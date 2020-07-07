@@ -1,5 +1,12 @@
 package com.avereon.cart2;
 
-import com.avereon.venza.image.VectorIcon;
+import com.avereon.venza.image.RenderedIcon;
 
-public class Cartesia2dIcon extends VectorIcon {}
+public class Cartesia2dIcon extends RenderedIcon {
+
+	@Override
+	protected void render() {
+
+	}
+
+}
