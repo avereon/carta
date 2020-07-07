@@ -40,7 +40,7 @@ jobs:
       - name: Fetch CI/CD resources
         uses: actions/checkout@v2
         with:
-          repository: avereon/cart2
+          repository: avereon/canoe
           path: .github
 
       - name: Configuration
