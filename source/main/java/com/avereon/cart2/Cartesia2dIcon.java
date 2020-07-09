@@ -20,18 +20,6 @@ public class Cartesia2dIcon extends SvgIcon {
 	public Cartesia2dIcon() {
 		super( 32, 32 );
 
-		double halfKnob = 0.5 * KNOB;
-		double a = Math.sqrt( RR * RR - halfKnob * halfKnob );
-
-		String top = "";
-		top += "M" + (CX - halfKnob) + "," + (CY - RR - KNOB);
-		top += "L" + (CX - halfKnob) + "," + (CY - a);
-		top += "A" + RR + "," + RR + " 0 1 0 " + (CX + halfKnob) + "," + (CY - a);
-		top += "L" + (CX + halfKnob) + "," + (CY - RR - KNOB);
-		top += circle( CX, CY, RR - ARM_WIDTH );
-		top += "Z";
-		add( top );
-
 		// Slope of 0.5
 		double alpha = Math.atan2( 1, 2 );
 		// 270 deg - alpha
@@ -57,21 +45,39 @@ public class Cartesia2dIcon extends SvgIcon {
 		double dX = cX + 0;
 		double dY = cY - (ARM_WIDTH / Math.sin( alpha ));
 
-		// The left arm
+		add( top() + left( aX, aY, bX, bY, cX, cY, dX, dY ) + right( aX, aY, bX, bY, cX, cY, dX, dY ) );
+	}
+
+	private String top() {
+		String top = "";
+
+		double halfKnob = 0.5 * KNOB;
+		double a = Math.sqrt( RR * RR - halfKnob * halfKnob );
+		top += "M" + (CX - halfKnob) + "," + (CY - RR - KNOB);
+		top += "L" + (CX - halfKnob) + "," + (CY - a);
+		top += "A" + RR + "," + RR + " 0 1 0 " + (CX + halfKnob) + "," + (CY - a);
+		top += "L" + (CX + halfKnob) + "," + (CY - RR - KNOB);
+		top += circle( CX, CY, RR - ARM_WIDTH );
+		top += "Z";
+		return top;
+	}
+
+	private String left( double aX, double aY, double bX, double bY, double cX, double cY, double dX, double dY ) {
 		String left = "M" + (CX - aX) + "," + (CY + aY);
 		left += "A" + SS + "," + SS + " 0 0 0 " + (CX - bX) + "," + (CY + bY);
 		left += "L" + (CX - cX) + "," + (CY + cY);
 		left += "L" + (CX - dX) + "," + (CY + dY);
 		left += "Z";
-		add( left );
+		return left;
+	}
 
-		// Mirror the left arm
+	private String right( double aX, double aY, double bX, double bY, double cX, double cY, double dX, double dY ) {
 		String right = "M" + (CX + aX) + "," + (CY + aY);
 		right += "A" + SS + "," + SS + " 0 0 1 " + (CX + bX) + "," + (CY + bY);
 		right += "L" + (CX + cX) + "," + (CY + cY);
 		right += "L" + (CX + dX) + "," + (CY + dY);
 		right += "Z";
-		add( right );
+		return right;
 	}
 
 	public static void main( String[] commands ) {
