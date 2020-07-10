@@ -1,9 +1,9 @@
-package com.avereon.cart2;
+package com.avereon.cartesia;
 
 import com.avereon.venza.image.Proof;
 import com.avereon.venza.image.SvgIcon;
 
-public class Cartesia2dIcon extends SvgIcon {
+public class CartesiaIcon extends SvgIcon {
 
 	private static final double CX = 16;
 
@@ -17,7 +17,7 @@ public class Cartesia2dIcon extends SvgIcon {
 
 	private static final double ARM_WIDTH = 2.5;
 
-	public Cartesia2dIcon() {
+	public CartesiaIcon() {
 		super( 32, 32 );
 
 		// Slope of 0.5
@@ -81,7 +81,7 @@ public class Cartesia2dIcon extends SvgIcon {
 	}
 
 	public static void main( String[] commands ) {
-		Proof.proof( new Cartesia2dIcon() );
+		Proof.proof( new CartesiaIcon() );
 	}
 
 }

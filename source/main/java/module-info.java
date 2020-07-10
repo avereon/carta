@@ -1,7 +1,9 @@
-module com.avereon.cartesia2d {
+import com.avereon.cartesia.CartesiaMod;
+
+module com.avereon.cartesia {
 	requires com.avereon.xenon;
 
-	//opens com.avereon.cart2.bundles;
-	exports com.avereon.cart2 to com.avereon.xenon, com.avereon.venza;
-	provides com.avereon.xenon.Mod with com.avereon.cart2.Cartesia2dMod;
+	//opens com.avereon.cartesia.bundles;
+	exports com.avereon.cartesia to com.avereon.xenon, com.avereon.venza;
+	provides com.avereon.xenon.Mod with CartesiaMod;
 }

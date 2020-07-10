@@ -11,12 +11,12 @@
 	</parent>
 
 	<groupId>com.avereon</groupId>
-	<artifactId>cart2</artifactId>
+	<artifactId>carta</artifactId>
 	<version>1.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>Cartesia 2D</name>
-	<description>2D computer aided design.</description>
+	<name>Cartesia</name>
+	<description>2D/3D computer aided design.</description>
 	<inceptionYear>2020</inceptionYear>
 
 	<repositories>
@@ -49,7 +49,7 @@
 				<configuration>
 					<!-- The argLine and systemPropertyVariables should match the failsafe configuration below -->
 					<argLine>
-						--add-opens=com.avereon.cart2/com.avereon.cart2=ALL-UNNAMED
+						--add-opens=com.avereon.cartesia/com.avereon.carta=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
@@ -74,7 +74,7 @@
 								<configuration>
 									<images>
 										<image>
-											<class>com.avereon.cart2.Cartesia2dIcon</class>
+											<class>com.avereon.cartesia.CartesiaIcon</class>
 											<target>${images-folder}/product.png</target>
 											<theme>light</theme>
 										</image>
