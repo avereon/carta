@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="product-page">
+		<group id="common">
+			<setting key="reticle" editor="combobox">
+				<option key="duplex"/>
+				<option key="crosshair"/>
+			</setting>
+		</group>
+	</page>
+
+</pages>

@@ -1,13 +1,11 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.cursor.StandardCursor;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
 import javafx.scene.layout.Pane;
 
-public class Design2dEditor extends ProgramTool {
+public class Design2dEditor extends DesignTool {
 
 	private static final System.Logger log = Log.get();
 
@@ -18,7 +16,7 @@ public class Design2dEditor extends ProgramTool {
 
 		getChildren().add( geometry = new Pane() );
 
-		setCursor( StandardCursor.DUPLEX );
+		//setCursor( StandardCursor.DUPLEX );
 
 		//onMousePressedProperty().set( e -> add( new Circle(100,100,100, Color.RED) ) );
 
@@ -31,9 +29,5 @@ public class Design2dEditor extends ProgramTool {
 	//public void add( Node node ) {
 	//	geometry.getChildren().add( node );
 	//}
-
-	public void setCursor( StandardCursor cursor ) {
-		super.setCursor( cursor.get() );
-	}
 
 }
