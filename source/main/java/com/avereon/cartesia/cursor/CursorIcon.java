@@ -1,0 +1,20 @@
+package com.avereon.cartesia.cursor;
+
+import com.avereon.venza.image.RenderedIcon;
+
+public abstract class CursorIcon extends RenderedIcon {
+
+	protected CursorIcon() {
+		super();
+	}
+
+	protected CursorIcon( double gridX, double gridY ) {
+		super( gridX, gridY );
+	}
+
+	@Override
+	protected void render() {
+		//getGraphicsContext2D().setImageSmoothing( false );
+	}
+
+}

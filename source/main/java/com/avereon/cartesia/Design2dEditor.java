@@ -1,12 +1,10 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.cursor.StandardCursor;
 import com.avereon.util.Log;
-import com.avereon.venza.image.VectorImage;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
-import javafx.geometry.Dimension2D;
-import javafx.scene.ImageCursor;
 import javafx.scene.layout.Pane;
 
 public class Design2dEditor extends ProgramTool {
@@ -20,11 +18,7 @@ public class Design2dEditor extends ProgramTool {
 
 		getChildren().add( geometry = new Pane() );
 
-		// NEXT Create an icon for the crosshair cursor
-		VectorImage icon = (VectorImage)getProgram().getIconLibrary().getIcon( "document" );
-
-		Dimension2D size = ImageCursor.getBestSize( 48, 48 );
-		setCursor( new ImageCursor( icon.resize( size.getWidth() ).getImage() ) );
+		setCursor( StandardCursor.DUPLEX );
 
 		//onMousePressedProperty().set( e -> add( new Circle(100,100,100, Color.RED) ) );
 
@@ -37,5 +31,9 @@ public class Design2dEditor extends ProgramTool {
 	//public void add( Node node ) {
 	//	geometry.getChildren().add( node );
 	//}
+
+	public void setCursor( StandardCursor cursor ) {
+		super.setCursor( cursor.get() );
+	}
 
 }

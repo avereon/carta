@@ -5,5 +5,6 @@ module com.avereon.cartesia {
 
 	opens com.avereon.cartesia.bundles;
 	exports com.avereon.cartesia to com.avereon.xenon, com.avereon.venza;
+	exports com.avereon.cartesia.cursor to com.avereon.venza;
 	provides com.avereon.xenon.Mod with CartesiaMod;
 }
