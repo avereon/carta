@@ -1,0 +1,16 @@
+Pros
+* Standalone
+* Simple
+* Inexpensive
+* Came with a manual
+* Command script / macro / text files
+* Ease of use
+
+Keep
+* Dimensions
+* Components
+* Printing
+
+Needs
+* Scale Components
+* Mixed units (per layer/component)

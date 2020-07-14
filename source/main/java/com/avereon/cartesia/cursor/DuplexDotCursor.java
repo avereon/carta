@@ -19,7 +19,7 @@ public class DuplexDotCursor extends DuplexCursor {
 	protected void render() {
 		super.render();
 		startPath();
-		getGraphicsContext2D().appendSVGPath( SvgIcon.circle( getC(), getC(), 1 ) );
+		getGraphicsContext2D().appendSVGPath( SvgIcon.circle( getC()-0.5, getC()-0.5, 2 ) );
 		fill();
 	}
 

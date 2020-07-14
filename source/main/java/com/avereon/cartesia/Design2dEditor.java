@@ -16,10 +16,6 @@ public class Design2dEditor extends DesignTool {
 
 		getChildren().add( geometry = new Pane() );
 
-		//setCursor( StandardCursor.DUPLEX );
-
-		//onMousePressedProperty().set( e -> add( new Circle(100,100,100, Color.RED) ) );
-
 		// Add a key listener (actions can start a command immediately)
 		// that sends the keys to a command processor
 		// that handles the processing of commands

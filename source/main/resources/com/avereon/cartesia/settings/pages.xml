@@ -6,6 +6,10 @@
 		<group id="common">
 			<setting key="reticle" editor="combobox">
 				<option key="duplex"/>
+				<option key="duplex_wide"/>
+				<option key="duplex_pixel"/>
+				<option key="duplex_dot"/>
+				<option key="duplex_circle"/>
 				<option key="crosshair"/>
 			</setting>
 		</group>

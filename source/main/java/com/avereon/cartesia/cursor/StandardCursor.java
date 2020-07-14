@@ -7,11 +7,12 @@ import javafx.scene.ImageCursor;
 public enum StandardCursor {
 
 	DUPLEX( new DuplexCursor( 0.8 ) ),
-	WIDE_DUPLEX( new DuplexCursor( 0.7 ) ),
+	DUPLEX_WIDE( new DuplexCursor( 0.7 ) ),
 	DUPLEX_60( new DuplexCursor( 0.6 ) ),
 	DUPLEX_40( new DuplexCursor( 0.4 ) ),
 	DUPLEX_20( new DuplexCursor( 0.2 ) ),
-	DUPLEX_DOT( new DuplexDotCursor( 0.8 ) ),
+	DUPLEX_PIXEL( new DuplexPixelCursor( 0.7 ) ),
+	DUPLEX_DOT( new DuplexDotCursor( 0.7 ) ),
 	DUPLEX_CIRCLE( new DuplexCircleCursor( 0.8 ) ),
 	CROSSHAIR( new CrosshairCursor() );
 
