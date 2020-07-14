@@ -3,6 +3,8 @@ package com.avereon.cartesia;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
+import javafx.geometry.Point3D;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 
 public class Design2dEditor extends DesignTool {
@@ -21,6 +23,13 @@ public class Design2dEditor extends DesignTool {
 		// that handles the processing of commands
 		// and their eventual outcome
 	}
+
+	@Override
+	protected Point3D mouseToWorld( MouseEvent event ) {
+		// TODO Convert to design coordinates
+		return new Point3D( event.getX(), event.getY(), 0 );
+	}
+
 
 	//public void add( Node node ) {
 	//	geometry.getChildren().add( node );
