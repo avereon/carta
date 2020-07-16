@@ -44,8 +44,8 @@ public class CommandPrompt extends BorderPane {
 
 	private void process( String command ) {
 		Design design = tool.getAssetModel();
-		// TODO This needs to get the command stack/processor for the asset and push this command
-		//design.getCommandProcessor().push( command );
+		// TODO This needs to get the command stack/processor for the asset and push the command
+		//design.getCommandProcessor().evaluate( command );
 	}
 
 }

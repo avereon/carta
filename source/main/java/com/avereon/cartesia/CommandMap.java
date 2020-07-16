@@ -23,7 +23,7 @@ public class CommandMap {
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T extends Command<?>> Class<T> get( String id ) {
+	public static <T extends Command<?>> Class<T> get( String id ) {
 		return (Class<T>)defaultCommands.get( id );
 	}
 
