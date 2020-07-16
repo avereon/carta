@@ -5,6 +5,8 @@ import com.avereon.xenon.ToolRegistration;
 
 public class CartesiaMod extends Mod {
 
+	static final String STYLESHEET = "cartesia.css";
+
 	private Design2dAssetType design2dAssetType;
 
 	private Design3dAssetType design3dAssetType;

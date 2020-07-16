@@ -10,9 +10,13 @@ public abstract class Design extends Node {
 
 	private static final String UNIT = "unit";
 
+	private final CommandProcessor commandProcessor;
+
 	public Design() {
 		definePrimaryKey( ID );
 		addModifyingKeys( NAME, UNIT );
+
+		this.commandProcessor = new CommandProcessor();
 	}
 
 	public String getName() {
@@ -31,6 +35,10 @@ public abstract class Design extends Node {
 	public Design setUnit( DesignUnit unit ) {
 		setValue( UNIT, unit );
 		return this;
+	}
+
+	public CommandProcessor getCommandProcessor() {
+		return commandProcessor;
 	}
 
 }

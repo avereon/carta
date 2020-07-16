@@ -5,18 +5,18 @@ import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Pane;
 
 public class Design2dEditor extends DesignTool {
 
 	private static final System.Logger log = Log.get();
 
-	private final Pane geometry;
+	//private final Pane geometry;
 
 	public Design2dEditor( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 
-		getChildren().add( geometry = new Pane() );
+		// This pane will "steal" the key events
+		//getChildren().add( geometry = new Pane() );
 
 		// Add a key listener (actions can start a command immediately)
 		// that sends the keys to a command processor
@@ -27,7 +27,7 @@ public class Design2dEditor extends DesignTool {
 	@Override
 	protected Point3D mouseToWorld( MouseEvent event ) {
 		// TODO Convert to design coordinates
-		return new Point3D( event.getX(), event.getY(), 0 );
+		return new Point3D( event.getX(), event.getY(), 0.0 );
 	}
 
 

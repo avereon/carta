@@ -7,6 +7,7 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import javafx.geometry.Point3D;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
 public abstract class DesignTool extends ProgramTool {
@@ -18,9 +19,9 @@ public abstract class DesignTool extends ProgramTool {
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 
-		addStylesheet( "cartesia.css" );
+		addStylesheet( CartesiaMod.STYLESHEET );
 
-		this.prompt = new CommandPrompt( product );
+		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 
 		// Initial values from settings
@@ -29,7 +30,8 @@ public abstract class DesignTool extends ProgramTool {
 		// Settings listeners
 		product.getSettings().register( "reticle", e -> setCursor( StandardCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 
-		onMouseMovedProperty().set( coordinates::update );
+		addEventHandler( KeyEvent.ANY, getCommandPrompt()::update );
+		addEventHandler( MouseEvent.MOUSE_MOVED, getCoordinateStatus()::update );
 	}
 
 	protected abstract Point3D mouseToWorld( MouseEvent event );
@@ -40,8 +42,10 @@ public abstract class DesignTool extends ProgramTool {
 		Workspace workspace = getWorkspace();
 		if( workspace != null ) {
 			workspace.getStatusBar().addLeft( getCommandPrompt() );
-			workspace.getStatusBar().addRight( coordinates );
+			workspace.getStatusBar().addRight( getCoordinateStatus() );
 		}
+		getCommandPrompt().clear();
+		requestFocus();
 	}
 
 	@Override
@@ -49,7 +53,7 @@ public abstract class DesignTool extends ProgramTool {
 		super.conceal();
 		Workspace workspace = getWorkspace();
 		if( workspace != null ) {
-			workspace.getStatusBar().removeRight( coordinates );
+			workspace.getStatusBar().removeRight( getCoordinateStatus() );
 			workspace.getStatusBar().removeLeft( getCommandPrompt() );
 		}
 	}
@@ -60,6 +64,10 @@ public abstract class DesignTool extends ProgramTool {
 
 	private CommandPrompt getCommandPrompt() {
 		return prompt;
+	}
+
+	private CoordinateStatus getCoordinateStatus() {
+		return coordinates;
 	}
 
 }
