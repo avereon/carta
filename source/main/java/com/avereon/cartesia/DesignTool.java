@@ -26,6 +26,10 @@ public abstract class DesignTool extends ProgramTool {
 
 	private final Pane geometry;
 
+	private Point3D dragAnchor;
+
+	private Point3D translateAnchor;
+
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 
@@ -35,7 +39,9 @@ public abstract class DesignTool extends ProgramTool {
 		this.coordinates = new CoordinateStatus( this );
 
 		// This pane will "steal" the key events
-		getChildren().add( geometry = new Pane() );
+		geometry = new Pane();
+		geometry.setManaged( false );
+		getChildren().add( geometry );
 
 		geometry.getChildren().add( new Line( -10, -10, 10, 10 ) );
 		geometry.getChildren().add( new Line( 10, -10, -10, 10 ) );
@@ -51,6 +57,11 @@ public abstract class DesignTool extends ProgramTool {
 
 		addEventFilter( KeyEvent.ANY, getCommandPrompt()::update );
 		addEventFilter( MouseEvent.MOUSE_MOVED, getCoordinateStatus()::update );
+		addEventFilter( MouseEvent.MOUSE_PRESSED, e -> {
+			dragAnchor = new Point3D( e.getX(), e.getY(), e.getZ() );
+			translateAnchor = new Point3D( geometry.getTranslateX(), geometry.getTranslateY(), 0.0 );
+		} );
+		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::translate );
 		addEventFilter( ScrollEvent.SCROLL, this::rescale );
 	}
 
@@ -90,8 +101,25 @@ public abstract class DesignTool extends ProgramTool {
 		return coordinates;
 	}
 
+	private void translate( MouseEvent event ) {
+		if( event.isPrimaryButtonDown() && event.isShiftDown() ) {
+			geometry.setTranslateX( translateAnchor.getX() + ((event.getX() - dragAnchor.getX())) );
+			geometry.setTranslateY( translateAnchor.getY() + ((event.getY() - dragAnchor.getY())) );
+		}
+	}
+
 	private void rescale( ScrollEvent event ) {
 		double delta = event.getDeltaY();
+
+		log.log( Log.WARN, "event={0},{1}", event.getX(), event.getY() );
+
+		double dx = event.getX() - geometry.getTranslateX();
+		double dy = event.getY() - geometry.getTranslateY();
+
+		// TODO Subtract the event point
+		//geometry.setTranslateX( -dx  );
+		//geometry.setTranslateY( -dy );
+
 		if( delta > 0 ) {
 			// Zoom in
 			geometry.setScaleX( geometry.getScaleX() * SCALE_FACTOR );
@@ -101,6 +129,10 @@ public abstract class DesignTool extends ProgramTool {
 			geometry.setScaleX( geometry.getScaleX() / SCALE_FACTOR );
 			geometry.setScaleY( geometry.getScaleY() / SCALE_FACTOR );
 		}
+
+		// TODO Add it back
+		//geometry.setTranslateX( dx  );
+		//geometry.setTranslateY( dy );
 	}
 
 }
