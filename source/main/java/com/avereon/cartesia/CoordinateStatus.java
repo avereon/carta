@@ -20,6 +20,8 @@ public class CoordinateStatus extends HBox {
 
 	private final Label zCoord;
 
+	private final Label zoomValue;
+
 	private final BorderPane zPane;
 
 	private boolean isFraction;
@@ -33,18 +35,21 @@ public class CoordinateStatus extends HBox {
 		String xPrompt = tool.getProduct().rb().textOr( "prompt", "x", "X:" );
 		String yPrompt = tool.getProduct().rb().textOr( "prompt", "y", "Y:" );
 		String zPrompt = tool.getProduct().rb().textOr( "prompt", "z", "Z:" );
+		String zoomPrompt = tool.getProduct().rb().textOr( "prompt", "zoom", "ZM:" );
 
 		xCoord = new Label( "0.000000" );
 		yCoord = new Label( "0.000000" );
 		zCoord = new Label( "0.000000" );
+		zoomValue = new Label( "0.000000" );
 
 		BorderPane xPane = new BorderPane( null, null, xCoord, null, new Label( xPrompt ) );
 		BorderPane yPane = new BorderPane( null, null, yCoord, null, new Label( yPrompt ) );
 		zPane = new BorderPane( null, null, zCoord, null, new Label( zPrompt ) );
+		BorderPane mPane = new BorderPane( null, null, zoomValue, null, new Label( zoomPrompt ) );
 
 		setShowZCoordinate( false );
 
-		getChildren().addAll( xPane, yPane, zPane );
+		getChildren().addAll( xPane, yPane, zPane, mPane );
 	}
 
 	public void update( MouseEvent event ) {
@@ -58,6 +63,10 @@ public class CoordinateStatus extends HBox {
 			yCoord.setText( format.format( point.getY() ) );
 			zCoord.setText( format.format( point.getZ() ) );
 		}
+	}
+
+	public void updateZoom( double x, double y, double z ) {
+		zoomValue.setText( format.format( x ) );
 	}
 
 	public void setShowZCoordinate( boolean showZ ) {
