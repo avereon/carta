@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.xenon.ProgramProduct;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -7,14 +8,13 @@ import javafx.scene.layout.BorderPane;
 
 public class CommandPrompt extends BorderPane {
 
-	private final DesignTool tool;
+	//private final DesignTool tool;
 
 	private final TextField command;
 
-	public CommandPrompt( DesignTool tool ) {
-		this.tool = tool;
+	public CommandPrompt( ProgramProduct product ) {
 		getStyleClass().add( "cartesia-command");
-		setLeft( new Label( tool.getProduct().rb().text( "prompt", "command" ) ) );
+		setLeft( new Label( product.rb().text( "prompt", "command" ) ) );
 		setCenter( command = new TextField() );
 	}
 
@@ -23,7 +23,7 @@ public class CommandPrompt extends BorderPane {
 		command.setText( "" );
 	}
 
-	public void update( KeyEvent event ) {
+	public void update( DesignTool tool, KeyEvent event ) {
 		command.fireEvent( event );
 
 		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
@@ -34,7 +34,7 @@ public class CommandPrompt extends BorderPane {
 					break;
 				}
 				case ENTER: {
-					process( command.getText() );
+					process( tool, command.getText() );
 					clear();
 					break;
 				}
@@ -42,7 +42,7 @@ public class CommandPrompt extends BorderPane {
 		}
 	}
 
-	private void process( String command ) {
+	private void process( DesignTool tool, String command ) {
 		Design design = tool.getAssetModel();
 		// TODO This needs to get the command stack/processor for the asset and push the command
 		//design.getCommandProcessor().evaluate( command );
