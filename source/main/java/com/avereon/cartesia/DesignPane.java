@@ -3,7 +3,6 @@ package com.avereon.cartesia;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -99,11 +98,17 @@ public class DesignPane extends Pane {
 		return (zoomZProperty == null) ? DEFAULT_ZOOM_Z : zoomZProperty.get();
 	}
 
-	void pan( Point2D translateAnchor, Point2D dragAnchor, MouseEvent event ) {
-		if( event.isPrimaryButtonDown() && event.isShiftDown() ) {
-			setTranslateX( translateAnchor.getX() + ((event.getX() - dragAnchor.getX())) );
-			setTranslateY( translateAnchor.getY() + ((event.getY() - dragAnchor.getY())) );
-		}
+	/**
+	 * Pan the design pane.
+	 *
+	 * @param panAnchor The pane location before being dragged
+	 * @param dragAnchor The point where the mouse was pressed
+	 * @param mouseX The mouse event X coordinate
+	 * @param mouseY The mouse event Y coordinate
+	 */
+	void pan( Point2D panAnchor, Point2D dragAnchor, double mouseX, double mouseY ) {
+			setTranslateX( panAnchor.getX() + ((mouseX - dragAnchor.getX())) );
+			setTranslateY( panAnchor.getY() + ((mouseY - dragAnchor.getY())) );
 	}
 
 	void zoom( ScrollEvent event ) {

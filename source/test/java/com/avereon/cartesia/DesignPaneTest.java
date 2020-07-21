@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import javafx.geometry.Point2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,23 @@ public class DesignPaneTest {
 	}
 
 	@Test
-	void checkScaleFactor() {
+	void testPan() {
+		pane.pan( new Point2D( pane.getTranslateX(), pane.getTranslateY() ), new Point2D( 1, 1 ), 2, 0.5 );
+		assertThat( pane.getTranslateX(), is( 1.0 ) );
+		assertThat( pane.getTranslateY(), is( -0.5 ) );
+	}
+
+	@Test
+	void testPanOffsetOrigin() {
+		pane.setTranslateX( -2 );
+		pane.setTranslateY( 1 );
+		pane.pan( new Point2D( pane.getTranslateX(), pane.getTranslateY() ), new Point2D( 1, 1 ), 2, 0.5 );
+		assertThat( pane.getTranslateX(), is( -1.0 ) );
+		assertThat( pane.getTranslateY(), is( 0.5 ) );
+	}
+
+	@Test
+	void checkZoomFactor() {
 		assertThat( 1 * DesignPane.ZOOM_FACTOR, is( 1.189207115002721 ) );
 	}
 

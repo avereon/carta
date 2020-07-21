@@ -26,7 +26,7 @@ public abstract class DesignTool extends ProgramTool {
 
 	private Point2D dragAnchor;
 
-	private Point2D translateAnchor;
+	private Point2D panAnchor;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -67,13 +67,13 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void anchor( MouseEvent event ) {
 		if( event.isShiftDown() && event.isPrimaryButtonDown() ) {
-			translateAnchor = new Point2D( geometry.getTranslateX(), geometry.getTranslateY() );
+			panAnchor = new Point2D( geometry.getTranslateX(), geometry.getTranslateY() );
 			dragAnchor = new Point2D( event.getX(), event.getY() );
 		}
 	}
 
 	private void drag( MouseEvent event ) {
-		geometry.pan( translateAnchor, dragAnchor, event );
+		if( event.isPrimaryButtonDown() && event.isShiftDown() ) geometry.pan( panAnchor, dragAnchor, event.getX(), event.getY() );
 	}
 
 	public DesignUnit getDesignUnit() {
