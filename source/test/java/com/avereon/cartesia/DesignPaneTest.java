@@ -9,9 +9,9 @@ import static org.hamcrest.Matchers.is;
 
 public class DesignPaneTest {
 
-	private static final double ZOOM_IN = 20;
+	private static final boolean ZOOM_IN = true;
 
-	private static final double ZOOM_OUT = -ZOOM_IN;
+	private static final boolean ZOOM_OUT = false;
 
 	private DesignPane pane;
 
@@ -47,7 +47,7 @@ public class DesignPaneTest {
 
 	@Test
 	void testZoomIn() {
-		pane.zoom( ZOOM_IN, 0, 0 );
+		pane.zoom( 0, 0, ZOOM_IN );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
 		assertThat( pane.getScaleX(), is( 1.0 * DesignPane.ZOOM_FACTOR ) );
@@ -64,7 +64,7 @@ public class DesignPaneTest {
 		double dy = oty - ey;
 		double ntx = ex + (dx * DesignPane.ZOOM_FACTOR);
 		double nty = ey + (dy * DesignPane.ZOOM_FACTOR);
-		pane.zoom( ZOOM_IN, ex, ey );
+		pane.zoom( ex, ey, ZOOM_IN );
 		assertThat( pane.getTranslateX(), is( ntx ) );
 		assertThat( pane.getTranslateY(), is( nty ) );
 		assertThat( pane.getScaleX(), is( 1.0 * DesignPane.ZOOM_FACTOR ) );
@@ -73,7 +73,7 @@ public class DesignPaneTest {
 
 	@Test
 	void testZoomOut() {
-		pane.zoom( ZOOM_OUT, 0, 0 );
+		pane.zoom( 0, 0, ZOOM_OUT );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
 		assertThat( pane.getScaleX(), is( 1.0 / DesignPane.ZOOM_FACTOR ) );
@@ -90,7 +90,7 @@ public class DesignPaneTest {
 		double dy = oty - ey;
 		double ntx = ex + (dx / DesignPane.ZOOM_FACTOR);
 		double nty = ey + (dy / DesignPane.ZOOM_FACTOR);
-		pane.zoom( ZOOM_OUT, -1, -1 );
+		pane.zoom( -1, -1, ZOOM_OUT );
 		assertThat( pane.getTranslateX(), is( ntx ) );
 		assertThat( pane.getTranslateY(), is( nty ) );
 		assertThat( pane.getScaleX(), is( 1.0 / DesignPane.ZOOM_FACTOR ) );
