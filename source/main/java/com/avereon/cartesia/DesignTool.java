@@ -53,8 +53,7 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::drag );
 		addEventFilter( ScrollEvent.SCROLL, geometry::zoom );
 
-		// FIXME Change this to listeners on the zoom properties of the design pane
-		//getCoordinateStatus().updateZoom( getZoomX(), getZoomY(), getZoomZ() );
+		geometry.zoomProperty().addListener( ( v, o, n ) -> getCoordinateStatus().updateZoom( n.doubleValue() ) );
 	}
 
 	private void key( KeyEvent event ) {
@@ -62,7 +61,8 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private void mouse( MouseEvent event ) {
-		getCoordinateStatus().updatePosition( this, event.getX(), event.getY(), event.getZ() );
+		Point3D point = mouseToWorld( event.getX(), event.getY(), event.getZ() );
+		getCoordinateStatus().updatePosition( point.getX(), point.getY(), point.getZ() );
 	}
 
 	private void anchor( MouseEvent event ) {

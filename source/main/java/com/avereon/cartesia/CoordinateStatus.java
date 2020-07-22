@@ -2,7 +2,6 @@ package com.avereon.cartesia;
 
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
-import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -48,23 +47,25 @@ public class CoordinateStatus extends HBox {
 		setShowZCoordinate( false );
 
 		getChildren().addAll( xPane, yPane, zPane, mPane );
+
+		updatePosition( 0,0,0 );
+		updateZoom( DesignPane.DEFAULT_ZOOM );
 	}
 
-	public void updatePosition( DesignTool tool, double x, double y, double z ) {
-		Point3D point = tool.mouseToWorld( x,y,z );
+	public void updatePosition( double x, double y, double z ) {
 		if( isFraction ) {
 			xCoord.setText( "0 0/0" );
 			yCoord.setText( "0 0/0" );
 			zCoord.setText( "0 0/0" );
 		} else {
-			xCoord.setText( format.format( point.getX() ) );
-			yCoord.setText( format.format( point.getY() ) );
-			zCoord.setText( format.format( point.getZ() ) );
+			xCoord.setText( format.format( x ) );
+			yCoord.setText( format.format( y ) );
+			zCoord.setText( format.format( z ) );
 		}
 	}
 
-		public void updateZoom( double x, double y, double z ) {
-		zoomValue.setText( format.format( x ) );
+		public void updateZoom( double zoom ) {
+		zoomValue.setText( format.format( zoom ) );
 	}
 
 	public void setShowZCoordinate( boolean showZ ) {
