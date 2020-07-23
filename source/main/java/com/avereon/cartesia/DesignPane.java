@@ -6,9 +6,9 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
-import javafx.stage.Screen;
 
 public class DesignPane extends Group {
 
@@ -38,8 +38,22 @@ public class DesignPane extends Group {
 
 	private DoubleProperty zoomProperty;
 
+	private Design design;
+
 	public DesignPane() {
-		double r = 10;
+		setManaged( false );
+		rescale();
+
+		// Setup listeners
+		zoomProperty().addListener( ( v, o, n ) -> rescale() );
+
+		// TODO Remove
+		generateTestData();
+	}
+
+	// TODO Remove this method that creates test data
+	private void generateTestData() {
+		double r = 1;
 		double d = r * Math.sqrt( 0.5 );
 		Group layer = new Group();
 		layer.getChildren().add( new Line( -d, -d, d, d ) );
@@ -48,14 +62,20 @@ public class DesignPane extends Group {
 		layer.getChildren().add( new Line( 0, -r, 0, r ) );
 		layer.getChildren().forEach( c -> {
 			Shape s = (Shape)c;
-			s.setStyle( "-fx-stroke: green; -fx-stroke-width: 1mm" );
-			//s.setStroke( Color.GREY );
-			//s.setStrokeWidth( 1.0/60.0 );
+			//s.setStyle( "-fx-stroke: green; -fx-stroke-width: 1mm" );
+			s.setStroke( Color.GREY );
+			s.setStrokeWidth( 1.0 / 10.0 );
 		} );
 		getChildren().add( layer );
+	}
 
-		// Initial values
-		setZoom( 1 );
+	public void setDesign( Design design ) {
+		if( this.design == design ) return;
+
+		this.design = design;
+
+		// Initialize from the design
+		design.register( Design.UNIT, e -> rescale() );
 	}
 
 	/**
@@ -73,35 +93,24 @@ public class DesignPane extends Group {
 
 	public final void setZoom( double value ) {
 		zoomProperty().set( value );
-
-		// FIXME From here down need to move to a rescale() method that can be called on changes to dpi/scale/zoom.
-
-		// This value comes from the layer/group
-		DesignUnit unit = DesignUnit.CENTIMETER;
-		// This value comes from the screen
-		//double dpi = Screen.getPrimary().getDpi();
-		double dpi = DEFAULT_DPI;
-
-		if( getScene() != null ) {
-			Screen s = Screen.getPrimary();
-			//Window.getWindows().get( 0 ).getScene().getRoot().getD
-			double r = getScene().getWindow().getRenderScaleX();
-			double o = getScene().getWindow().getOutputScaleX();
-			log.log( Log.WARN, "r={0} o={1} d={2}", r, o, s.getDpi() );
-		}
-
-		// NEXT The scale is the combination of the unit conversion and the zoom property
-		double dpu = DesignUnit.INCH.from( dpi, unit );
-		dpu = 1;
-		double scaleX = dpu * value;
-		double scaleY = dpu * value;
-
-		setScaleX( scaleX );
-		setScaleY( -scaleY );
 	}
 
 	public final double getZoom() {
 		return (zoomProperty == null) ? DEFAULT_ZOOM : zoomProperty.get();
+	}
+
+	protected DesignUnit getDesignUnit() {
+		return design == null ? DesignUnit.CENTIMETER : design.getDesignUnit();
+	}
+
+	// TODO Make the dpi adjusted to actual screen dpi
+	protected final double getDpi() {
+		return DEFAULT_DPI;
+	}
+
+	// TODO This might be a value worth caching
+	protected final double getDpu() {
+		return DesignUnit.INCH.from( getDpi(), getDesignUnit() );
 	}
 
 	/**
@@ -135,6 +144,12 @@ public class DesignPane extends Group {
 			setTranslateY( anchorY + (dy / ZOOM_FACTOR) );
 			setZoom( getZoom() / ZOOM_FACTOR );
 		}
+	}
+
+	private void rescale() {
+		double scale = getDpu() * getZoom();
+		setScaleX( scale );
+		setScaleY( -scale );
 	}
 
 }

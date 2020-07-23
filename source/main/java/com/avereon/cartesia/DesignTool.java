@@ -5,6 +5,7 @@ import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import javafx.geometry.Point2D;
@@ -86,6 +87,12 @@ public abstract class DesignTool extends ProgramTool {
 		} catch( NonInvertibleTransformException exception ) {
 			return new Point3D( Double.NaN, Double.NaN, Double.NaN );
 		}
+	}
+
+	@Override
+	protected void ready( OpenAssetRequest request ) throws ToolException {
+		super.ready( request );
+		geometry.setDesign( request.getAsset().getModel() );
 	}
 
 	@Override

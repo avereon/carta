@@ -4,17 +4,20 @@ import com.avereon.data.Node;
 
 public abstract class Design extends Node {
 
+	public static final DesignUnit DEFAULT_DESIGN_UNIT = DesignUnit.CENTIMETER;
+
 	private static final String ID = "id";
 
-	private static final String NAME = "name";
+	public static final String NAME = "name";
 
-	private static final String UNIT = "unit";
+	public static final String UNIT = "unit";
 
 	private final CommandProcessor commandProcessor;
 
 	public Design() {
 		definePrimaryKey( ID );
 		addModifyingKeys( NAME, UNIT );
+		setDesignUnit( DEFAULT_DESIGN_UNIT );
 
 		this.commandProcessor = new CommandProcessor();
 	}
@@ -28,11 +31,11 @@ public abstract class Design extends Node {
 		return this;
 	}
 
-	public DesignUnit getUnit() {
+	public DesignUnit getDesignUnit() {
 		return getValue( UNIT );
 	}
 
-	public Design setUnit( DesignUnit unit ) {
+	public Design setDesignUnit( DesignUnit unit ) {
 		setValue( UNIT, unit );
 		return this;
 	}

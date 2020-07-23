@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 
 public class DesignPaneTest {
@@ -13,19 +14,27 @@ public class DesignPaneTest {
 
 	private static final boolean ZOOM_OUT = false;
 
+	// This value is a bit roomier than required (1e-12 > 1e-14)
+	private static final double TOLERANCE = 1e-12;
+
+	private static final double SCALE = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, DesignUnit.CENTIMETER );
+
+	private Design design;
+
 	private DesignPane pane;
 
 	@BeforeEach
-	void setup() {
+	void setup() throws Exception {
 		pane = new DesignPane();
-		assertThat( pane.getScaleX(), is( 1.0 ) );
-		assertThat( pane.getScaleY(), is( -1.0 ) );
+		pane.setDesign( design = new Design2d() );
+		assertThat( pane.getScaleX(), is( 1.0 * SCALE ) );
+		assertThat( pane.getScaleY(), is( -1.0 * SCALE ) );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
 	}
 
 	@Test
-	void testPan() {
+	void testPan() throws Exception {
 		pane.pan( new Point2D( pane.getTranslateX(), pane.getTranslateY() ), new Point2D( 1, 1 ), 2, 0.5 );
 		assertThat( pane.getTranslateX(), is( 1.0 ) );
 		assertThat( pane.getTranslateY(), is( -0.5 ) );
@@ -50,8 +59,8 @@ public class DesignPaneTest {
 		pane.zoom( 0, 0, ZOOM_IN );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
-		assertThat( pane.getScaleX(), is( 1.0 * DesignPane.ZOOM_FACTOR ) );
-		assertThat( pane.getScaleY(), is( -1.0 * DesignPane.ZOOM_FACTOR ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
 	}
 
 	@Test
@@ -67,8 +76,8 @@ public class DesignPaneTest {
 		pane.zoom( ex, ey, ZOOM_IN );
 		assertThat( pane.getTranslateX(), is( ntx ) );
 		assertThat( pane.getTranslateY(), is( nty ) );
-		assertThat( pane.getScaleX(), is( 1.0 * DesignPane.ZOOM_FACTOR ) );
-		assertThat( pane.getScaleY(), is( -1.0 * DesignPane.ZOOM_FACTOR ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
 	}
 
 	@Test
@@ -76,8 +85,9 @@ public class DesignPaneTest {
 		pane.zoom( 0, 0, ZOOM_OUT );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
-		assertThat( pane.getScaleX(), is( 1.0 / DesignPane.ZOOM_FACTOR ) );
-		assertThat( pane.getScaleY(), is( -1.0 / DesignPane.ZOOM_FACTOR ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		closeTo( 1,0 );
 	}
 
 	@Test
@@ -93,8 +103,16 @@ public class DesignPaneTest {
 		pane.zoom( -1, -1, ZOOM_OUT );
 		assertThat( pane.getTranslateX(), is( ntx ) );
 		assertThat( pane.getTranslateY(), is( nty ) );
-		assertThat( pane.getScaleX(), is( 1.0 / DesignPane.ZOOM_FACTOR ) );
-		assertThat( pane.getScaleY(), is( -1.0 / DesignPane.ZOOM_FACTOR ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+	}
+
+	@Test
+	void testChangeDesignUnitCausesRescale() {
+		design.setDesignUnit( DesignUnit.MILLIMETER );
+		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.getDesignUnit() );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * scale, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * scale, TOLERANCE ) );
 	}
 
 }
