@@ -9,6 +9,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
 
 public class DesignPane extends Group {
 
@@ -65,6 +66,7 @@ public class DesignPane extends Group {
 			//s.setStyle( "-fx-stroke: green; -fx-stroke-width: 1mm" );
 			s.setStroke( Color.GREY );
 			s.setStrokeWidth( 1.0 / 10.0 );
+			s.setStrokeLineCap( StrokeLineCap.BUTT );
 		} );
 		getChildren().add( layer );
 	}
