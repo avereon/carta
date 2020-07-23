@@ -25,8 +25,8 @@ public class DesignPaneTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-		pane = new DesignPane();
-		pane.setDesign( design = new Design2d() );
+		design = new Design2d();
+		pane = new DesignPane( design );
 		assertThat( pane.getScaleX(), is( 1.0 * SCALE ) );
 		assertThat( pane.getScaleY(), is( -1.0 * SCALE ) );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
@@ -51,7 +51,7 @@ public class DesignPaneTest {
 
 	@Test
 	void checkZoomFactor() {
-		assertThat( 1 * DesignPane.ZOOM_FACTOR, is( 1.189207115002721 ) );
+		assertThat( 1 * DesignPane.ZOOM_IN_FACTOR, is( 1.189207115002721 ) );
 	}
 
 	@Test
@@ -59,8 +59,8 @@ public class DesignPaneTest {
 		pane.zoom( 0, 0, ZOOM_IN );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 	}
 
 	@Test
@@ -71,13 +71,13 @@ public class DesignPaneTest {
 		double oty = 0;
 		double dx = otx - ex;
 		double dy = oty - ey;
-		double ntx = ex + (dx * DesignPane.ZOOM_FACTOR);
-		double nty = ey + (dy * DesignPane.ZOOM_FACTOR);
+		double ntx = ex + (dx * DesignPane.ZOOM_IN_FACTOR);
+		double nty = ey + (dy * DesignPane.ZOOM_IN_FACTOR);
 		pane.zoom( ex, ey, ZOOM_IN );
 		assertThat( pane.getTranslateX(), is( ntx ) );
 		assertThat( pane.getTranslateY(), is( nty ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 	}
 
 	@Test
@@ -85,9 +85,9 @@ public class DesignPaneTest {
 		pane.zoom( 0, 0, ZOOM_OUT );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
-		closeTo( 1,0 );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		closeTo( 1, 0 );
 	}
 
 	@Test
@@ -98,13 +98,13 @@ public class DesignPaneTest {
 		double oty = 0;
 		double dx = otx - ex;
 		double dy = oty - ey;
-		double ntx = ex + (dx / DesignPane.ZOOM_FACTOR);
-		double nty = ey + (dy / DesignPane.ZOOM_FACTOR);
+		double ntx = ex + (dx / DesignPane.ZOOM_IN_FACTOR);
+		double nty = ey + (dy / DesignPane.ZOOM_IN_FACTOR);
 		pane.zoom( -1, -1, ZOOM_OUT );
 		assertThat( pane.getTranslateX(), is( ntx ) );
 		assertThat( pane.getTranslateY(), is( nty ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 	}
 
 	@Test

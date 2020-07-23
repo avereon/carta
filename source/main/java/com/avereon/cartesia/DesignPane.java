@@ -5,11 +5,12 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.Group;
-import javafx.scene.input.ScrollEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineCap;
+
+import java.util.Objects;
 
 public class DesignPane extends Group {
 
@@ -31,22 +32,32 @@ public class DesignPane extends Group {
 	 * by calculating a factor that will increase the zoom by a specific
 	 * magnification in a specific number of steps.
 	 */
-	static final double ZOOM_FACTOR = Math.pow( DEFAULT_ZOOM_MAGNIFICATION, 1.0 / DEFAULT_ZOOM_STEPS );
+	static final double ZOOM_IN_FACTOR = Math.pow( DEFAULT_ZOOM_MAGNIFICATION, 1.0 / DEFAULT_ZOOM_STEPS );
 
-	static final double DEFAULT_ZOOM = 1;
+	static final double ZOOM_OUT_FACTOR = 1.0 / ZOOM_IN_FACTOR;
 
 	static final double DEFAULT_DPI = 96;
 
+	static final double DEFAULT_ZOOM = 1;
+
+	private DoubleProperty dpiProperty;
+
 	private DoubleProperty zoomProperty;
 
-	private Design design;
+	private final Design design;
 
-	public DesignPane() {
+	private double dpu;
+
+	public DesignPane( Design design ) {
+		this.design = Objects.requireNonNull( design );
+
 		setManaged( false );
-		rescale();
+		rescale( true );
 
 		// Setup listeners
-		zoomProperty().addListener( ( v, o, n ) -> rescale() );
+		design.register( Design.UNIT, e -> rescale( true ) );
+		dpiProperty().addListener( ( v, o, n ) -> rescale( true ) );
+		zoomProperty().addListener( ( v, o, n ) -> rescale( false ) );
 
 		// TODO Remove
 		generateTestData();
@@ -71,13 +82,21 @@ public class DesignPane extends Group {
 		getChildren().add( layer );
 	}
 
-	public void setDesign( Design design ) {
-		if( this.design == design ) return;
+	public Design getDesign() {
+		return design;
+	}
 
-		this.design = design;
+	public final DoubleProperty dpiProperty() {
+		if( dpiProperty == null ) dpiProperty = new SimpleDoubleProperty( DEFAULT_DPI );
+		return dpiProperty;
+	}
 
-		// Initialize from the design
-		design.register( Design.UNIT, e -> rescale() );
+	public final void setDpi( double value ) {
+		dpiProperty().set( value );
+	}
+
+	public final double getDpi() {
+		return (dpiProperty == null) ? DEFAULT_DPI : dpiProperty.get();
 	}
 
 	/**
@@ -102,17 +121,7 @@ public class DesignPane extends Group {
 	}
 
 	protected DesignUnit getDesignUnit() {
-		return design == null ? DesignUnit.CENTIMETER : design.getDesignUnit();
-	}
-
-	// TODO Make the dpi adjusted to actual screen dpi
-	protected final double getDpi() {
-		return DEFAULT_DPI;
-	}
-
-	// TODO This might be a value worth caching
-	protected final double getDpu() {
-		return DesignUnit.INCH.from( getDpi(), getDesignUnit() );
+		return design.getDesignUnit();
 	}
 
 	/**
@@ -128,30 +137,32 @@ public class DesignPane extends Group {
 		setTranslateY( panAnchor.getY() + ((mouseY - dragAnchor.getY())) );
 	}
 
-	void zoom( ScrollEvent event ) {
-		if( Math.abs( event.getDeltaY() ) != 0.0 ) zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
-	}
-
+	/**
+	 * Zoom the design pane. Zoom in (scroll up) increases the scale. Zoom out
+	 * (scroll down) decreases the scale.
+	 *
+	 * @param anchorX The anchor point X coordinate
+	 * @param anchorY The anchor point Y coordinate
+	 * @param zoomIn True to zoom in, false to zoom out
+	 */
 	void zoom( double anchorX, double anchorY, boolean zoomIn ) {
 		double dx = getTranslateX() - anchorX;
 		double dy = getTranslateY() - anchorY;
-		if( zoomIn ) {
-			// Zoom in (scroll up) [increase the scale]
-			setTranslateX( anchorX + (dx * ZOOM_FACTOR) );
-			setTranslateY( anchorY + (dy * ZOOM_FACTOR) );
-			setZoom( getZoom() * ZOOM_FACTOR );
-		} else {
-			// Zoom out (scroll down) [decrease the scale]
-			setTranslateX( anchorX + (dx / ZOOM_FACTOR) );
-			setTranslateY( anchorY + (dy / ZOOM_FACTOR) );
-			setZoom( getZoom() / ZOOM_FACTOR );
-		}
+		double zoomFactor = zoomIn ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
+		setTranslateX( anchorX + (dx * zoomFactor) );
+		setTranslateY( anchorY + (dy * zoomFactor) );
+		setZoom( getZoom() * zoomFactor );
 	}
 
-	private void rescale() {
+	private void rescale( boolean recalculateDpu ) {
+		if( recalculateDpu ) this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
 		double scale = getDpu() * getZoom();
 		setScaleX( scale );
 		setScaleY( -scale );
+	}
+
+	private double getDpu() {
+		return dpu;
 	}
 
 }
