@@ -22,6 +22,10 @@ public class CommandMap {
 		defaultCommands = Collections.unmodifiableMap( map );
 	}
 
+	public static boolean hasCommand( String id ) {
+		return defaultCommands.containsKey( id );
+	}
+
 	@SuppressWarnings( "unchecked" )
 	public static <T extends Command<?>> Class<T> get( String id ) {
 		return (Class<T>)defaultCommands.get( id );

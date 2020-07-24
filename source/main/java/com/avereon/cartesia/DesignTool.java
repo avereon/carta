@@ -35,8 +35,8 @@ public abstract class DesignTool extends ProgramTool {
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
-		this.prompt = new CommandPrompt( product );
-		this.coordinates = new CoordinateStatus( product );
+		this.prompt = new CommandPrompt( this );
+		this.coordinates = new CoordinateStatus( this );
 
 		// Initial values from settings
 		setCursor( StandardCursor.valueOf( product.getSettings().get( "reticle", StandardCursor.DUPLEX.name() ).toUpperCase() ) );
@@ -65,12 +65,13 @@ public abstract class DesignTool extends ProgramTool {
 	@Override
 	protected void activate() throws ToolException {
 		super.activate();
+		// Not sure I want to reset when activated
+		//getCommandPrompt().reset();
 		Workspace workspace = getWorkspace();
 		if( workspace != null ) {
 			workspace.getStatusBar().addLeft( getCommandPrompt() );
 			workspace.getStatusBar().addRight( getCoordinateStatus() );
 		}
-		getCommandPrompt().clear();
 		requestFocus();
 	}
 
@@ -101,7 +102,7 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private void key( KeyEvent event ) {
-		getCommandPrompt().update( this, event );
+		getCommandPrompt().relay( event );
 	}
 
 	private void mouse( MouseEvent event ) {

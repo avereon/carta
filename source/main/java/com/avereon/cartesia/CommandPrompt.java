@@ -1,7 +1,6 @@
 package com.avereon.cartesia;
 
 import com.avereon.util.Log;
-import com.avereon.xenon.ProgramProduct;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -11,48 +10,66 @@ public class CommandPrompt extends BorderPane {
 
 	private static final System.Logger log = Log.get();
 
+	private final DesignTool tool;
+
 	private final TextField command;
 
-	public CommandPrompt( ProgramProduct product ) {
-		getStyleClass().add( "cartesia-command");
-		setLeft( new Label( product.rb().text( "prompt", "command" ) ) );
+	private static final boolean DEFAULT_AUTO_COMMAND = true;
+
+	public CommandPrompt( DesignTool tool ) {
+		this.tool = tool;
+		getStyleClass().add( "cartesia-command" );
+		setLeft( new Label( tool.getProduct().rb().text( "prompt", "command" ) ) );
 		setCenter( command = new TextField() );
+		command.addEventHandler( KeyEvent.ANY, this::key );
 	}
 
-	public void clear() {
-		// Just clear the current text
-		command.setText( "" );
-	}
-
-	public void update( DesignTool tool, KeyEvent event ) {
+	public void relay( KeyEvent event ) {
 		command.fireEvent( event );
+	}
+
+	private Design getDesign() {
+		return tool.getAssetModel();
+	}
+
+	private void key( KeyEvent event ) {
+		// On each key event the situation needs to be evaluated...
+		// If ESC was pressed, then the whole command stack should be cancelled
+		// If ENTER was pressed, then an attempt to process the text should be forced
+		// If a key was typed, and auto commands are enabled, and the text matched a command then it should be run
 
 		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
 			switch( event.getCode() ) {
 				case ESCAPE: {
 					// Cancel the command stack
+					getDesign().getCommandProcessor().cancel();
 					clear();
 					break;
 				}
 				case ENTER: {
-					process( tool, command.getText() );
+					process( command.getText() );
 					clear();
 					break;
 				}
 			}
 		} else if( event.getEventType() == KeyEvent.KEY_TYPED ) {
-			Class<Command<?>> commandClass = CommandMap.get( command.getText() );
-			if( commandClass != null ) {
-				log.log( Log.WARN, "Auto command=" + commandClass );
+			String id = command.getText();
+			// TODO autoCommand should be a user preference
+			boolean autoCommand = DEFAULT_AUTO_COMMAND;
+			if( autoCommand && CommandMap.hasCommand( id ) ) {
+				log.log( Log.WARN, "Auto command=" + id );
+				process( id );
 				clear();
 			}
 		}
 	}
 
-	private void process( DesignTool tool, String command ) {
-		Design design = tool.getAssetModel();
-		// TODO This needs to get the command stack/processor for the asset and push the command
-		//design.getCommandProcessor().evaluate( command );
+	private void process( String command ) {
+		getDesign().getCommandProcessor().evaluate( command );
+	}
+
+	private void clear() {
+		command.setText( "" );
 	}
 
 }

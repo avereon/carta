@@ -9,6 +9,10 @@ import java.util.Stack;
  * for multiple tools on the same asset to work with the command processor
  * through the course of a command. The command processor holds the state for
  * commands "in progress".
+ *
+ * The way this should work is a command pushes param commands onto the stack
+ * for anything that is not available. Those commands are evaluated until there
+ * are enough parameters for the original command.
  */
 public class CommandProcessor {
 
@@ -17,6 +21,11 @@ public class CommandProcessor {
 	private Stack<Command<?>> commandStack;
 
 	private Stack<Object> valueStack;
+
+	public void cancel() {
+		commandStack.clear();
+		valueStack.clear();
+	}
 
 	public void evaluate( String text ) {
 		Class<Command<?>> commandClass = CommandMap.get( text );
