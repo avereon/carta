@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -8,7 +9,7 @@ import javafx.scene.layout.BorderPane;
 
 public class CommandPrompt extends BorderPane {
 
-	//private final DesignTool tool;
+	private static final System.Logger log = Log.get();
 
 	private final TextField command;
 
@@ -38,6 +39,12 @@ public class CommandPrompt extends BorderPane {
 					clear();
 					break;
 				}
+			}
+		} else if( event.getEventType() == KeyEvent.KEY_TYPED ) {
+			Class<Command<?>> commandClass = CommandMap.get( command.getText() );
+			if( commandClass != null ) {
+				log.log( Log.WARN, "Auto command=" + commandClass );
+				clear();
 			}
 		}
 	}

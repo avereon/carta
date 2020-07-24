@@ -51,38 +51,6 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
 	}
 
-	private void key( KeyEvent event ) {
-		getCommandPrompt().update( this, event );
-	}
-
-	private void mouse( MouseEvent event ) {
-		try {
-			Point3D point = mouseToWorld( event.getX(), event.getY(), event.getZ() );
-			getCoordinateStatus().updatePosition( point.getX(), point.getY(), point.getZ() );
-		} catch( NonInvertibleTransformException exception ) {
-			log.log( Log.ERROR, exception );
-		}
-	}
-
-	private void anchor( MouseEvent event ) {
-		if( event.isShiftDown() && event.isPrimaryButtonDown() ) {
-			panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
-			dragAnchor = new Point2D( event.getX(), event.getY() );
-		}
-	}
-
-	private void drag( MouseEvent event ) {
-		if( event.isPrimaryButtonDown() && event.isShiftDown() ) designPane.pan( panAnchor, dragAnchor, event.getX(), event.getY() );
-	}
-
-	private void zoom( ScrollEvent event ) {
-		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
-	}
-
-	protected Point3D mouseToWorld( double x, double y, double z ) throws NonInvertibleTransformException {
-		return designPane.getLocalToParentTransform().inverseTransform( x, y, z );
-	}
-
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
@@ -116,6 +84,10 @@ public abstract class DesignTool extends ProgramTool {
 		}
 	}
 
+	protected Point3D mouseToWorld( double x, double y, double z ) throws NonInvertibleTransformException {
+		return designPane.getLocalToParentTransform().inverseTransform( x, y, z );
+	}
+
 	private void setCursor( StandardCursor cursor ) {
 		setCursor( cursor.get() );
 	}
@@ -126,6 +98,38 @@ public abstract class DesignTool extends ProgramTool {
 
 	private CoordinateStatus getCoordinateStatus() {
 		return coordinates;
+	}
+
+	private void key( KeyEvent event ) {
+		getCommandPrompt().update( this, event );
+	}
+
+	private void mouse( MouseEvent event ) {
+		try {
+			Point3D point = mouseToWorld( event.getX(), event.getY(), event.getZ() );
+			getCoordinateStatus().updatePosition( point.getX(), point.getY(), point.getZ() );
+		} catch( NonInvertibleTransformException exception ) {
+			log.log( Log.ERROR, exception );
+		}
+	}
+
+	private void anchor( MouseEvent event ) {
+		if( isPanMouseEvent( event ) ) {
+			panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
+			dragAnchor = new Point2D( event.getX(), event.getY() );
+		}
+	}
+
+	private void drag( MouseEvent event ) {
+		if( isPanMouseEvent( event ) ) designPane.pan( panAnchor, dragAnchor, event.getX(), event.getY() );
+	}
+
+	private void zoom( ScrollEvent event ) {
+		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
+	}
+
+	private boolean isPanMouseEvent( MouseEvent event ) {
+		return event.isShiftDown() && event.isPrimaryButtonDown();
 	}
 
 }

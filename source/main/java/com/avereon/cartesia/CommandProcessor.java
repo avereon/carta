@@ -1,5 +1,7 @@
 package com.avereon.cartesia;
 
+import com.avereon.util.Log;
+
 import java.util.Stack;
 
 /**
@@ -10,16 +12,22 @@ import java.util.Stack;
  */
 public class CommandProcessor {
 
+	private static final System.Logger log = Log.get();
+
 	private Stack<Command<?>> commandStack;
 
 	private Stack<Object> valueStack;
 
 	public void evaluate( String text ) {
 		Class<Command<?>> commandClass = CommandMap.get( text );
-		try {
-			Command<?> command = commandClass.getConstructor(  ).newInstance(  );
-		} catch( Exception exception ) {
-			exception.printStackTrace();
+
+		if( commandClass != null ) {
+			try {
+				Command<?> command = commandClass.getConstructor().newInstance();
+				log.log( Log.WARN, "Command found {0}", command.getClass().getName() );
+			} catch( Exception exception ) {
+				exception.printStackTrace();
+			}
 		}
 
 		// The text needs to be turned into a command
