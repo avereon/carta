@@ -8,14 +8,11 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 
-public class DesignPaneTest {
+public class DesignPaneTest implements NumericTest {
 
 	private static final boolean ZOOM_IN = true;
 
 	private static final boolean ZOOM_OUT = false;
-
-	// This value is a bit roomier than required (1e-12 > 1e-14)
-	private static final double TOLERANCE = 1e-12;
 
 	private static final double SCALE = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, DesignUnit.CENTIMETER );
 
@@ -25,7 +22,7 @@ public class DesignPaneTest {
 
 	@BeforeEach
 	void setup() throws Exception {
-		design = new Design2d();
+		design = new Design2D();
 		pane = new DesignPane( design );
 		assertThat( pane.getScaleX(), is( 1.0 * SCALE ) );
 		assertThat( pane.getScaleY(), is( -1.0 * SCALE ) );

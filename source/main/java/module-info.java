@@ -2,6 +2,7 @@ import com.avereon.cartesia.CartesiaMod;
 
 module com.avereon.cartesia {
 	requires com.avereon.xenon;
+	requires jep;
 
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.settings;

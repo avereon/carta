@@ -13,11 +13,28 @@ public class CommandMap {
 	static {
 		Map<String, Class<? extends Command<?>>> map = new HashMap<>();
 
+		// High level letters
+		// a - arc
+		// c - circle
+		// e - ellipse
+		// g - grid
+		// l - line
+		// p - point
+		// s - snap
+		// t - text
+		// v - curve
+		// y - layer
+		// z - zoom
+
 		map.put( "aa", ArcCommand.class );
 		map.put( "ll", LineCommand.class );
-		map.put( "pp", PathCommand.class );
+		map.put( "pp", PointCommand.class );
 		map.put( "vv", CurveCommand.class );
-		map.put( "ps", PointCommand.class );
+		map.put( "ww", PathCommand.class );
+
+		// gg - grid toggle
+		// sn - snap nearest
+		// sg - toggle snap to grid
 
 		defaultCommands = Collections.unmodifiableMap( map );
 	}

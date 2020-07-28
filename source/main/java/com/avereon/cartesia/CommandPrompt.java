@@ -54,10 +54,8 @@ public class CommandPrompt extends BorderPane {
 			}
 		} else if( event.getEventType() == KeyEvent.KEY_TYPED ) {
 			String id = command.getText();
-			// TODO autoCommand should be a user preference
-			boolean autoCommand = DEFAULT_AUTO_COMMAND;
+			boolean autoCommand = tool.getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 			if( autoCommand && CommandMap.hasCommand( id ) ) {
-				log.log( Log.WARN, "Auto command=" + id );
 				process( id );
 				clear();
 			}

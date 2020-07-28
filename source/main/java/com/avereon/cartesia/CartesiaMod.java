@@ -26,7 +26,10 @@ public class CartesiaMod extends Mod {
 		registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
 		ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
 		design3dEditorRegistration.setName( "Design 3D Editor" );
-		registerTool( design3dAssetType, design3dEditorRegistration );
+		//registerTool( design3dAssetType, design3dEditorRegistration );
+
+		// Load the default settings
+		loadDefaultSettings();
 
 		// Register the settings pages
 		registerSettingsPages();

@@ -44,6 +44,40 @@ public class DesignTest {
 		assertThat( design.isModified(), is( false ) );
 	}
 
+	@Test
+	void testAddRemoveLayer() {
+		Design design = new MockDesign();
+		design.setModified( false );
+		assertThat( design.getLayers().size(), is( 0 ) );
+		assertThat( design.isModified(), is( false ) );
+
+		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
+		design.addLayer( layer );
+		assertThat( design.getLayers().size(), is( 1 ) );
+		assertThat( design.isModified(), is( true ) );
+
+		design.removeLayer( layer );
+		assertThat( design.getLayers().size(), is( 0 ) );
+		assertThat( design.isModified(), is( false ) );
+	}
+
+	@Test
+	void testAddLayerAndSave() {
+		Design design = new MockDesign();
+		design.setModified( false );
+		assertThat( design.getLayers().size(), is( 0 ) );
+		assertThat( design.isModified(), is( false ) );
+
+		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
+		design.addLayer( layer );
+		assertThat( design.getLayers().size(), is( 1 ) );
+		assertThat( design.isModified(), is( true ) );
+
+		design.setModified( false );
+		assertThat( design.getLayers().size(), is( 1 ) );
+		assertThat( design.isModified(), is( false ) );
+	}
+
 	private static class MockDesign extends Design {}
 
 }
