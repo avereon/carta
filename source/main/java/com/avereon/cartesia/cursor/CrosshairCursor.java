@@ -1,6 +1,6 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.venza.image.Proof;
+import com.avereon.zerra.image.Proof;
 import javafx.geometry.Dimension2D;
 
 public class CrosshairCursor extends CursorIcon {

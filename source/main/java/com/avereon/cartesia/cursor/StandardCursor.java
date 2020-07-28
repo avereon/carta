@@ -1,6 +1,6 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.venza.image.VectorImage;
+import com.avereon.zerra.image.VectorImage;
 import javafx.geometry.Dimension2D;
 import javafx.scene.ImageCursor;
 

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.venza.image.RenderedIcon;
+import com.avereon.zerra.image.RenderedIcon;
 
 public abstract class CursorIcon extends RenderedIcon {
 

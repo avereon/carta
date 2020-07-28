@@ -1,7 +1,7 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.venza.image.Proof;
-import com.avereon.venza.image.SvgIcon;
+import com.avereon.zerra.image.Proof;
+import com.avereon.zerra.image.SvgIcon;
 
 public class DuplexDotCursor extends DuplexCursor {
 
