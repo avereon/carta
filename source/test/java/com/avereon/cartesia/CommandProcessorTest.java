@@ -4,7 +4,7 @@ import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.avereon.venza.test.PointCloseTo.closeTo;
+import static com.avereon.zarra.test.PointCloseTo.closeTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
