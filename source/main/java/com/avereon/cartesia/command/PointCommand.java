@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.*;
-import com.avereon.cartesia.geometry.CasPoint;
+import com.avereon.cartesia.geometry.CsaPoint;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -19,13 +19,15 @@ public class PointCommand extends Command {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Object object = processor.pullValue();
+		Object origin = processor.pullValue();
 
-		if( object instanceof Point3D ) {
-			processor.pushValue( tool, new CasPoint( (Point3D)object ) );
+		if( origin instanceof Point3D ) {
+			CsaPoint point = new CsaPoint( (Point3D)origin );
+			processor.pushValue( tool, point );
+			log.log( Log.DEBUG, "Add point=" + point );
 		} else {
-			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error", object );
-			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", object );
+			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
+			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", origin );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 	}

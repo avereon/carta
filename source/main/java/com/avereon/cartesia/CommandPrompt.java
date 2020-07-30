@@ -64,7 +64,11 @@ public class CommandPrompt extends BorderPane {
 					break;
 				}
 				case ENTER: {
-					process( command.getText() );
+					if( TextUtil.isEmpty( command.getText() )) {
+						getDesign().getCommandProcessor().evaluate( tool, tool.getMousePoint() );
+					} else {
+						process( command.getText() );
+					}
 					clear();
 					break;
 				}

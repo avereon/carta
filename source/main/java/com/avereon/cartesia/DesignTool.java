@@ -26,6 +26,8 @@ public abstract class DesignTool extends ProgramTool {
 
 	private DesignPane designPane;
 
+	private Point3D mousePoint;
+
 	private Point2D dragAnchor;
 
 	private Point2D panAnchor;
@@ -49,6 +51,14 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( MouseEvent.MOUSE_PRESSED, this::anchor );
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::drag );
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
+	}
+
+	public CommandPrompt getCommandPrompt() {
+		return prompt;
+	}
+
+	public Point3D getMousePoint() {
+		return mousePoint;
 	}
 
 	@Override
@@ -93,10 +103,6 @@ public abstract class DesignTool extends ProgramTool {
 		setCursor( cursor.get() );
 	}
 
-	public CommandPrompt getCommandPrompt() {
-		return prompt;
-	}
-
 	private CoordinateStatus getCoordinateStatus() {
 		return coordinates;
 	}
@@ -107,8 +113,8 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void mouse( MouseEvent event ) {
 		try {
-			Point3D point = mouseToWorld( event.getX(), event.getY(), event.getZ() );
-			getCoordinateStatus().updatePosition( point.getX(), point.getY(), point.getZ() );
+			mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
+			getCoordinateStatus().updatePosition( mousePoint.getX(), mousePoint.getY(), mousePoint.getZ() );
 		} catch( NonInvertibleTransformException exception ) {
 			log.log( Log.ERROR, exception );
 		}

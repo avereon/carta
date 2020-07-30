@@ -50,7 +50,7 @@ public class CoordinateStatus extends HBox {
 
 		getChildren().addAll( xPane, yPane, zPane, mPane );
 
-		updatePosition( 0,0,0 );
+		updatePosition( 0, 0, 0 );
 		updateZoom( DesignPane.DEFAULT_ZOOM );
 	}
 
@@ -66,7 +66,7 @@ public class CoordinateStatus extends HBox {
 		}
 	}
 
-		public void updateZoom( double zoom ) {
+	public void updateZoom( double zoom ) {
 		zoomValue.setText( format.format( zoom ) );
 	}
 
