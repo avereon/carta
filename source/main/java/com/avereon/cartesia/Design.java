@@ -1,16 +1,16 @@
 package com.avereon.cartesia;
 
-import com.avereon.data.Node;
+import com.avereon.data.IdNode;
+import com.avereon.data.NodeComparator;
+import com.avereon.data.NodeSet;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Objects;
+import java.util.Optional;
 
-public abstract class Design extends Node {
+public abstract class Design extends IdNode {
 
 	public static final DesignUnit DEFAULT_DESIGN_UNIT = DesignUnit.CENTIMETER;
-
-	private static final String ID = "id";
 
 	public static final String NAME = "name";
 
@@ -23,7 +23,6 @@ public abstract class Design extends Node {
 	private final CommandProcessor commandProcessor;
 
 	public Design() {
-		definePrimaryKey( ID );
 		addModifyingKeys( NAME, UNIT, LAYERS );
 		setDesignUnit( DEFAULT_DESIGN_UNIT );
 
@@ -53,62 +52,32 @@ public abstract class Design extends Node {
 	}
 
 	public List<DesignLayer> getLayers() {
-		LayerNode layers = getValue( LAYERS );
-		if( layers == null ) return List.of();
-		Stream<DesignLayer> stream = layers.stream();
-		return stream.collect( Collectors.toList() );
+		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER ) );
 	}
 
-	private LayerNode layerNode() {
-		return computeIfAbsent( LAYERS, k -> new LayerNode() );
+	@SuppressWarnings( "unchecked" )
+	private NodeSet<DesignLayer> layerNode() {
+		return (NodeSet<DesignLayer>)Optional.ofNullable( getValue( LAYERS ) ).orElse( NodeSet.of() );
 	}
 
 	public Design setCurrentLayer( DesignLayer layer ) {
 		if( layerNode().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
-		setValue( CURRENT_LAYER, layer );
+		setValue( CURRENT_LAYER, Objects.requireNonNull( layer ) );
 		return this;
 	}
 
-	public DesignLayer currentLayer() {
-		return getValue( CURRENT_LAYER );
+	public DesignLayer getCurrentLayer() {
+		return Objects.requireNonNull( getValue( CURRENT_LAYER ) );
 	}
 
 	public Design addLayer( DesignLayer layer ) {
-		layerNode().addLayer( layer );
+		addToSet( LAYERS, layer );
 		return this;
 	}
 
 	public Design removeLayer( DesignLayer layer ) {
-		LayerNode layers = getValue( LAYERS );
-		if( layers != null ) {
-			layers.removeLayer( layer );
-			if( layers.isEmpty() ) setValue( LAYERS, null );
-		}
+		removeFromSet( LAYERS, layer );
 		return this;
-	}
-
-	// TODO This might be a model for a NodeCollection?
-	private static class LayerNode extends Node {
-
-		public <T> Stream<T> stream() {
-			return super.stream();
-		}
-
-		public boolean isEmpty() {
-			return super.isEmpty();
-		}
-
-		public boolean contains( DesignLayer layer ) {
-			return super.getValues().contains( layer );
-		}
-
-		public void addLayer( DesignLayer layer ) {
-			setValue( layer.getId(), layer );
-		}
-
-		public void removeLayer( DesignLayer layer ) {
-			setValue( layer.getId(), null );
-		}
 	}
 
 }

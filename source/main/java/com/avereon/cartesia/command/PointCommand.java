@@ -14,7 +14,7 @@ public class PointCommand extends Command {
 
 	@Override
 	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of( new InputCommand( tool, "select-point" ) );
+		return List.of( new PromptCommand( tool, "select-point" ) );
 	}
 
 	@Override

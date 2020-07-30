@@ -92,6 +92,8 @@ public class CommandProcessor {
 	}
 
 	void nextCommand( DesignTool tool ) {
+		// If there are no more commands but there is a shape on the value stack
+		// add the shape to the current layer
 		if( commandStack.isEmpty() ) return;
 		tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
 	}

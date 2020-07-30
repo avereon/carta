@@ -1,14 +1,13 @@
 package com.avereon.cartesia;
 
-import com.avereon.data.Node;
+import com.avereon.cartesia.geometry.CsaShape;
+import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
 import javafx.scene.paint.Color;
 
 import java.util.UUID;
 
-public class DesignLayer extends Node implements Comparable<DesignLayer> {
-
-	public static final String ID = "id";
+public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 
 	public static final String NAME = "name";
 
@@ -22,6 +21,8 @@ public class DesignLayer extends Node implements Comparable<DesignLayer> {
 
 	public static final String ORDER = "order";
 
+	public static final String SHAPES = "shapes";
+
 	private static final NodeComparator<DesignLayer> comparator;
 
 	static {
@@ -29,19 +30,20 @@ public class DesignLayer extends Node implements Comparable<DesignLayer> {
 	}
 
 	public DesignLayer() {
-		definePrimaryKey( ID );
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
 
 		setId( UUID.randomUUID().toString() );
 	}
 
-	public String getId() {
-		return getValue( ID );
-	}
-
+	/**
+	 * Overridden to return the specific type of this class.
+	 *
+	 * @param id The node id
+	 * @return This instance
+	 */
 	public DesignLayer setId( String id ) {
-		setValue( ID, id );
+		super.setValue( ID, id );
 		return this;
 	}
 
@@ -99,9 +101,21 @@ public class DesignLayer extends Node implements Comparable<DesignLayer> {
 		return this;
 	}
 
+	public void addShape( CsaShape shape ) {
+
+	}
+
+	public void removeShape( CsaShape shape ) {
+
+	}
+
 	@Override
 	public int compareTo( DesignLayer that ) {
 		return comparator.compare( this, that );
 	}
+
+//	private ShapeNode shapeNode() {
+//		return computeIfAbsent( SHAPES, k -> new ShapeNode() );
+//	}
 
 }

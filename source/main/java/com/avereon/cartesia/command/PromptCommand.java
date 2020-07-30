@@ -5,15 +5,15 @@ import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.DesignTool;
 import com.avereon.xenon.BundleKey;
 
-public class InputCommand extends Command {
+public class PromptCommand extends Command {
 
 	private final String prompt;
 
-	public InputCommand( String prompt ) {
+	public PromptCommand( String prompt ) {
 		this.prompt = prompt;
 	}
 
-	public InputCommand( DesignTool tool, String key ) {
+	public PromptCommand( DesignTool tool, String key ) {
 		this( tool.getProduct().rb().text( BundleKey.PROMPT, key ) );
 	}
 

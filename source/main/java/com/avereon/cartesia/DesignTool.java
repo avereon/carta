@@ -53,6 +53,10 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
 	}
 
+	public Design getDesign() {
+		return getAssetModel();
+	}
+
 	public CommandPrompt getCommandPrompt() {
 		return prompt;
 	}
