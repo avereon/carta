@@ -93,7 +93,7 @@ public abstract class DesignTool extends ProgramTool {
 		setCursor( cursor.get() );
 	}
 
-	private CommandPrompt getCommandPrompt() {
+	public CommandPrompt getCommandPrompt() {
 		return prompt;
 	}
 
@@ -115,9 +115,15 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private void anchor( MouseEvent event ) {
-		if( isPanMouseEvent( event ) ) {
-			panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
-			dragAnchor = new Point2D( event.getX(), event.getY() );
+		try {
+			if( isPanMouseEvent( event ) ) {
+				panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
+				dragAnchor = new Point2D( event.getX(), event.getY() );
+			} else {
+				getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
+			}
+		} catch( NonInvertibleTransformException exception ) {
+			log.log( Log.ERROR, exception );
 		}
 	}
 

@@ -1,19 +1,14 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.Command;
-import com.avereon.cartesia.CommandException;
-import javafx.scene.shape.CubicCurve;
+import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.DesignTool;
 
-public class CurveCommand extends Command<CubicCurve> {
-
-	@Override
-	public void evaluate( Object... parameters ) {
-
-	}
+public class CurveCommand extends Command {
 
 	@Override
-	public CubicCurve getResult() throws CommandException {
-		return null;
+	public void evaluate( CommandProcessor processor, DesignTool tool ) {
+
 	}
 
 }

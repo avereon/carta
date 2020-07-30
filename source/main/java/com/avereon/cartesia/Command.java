@@ -1,9 +1,13 @@
 package com.avereon.cartesia;
 
-public abstract class Command<T> {
+import java.util.List;
 
-	public abstract void evaluate(Object... parameters);
+public abstract class Command {
 
-	public abstract T getResult() throws CommandException;
+	public List<Command> getPreSteps(DesignTool tool) {
+		return List.of();
+	}
+
+	public void evaluate( CommandProcessor processor, DesignTool tool ) throws CommandException {}
 
 }

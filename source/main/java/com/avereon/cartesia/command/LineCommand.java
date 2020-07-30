@@ -1,19 +1,21 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.Command;
-import com.avereon.cartesia.CommandException;
-import javafx.scene.shape.Line;
+import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.DesignTool;
 
-public class LineCommand extends Command<Line> {
+import java.util.List;
+
+public class LineCommand extends Command {
 
 	@Override
-	public void evaluate( Object... parameters ) {
-
+	public List<Command> getPreSteps(DesignTool tool) {
+		return List.of( new InputCommand( tool, "start-point" ), new InputCommand( tool, "end-point" ) );
 	}
 
 	@Override
-	public Line getResult() throws CommandException {
-		return null;
+	public void evaluate( CommandProcessor processor, DesignTool tool ) {
+
 	}
 
 }

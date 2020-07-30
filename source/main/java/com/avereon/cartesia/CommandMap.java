@@ -8,10 +8,10 @@ import java.util.Map;
 
 public class CommandMap {
 
-	private static final Map<String, Class<? extends Command<?>>> defaultCommands;
+	private static final Map<String, Class<? extends Command>> defaultCommands;
 
 	static {
-		Map<String, Class<? extends Command<?>>> map = new HashMap<>();
+		Map<String, Class<? extends Command>> map = new HashMap<>();
 
 		// High level letters
 		// a - arc
@@ -44,7 +44,7 @@ public class CommandMap {
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static <T extends Command<?>> Class<T> get( String id ) {
+	public static <T extends Command> Class<T> get( String id ) {
 		return (Class<T>)defaultCommands.get( id );
 	}
 

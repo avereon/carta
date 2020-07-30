@@ -1,6 +1,9 @@
 package com.avereon.cartesia;
 
 import com.avereon.util.Log;
+import com.avereon.util.TextUtil;
+import javafx.application.Platform;
+import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
@@ -12,6 +15,8 @@ public class CommandPrompt extends BorderPane {
 
 	private final DesignTool tool;
 
+	private final Label prompt;
+
 	private final TextField command;
 
 	private static final boolean DEFAULT_AUTO_COMMAND = true;
@@ -19,9 +24,21 @@ public class CommandPrompt extends BorderPane {
 	public CommandPrompt( DesignTool tool ) {
 		this.tool = tool;
 		getStyleClass().add( "cartesia-command" );
-		setLeft( new Label( tool.getProduct().rb().text( "prompt", "command" ) ) );
+		setLeft( prompt = new Label() );
 		setCenter( command = new TextField() );
 		command.addEventHandler( KeyEvent.ANY, this::key );
+
+		setPrompt( null );
+	}
+
+	public void setPrompt( String prompt ) {
+		if( TextUtil.isEmpty( prompt ) ) prompt = tool.getProduct().rb().text( "prompt", "command" );
+		final String effectivePrompt = prompt;
+		Platform.runLater( () -> this.prompt.setText( effectivePrompt ) );
+	}
+
+	public void relay( Point3D point ) {
+		getDesign().getCommandProcessor().evaluate( tool, point );
 	}
 
 	public void relay( KeyEvent event ) {
@@ -42,7 +59,7 @@ public class CommandPrompt extends BorderPane {
 			switch( event.getCode() ) {
 				case ESCAPE: {
 					// Cancel the command stack
-					getDesign().getCommandProcessor().cancel();
+					getDesign().getCommandProcessor().cancel( tool );
 					clear();
 					break;
 				}
@@ -63,7 +80,11 @@ public class CommandPrompt extends BorderPane {
 	}
 
 	private void process( String command ) {
-		getDesign().getCommandProcessor().evaluate( command );
+		try {
+			getDesign().getCommandProcessor().evaluate( tool, command );
+		} catch( CommandException exception ) {
+			log.log( Log.ERROR, exception );
+		}
 	}
 
 	private void clear() {

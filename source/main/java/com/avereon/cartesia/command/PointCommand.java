@@ -1,24 +1,33 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
-import com.avereon.cartesia.CommandException;
+import com.avereon.cartesia.*;
+import com.avereon.cartesia.geometry.CasPoint;
+import com.avereon.util.Log;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 
-import java.util.Objects;
+import java.util.List;
 
-public class PointCommand extends Command<Point3D> {
+public class PointCommand extends Command {
+
+	private static final System.Logger log = Log.get();
 
 	@Override
-	public void evaluate( Object... parameters ) {
-		String expression = "";
-		if( parameters.length > 0 ) expression = Objects.requireNonNullElse( String.valueOf( parameters[0] ), expression );
-
-		// TODO Parse the point expression
+	public List<Command> getPreSteps( DesignTool tool ) {
+		return List.of( new InputCommand( tool, "select-point" ) );
 	}
 
 	@Override
-	public Point3D getResult() throws CommandException {
-		return null;
+	public void evaluate( CommandProcessor processor, DesignTool tool ) {
+		Object object = processor.pullValue();
+
+		if( object instanceof Point3D ) {
+			processor.pushValue( tool, new CasPoint( (Point3D)object ) );
+		} else {
+			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error", object );
+			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", object );
+			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
 	}
 
 }

@@ -1,19 +1,14 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.Command;
-import com.avereon.cartesia.CommandException;
-import javafx.scene.shape.Arc;
+import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.DesignTool;
 
-public class ArcCommand extends Command<Arc> {
-
-	@Override
-	public void evaluate( Object... parameters ) {
-
-	}
+public class ArcCommand extends Command {
 
 	@Override
-	public Arc getResult() throws CommandException {
-		return null;
+	public void evaluate( CommandProcessor processor, DesignTool tool ) {
+
 	}
 
 }

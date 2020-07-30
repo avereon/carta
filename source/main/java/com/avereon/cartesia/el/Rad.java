@@ -2,7 +2,6 @@ package com.avereon.cartesia.el;
 
 import org.nfunk.jep.ParseException;
 import org.nfunk.jep.function.PostfixMathCommand;
-import org.nfunk.jep.type.Complex;
 
 import java.util.Stack;
 
@@ -16,14 +15,12 @@ public class Rad extends PostfixMathCommand {
 	public void run( Stack stack ) throws ParseException {
 		this.checkStack( stack );
 		Object value = stack.pop();
-		stack.push( this.sin( value ) );
+		stack.push( this.toRadians( value ) );
 	}
 
-	public Object sin( Object value ) throws ParseException {
+	public Object toRadians( Object value ) throws ParseException {
 		if( value instanceof Number ) {
 			return Math.toRadians( ((Number)value).doubleValue() );
-		} else if( value instanceof Complex ) {
-			return ((Complex)value).sin();
 		} else {
 			throw new ParseException( "Invalid parameter type" );
 		}

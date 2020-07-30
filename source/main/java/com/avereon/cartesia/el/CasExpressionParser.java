@@ -5,6 +5,7 @@ import org.nfunk.jep.JEP;
 public class CasExpressionParser extends JEP {
 
 	public CasExpressionParser() {
+		setAllowUndeclared( false );
 		addStandardConstants();
 		addStandardFunctions();
 		addFunction( "deg", new Deg() );
