@@ -64,6 +64,7 @@
 					<!-- The argLine and systemPropertyVariables should match the failsafe configuration below -->
 					<argLine>
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED
+						--add-opens=com.avereon.cartesia/com.avereon.cartesia.geometry=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
