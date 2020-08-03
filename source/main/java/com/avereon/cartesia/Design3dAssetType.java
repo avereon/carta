@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design3D;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -14,7 +15,7 @@ public class Design3dAssetType extends AssetType {
 
 	@Override
 	public boolean assetInit( Program program, Asset asset ) throws AssetException {
-		asset.setModel( new Design3d() );
+		asset.setModel( new Design3D() );
 		return true;
 	}
 

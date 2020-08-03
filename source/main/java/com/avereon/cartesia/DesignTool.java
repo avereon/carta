@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.cursor.StandardCursor;
+import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
@@ -17,6 +18,8 @@ import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Screen;
 
 public abstract class DesignTool extends ProgramTool {
+
+	public static final String RETICLE = "reticle";
 
 	private static final System.Logger log = Log.get();
 
@@ -41,10 +44,10 @@ public abstract class DesignTool extends ProgramTool {
 		this.coordinates = new CoordinateStatus( this );
 
 		// Initial values from settings
-		setCursor( StandardCursor.valueOf( product.getSettings().get( "reticle", StandardCursor.DUPLEX.name() ).toUpperCase() ) );
+		setCursor( StandardCursor.valueOf( product.getSettings().get( RETICLE, StandardCursor.DUPLEX.name() ).toUpperCase() ) );
 
 		// Settings listeners
-		product.getSettings().register( "reticle", e -> setCursor( StandardCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		product.getSettings().register( RETICLE, e -> setCursor( StandardCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 
 		addEventFilter( KeyEvent.ANY, this::key );
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouse );

@@ -1,5 +1,6 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;

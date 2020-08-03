@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -54,10 +55,12 @@ public class DesignPane extends Group {
 		setManaged( false );
 		rescale( true );
 
-		// Setup listeners
-		design.register( Design.UNIT, e -> rescale( true ) );
+		// Internal listeners
 		dpiProperty().addListener( ( v, o, n ) -> rescale( true ) );
 		zoomProperty().addListener( ( v, o, n ) -> rescale( false ) );
+
+		// Design listeners
+		design.register( Design.UNIT, e -> rescale( true ) );
 
 		// TODO Remove
 		generateTestData();

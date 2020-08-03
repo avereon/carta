@@ -1,5 +1,7 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.Design2D;
 import javafx.geometry.Point2D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

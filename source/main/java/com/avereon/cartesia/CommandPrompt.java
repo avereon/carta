@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import javafx.application.Platform;

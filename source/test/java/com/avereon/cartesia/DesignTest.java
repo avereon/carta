@@ -1,5 +1,7 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;

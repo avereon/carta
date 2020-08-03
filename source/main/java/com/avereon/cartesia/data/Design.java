@@ -1,5 +1,7 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
 import com.avereon.data.NodeSet;
@@ -7,6 +9,7 @@ import com.avereon.data.NodeSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
 public abstract class Design extends IdNode {
 
@@ -17,6 +20,8 @@ public abstract class Design extends IdNode {
 	public static final String UNIT = "unit";
 
 	public static final String LAYERS = "layers";
+
+	public static final String VIEWS = "views";
 
 	public static final String CURRENT_LAYER = "current-layer";
 
@@ -51,15 +56,6 @@ public abstract class Design extends IdNode {
 		return commandProcessor;
 	}
 
-	public List<DesignLayer> getLayers() {
-		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER ) );
-	}
-
-	@SuppressWarnings( "unchecked" )
-	private NodeSet<DesignLayer> layerNode() {
-		return (NodeSet<DesignLayer>)Optional.ofNullable( getValue( LAYERS ) ).orElse( NodeSet.of() );
-	}
-
 	public Design setCurrentLayer( DesignLayer layer ) {
 		if( layerNode().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
 		setValue( CURRENT_LAYER, Objects.requireNonNull( layer ) );
@@ -70,6 +66,10 @@ public abstract class Design extends IdNode {
 		return Objects.requireNonNull( getValue( CURRENT_LAYER ) );
 	}
 
+	public List<DesignLayer> getLayers() {
+		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER ) );
+	}
+
 	public Design addLayer( DesignLayer layer ) {
 		addToSet( LAYERS, layer );
 		return this;
@@ -77,6 +77,25 @@ public abstract class Design extends IdNode {
 
 	public Design removeLayer( DesignLayer layer ) {
 		removeFromSet( LAYERS, layer );
+		return this;
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private NodeSet<DesignLayer> layerNode() {
+		return (NodeSet<DesignLayer>)Optional.ofNullable( getValue( LAYERS ) ).orElse( NodeSet.of() );
+	}
+
+	public Set<DesignView> getViews() {
+		return getValues( VIEWS );
+	}
+
+	public Design addView( DesignView view ) {
+		addToSet( VIEWS, view );
+		return this;
+	}
+
+	public Design removeView( DesignView view ) {
+		removeFromSet( VIEWS, view );
 		return this;
 	}
 

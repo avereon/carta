@@ -1,4 +1,4 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.data;
 
 public class Design2D extends Design {
 

@@ -1,5 +1,7 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
