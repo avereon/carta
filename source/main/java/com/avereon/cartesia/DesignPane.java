@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.Design;
+import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -61,6 +62,9 @@ public class DesignPane extends Group {
 
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
+		design.register( NodeEvent.CHILD_ADDED, e -> {
+			log.log( Log.INFO, "Child added: " + e );
+		});
 
 		// TODO Remove
 		generateTestData();

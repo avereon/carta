@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.el.CasExpressionParser;
+import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.task.Task;
@@ -43,6 +44,7 @@ public class CommandProcessor {
 
 	/**
 	 * Convenience method to evaluate known points
+	 *
 	 * @param tool
 	 * @param point
 	 */
@@ -93,9 +95,17 @@ public class CommandProcessor {
 
 	void nextCommand( DesignTool tool ) {
 		// If there are no more commands but there is a shape on the value stack
-		// add the shape to the current layer
-		if( commandStack.isEmpty() ) return;
-		tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
+		if( commandStack.isEmpty() ) {
+			if( !valueStack.isEmpty() ) {
+				Object value = valueStack.pop();
+				if( value instanceof CsaShape ) {
+					CsaShape shape = (CsaShape)value;
+					tool.getDesign().getCurrentLayer().addShape( shape );
+				}
+			}
+		} else {
+			tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
+		}
 	}
 
 	void pushCommand( Command command ) {
@@ -166,7 +176,7 @@ public class CommandProcessor {
 		jep.addStandardConstants();
 		jep.addStandardFunctions();
 		jep.parseExpression( text );
-		if( jep.hasError() ) throw new ParseException( jep.getErrorInfo(),-1 );
+		if( jep.hasError() ) throw new ParseException( jep.getErrorInfo(), -1 );
 		return jep.getValue();
 	}
 

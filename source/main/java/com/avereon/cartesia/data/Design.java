@@ -4,11 +4,10 @@ import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
-import com.avereon.data.NodeSet;
+import com.avereon.util.Log;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 
 public abstract class Design extends IdNode {
@@ -24,6 +23,8 @@ public abstract class Design extends IdNode {
 	public static final String VIEWS = "views";
 
 	public static final String CURRENT_LAYER = "current-layer";
+
+	private static final System.Logger log = Log.get();
 
 	private final CommandProcessor commandProcessor;
 
@@ -57,7 +58,7 @@ public abstract class Design extends IdNode {
 	}
 
 	public Design setCurrentLayer( DesignLayer layer ) {
-		if( layerNode().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
+		if( !getValues( LAYERS ).contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
 		setValue( CURRENT_LAYER, Objects.requireNonNull( layer ) );
 		return this;
 	}
@@ -78,11 +79,6 @@ public abstract class Design extends IdNode {
 	public Design removeLayer( DesignLayer layer ) {
 		removeFromSet( LAYERS, layer );
 		return this;
-	}
-
-	@SuppressWarnings( "unchecked" )
-	private NodeSet<DesignLayer> layerNode() {
-		return (NodeSet<DesignLayer>)Optional.ofNullable( getValue( LAYERS ) ).orElse( NodeSet.of() );
 	}
 
 	public Set<DesignView> getViews() {

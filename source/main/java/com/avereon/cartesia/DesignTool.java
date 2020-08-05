@@ -71,8 +71,11 @@ public abstract class DesignTool extends ProgramTool {
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
-		designPane = new DesignPane( request.getAsset().getModel() );
-		designPane.setManaged( false );
+
+		Design design = request.getAsset().getModel();
+		//design.register( NodeEvent.ANY, e -> log.log( Log.INFO, "Design event: " + e ) );
+
+		designPane = new DesignPane( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
 		getChildren().add( designPane );
 
@@ -103,7 +106,7 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	protected Point3D mouseToWorld( double x, double y, double z ) throws NonInvertibleTransformException {
-		return designPane.getLocalToParentTransform().inverseTransform( x, y, z );
+		return designPane == null ? Point3D.ZERO : designPane.getLocalToParentTransform().inverseTransform( x, y, z );
 	}
 
 	private void setCursor( StandardCursor cursor ) {

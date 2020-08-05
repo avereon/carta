@@ -28,7 +28,6 @@ public class LineCommand extends Command {
 		if( origin instanceof Point3D && point instanceof Point3D ) {
 			CsaLine line = new CsaLine( (Point3D)origin, (Point3D)point );
 			processor.pushValue( tool, line );
-			log.log( Log.DEBUG, "Add line=" + line );
 		} else {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
 			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-line", origin, point );
