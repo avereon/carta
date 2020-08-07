@@ -1,8 +1,11 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.geometry.CsaLine;
+import com.avereon.data.Node;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
@@ -63,7 +66,14 @@ public class DesignPane extends Group {
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			log.log( Log.INFO, "Child added: " + e );
+			// FIXME This is a test implementation
+			if( e.getNewValue() instanceof CsaLine ) {
+				CsaLine ll = e.getNewValue();
+				Line line = new Line(ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
+				Group layer = (Group)getChildren().get( 0 );
+				Platform.runLater( () -> layer.getChildren().add( line ) );
+			}
+			log.log( Log.INFO, e.getNewValue().getClass().getSimpleName() + " added to " + ((Node)e.getNode()).getParent() );
 		});
 
 		// TODO Remove

@@ -72,6 +72,12 @@ public abstract class DesignTool extends ProgramTool {
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
+		setTitle( getAsset().getName() );
+		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
+
+		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
+		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
+
 		Design design = request.getAsset().getModel();
 		//design.register( NodeEvent.ANY, e -> log.log( Log.INFO, "Design event: " + e ) );
 
