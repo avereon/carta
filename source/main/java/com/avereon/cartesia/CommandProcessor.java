@@ -2,6 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.el.CasExpressionParser;
 import com.avereon.cartesia.geometry.CsaShape;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.task.Task;

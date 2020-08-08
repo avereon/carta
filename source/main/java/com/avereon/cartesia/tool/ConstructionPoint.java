@@ -1,24 +1,29 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.control.Control;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
-public class ConstructionPoint extends Control {
+public class ConstructionPoint extends Region {
 
 	public enum Type {
 		CIRCLE,
+		CROSS,
 		DIAMOND,
+		REFERENCE,
 		SQUARE,
 		X
 	}
 
-	public static final double DEFAULT_SIZE = 2.5;
+	public static final double DEFAULT_SIZE = 4;
+
+	private static final double SQRT_ONE_HALF = Math.sqrt( 0.5 );
 
 	private DoubleProperty size;
 
@@ -27,6 +32,7 @@ public class ConstructionPoint extends Control {
 	}
 
 	public ConstructionPoint( Type type ) {
+		getStyleClass().addAll( "construction-point" );
 		setManaged( false );
 		setType( type );
 	}
@@ -52,8 +58,12 @@ public class ConstructionPoint extends Control {
 		switch( type ) {
 			case CIRCLE:
 				return createCircle( getSize() );
+			case CROSS:
+				return createCross( getSize() );
 			case DIAMOND:
 				return createDiamond( getSize() );
+			case REFERENCE:
+				return createReference( getSize() );
 			case SQUARE:
 				return createSquare( getSize() );
 			default:
@@ -68,6 +78,10 @@ public class ConstructionPoint extends Control {
 		return Set.of( circle );
 	}
 
+	private Collection<Shape> createCross( double size ) {
+		return Set.of( line( -size, 0, size, 0 ), line( 0, -size, 0, size ) );
+	}
+
 	private Collection<Shape> createDiamond( double size ) {
 		Path p = new Path();
 		p.getElements().addAll( new MoveTo( -size, 0 ), new LineTo( 0, size ), new LineTo( size, 0 ), new LineTo( 0, -size ), new ClosePath() );
@@ -76,19 +90,32 @@ public class ConstructionPoint extends Control {
 		return Set.of( p );
 	}
 
+	private Collection<Shape> createReference( double size ) {
+		Set<Shape> shapes = new HashSet<>();
+		shapes.addAll( createCross( size ) );
+		shapes.addAll( createX( size ) );
+		return shapes;
+	}
+
 	private Collection<Shape> createSquare( double size ) {
-		Rectangle rectangle = new Rectangle( -size, -size, size + size, size + size );
+		double z = SQRT_ONE_HALF * size;
+		Rectangle rectangle = new Rectangle( -z, -z, z + z, z + z );
 		rectangle.setStrokeWidth( 0 );
 		rectangle.setFill( Color.GREEN );
 		return Set.of( rectangle );
 	}
 
 	private Collection<Shape> createX( double size ) {
-		Line a = new Line( -size, -size, size, size );
-		Line b = new Line( -size, size, size, -size );
-		a.setStroke( Color.WHITE );
-		b.setStroke( Color.WHITE );
-		return Set.of( a, b );
+		double z = SQRT_ONE_HALF * size;
+		return Set.of( line( -z, -z, z, z ), line( -z, z, z, -z ) );
+	}
+
+	private Line line( double x1, double y1, double x2, double y2 ) {
+		Line line = new Line( x1, y1, x2, y2 );
+		line.setStroke( Color.GRAY );
+		line.setStrokeLineCap( StrokeLineCap.BUTT );
+		//line.setStrokeWidth( 0.5 );
+		return line;
 	}
 
 }

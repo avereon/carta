@@ -1,4 +1,4 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.icon;
 
 import com.avereon.zerra.image.Proof;
 import com.avereon.zerra.image.SvgIcon;

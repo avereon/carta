@@ -1,11 +1,11 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.DesignUnit;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DesignTest {
@@ -32,7 +32,7 @@ public class DesignTest {
 	void testDesignUnitModifiesDesign() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getDesignUnit(), is( DesignUnit.CENTIMETER ) );
+		assertThat( design.getDesignUnit(), Matchers.is( DesignUnit.CENTIMETER ) );
 		assertThat( design.isModified(), is( false ) );
 
 		design.setDesignUnit( DesignUnit.MILLIMETER );

@@ -1,5 +1,7 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.CommandException;
+import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;

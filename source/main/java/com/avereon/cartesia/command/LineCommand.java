@@ -3,7 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandProcessor;
-import com.avereon.cartesia.DesignTool;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.geometry.CsaLine;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;

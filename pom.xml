@@ -89,7 +89,7 @@
 								<configuration>
 									<images>
 										<image>
-											<class>com.avereon.cartesia.CartesiaIcon</class>
+											<class>com.avereon.cartesia.icon.CartesiaIcon</class>
 											<target>${images-folder}/product.png</target>
 											<theme>light</theme>
 										</image>

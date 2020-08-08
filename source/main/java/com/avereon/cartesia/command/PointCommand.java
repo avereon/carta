@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.geometry.CsaPoint;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;

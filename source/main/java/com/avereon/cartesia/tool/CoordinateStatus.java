@@ -1,4 +1,4 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
 import com.avereon.util.TextUtil;
 import javafx.scene.control.Label;

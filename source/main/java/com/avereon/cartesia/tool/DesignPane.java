@@ -1,5 +1,6 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.geometry.CsaLine;
 import com.avereon.data.Node;
@@ -64,7 +65,6 @@ public class DesignPane extends StackPane {
 		rescale( true );
 
 		layers.getChildren().add( new Pane() );
-		reference.getChildren().add( new ConstructionPoint(ConstructionPoint.Type.DIAMOND) );
 		getChildren().addAll( layers, reference );
 
 		// Internal listeners
@@ -93,27 +93,11 @@ public class DesignPane extends StackPane {
 			log.log( Log.INFO, e.getNewValue().getClass().getSimpleName() + " added to " + ((Node)e.getNode()).getParent() );
 		} );
 
-		// TODO Remove
-		//generateTestData();
+		addOriginReferencePoint();
 	}
 
-	// TODO Remove this method that creates test data
-	private void generateTestData() {
-		double r = 1;
-		double d = r * Math.sqrt( 0.5 );
-		Pane layer = new Pane();
-		//		layer.getChildren().add( new Line( -d, -d, d, d ) );
-		//		layer.getChildren().add( new Line( d, -d, -d, d ) );
-		//		layer.getChildren().add( new Line( -r, 0, r, 0 ) );
-		//		layer.getChildren().add( new Line( 0, -r, 0, r ) );
-		//		layer.getChildren().forEach( c -> {
-		//			Shape s = (Shape)c;
-		//			//s.setStyle( "-fx-stroke: green; -fx-stroke-width: 1mm" );
-		//			s.setStroke( Color.GREY );
-		//			s.setStrokeWidth( 1.0 / 10.0 );
-		//			s.setStrokeLineCap( StrokeLineCap.BUTT );
-		//		} );
-		layers.getChildren().add( layer );
+	private void addOriginReferencePoint() {
+		reference.getChildren().add( new ConstructionPoint(ConstructionPoint.Type.REFERENCE) );
 	}
 
 	public Design getDesign() {

@@ -32,7 +32,6 @@ public class CsaLineTest {
 		assertFalse( line.isModified() );
 	}
 
-
 	@Test
 	void testOrigin() {
 		CsaLine point = new CsaLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );

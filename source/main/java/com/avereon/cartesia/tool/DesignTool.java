@@ -1,5 +1,6 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.cursor.StandardCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;

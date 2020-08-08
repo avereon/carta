@@ -1,5 +1,7 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import javafx.geometry.Point2D;
