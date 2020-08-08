@@ -22,8 +22,10 @@ public class LineCommand extends Command {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Object origin = processor.pullValue();
+		// Get the end point first
 		Object point = processor.pullValue();
+		// Get the start point last
+		Object origin = processor.pullValue();
 
 		if( origin instanceof Point3D && point instanceof Point3D ) {
 			CsaLine line = new CsaLine( (Point3D)origin, (Point3D)point );

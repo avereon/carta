@@ -9,15 +9,13 @@ import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
-import javafx.scene.Group;
-import javafx.scene.paint.Color;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeLineCap;
 
 import java.util.Objects;
 
-public class DesignPane extends Group {
+public class DesignPane extends StackPane {
 
 	private static final System.Logger log = Log.get();
 
@@ -53,11 +51,21 @@ public class DesignPane extends Group {
 
 	private double dpu;
 
+	private Pane reference;
+
+	private StackPane layers;
+
 	public DesignPane( Design design ) {
 		this.design = Objects.requireNonNull( design );
+		reference = new Pane();
+		layers = new StackPane();
 
 		setManaged( false );
 		rescale( true );
+
+		layers.getChildren().add( new Pane() );
+		reference.getChildren().add( new ConstructionPoint(ConstructionPoint.Type.DIAMOND) );
+		getChildren().addAll( layers, reference );
 
 		// Internal listeners
 		dpiProperty().addListener( ( v, o, n ) -> rescale( true ) );
@@ -69,34 +77,43 @@ public class DesignPane extends Group {
 			// FIXME This is a test implementation
 			if( e.getNewValue() instanceof CsaLine ) {
 				CsaLine ll = e.getNewValue();
-				Line line = new Line(ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
-				Group layer = (Group)getChildren().get( 0 );
-				Platform.runLater( () -> layer.getChildren().add( line ) );
+				Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
+				ConstructionPoint o = new ConstructionPoint();
+				o.layoutXProperty().bind( line.startXProperty().multiply( scaleXProperty() ) );
+				o.layoutYProperty().bind( line.startYProperty().multiply( scaleYProperty() ).negate() );
+				ConstructionPoint p = new ConstructionPoint();
+				p.layoutXProperty().bind( line.endXProperty().multiply( scaleXProperty() ) );
+				p.layoutYProperty().bind( line.endYProperty().multiply( scaleYProperty() ).negate() );
+				Pane layer = (Pane)layers.getChildren().get( 0 );
+				Platform.runLater( () -> {
+					layer.getChildren().add( line );
+					reference.getChildren().addAll( o, p );
+				} );
 			}
 			log.log( Log.INFO, e.getNewValue().getClass().getSimpleName() + " added to " + ((Node)e.getNode()).getParent() );
-		});
+		} );
 
 		// TODO Remove
-		generateTestData();
+		//generateTestData();
 	}
 
 	// TODO Remove this method that creates test data
 	private void generateTestData() {
 		double r = 1;
 		double d = r * Math.sqrt( 0.5 );
-		Group layer = new Group();
-		layer.getChildren().add( new Line( -d, -d, d, d ) );
-		layer.getChildren().add( new Line( d, -d, -d, d ) );
-		layer.getChildren().add( new Line( -r, 0, r, 0 ) );
-		layer.getChildren().add( new Line( 0, -r, 0, r ) );
-		layer.getChildren().forEach( c -> {
-			Shape s = (Shape)c;
-			//s.setStyle( "-fx-stroke: green; -fx-stroke-width: 1mm" );
-			s.setStroke( Color.GREY );
-			s.setStrokeWidth( 1.0 / 10.0 );
-			s.setStrokeLineCap( StrokeLineCap.BUTT );
-		} );
-		getChildren().add( layer );
+		Pane layer = new Pane();
+		//		layer.getChildren().add( new Line( -d, -d, d, d ) );
+		//		layer.getChildren().add( new Line( d, -d, -d, d ) );
+		//		layer.getChildren().add( new Line( -r, 0, r, 0 ) );
+		//		layer.getChildren().add( new Line( 0, -r, 0, r ) );
+		//		layer.getChildren().forEach( c -> {
+		//			Shape s = (Shape)c;
+		//			//s.setStyle( "-fx-stroke: green; -fx-stroke-width: 1mm" );
+		//			s.setStroke( Color.GREY );
+		//			s.setStrokeWidth( 1.0 / 10.0 );
+		//			s.setStrokeLineCap( StrokeLineCap.BUTT );
+		//		} );
+		layers.getChildren().add( layer );
 	}
 
 	public Design getDesign() {
@@ -176,6 +193,8 @@ public class DesignPane extends Group {
 		double scale = getDpu() * getZoom();
 		setScaleX( scale );
 		setScaleY( -scale );
+		reference.setScaleX( 1 / scale );
+		reference.setScaleY( 1 / scale );
 	}
 
 	private double getDpu() {
