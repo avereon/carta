@@ -82,9 +82,12 @@ public abstract class DesignTool extends ProgramTool {
 		Design design = request.getAsset().getModel();
 		//design.register( NodeEvent.ANY, e -> log.log( Log.INFO, "Design event: " + e ) );
 
+		// FIXME can the design pane be centered...at least at the beginning?
 		designPane = new DesignPane( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
 		getChildren().add( designPane );
+
+
 
 		designPane.zoomProperty().addListener( ( v, o, n ) -> getCoordinateStatus().updateZoom( n.doubleValue() ) );
 	}

@@ -3,6 +3,8 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.geometry.CsaLine;
+import com.avereon.cartesia.geometry.CsaPoint;
+import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.data.Node;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
@@ -12,9 +14,13 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public class DesignPane extends StackPane {
 
@@ -71,33 +77,51 @@ public class DesignPane extends StackPane {
 		dpiProperty().addListener( ( v, o, n ) -> rescale( true ) );
 		zoomProperty().addListener( ( v, o, n ) -> rescale( false ) );
 
+		Map<Class<? extends CsaShape>, Consumer<? extends CsaShape>> m = new HashMap<>();
+		m.put( CsaPoint.class, ( s ) -> addPoint( (CsaPoint)s ) );
+		m.put( CsaLine.class, ( s ) -> addLine( (CsaLine)s ) );
+
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			// FIXME This is a test implementation
-			if( e.getNewValue() instanceof CsaLine ) {
-				CsaLine ll = e.getNewValue();
-				Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
-				ConstructionPoint o = new ConstructionPoint();
-				o.layoutXProperty().bind( line.startXProperty().multiply( scaleXProperty() ) );
-				o.layoutYProperty().bind( line.startYProperty().multiply( scaleYProperty() ).negate() );
-				ConstructionPoint p = new ConstructionPoint();
-				p.layoutXProperty().bind( line.endXProperty().multiply( scaleXProperty() ) );
-				p.layoutYProperty().bind( line.endYProperty().multiply( scaleYProperty() ).negate() );
-				Pane layer = (Pane)layers.getChildren().get( 0 );
-				Platform.runLater( () -> {
-					layer.getChildren().add( line );
-					reference.getChildren().addAll( o, p );
-				} );
-			}
+			Consumer<? extends CsaShape> c = m.get( e.getNewValue().getClass() );
+			if( c != null ) c.accept( e.getNewValue() );
 			log.log( Log.INFO, e.getNewValue().getClass().getSimpleName() + " added to " + ((Node)e.getNode()).getParent() );
 		} );
 
 		addOriginReferencePoint();
 	}
 
+	private ConstructionPoint cp( DoubleProperty xProperty, DoubleProperty yProperty ) {
+		ConstructionPoint cp = new ConstructionPoint();
+		cp.layoutXProperty().bind( xProperty.multiply( scaleXProperty() ) );
+		cp.layoutYProperty().bind( yProperty.multiply( scaleYProperty() ).negate() );
+		return cp;
+	}
+
+	private void addPoint( CsaPoint pp ) {
+		Circle point = new Circle(pp.getOrigin().getX(), pp.getOrigin().getY(), 0.5 );
+		ConstructionPoint o = cp( point.centerXProperty(), point.centerYProperty() );
+		Pane layer = (Pane)layers.getChildren().get( 0 );
+		Platform.runLater( () -> {
+			layer.getChildren().add( point );
+			reference.getChildren().addAll( o );
+		} );
+	}
+
+	private void addLine( CsaLine ll ) {
+		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
+		ConstructionPoint o = cp(line.startXProperty(),line.startYProperty());
+		ConstructionPoint p = cp( line.endXProperty(),line.endYProperty());
+		Pane layer = (Pane)layers.getChildren().get( 0 );
+		Platform.runLater( () -> {
+			layer.getChildren().add( line );
+			reference.getChildren().addAll( o, p );
+		} );
+	}
+
 	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint(ConstructionPoint.Type.REFERENCE) );
+		reference.getChildren().add( new ConstructionPoint( ConstructionPoint.Type.REFERENCE ) );
 	}
 
 	public Design getDesign() {
