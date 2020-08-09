@@ -12,9 +12,4 @@ public abstract class CursorIcon extends RenderedIcon {
 		super( gridX, gridY );
 	}
 
-	@Override
-	protected void render() {
-		//getGraphicsContext2D().setImageSmoothing( false );
-	}
-
 }

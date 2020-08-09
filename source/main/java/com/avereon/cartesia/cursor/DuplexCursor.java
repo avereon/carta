@@ -20,7 +20,6 @@ public class DuplexCursor extends CursorIcon {
 
 	@Override
 	protected void render() {
-		super.render();
 		startPath();
 		getGraphicsContext2D().appendSVGPath( getPath() );
 		setStrokeWidth( 1 );

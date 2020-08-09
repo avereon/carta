@@ -18,7 +18,6 @@ public class CrosshairCursor extends CursorIcon {
 
 	@Override
 	protected void render() {
-		super.render();
 		double w = getWidth()-1;
 		double a = 0;
 		double c = 0.5 * w;
