@@ -87,7 +87,7 @@ public class DesignPane extends StackPane {
 		rescale( true );
 
 		// WORKAROUND This is here temporarily until proper node population exists
-		design.getLayers().forEach( l -> layers.getChildren().add( new Pane() ) );
+		design.getLayers().forEach( this::addLayer );
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );

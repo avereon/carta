@@ -35,7 +35,8 @@ public class DesignPaneTest implements NumericTest {
 	private DesignPane pane;
 
 	@BeforeEach
-	void setup() {
+	public void setup() {
+		JavaFxStarter.startAndWait( 2000 );
 		parent = new StackPane();
 		design = new Design2D();
 		pane = new DesignPane( design );
@@ -52,7 +53,6 @@ public class DesignPaneTest implements NumericTest {
 
 	@Test
 	void testAddLayer() throws Exception {
-		JavaFxStarter.startAndWait( 1000 );
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.addLayer( layer );
 		FxUtil.fxWait( 1000 );
@@ -64,8 +64,6 @@ public class DesignPaneTest implements NumericTest {
 	@Test
 	void testAddLine() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-
-		JavaFxStarter.startAndWait( 1000 );
 		design.addLayer( layer ).setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
 		FxUtil.fxWait( 1000 );
