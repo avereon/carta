@@ -5,13 +5,16 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.geometry.CsaLine;
 import com.avereon.cartesia.geometry.CsaPoint;
 import com.avereon.cartesia.geometry.CsaShape;
-import com.avereon.data.Node;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
+import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Circle;
@@ -48,9 +51,13 @@ public class DesignPane extends StackPane {
 
 	static final double DEFAULT_DPI = 96;
 
+	static final Point3D DEFAULT_PAN = new Point3D( 1, 1, 0 );
+
 	static final double DEFAULT_ZOOM = 1;
 
 	private DoubleProperty dpiProperty;
+
+	private ObjectProperty<Point3D> panProperty;
 
 	private DoubleProperty zoomProperty;
 
@@ -61,6 +68,10 @@ public class DesignPane extends StackPane {
 	private Pane reference;
 
 	private StackPane layers;
+
+	private final Map<Class<? extends CsaShape>, Consumer<? extends CsaShape>> addActions;
+
+	private final Map<Class<? extends CsaShape>, Consumer<? extends CsaShape>> removeActions;
 
 	public DesignPane( Design design ) {
 		this.design = Objects.requireNonNull( design );
@@ -74,22 +85,40 @@ public class DesignPane extends StackPane {
 		getChildren().addAll( layers, reference );
 
 		// Internal listeners
-		dpiProperty().addListener( ( v, o, n ) -> rescale( true ) );
-		zoomProperty().addListener( ( v, o, n ) -> rescale( false ) );
+		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
+		panProperty().addListener( ( p, o, n ) -> repan( n ) );
+		zoomProperty().addListener( ( p, o, n ) -> rescale( false ) );
 
-		Map<Class<? extends CsaShape>, Consumer<? extends CsaShape>> m = new HashMap<>();
-		m.put( CsaPoint.class, ( s ) -> addPoint( (CsaPoint)s ) );
-		m.put( CsaLine.class, ( s ) -> addLine( (CsaLine)s ) );
+		// TODO Move this map somewhere else
+		addActions = new HashMap<>();
+		addActions.put( CsaPoint.class, ( s ) -> addPoint( (CsaPoint)s ) );
+		addActions.put( CsaLine.class, ( s ) -> addLine( (CsaLine)s ) );
+
+		// TODO Move this map somewhere else
+		removeActions = new HashMap<>();
+		//removeActions.put( CsaPoint.class, ( s ) -> removePoint( (CsaPoint)s ) );
+		//removeActions.put( CsaLine.class, ( s ) -> removeLine( (CsaLine)s ) );
 
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
-		design.register( NodeEvent.CHILD_ADDED, e -> {
-			Consumer<? extends CsaShape> c = m.get( e.getNewValue().getClass() );
-			if( c != null ) c.accept( e.getNewValue() );
-			log.log( Log.INFO, e.getNewValue().getClass().getSimpleName() + " added to " + ((Node)e.getNode()).getParent() );
-		} );
+		design.register( NodeEvent.CHILD_ADDED, this::addShape );
+		design.register( NodeEvent.CHILD_REMOVED, this::removeShape );
 
 		addOriginReferencePoint();
+	}
+
+	private void addShape( NodeEvent event ) {
+		addActions.computeIfPresent( ((CsaShape)event.getNewValue()).getClass(), ( k, c ) -> {
+			c.accept( event.getNewValue() );
+			return c;
+		} );
+	}
+
+	private void removeShape( NodeEvent event ) {
+		removeActions.computeIfPresent( ((CsaShape)event.getNewValue()).getClass(), ( k, c ) -> {
+			c.accept( event.getNewValue() );
+			return c;
+		} );
 	}
 
 	private ConstructionPoint cp( DoubleProperty xProperty, DoubleProperty yProperty ) {
@@ -100,7 +129,9 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addPoint( CsaPoint pp ) {
-		Circle point = new Circle(pp.getOrigin().getX(), pp.getOrigin().getY(), 0.5 );
+		// TODO All this data may need to be encapsulated to be mapped to the original CsaPoint
+		Circle point = new Circle( pp.getOrigin().getX(), pp.getOrigin().getY(), 0.5 );
+		// TODO Generalize and simplify
 		ConstructionPoint o = cp( point.centerXProperty(), point.centerYProperty() );
 		Pane layer = (Pane)layers.getChildren().get( 0 );
 		Platform.runLater( () -> {
@@ -110,9 +141,11 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addLine( CsaLine ll ) {
+		// TODO All this data may need to be encapsulated to be mapped to the original CsaLine
 		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
-		ConstructionPoint o = cp(line.startXProperty(),line.startYProperty());
-		ConstructionPoint p = cp( line.endXProperty(),line.endYProperty());
+		// TODO Generalize and simplify
+		ConstructionPoint o = cp( line.startXProperty(), line.startYProperty() );
+		ConstructionPoint p = cp( line.endXProperty(), line.endYProperty() );
 		Pane layer = (Pane)layers.getChildren().get( 0 );
 		Platform.runLater( () -> {
 			layer.getChildren().add( line );
@@ -141,6 +174,24 @@ public class DesignPane extends StackPane {
 		return (dpiProperty == null) ? DEFAULT_DPI : dpiProperty.get();
 	}
 
+	public ObjectProperty<Point3D> panProperty() {
+		if( panProperty == null ) panProperty = new SimpleObjectProperty<>( DEFAULT_PAN );
+		return panProperty;
+	}
+
+	/**
+	 * Pan the design pane
+	 *
+	 * @param point The world point to move to the center of the view
+	 */
+	public final void setPan( Point3D point ) {
+		panProperty().set( point );
+	}
+
+	public final Point3D getPan() {
+		return panProperty == null ? DEFAULT_PAN : panProperty.get();
+	}
+
 	/**
 	 * Defines the factor by which coordinates are zoomed about the center of the
 	 * {@code Design}. This is used to zoom the design either manually or by using
@@ -164,6 +215,11 @@ public class DesignPane extends StackPane {
 
 	protected DesignUnit getDesignUnit() {
 		return design.getDesignUnit();
+	}
+
+	void panOffset( double x, double y ) {
+		if( x != 0.0 ) setTranslateX( getTranslateX() + x );
+		if( y != 0.0 ) setTranslateY( getTranslateY() + y );
 	}
 
 	/**
@@ -194,6 +250,15 @@ public class DesignPane extends StackPane {
 		setTranslateX( anchorX + (dx * zoomFactor) );
 		setTranslateY( anchorY + (dy * zoomFactor) );
 		setZoom( getZoom() * zoomFactor );
+	}
+
+	private void repan( Point3D point ) {
+		Parent parent = getParent();
+		if( parent == null ) return;
+
+		Point3D p = getLocalToParentTransform().transform( point ).subtract( getTranslateX(), getTranslateY(), 0 );
+		setTranslateX( parent.getLayoutBounds().getCenterX() - p.getX() );
+		setTranslateY( parent.getLayoutBounds().getCenterY() - p.getY() );
 	}
 
 	private void rescale( boolean recalculateDpu ) {

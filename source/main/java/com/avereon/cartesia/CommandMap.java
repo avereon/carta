@@ -32,6 +32,8 @@ public class CommandMap {
 		map.put( "vv", CurveCommand.class );
 		map.put( "ww", PathCommand.class );
 
+		map.put( "pa", PanCommand.class );
+
 		// gg - grid toggle
 		// sn - snap nearest
 		// sg - toggle snap to grid

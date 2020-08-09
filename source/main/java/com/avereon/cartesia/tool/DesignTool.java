@@ -69,6 +69,13 @@ public abstract class DesignTool extends ProgramTool {
 		return mousePoint;
 	}
 
+	public Point3D getPan() {
+		return designPane == null ? Point3D.ZERO : designPane.getPan();
+	}
+	public void setPan( Point3D point ) {
+		if( designPane != null ) designPane.setPan( point );
+	}
+
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
@@ -79,17 +86,21 @@ public abstract class DesignTool extends ProgramTool {
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
-		Design design = request.getAsset().getModel();
-		//design.register( NodeEvent.ANY, e -> log.log( Log.INFO, "Design event: " + e ) );
-
-		// FIXME can the design pane be centered...at least at the beginning?
-		designPane = new DesignPane( design );
+		designPane = new DesignPane( request.getAsset().getModel() );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
 		getChildren().add( designPane );
 
+		// Keep the design pane centered when resizing
+		widthProperty().addListener( ( p, o, n ) -> designPane.panOffset( 0.5 * (n.doubleValue() - o.doubleValue()), 0 ) );
+		heightProperty().addListener( ( p, o, n ) -> designPane.panOffset( 0, 0.5 * (n.doubleValue() - o.doubleValue()) ) );
 
+		// Update the status when the zoom changes
+		designPane.zoomProperty().addListener( ( p, o, n ) -> getCoordinateStatus().updateZoom( n.doubleValue() ) );
 
-		designPane.zoomProperty().addListener( ( v, o, n ) -> getCoordinateStatus().updateZoom( n.doubleValue() ) );
+		// Set the stored tool pan
+		designPane.setPan( Point3D.ZERO );
+		// Set the stored tool zoom
+		designPane.setZoom( 1 );
 	}
 
 	@Override
