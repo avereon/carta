@@ -4,6 +4,7 @@ import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
+import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
 
 import java.util.List;
@@ -59,12 +60,14 @@ public abstract class Design extends IdNode {
 
 	public Design setCurrentLayer( DesignLayer layer ) {
 		if( !getValues( LAYERS ).contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
-		setValue( CURRENT_LAYER, Objects.requireNonNull( layer ) );
+		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
 		return this;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	public DesignLayer getCurrentLayer() {
-		return Objects.requireNonNull( getValue( CURRENT_LAYER ) );
+		// Current layer is a node link so the layer doesn't get removed from the layer set
+		return Objects.requireNonNull( ((NodeLink<DesignLayer>)getValue( CURRENT_LAYER )).getNode() );
 	}
 
 	public List<DesignLayer> getLayers() {

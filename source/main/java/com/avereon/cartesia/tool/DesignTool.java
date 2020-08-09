@@ -72,8 +72,17 @@ public abstract class DesignTool extends ProgramTool {
 	public Point3D getPan() {
 		return designPane == null ? Point3D.ZERO : designPane.getPan();
 	}
+
 	public void setPan( Point3D point ) {
 		if( designPane != null ) designPane.setPan( point );
+	}
+
+	public double getZoom() {
+		return designPane == null ? 1.0 : designPane.getZoom();
+	}
+
+	public void setZoom( double zoom ) {
+		if( designPane != null ) designPane.setZoom( zoom );
 	}
 
 	@Override

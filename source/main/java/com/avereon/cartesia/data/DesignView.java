@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.data.IdNode;
+import com.avereon.data.NodeLink;
 
 import java.util.Set;
 
@@ -12,16 +13,16 @@ public class DesignView extends IdNode {
 
 	public static final String LAYER_LINKS = "layer-links";
 
-	public Set<DesignLayerLink> getLinks() {
+	public Set<NodeLink<DesignLayer>> getLayerLinks() {
 		return getValues( LAYER_LINKS );
 	}
 
-	public DesignView addLink( DesignLayerLink link ) {
+	public DesignView addLayerLink( NodeLink<DesignLayer> link ) {
 		addToSet( LAYER_LINKS, link );
 		return this;
 	}
 
-	public DesignView removeLink( DesignLayerLink link ) {
+	public DesignView removeLayerLink( NodeLink<DesignLayer> link ) {
 		removeFromSet( LAYER_LINKS, link );
 		return this;
 	}

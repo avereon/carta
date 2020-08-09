@@ -2,9 +2,9 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.geometry.CsaLine;
 import com.avereon.cartesia.geometry.CsaPoint;
-import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import javafx.application.Platform;
@@ -69,20 +69,25 @@ public class DesignPane extends StackPane {
 
 	private StackPane layers;
 
-	private final Map<Class<? extends CsaShape>, Consumer<? extends CsaShape>> addActions;
+	private final Map<Class<?>, Consumer<?>> addActions;
 
-	private final Map<Class<? extends CsaShape>, Consumer<? extends CsaShape>> removeActions;
+	private final Map<Class<?>, Consumer<?>> changeActions;
+
+	private final Map<Class<?>, Consumer<?>> removeActions;
 
 	public DesignPane( Design design ) {
 		this.design = Objects.requireNonNull( design );
-		reference = new Pane();
 		layers = new StackPane();
+		reference = new Pane();
+		getChildren().addAll( layers, reference );
+
+		addOriginReferencePoint();
 
 		setManaged( false );
 		rescale( true );
 
-		layers.getChildren().add( new Pane() );
-		getChildren().addAll( layers, reference );
+		// WORKAROUND This is here temporarily until proper node population exists
+		design.getLayers().forEach( l -> layers.getChildren().add( new Pane() ) );
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
@@ -91,8 +96,15 @@ public class DesignPane extends StackPane {
 
 		// TODO Move this map somewhere else
 		addActions = new HashMap<>();
+		addActions.put( DesignLayer.class, (o) -> addLayer( (DesignLayer)o));
 		addActions.put( CsaPoint.class, ( s ) -> addPoint( (CsaPoint)s ) );
 		addActions.put( CsaLine.class, ( s ) -> addLine( (CsaLine)s ) );
+
+		// TODO Move this map somewhere else
+		changeActions = new HashMap<>();
+		changeActions.put( DesignLayer.class, (o) -> {
+			log.log( Log.WARN, "Layer changed --- still needs implementing" );
+		} );
 
 		// TODO Move this map somewhere else
 		removeActions = new HashMap<>();
@@ -102,20 +114,26 @@ public class DesignPane extends StackPane {
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
 		design.register( NodeEvent.CHILD_ADDED, this::addShape );
+		design.register( NodeEvent.VALUE_CHANGED, this::valueChanged );
 		design.register( NodeEvent.CHILD_REMOVED, this::removeShape );
-
-		addOriginReferencePoint();
 	}
 
 	private void addShape( NodeEvent event ) {
-		addActions.computeIfPresent( ((CsaShape)event.getNewValue()).getClass(), ( k, c ) -> {
+		addActions.computeIfPresent( event.getNewValue().getClass(), ( k, c ) -> {
+			c.accept( event.getNewValue() );
+			return c;
+		} );
+	}
+
+	private void valueChanged( NodeEvent event ) {
+		changeActions.computeIfPresent( event.getNode().getClass(), ( k, c ) -> {
 			c.accept( event.getNewValue() );
 			return c;
 		} );
 	}
 
 	private void removeShape( NodeEvent event ) {
-		removeActions.computeIfPresent( ((CsaShape)event.getNewValue()).getClass(), ( k, c ) -> {
+		removeActions.computeIfPresent( event.getOldValue().getClass(), ( k, c ) -> {
 			c.accept( event.getNewValue() );
 			return c;
 		} );
@@ -126,6 +144,13 @@ public class DesignPane extends StackPane {
 		cp.layoutXProperty().bind( xProperty.multiply( scaleXProperty() ) );
 		cp.layoutYProperty().bind( yProperty.multiply( scaleYProperty() ).negate() );
 		return cp;
+	}
+
+	private void addLayer( DesignLayer yy ) {
+		Pane layer = new Pane();
+		Platform.runLater( () -> {
+			layers.getChildren().add( layer );
+		});
 	}
 
 	private void addPoint( CsaPoint pp ) {

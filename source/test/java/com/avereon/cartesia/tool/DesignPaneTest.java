@@ -4,9 +4,15 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.geometry.CsaLine;
+import com.avereon.zerra.javafx.FxUtil;
+import com.avereon.zerra.javafx.JavaFxStarter;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.shape.Line;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -42,6 +48,36 @@ public class DesignPaneTest implements NumericTest {
 		assertThat( pane.getScaleY(), is( -1.0 * SCALE ) );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
+	}
+
+	@Test
+	void testAddLayer() throws Exception {
+		JavaFxStarter.startAndWait( 1000 );
+		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
+		design.addLayer( layer );
+		FxUtil.fxWait( 1000 );
+
+		StackPane layers = (StackPane)pane.getChildren().get( 0 );
+		assertThat( layers.getChildren().size(), is( 1 ) );
+	}
+
+	@Test
+	void testAddLine() throws Exception {
+		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
+
+		JavaFxStarter.startAndWait( 1000 );
+		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getCurrentLayer().addShape( new CsaLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
+		FxUtil.fxWait( 1000 );
+
+		// Now there should be a line in the pane
+		StackPane layers = (StackPane)pane.getChildren().get( 0 );
+		Pane construction = (Pane)layers.getChildren().get( 0 );
+		Line line = (Line)construction.getChildren().get( 0 );
+		assertThat( line.getStartX(), is( 1.0 ) );
+		assertThat( line.getStartY(), is( 2.0 ) );
+		assertThat( line.getEndX(), is( 3.0 ) );
+		assertThat( line.getEndY(), is( 4.0 ) );
 	}
 
 	@Test
