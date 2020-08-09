@@ -7,9 +7,7 @@ import com.avereon.data.NodeComparator;
 import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public abstract class Design extends IdNode {
 
@@ -96,6 +94,16 @@ public abstract class Design extends IdNode {
 	public Design removeView( DesignView view ) {
 		removeFromSet( VIEWS, view );
 		return this;
+	}
+
+	public Map<String, ?> asDeepMap() {
+		Map<String, Object> map = new HashMap<>( asMap( ID, NAME ) );
+
+		Map<String, Map<String,?>> layerMap = new HashMap<>();
+		getLayers().forEach( l -> layerMap.put( l.getId(), l.asMap() ) );
+		map.put( LAYERS, layerMap );
+
+		return map;
 	}
 
 }

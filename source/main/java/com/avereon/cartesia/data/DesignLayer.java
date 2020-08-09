@@ -6,8 +6,8 @@ import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
 import javafx.scene.paint.Color;
 
+import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 
 public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 
@@ -34,8 +34,6 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 	public DesignLayer() {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, DRAW_WIDTH, DRAW_COLOR, FILL_COLOR, SHAPES );
-
-		setId( UUID.randomUUID().toString() );
 	}
 
 	/**
@@ -115,13 +113,17 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 		removeFromSet( SHAPES, shape );
 	}
 
+	public Map<String, ?> asMap() {
+		return asMap( ID, NAME );
+	}
+
 	@Override
 	public int compareTo( DesignLayer that ) {
 		return comparator.compare( this, that );
 	}
 
-//	private ShapeNode shapeNode() {
-//		return computeIfAbsent( SHAPES, k -> new ShapeNode() );
-//	}
+	//	private ShapeNode shapeNode() {
+	//		return computeIfAbsent( SHAPES, k -> new ShapeNode() );
+	//	}
 
 }

@@ -2,6 +2,9 @@ import com.avereon.cartesia.CartesiaMod;
 
 module com.avereon.cartesia {
 	requires com.avereon.xenon;
+	requires com.fasterxml.jackson.annotation;
+	requires com.fasterxml.jackson.databind;
+	requires com.fasterxml.jackson.core;
 	requires jep;
 
 	opens com.avereon.cartesia.bundles;
