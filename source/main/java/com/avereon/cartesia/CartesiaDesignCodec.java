@@ -15,9 +15,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
-public class CartesiaDesignCodec extends Codec {
-
-	static final String MEDIA_TYPE = "application/vnd.avereon.recon.network.graph";
+public abstract class CartesiaDesignCodec extends Codec {
 
 	private static final System.Logger log = Log.get();
 
@@ -25,13 +23,6 @@ public class CartesiaDesignCodec extends Codec {
 
 	public CartesiaDesignCodec( Product product ) {
 		this.product = product;
-		setDefaultExtension( "cartesia2d" );
-		addSupported( Pattern.MEDIATYPE, MEDIA_TYPE );
-	}
-
-	@Override
-	public String getKey() {
-		return MEDIA_TYPE;
 	}
 
 	@Override

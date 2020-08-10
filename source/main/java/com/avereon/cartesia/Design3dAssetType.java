@@ -11,6 +11,7 @@ public class Design3dAssetType extends AssetType {
 
 	public Design3dAssetType( ProgramProduct product ) {
 		super( product, "design3d" );
+		setDefaultCodec( new CartesiaDesignCodec3D( product ) );
 	}
 
 	@Override

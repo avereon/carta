@@ -18,7 +18,7 @@ import java.util.Map;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class CartesiaDesignCodecTest extends BaseCartesiaTest {
+public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 
 	private CartesiaDesignCodec codec;
 
@@ -27,7 +27,7 @@ public class CartesiaDesignCodecTest extends BaseCartesiaTest {
 	@BeforeEach
 	void setup() {
 		super.setup();
-		codec = new CartesiaDesignCodec( mod );
+		codec = new CartesiaDesignCodec2D( mod );
 
 		Path path = Paths.get( "target", "design.tmp" );
 		asset = new Asset( path.toUri(), new Design2dAssetType( mod ) );
