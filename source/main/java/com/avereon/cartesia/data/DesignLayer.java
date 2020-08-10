@@ -4,6 +4,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
+import com.avereon.util.NumberUtil;
 import javafx.scene.paint.Color;
 
 import java.util.Map;
@@ -56,11 +57,11 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 		return this;
 	}
 
-	public double getOrder() {
+	public int getOrder() {
 		return getValue( ORDER, 0 );
 	}
 
-	public DesignLayer setOrder( double order ) {
+	public DesignLayer setOrder( int order ) {
 		setValue( ORDER, order );
 		return this;
 	}
@@ -114,7 +115,17 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 	}
 
 	public Map<String, ?> asMap() {
-		return asMap( ID, NAME );
+		return asMap( ID, NAME, ORDER );
+	}
+
+	public DesignLayer updateFrom( Map<String, Object> map ) {
+		setId( String.valueOf( map.get( DesignLayer.ID ) ) );
+		map.computeIfPresent( DesignLayer.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignLayer.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignLayer.ORDER, ( k, v ) -> NumberUtil.parseInt( v, -1 ) );
+
+		// TODO Restore the other attributes
+		return this;
 	}
 
 	@Override

@@ -8,6 +8,7 @@ import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Design extends IdNode {
 
@@ -96,14 +97,20 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	public Map<String, ?> asDeepMap() {
-		Map<String, Object> map = new HashMap<>( asMap( ID, NAME ) );
+	public Map<String, ?> asMap() {
+		return asMap( ID, NAME );
+	}
 
-		Map<String, Map<String,?>> layerMap = new HashMap<>();
-		getLayers().forEach( l -> layerMap.put( l.getId(), l.asMap() ) );
-		map.put( LAYERS, layerMap );
-
+	public Map<String, Object> asDeepMap() {
+		Map<String, Object> map = new HashMap<>( asMap() );
+		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asMap ) ) );
 		return map;
+	}
+
+	public Design updateFrom( Map<String, Object> map ) {
+		map.computeIfPresent( DesignLayer.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignLayer.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		return this;
 	}
 
 }

@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
 
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -24,6 +25,12 @@ public class DesignView extends IdNode {
 
 	public DesignView removeLayerLink( NodeLink<DesignLayer> link ) {
 		removeFromSet( LAYER_LINKS, link );
+		return this;
+	}
+
+	public DesignView updateFrom( Map<String,?> map ) {
+		setId( String.valueOf( map.get( DesignLayer.ID ) ) );
+		//setName( String.valueOf( map.get( DesignLayer.NAME ) ) );
 		return this;
 	}
 
