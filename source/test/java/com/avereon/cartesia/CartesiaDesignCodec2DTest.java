@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -50,7 +51,10 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	void testLoad() throws Exception {
 		// Generate a test design
 		Design design = createTestDesign( new Design2D() );
-		Map<String, ?> map = design.asDeepMap();
+		Map<String, Object> designMap = design.asDeepMap();
+
+		Map<String, Object> map = new HashMap<>( designMap );
+		map.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 
 		// Load the design from a stream
 		byte[] buffer = MAPPER.writer().writeValueAsBytes( map );
@@ -58,7 +62,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		//System.out.println( codec.prettyPrint( buffer ) );
 
 		// Check the result
-		assertThat( ((Design)asset.getModel()).asDeepMap(), is( map ) );
+		assertThat( ((Design)asset.getModel()).asDeepMap(), is( designMap ) );
 	}
 
 	@Test
@@ -72,8 +76,9 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		//System.out.println( prettyPrint( output.toByteArray() ) );
 
 		// Check the result
-		Map<String, ?> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
-		Map<String,? > expected = MAPPER.readValue( MAPPER.writeValueAsBytes( design.asDeepMap() ), new TypeReference<>() {} );
+		Map<String, Object> expected = MAPPER.readValue( MAPPER.writeValueAsBytes( design.asDeepMap() ), new TypeReference<>() {} );
+		expected.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
+		Map<String, Object> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
 		assertThat( actual, is( expected ) );
 	}
 
@@ -95,6 +100,8 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		layer2.addShape( line1 );
 		CsaLine line2 = new CsaLine( new Point3D( 2, 5, 0 ), new Point3D( 3, 6, 0 ) );
 		layer2.addShape( line2 );
+
+		design.setCurrentLayer( layer2 );
 
 		return design;
 	}

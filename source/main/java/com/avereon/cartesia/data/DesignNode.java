@@ -4,6 +4,9 @@ import com.avereon.data.IdNode;
 
 import java.util.Map;
 
+/**
+ * The base node for all design data objects.
+ */
 public abstract class DesignNode extends IdNode {
 
 	protected Map<String, Object> asMap() {

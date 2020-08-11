@@ -104,6 +104,7 @@ public abstract class Design extends IdNode {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
+		map.put( CURRENT_LAYER, getCurrentLayer().getId() );
 		return map;
 	}
 

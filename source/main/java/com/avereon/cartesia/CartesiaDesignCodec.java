@@ -23,12 +23,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public abstract class CartesiaDesignCodec extends Codec {
 
 	private static final System.Logger log = Log.get();
 
 	static final ObjectMapper JSON_MAPPER;
+
+	static final String CODEC_VERSION_KEY = "codec-version";
+
+	static final String CODEC_VERSION = "1";
+
+	static final String CURRENT_LAYER_ID = "current-layer";
 
 	private final Product product;
 
@@ -60,52 +67,64 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
-		Design design = asset.getModel();
+		Design2D design = new Design2D();
+
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
+
+		log.log( Log.DEBUG, "Design codec version: " + map.get( CODEC_VERSION_KEY ) );
 
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( Design.LAYERS, Map.of() );
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
 
 		design.updateFrom( map );
-		layers.values().forEach( l -> {
-			DesignLayer layer = new DesignLayer().updateFrom( toStringMap(l) );
-			design.addLayer( layer );
+		String currentLayerId = String.valueOf( map.get( Design.CURRENT_LAYER ) );
 
-			Map<String, Map<String, String>> shapes = (Map<String, Map<String, String>>)l.getOrDefault( DesignLayer.SHAPES, Map.of() );
+		// Load layers
+		layers.values().forEach( l -> {
+			DesignLayer layer = new DesignLayer().updateFrom( toStringOnlyMap( l ) );
+			design.addLayer( layer );
+			if( Objects.equals( layer.getId(), currentLayerId ) ) design.setCurrentLayer( layer );
 
 			// Add the shapes found in the layer
-			shapes.values().forEach( s -> {
-				String type = String.valueOf( s.get( CsaShape.SHAPE ) );
+			Map<String, Map<String, String>> geometry = (Map<String, Map<String, String>>)l.getOrDefault( DesignLayer.SHAPES, Map.of() );
+			geometry.values().forEach( g -> {
+				String type = String.valueOf( g.get( CsaShape.SHAPE ) );
 				CsaShape shape = switch( type ) {
-					case "point" -> loadCsaPoint( s );
-					case "line" -> loadCsaLine( s );
+					case "point" -> loadCsaPoint( g );
+					case "line" -> loadCsaLine( g );
 					default -> null;
 				};
 				layer.addShape( shape );
 			} );
 		} );
-		views.values().forEach( l -> design.addView( new DesignView().updateFrom( l ) ) );
-	}
 
-	private Map<String,String> toStringMap( Map<String,Object> map ) {
-		Map<String,String> stringMap = new HashMap<>();
-		map.forEach( (k,v) -> {
-			if( v != null ) stringMap.put( k, v.toString() );
-		} );
-		return stringMap;
-	}
+		// Load views
+		views.values().forEach( v -> design.addView( new DesignView().updateFrom( v ) ) );
 
-	private CsaPoint loadCsaPoint( Map<String,String> map ) {
-		return new CsaPoint().updateFrom( map );
-	}
-
-	private CsaLine loadCsaLine( Map<String,String> map ) {
-		return new CsaLine().updateFrom( map );
+		asset.setModel( design );
 	}
 
 	@Override
 	public void save( Asset asset, OutputStream output ) throws IOException {
-		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, ((Design)asset.getModel()).asDeepMap() );
+		Map<String, Object> map = ((Design)asset.getModel()).asDeepMap();
+		map.put( CODEC_VERSION_KEY, CODEC_VERSION );
+		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
+	}
+
+	private Map<String, String> toStringOnlyMap( Map<String, Object> map ) {
+		Map<String, String> stringMap = new HashMap<>();
+		map.forEach( ( k, v ) -> {
+			if( v instanceof String ) stringMap.put( k, v.toString() );
+		} );
+		return stringMap;
+	}
+
+	private CsaPoint loadCsaPoint( Map<String, String> map ) {
+		return new CsaPoint().updateFrom( map );
+	}
+
+	private CsaLine loadCsaLine( Map<String, String> map ) {
+		return new CsaLine().updateFrom( map );
 	}
 
 	String prettyPrint( byte[] buffer ) throws Exception {

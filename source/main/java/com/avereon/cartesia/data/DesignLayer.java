@@ -9,13 +9,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
+public class DesignLayer extends DesignDrawable implements Comparable<DesignLayer> {
 
 	public static final String NAME = "name";
 
 	public static final String UNIT = "unit";
-
-	public static final String ORDER = "order";
 
 	public static final String SHAPES = "shapes";
 
@@ -50,15 +48,6 @@ public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 		return this;
 	}
 
-	public int getOrder() {
-		return getValue( ORDER, 0 );
-	}
-
-	public DesignLayer setOrder( int order ) {
-		setValue( ORDER, order );
-		return this;
-	}
-
 	public DesignUnit getDesignUnit() {
 		return getValue( UNIT );
 	}
@@ -82,7 +71,7 @@ public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 
 	public Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( NAME, ORDER ) );
+		map.putAll( asMap( NAME ) );
 		return map;
 	}
 
@@ -95,7 +84,6 @@ public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 	public DesignLayer updateFrom( Map<String, String> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( NAME ) ) setName( map.get( NAME ) );
-		if( map.containsKey( ORDER ) ) setOrder( Integer.parseInt( ORDER ) );
 		return this;
 	}
 

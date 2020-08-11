@@ -1,10 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.CsaLine;
-import com.avereon.cartesia.data.CsaPoint;
+import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import javafx.application.Platform;
@@ -14,15 +11,15 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 
 public class DesignPane extends StackPane {
@@ -69,11 +66,13 @@ public class DesignPane extends StackPane {
 
 	private StackPane layers;
 
-	private final Map<Class<?>, Consumer<?>> addActions;
+	private final Map<DesignLayer, Node> layerMap;
 
-	private final Map<Class<?>, Consumer<?>> changeActions;
+	private final Map<Class<?>, Consumer<Object>> addActions;
 
-	private final Map<Class<?>, Consumer<?>> removeActions;
+	private final Map<Class<?>, Consumer<Object>> changeActions;
+
+	private final Map<Class<?>, Consumer<Object>> removeActions;
 
 	public DesignPane( Design design ) {
 		this.design = Objects.requireNonNull( design );
@@ -86,8 +85,7 @@ public class DesignPane extends StackPane {
 		setManaged( false );
 		rescale( true );
 
-		// WORKAROUND This is here temporarily until proper node population exists
-		design.getLayers().forEach( this::addLayer );
+		layerMap = new ConcurrentHashMap<>();
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
@@ -96,13 +94,13 @@ public class DesignPane extends StackPane {
 
 		// TODO Move this map somewhere else
 		addActions = new HashMap<>();
-		addActions.put( DesignLayer.class, (o) -> addLayer( (DesignLayer)o));
+		addActions.put( DesignLayer.class, ( o ) -> addLayer( (DesignLayer)o ) );
 		addActions.put( CsaPoint.class, ( s ) -> addPoint( (CsaPoint)s ) );
 		addActions.put( CsaLine.class, ( s ) -> addLine( (CsaLine)s ) );
 
 		// TODO Move this map somewhere else
 		changeActions = new HashMap<>();
-		changeActions.put( DesignLayer.class, (o) -> {
+		changeActions.put( DesignLayer.class, ( o ) -> {
 			log.log( Log.WARN, "Layer changed --- still needs implementing" );
 		} );
 
@@ -116,13 +114,24 @@ public class DesignPane extends StackPane {
 		design.register( NodeEvent.CHILD_ADDED, this::addShape );
 		design.register( NodeEvent.VALUE_CHANGED, this::valueChanged );
 		design.register( NodeEvent.CHILD_REMOVED, this::removeShape );
+
+		loadDesign( design );
+	}
+
+	private void loadDesign( Design design ) {
+		design.getLayers().forEach( this::addLayer );
+		design.getLayers().forEach( l -> l.getShapes().forEach( this::add ) );
+		design.getLayers().forEach( this::reorderLayer );
+	}
+
+	private void add( DesignNode node ) {
+		Consumer<Object> c = addActions.get( node.getClass() );
+		if( c == null ) return;
+		c.accept( node );
 	}
 
 	private void addShape( NodeEvent event ) {
-		addActions.computeIfPresent( event.getNewValue().getClass(), ( k, c ) -> {
-			c.accept( event.getNewValue() );
-			return c;
-		} );
+		add( event.getNewValue() );
 	}
 
 	private void valueChanged( NodeEvent event ) {
@@ -148,17 +157,38 @@ public class DesignPane extends StackPane {
 
 	private void addLayer( DesignLayer yy ) {
 		Pane layer = new Pane();
+		layerMap.put( yy, layer );
 		Platform.runLater( () -> {
 			layers.getChildren().add( layer );
-		});
+		} );
+	}
+
+	private void reorderLayer( DesignLayer layer ) {
+		reorderLayer( (Pane)layerMap.get( layer ) );
+	}
+
+	private void reorderLayer( Pane pane ) {
+		Platform.runLater( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
 	private void addPoint( CsaPoint pp ) {
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaPoint
-		Circle point = new Circle( pp.getOrigin().getX(), pp.getOrigin().getY(), 0.5 );
+		double size = 0.5;
+		Line h = new Line( pp.getOrigin().getX() - size, pp.getOrigin().getY(), pp.getOrigin().getX() + size, pp.getOrigin().getY() );
+		h.setStroke( pp.getDrawColor() );
+		h.setStrokeWidth( 0.1 );
+		Line v = new Line( pp.getOrigin().getX(), pp.getOrigin().getY() - size, pp.getOrigin().getX(), pp.getOrigin().getY() + size );
+		v.setStroke( pp.getDrawColor() );
+		v.setStrokeWidth( 0.1 );
+		Group point = new Group( h, v );
+
 		// TODO Generalize and simplify
-		ConstructionPoint o = cp( point.centerXProperty(), point.centerYProperty() );
-		Pane layer = (Pane)layers.getChildren().get( 0 );
+		ConstructionPoint o = cp( v.startXProperty(), h.startYProperty() );
+		point.getProperties().put( "data", pp );
+		point.getProperties().put( "construction-points", Set.of( o ) );
+
+		DesignLayer yy = pp.getParent();
+		Pane layer = (Pane)layerMap.get( yy );
 		Platform.runLater( () -> {
 			layer.getChildren().add( point );
 			reference.getChildren().addAll( o );
@@ -168,10 +198,16 @@ public class DesignPane extends StackPane {
 	private void addLine( CsaLine ll ) {
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaLine
 		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
+		line.setStroke( ll.getDrawColor() );
+
 		// TODO Generalize and simplify
 		ConstructionPoint o = cp( line.startXProperty(), line.startYProperty() );
 		ConstructionPoint p = cp( line.endXProperty(), line.endYProperty() );
-		Pane layer = (Pane)layers.getChildren().get( 0 );
+		line.getProperties().put( "data", ll );
+		line.getProperties().put( "construction-points", Set.of( o, p ) );
+
+		DesignLayer yy = ll.getParent();
+		Pane layer = (Pane)layerMap.get( yy );
 		Platform.runLater( () -> {
 			layer.getChildren().add( line );
 			reference.getChildren().addAll( o, p );
@@ -297,6 +333,17 @@ public class DesignPane extends StackPane {
 
 	private double getDpu() {
 		return dpu;
+	}
+
+	private static class LayerSorter implements Comparator<Node> {
+
+		@Override
+		public int compare( Node o1, Node o2 ) {
+			CsaShape s1 = (CsaShape)o1.getProperties().get( "data" );
+			CsaShape s2 = (CsaShape)o2.getProperties().get( "data" );
+			return s2.getOrder() - s1.getOrder();
+		}
+
 	}
 
 }

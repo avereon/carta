@@ -17,7 +17,7 @@ public class Design2dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetInit( Program program, Asset asset ) throws AssetException {
+	public boolean assetNew( Program program, Asset asset ) throws AssetException {
 		String constructionLayerName = getProduct().rb().textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 
 		Design2D design = new Design2D();
