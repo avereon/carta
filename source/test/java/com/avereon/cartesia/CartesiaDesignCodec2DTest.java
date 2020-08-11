@@ -3,9 +3,15 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.geometry.CsaLine;
+import com.avereon.cartesia.geometry.CsaPoint;
+import com.avereon.util.TextUtil;
 import com.avereon.xenon.asset.Asset;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -41,7 +47,8 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		Map<String, ?> map = design.asDeepMap();
 
 		// Load the design from a stream
-		byte[] buffer = new ObjectMapper().writeValueAsBytes( map );
+		byte[] buffer = new ObjectMapper().writer().writeValueAsBytes( map );
+		System.out.println( prettyPrint( buffer ) );
 		codec.load( asset, new ByteArrayInputStream( buffer ) );
 
 		// Check the result
@@ -57,6 +64,8 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		codec.save( asset, output );
 
+		//System.out.println( prettyPrint( output.toByteArray() ) );
+
 		// Check the result
 		Map<String, ?> map = new ObjectMapper().readValue( output.toByteArray(), new TypeReference<Map<String, Object>>() {} );
 		assertThat( map, is( design.asDeepMap() ) );
@@ -64,9 +73,31 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 
 	private Design createTestDesign( Design design ) {
 		design.setName( "Test Design" );
+		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (And empty layer)" );
+		design.addLayer( layer0 );
 		DesignLayer layer1 = new DesignLayer().setName( "Layer 1" );
 		design.addLayer( layer1 );
 		DesignLayer layer2 = new DesignLayer().setName( "Layer 2" );
-		design.addLayer( layer2 );		return design;
+		design.addLayer( layer2 );
+
+		CsaPoint point = new CsaPoint( new Point3D( 1, 2, 0 ) );
+		point.setDrawColor( Color.web( "0x0000ff80" ) );
+		layer1.addShape( point );
+
+		CsaLine line1 = new CsaLine( new Point3D( 2, 3, 0 ), new Point3D( 3, 4, 0 ) );
+		line1.setDrawColor( Color.GREEN );
+		layer2.addShape( line1 );
+		CsaLine line2 = new CsaLine( new Point3D( 2, 5, 0 ), new Point3D( 3, 6, 0 ) );
+		layer2.addShape( line2 );
+
+		return design;
 	}
+
+	private String prettyPrint( byte[] buffer ) throws Exception {
+		JsonNode node = new ObjectMapper().readValue( buffer, JsonNode.class );
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue( output, node );
+		return new String( output.toByteArray(), TextUtil.CHARSET );
+	}
+
 }

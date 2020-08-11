@@ -1,37 +1,16 @@
 package com.avereon.cartesia.geometry;
 
-import com.avereon.data.Node;
+import com.avereon.cartesia.data.DesignDraw;
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
 
-public abstract class CsaShape extends Node {
+import java.util.Map;
 
-	public static final String DRAW_COLOR = "draw-color";
-
-	public static final String DRAW_WIDTH = "draw-width";
+public abstract class CsaShape extends DesignDraw {
 
 	public static final String ORIGIN = "origin";
 
 	public CsaShape() {
-		addModifyingKeys( DRAW_COLOR, DRAW_WIDTH, ORIGIN );
-	}
-
-	public Color getDrawColor() {
-		return getValue( DRAW_COLOR );
-	}
-
-	public CsaShape setDrawColor( Color color ) {
-		setValue( DRAW_COLOR, color );
-		return this;
-	}
-
-	public double getDrawWidth() {
-		return getValue( DRAW_WIDTH );
-	}
-
-	public CsaShape setDrawWidth( double width ) {
-		setValue( DRAW_WIDTH, width );
-		return this;
+		addModifyingKeys( ORIGIN );
 	}
 
 	public Point3D getOrigin() {

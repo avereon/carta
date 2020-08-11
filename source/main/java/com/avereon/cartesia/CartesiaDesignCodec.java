@@ -3,12 +3,14 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignView;
+import com.avereon.cartesia.geometry.CsaPoint;
 import com.avereon.product.Product;
 import com.avereon.util.Log;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.geometry.Point3D;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +43,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	@Override
+	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
 		Design design = asset.getModel();
 		Map<String, Object> map = new ObjectMapper().readValue( input, new TypeReference<>() {} );
@@ -48,7 +51,25 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
 
 		design.updateFrom( map );
-		layers.values().forEach( l -> design.addLayer( new DesignLayer().updateFrom( l ) ) );
+		layers.values().forEach( l -> {
+			design.addLayer( new DesignLayer().updateFrom( l ) );
+			Map<String, Map<String, Object>> shapes = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
+			// NEXT Add the shapes found in the layer
+			shapes.values().forEach( s -> {
+				String type = String.valueOf( s.get( "type" ) );
+				switch( type ) {
+					case "point" : {
+						// NEXT Need to parse the origin point
+						Point3D origin = new Point3D(0,0,0);
+						CsaPoint point = new CsaPoint( origin );
+						break;
+					}
+					case "line" : {
+						break;
+					}
+				}
+			});
+		} );
 		views.values().forEach( l -> design.addView( new DesignView().updateFrom( l ) ) );
 	}
 

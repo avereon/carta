@@ -5,22 +5,17 @@ import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
 import com.avereon.util.NumberUtil;
-import javafx.scene.paint.Color;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
+public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 
 	public static final String NAME = "name";
 
 	public static final String UNIT = "unit";
-
-	public static final String DRAW_WIDTH = "draw-width";
-
-	public static final String DRAW_COLOR = "draw-color";
-
-	public static final String FILL_COLOR = "fill-color";
 
 	public static final String ORDER = "order";
 
@@ -34,7 +29,7 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 
 	public DesignLayer() {
 		defineNaturalKey( NAME );
-		addModifyingKeys( NAME, DRAW_WIDTH, DRAW_COLOR, FILL_COLOR, SHAPES );
+		addModifyingKeys( NAME, SHAPES );
 	}
 
 	/**
@@ -75,33 +70,6 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 		return this;
 	}
 
-	public double getDrawWidth() {
-		return getValue( DRAW_WIDTH );
-	}
-
-	public DesignLayer setDrawWidth( double width ) {
-		setValue( DRAW_WIDTH, width );
-		return this;
-	}
-
-	public Color getDrawColor() {
-		return getValue( DRAW_COLOR );
-	}
-
-	public DesignLayer setDrawColor( Color color ) {
-		setValue( DRAW_COLOR, color );
-		return this;
-	}
-
-	public Color getFillColor() {
-		return getValue( FILL_COLOR );
-	}
-
-	public DesignLayer setFillColor( Color color ) {
-		setValue( FILL_COLOR, color );
-		return this;
-	}
-
 	public Set<CsaShape> getShapes() {
 		return getValues( SHAPES );
 	}
@@ -114,8 +82,16 @@ public class DesignLayer extends IdNode implements Comparable<DesignLayer> {
 		removeFromSet( SHAPES, shape );
 	}
 
-	public Map<String, ?> asMap() {
-		return asMap( ID, NAME, ORDER );
+	public Map<String, String> asMap() {
+		Map<String, String> map = super.asMap();
+		map.putAll( asMap( NAME, ORDER ) );
+		return map;
+	}
+
+	public Map<String, Object> asDeepMap() {
+		Map<String, Object> map = new HashMap<>( asMap() );
+		map.put( SHAPES, getShapes().stream().collect( Collectors.toMap( IdNode::getId, CsaShape::asMap ) ) );
+		return map;
 	}
 
 	public DesignLayer updateFrom( Map<String, Object> map ) {
