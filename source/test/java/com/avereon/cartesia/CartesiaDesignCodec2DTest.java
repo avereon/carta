@@ -1,15 +1,11 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.Design2D;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.geometry.CsaLine;
-import com.avereon.cartesia.geometry.CsaPoint;
-import com.avereon.util.TextUtil;
+import com.avereon.cartesia.data.*;
 import com.avereon.xenon.asset.Asset;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,6 +22,8 @@ import static org.hamcrest.Matchers.is;
 
 public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 
+	private static final ObjectMapper MAPPER = CartesiaDesignCodec.JSON_MAPPER;
+
 	private CartesiaDesignCodec codec;
 
 	private Asset asset;
@@ -41,15 +39,23 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	}
 
 	@Test
+	void testMapper() throws Exception {
+		ObjectWriter writer = MAPPER.writer();
+		assertThat( writer.writeValueAsString( new Point2D( 1, 2 ) ), is( "\"1.0,2.0\"" ) );
+		assertThat( writer.writeValueAsString( new Point3D( 3, 2, 1 ) ), is( "\"3.0,2.0,1.0\"" ) );
+		assertThat( writer.writeValueAsString( Color.web( "0x20608080" ) ), is( "\"0x20608080\"" ) );
+	}
+
+	@Test
 	void testLoad() throws Exception {
 		// Generate a test design
 		Design design = createTestDesign( new Design2D() );
 		Map<String, ?> map = design.asDeepMap();
 
 		// Load the design from a stream
-		byte[] buffer = new ObjectMapper().writer().writeValueAsBytes( map );
-		System.out.println( prettyPrint( buffer ) );
+		byte[] buffer = MAPPER.writer().writeValueAsBytes( map );
 		codec.load( asset, new ByteArrayInputStream( buffer ) );
+		//System.out.println( codec.prettyPrint( buffer ) );
 
 		// Check the result
 		assertThat( ((Design)asset.getModel()).asDeepMap(), is( map ) );
@@ -63,17 +69,17 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		// Save the design to a stream
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		codec.save( asset, output );
-
 		//System.out.println( prettyPrint( output.toByteArray() ) );
 
 		// Check the result
-		Map<String, ?> map = new ObjectMapper().readValue( output.toByteArray(), new TypeReference<Map<String, Object>>() {} );
-		assertThat( map, is( design.asDeepMap() ) );
+		Map<String, ?> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
+		Map<String,? > expected = MAPPER.readValue( MAPPER.writeValueAsBytes( design.asDeepMap() ), new TypeReference<>() {} );
+		assertThat( actual, is( expected ) );
 	}
 
 	private Design createTestDesign( Design design ) {
 		design.setName( "Test Design" );
-		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (And empty layer)" );
+		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (Empty layer)" );
 		design.addLayer( layer0 );
 		DesignLayer layer1 = new DesignLayer().setName( "Layer 1" );
 		design.addLayer( layer1 );
@@ -91,13 +97,6 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		layer2.addShape( line2 );
 
 		return design;
-	}
-
-	private String prettyPrint( byte[] buffer ) throws Exception {
-		JsonNode node = new ObjectMapper().readValue( buffer, JsonNode.class );
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue( output, node );
-		return new String( output.toByteArray(), TextUtil.CHARSET );
 	}
 
 }

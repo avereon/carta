@@ -4,7 +4,7 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.geometry.CsaLine;
+import com.avereon.cartesia.data.CsaLine;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;

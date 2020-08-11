@@ -1,5 +1,6 @@
-package com.avereon.cartesia.geometry;
+package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.ParseUtil;
 import javafx.geometry.Point3D;
 
 import java.util.Map;
@@ -8,8 +9,12 @@ public class CsaLine extends CsaShape {
 
 	public static final String POINT = "point";
 
-	public CsaLine( Point3D origin, Point3D point ) {
+	public CsaLine() {
 		addModifyingKeys( ORIGIN, POINT );
+	}
+
+	public CsaLine( Point3D origin, Point3D point ) {
+		this();
 		setOrigin( origin );
 		setPoint( point );
 	}
@@ -23,11 +28,17 @@ public class CsaLine extends CsaShape {
 		return this;
 	}
 
-	public Map<String, String> asMap() {
-		Map<String, String> map = super.asMap();
-		map.put( "type", "line" );
+	protected Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
+		map.put( SHAPE, "line" );
 		map.putAll( asMap( ORIGIN, POINT ) );
 		return map;
+	}
+
+	public CsaLine updateFrom( Map<String, String> map ) {
+		super.updateFrom( map );
+		setPoint( ParseUtil.parsePoint3D( map.get( POINT ) ) );
+		return this;
 	}
 
 	@Override

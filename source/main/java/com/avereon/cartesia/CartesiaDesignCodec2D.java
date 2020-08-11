@@ -17,4 +17,9 @@ public class CartesiaDesignCodec2D extends CartesiaDesignCodec {
 		return MEDIA_TYPE;
 	}
 
+	@Override
+	public String getName() {
+		return getProduct().rb().text( "asset", "codec-cartesia2d-name" );
+	}
+
 }

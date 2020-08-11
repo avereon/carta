@@ -5,7 +5,7 @@ import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.geometry.CsaLine;
+import com.avereon.cartesia.data.CsaLine;
 import com.avereon.zerra.javafx.FxUtil;
 import com.avereon.zerra.javafx.JavaFxStarter;
 import javafx.geometry.Point2D;

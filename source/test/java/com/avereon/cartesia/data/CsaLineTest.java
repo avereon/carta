@@ -1,5 +1,6 @@
-package com.avereon.cartesia.geometry;
+package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.data.CsaLine;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 

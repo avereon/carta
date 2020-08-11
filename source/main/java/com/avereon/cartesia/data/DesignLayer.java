@@ -1,10 +1,8 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.geometry.CsaShape;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
-import com.avereon.util.NumberUtil;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -82,8 +80,8 @@ public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 		removeFromSet( SHAPES, shape );
 	}
 
-	public Map<String, String> asMap() {
-		Map<String, String> map = super.asMap();
+	public Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
 		map.putAll( asMap( NAME, ORDER ) );
 		return map;
 	}
@@ -94,13 +92,10 @@ public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 		return map;
 	}
 
-	public DesignLayer updateFrom( Map<String, Object> map ) {
-		setId( String.valueOf( map.get( DesignLayer.ID ) ) );
-		map.computeIfPresent( DesignLayer.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
-		map.computeIfPresent( DesignLayer.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
-		map.computeIfPresent( DesignLayer.ORDER, ( k, v ) -> NumberUtil.parseInt( v, -1 ) );
-
-		// TODO Restore the other attributes
+	public DesignLayer updateFrom( Map<String, String> map ) {
+		super.updateFrom( map );
+		if( map.containsKey( NAME ) ) setName( map.get( NAME ) );
+		if( map.containsKey( ORDER ) ) setOrder( Integer.parseInt( ORDER ) );
 		return this;
 	}
 
@@ -108,9 +103,5 @@ public class DesignLayer extends DesignDraw implements Comparable<DesignLayer> {
 	public int compareTo( DesignLayer that ) {
 		return comparator.compare( this, that );
 	}
-
-	//	private ShapeNode shapeNode() {
-	//		return computeIfAbsent( SHAPES, k -> new ShapeNode() );
-	//	}
 
 }

@@ -3,7 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.geometry.CsaShape;
+import com.avereon.cartesia.data.CsaShape;
 
 public class AddCommand extends Command {
 
