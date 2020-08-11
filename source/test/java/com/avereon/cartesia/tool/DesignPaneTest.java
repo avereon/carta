@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.NumericTest;
+import com.avereon.cartesia.TestTimeouts;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
@@ -20,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 
-public class DesignPaneTest implements NumericTest {
+public class DesignPaneTest implements NumericTest, TestTimeouts {
 
 	private static final boolean ZOOM_IN = true;
 
@@ -36,7 +37,7 @@ public class DesignPaneTest implements NumericTest {
 
 	@BeforeEach
 	public void setup() {
-		JavaFxStarter.startAndWait( 2000 );
+		JavaFxStarter.startAndWait( FX_STARTUP_TIMEOUT );
 		parent = new StackPane();
 		design = new Design2D();
 		pane = new DesignPane( design );
@@ -55,7 +56,7 @@ public class DesignPaneTest implements NumericTest {
 	void testAddLayer() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.addLayer( layer );
-		FxUtil.fxWait( 1000 );
+		FxUtil.fxWait( FX_WAIT_TIMEOUT );
 
 		StackPane layers = (StackPane)pane.getChildren().get( 0 );
 		assertThat( layers.getChildren().size(), is( 1 ) );
@@ -66,7 +67,7 @@ public class DesignPaneTest implements NumericTest {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.addLayer( layer ).setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
-		FxUtil.fxWait( 1000 );
+		FxUtil.fxWait( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane
 		StackPane layers = (StackPane)pane.getChildren().get( 0 );
