@@ -9,6 +9,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -16,11 +18,17 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.scene.transform.NonInvertibleTransformException;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class DesignPane extends StackPane {
 
@@ -313,6 +321,58 @@ public class DesignPane extends StackPane {
 		setTranslateX( anchorX + (dx * zoomFactor) );
 		setTranslateY( anchorY + (dy * zoomFactor) );
 		setZoom( getZoom() * zoomFactor );
+	}
+
+	Set<Node> mouseSelect( Point2D a, Point2D b, boolean crossing ) {
+		try {
+			return select( getLocalToParentTransform().inverseTransform( a ), getLocalToParentTransform().inverseTransform( b ), crossing );
+		} catch( NonInvertibleTransformException exception ) {
+			log.log( Log.ERROR, "Unable to transform selection bounds to world coordinates", exception );
+		}
+		return Set.of();
+	}
+
+	/**
+	 * Find the nodes contained by, or intersecting, the window specified by
+	 * points a and b.
+	 *
+	 * @param a One corner of the window
+	 * @param b The other corner of the window
+	 * @param crossing False to select nodes contained in the window, true to select nodes contained by or intersecting the window
+	 * @return The set of selected nodes
+	 */
+	Set<Node> select( Point2D a, Point2D b, boolean crossing ) {
+		double x = Math.min( a.getX(), b.getX() );
+		double y = Math.min( a.getY(), b.getY() );
+		double w = Math.abs( a.getX() - b.getX() );
+		double h = Math.abs( a.getY() - b.getY() );
+		Bounds bounds = new BoundingBox( x, y, w, h );
+		Set<Node> visibleNodes = getVisibleNodes();
+
+		Rectangle box = new Rectangle( x, y, w, h );
+		box.setStroke( Color.TRANSPARENT );
+		box.setFill( Color.TRANSPARENT );
+		getChildren().add( box );
+
+		// check for contains or intersecting
+		try {
+			if( crossing ) {
+				return visibleNodes
+					.stream()
+					.filter( n -> bounds.intersects( n.getBoundsInLocal() ) )
+					.filter( n -> n instanceof Shape )
+					.filter( n -> !((Path)Shape.intersect( (Shape)n, box )).getElements().isEmpty() )
+					.collect( Collectors.toSet() );
+			} else {
+				return visibleNodes.stream().filter( n -> bounds.contains( n.getBoundsInLocal() ) ).collect( Collectors.toSet() );
+			}
+		} finally {
+			getChildren().remove( box );
+		}
+	}
+
+	private Set<Node> getVisibleNodes() {
+		return layers.getChildren().stream().filter( Node::isVisible ).flatMap( l -> ((Pane)l).getChildren().stream() ).collect( Collectors.toSet() );
 	}
 
 	private void repan( Point3D point ) {

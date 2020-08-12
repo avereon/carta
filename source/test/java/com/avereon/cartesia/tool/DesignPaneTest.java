@@ -18,8 +18,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.closeTo;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DesignPaneTest implements NumericTest, TestTimeouts {
 
@@ -50,6 +50,68 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( pane.getScaleY(), is( -1.0 * SCALE ) );
 		assertThat( pane.getTranslateX(), is( 0.0 ) );
 		assertThat( pane.getTranslateY(), is( 0.0 ) );
+	}
+
+	@Test
+	void testSelectIntersects() throws Exception {
+		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
+		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		FxUtil.fxWait( FX_WAIT_TIMEOUT );
+
+		// Get the line that was added for use later
+		StackPane layers = (StackPane)pane.getChildren().get( 0 );
+		Pane construction = (Pane)layers.getChildren().get( 0 );
+		assertTrue( construction.isVisible() );
+		Line line = (Line)construction.getChildren().get( 0 );
+		assertThat( line.getStartX(), is( -1.0 ) );
+		assertThat( line.getStartY(), is( 1.0 ) );
+		assertThat( line.getEndX(), is( 1.0 ) );
+		assertThat( line.getEndY(), is( -1.0 ) );
+
+		assertTrue( pane.select( new Point2D( 1, 1 ), new Point2D( 2, 2 ), true ).isEmpty() );
+		assertThat( pane.select( new Point2D( 0, 0 ), new Point2D( 1, 1 ), true ), contains( line ) );
+		assertThat( pane.select( new Point2D( -1, -1 ), new Point2D( 0, 0 ), true ), contains( line ) );
+		assertTrue( pane.select( new Point2D( -2, -2 ), new Point2D( -1, -1 ), true ).isEmpty() );
+
+		assertThat( pane.select( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), true ), contains( line ) );
+		assertThat( pane.select( new Point2D( -1, -1 ), new Point2D( 1, 1 ), true ), contains( line ) );
+
+		assertThat( pane.select( new Point2D( -2, -2 ), new Point2D( 2, 2 ), true ), contains( line ) );
+		assertThat( pane.select( new Point2D( -2, 2 ), new Point2D( 2, -2 ), true ), contains( line ) );
+	}
+
+	@Test
+	void testSelectContains() throws Exception {
+		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
+		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		FxUtil.fxWait( FX_WAIT_TIMEOUT );
+
+		// Get the line that was added for use later
+		StackPane layers = (StackPane)pane.getChildren().get( 0 );
+		Pane construction = (Pane)layers.getChildren().get( 0 );
+		assertTrue( construction.isVisible() );
+		Line line = (Line)construction.getChildren().get( 0 );
+		assertThat( line.getStartX(), is( -1.0 ) );
+		assertThat( line.getStartY(), is( 1.0 ) );
+		assertThat( line.getEndX(), is( 1.0 ) );
+		assertThat( line.getEndY(), is( -1.0 ) );
+
+		assertTrue( pane.select( new Point2D( 1, 1 ), new Point2D( 2, 2 ), false ).isEmpty() );
+		assertTrue( pane.select( new Point2D( 0, 0 ), new Point2D( 1, 1 ), false ).isEmpty() );
+		assertTrue( pane.select( new Point2D( -1, -1 ), new Point2D( 0, 0 ), false ).isEmpty() );
+		assertTrue( pane.select( new Point2D( -2, -2 ), new Point2D( -1, -1 ), false ).isEmpty() );
+
+		assertTrue( pane.select( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), false ).isEmpty() );
+		// This does not contain the line because the line has width and stroke caps
+		assertTrue( pane.select( new Point2D( -1, -1 ), new Point2D( 1, 1 ), false ).isEmpty() );
+		// This should just barely contain the line
+		double d =line.getBoundsInLocal().getMaxX();
+		assertThat( pane.select( new Point2D( -d, -d ), new Point2D( d, d ), false ), contains( line ) );
+
+		assertThat( pane.select( new Point2D( -2, -2 ), new Point2D( 2, 2 ), false ), contains( line ) );
+		assertThat( pane.select( new Point2D( -2, 2 ), new Point2D( 2, -2 ), false ), contains( line ) );
 	}
 
 	@Test

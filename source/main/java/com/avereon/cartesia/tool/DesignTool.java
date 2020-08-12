@@ -12,11 +12,14 @@ import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Screen;
+
+import java.util.Set;
 
 public abstract class DesignTool extends ProgramTool {
 
@@ -186,6 +189,19 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void zoom( ScrollEvent event ) {
 		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
+	}
+
+	private void select( MouseEvent event ) {
+		Point2D p = new Point2D( event.getX(), event.getY() );
+	}
+
+	private void select( Point2D a, Point2D b ) {
+		select( a, b, false );
+	}
+
+	// Points are in tool coordinates
+	private void select( Point2D a, Point2D b, boolean crossing ) {
+		Set<Node> selected = designPane.select(a,b,crossing );
 	}
 
 	private boolean isPanMouseEvent( MouseEvent event ) {
