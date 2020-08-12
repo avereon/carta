@@ -13,7 +13,7 @@ public class PanCommand extends Command {
 
 	@Override
 	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptCommand( tool, "pan-point" ) );
+		return List.of( new PromptForPointCommand( tool, "pan-point" ) );
 	}
 
 	@Override

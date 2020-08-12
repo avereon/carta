@@ -3,17 +3,17 @@ package com.avereon.cartesia.cursor;
 import com.avereon.zerra.image.Proof;
 import com.avereon.zerra.image.VectorImage;
 
-public class DuplexCursor extends CursorIcon {
+public class DuplexReticle extends CursorIcon {
 
 	private double percent;
 
-	public DuplexCursor() {}
+	public DuplexReticle() {}
 
-	public DuplexCursor( double percent ) {
+	public DuplexReticle( double percent ) {
 		this.percent = percent;
 	}
 
-	public DuplexCursor( double percent, double width, double height ) {
+	public DuplexReticle( double percent, double width, double height ) {
 		super( width, height );
 		this.percent = percent;
 	}
@@ -66,13 +66,13 @@ public class DuplexCursor extends CursorIcon {
 	public <T extends VectorImage> T copy() {
 		T copy = super.copy();
 
-		((DuplexCursor)copy).percent = this.percent;
+		((DuplexReticle)copy).percent = this.percent;
 
 		return copy;
 	}
 
 	public static void main( String[] commands ) {
-		Proof.proof( new DuplexCursor( 0.8, 48, 48 ) );
+		Proof.proof( new DuplexReticle( 0.8, 48, 48 ) );
 	}
 
 }

@@ -17,7 +17,7 @@ public class LineCommand extends Command {
 
 	@Override
 	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptCommand( tool, "start-point" ), new PromptCommand( tool, "end-point" ) );
+		return List.of( new PromptForPointCommand( tool, "start-point" ), new PromptForPointCommand( tool, "end-point" ) );
 	}
 
 	@Override

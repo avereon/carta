@@ -1,12 +1,14 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.el.CasExpressionParser;
 import com.avereon.cartesia.data.CsaShape;
+import com.avereon.cartesia.el.CasExpressionParser;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.task.Task;
+import javafx.application.Platform;
 import javafx.geometry.Point3D;
+import javafx.scene.Cursor;
 
 import java.text.ParseException;
 import java.util.*;
@@ -38,6 +40,7 @@ public class CommandProcessor {
 	}
 
 	public void cancel( DesignTool tool ) {
+		Platform.runLater( () -> tool.setCursor( Cursor.DEFAULT ) );
 		tool.getCommandPrompt().setPrompt( null );
 		commandStack.clear();
 		valueStack.clear();
@@ -95,17 +98,21 @@ public class CommandProcessor {
 	}
 
 	void nextCommand( DesignTool tool ) {
-		// If there are no more commands but there is a shape on the value stack
-		if( commandStack.isEmpty() ) {
-			if( !valueStack.isEmpty() ) {
-				Object value = valueStack.pop();
-				if( value instanceof CsaShape ) {
-					CsaShape shape = (CsaShape)value;
-					tool.getDesign().getCurrentLayer().addShape( shape );
+		try {
+			// If there are no more commands but there is a shape on the value stack
+			if( commandStack.isEmpty() ) {
+				if( !valueStack.isEmpty() ) {
+					Object value = valueStack.pop();
+					if( value instanceof CsaShape ) {
+						CsaShape shape = (CsaShape)value;
+						tool.getDesign().getCurrentLayer().addShape( shape );
+					}
 				}
+			} else {
+				tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
 			}
-		} else {
-			tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
+		} finally {
+			Platform.runLater( () -> tool.setCursor( Cursor.DEFAULT ) );
 		}
 	}
 

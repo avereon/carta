@@ -9,6 +9,7 @@ public class PromptCommand extends Command {
 
 	private final String prompt;
 
+	@Deprecated
 	public PromptCommand( String prompt ) {
 		this.prompt = prompt;
 	}

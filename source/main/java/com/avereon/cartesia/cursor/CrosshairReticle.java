@@ -1,17 +1,17 @@
 package com.avereon.cartesia.cursor;
 
 import com.avereon.zerra.image.Proof;
-import javafx.geometry.Dimension2D;
+import com.avereon.zerra.image.RenderedIcon;
 
-public class CrosshairCursor extends CursorIcon {
+public class CrosshairReticle extends RenderedIcon {
 
-	public CrosshairCursor() {}
+	public CrosshairReticle() {}
 
-	public CrosshairCursor( Dimension2D size ) {
-		this( size.getWidth(), size.getHeight() );
-	}
+//	public CrosshairReticle( Dimension2D size ) {
+//		this( size.getWidth(), size.getHeight() );
+//	}
 
-	public CrosshairCursor( double width, double height ) {
+	public CrosshairReticle( double width, double height ) {
 		super( width, height );
 		resize( width, height );
 	}
@@ -35,7 +35,7 @@ public class CrosshairCursor extends CursorIcon {
 	}
 
 	public static void main( String[] commands ) {
-		Proof.proof( new CrosshairCursor( 48, 48 ) );
+		Proof.proof( new CrosshairReticle( 48, 48 ) );
 	}
 
 }

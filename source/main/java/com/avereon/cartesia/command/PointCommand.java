@@ -15,7 +15,7 @@ public class PointCommand extends Command {
 
 	@Override
 	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptCommand( tool, "select-point" ) );
+		return List.of( new PromptForPointCommand( tool, "select-point" ) );
 	}
 
 	@Override
@@ -23,9 +23,7 @@ public class PointCommand extends Command {
 		Object origin = processor.pullValue();
 
 		if( origin instanceof Point3D ) {
-			CsaPoint point = new CsaPoint( (Point3D)origin );
-			processor.pushValue( tool, point );
-			log.log( Log.DEBUG, "Add point=" + point );
+			processor.pushValue( tool, new CsaPoint( (Point3D)origin ) );
 		} else {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
 			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", origin );

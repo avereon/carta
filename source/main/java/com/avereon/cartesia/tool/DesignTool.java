@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.cursor.StandardCursor;
+import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
@@ -28,6 +28,8 @@ public abstract class DesignTool extends ProgramTool {
 
 	private final CoordinateStatus coordinates;
 
+	private ReticleCursor reticle;
+
 	private DesignPane designPane;
 
 	private Point3D mousePoint;
@@ -45,10 +47,10 @@ public abstract class DesignTool extends ProgramTool {
 		this.coordinates = new CoordinateStatus( this );
 
 		// Initial values from settings
-		setCursor( StandardCursor.valueOf( product.getSettings().get( RETICLE, StandardCursor.DUPLEX.name() ).toUpperCase() ) );
+		setReticle( ReticleCursor.valueOf( product.getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
 
 		// Settings listeners
-		product.getSettings().register( RETICLE, e -> setCursor( StandardCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		product.getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 
 		addEventFilter( KeyEvent.ANY, this::key );
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouse );
@@ -139,8 +141,13 @@ public abstract class DesignTool extends ProgramTool {
 		return designPane == null ? Point3D.ZERO : designPane.getLocalToParentTransform().inverseTransform( x, y, z );
 	}
 
-	private void setCursor( StandardCursor cursor ) {
-		setCursor( cursor.get() );
+	public ReticleCursor getReticle() {
+		return reticle;
+	}
+
+	private void setReticle( ReticleCursor reticle ) {
+		this.reticle = reticle;
+		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
 	}
 
 	private CoordinateStatus getCoordinateStatus() {

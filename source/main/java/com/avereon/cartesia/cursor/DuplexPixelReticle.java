@@ -3,15 +3,15 @@ package com.avereon.cartesia.cursor;
 import com.avereon.zerra.image.Proof;
 import com.avereon.zerra.image.SvgIcon;
 
-public class DuplexPixelCursor extends DuplexCursor {
+public class DuplexPixelReticle extends DuplexReticle {
 
-	public DuplexPixelCursor() {}
+	public DuplexPixelReticle() {}
 
-	public DuplexPixelCursor( double percent ) {
+	public DuplexPixelReticle( double percent ) {
 		super( percent );
 	}
 
-	public DuplexPixelCursor( double percent, double width, double height ) {
+	public DuplexPixelReticle( double percent, double width, double height ) {
 		super( percent, width, height );
 	}
 
@@ -24,7 +24,7 @@ public class DuplexPixelCursor extends DuplexCursor {
 	}
 
 	public static void main( String[] commands ) {
-		Proof.proof( new DuplexPixelCursor( 0.8, 64, 64 ) );
+		Proof.proof( new DuplexPixelReticle( 0.8, 64, 64 ) );
 	}
 
 }
