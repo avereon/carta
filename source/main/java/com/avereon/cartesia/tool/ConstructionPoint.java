@@ -25,6 +25,8 @@ public class ConstructionPoint extends Region {
 
 	private static final double SQRT_ONE_HALF = Math.sqrt( 0.5 );
 
+	private static final Color DEFAULT_COLOR = Color.web( "0x808080ff" );
+
 	private DoubleProperty size;
 
 	public ConstructionPoint() {
@@ -74,7 +76,7 @@ public class ConstructionPoint extends Region {
 	private Collection<Shape> createCircle( double size ) {
 		Circle circle = new Circle( size );
 		circle.setStrokeWidth( 0 );
-		circle.setFill( Color.GRAY );
+		circle.setFill( DEFAULT_COLOR );
 		return Set.of( circle );
 	}
 
@@ -86,7 +88,7 @@ public class ConstructionPoint extends Region {
 		Path p = new Path();
 		p.getElements().addAll( new MoveTo( -size, 0 ), new LineTo( 0, size ), new LineTo( size, 0 ), new LineTo( 0, -size ), new ClosePath() );
 		p.setStrokeWidth( 0 );
-		p.setFill( Color.BLUE );
+		p.setFill( DEFAULT_COLOR );
 		return Set.of( p );
 	}
 
@@ -101,7 +103,7 @@ public class ConstructionPoint extends Region {
 		double z = SQRT_ONE_HALF * size;
 		Rectangle rectangle = new Rectangle( -z, -z, z + z, z + z );
 		rectangle.setStrokeWidth( 0 );
-		rectangle.setFill( Color.GREEN );
+		rectangle.setFill( DEFAULT_COLOR );
 		return Set.of( rectangle );
 	}
 
@@ -112,7 +114,7 @@ public class ConstructionPoint extends Region {
 
 	private Line line( double x1, double y1, double x2, double y2 ) {
 		Line line = new Line( x1, y1, x2, y2 );
-		line.setStroke( Color.GRAY );
+		line.setStroke( DEFAULT_COLOR );
 		line.setStrokeLineCap( StrokeLineCap.BUTT );
 		//line.setStrokeWidth( 0.5 );
 		return line;

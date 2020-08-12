@@ -62,9 +62,9 @@ public class DesignPane extends StackPane {
 
 	private double dpu;
 
-	private Pane reference;
+	private final Pane reference;
 
-	private StackPane layers;
+	private final StackPane layers;
 
 	private final Map<DesignLayer, Node> layerMap;
 
@@ -172,6 +172,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addPoint( CsaPoint pp ) {
+		// FIXME Should the CsaShape class be used to generate the geometry???
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaPoint
 		double size = 0.5;
 		Line h = new Line( pp.getOrigin().getX() - size, pp.getOrigin().getY(), pp.getOrigin().getX() + size, pp.getOrigin().getY() );
@@ -196,6 +197,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addLine( CsaLine ll ) {
+		// FIXME Should the CsaShape class be used to generate the geometry???
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaLine
 		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
 		line.setStroke( ll.getDrawColor() );

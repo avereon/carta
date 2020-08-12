@@ -63,10 +63,10 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	@SuppressWarnings( "unchecked" )
 	public DesignLayer getCurrentLayer() {
 		// Current layer is a node link so the layer doesn't get removed from the layer set
-		return Objects.requireNonNull( ((NodeLink<DesignLayer>)getValue( CURRENT_LAYER )).getNode() );
+		NodeLink<DesignLayer> link = getValue( CURRENT_LAYER );
+		return link == null ? null : link.getNode();
 	}
 
 	public List<DesignLayer> getLayers() {

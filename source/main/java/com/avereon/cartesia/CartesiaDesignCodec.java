@@ -68,6 +68,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
 		Design2D design = new Design2D();
+		design.removeLayer( design.getCurrentLayer() );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 

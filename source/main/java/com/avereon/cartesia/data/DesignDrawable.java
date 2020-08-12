@@ -14,6 +14,12 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String FILL_COLOR = "fill-color";
 
+	private static final double DEFAULT_DRAW_WIDTH = 1.0;
+
+	private static final Color DEFAULT_DRAW_COLOR = Color.web( "0x000000ff");
+
+	private static final Color DEFAULT_FILL_COLOR = Color.web( "0x202030ff");
+
 	protected DesignDrawable() {
 		addModifyingKeys( DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
 	}
@@ -27,8 +33,13 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public double getDrawWidth() {
-		return getValue( DRAW_WIDTH );
+	public Double getDrawWidth() {
+		Double width = getValue( DRAW_COLOR );
+		if( width != null ) return width;
+		if( this instanceof DesignLayer) return DEFAULT_DRAW_WIDTH;
+		DesignNode parent = getParent();
+		if( parent instanceof DesignLayer ) width = ((DesignLayer)parent).getDrawWidth();
+		return width;
 	}
 
 	public DesignDrawable setDrawWidth( double width ) {
@@ -37,7 +48,12 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Color getDrawColor() {
-		return getValue( DRAW_COLOR );
+		Color color = getValue( DRAW_COLOR );
+		if( color != null ) return color;
+		if( this instanceof DesignLayer) return DEFAULT_DRAW_COLOR;
+		DesignNode parent = getParent();
+		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).getDrawColor();
+		return color;
 	}
 
 	public DesignDrawable setDrawColor( Color color ) {
@@ -46,7 +62,12 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Color getFillColor() {
-		return getValue( FILL_COLOR );
+		Color color = getValue( FILL_COLOR );
+		if( color != null ) return color;
+		if( this instanceof DesignLayer) return DEFAULT_FILL_COLOR;
+		DesignNode parent = getParent();
+		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).getFillColor();
+		return color;
 	}
 
 	public DesignDrawable setFillColor( Color color ) {
@@ -56,7 +77,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap(ORDER, DRAW_WIDTH, DRAW_COLOR, FILL_COLOR ) );
+		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_COLOR, FILL_COLOR ) );
 		return map;
 	}
 
