@@ -7,10 +7,6 @@ public class CrosshairReticle extends RenderedIcon {
 
 	public CrosshairReticle() {}
 
-//	public CrosshairReticle( Dimension2D size ) {
-//		this( size.getWidth(), size.getHeight() );
-//	}
-
 	public CrosshairReticle( double width, double height ) {
 		super( width, height );
 		resize( width, height );
