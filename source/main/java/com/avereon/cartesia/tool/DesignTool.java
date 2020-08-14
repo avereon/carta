@@ -1,6 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
@@ -25,6 +26,10 @@ public abstract class DesignTool extends ProgramTool {
 
 	public static final String RETICLE = "reticle";
 
+	public static final String SELECT_APERTURE_RADIUS = "select-aperture-radius";
+
+	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
+
 	private static final System.Logger log = Log.get();
 
 	private final CommandPrompt prompt;
@@ -41,6 +46,10 @@ public abstract class DesignTool extends ProgramTool {
 
 	private Point2D panAnchor;
 
+	private double selectApertureRadius;
+
+	private DesignUnit selectApertureUnit;
+
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 
@@ -51,9 +60,14 @@ public abstract class DesignTool extends ProgramTool {
 
 		// Initial values from settings
 		setReticle( ReticleCursor.valueOf( product.getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
+		double selectApertureRadius = Double.parseDouble( product.getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( product.getSettings().get( SELECT_APERTURE_UNIT, DesignUnit.MILLIMETER.name() ).toUpperCase() );
+		setSelectAperture( selectApertureRadius, selectApertureUnit );
 
 		// Settings listeners
 		product.getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		product.getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectAperture( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) );
+		product.getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectAperture( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) );
 
 		addEventFilter( KeyEvent.ANY, this::key );
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouse );
@@ -88,6 +102,11 @@ public abstract class DesignTool extends ProgramTool {
 
 	public void setZoom( double zoom ) {
 		if( designPane != null ) designPane.setZoom( zoom );
+	}
+
+	public void setSelectAperture( double radius, DesignUnit unit ) {
+		selectApertureRadius = radius;
+		selectApertureUnit = unit;
 	}
 
 	@Override
@@ -141,7 +160,7 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	protected Point3D mouseToWorld( double x, double y, double z ) throws NonInvertibleTransformException {
-		return designPane == null ? Point3D.ZERO : designPane.getLocalToParentTransform().inverseTransform( x, y, z );
+		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld().transform( x, y, z );
 	}
 
 	public ReticleCursor getReticle() {
@@ -175,6 +194,8 @@ public abstract class DesignTool extends ProgramTool {
 			if( isPanMouseEvent( event ) ) {
 				panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
 				dragAnchor = new Point2D( event.getX(), event.getY() );
+			} else if( isSelectMode() ) {
+				mouseSelect( event.getX(), event.getY(), event.getZ(), true );
 			} else {
 				getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 			}
@@ -191,21 +212,34 @@ public abstract class DesignTool extends ProgramTool {
 		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
 	}
 
-	private void select( MouseEvent event ) {
-		Point2D p = new Point2D( event.getX(), event.getY() );
-	}
+	//	private void mouseSelect( MouseEvent event ) {
+	//		mouseSelect( new Point2D( event.getX(), event.getY() ) );
+	//	}
+	//
+	//	private void mouseSelect( Point2D p ) {
+	//		// This will select with a square
+	//		mouseSelect( p.subtract( selectApertureRadius, selectApertureRadius ), p.add( selectApertureRadius, selectApertureRadius ), true );
+	//	}
+	//
+	//	// Points are in tool coordinates
+	//	private void mouseSelect( Point2D a, Point2D b, boolean crossing ) {
+	//		log.log( Log.INFO, "Select a=" + a + " b=" +b );
+	//		Set<Node> selected = designPane.mouseSelect( a, b, crossing );
+	//		selected.forEach( shape -> log.log( Log.INFO, "s=" + shape ) );
+	//	}
 
-	private void select( Point2D a, Point2D b ) {
-		select( a, b, false );
-	}
-
-	// Points are in tool coordinates
-	private void select( Point2D a, Point2D b, boolean crossing ) {
-		Set<Node> selected = designPane.select(a,b,crossing );
+	private Set<Node> mouseSelect( double x, double y, double z, boolean crossing ) throws NonInvertibleTransformException {
+		Set<Node> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit, crossing );
+		selection.forEach( n -> log.log( Log.WARN, "selected=" + n ) );
+		return selection;
 	}
 
 	private boolean isPanMouseEvent( MouseEvent event ) {
 		return event.isShiftDown() && event.isPrimaryButtonDown();
+	}
+
+	private boolean isSelectMode() {
+		return getDesign().getCommandProcessor().isSelecting();
 	}
 
 }

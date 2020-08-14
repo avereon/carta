@@ -9,7 +9,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -19,11 +18,10 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.transform.Transform;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -323,13 +321,29 @@ public class DesignPane extends StackPane {
 		setZoom( getZoom() * zoomFactor );
 	}
 
-	Set<Node> mouseSelect( Point2D a, Point2D b, boolean crossing ) {
+	Transform mouseToWorld() {
 		try {
-			return select( getLocalToParentTransform().inverseTransform( a ), getLocalToParentTransform().inverseTransform( b ), crossing );
+			return getLocalToParentTransform().createInverse();
 		} catch( NonInvertibleTransformException exception ) {
-			log.log( Log.ERROR, "Unable to transform selection bounds to world coordinates", exception );
+			log.log( Log.ERROR, "Unable to obtain parent to local transform" );
 		}
-		return Set.of();
+		return new Affine();
+	}
+
+	Set<Node> apertureSelect( double x, double y, double z, double r, DesignUnit u, boolean crossing ) {
+		// Convert the aperture radius and unit to world values
+		double pixels = u.to( r, DesignUnit.INCH ) * getDpi();
+		Point2D aperture  = mouseToWorld().transform( getTranslateX() + pixels, getTranslateY() + pixels );
+		log.log( Log.INFO, "a=" + aperture.getX() );
+		return selectByAperture( mouseToWorld().transform( x, y, z ), aperture.getX(), crossing );
+	}
+
+	Set<Node> windowSelect( Point2D a, Point2D b, boolean crossing ) {
+		return selectByWindow( mouseToWorld().transform( a ), mouseToWorld().transform( b ), crossing );
+	}
+
+	Set<Node> selectByAperture( Point3D anchor, double radius, boolean crossing ) {
+		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), crossing );
 	}
 
 	/**
@@ -341,18 +355,25 @@ public class DesignPane extends StackPane {
 	 * @param crossing False to select nodes contained in the window, true to select nodes contained by or intersecting the window
 	 * @return The set of selected nodes
 	 */
-	Set<Node> select( Point2D a, Point2D b, boolean crossing ) {
+	Set<Node> selectByWindow( Point2D a, Point2D b, boolean crossing ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
 		double h = Math.abs( a.getY() - b.getY() );
-		Bounds bounds = new BoundingBox( x, y, w, h );
-		Set<Node> visibleNodes = getVisibleNodes();
 
 		Rectangle box = new Rectangle( x, y, w, h );
-		box.setStroke( Color.TRANSPARENT );
-		box.setFill( Color.TRANSPARENT );
-		getChildren().add( box );
+		return selectByShape( box, crossing );
+	}
+
+	private Set<Node> selectByShape( Shape aperture, boolean crossing ) {
+		aperture.setStroke( Color.TRANSPARENT );
+		aperture.setFill( Color.TRANSPARENT );
+		getChildren().add( aperture );
+
+		log.log( Log.INFO, "Select a=" + aperture );
+
+		Bounds bounds = aperture.getBoundsInLocal();
+		Set<Node> visibleNodes = getVisibleNodes();
 
 		// check for contains or intersecting
 		try {
@@ -361,13 +382,13 @@ public class DesignPane extends StackPane {
 					.stream()
 					.filter( n -> bounds.intersects( n.getBoundsInLocal() ) )
 					.filter( n -> n instanceof Shape )
-					.filter( n -> !((Path)Shape.intersect( (Shape)n, box )).getElements().isEmpty() )
+					.filter( n -> !((Path)Shape.intersect( (Shape)n, aperture )).getElements().isEmpty() )
 					.collect( Collectors.toSet() );
 			} else {
 				return visibleNodes.stream().filter( n -> bounds.contains( n.getBoundsInLocal() ) ).collect( Collectors.toSet() );
 			}
 		} finally {
-			getChildren().remove( box );
+			getChildren().remove( aperture );
 		}
 	}
 
@@ -386,15 +407,11 @@ public class DesignPane extends StackPane {
 
 	private void rescale( boolean recalculateDpu ) {
 		if( recalculateDpu ) this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
-		double scale = getDpu() * getZoom();
+		double scale = this.dpu * getZoom();
 		setScaleX( scale );
 		setScaleY( -scale );
 		reference.setScaleX( 1 / scale );
 		reference.setScaleY( 1 / scale );
-	}
-
-	private double getDpu() {
-		return dpu;
 	}
 
 	private static class LayerSorter implements Comparator<Node> {

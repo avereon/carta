@@ -69,16 +69,16 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( line.getEndX(), is( 1.0 ) );
 		assertThat( line.getEndY(), is( -1.0 ) );
 
-		assertTrue( pane.select( new Point2D( 1, 1 ), new Point2D( 2, 2 ), true ).isEmpty() );
-		assertThat( pane.select( new Point2D( 0, 0 ), new Point2D( 1, 1 ), true ), contains( line ) );
-		assertThat( pane.select( new Point2D( -1, -1 ), new Point2D( 0, 0 ), true ), contains( line ) );
-		assertTrue( pane.select( new Point2D( -2, -2 ), new Point2D( -1, -1 ), true ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( 1, 1 ), new Point2D( 2, 2 ), true ).isEmpty() );
+		assertThat( pane.selectByWindow( new Point2D( 0, 0 ), new Point2D( 1, 1 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 0, 0 ), true ), contains( line ) );
+		assertTrue( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( -1, -1 ), true ).isEmpty() );
 
-		assertThat( pane.select( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), true ), contains( line ) );
-		assertThat( pane.select( new Point2D( -1, -1 ), new Point2D( 1, 1 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 1, 1 ), true ), contains( line ) );
 
-		assertThat( pane.select( new Point2D( -2, -2 ), new Point2D( 2, 2 ), true ), contains( line ) );
-		assertThat( pane.select( new Point2D( -2, 2 ), new Point2D( 2, -2 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( 2, 2 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -2, 2 ), new Point2D( 2, -2 ), true ), contains( line ) );
 	}
 
 	@Test
@@ -98,20 +98,20 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( line.getEndX(), is( 1.0 ) );
 		assertThat( line.getEndY(), is( -1.0 ) );
 
-		assertTrue( pane.select( new Point2D( 1, 1 ), new Point2D( 2, 2 ), false ).isEmpty() );
-		assertTrue( pane.select( new Point2D( 0, 0 ), new Point2D( 1, 1 ), false ).isEmpty() );
-		assertTrue( pane.select( new Point2D( -1, -1 ), new Point2D( 0, 0 ), false ).isEmpty() );
-		assertTrue( pane.select( new Point2D( -2, -2 ), new Point2D( -1, -1 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( 1, 1 ), new Point2D( 2, 2 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( 0, 0 ), new Point2D( 1, 1 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 0, 0 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( -1, -1 ), false ).isEmpty() );
 
-		assertTrue( pane.select( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), false ).isEmpty() );
 		// This does not contain the line because the line has width and stroke caps
-		assertTrue( pane.select( new Point2D( -1, -1 ), new Point2D( 1, 1 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 1, 1 ), false ).isEmpty() );
 		// This should just barely contain the line
 		double d =line.getBoundsInLocal().getMaxX();
-		assertThat( pane.select( new Point2D( -d, -d ), new Point2D( d, d ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -d, -d ), new Point2D( d, d ), false ), contains( line ) );
 
-		assertThat( pane.select( new Point2D( -2, -2 ), new Point2D( 2, 2 ), false ), contains( line ) );
-		assertThat( pane.select( new Point2D( -2, 2 ), new Point2D( 2, -2 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( 2, 2 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point2D( -2, 2 ), new Point2D( 2, -2 ), false ), contains( line ) );
 	}
 
 	@Test

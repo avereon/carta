@@ -97,6 +97,10 @@ public class CommandProcessor {
 		return valueStack.isEmpty() ? null : valueStack.pop();
 	}
 
+	public boolean isSelecting() {
+		return commandStack.isEmpty();
+	}
+
 	void nextCommand( DesignTool tool ) {
 		try {
 			// If there are no more commands but there is a shape on the value stack
