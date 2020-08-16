@@ -17,7 +17,6 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.stage.Screen;
 
 import java.util.Set;
@@ -67,7 +66,9 @@ public abstract class DesignTool extends ProgramTool {
 		// Settings listeners
 		product.getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		product.getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectAperture( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) );
-		product.getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectAperture( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) );
+		product
+			.getSettings()
+			.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) );
 
 		addEventFilter( KeyEvent.ANY, this::key );
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouse );
@@ -159,7 +160,7 @@ public abstract class DesignTool extends ProgramTool {
 		}
 	}
 
-	protected Point3D mouseToWorld( double x, double y, double z ) throws NonInvertibleTransformException {
+	protected Point3D mouseToWorld( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld().transform( x, y, z );
 	}
 
@@ -181,26 +182,18 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private void mouse( MouseEvent event ) {
-		try {
-			mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
-			getCoordinateStatus().updatePosition( mousePoint.getX(), mousePoint.getY(), mousePoint.getZ() );
-		} catch( NonInvertibleTransformException exception ) {
-			log.log( Log.ERROR, exception );
-		}
+		mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
+		getCoordinateStatus().updatePosition( mousePoint.getX(), mousePoint.getY(), mousePoint.getZ() );
 	}
 
 	private void anchor( MouseEvent event ) {
-		try {
-			if( isPanMouseEvent( event ) ) {
-				panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
-				dragAnchor = new Point2D( event.getX(), event.getY() );
-			} else if( isSelectMode() ) {
-				mouseSelect( event.getX(), event.getY(), event.getZ(), true );
-			} else {
-				getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
-			}
-		} catch( NonInvertibleTransformException exception ) {
-			log.log( Log.ERROR, exception );
+		if( isPanMouseEvent( event ) ) {
+			panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
+			dragAnchor = new Point2D( event.getX(), event.getY() );
+		} else if( isSelectMode() ) {
+			mouseSelect( event.getX(), event.getY(), event.getZ() );
+		} else {
+			getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 		}
 	}
 
@@ -228,8 +221,8 @@ public abstract class DesignTool extends ProgramTool {
 	//		selected.forEach( shape -> log.log( Log.INFO, "s=" + shape ) );
 	//	}
 
-	private Set<Node> mouseSelect( double x, double y, double z, boolean crossing ) throws NonInvertibleTransformException {
-		Set<Node> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit, crossing );
+	private Set<Node> mouseSelect( double x, double y, double z ) {
+		Set<Node> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit );
 		selection.forEach( n -> log.log( Log.WARN, "selected=" + n ) );
 		return selection;
 	}

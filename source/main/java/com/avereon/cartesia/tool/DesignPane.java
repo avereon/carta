@@ -68,9 +68,11 @@ public class DesignPane extends StackPane {
 
 	private double dpu;
 
-	private final Pane reference;
-
 	private final StackPane layers;
+
+	private final Pane preview;
+
+	private final Pane reference;
 
 	private final Map<DesignLayer, Node> layerMap;
 
@@ -83,8 +85,9 @@ public class DesignPane extends StackPane {
 	public DesignPane( Design design ) {
 		this.design = Objects.requireNonNull( design );
 		layers = new StackPane();
+		preview = new Pane();
 		reference = new Pane();
-		getChildren().addAll( layers, reference );
+		getChildren().addAll( layers, preview, reference );
 
 		addOriginReferencePoint();
 
@@ -330,20 +333,20 @@ public class DesignPane extends StackPane {
 		return new Affine();
 	}
 
-	Set<Node> apertureSelect( double x, double y, double z, double r, DesignUnit u, boolean crossing ) {
+	Set<Node> apertureSelect( double x, double y, double z, double r, DesignUnit u ) {
 		// Convert the aperture radius and unit to world values
 		double pixels = u.to( r, DesignUnit.INCH ) * getDpi();
 		Point2D aperture  = mouseToWorld().transform( getTranslateX() + pixels, getTranslateY() + pixels );
 		log.log( Log.INFO, "a=" + aperture.getX() );
-		return selectByAperture( mouseToWorld().transform( x, y, z ), aperture.getX(), crossing );
+		return selectByAperture( mouseToWorld().transform( x, y, z ), aperture.getX() );
 	}
 
-	Set<Node> windowSelect( Point2D a, Point2D b, boolean crossing ) {
+	Set<Node> windowSelect( Point3D a, Point3D b, boolean crossing ) {
 		return selectByWindow( mouseToWorld().transform( a ), mouseToWorld().transform( b ), crossing );
 	}
 
-	Set<Node> selectByAperture( Point3D anchor, double radius, boolean crossing ) {
-		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), crossing );
+	Set<Node> selectByAperture( Point3D anchor, double radius ) {
+		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), true );
 	}
 
 	/**
@@ -355,7 +358,7 @@ public class DesignPane extends StackPane {
 	 * @param crossing False to select nodes contained in the window, true to select nodes contained by or intersecting the window
 	 * @return The set of selected nodes
 	 */
-	Set<Node> selectByWindow( Point2D a, Point2D b, boolean crossing ) {
+	Set<Node> selectByWindow( Point3D a, Point3D b, boolean crossing ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
@@ -365,30 +368,29 @@ public class DesignPane extends StackPane {
 		return selectByShape( box, crossing );
 	}
 
-	private Set<Node> selectByShape( Shape aperture, boolean crossing ) {
-		aperture.setStroke( Color.TRANSPARENT );
-		aperture.setFill( Color.TRANSPARENT );
-		getChildren().add( aperture );
+	private Set<Node> selectByShape( Shape shape, boolean crossing ) {
+		// The shape must have a fill but no stroke
+		shape.setFill( Color.TRANSPARENT );
+		shape.setStroke( null );
 
-		log.log( Log.INFO, "Select a=" + aperture );
-
-		Bounds bounds = aperture.getBoundsInLocal();
 		Set<Node> visibleNodes = getVisibleNodes();
 
 		// check for contains or intersecting
 		try {
+			preview.getChildren().add( shape );
+			Bounds bounds = shape.getBoundsInLocal();
 			if( crossing ) {
 				return visibleNodes
 					.stream()
 					.filter( n -> bounds.intersects( n.getBoundsInLocal() ) )
 					.filter( n -> n instanceof Shape )
-					.filter( n -> !((Path)Shape.intersect( (Shape)n, aperture )).getElements().isEmpty() )
+					.filter( n -> !((Path)Shape.intersect( (Shape)n, shape )).getElements().isEmpty() )
 					.collect( Collectors.toSet() );
 			} else {
 				return visibleNodes.stream().filter( n -> bounds.contains( n.getBoundsInLocal() ) ).collect( Collectors.toSet() );
 			}
 		} finally {
-			getChildren().remove( aperture );
+			preview.getChildren().remove( shape );
 		}
 	}
 

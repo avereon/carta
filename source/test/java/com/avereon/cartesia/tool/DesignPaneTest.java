@@ -53,7 +53,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	}
 
 	@Test
-	void testSelectIntersects() throws Exception {
+	void testApertureSelect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.addLayer( layer ).setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
@@ -69,20 +69,13 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( line.getEndX(), is( 1.0 ) );
 		assertThat( line.getEndY(), is( -1.0 ) );
 
-		assertTrue( pane.selectByWindow( new Point2D( 1, 1 ), new Point2D( 2, 2 ), true ).isEmpty() );
-		assertThat( pane.selectByWindow( new Point2D( 0, 0 ), new Point2D( 1, 1 ), true ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 0, 0 ), true ), contains( line ) );
-		assertTrue( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( -1, -1 ), true ).isEmpty() );
-
-		assertThat( pane.selectByWindow( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), true ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 1, 1 ), true ), contains( line ) );
-
-		assertThat( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( 2, 2 ), true ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point2D( -2, 2 ), new Point2D( 2, -2 ), true ), contains( line ) );
+		assertTrue( pane.selectByAperture( new Point3D( 1, 1, 0 ), 0.1 ).isEmpty() );
+		assertThat( pane.selectByAperture( new Point3D( 0, 0, 0 ), 0.1 ), contains( line ) );
+		assertTrue( pane.selectByAperture( new Point3D( -1, -1, 0 ), 0.1 ).isEmpty() );
 	}
 
 	@Test
-	void testSelectContains() throws Exception {
+	void testWindowSelectWithIntersect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.addLayer( layer ).setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
@@ -98,20 +91,49 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( line.getEndX(), is( 1.0 ) );
 		assertThat( line.getEndY(), is( -1.0 ) );
 
-		assertTrue( pane.selectByWindow( new Point2D( 1, 1 ), new Point2D( 2, 2 ), false ).isEmpty() );
-		assertTrue( pane.selectByWindow( new Point2D( 0, 0 ), new Point2D( 1, 1 ), false ).isEmpty() );
-		assertTrue( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 0, 0 ), false ).isEmpty() );
-		assertTrue( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( -1, -1 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), true ).isEmpty() );
+		assertThat( pane.selectByWindow( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), true ), contains( line ) );
+		assertTrue( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), true ).isEmpty() );
 
-		assertTrue( pane.selectByWindow( new Point2D( -0.5, -0.5 ), new Point2D( 0.5, 0.5 ), false ).isEmpty() );
+		assertThat( pane.selectByWindow( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), true ), contains( line ) );
+
+		assertThat( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), true ), contains( line ) );
+	}
+
+	@Test
+	void testWindowSelectWithContains() throws Exception {
+		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
+		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		FxUtil.fxWait( FX_WAIT_TIMEOUT );
+
+		// Get the line that was added for use later
+		StackPane layers = (StackPane)pane.getChildren().get( 0 );
+		Pane construction = (Pane)layers.getChildren().get( 0 );
+		assertTrue( construction.isVisible() );
+		Line line = (Line)construction.getChildren().get( 0 );
+		assertThat( line.getStartX(), is( -1.0 ) );
+		assertThat( line.getStartY(), is( 1.0 ) );
+		assertThat( line.getEndX(), is( 1.0 ) );
+		assertThat( line.getEndY(), is( -1.0 ) );
+
+		assertTrue( pane.selectByWindow( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), false ).isEmpty() );
+
+		assertTrue( pane.selectByWindow( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), false ).isEmpty() );
 		// This does not contain the line because the line has width and stroke caps
-		assertTrue( pane.selectByWindow( new Point2D( -1, -1 ), new Point2D( 1, 1 ), false ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), false ).isEmpty() );
 		// This should just barely contain the line
-		double d =line.getBoundsInLocal().getMaxX();
-		assertThat( pane.selectByWindow( new Point2D( -d, -d ), new Point2D( d, d ), false ), contains( line ) );
+		double d = line.getBoundsInLocal().getMaxX();
+		assertThat( pane.selectByWindow( new Point3D( -d, -d, 0 ), new Point3D( d, d, 0 ), false ), contains( line ) );
 
-		assertThat( pane.selectByWindow( new Point2D( -2, -2 ), new Point2D( 2, 2 ), false ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point2D( -2, 2 ), new Point2D( 2, -2 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), false ), contains( line ) );
 	}
 
 	@Test
