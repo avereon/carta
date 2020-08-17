@@ -166,14 +166,16 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	@Test
 	void testPanAbsolute() {
 		double offset = DesignUnit.CENTIMETER.to( 1, DesignUnit.INCH ) * pane.getDpi();
+		double cx = 800;
+		double cy = 450;
 
 		pane.setPan( Point3D.ZERO );
-		assertThat( pane.getTranslateX(), is( 800.0 ) );
-		assertThat( pane.getTranslateY(), is( 450.0 ) );
+		assertThat( pane.getTranslateX(), is( cx ) );
+		assertThat( pane.getTranslateY(), is( cy ) );
 
 		pane.setPan( new Point3D( 1, 1, 0 ) );
-		assertThat( pane.getTranslateX(), is( 800.0 - offset ) );
-		assertThat( pane.getTranslateY(), is( 450.0 + offset ) );
+		assertThat( pane.getTranslateX(), is( cx - offset ) );
+		assertThat( pane.getTranslateY(), is( cy + offset ) );
 	}
 
 	@Test
