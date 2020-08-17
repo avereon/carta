@@ -58,7 +58,7 @@ public abstract class Design extends IdNode {
 	}
 
 	public Design setCurrentLayer( DesignLayer layer ) {
-		if( !getValues( LAYERS ).contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
+		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
 		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
 		return this;
 	}
@@ -67,6 +67,12 @@ public abstract class Design extends IdNode {
 		// Current layer is a node link so the layer doesn't get removed from the layer set
 		NodeLink<DesignLayer> link = getValue( CURRENT_LAYER );
 		return link == null ? null : link.getNode();
+	}
+
+	public Set<DesignLayer> getAllLayers() {
+		Set<DesignLayer> layers = new HashSet<>( getValues( LAYERS ) );
+		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toSet() ) );
+		return layers;
 	}
 
 	public List<DesignLayer> getLayers() {
@@ -95,6 +101,10 @@ public abstract class Design extends IdNode {
 	public Design removeView( DesignView view ) {
 		removeFromSet( VIEWS, view );
 		return this;
+	}
+
+	public void clearSelected() {
+		getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> s.setSelected( false ) );
 	}
 
 	public Map<String, ?> asMap() {

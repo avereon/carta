@@ -63,6 +63,7 @@ public class CommandPrompt extends BorderPane {
 				case ESCAPE: {
 					// Cancel the command stack
 					getDesign().getCommandProcessor().cancel( tool );
+					getDesign().clearSelected();
 					clear();
 					break;
 				}

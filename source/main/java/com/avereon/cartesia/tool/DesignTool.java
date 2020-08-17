@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.data.CsaShape;
 import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
@@ -205,25 +206,12 @@ public abstract class DesignTool extends ProgramTool {
 		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
 	}
 
-	//	private void mouseSelect( MouseEvent event ) {
-	//		mouseSelect( new Point2D( event.getX(), event.getY() ) );
-	//	}
-	//
-	//	private void mouseSelect( Point2D p ) {
-	//		// This will select with a square
-	//		mouseSelect( p.subtract( selectApertureRadius, selectApertureRadius ), p.add( selectApertureRadius, selectApertureRadius ), true );
-	//	}
-	//
-	//	// Points are in tool coordinates
-	//	private void mouseSelect( Point2D a, Point2D b, boolean crossing ) {
-	//		log.log( Log.INFO, "Select a=" + a + " b=" +b );
-	//		Set<Node> selected = designPane.mouseSelect( a, b, crossing );
-	//		selected.forEach( shape -> log.log( Log.INFO, "s=" + shape ) );
-	//	}
-
 	private Set<Node> mouseSelect( double x, double y, double z ) {
 		Set<Node> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit );
-		selection.forEach( n -> log.log( Log.WARN, "selected=" + n ) );
+		selection.forEach( n -> {
+			CsaShape s = (CsaShape)n.getProperties().get( "data" );
+			s.setSelected( !s.isSelected() );
+		});
 		return selection;
 	}
 

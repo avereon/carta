@@ -5,14 +5,10 @@ import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -157,6 +153,18 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
+	private ConstructionPoint cp( ReadOnlyObjectProperty<Bounds> bProperty ) {
+		ConstructionPoint cp = new ConstructionPoint();
+		bProperty.addListener( (p,o,n ) -> {
+			cp.layoutXProperty().set( bProperty.get().getCenterX() );
+			cp.layoutYProperty().set( bProperty.get().getCenterY());
+		} );
+//		bProperty.get().getCenterX();
+//		cp.layoutXProperty().bind( xProperty.multiply( scaleXProperty() ) );
+//		cp.layoutYProperty().bind( yProperty.multiply( scaleYProperty() ).negate() );
+		return cp;
+	}
+
 	private ConstructionPoint cp( DoubleProperty xProperty, DoubleProperty yProperty ) {
 		ConstructionPoint cp = new ConstructionPoint();
 		cp.layoutXProperty().bind( xProperty.multiply( scaleXProperty() ) );
@@ -184,23 +192,47 @@ public class DesignPane extends StackPane {
 		// FIXME Should the CsaShape class be used to generate the geometry???
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaPoint
 		double size = 0.5;
-		Line h = new Line( pp.getOrigin().getX() - size, pp.getOrigin().getY(), pp.getOrigin().getX() + size, pp.getOrigin().getY() );
-		h.setStroke( pp.getDrawColor() );
-		h.setStrokeWidth( 0.1 );
-		Line v = new Line( pp.getOrigin().getX(), pp.getOrigin().getY() - size, pp.getOrigin().getX(), pp.getOrigin().getY() + size );
-		v.setStroke( pp.getDrawColor() );
-		v.setStrokeWidth( 0.1 );
-		Group point = new Group( h, v );
+		double offset = 0.1 * size;
+		double ox = pp.getOrigin().getX();
+		double oy = pp.getOrigin().getY();
+
+		Path p = new Path();
+		p.getElements().add( new MoveTo( ox - offset, oy + size ) );
+		p.getElements().add( new LineTo( ox + offset, oy + size ) );
+		p.getElements().add( new LineTo( ox + offset, oy + offset ) );
+		p.getElements().add( new LineTo( ox + size, oy + offset ) );
+		p.getElements().add( new LineTo( ox + size, oy - offset ) );
+		p.getElements().add( new LineTo( ox + offset, oy - offset ) );
+		p.getElements().add( new LineTo( ox + offset, oy - size ) );
+		p.getElements().add( new LineTo( ox - offset, oy - size ) );
+		p.getElements().add( new LineTo( ox - offset, oy - offset ) );
+		p.getElements().add( new LineTo( ox - size, oy - offset ) );
+		p.getElements().add( new LineTo( ox - size, oy + offset ) );
+		p.getElements().add( new LineTo( ox - offset, oy + offset ) );
+		p.getElements().add( new ClosePath() );
+		p.setFill( pp.getDrawColor() );
+
+//		Line h = new Line( pp.getOrigin().getX() - size, pp.getOrigin().getY(), pp.getOrigin().getX() + size, pp.getOrigin().getY() );
+//		h.setStroke( pp.getDrawColor() );
+//		h.setStrokeWidth( 0.1 );
+//		Line v = new Line( pp.getOrigin().getX(), pp.getOrigin().getY() - size, pp.getOrigin().getX(), pp.getOrigin().getY() + size );
+//		v.setStroke( pp.getDrawColor() );
+//		v.setStrokeWidth( 0.1 );
+//		Group point = new Group( h, v );
+
+		pp.register( CsaShape.SELECTED, e -> {
+			p.setStroke( e.getNewValue() ? Color.MAGENTA : pp.getDrawColor() );
+		} );
 
 		// TODO Generalize and simplify
-		ConstructionPoint o = cp( v.startXProperty(), h.startYProperty() );
-		point.getProperties().put( "data", pp );
-		point.getProperties().put( "construction-points", Set.of( o ) );
+		ConstructionPoint o = cp( p.boundsInParentProperty() );
+		p.getProperties().put( "data", pp );
+		p.getProperties().put( "construction-points", Set.of( o ) );
 
 		DesignLayer yy = pp.getParent();
 		Pane layer = (Pane)layerMap.get( yy );
 		Platform.runLater( () -> {
-			layer.getChildren().add( point );
+			layer.getChildren().add( p );
 			reference.getChildren().addAll( o );
 		} );
 	}
@@ -210,6 +242,8 @@ public class DesignPane extends StackPane {
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaLine
 		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
 		line.setStroke( ll.getDrawColor() );
+
+		ll.register( CsaShape.SELECTED, e -> line.setStroke( e.getNewValue() ? Color.MAGENTA : ll.getDrawColor() ) );
 
 		// TODO Generalize and simplify
 		ConstructionPoint o = cp( line.startXProperty(), line.startYProperty() );
@@ -336,7 +370,7 @@ public class DesignPane extends StackPane {
 	Set<Node> apertureSelect( double x, double y, double z, double r, DesignUnit u ) {
 		// Convert the aperture radius and unit to world values
 		double pixels = u.to( r, DesignUnit.INCH ) * getDpi();
-		Point2D aperture  = mouseToWorld().transform( getTranslateX() + pixels, getTranslateY() + pixels );
+		Point2D aperture = mouseToWorld().transform( getTranslateX() + pixels, getTranslateY() + pixels );
 		log.log( Log.INFO, "a=" + aperture.getX() );
 		return selectByAperture( mouseToWorld().transform( x, y, z ), aperture.getX() );
 	}

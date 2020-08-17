@@ -12,6 +12,8 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 
 	public static final String ORIGIN = "origin";
 
+	public static final String SELECTED = "selected";
+
 	public static final NodeComparator<CsaShape> comparator;
 
 	static {
@@ -28,6 +30,15 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 
 	public CsaShape setOrigin( Point3D origin ) {
 		setValue( ORIGIN, origin );
+		return this;
+	}
+
+	public boolean isSelected() {
+		return getValue( SELECTED, false );
+	}
+
+	public CsaShape setSelected( boolean selected ) {
+		setValue( SELECTED, selected );
 		return this;
 	}
 
