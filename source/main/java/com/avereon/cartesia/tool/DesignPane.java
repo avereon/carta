@@ -159,9 +159,6 @@ public class DesignPane extends StackPane {
 			cp.layoutXProperty().set( bProperty.get().getCenterX() );
 			cp.layoutYProperty().set( bProperty.get().getCenterY());
 		} );
-//		bProperty.get().getCenterX();
-//		cp.layoutXProperty().bind( xProperty.multiply( scaleXProperty() ) );
-//		cp.layoutYProperty().bind( yProperty.multiply( scaleYProperty() ).negate() );
 		return cp;
 	}
 
@@ -211,6 +208,8 @@ public class DesignPane extends StackPane {
 		p.getElements().add( new LineTo( ox - offset, oy + offset ) );
 		p.getElements().add( new ClosePath() );
 		p.setFill( pp.getDrawColor() );
+		p.setStrokeWidth( 0 );
+		p.setStroke( null );
 
 //		Line h = new Line( pp.getOrigin().getX() - size, pp.getOrigin().getY(), pp.getOrigin().getX() + size, pp.getOrigin().getY() );
 //		h.setStroke( pp.getDrawColor() );
@@ -221,7 +220,7 @@ public class DesignPane extends StackPane {
 //		Group point = new Group( h, v );
 
 		pp.register( CsaShape.SELECTED, e -> {
-			p.setStroke( e.getNewValue() ? Color.MAGENTA : pp.getDrawColor() );
+			p.setFill( e.getNewValue() ? Color.MAGENTA : pp.getDrawColor() );
 		} );
 
 		// TODO Generalize and simplify
