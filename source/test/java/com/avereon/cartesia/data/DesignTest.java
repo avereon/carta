@@ -50,16 +50,16 @@ public class DesignTest {
 	void testAddRemoveLayer() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getLayers().size(), is( 0 ) );
+		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
 		assertThat( design.isModified(), is( false ) );
 
 		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
-		design.addLayer( layer );
-		assertThat( design.getLayers().size(), is( 1 ) );
+		design.getRootLayer().addLayer( layer );
+		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( true ) );
 
-		design.removeLayer( layer );
-		assertThat( design.getLayers().size(), is( 0 ) );
+		design.getRootLayer().removeLayer( layer );
+		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
 		assertThat( design.isModified(), is( false ) );
 	}
 
@@ -67,16 +67,16 @@ public class DesignTest {
 	void testAddLayerAndSave() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getLayers().size(), is( 0 ) );
+		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
 		assertThat( design.isModified(), is( false ) );
 
 		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
-		design.addLayer( layer );
-		assertThat( design.getLayers().size(), is( 1 ) );
+		design.getRootLayer().addLayer( layer );
+		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( true ) );
 
 		design.setModified( false );
-		assertThat( design.getLayers().size(), is( 1 ) );
+		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( false ) );
 	}
 

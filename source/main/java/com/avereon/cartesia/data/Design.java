@@ -3,7 +3,6 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
-import com.avereon.data.NodeComparator;
 import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
 
@@ -18,18 +17,24 @@ public abstract class Design extends IdNode {
 
 	public static final String UNIT = "unit";
 
-	public static final String LAYERS = "layers";
-
-	public static final String VIEWS = "views";
+	public static final String ROOT_LAYER = "root-layer";
 
 	public static final String CURRENT_LAYER = "current-layer";
+
+	public static final String VIEWS = "views";
 
 	private static final System.Logger log = Log.get();
 
 	private final CommandProcessor commandProcessor;
 
 	public Design() {
-		addModifyingKeys( NAME, UNIT, LAYERS );
+		addModifyingKeys( NAME, UNIT, ROOT_LAYER );
+
+		// Read-only values
+		setValue( ROOT_LAYER, new DesignLayer() );
+		defineReadOnly( ROOT_LAYER );
+
+		// Default values
 		setDesignUnit( DEFAULT_DESIGN_UNIT );
 
 		this.commandProcessor = new CommandProcessor();
@@ -57,36 +62,27 @@ public abstract class Design extends IdNode {
 		return commandProcessor;
 	}
 
-	public Design setCurrentLayer( DesignLayer layer ) {
-		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
-		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
-		return this;
+	public DesignLayer getRootLayer() {
+		return getValue( ROOT_LAYER );
 	}
 
 	public DesignLayer getCurrentLayer() {
-		// Current layer is a node link so the layer doesn't get removed from the layer set
+		// Current layer is a node link so the layer doesn't get removed from the layer tree
 		NodeLink<DesignLayer> link = getValue( CURRENT_LAYER );
 		return link == null ? null : link.getNode();
 	}
 
+	public Design setCurrentLayer( DesignLayer layer ) {
+		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
+		// Current layer is a node link so the layer doesn't get removed from the layer tree
+		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
+		return this;
+	}
+
 	public Set<DesignLayer> getAllLayers() {
-		Set<DesignLayer> layers = new HashSet<>( getValues( LAYERS ) );
+		Set<DesignLayer> layers = new HashSet<>( getRootLayer().getAllLayers() );
 		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toSet() ) );
 		return layers;
-	}
-
-	public List<DesignLayer> getLayers() {
-		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER ) );
-	}
-
-	public Design addLayer( DesignLayer layer ) {
-		addToSet( LAYERS, layer );
-		return this;
-	}
-
-	public Design removeLayer( DesignLayer layer ) {
-		removeFromSet( LAYERS, layer );
-		return this;
 	}
 
 	public Set<DesignView> getViews() {
@@ -113,8 +109,8 @@ public abstract class Design extends IdNode {
 
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
-		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
 		map.put( CURRENT_LAYER, getCurrentLayer().getId() );
+		map.put( DesignLayer.LAYERS, getRootLayer().getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
 		return map;
 	}
 

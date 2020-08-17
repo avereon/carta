@@ -30,10 +30,11 @@ public class Design2dAssetType extends AssetType {
 		if( design == null ) asset.setModel( design = new Design2D() );
 
 		// If there is not a default layer, create one
-		if( design.getLayers().size() == 0 ) {
+		if( design.getRootLayer().getLayers().size() == 0 ) {
 			String constructionLayerName = getProduct().rb().textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 			DesignLayer layer = new DesignLayer().setName( constructionLayerName );
-			design.addLayer( layer ).setCurrentLayer( layer );
+			design.getRootLayer().addLayer( layer );
+			design.setCurrentLayer( layer );
 		}
 
 		return true;

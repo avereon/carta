@@ -68,41 +68,48 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
 		Design2D design = new Design2D();
-		design.removeLayer( design.getCurrentLayer() );
+		design.getRootLayer().removeLayer( design.getCurrentLayer() );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 
 		log.log( Log.DEBUG, "Design codec version: " + map.get( CODEC_VERSION_KEY ) );
 
-		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( Design.LAYERS, Map.of() );
+		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
 
 		design.updateFrom( map );
 		String currentLayerId = String.valueOf( map.get( Design.CURRENT_LAYER ) );
 
 		// Load layers
-		layers.values().forEach( l -> {
-			DesignLayer layer = new DesignLayer().updateFrom( toStringOnlyMap( l ) );
-			design.addLayer( layer );
-			if( Objects.equals( layer.getId(), currentLayerId ) ) design.setCurrentLayer( layer );
-
-			// Add the shapes found in the layer
-			Map<String, Map<String, String>> geometry = (Map<String, Map<String, String>>)l.getOrDefault( DesignLayer.SHAPES, Map.of() );
-			geometry.values().forEach( g -> {
-				String type = String.valueOf( g.get( CsaShape.SHAPE ) );
-				CsaShape shape = switch( type ) {
-					case "point" -> loadCsaPoint( g );
-					case "line" -> loadCsaLine( g );
-					default -> null;
-				};
-				layer.addShape( shape );
-			} );
-		} );
+		layers.values().forEach( l -> loadLayer( design, design.getRootLayer(), currentLayerId, l ));
 
 		// Load views
 		views.values().forEach( v -> design.addView( new DesignView().updateFrom( v ) ) );
 
 		asset.setModel( design );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private void loadLayer( Design design, DesignLayer parent, String currentLayerId, Map<String, Object> map ) {
+		// FIXME Layers are now nested
+		DesignLayer layer = new DesignLayer().updateFrom( toStringOnlyMap( map ) );
+		design.getRootLayer().addLayer( layer );
+		if( Objects.equals( layer.getId(), currentLayerId ) ) design.setCurrentLayer( layer );
+
+		// Add the shapes found in the layer
+		Map<String, Map<String, String>> geometry = (Map<String, Map<String, String>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
+		geometry.values().forEach( g -> {
+			String type = String.valueOf( g.get( CsaShape.SHAPE ) );
+			CsaShape shape = switch( type ) {
+				case "point" -> loadCsaPoint( g );
+				case "line" -> loadCsaLine( g );
+				default -> null;
+			};
+			layer.addShape( shape );
+		} );
+
+		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
+		layers.values().forEach( l -> loadLayer( design, layer, currentLayerId, l ));
 	}
 
 	@Override

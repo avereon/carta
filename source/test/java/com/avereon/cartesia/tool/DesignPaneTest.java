@@ -3,15 +3,14 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.TestTimeouts;
+import com.avereon.cartesia.data.CsaLine;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.CsaLine;
 import com.avereon.zerra.javafx.FxUtil;
 import com.avereon.zerra.javafx.JavaFxStarter;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,13 +54,14 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	@Test
 	void testApertureSelect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getRootLayer().addLayer( layer );
+		design.setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		FxUtil.fxWait( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		StackPane layers = (StackPane)pane.getChildren().get( 0 );
-		Pane construction = (Pane)layers.getChildren().get( 0 );
+		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
+		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Line line = (Line)construction.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( -1.0 ) );
@@ -77,42 +77,14 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	@Test
 	void testWindowSelectWithIntersect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getRootLayer().addLayer( layer );
+		design.setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		FxUtil.fxWait( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		StackPane layers = (StackPane)pane.getChildren().get( 0 );
-		Pane construction = (Pane)layers.getChildren().get( 0 );
-		assertTrue( construction.isVisible() );
-		Line line = (Line)construction.getChildren().get( 0 );
-		assertThat( line.getStartX(), is( -1.0 ) );
-		assertThat( line.getStartY(), is( 1.0 ) );
-		assertThat( line.getEndX(), is( 1.0 ) );
-		assertThat( line.getEndY(), is( -1.0 ) );
-
-		assertTrue( pane.selectByWindow( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), true ).isEmpty() );
-		assertThat( pane.selectByWindow( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), true ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), true ), contains( line ) );
-		assertTrue( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), true ).isEmpty() );
-
-		assertThat( pane.selectByWindow( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), true ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), true ), contains( line ) );
-
-		assertThat( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), true ), contains( line ) );
-		assertThat( pane.selectByWindow( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), true ), contains( line ) );
-	}
-
-	@Test
-	void testWindowSelectWithContains() throws Exception {
-		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.addLayer( layer ).setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
-		FxUtil.fxWait( FX_WAIT_TIMEOUT );
-
-		// Get the line that was added for use later
-		StackPane layers = (StackPane)pane.getChildren().get( 0 );
-		Pane construction = (Pane)layers.getChildren().get( 0 );
+		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
+		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Line line = (Line)construction.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( -1.0 ) );
@@ -121,41 +93,72 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( line.getEndY(), is( -1.0 ) );
 
 		assertTrue( pane.selectByWindow( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), false ).isEmpty() );
-		assertTrue( pane.selectByWindow( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), false ).isEmpty() );
-		assertTrue( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), false ).isEmpty() );
+		assertThat( pane.selectByWindow( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), false ), contains( line ) );
 		assertTrue( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), false ).isEmpty() );
 
-		assertTrue( pane.selectByWindow( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), false ).isEmpty() );
-		// This does not contain the line because the line has width and stroke caps
-		assertTrue( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), false ).isEmpty() );
-		// This should just barely contain the line
-		double d = line.getBoundsInLocal().getMaxX();
-		assertThat( pane.selectByWindow( new Point3D( -d, -d, 0 ), new Point3D( d, d, 0 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), false ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), false ), contains( line ) );
 
 		assertThat( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), false ), contains( line ) );
 		assertThat( pane.selectByWindow( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), false ), contains( line ) );
 	}
 
 	@Test
-	void testAddLayer() throws Exception {
+	void testWindowSelectWithContains() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.addLayer( layer );
+		design.getRootLayer().addLayer( layer );
+		design.setCurrentLayer( layer );
+		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		FxUtil.fxWait( FX_WAIT_TIMEOUT );
 
-		StackPane layers = (StackPane)pane.getChildren().get( 0 );
+		// Get the line that was added for use later
+		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
+		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
+		assertTrue( construction.isVisible() );
+		Line line = (Line)construction.getChildren().get( 0 );
+		assertThat( line.getStartX(), is( -1.0 ) );
+		assertThat( line.getStartY(), is( 1.0 ) );
+		assertThat( line.getEndX(), is( 1.0 ) );
+		assertThat( line.getEndY(), is( -1.0 ) );
+
+		assertTrue( pane.selectByWindow( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), true ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), true ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), true ).isEmpty() );
+		assertTrue( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), true ).isEmpty() );
+
+		assertTrue( pane.selectByWindow( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), true ).isEmpty() );
+		// This does not contain the line because the line has width and stroke caps
+		assertTrue( pane.selectByWindow( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), true ).isEmpty() );
+		// This should just barely contain the line
+		double d = line.getBoundsInLocal().getMaxX();
+		assertThat( pane.selectByWindow( new Point3D( -d, -d, 0 ), new Point3D( d, d, 0 ), true ), contains( line ) );
+
+		assertThat( pane.selectByWindow( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), true ), contains( line ) );
+		assertThat( pane.selectByWindow( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), true ), contains( line ) );
+	}
+
+	@Test
+	void testAddLayer() throws Exception {
+		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
+		design.getRootLayer().addLayer( layer );
+		FxUtil.fxWait( FX_WAIT_TIMEOUT );
+
+		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
 		assertThat( layers.getChildren().size(), is( 1 ) );
 	}
 
 	@Test
 	void testAddLine() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.addLayer( layer ).setCurrentLayer( layer );
+		design.getRootLayer().addLayer( layer );
+		design.setCurrentLayer( layer );
 		design.getCurrentLayer().addShape( new CsaLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
 		FxUtil.fxWait( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane
-		StackPane layers = (StackPane)pane.getChildren().get( 0 );
-		Pane construction = (Pane)layers.getChildren().get( 0 );
+		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
+		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
 		Line line = (Line)construction.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( 1.0 ) );
 		assertThat( line.getStartY(), is( 2.0 ) );

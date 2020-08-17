@@ -14,13 +14,13 @@ import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
-import java.util.Set;
+import java.util.List;
 
 public abstract class DesignTool extends ProgramTool {
 
@@ -72,9 +72,10 @@ public abstract class DesignTool extends ProgramTool {
 			.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) );
 
 		addEventFilter( KeyEvent.ANY, this::key );
-		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouse );
-		addEventFilter( MouseEvent.MOUSE_PRESSED, this::anchor );
-		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::drag );
+		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
+		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
+		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
+		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
 	}
 
@@ -182,37 +183,53 @@ public abstract class DesignTool extends ProgramTool {
 		getCommandPrompt().relay( event );
 	}
 
-	private void mouse( MouseEvent event ) {
+	private void mouseMove( MouseEvent event ) {
 		mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
 		getCoordinateStatus().updatePosition( mousePoint.getX(), mousePoint.getY(), mousePoint.getZ() );
 	}
 
-	private void anchor( MouseEvent event ) {
+	private void mousePress( MouseEvent event ) {
+		// Drag anchor is used by select, pan (and others)
 		if( isPanMouseEvent( event ) ) {
 			panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
 			dragAnchor = new Point2D( event.getX(), event.getY() );
 		} else if( isSelectMode() ) {
-			mouseSelect( event.getX(), event.getY(), event.getZ() );
+			// A click with no modifier replaces the selection
+			// A click with a CTRL modifier adds/removes to/from the selection
+			boolean selected = mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
+			// TODO If nothing is selected this could be the start of a select window
+			if( !selected ) dragAnchor = new Point2D( event.getX(), event.getY() );
 		} else {
 			getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 		}
 	}
 
-	private void drag( MouseEvent event ) {
+	private void mouseDrag( MouseEvent event ) {
 		if( isPanMouseEvent( event ) ) designPane.pan( panAnchor, dragAnchor, event.getX(), event.getY() );
+		// TODO if( isSelectMode() ) designPane.showSelectWindow( dragAnchor, new Point3D(event.getX(), event.getY(), event.getZ() ));
+	}
+
+	private void mouseRelease( MouseEvent event ) {
+		// TODO if( isSelectMode() ) designPane.hideSelectWindow( dragAnchor, new Point3D(event.getX(), event.getY(), event.getZ() ));
 	}
 
 	private void zoom( ScrollEvent event ) {
 		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
 	}
 
-	private Set<Node> mouseSelect( double x, double y, double z ) {
-		Set<Node> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit );
-		selection.forEach( n -> {
-			CsaShape s = (CsaShape)n.getProperties().get( "data" );
-			s.setSelected( !s.isSelected() );
-		});
-		return selection;
+	private boolean mouseSelect( double x, double y, double z, boolean modify ) {
+		if( !modify ) getDesign().clearSelected();
+
+		List<Shape> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit );
+		if( selection.isEmpty() ) return false;
+
+		CsaShape s = (CsaShape)selection.get( 0 ).getProperties().get( DesignPane.SHAPE_META_DATA );
+		s.setSelected( !modify || !s.isSelected() );
+		return true;
+	}
+
+	private boolean isSelectModifyEvent( MouseEvent event ) {
+		return event.isControlDown() && event.isPrimaryButtonDown();
 	}
 
 	private boolean isPanMouseEvent( MouseEvent event ) {

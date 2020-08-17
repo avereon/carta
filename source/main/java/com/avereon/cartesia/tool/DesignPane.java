@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 
 public class DesignPane extends StackPane {
 
+	public static final String SHAPE_META_DATA = "shape-meta-data";
+
 	private static final System.Logger log = Log.get();
 
 	/**
@@ -64,13 +66,15 @@ public class DesignPane extends StackPane {
 
 	private double dpu;
 
-	private final StackPane layers;
+	private final Pane select;
 
 	private final Pane preview;
 
 	private final Pane reference;
 
-	private final Map<DesignLayer, Node> layerMap;
+	private final Layer layers;
+
+	private final Map<DesignLayer, Layer> layerMap;
 
 	private final Map<Class<?>, Consumer<Object>> addActions;
 
@@ -80,10 +84,11 @@ public class DesignPane extends StackPane {
 
 	public DesignPane( Design design ) {
 		this.design = Objects.requireNonNull( design );
-		layers = new StackPane();
-		preview = new Pane();
+		select = new Pane();
 		reference = new Pane();
-		getChildren().addAll( layers, preview, reference );
+		preview = new Pane();
+		layers = new Layer();
+		getChildren().addAll( layers, preview, reference, select );
 
 		addOriginReferencePoint();
 
@@ -91,6 +96,7 @@ public class DesignPane extends StackPane {
 		rescale( true );
 
 		layerMap = new ConcurrentHashMap<>();
+		layerMap.put( design.getRootLayer(), layers );
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
@@ -124,9 +130,9 @@ public class DesignPane extends StackPane {
 	}
 
 	private void loadDesign( Design design ) {
-		design.getLayers().forEach( this::addLayer );
-		design.getLayers().forEach( l -> l.getShapes().forEach( this::add ) );
-		design.getLayers().forEach( this::reorderLayer );
+		design.getRootLayer().getLayers().forEach( this::addLayer );
+		design.getRootLayer().getLayers().forEach( l -> l.getShapes().forEach( this::add ) );
+		design.getRootLayer().getLayers().forEach( this::reorderLayer );
 	}
 
 	private void add( DesignNode node ) {
@@ -155,9 +161,9 @@ public class DesignPane extends StackPane {
 
 	private ConstructionPoint cp( ReadOnlyObjectProperty<Bounds> bProperty ) {
 		ConstructionPoint cp = new ConstructionPoint();
-		bProperty.addListener( (p,o,n ) -> {
+		bProperty.addListener( ( p, o, n ) -> {
 			cp.layoutXProperty().set( bProperty.get().getCenterX() );
-			cp.layoutYProperty().set( bProperty.get().getCenterY());
+			cp.layoutYProperty().set( bProperty.get().getCenterY() );
 		} );
 		return cp;
 	}
@@ -170,18 +176,21 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addLayer( DesignLayer yy ) {
-		Pane layer = new Pane();
-		layerMap.put( yy, layer );
-		Platform.runLater( () -> {
-			layers.getChildren().add( layer );
-		} );
+		Layer parent = layerMap.get( yy.getParent() );
+		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
+		Platform.runLater( () -> layers.getChildren().add( layer ) );
+	}
+
+	private void removeLayer( DesignLayer yy ) {
+		Layer layer = layerMap.remove( yy );
+		if( layer != null ) ((Layer)layer.getParent()).getChildren().remove( layer );
 	}
 
 	private void reorderLayer( DesignLayer layer ) {
-		reorderLayer( (Pane)layerMap.get( layer ) );
+		reorderLayer( layerMap.get( layer ) );
 	}
 
-	private void reorderLayer( Pane pane ) {
+	private void reorderLayer( Layer pane ) {
 		Platform.runLater( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
@@ -211,25 +220,15 @@ public class DesignPane extends StackPane {
 		p.setStrokeWidth( 0 );
 		p.setStroke( null );
 
-//		Line h = new Line( pp.getOrigin().getX() - size, pp.getOrigin().getY(), pp.getOrigin().getX() + size, pp.getOrigin().getY() );
-//		h.setStroke( pp.getDrawColor() );
-//		h.setStrokeWidth( 0.1 );
-//		Line v = new Line( pp.getOrigin().getX(), pp.getOrigin().getY() - size, pp.getOrigin().getX(), pp.getOrigin().getY() + size );
-//		v.setStroke( pp.getDrawColor() );
-//		v.setStrokeWidth( 0.1 );
-//		Group point = new Group( h, v );
-
-		pp.register( CsaShape.SELECTED, e -> {
-			p.setFill( e.getNewValue() ? Color.MAGENTA : pp.getDrawColor() );
-		} );
+		pp.register( CsaShape.SELECTED, e -> p.setFill( e.getNewValue() ? Color.MAGENTA : pp.getDrawColor() ) );
 
 		// TODO Generalize and simplify
 		ConstructionPoint o = cp( p.boundsInParentProperty() );
-		p.getProperties().put( "data", pp );
+		p.getProperties().put( SHAPE_META_DATA, pp );
 		p.getProperties().put( "construction-points", Set.of( o ) );
 
 		DesignLayer yy = pp.getParent();
-		Pane layer = (Pane)layerMap.get( yy );
+		Layer layer = layerMap.get( yy );
 		Platform.runLater( () -> {
 			layer.getChildren().add( p );
 			reference.getChildren().addAll( o );
@@ -241,17 +240,18 @@ public class DesignPane extends StackPane {
 		// TODO All this data may need to be encapsulated to be mapped to the original CsaLine
 		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
 		line.setStroke( ll.getDrawColor() );
+		line.setFill( null );
 
 		ll.register( CsaShape.SELECTED, e -> line.setStroke( e.getNewValue() ? Color.MAGENTA : ll.getDrawColor() ) );
 
 		// TODO Generalize and simplify
 		ConstructionPoint o = cp( line.startXProperty(), line.startYProperty() );
 		ConstructionPoint p = cp( line.endXProperty(), line.endYProperty() );
-		line.getProperties().put( "data", ll );
+		line.getProperties().put( SHAPE_META_DATA, ll );
 		line.getProperties().put( "construction-points", Set.of( o, p ) );
 
 		DesignLayer yy = ll.getParent();
-		Pane layer = (Pane)layerMap.get( yy );
+		Layer layer = layerMap.get( yy );
 		Platform.runLater( () -> {
 			layer.getChildren().add( line );
 			reference.getChildren().addAll( o, p );
@@ -366,20 +366,20 @@ public class DesignPane extends StackPane {
 		return new Affine();
 	}
 
-	Set<Node> apertureSelect( double x, double y, double z, double r, DesignUnit u ) {
+	List<Shape> apertureSelect( double x, double y, double z, double r, DesignUnit u ) {
 		// Convert the aperture radius and unit to world values
 		double pixels = u.to( r, DesignUnit.INCH ) * getDpi();
 		Point2D aperture = mouseToWorld().transform( getTranslateX() + pixels, getTranslateY() + pixels );
-		log.log( Log.INFO, "a=" + aperture.getX() );
 		return selectByAperture( mouseToWorld().transform( x, y, z ), aperture.getX() );
 	}
 
-	Set<Node> windowSelect( Point3D a, Point3D b, boolean crossing ) {
-		return selectByWindow( mouseToWorld().transform( a ), mouseToWorld().transform( b ), crossing );
+	List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
+		return selectByWindow( mouseToWorld().transform( a ), mouseToWorld().transform( b ), contains );
 	}
 
-	Set<Node> selectByAperture( Point3D anchor, double radius ) {
-		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), true );
+	List<Shape> selectByAperture( Point3D anchor, double radius ) {
+		log.log( Log.INFO, "a.radius=" + radius );
+		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), false );
 	}
 
 	/**
@@ -388,47 +388,78 @@ public class DesignPane extends StackPane {
 	 *
 	 * @param a One corner of the window
 	 * @param b The other corner of the window
-	 * @param crossing False to select nodes contained in the window, true to select nodes contained by or intersecting the window
+	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
 	 * @return The set of selected nodes
 	 */
-	Set<Node> selectByWindow( Point3D a, Point3D b, boolean crossing ) {
+	List<Shape> selectByWindow( Point3D a, Point3D b, boolean contains ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
 		double h = Math.abs( a.getY() - b.getY() );
 
 		Rectangle box = new Rectangle( x, y, w, h );
-		return selectByShape( box, crossing );
+		return selectByShape( box, contains );
 	}
 
-	private Set<Node> selectByShape( Shape shape, boolean crossing ) {
+	/**
+	 * Select nodes using a shape. The selecting shape can be any shape but it
+	 * usually a {@link Circle} or a {@link Rectangle}. Returns the list of
+	 * selected shapes in order from top to bottom.
+	 *
+	 * @param selector The selecting shape
+	 * @param contains True to require selected shapes be contained by the selecting shape
+	 * @return The list of selected shapes
+	 */
+	private List<Shape> selectByShape( Shape selector, boolean contains ) {
 		// The shape must have a fill but no stroke
-		shape.setFill( Color.TRANSPARENT );
-		shape.setStroke( null );
+		selector.setFill( Color.web( "0xff00ff80" ) );
+		//selector.setFill( Color.TRANSPARENT );
+		selector.setStrokeWidth( 0.0 );
+		selector.setStroke( null );
 
-		Set<Node> visibleNodes = getVisibleNodes();
+		List<Shape> shapes = getVisibleShapes();
+		Collections.reverse( shapes );
 
 		// check for contains or intersecting
 		try {
-			preview.getChildren().add( shape );
-			Bounds bounds = shape.getBoundsInLocal();
-			if( crossing ) {
-				return visibleNodes
-					.stream()
-					.filter( n -> bounds.intersects( n.getBoundsInLocal() ) )
-					.filter( n -> n instanceof Shape )
-					.filter( n -> !((Path)Shape.intersect( (Shape)n, shape )).getElements().isEmpty() )
-					.collect( Collectors.toSet() );
+			select.getChildren().add( selector );
+			if( contains ) {
+				return shapes.stream().filter( s -> isContained( selector, s ) ).collect( Collectors.toList() );
 			} else {
-				return visibleNodes.stream().filter( n -> bounds.contains( n.getBoundsInLocal() ) ).collect( Collectors.toSet() );
+				return shapes.stream().filter( s -> isIntersecting( selector, s ) ).collect( Collectors.toList() );
 			}
 		} finally {
-			preview.getChildren().remove( shape );
+			select.getChildren().remove( selector );
 		}
 	}
 
-	private Set<Node> getVisibleNodes() {
-		return layers.getChildren().stream().filter( Node::isVisible ).flatMap( l -> ((Pane)l).getChildren().stream() ).collect( Collectors.toSet() );
+	private List<Shape> getVisibleShapes() {
+		return getLayers( layers )
+			.stream()
+			.filter( Node::isVisible )
+			.flatMap( l -> l.getChildren().stream() )
+			.filter( n -> n instanceof Shape )
+			.map( n -> (Shape)n )
+			.collect( Collectors.toList() );
+	}
+
+	private boolean isContained( Shape selector, Shape shape ) {
+		return selector.getBoundsInLocal().contains( shape.getBoundsInLocal() );
+	}
+
+	private boolean isIntersecting( Shape selector, Shape shape ) {
+		return selector.getBoundsInLocal().intersects( shape.getBoundsInLocal() ) && !((Path)Shape.intersect( selector, shape )).getElements().isEmpty();
+	}
+
+	private List<Layer> getLayers( Layer root ) {
+		List<Layer> layers = new ArrayList<>();
+
+		root.getChildren().stream().filter( c -> c instanceof Layer ).map( c -> (Layer)c ).forEach( l -> {
+			layers.add( l );
+			layers.addAll( getLayers( l ) );
+		} );
+
+		return layers;
 	}
 
 	private void repan( Point3D point ) {
@@ -453,11 +484,14 @@ public class DesignPane extends StackPane {
 
 		@Override
 		public int compare( Node o1, Node o2 ) {
-			CsaShape s1 = (CsaShape)o1.getProperties().get( "data" );
-			CsaShape s2 = (CsaShape)o2.getProperties().get( "data" );
+			CsaShape s1 = (CsaShape)o1.getProperties().get( SHAPE_META_DATA );
+			CsaShape s2 = (CsaShape)o2.getProperties().get( SHAPE_META_DATA );
 			return s2.getOrder() - s1.getOrder();
 		}
 
 	}
+
+	// FIXME Change to 'extends Group'
+	static class Layer extends Pane {}
 
 }
