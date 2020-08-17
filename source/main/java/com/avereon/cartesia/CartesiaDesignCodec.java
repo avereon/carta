@@ -91,10 +91,9 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	@SuppressWarnings( "unchecked" )
 	private void loadLayer( Design design, DesignLayer parent, String currentLayerId, Map<String, Object> map ) {
-		// FIXME Layers are now nested
 		DesignLayer layer = new DesignLayer().updateFrom( toStringOnlyMap( map ) );
-		design.getRootLayer().addLayer( layer );
-		if( Objects.equals( layer.getId(), currentLayerId ) ) design.setCurrentLayer( layer );
+		parent.addLayer( layer );
+		if( Objects.equals( currentLayerId, layer.getId() ) ) design.setCurrentLayer( layer );
 
 		// Add the shapes found in the layer
 		Map<String, Map<String, String>> geometry = (Map<String, Map<String, String>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
