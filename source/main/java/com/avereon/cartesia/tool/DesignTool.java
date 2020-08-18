@@ -148,6 +148,8 @@ public abstract class DesignTool extends ProgramTool {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			getSettings().set( SETTINGS_ZOOM, n.doubleValue() );
 		} );
+
+		designPane.recenter();
 	}
 
 	@Override
