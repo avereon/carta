@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.CsaShape;
 import com.avereon.cartesia.data.Design;
@@ -12,7 +13,6 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -30,6 +30,10 @@ public abstract class DesignTool extends ProgramTool {
 
 	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
 
+	private static final String SETTINGS_ZOOM = "zoom";
+
+	private static final String SETTINGS_PAN = "pan";
+
 	private static final System.Logger log = Log.get();
 
 	private final CommandPrompt prompt;
@@ -42,9 +46,9 @@ public abstract class DesignTool extends ProgramTool {
 
 	private Point3D mousePoint;
 
-	private Point2D dragAnchor;
+	private Point3D dragAnchor;
 
-	private Point2D panAnchor;
+	private Point3D viewAnchor;
 
 	private double selectApertureRadius;
 
@@ -92,11 +96,11 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	public Point3D getPan() {
-		return designPane == null ? Point3D.ZERO : designPane.getPan();
+		return designPane == null ? Point3D.ZERO : designPane.getViewPoint();
 	}
 
 	public void setPan( Point3D point ) {
-		if( designPane != null ) designPane.setPan( point );
+		if( designPane != null ) designPane.setViewPoint( point );
 	}
 
 	public double getZoom() {
@@ -127,16 +131,23 @@ public abstract class DesignTool extends ProgramTool {
 		getChildren().add( designPane );
 
 		// Keep the design pane centered when resizing
-		widthProperty().addListener( ( p, o, n ) -> designPane.panOffset( 0.5 * (n.doubleValue() - o.doubleValue()), 0 ) );
-		heightProperty().addListener( ( p, o, n ) -> designPane.panOffset( 0, 0.5 * (n.doubleValue() - o.doubleValue()) ) );
+		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
+		heightProperty().addListener( ( p, o, n ) -> designPane.recenter() );
 
-		// Update the status when the zoom changes
-		designPane.zoomProperty().addListener( ( p, o, n ) -> getCoordinateStatus().updateZoom( n.doubleValue() ) );
+		// Get tool settings
+		setPan( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_PAN, "0,0,0" ) ) );
+		setZoom( Double.parseDouble( getSettings().get( SETTINGS_ZOOM, "1.0" ) ) );
 
-		// Set the stored tool pan
-		designPane.setPan( Point3D.ZERO );
-		// Set the stored tool zoom
-		designPane.setZoom( 1 );
+		// Add pan property listener
+		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
+			getSettings().set( SETTINGS_PAN, n.getX() + "," + n.getY() + "," + n.getZ() );
+		} );
+
+		// Add zoom property listener
+		designPane.zoomProperty().addListener( ( p, o, n ) -> {
+			getCoordinateStatus().updateZoom( n.doubleValue() );
+			getSettings().set( SETTINGS_ZOOM, n.doubleValue() );
+		} );
 	}
 
 	@Override
@@ -163,7 +174,7 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	protected Point3D mouseToWorld( double x, double y, double z ) {
-		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld().transform( x, y, z );
+		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld( x, y, z );
 	}
 
 	public ReticleCursor getReticle() {
@@ -191,21 +202,21 @@ public abstract class DesignTool extends ProgramTool {
 	private void mousePress( MouseEvent event ) {
 		// Drag anchor is used by select, pan (and others)
 		if( isPanMouseEvent( event ) ) {
-			panAnchor = new Point2D( designPane.getTranslateX(), designPane.getTranslateY() );
-			dragAnchor = new Point2D( event.getX(), event.getY() );
+			viewAnchor = designPane.getViewPoint();
+			dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		} else if( isSelectMode() ) {
 			// A click with no modifier replaces the selection
 			// A click with a CTRL modifier adds/removes to/from the selection
 			boolean selected = mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
 			// TODO If nothing is selected this could be the start of a select window
-			if( !selected ) dragAnchor = new Point2D( event.getX(), event.getY() );
+			if( !selected ) dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		} else {
 			getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 		}
 	}
 
 	private void mouseDrag( MouseEvent event ) {
-		if( isPanMouseEvent( event ) ) designPane.pan( panAnchor, dragAnchor, event.getX(), event.getY() );
+		if( isPanMouseEvent( event ) ) designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
 		// TODO if( isSelectMode() ) designPane.showSelectWindow( dragAnchor, new Point3D(event.getX(), event.getY(), event.getZ() ));
 	}
 
@@ -214,7 +225,7 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private void zoom( ScrollEvent event ) {
-		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.zoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
+		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.mouseZoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
 	}
 
 	private boolean mouseSelect( double x, double y, double z, boolean modify ) {

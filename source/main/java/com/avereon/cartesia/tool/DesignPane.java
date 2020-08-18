@@ -15,9 +15,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Transform;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -50,17 +47,17 @@ public class DesignPane extends StackPane {
 
 	static final double ZOOM_OUT_FACTOR = 1.0 / ZOOM_IN_FACTOR;
 
+	static final double DEFAULT_ZOOM = 1;
+
 	static final double DEFAULT_DPI = 96;
 
-	static final Point3D DEFAULT_PAN = new Point3D( 1, 1, 0 );
-
-	static final double DEFAULT_ZOOM = 1;
+	static final Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
 
 	private DoubleProperty dpiProperty;
 
-	private ObjectProperty<Point3D> panProperty;
-
 	private DoubleProperty zoomProperty;
+
+	private ObjectProperty<Point3D> viewPointProperty;
 
 	private final Design design;
 
@@ -100,8 +97,9 @@ public class DesignPane extends StackPane {
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
-		panProperty().addListener( ( p, o, n ) -> repan( n ) );
+		viewPointProperty().addListener( ( p, o, n ) -> recenter() );
 		zoomProperty().addListener( ( p, o, n ) -> rescale( false ) );
+		parentProperty().addListener( ( p, o, n ) -> recenter() );
 
 		// TODO Move this map somewhere else
 		addActions = new HashMap<>();
@@ -266,35 +264,44 @@ public class DesignPane extends StackPane {
 		return design;
 	}
 
-	public final DoubleProperty dpiProperty() {
-		if( dpiProperty == null ) dpiProperty = new SimpleDoubleProperty( DEFAULT_DPI );
-		return dpiProperty;
+	public final double getDpi() {
+		return (dpiProperty == null) ? DEFAULT_DPI : dpiProperty.get();
 	}
 
 	public final void setDpi( double value ) {
 		dpiProperty().set( value );
 	}
 
-	public final double getDpi() {
-		return (dpiProperty == null) ? DEFAULT_DPI : dpiProperty.get();
+	public final DoubleProperty dpiProperty() {
+		if( dpiProperty == null ) dpiProperty = new SimpleDoubleProperty( DEFAULT_DPI );
+		return dpiProperty;
 	}
 
-	public ObjectProperty<Point3D> panProperty() {
-		if( panProperty == null ) panProperty = new SimpleObjectProperty<>( DEFAULT_PAN );
-		return panProperty;
+	public final Point3D getViewPoint() {
+		return viewPointProperty == null ? DEFAULT_PAN : viewPointProperty.get();
 	}
 
 	/**
-	 * Pan the design pane
+	 * Set the pane view point. The point is the world point that should be in the
+	 * center of the view.
 	 *
 	 * @param point The world point to move to the center of the view
 	 */
-	public final void setPan( Point3D point ) {
-		panProperty().set( point );
+	public final void setViewPoint( Point3D point ) {
+		viewPointProperty().set( point );
 	}
 
-	public final Point3D getPan() {
-		return panProperty == null ? DEFAULT_PAN : panProperty.get();
+	public ObjectProperty<Point3D> viewPointProperty() {
+		if( viewPointProperty == null ) viewPointProperty = new SimpleObjectProperty<>( DEFAULT_PAN );
+		return viewPointProperty;
+	}
+
+	public final double getZoom() {
+		return (zoomProperty == null) ? DEFAULT_ZOOM : zoomProperty.get();
+	}
+
+	public final void setZoom( double value ) {
+		zoomProperty().set( value );
 	}
 
 	/**
@@ -310,71 +317,69 @@ public class DesignPane extends StackPane {
 		return zoomProperty;
 	}
 
-	public final void setZoom( double value ) {
-		zoomProperty().set( value );
-	}
-
-	public final double getZoom() {
-		return (zoomProperty == null) ? DEFAULT_ZOOM : zoomProperty.get();
-	}
-
-	protected DesignUnit getDesignUnit() {
+	private DesignUnit getDesignUnit() {
 		return design.getDesignUnit();
 	}
 
-	void panOffset( double x, double y ) {
-		if( x != 0.0 ) setTranslateX( getTranslateX() + x );
-		if( y != 0.0 ) setTranslateY( getTranslateY() + y );
+	/**
+	 * Pan the viewpoint by an offset in world coordinates.
+	 *
+	 * @param x The world X offset
+	 * @param y The world Y offset
+	 */
+	void pan( double x, double y ) {
+		setViewPoint( getViewPoint().add( x, y, 0 ) );
 	}
 
 	/**
 	 * Pan the design pane.
 	 *
-	 * @param panAnchor The pane location before being dragged
+	 * @param viewAnchor The view point location before being dragged
 	 * @param dragAnchor The point where the mouse was pressed
 	 * @param mouseX The mouse event X coordinate
 	 * @param mouseY The mouse event Y coordinate
 	 */
-	void pan( Point2D panAnchor, Point2D dragAnchor, double mouseX, double mouseY ) {
-		setTranslateX( panAnchor.getX() + ((mouseX - dragAnchor.getX())) );
-		setTranslateY( panAnchor.getY() + ((mouseY - dragAnchor.getY())) );
+	void mousePan( Point3D viewAnchor, Point3D dragAnchor, double mouseX, double mouseY ) {
+		double x = (dragAnchor.getX() - mouseX) / getScaleX();
+		double y = (dragAnchor.getY() - mouseY) / getScaleY();
+		setViewPoint( viewAnchor.add( x, y, 0 ) );
 	}
 
 	/**
 	 * Zoom the design pane. Zoom in (scroll up) increases the scale. Zoom out
 	 * (scroll down) decreases the scale.
 	 *
-	 * @param anchorX The anchor point X coordinate
-	 * @param anchorY The anchor point Y coordinate
+	 * @param mouseX The anchor point X coordinate
+	 * @param mouseY The anchor point Y coordinate
 	 * @param zoomIn True to zoom in, false to zoom out
 	 */
-	void zoom( double anchorX, double anchorY, boolean zoomIn ) {
-		double dx = getTranslateX() - anchorX;
-		double dy = getTranslateY() - anchorY;
+	void mouseZoom( double mouseX, double mouseY, boolean zoomIn ) {
+		Point3D anchor = mouseToWorld( mouseX, mouseY, 0 );
+		Point3D offset = getViewPoint().subtract( anchor );
+
 		double zoomFactor = zoomIn ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
-		setTranslateX( anchorX + (dx * zoomFactor) );
-		setTranslateY( anchorY + (dy * zoomFactor) );
 		setZoom( getZoom() * zoomFactor );
+
+		setViewPoint( anchor.add( offset.multiply( 1 / zoomFactor ) ) );
 	}
 
-	Transform mouseToWorld() {
-		try {
-			return getLocalToParentTransform().createInverse();
-		} catch( NonInvertibleTransformException exception ) {
-			log.log( Log.ERROR, "Unable to obtain parent to local transform" );
-		}
-		return new Affine();
+	Point3D mouseToWorld( double x, double y, double z ) {
+		return parentToLocal( x, y, z );
+	}
+
+	Point3D worldToMouse( double x, double y, double z ) {
+		return localToParent( x, y, z );
 	}
 
 	List<Shape> apertureSelect( double x, double y, double z, double r, DesignUnit u ) {
 		// Convert the aperture radius and unit to world values
 		double pixels = u.to( r, DesignUnit.INCH ) * getDpi();
-		Point2D aperture = mouseToWorld().transform( getTranslateX() + pixels, getTranslateY() + pixels );
-		return selectByAperture( mouseToWorld().transform( x, y, z ), aperture.getX() );
+		Point2D aperture = parentToLocal( getTranslateX() + pixels, getTranslateY() + pixels );
+		return selectByAperture( parentToLocal( x, y, z ), aperture.getX() );
 	}
 
 	List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
-		return selectByWindow( mouseToWorld().transform( a ), mouseToWorld().transform( b ), contains );
+		return selectByWindow( parentToLocal( a ), parentToLocal( b ), contains );
 	}
 
 	List<Shape> selectByAperture( Point3D anchor, double radius ) {
@@ -462,13 +467,11 @@ public class DesignPane extends StackPane {
 		return layers;
 	}
 
-	private void repan( Point3D point ) {
+	void recenter() {
 		Parent parent = getParent();
-		if( parent == null ) return;
-
-		Point3D p = getLocalToParentTransform().transform( point ).subtract( getTranslateX(), getTranslateY(), 0 );
-		setTranslateX( parent.getLayoutBounds().getCenterX() - p.getX() );
-		setTranslateY( parent.getLayoutBounds().getCenterY() - p.getY() );
+		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
+		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
+		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
 	}
 
 	private void rescale( boolean recalculateDpu ) {

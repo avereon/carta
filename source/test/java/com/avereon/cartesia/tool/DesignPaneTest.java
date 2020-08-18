@@ -9,7 +9,6 @@ import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.zerra.javafx.FxUtil;
 import com.avereon.zerra.javafx.JavaFxStarter;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
@@ -21,6 +20,14 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DesignPaneTest implements NumericTest, TestTimeouts {
+
+	private static final double PARENT_WIDTH = 1600.0;
+
+	private static final double PARENT_HEIGHT = 900.0;
+
+	private static final double PARENT_HALF_WIDTH = 0.5 * PARENT_WIDTH;
+
+	private static final double PARENT_HALF_HEIGHT = 0.5 * PARENT_HEIGHT;
 
 	private static final boolean ZOOM_IN = true;
 
@@ -38,17 +45,18 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	public void setup() {
 		JavaFxStarter.startAndWait( FX_STARTUP_TIMEOUT );
 		parent = new StackPane();
+		parent.resize( PARENT_WIDTH, PARENT_HEIGHT );
+
 		design = new Design2D();
 		pane = new DesignPane( design );
 		parent.getChildren().add( pane );
-		parent.resize( 1600, 900 );
 
-		assertThat( parent.getWidth(), is( 1600.0 ) );
-		assertThat( parent.getHeight(), is( 900.0 ) );
+		assertThat( parent.getWidth(), is( PARENT_WIDTH ) );
+		assertThat( parent.getHeight(), is( PARENT_HEIGHT ) );
 		assertThat( pane.getScaleX(), is( 1.0 * SCALE ) );
 		assertThat( pane.getScaleY(), is( -1.0 * SCALE ) );
-		assertThat( pane.getTranslateX(), is( 0.0 ) );
-		assertThat( pane.getTranslateY(), is( 0.0 ) );
+		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
+		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
 	}
 
 	@Test
@@ -169,32 +177,35 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	@Test
 	void testPanAbsolute() {
 		double offset = DesignUnit.CENTIMETER.to( 1, DesignUnit.INCH ) * pane.getDpi();
-		double cx = 800;
-		double cy = 450;
+		double cx = PARENT_HALF_WIDTH;
+		double cy = PARENT_HALF_HEIGHT;
 
-		pane.setPan( Point3D.ZERO );
+		pane.setViewPoint( Point3D.ZERO );
 		assertThat( pane.getTranslateX(), is( cx ) );
 		assertThat( pane.getTranslateY(), is( cy ) );
 
-		pane.setPan( new Point3D( 1, 1, 0 ) );
+		pane.setViewPoint( new Point3D( 1, 1, 0 ) );
 		assertThat( pane.getTranslateX(), is( cx - offset ) );
 		assertThat( pane.getTranslateY(), is( cy + offset ) );
 	}
 
 	@Test
-	void testPanRelative() {
-		pane.pan( new Point2D( pane.getTranslateX(), pane.getTranslateY() ), new Point2D( 1, 1 ), 2, 0.5 );
-		assertThat( pane.getTranslateX(), is( 1.0 ) );
-		assertThat( pane.getTranslateY(), is( -0.5 ) );
+	void testPan() {
+		Point3D vp = pane.getViewPoint();
+		pane.pan( 1, 1 );
+		assertThat( pane.getViewPoint(), is( vp.add( 1, 1, 0 ) ) );
 	}
 
 	@Test
 	void testPanOffsetOrigin() {
-		pane.setTranslateX( -2 );
-		pane.setTranslateY( 1 );
-		pane.pan( new Point2D( pane.getTranslateX(), pane.getTranslateY() ), new Point2D( 1, 1 ), 2, 0.5 );
-		assertThat( pane.getTranslateX(), is( -1.0 ) );
-		assertThat( pane.getTranslateY(), is( 0.5 ) );
+		Point3D viewAnchor = new Point3D( -2, -1, 0 );
+		Point3D dragAnchor = new Point3D( 1, 1, 0 );
+		Point3D mouse = new Point3D( 2, 0.5, 0 );
+		pane.mousePan( viewAnchor, dragAnchor.multiply( SCALE ), mouse.multiply( SCALE ).getX(), mouse.multiply( SCALE ).getY() );
+
+		double x = viewAnchor.getX() + (dragAnchor.getX() - mouse.getX());
+		double y = viewAnchor.getY() - (dragAnchor.getY() - mouse.getY());
+		assertThat( pane.getViewPoint(), is( new Point3D( x, y, 0 ) ) );
 	}
 
 	@Test
@@ -204,55 +215,62 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 
 	@Test
 	void testZoomIn() {
-		pane.zoom( 0, 0, ZOOM_IN );
-		assertThat( pane.getTranslateX(), is( 0.0 ) );
-		assertThat( pane.getTranslateY(), is( 0.0 ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		pane.mouseZoom( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, ZOOM_IN );
+		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
+		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
+		assertThat( pane.getScaleX(), closeTo( SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 	}
 
 	@Test
 	void testZoomInOffsetOrigin() {
-		double ex = -1;
-		double ey = -1;
-		double otx = 0;
-		double oty = 0;
-		double dx = otx - ex;
-		double dy = oty - ey;
-		double ntx = ex + (dx * DesignPane.ZOOM_IN_FACTOR);
-		double nty = ey + (dy * DesignPane.ZOOM_IN_FACTOR);
-		pane.zoom( ex, ey, ZOOM_IN );
-		assertThat( pane.getTranslateX(), is( ntx ) );
-		assertThat( pane.getTranslateY(), is( nty ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		double worldX = -1;
+		double worldY = -1;
+		double ex = PARENT_HALF_WIDTH + worldX * pane.getScaleX();
+		double ey = PARENT_HALF_HEIGHT + worldY * pane.getScaleY();
+		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
+
+		pane.mouseZoom( ex, ey, ZOOM_IN );
+
+		double newScale = SCALE * DesignPane.ZOOM_IN_FACTOR;
+		double offset = newScale - SCALE;
+		assertThat( pane.getScaleX(), closeTo( newScale, TOLERANCE ) );
+		assertThat( -pane.getScaleY(), closeTo( newScale, TOLERANCE ) );
+		assertThat( pane.getTranslateX(), closeTo( PARENT_HALF_WIDTH + offset, TOLERANCE ) );
+		assertThat( pane.getTranslateY(), closeTo( PARENT_HALF_HEIGHT - offset, 1 ) );
+
+		// The mouse coords for the world point should still be the same
+		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 	}
 
 	@Test
 	void testZoomOut() {
-		pane.zoom( 0, 0, ZOOM_OUT );
-		assertThat( pane.getTranslateX(), is( 0.0 ) );
-		assertThat( pane.getTranslateY(), is( 0.0 ) );
+		pane.mouseZoom( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, ZOOM_OUT );
+		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
+		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
 		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		closeTo( 1, 0 );
 	}
 
 	@Test
 	void testZoomOutOffsetOrigin() {
-		double ex = -1;
-		double ey = -1;
-		double otx = 0;
-		double oty = 0;
-		double dx = otx - ex;
-		double dy = oty - ey;
-		double ntx = ex + (dx / DesignPane.ZOOM_IN_FACTOR);
-		double nty = ey + (dy / DesignPane.ZOOM_IN_FACTOR);
-		pane.zoom( -1, -1, ZOOM_OUT );
-		assertThat( pane.getTranslateX(), is( ntx ) );
-		assertThat( pane.getTranslateY(), is( nty ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		double worldX = -1;
+		double worldY = -1;
+		double ex = PARENT_HALF_WIDTH + worldX * pane.getScaleX();
+		double ey = PARENT_HALF_HEIGHT + worldY * pane.getScaleY();
+		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
+
+		pane.mouseZoom( ex, ey, ZOOM_OUT );
+
+		double newScale = SCALE * DesignPane.ZOOM_OUT_FACTOR;
+		double offset = newScale - SCALE;
+		assertThat( pane.getScaleX(), closeTo( newScale, TOLERANCE ) );
+		assertThat( -pane.getScaleY(), closeTo( newScale, TOLERANCE ) );
+		assertThat( pane.getTranslateX(), closeTo( PARENT_HALF_WIDTH + offset, TOLERANCE ) );
+		assertThat( pane.getTranslateY(), closeTo( PARENT_HALF_HEIGHT - offset, 1 ) );
+
+		// The mouse coords for the world point should still be the same
+		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 	}
 
 	@Test
