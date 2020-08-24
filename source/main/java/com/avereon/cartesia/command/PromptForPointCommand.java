@@ -2,7 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
-import javafx.application.Platform;
+import com.avereon.zerra.javafx.Fx;
 
 public class PromptForPointCommand extends PromptCommand {
 

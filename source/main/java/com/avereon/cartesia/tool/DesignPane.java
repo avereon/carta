@@ -4,7 +4,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
-import javafx.application.Platform;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.*;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
