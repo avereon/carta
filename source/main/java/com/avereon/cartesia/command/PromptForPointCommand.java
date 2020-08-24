@@ -12,7 +12,7 @@ public class PromptForPointCommand extends PromptCommand {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Platform.runLater( () -> tool.setCursor( tool.getReticle() ) );
+		Fx.run( () -> tool.setCursor( tool.getReticle() ) );
 		super.evaluate( processor, tool );
 	}
 

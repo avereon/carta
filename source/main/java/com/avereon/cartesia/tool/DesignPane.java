@@ -176,7 +176,7 @@ public class DesignPane extends StackPane {
 	private void addLayer( DesignLayer yy ) {
 		Layer parent = layerMap.get( yy.getParent() );
 		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
-		Platform.runLater( () -> layers.getChildren().add( layer ) );
+		Fx.run( () -> layers.getChildren().add( layer ) );
 	}
 
 	private void removeLayer( DesignLayer yy ) {
@@ -189,7 +189,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void reorderLayer( Layer pane ) {
-		Platform.runLater( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
+		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
 	private void addPoint( CsaPoint pp ) {
@@ -227,7 +227,7 @@ public class DesignPane extends StackPane {
 
 		DesignLayer yy = pp.getParent();
 		Layer layer = layerMap.get( yy );
-		Platform.runLater( () -> {
+		Fx.run( () -> {
 			layer.getChildren().add( p );
 			reference.getChildren().addAll( o );
 		} );
@@ -250,7 +250,7 @@ public class DesignPane extends StackPane {
 
 		DesignLayer yy = ll.getParent();
 		Layer layer = layerMap.get( yy );
-		Platform.runLater( () -> {
+		Fx.run( () -> {
 			layer.getChildren().add( line );
 			reference.getChildren().addAll( o, p );
 		} );
