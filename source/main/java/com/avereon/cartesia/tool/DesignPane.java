@@ -6,9 +6,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.*;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -321,6 +319,13 @@ public class DesignPane extends StackPane {
 		return design.getDesignUnit();
 	}
 
+	void recenter() {
+		Parent parent = getParent();
+		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
+		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
+		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
+	}
+
 	/**
 	 * Pan the viewpoint by an offset in world coordinates.
 	 *
@@ -406,6 +411,16 @@ public class DesignPane extends StackPane {
 		return selectByShape( box, contains );
 	}
 
+//	void showSelectWindow( Point3D c, Point3D d ) {
+//		Point3D a = parentToLocal( c );
+//		Point3D b = parentToLocal( d  );
+//		Rectangle r = new Rectangle( Math.min( a.getX(), b.getX() ), Math.min(a.getY(), b.getY()), Math.abs( a.getX() - b.getX()), Math.abs( a.getY() - b.getY() ) );
+//		r.setFill( Color.web( "#80000080" ) );
+//		log.log( Log.INFO, "window=" + r );
+//		select.getChildren().add( r );
+//		select.setVisible( true );
+//	}
+
 	/**
 	 * Select nodes using a shape. The selecting shape can be any shape but it
 	 * usually a {@link Circle} or a {@link Rectangle}. Returns the list of
@@ -465,13 +480,6 @@ public class DesignPane extends StackPane {
 		} );
 
 		return layers;
-	}
-
-	void recenter() {
-		Parent parent = getParent();
-		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
-		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
-		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
 	}
 
 	private void rescale( boolean recalculateDpu ) {

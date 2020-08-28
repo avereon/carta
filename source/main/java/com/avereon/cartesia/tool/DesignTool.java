@@ -13,10 +13,14 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
+import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
@@ -44,6 +48,10 @@ public abstract class DesignTool extends ProgramTool {
 
 	private DesignPane designPane;
 
+	private final Pane selectPane;
+
+	private final SelectWindow selectWindow;
+
 	private Point3D mousePoint;
 
 	private Point3D dragAnchor;
@@ -61,6 +69,11 @@ public abstract class DesignTool extends ProgramTool {
 
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
+
+		this.selectWindow = new SelectWindow();
+		this.selectWindow.setFill( Color.web( "#80000040" ) );
+		this.selectPane = new Pane();
+		this.selectPane.getChildren().addAll( selectWindow );
 
 		// Initial values from settings
 		setReticle( ReticleCursor.valueOf( product.getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
@@ -81,6 +94,26 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
 		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
+	}
+
+	private static class SelectWindow extends Rectangle {
+
+		public SelectWindow() {
+			super( 0, 0, 100, 100 );
+		}
+
+		@Override
+		public boolean isResizable() {
+			return true;
+		}
+
+		@Override
+		public void resizeRelocate( double x, double y, double w, double h ) {
+			setX( x );
+			setY( y );
+			setWidth( w );
+			setHeight( h );
+		}
 	}
 
 	public Design getDesign() {
@@ -128,7 +161,8 @@ public abstract class DesignTool extends ProgramTool {
 
 		designPane = new DesignPane( request.getAsset().getModel() );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
-		getChildren().add( designPane );
+
+		getChildren().addAll( designPane, selectPane );
 
 		// Keep the design pane centered when resizing
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
@@ -209,6 +243,7 @@ public abstract class DesignTool extends ProgramTool {
 		} else if( isSelectMode() ) {
 			// A click with no modifier replaces the selection
 			// A click with a CTRL modifier adds/removes to/from the selection
+			selectWindow.resizeRelocate( 0, 0, 0, 0 );
 			boolean selected = mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
 			// TODO If nothing is selected this could be the start of a select window
 			if( !selected ) dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
@@ -219,7 +254,16 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void mouseDrag( MouseEvent event ) {
 		if( isPanMouseEvent( event ) ) designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
-		// TODO if( isSelectMode() ) designPane.showSelectWindow( dragAnchor, new Point3D(event.getX(), event.getY(), event.getZ() ));
+		if( isSelectMode() ) updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
+	}
+
+	private void updateSelectWindow( Point3D a, Point3D b ) {
+		double x = Math.min( a.getX(), b.getX() );
+		double y = Math.min( a.getY(), b.getY() );
+		double w = Math.abs( a.getX() - b.getX() );
+		double h = Math.abs( a.getY() - b.getY() );
+		//System.out.println( "x=" + x + " y=" + y + " w=" + w + " h=" + h );
+		Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
 	}
 
 	private void mouseRelease( MouseEvent event ) {
