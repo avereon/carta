@@ -19,7 +19,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
@@ -64,6 +63,7 @@ public abstract class DesignTool extends ProgramTool {
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
+		getStyleClass().add( "design-tool" );
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
@@ -71,7 +71,7 @@ public abstract class DesignTool extends ProgramTool {
 		this.coordinates = new CoordinateStatus( this );
 
 		this.selectWindow = new SelectWindow();
-		this.selectWindow.setFill( Color.web( "#80000040" ) );
+		this.selectWindow.getStyleClass().add( "select" );
 		this.selectPane = new Pane();
 		this.selectPane.getChildren().addAll( selectWindow );
 
@@ -97,10 +97,6 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private static class SelectWindow extends Rectangle {
-
-		public SelectWindow() {
-			super( 0, 0, 100, 100 );
-		}
 
 		@Override
 		public boolean isResizable() {
@@ -262,12 +258,14 @@ public abstract class DesignTool extends ProgramTool {
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
 		double h = Math.abs( a.getY() - b.getY() );
-		//System.out.println( "x=" + x + " y=" + y + " w=" + w + " h=" + h );
 		Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
 	}
 
 	private void mouseRelease( MouseEvent event ) {
-		// TODO if( isSelectMode() ) designPane.hideSelectWindow( dragAnchor, new Point3D(event.getX(), event.getY(), event.getZ() ));
+		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
+		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) {
+			windowSelect( dragAnchor, mouse, !event.isControlDown() );
+		}
 	}
 
 	private void zoom( ScrollEvent event ) {
@@ -282,6 +280,18 @@ public abstract class DesignTool extends ProgramTool {
 
 		CsaShape s = (CsaShape)selection.get( 0 ).getProperties().get( DesignPane.SHAPE_META_DATA );
 		s.setSelected( !modify || !s.isSelected() );
+		return true;
+	}
+
+	private boolean windowSelect( Point3D a, Point3D b, boolean contains ) {
+		// a might be null
+
+		selectWindow.resizeRelocate( 0, 0, 0, 0 );
+
+		List<Shape> selection = designPane.windowSelect( a, b, contains );
+		if( selection.isEmpty() ) return false;
+
+		selection.stream().map( s -> (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA ) ).forEach( s -> s.setSelected( true ) );
 		return true;
 	}
 

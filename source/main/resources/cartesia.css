@@ -1,0 +1,4 @@
+.design-tool .select {
+	-fx-fill: transparent;
+	-fx-stroke: -fx-accent;
+}

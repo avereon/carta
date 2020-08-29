@@ -388,7 +388,7 @@ public class DesignPane extends StackPane {
 	}
 
 	List<Shape> selectByAperture( Point3D anchor, double radius ) {
-		log.log( Log.INFO, "a.radius=" + radius );
+		log.log( Log.TRACE, "a.radius=" + radius );
 		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), false );
 	}
 
