@@ -114,7 +114,7 @@ public class ConstructionPoint extends Region {
 
 	private Line line( double x1, double y1, double x2, double y2 ) {
 		Line line = new Line( x1, y1, x2, y2 );
-		line.setStroke( DEFAULT_COLOR );
+		//line.setStroke( DEFAULT_COLOR );
 		line.setStrokeLineCap( StrokeLineCap.BUTT );
 		//line.setStrokeWidth( 0.5 );
 		return line;

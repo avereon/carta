@@ -1,12 +1,15 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.*;
-import javafx.geometry.*;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -51,16 +54,6 @@ public class DesignPane extends StackPane {
 
 	static final Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
 
-	private DoubleProperty dpiProperty;
-
-	private DoubleProperty zoomProperty;
-
-	private ObjectProperty<Point3D> viewPointProperty;
-
-	private final Design design;
-
-	private double dpu;
-
 	private final Pane select;
 
 	private final Pane preview;
@@ -77,8 +70,17 @@ public class DesignPane extends StackPane {
 
 	private final Map<Class<?>, Consumer<Object>> removeActions;
 
-	public DesignPane( Design design ) {
-		this.design = Objects.requireNonNull( design );
+	private Design design;
+
+	private DoubleProperty dpiProperty;
+
+	private DoubleProperty zoomProperty;
+
+	private ObjectProperty<Point3D> viewPointProperty;
+
+	private double dpu;
+
+	public DesignPane() {
 		select = new Pane();
 		reference = new Pane();
 		preview = new Pane();
@@ -88,10 +90,8 @@ public class DesignPane extends StackPane {
 		addOriginReferencePoint();
 
 		setManaged( false );
-		rescale( true );
 
 		layerMap = new ConcurrentHashMap<>();
-		layerMap.put( design.getRootLayer(), layers );
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
@@ -115,6 +115,13 @@ public class DesignPane extends StackPane {
 		removeActions = new HashMap<>();
 		//removeActions.put( CsaPoint.class, ( s ) -> removePoint( (CsaPoint)s ) );
 		//removeActions.put( CsaLine.class, ( s ) -> removeLine( (CsaLine)s ) );
+	}
+
+	public DesignPane loadDesign( Design design ) {
+		if( this.design != null ) throw new IllegalStateException( "Design already set" );
+		this.design = Objects.requireNonNull( design );
+
+		layerMap.put( design.getRootLayer(), layers );
 
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
@@ -122,13 +129,13 @@ public class DesignPane extends StackPane {
 		design.register( NodeEvent.VALUE_CHANGED, this::valueChanged );
 		design.register( NodeEvent.CHILD_REMOVED, this::removeShape );
 
-		loadDesign( design );
-	}
-
-	private void loadDesign( Design design ) {
 		design.getRootLayer().getLayers().forEach( this::addLayer );
 		design.getRootLayer().getLayers().forEach( l -> l.getShapes().forEach( this::add ) );
 		design.getRootLayer().getLayers().forEach( this::reorderLayer );
+
+		rescale( true );
+
+		return this;
 	}
 
 	private void add( DesignNode node ) {
@@ -376,9 +383,9 @@ public class DesignPane extends StackPane {
 		return localToParent( x, y, z );
 	}
 
-	List<Shape> apertureSelect( double x, double y, double z, double r, DesignUnit u ) {
+	List<Shape> apertureSelect( double x, double y, double z, DesignValue v ) {
 		// Convert the aperture radius and unit to world values
-		double pixels = u.to( r, DesignUnit.INCH ) * getDpi();
+		double pixels = v.getUnit().to( v.getValue(), DesignUnit.INCH ) * getDpi();
 		Point2D aperture = parentToLocal( getTranslateX() + pixels, getTranslateY() + pixels );
 		return selectByAperture( parentToLocal( x, y, z ), aperture.getX() );
 	}

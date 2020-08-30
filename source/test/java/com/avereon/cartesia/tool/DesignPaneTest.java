@@ -48,7 +48,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		parent.resize( PARENT_WIDTH, PARENT_HEIGHT );
 
 		design = new Design2D();
-		pane = new DesignPane( design );
+		pane = new DesignPane().loadDesign( design );
 		parent.getChildren().add( pane );
 
 		assertThat( parent.getWidth(), is( PARENT_WIDTH ) );

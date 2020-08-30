@@ -1,4 +1,8 @@
 .design-tool .select {
-	-fx-fill: transparent;
 	-fx-stroke: -fx-accent;
+	-fx-fill: transparent;
+}
+
+.design-tool .construction-point > * {
+	-fx-stroke: #808080;
 }

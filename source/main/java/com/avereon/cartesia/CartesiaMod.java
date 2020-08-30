@@ -2,7 +2,6 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.icon.CartesiaIcon;
 import com.avereon.cartesia.tool.Design2dEditor;
-import com.avereon.cartesia.tool.Design3dEditor;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
 
@@ -26,9 +25,9 @@ public class CartesiaMod extends Mod {
 		registerTool( design2dAssetType, design2dEditorRegistration );
 
 		// Register Design3D
-		registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
-		ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
-		design3dEditorRegistration.setName( "Design 3D Editor" );
+		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
+		//ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
+		//design3dEditorRegistration.setName( "Design 3D Editor" );
 		//registerTool( design3dAssetType, design3dEditorRegistration );
 
 		// Load the default settings
@@ -44,8 +43,8 @@ public class CartesiaMod extends Mod {
 		unregisterSettingsPages();
 
 		// Unregister Design3D
-		unregisterTool( design3dAssetType, Design3dEditor.class );
-		unregisterAssetType( design3dAssetType );
+		//unregisterTool( design3dAssetType, Design3dEditor.class );
+		//unregisterAssetType( design3dAssetType );
 
 		// Unregister Design2D
 		unregisterTool( design2dAssetType, Design2dEditor.class );

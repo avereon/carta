@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.CsaShape;
@@ -14,6 +15,11 @@ import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -45,11 +51,15 @@ public abstract class DesignTool extends ProgramTool {
 
 	private ReticleCursor reticle;
 
-	private DesignPane designPane;
+	private final DesignPane designPane;
 
 	private final Pane selectPane;
 
 	private final SelectWindow selectWindow;
+
+	private final ObjectProperty<DesignValue> selectTolerance;
+
+	private final ObservableList<Shape> selectedShapes;
 
 	private Point3D mousePoint;
 
@@ -57,36 +67,47 @@ public abstract class DesignTool extends ProgramTool {
 
 	private Point3D viewAnchor;
 
-	private double selectApertureRadius;
-
-	private DesignUnit selectApertureUnit;
-
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		getStyleClass().add( "design-tool" );
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
+		this.designPane = new DesignPane();
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
+		this.selectTolerance = new SimpleObjectProperty<>();
 
+		this.selectedShapes = FXCollections.observableArrayList();
+		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)( l ) -> {
+			while( l.next() ) {
+				l.getAddedSubList().stream().map( s -> (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA ) ).forEach( s -> s.setSelected( true ) );
+				l.getRemoved().stream().map( s -> (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA ) ).forEach( s -> s.setSelected( false ) );
+			}
+		} );
 		this.selectWindow = new SelectWindow();
 		this.selectWindow.getStyleClass().add( "select" );
 		this.selectPane = new Pane();
 		this.selectPane.getChildren().addAll( selectWindow );
 
+		getChildren().addAll( designPane, selectPane );
+
 		// Initial values from settings
 		setReticle( ReticleCursor.valueOf( product.getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
 		double selectApertureRadius = Double.parseDouble( product.getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
 		DesignUnit selectApertureUnit = DesignUnit.valueOf( product.getSettings().get( SELECT_APERTURE_UNIT, DesignUnit.MILLIMETER.name() ).toUpperCase() );
-		setSelectAperture( selectApertureRadius, selectApertureUnit );
+		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
 
 		// Settings listeners
 		product.getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		product.getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectAperture( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) );
 		product
 			.getSettings()
-			.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) );
+			.register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		product
+			.getSettings()
+			.register( SELECT_APERTURE_UNIT,
+				e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
+			);
 
 		addEventFilter( KeyEvent.ANY, this::key );
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
@@ -140,9 +161,24 @@ public abstract class DesignTool extends ProgramTool {
 		if( designPane != null ) designPane.setZoom( zoom );
 	}
 
-	public void setSelectAperture( double radius, DesignUnit unit ) {
-		selectApertureRadius = radius;
-		selectApertureUnit = unit;
+	public ReticleCursor getReticle() {
+		return reticle;
+	}
+
+	public void setSelectTolerance( DesignValue tolerance ) {
+		selectTolerance.set( tolerance );
+	}
+
+	public DesignValue getSelectTolerance() {
+		return selectTolerance.get();
+	}
+
+	public ObjectProperty<DesignValue> selectToleranceProperty() {
+		return selectTolerance;
+	}
+
+	public ObservableList<Shape> selectedShapes() {
+		return selectedShapes;
 	}
 
 	@Override
@@ -155,10 +191,8 @@ public abstract class DesignTool extends ProgramTool {
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
-		designPane = new DesignPane( request.getAsset().getModel() );
+		designPane.loadDesign( request.getAsset().getModel() );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
-
-		getChildren().addAll( designPane, selectPane );
 
 		// Keep the design pane centered when resizing
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
@@ -209,10 +243,6 @@ public abstract class DesignTool extends ProgramTool {
 		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld( x, y, z );
 	}
 
-	public ReticleCursor getReticle() {
-		return reticle;
-	}
-
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
 		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
@@ -253,19 +283,19 @@ public abstract class DesignTool extends ProgramTool {
 		if( isSelectMode() ) updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
 	}
 
-	private void updateSelectWindow( Point3D a, Point3D b ) {
-		double x = Math.min( a.getX(), b.getX() );
-		double y = Math.min( a.getY(), b.getY() );
-		double w = Math.abs( a.getX() - b.getX() );
-		double h = Math.abs( a.getY() - b.getY() );
+	private void updateSelectWindow( Point3D anchor, Point3D mouse ) {
+		if( anchor == null ) return;
+		double x = Math.min( anchor.getX(), mouse.getX() );
+		double y = Math.min( anchor.getY(), mouse.getY() );
+		double w = Math.abs( anchor.getX() - mouse.getX() );
+		double h = Math.abs( anchor.getY() - mouse.getY() );
 		Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
 	}
 
 	private void mouseRelease( MouseEvent event ) {
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) {
-			windowSelect( dragAnchor, mouse, !event.isControlDown() );
-		}
+		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) windowSelect( dragAnchor, mouse, !event.isControlDown() );
+		dragAnchor = null;
 	}
 
 	private void zoom( ScrollEvent event ) {
@@ -275,23 +305,29 @@ public abstract class DesignTool extends ProgramTool {
 	private boolean mouseSelect( double x, double y, double z, boolean modify ) {
 		if( !modify ) getDesign().clearSelected();
 
-		List<Shape> selection = designPane.apertureSelect( x, y, z, selectApertureRadius, selectApertureUnit );
+		List<Shape> selection = designPane.apertureSelect( x, y, z, getSelectTolerance() );
 		if( selection.isEmpty() ) return false;
 
-		CsaShape s = (CsaShape)selection.get( 0 ).getProperties().get( DesignPane.SHAPE_META_DATA );
-		s.setSelected( !modify || !s.isSelected() );
+		Shape shape = selection.get( 0 );
+		boolean selected = ((CsaShape)shape.getProperties().get( DesignPane.SHAPE_META_DATA )).isSelected();
+		if( !modify || !selected ) {
+			selectedShapes().add( shape );
+		} else {
+			selectedShapes().remove( shape );
+		}
+
 		return true;
 	}
 
 	private boolean windowSelect( Point3D a, Point3D b, boolean contains ) {
-		// a might be null
-
 		selectWindow.resizeRelocate( 0, 0, 0, 0 );
 
 		List<Shape> selection = designPane.windowSelect( a, b, contains );
 		if( selection.isEmpty() ) return false;
 
-		selection.stream().map( s -> (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA ) ).forEach( s -> s.setSelected( true ) );
+		selectedShapes().clear();
+		selectedShapes().addAll( selection );
+
 		return true;
 	}
 
