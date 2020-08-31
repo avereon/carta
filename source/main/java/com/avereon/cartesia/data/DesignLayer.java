@@ -57,9 +57,9 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 		return this;
 	}
 
-	public Set<DesignLayer> getAllLayers() {
-		Set<DesignLayer> layers = new HashSet<>( getValues( LAYERS ) );
-		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toSet()) );
+	public List<DesignLayer> getAllLayers() {
+		List<DesignLayer> layers = new ArrayList<>( getValues( LAYERS ) );
+		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toList()) );
 		return layers;
 	}
 

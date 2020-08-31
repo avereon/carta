@@ -1,8 +1,13 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.tool.ConstructionPoint;
+import com.avereon.cartesia.tool.DesignPane;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 
+import java.util.List;
 import java.util.Map;
 
 public class CsaLine extends CsaShape {
@@ -39,6 +44,24 @@ public class CsaLine extends CsaShape {
 		super.updateFrom( map );
 		setPoint( ParseUtil.parsePoint3D( map.get( POINT ) ) );
 		return this;
+	}
+
+	@Override
+	public List<Shape> generateGeometry() {
+		Line line = new Line( getOrigin().getX(), getOrigin().getY(), getPoint().getX(), getPoint().getY() );
+		configureShape( line );
+		return List.of( line );
+	}
+
+	@Override
+	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
+		Line line = (Line)shapes.get( 0 );
+		ConstructionPoint o = cp( pane, line.startXProperty(), line.startYProperty() );
+		ConstructionPoint p = cp( pane, line.endXProperty(), line.endYProperty() );
+
+		List<ConstructionPoint> cps = List.of( o, p );
+		line.getProperties().put( CONSTRUCTION_POINTS, cps );
+		return cps;
 	}
 
 	@Override

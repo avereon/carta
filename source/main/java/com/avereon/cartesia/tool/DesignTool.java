@@ -141,7 +141,7 @@ public abstract class DesignTool extends ProgramTool {
 		return prompt;
 	}
 
-	public Point3D getMousePoint() {
+	public Point3D getWorldPointAtMouse() {
 		return mousePoint;
 	}
 
@@ -239,7 +239,7 @@ public abstract class DesignTool extends ProgramTool {
 		}
 	}
 
-	protected Point3D mouseToWorld( double x, double y, double z ) {
+	private Point3D mouseToWorld( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld( x, y, z );
 	}
 
@@ -258,7 +258,7 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void mouseMove( MouseEvent event ) {
 		mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
-		getCoordinateStatus().updatePosition( mousePoint.getX(), mousePoint.getY(), mousePoint.getZ() );
+		getCoordinateStatus().updatePosition( mousePoint );
 	}
 
 	private void mousePress( MouseEvent event ) {
@@ -274,7 +274,7 @@ public abstract class DesignTool extends ProgramTool {
 			// TODO If nothing is selected this could be the start of a select window
 			if( !selected ) dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		} else {
-			getCommandPrompt().relay( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
+			getCommandPrompt().relay( getWorldPointAtMouse() );
 		}
 	}
 

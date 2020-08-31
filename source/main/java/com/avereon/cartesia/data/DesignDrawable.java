@@ -33,8 +33,9 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
+	// FIXME This should probably be a calculatedDrawWidth() method
 	public Double getDrawWidth() {
-		Double width = getValue( DRAW_COLOR );
+		Double width = getValue( DRAW_WIDTH );
 		if( width != null ) return width;
 		if( this instanceof DesignLayer) return DEFAULT_DRAW_WIDTH;
 		DesignNode parent = getParent();
@@ -84,7 +85,7 @@ public abstract class DesignDrawable extends DesignNode {
 	public DesignDrawable updateFrom( Map<String, String> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( ORDER ) ) setOrder( Integer.parseInt( map.get( ORDER ) ) );
-		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( Integer.parseInt( map.get( DRAW_WIDTH ) ) );
+		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( Double.parseDouble( map.get( DRAW_WIDTH ) ) );
 		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( Color.web( map.get( DRAW_COLOR ) ) );
 		if( map.containsKey( FILL_COLOR ) ) setFillColor( Color.web( map.get( FILL_COLOR ) ) );
 		return this;

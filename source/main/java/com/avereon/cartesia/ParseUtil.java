@@ -5,6 +5,10 @@ import javafx.geometry.Point3D;
 
 public class ParseUtil {
 
+	public static Double parseDouble( String string ) {
+		return string == null ? null :  Double.parseDouble( string );
+	}
+
 	public static Point2D parsePoint2D( String string ) {
 		String[] coords = string.split( "," );
 		return new Point2D( Double.parseDouble( coords[ 0 ] ), Double.parseDouble( coords[ 1 ] ) );

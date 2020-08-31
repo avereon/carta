@@ -3,11 +3,15 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.math.Points;
 import com.avereon.data.NodeEvent;
+import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
-import javafx.beans.property.*;
-import javafx.geometry.Bounds;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
@@ -15,7 +19,10 @@ import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -64,11 +71,7 @@ public class DesignPane extends StackPane {
 
 	private final Map<DesignLayer, Layer> layerMap;
 
-	private final Map<Class<?>, Consumer<Object>> addActions;
-
-	private final Map<Class<?>, Consumer<Object>> changeActions;
-
-	private final Map<Class<?>, Consumer<Object>> removeActions;
+	private final Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions;
 
 	private Design design;
 
@@ -88,7 +91,6 @@ public class DesignPane extends StackPane {
 		getChildren().addAll( layers, preview, reference, select );
 
 		addOriginReferencePoint();
-
 		setManaged( false );
 
 		layerMap = new ConcurrentHashMap<>();
@@ -99,22 +101,24 @@ public class DesignPane extends StackPane {
 		zoomProperty().addListener( ( p, o, n ) -> rescale( false ) );
 		parentProperty().addListener( ( p, o, n ) -> recenter() );
 
-		// TODO Move this map somewhere else
-		addActions = new HashMap<>();
-		addActions.put( DesignLayer.class, ( o ) -> addLayer( (DesignLayer)o ) );
-		addActions.put( CsaPoint.class, ( s ) -> addPoint( (CsaPoint)s ) );
-		addActions.put( CsaLine.class, ( s ) -> addLine( (CsaLine)s ) );
+		// The design action map
+		setupDesignActions( designActions = new HashMap<>() );
+	}
 
-		// TODO Move this map somewhere else
-		changeActions = new HashMap<>();
+	private void setupDesignActions( Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions ) {
+		Map<Class<?>, Consumer<Object>> addActions = designActions.computeIfAbsent( NodeEvent.CHILD_ADDED, ( k ) -> new HashMap<>() );
+		addActions.put( DesignLayer.class, ( o ) -> doAddLayer( (DesignLayer)o ) );
+		addActions.put( CsaPoint.class, ( s ) -> doAddShape( (CsaShape)s ) );
+		addActions.put( CsaLine.class, ( s ) -> doAddShape( (CsaShape)s ) );
+
+		Map<Class<?>, Consumer<Object>> changeActions = designActions.computeIfAbsent( NodeEvent.VALUE_CHANGED, ( k ) -> new HashMap<>() );
 		changeActions.put( DesignLayer.class, ( o ) -> {
 			log.log( Log.WARN, "Layer changed --- still needs implementing" );
 		} );
 
-		// TODO Move this map somewhere else
-		removeActions = new HashMap<>();
-		//removeActions.put( CsaPoint.class, ( s ) -> removePoint( (CsaPoint)s ) );
-		//removeActions.put( CsaLine.class, ( s ) -> removeLine( (CsaLine)s ) );
+		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
+		//removeActions.put( CsaPoint.class, ( s ) -> doRemovePoint( (CsaPoint)s ) );
+		//removeActions.put( CsaLine.class, ( s ) -> doRemoveLine( (CsaLine)s ) );
 	}
 
 	public DesignPane loadDesign( Design design ) {
@@ -123,146 +127,65 @@ public class DesignPane extends StackPane {
 
 		layerMap.put( design.getRootLayer(), layers );
 
-		// Design listeners
-		design.register( Design.UNIT, e -> rescale( true ) );
-		design.register( NodeEvent.CHILD_ADDED, this::addShape );
-		design.register( NodeEvent.VALUE_CHANGED, this::valueChanged );
-		design.register( NodeEvent.CHILD_REMOVED, this::removeShape );
-
-		design.getRootLayer().getLayers().forEach( this::addLayer );
-		design.getRootLayer().getLayers().forEach( l -> l.getShapes().forEach( this::add ) );
-		design.getRootLayer().getLayers().forEach( this::reorderLayer );
+		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
+		design.getRootLayer().getAllLayers().forEach( l -> l.getShapes().forEach( this::doAddNode ) );
+		design.getRootLayer().getAllLayers().forEach( this::doReorderLayer );
 
 		rescale( true );
+
+		// Design listeners
+		design.register( Design.UNIT, e -> rescale( true ) );
+		design.register( NodeEvent.CHILD_ADDED, this::doAction );
+		design.register( NodeEvent.VALUE_CHANGED, this::doAction );
+		design.register( NodeEvent.CHILD_REMOVED, this::doAction );
 
 		return this;
 	}
 
-	private void add( DesignNode node ) {
-		Consumer<Object> c = addActions.get( node.getClass() );
-		if( c == null ) return;
-		c.accept( node );
+	private void doAction( NodeEvent event ) {
+		Object value = event.getNewValue();
+		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
+		if( c != null ) c.accept( value );
 	}
 
-	private void addShape( NodeEvent event ) {
-		add( event.getNewValue() );
+	private void doAddNode( DesignNode node ) {
+		Consumer<Object> c = designActions.get( NodeEvent.CHILD_ADDED ).get( node.getClass() );
+		if( c != null ) c.accept( node );
 	}
 
-	private void valueChanged( NodeEvent event ) {
-		changeActions.computeIfPresent( event.getNode().getClass(), ( k, c ) -> {
-			c.accept( event.getNewValue() );
-			return c;
-		} );
-	}
-
-	private void removeShape( NodeEvent event ) {
-		removeActions.computeIfPresent( event.getOldValue().getClass(), ( k, c ) -> {
-			c.accept( event.getNewValue() );
-			return c;
-		} );
-	}
-
-	private ConstructionPoint cp( ReadOnlyObjectProperty<Bounds> bProperty ) {
-		ConstructionPoint cp = new ConstructionPoint();
-		bProperty.addListener( ( p, o, n ) -> {
-			cp.layoutXProperty().set( bProperty.get().getCenterX() );
-			cp.layoutYProperty().set( bProperty.get().getCenterY() );
-		} );
-		return cp;
-	}
-
-	private ConstructionPoint cp( DoubleProperty xProperty, DoubleProperty yProperty ) {
-		ConstructionPoint cp = new ConstructionPoint();
-		cp.layoutXProperty().bind( xProperty.multiply( scaleXProperty() ) );
-		cp.layoutYProperty().bind( yProperty.multiply( scaleYProperty() ).negate() );
-		return cp;
-	}
-
-	private void addLayer( DesignLayer yy ) {
+	private void doAddLayer( DesignLayer yy ) {
 		Layer parent = layerMap.get( yy.getParent() );
 		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
 		Fx.run( () -> layers.getChildren().add( layer ) );
 	}
 
-	private void removeLayer( DesignLayer yy ) {
+	private void doRemoveLayer( DesignLayer yy ) {
 		Layer layer = layerMap.remove( yy );
 		if( layer != null ) ((Layer)layer.getParent()).getChildren().remove( layer );
 	}
 
-	private void reorderLayer( DesignLayer layer ) {
-		reorderLayer( layerMap.get( layer ) );
+	private void doReorderLayer( DesignLayer layer ) {
+		doReorderLayer( layerMap.get( layer ) );
 	}
 
-	private void reorderLayer( Layer pane ) {
+	private void doReorderLayer( Layer pane ) {
 		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
-	private void addPoint( CsaPoint pp ) {
-		// FIXME Should the CsaShape class be used to generate the geometry???
-		// TODO All this data may need to be encapsulated to be mapped to the original CsaPoint
-		double size = 0.5;
-		double offset = 0.1 * size;
-		double ox = pp.getOrigin().getX();
-		double oy = pp.getOrigin().getY();
+	private void doAddShape( CsaShape designShape ) {
+		List<Shape> geometry = designShape.generateGeometry();
+		List<ConstructionPoint> cps = designShape.generateConstructionPoints( this, geometry  );
 
-		Path p = new Path();
-		p.getElements().add( new MoveTo( ox - offset, oy + size ) );
-		p.getElements().add( new LineTo( ox + offset, oy + size ) );
-		p.getElements().add( new LineTo( ox + offset, oy + offset ) );
-		p.getElements().add( new LineTo( ox + size, oy + offset ) );
-		p.getElements().add( new LineTo( ox + size, oy - offset ) );
-		p.getElements().add( new LineTo( ox + offset, oy - offset ) );
-		p.getElements().add( new LineTo( ox + offset, oy - size ) );
-		p.getElements().add( new LineTo( ox - offset, oy - size ) );
-		p.getElements().add( new LineTo( ox - offset, oy - offset ) );
-		p.getElements().add( new LineTo( ox - size, oy - offset ) );
-		p.getElements().add( new LineTo( ox - size, oy + offset ) );
-		p.getElements().add( new LineTo( ox - offset, oy + offset ) );
-		p.getElements().add( new ClosePath() );
-		p.setFill( pp.getDrawColor() );
-		p.setStrokeWidth( 0 );
-		p.setStroke( null );
-
-		pp.register( CsaShape.SELECTED, e -> p.setFill( e.getNewValue() ? Color.MAGENTA : pp.getDrawColor() ) );
-
-		// TODO Generalize and simplify
-		ConstructionPoint o = cp( p.boundsInParentProperty() );
-		p.getProperties().put( SHAPE_META_DATA, pp );
-		p.getProperties().put( "construction-points", Set.of( o ) );
-
-		DesignLayer yy = pp.getParent();
+		DesignLayer yy = designShape.getParent();
 		Layer layer = layerMap.get( yy );
 		Fx.run( () -> {
-			layer.getChildren().add( p );
-			reference.getChildren().addAll( o );
-		} );
-	}
-
-	private void addLine( CsaLine ll ) {
-		// FIXME Should the CsaShape class be used to generate the geometry???
-		// TODO All this data may need to be encapsulated to be mapped to the original CsaLine
-		Line line = new Line( ll.getOrigin().getX(), ll.getOrigin().getY(), ll.getPoint().getX(), ll.getPoint().getY() );
-		line.setStroke( ll.getDrawColor() );
-		line.setFill( null );
-
-		ll.register( CsaShape.SELECTED, e -> line.setStroke( e.getNewValue() ? Color.MAGENTA : ll.getDrawColor() ) );
-
-		// TODO Generalize and simplify
-		ConstructionPoint o = cp( line.startXProperty(), line.startYProperty() );
-		ConstructionPoint p = cp( line.endXProperty(), line.endYProperty() );
-		line.getProperties().put( SHAPE_META_DATA, ll );
-		line.getProperties().put( "construction-points", Set.of( o, p ) );
-
-		DesignLayer yy = ll.getParent();
-		Layer layer = layerMap.get( yy );
-		Fx.run( () -> {
-			layer.getChildren().add( line );
-			reference.getChildren().addAll( o, p );
+			layer.getChildren().addAll( geometry );
+			reference.getChildren().addAll( cps );
 		} );
 	}
 
 	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint( ConstructionPoint.Type.REFERENCE ) );
+		reference.getChildren().add( new ConstructionPoint( Points.Type.REFERENCE ) );
 	}
 
 	public Design getDesign() {
@@ -418,16 +341,6 @@ public class DesignPane extends StackPane {
 		return selectByShape( box, contains );
 	}
 
-//	void showSelectWindow( Point3D c, Point3D d ) {
-//		Point3D a = parentToLocal( c );
-//		Point3D b = parentToLocal( d  );
-//		Rectangle r = new Rectangle( Math.min( a.getX(), b.getX() ), Math.min(a.getY(), b.getY()), Math.abs( a.getX() - b.getX()), Math.abs( a.getY() - b.getY() ) );
-//		r.setFill( Color.web( "#80000080" ) );
-//		log.log( Log.INFO, "window=" + r );
-//		select.getChildren().add( r );
-//		select.setVisible( true );
-//	}
-
 	/**
 	 * Select nodes using a shape. The selecting shape can be any shape but it
 	 * usually a {@link Circle} or a {@link Rectangle}. Returns the list of
@@ -509,7 +422,9 @@ public class DesignPane extends StackPane {
 
 	}
 
-	// FIXME Change to 'extends Group'
+	/**
+	 * This is the internal layer that represents the design layer.
+	 */
 	static class Layer extends Pane {}
 
 }
