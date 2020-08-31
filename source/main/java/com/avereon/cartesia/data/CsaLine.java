@@ -49,8 +49,7 @@ public class CsaLine extends CsaShape {
 	@Override
 	public List<Shape> generateGeometry() {
 		Line line = new Line( getOrigin().getX(), getOrigin().getY(), getPoint().getX(), getPoint().getY() );
-		configureShape( line );
-		return List.of( line );
+		return List.of( configureShape( line ) );
 	}
 
 	@Override

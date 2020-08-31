@@ -4,10 +4,8 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeComparator;
-import com.avereon.zerra.color.Colors;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
@@ -24,10 +22,6 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 	static final String SHAPE_META_DATA = "shape-meta-data";
 
 	static final String CONSTRUCTION_POINTS = "construction-points";
-
-	private static final Color DEFAULT_SELECT_DRAW = Colors.web( "#ff00ffff" );
-
-	private static final Color DEFAULT_SELECT_FILL = Colors.web( "#ff00ff40" );
 
 	public static final NodeComparator<CsaShape> comparator;
 
@@ -85,23 +79,19 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 	<V extends Shape> V configureShape( V shape ) {
 		shape.getProperties().put( SHAPE_META_DATA, this );
 
-		// All these...and the listeners can probably be handled in DesignDrawable
-		// FIXME Use "calculated" methods instead of direct methods
-		shape.setStroke( getDrawColor() );
-		shape.setStrokeWidth( getDrawWidth() );
-		shape.setFill( getFillColor() );
+		shape.setStroke( calcDrawColor() );
+		shape.setStrokeWidth( calcDrawWidth() );
+		shape.setFill( calcFillColor() );
 
 		// Add listeners for property changes
-		// FIXME Use "calculated" methods instead of direct methods
-		register( DRAW_WIDTH, e -> shape.setStrokeWidth( getDrawWidth() ) );
-		register( DRAW_COLOR, e -> shape.setStroke( getDrawColor() ) );
-		register( FILL_COLOR, e -> shape.setFill( getFillColor() ) );
+		register( DRAW_WIDTH, e -> shape.setStrokeWidth( calcDrawWidth() ) );
+		register( DRAW_COLOR, e -> shape.setStroke( calcDrawColor() ) );
+		register( FILL_COLOR, e -> shape.setFill( calcFillColor() ) );
 
 		// Selection listener
 		register( CsaShape.SELECTED, e -> {
-			// FIXME Use "calculated" methods instead of direct methods
-			shape.setStroke( e.getNewValue() ? DEFAULT_SELECT_DRAW : getDrawColor() );
-			shape.setFill( e.getNewValue() ? DEFAULT_SELECT_FILL : getFillColor() );
+			shape.setStroke( e.getNewValue() ? calcSelectDrawColor() : calcDrawColor() );
+			shape.setFill( e.getNewValue() ? calcSelectFillColor() : calcFillColor() );
 		} );
 
 		return shape;

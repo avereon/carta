@@ -5,6 +5,7 @@ import com.avereon.cartesia.math.Points;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
@@ -18,7 +19,11 @@ public class CsaPoint extends CsaShape {
 
 	public static final String TYPE = "type";
 
-	private static final double DEFAULT_SIZE = 1;
+	private static final double DEFAULT_SIZE = 1.0;
+
+	private static final Points.Type DEFAULT_TYPE = Points.Type.CIRCLE;
+
+	private static final double ZERO_DRAW_WIDTH = 0.0;
 
 	public CsaPoint() {
 		addModifyingKeys( ORIGIN, SIZE, TYPE );
@@ -43,13 +48,33 @@ public class CsaPoint extends CsaShape {
 		return this;
 	}
 
-	public String getType() {
+	public Points.Type calcType() {
+		Points.Type type = getType();
+		return type == null ? DEFAULT_TYPE : type;
+	}
+
+	public Points.Type getType() {
 		return getValue( TYPE );
 	}
 
-	public CsaPoint setType( String type ) {
+	public CsaPoint setType( Points.Type type ) {
 		setValue( TYPE, type );
 		return this;
+	}
+
+	@Override
+	public double calcDrawWidth() {
+		return calcType().isClosed() ? ZERO_DRAW_WIDTH : super.calcDrawWidth();
+	}
+
+	@Override
+	public Color calcFillColor() {
+		return calcDrawColor();
+	}
+
+	@Override
+	public Color calcSelectFillColor() {
+		return calcSelectDrawColor();
 	}
 
 	protected Map<String, Object> asMap() {
@@ -62,7 +87,7 @@ public class CsaPoint extends CsaShape {
 	public CsaPoint updateFrom( Map<String, String> map ) {
 		super.updateFrom( map );
 		setSize( ParseUtil.parseDouble( map.get( SIZE ) ) );
-		setType( map.get( TYPE ) );
+		setType( Points.parsePointType( map.get( TYPE ) ) );
 		return this;
 	}
 
@@ -75,11 +100,8 @@ public class CsaPoint extends CsaShape {
 	public List<Shape> generateGeometry() {
 		double ox = getOrigin().getX();
 		double oy = getOrigin().getY();
-		Path path = Points.createPoint( getType(), ox, oy, getRadius() );
-
-		configureShape( path );
-		// If the path is closed then the listeners need to be modified a bit
-		return List.of( path );
+		Path path = Points.createPoint( calcType(), ox, oy, getRadius() );
+		return List.of( configureShape( path ) );
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
 
 import java.util.Map;
@@ -16,9 +17,13 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final double DEFAULT_DRAW_WIDTH = 1.0;
 
-	private static final Color DEFAULT_DRAW_COLOR = Color.web( "0x000000ff");
+	private static final Color DEFAULT_DRAW_COLOR = Color.web( "0x000000ff" );
 
-	private static final Color DEFAULT_FILL_COLOR = Color.web( "0x202030ff");
+	private static final Color DEFAULT_FILL_COLOR = Color.web( "0x202030ff" );
+
+	private static final Color DEFAULT_SELECT_DRAW_COLOR = Colors.web( "#ff00ffff" );
+
+	private static final Color DEFAULT_SELECT_FILL_COLOR = Colors.web( "#ff00ff40" );
 
 	protected DesignDrawable() {
 		addModifyingKeys( DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
@@ -33,14 +38,17 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	// FIXME This should probably be a calculatedDrawWidth() method
-	public Double getDrawWidth() {
-		Double width = getValue( DRAW_WIDTH );
+	public double calcDrawWidth() {
+		Double width = getDrawWidth();
 		if( width != null ) return width;
-		if( this instanceof DesignLayer) return DEFAULT_DRAW_WIDTH;
+		if( this instanceof DesignLayer ) return DEFAULT_DRAW_WIDTH;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) width = ((DesignLayer)parent).getDrawWidth();
+		if( parent instanceof DesignLayer ) width = ((DesignLayer)parent).calcDrawWidth();
 		return width;
+	}
+
+	public Double getDrawWidth() {
+		return getValue( DRAW_WIDTH );
 	}
 
 	public DesignDrawable setDrawWidth( double width ) {
@@ -48,13 +56,17 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public Color getDrawColor() {
-		Color color = getValue( DRAW_COLOR );
+	public Color calcDrawColor() {
+		Color color = getDrawColor();
 		if( color != null ) return color;
-		if( this instanceof DesignLayer) return DEFAULT_DRAW_COLOR;
+		if( this instanceof DesignLayer ) return DEFAULT_DRAW_COLOR;
 		DesignNode parent = getParent();
 		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).getDrawColor();
 		return color;
+	}
+
+	public Color getDrawColor() {
+		return getValue( DRAW_COLOR );
 	}
 
 	public DesignDrawable setDrawColor( Color color ) {
@@ -62,18 +74,30 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public Color getFillColor() {
-		Color color = getValue( FILL_COLOR );
+	public Color calcFillColor() {
+		Color color = getFillColor();
 		if( color != null ) return color;
-		if( this instanceof DesignLayer) return DEFAULT_FILL_COLOR;
+		if( this instanceof DesignLayer ) return DEFAULT_FILL_COLOR;
 		DesignNode parent = getParent();
 		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).getFillColor();
 		return color;
 	}
 
+	public Color getFillColor() {
+		return getValue( FILL_COLOR );
+	}
+
 	public DesignDrawable setFillColor( Color color ) {
 		setValue( FILL_COLOR, color );
 		return this;
+	}
+
+	public Color calcSelectDrawColor() {
+		return DEFAULT_SELECT_DRAW_COLOR;
+	}
+
+	public Color calcSelectFillColor() {
+		return DEFAULT_SELECT_FILL_COLOR;
 	}
 
 	protected Map<String, Object> asMap() {

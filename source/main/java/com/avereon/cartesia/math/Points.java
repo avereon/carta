@@ -5,19 +5,26 @@ import javafx.scene.shape.*;
 public class Points {
 
 	public enum Type {
-		CIRCLE,
-		CROSS,
-		DIAMOND,
-		REFERENCE,
-		SQUARE,
-		X
+		CIRCLE( true ),
+		CROSS( false ),
+		DIAMOND( true ),
+		REFERENCE( false ),
+		SQUARE( true ),
+		X( false );
+
+		private final boolean closed;
+
+		Type( boolean closed ) {
+			this.closed = closed;
+		}
+
+		public boolean isClosed() {
+			return closed;
+		}
+
 	}
 
 	private static final Type DEFAULT_TYPE = Type.CROSS;
-
-	public static Path createPoint( String type, double x, double y, double r ) {
-		return createPoint( parseType( type ), x, y, r );
-	}
 
 	public static Path createPoint( Type type, double x, double y, double r ) {
 		return switch( type ) {
@@ -30,7 +37,8 @@ public class Points {
 		};
 	}
 
-	private static Type parseType( String type ) {
+	public static Type parsePointType( String type ) {
+		if( type == null ) return null;
 		try {
 			return Type.valueOf( type.toUpperCase() );
 		} catch( NullPointerException | IllegalArgumentException exception ) {
