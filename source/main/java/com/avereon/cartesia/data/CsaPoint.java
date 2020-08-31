@@ -80,7 +80,7 @@ public class CsaPoint extends CsaShape {
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, "point" );
-		map.putAll( asMap( ORIGIN, SIZE, TYPE ) );
+		map.putAll( asMap( SIZE, TYPE ) );
 		return map;
 	}
 

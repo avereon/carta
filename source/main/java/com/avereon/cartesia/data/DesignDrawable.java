@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.ParseUtil;
 import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
 
@@ -109,7 +110,7 @@ public abstract class DesignDrawable extends DesignNode {
 	public DesignDrawable updateFrom( Map<String, String> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( ORDER ) ) setOrder( Integer.parseInt( map.get( ORDER ) ) );
-		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( Double.parseDouble( map.get( DRAW_WIDTH ) ) );
+		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( ParseUtil.parseDouble( map.get( DRAW_WIDTH ) ) );
 		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( Color.web( map.get( DRAW_COLOR ) ) );
 		if( map.containsKey( FILL_COLOR ) ) setFillColor( Color.web( map.get( FILL_COLOR ) ) );
 		return this;

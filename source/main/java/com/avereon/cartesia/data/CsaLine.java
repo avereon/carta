@@ -36,7 +36,7 @@ public class CsaLine extends CsaShape {
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, "line" );
-		map.putAll( asMap( ORIGIN, POINT ) );
+		map.putAll( asMap( POINT ) );
 		return map;
 	}
 
