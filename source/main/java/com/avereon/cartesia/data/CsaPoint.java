@@ -21,7 +21,7 @@ public class CsaPoint extends CsaShape {
 
 	private static final double DEFAULT_SIZE = 1.0;
 
-	private static final Points.Type DEFAULT_TYPE = Points.Type.CIRCLE;
+	private static final Points.Type DEFAULT_TYPE = Points.Type.CROSS;
 
 	private static final double ZERO_DRAW_WIDTH = 0.0;
 

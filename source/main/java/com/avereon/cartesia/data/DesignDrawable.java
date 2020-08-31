@@ -61,7 +61,7 @@ public abstract class DesignDrawable extends DesignNode {
 		if( color != null ) return color;
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_COLOR;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).getDrawColor();
+		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).calcDrawColor();
 		return color;
 	}
 
@@ -79,7 +79,7 @@ public abstract class DesignDrawable extends DesignNode {
 		if( color != null ) return color;
 		if( this instanceof DesignLayer ) return DEFAULT_FILL_COLOR;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).getFillColor();
+		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).calcFillColor();
 		return color;
 	}
 

@@ -79,8 +79,8 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 	<V extends Shape> V configureShape( V shape ) {
 		shape.getProperties().put( SHAPE_META_DATA, this );
 
-		shape.setStroke( calcDrawColor() );
 		shape.setStrokeWidth( calcDrawWidth() );
+		shape.setStroke( calcDrawColor() );
 		shape.setFill( calcFillColor() );
 
 		// Add listeners for property changes
