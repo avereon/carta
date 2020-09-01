@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="point">
+		<setting key="type" editor="combobox"/>
+		<setting key="size" type="number" editor="textline"/>
+		<setting key="draw-width" type="number" editor="textline"/>
+		<setting key="draw-color" editor="color"/>
+	</page>
+
+</pages>
