@@ -7,11 +7,13 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.CsaShape;
 import com.avereon.cartesia.data.Design;
+import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.util.Log;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.ProgramTool;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.tool.settings.SettingsPage;
+import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
@@ -20,6 +22,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -29,6 +32,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
+import java.io.IOException;
 import java.util.List;
 
 public abstract class DesignTool extends ProgramTool {
@@ -61,6 +65,8 @@ public abstract class DesignTool extends ProgramTool {
 
 	private final ObservableList<Shape> selectedShapes;
 
+	private final PropertiesAction propertiesAction;
+
 	private Point3D mousePoint;
 
 	private Point3D dragAnchor;
@@ -77,14 +83,10 @@ public abstract class DesignTool extends ProgramTool {
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
+		this.propertiesAction = new PropertiesAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
-		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)( l ) -> {
-			while( l.next() ) {
-				l.getAddedSubList().stream().map( s -> (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA ) ).forEach( s -> s.setSelected( true ) );
-				l.getRemoved().stream().map( s -> (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA ) ).forEach( s -> s.setSelected( false ) );
-			}
-		} );
+		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectShapes );
 		this.selectWindow = new SelectWindow();
 		this.selectWindow.getStyleClass().add( "select" );
 		this.selectPane = new Pane();
@@ -115,6 +117,18 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
 		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
+	}
+
+	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
+		while( c.next() ) {
+			c.getRemoved().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( true ) );
+		}
+		propertiesAction.updateEnabled();
+	}
+
+	private CsaShape getDesignShape( Shape s ) {
+		return (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );
 	}
 
 	private static class SelectWindow extends Rectangle {
@@ -218,7 +232,6 @@ public abstract class DesignTool extends ProgramTool {
 
 	@Override
 	protected void activate() throws ToolException {
-		super.activate();
 		// Not sure I want to reset when activated
 		//getCommandPrompt().reset();
 		Workspace workspace = getWorkspace();
@@ -226,6 +239,7 @@ public abstract class DesignTool extends ProgramTool {
 			workspace.getStatusBar().addLeft( getCommandPrompt() );
 			workspace.getStatusBar().addRight( getCoordinateStatus() );
 		}
+		getProgram().getActionLibrary().getAction( "properties" ).pushAction( propertiesAction );
 		requestFocus();
 	}
 
@@ -237,6 +251,11 @@ public abstract class DesignTool extends ProgramTool {
 			workspace.getStatusBar().removeRight( getCoordinateStatus() );
 			workspace.getStatusBar().removeLeft( getCommandPrompt() );
 		}
+	}
+
+	@Override
+	protected void conceal() throws ToolException {
+		getProgram().getActionLibrary().getAction( "properties" ).pullAction( propertiesAction );
 	}
 
 	private Point3D mouseToWorld( double x, double y, double z ) {
@@ -263,24 +282,35 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void mousePress( MouseEvent event ) {
 		// Drag anchor is used by select, pan (and others)
+		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
+		selectWindow.resizeRelocate( 0, 0, 0, 0 );
+
 		if( isPanMouseEvent( event ) ) {
 			viewAnchor = designPane.getViewPoint();
-			dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		} else if( isSelectMode() ) {
-			// A click with no modifier replaces the selection
-			// A click with a CTRL modifier adds/removes to/from the selection
-			selectWindow.resizeRelocate( 0, 0, 0, 0 );
-			boolean selected = mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
-			// TODO If nothing is selected this could be the start of a select window
-			if( !selected ) dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
+			mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
 		} else {
 			getCommandPrompt().relay( getWorldPointAtMouse() );
 		}
 	}
 
 	private void mouseDrag( MouseEvent event ) {
-		if( isPanMouseEvent( event ) ) designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
-		if( isSelectMode() ) updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
+		if( isPanMouseEvent( event ) ) {
+			designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
+		} else if( isWindowSelectMode( event ) ) {
+			updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
+		}
+	}
+
+	private void mouseRelease( MouseEvent event ) {
+		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
+		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) windowSelect( dragAnchor, mouse, !event.isControlDown() );
+		selectWindow.resizeRelocate( 0, 0, 0, 0 );
+		dragAnchor = null;
+	}
+
+	private void zoom( ScrollEvent event ) {
+		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.mouseZoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
 	}
 
 	private void updateSelectWindow( Point3D anchor, Point3D mouse ) {
@@ -292,18 +322,8 @@ public abstract class DesignTool extends ProgramTool {
 		Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
 	}
 
-	private void mouseRelease( MouseEvent event ) {
-		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) windowSelect( dragAnchor, mouse, !event.isControlDown() );
-		dragAnchor = null;
-	}
-
-	private void zoom( ScrollEvent event ) {
-		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.mouseZoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
-	}
-
 	private boolean mouseSelect( double x, double y, double z, boolean modify ) {
-		if( !modify ) getDesign().clearSelected();
+		if( !modify ) selectedShapes().clear();
 
 		List<Shape> selection = designPane.apertureSelect( x, y, z, getSelectTolerance() );
 		if( selection.isEmpty() ) return false;
@@ -320,12 +340,11 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private boolean windowSelect( Point3D a, Point3D b, boolean contains ) {
-		selectWindow.resizeRelocate( 0, 0, 0, 0 );
+		selectedShapes().clear();
 
 		List<Shape> selection = designPane.windowSelect( a, b, contains );
 		if( selection.isEmpty() ) return false;
 
-		selectedShapes().clear();
 		selectedShapes().addAll( selection );
 
 		return true;
@@ -336,11 +355,41 @@ public abstract class DesignTool extends ProgramTool {
 	}
 
 	private boolean isPanMouseEvent( MouseEvent event ) {
-		return event.isShiftDown() && event.isPrimaryButtonDown();
+		return event.isShiftDown() && event.isPrimaryButtonDown() && !event.isStillSincePress();
 	}
 
 	private boolean isSelectMode() {
 		return getDesign().getCommandProcessor().isSelecting();
+	}
+
+	private boolean isWindowSelectMode( MouseEvent event ) {
+		return isSelectMode() && !event.isStillSincePress();
+	}
+
+	private class PropertiesAction extends Action {
+
+		protected PropertiesAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return !selectedShapes().isEmpty();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			String pointPath = "/com/avereon/cartesia/settings/point.xml";
+			selectedShapes.stream().findFirst().map( CsaShape::getFrom ).ifPresent( s -> {
+				try {
+					SettingsPage page = new SettingsPageParser( getProduct(), new NodeSettingsWrapper( s ) ).parse( pointPath ).get( "point" );
+					getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
+				} catch( IOException e ) {
+					e.printStackTrace();
+				}
+			} );
+		}
+
 	}
 
 }

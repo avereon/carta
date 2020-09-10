@@ -104,4 +104,8 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return cp;
 	}
 
+	public static CsaShape getFrom( Shape s ) {
+		return (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );
+	}
+
 }
