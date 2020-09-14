@@ -9,7 +9,9 @@ import com.avereon.cartesia.data.CsaShape;
 import com.avereon.cartesia.data.Design;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.util.Log;
-import com.avereon.xenon.*;
+import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.ProgramTool;
+import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -22,7 +24,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -65,7 +66,7 @@ public abstract class DesignTool extends ProgramTool {
 
 	private final ObservableList<Shape> selectedShapes;
 
-	private final PropertiesAction propertiesAction;
+	//private final PropertiesAction propertiesAction;
 
 	private Point3D mousePoint;
 
@@ -83,10 +84,11 @@ public abstract class DesignTool extends ProgramTool {
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
-		this.propertiesAction = new PropertiesAction( product.getProgram() );
+		//this.propertiesAction = new PropertiesAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectShapes );
+		//this.selectedShapes.addListener( (ListChangeListener<? super Shape>)c -> propertiesAction.updateEnabled() );
 		this.selectWindow = new SelectWindow();
 		this.selectWindow.getStyleClass().add( "select" );
 		this.selectPane = new Pane();
@@ -117,34 +119,6 @@ public abstract class DesignTool extends ProgramTool {
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
 		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
 		addEventFilter( ScrollEvent.SCROLL, this::zoom );
-	}
-
-	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
-		while( c.next() ) {
-			c.getRemoved().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( false ) );
-			c.getAddedSubList().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( true ) );
-		}
-		propertiesAction.updateEnabled();
-	}
-
-	private CsaShape getDesignShape( Shape s ) {
-		return (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );
-	}
-
-	private static class SelectWindow extends Rectangle {
-
-		@Override
-		public boolean isResizable() {
-			return true;
-		}
-
-		@Override
-		public void resizeRelocate( double x, double y, double w, double h ) {
-			setX( x );
-			setY( y );
-			setWidth( w );
-			setHeight( h );
-		}
 	}
 
 	public Design getDesign() {
@@ -239,7 +213,7 @@ public abstract class DesignTool extends ProgramTool {
 			workspace.getStatusBar().addLeft( getCommandPrompt() );
 			workspace.getStatusBar().addRight( getCoordinateStatus() );
 		}
-		getProgram().getActionLibrary().getAction( "properties" ).pushAction( propertiesAction );
+		//getProgram().getActionLibrary().getAction( "properties" ).pushAction( propertiesAction );
 		requestFocus();
 	}
 
@@ -255,7 +229,7 @@ public abstract class DesignTool extends ProgramTool {
 
 	@Override
 	protected void conceal() throws ToolException {
-		getProgram().getActionLibrary().getAction( "properties" ).pullAction( propertiesAction );
+		//getProgram().getActionLibrary().getAction( "properties" ).pullAction( propertiesAction );
 	}
 
 	private Point3D mouseToWorld( double x, double y, double z ) {
@@ -366,30 +340,38 @@ public abstract class DesignTool extends ProgramTool {
 		return isSelectMode() && !event.isStillSincePress();
 	}
 
-	private class PropertiesAction extends Action {
+	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
+		while( c.next() ) {
+			c.getRemoved().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( true ) );
+		}
 
-		protected PropertiesAction( Program program ) {
-			super( program );
+		String pointPath = "/com/avereon/cartesia/settings/point.xml";
+		selectedShapes.stream().findFirst().map( CsaShape::getFrom ).ifPresent( s -> {
+			try {
+				SettingsPage page = new SettingsPageParser( getProduct(), new NodeSettingsWrapper( s ) ).parse( pointPath ).get( "point" );
+				// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
+				getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
+			} catch( IOException e ) {
+				e.printStackTrace();
+			}
+		} );
+	}
+
+	private static class SelectWindow extends Rectangle {
+
+		@Override
+		public boolean isResizable() {
+			return true;
 		}
 
 		@Override
-		public boolean isEnabled() {
-			return !selectedShapes().isEmpty();
+		public void resizeRelocate( double x, double y, double w, double h ) {
+			setX( x );
+			setY( y );
+			setWidth( w );
+			setHeight( h );
 		}
-
-		@Override
-		public void handle( ActionEvent event ) {
-			String pointPath = "/com/avereon/cartesia/settings/point.xml";
-			selectedShapes.stream().findFirst().map( CsaShape::getFrom ).ifPresent( s -> {
-				try {
-					SettingsPage page = new SettingsPageParser( getProduct(), new NodeSettingsWrapper( s ) ).parse( pointPath ).get( "point" );
-					getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
-				} catch( IOException e ) {
-					e.printStackTrace();
-				}
-			} );
-		}
-
 	}
 
 }
