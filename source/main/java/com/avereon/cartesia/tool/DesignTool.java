@@ -206,14 +206,8 @@ public abstract class DesignTool extends ProgramTool {
 
 	@Override
 	protected void activate() throws ToolException {
-		// Not sure I want to reset when activated
-		//getCommandPrompt().reset();
-		Workspace workspace = getWorkspace();
-		if( workspace != null ) {
-			workspace.getStatusBar().addLeft( getCommandPrompt() );
-			workspace.getStatusBar().addRight( getCoordinateStatus() );
-		}
-		//getProgram().getActionLibrary().getAction( "properties" ).pushAction( propertiesAction );
+		getWorkspace().getStatusBar().addLeft( getCommandPrompt() );
+		getWorkspace().getStatusBar().addRight( getCoordinateStatus() );
 		requestFocus();
 	}
 
