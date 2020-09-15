@@ -12,4 +12,10 @@ public class CasExpressionParser extends JEP {
 		addFunction( "rad", new Rad() );
 	}
 
+	public static double eval( String expression ) {
+		CasExpressionParser parser = new CasExpressionParser();
+		parser.parseExpression( expression );
+		return parser.getValue();
+	}
+
 }

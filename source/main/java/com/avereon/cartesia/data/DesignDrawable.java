@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.el.CasExpressionParser;
 import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
 
@@ -40,19 +40,19 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
-		Double width = getDrawWidth();
-		if( width != null ) return width;
+		String width = getDrawWidth();
+		if( width != null ) return CasExpressionParser.eval( width );
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_WIDTH;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) width = ((DesignLayer)parent).calcDrawWidth();
-		return width;
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawWidth();
+		return Double.NaN;
 	}
 
-	public Double getDrawWidth() {
+	public String getDrawWidth() {
 		return getValue( DRAW_WIDTH );
 	}
 
-	public DesignDrawable setDrawWidth( double width ) {
+	public DesignDrawable setDrawWidth( String width ) {
 		setValue( DRAW_WIDTH, width );
 		return this;
 	}
@@ -107,12 +107,12 @@ public abstract class DesignDrawable extends DesignNode {
 		return map;
 	}
 
-	public DesignDrawable updateFrom( Map<String, String> map ) {
+	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		if( map.containsKey( ORDER ) ) setOrder( Integer.parseInt( map.get( ORDER ) ) );
-		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( ParseUtil.parseDouble( map.get( DRAW_WIDTH ) ) );
-		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( Color.web( map.get( DRAW_COLOR ) ) );
-		if( map.containsKey( FILL_COLOR ) ) setFillColor( Color.web( map.get( FILL_COLOR ) ) );
+		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
+		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
+		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( Color.web( (String)map.get( DRAW_COLOR ) ) );
+		if( map.containsKey( FILL_COLOR ) ) setFillColor( Color.web( (String)map.get( FILL_COLOR ) ) );
 		return this;
 	}
 

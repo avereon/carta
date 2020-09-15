@@ -104,9 +104,9 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 		return map;
 	}
 
-	public DesignLayer updateFrom( Map<String, String> map ) {
+	public DesignLayer updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		if( map.containsKey( NAME ) ) setName( map.get( NAME ) );
+		if( map.containsKey( NAME ) ) setName( (String)map.get( NAME ) );
 		return this;
 	}
 

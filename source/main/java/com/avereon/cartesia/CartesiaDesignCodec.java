@@ -21,7 +21,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -91,12 +90,12 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	@SuppressWarnings( "unchecked" )
 	private void loadLayer( Design design, DesignLayer parent, String currentLayerId, Map<String, Object> map ) {
-		DesignLayer layer = new DesignLayer().updateFrom( toStringOnlyMap( map ) );
+		DesignLayer layer = new DesignLayer().updateFrom( map );
 		parent.addLayer( layer );
 		if( Objects.equals( currentLayerId, layer.getId() ) ) design.setCurrentLayer( layer );
 
 		// Add the shapes found in the layer
-		Map<String, Map<String, String>> geometry = (Map<String, Map<String, String>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
+		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
 		geometry.values().forEach( g -> {
 			String type = String.valueOf( g.get( CsaShape.SHAPE ) );
 			CsaShape shape = switch( type ) {
@@ -118,19 +117,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 	}
 
-	private Map<String, String> toStringOnlyMap( Map<String, Object> map ) {
-		Map<String, String> stringMap = new HashMap<>();
-		map.forEach( ( k, v ) -> {
-			if( v instanceof String ) stringMap.put( k, v.toString() );
-		} );
-		return stringMap;
-	}
-
-	private CsaPoint loadCsaPoint( Map<String, String> map ) {
+	private CsaPoint loadCsaPoint( Map<String, Object> map ) {
 		return new CsaPoint().updateFrom( map );
 	}
 
-	private CsaLine loadCsaLine( Map<String, String> map ) {
+	private CsaLine loadCsaLine( Map<String, Object> map ) {
 		return new CsaLine().updateFrom( map );
 	}
 

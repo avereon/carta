@@ -13,7 +13,6 @@ import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.tool.settings.SettingOptionProvider;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
@@ -34,7 +33,6 @@ import javafx.stage.Screen;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 public abstract class DesignTool extends ProgramTool {
 
@@ -336,19 +334,31 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
+			c.getRemoved().stream().findFirst().map( CsaShape::getFrom ).ifPresent( this::hidePropertiesPage );
 			c.getRemoved().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( true ) );
+			c.getAddedSubList().stream().findFirst().map( CsaShape::getFrom ).ifPresent( this::showPropertiesPage );
 		}
+	}
 
-		selectedShapes.stream().findFirst().map( CsaShape::getFrom ).ifPresent( s -> {
-			try {
-				SettingsPage page = s.getPropertiesPage( getProduct() );
-				// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
-				getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
-			} catch( IOException e ) {
-				e.printStackTrace();
-			}
-		} );
+	private void showPropertiesPage( CsaShape s ) {
+		try {
+			SettingsPage page = s.getPropertiesPage( getProduct() );
+			// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
+			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
+		} catch( IOException e ) {
+			e.printStackTrace();
+		}
+	}
+
+	private void hidePropertiesPage( CsaShape s ) {
+		try {
+			SettingsPage page = s.getPropertiesPage( getProduct() );
+			// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
+			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page ) );
+		} catch( IOException e ) {
+			e.printStackTrace();
+		}
 	}
 
 	private static class SelectWindow extends Rectangle {

@@ -45,9 +45,9 @@ public class CsaLine extends CsaShape {
 		return map;
 	}
 
-	public CsaLine updateFrom( Map<String, String> map ) {
+	public CsaLine updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		setPoint( ParseUtil.parsePoint3D( map.get( POINT ) ) );
+		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;
 	}
 

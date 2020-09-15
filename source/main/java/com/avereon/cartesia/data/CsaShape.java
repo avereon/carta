@@ -60,9 +60,9 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return map;
 	}
 
-	public CsaShape updateFrom( Map<String, String> map ) {
+	public CsaShape updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		setOrigin( ParseUtil.parsePoint3D( map.get( ORIGIN ) ) );
+		setOrigin( ParseUtil.parsePoint3D( (String)map.get( ORIGIN ) ) );
 		return this;
 	}
 

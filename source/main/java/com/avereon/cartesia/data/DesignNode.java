@@ -13,8 +13,8 @@ public abstract class DesignNode extends IdNode {
 		return asMap( ID );
 	}
 
-	public DesignNode updateFrom( Map<String, String> map ) {
-		if( map.containsKey( ID ) ) setId( map.get( ID ) );
+	public DesignNode updateFrom( Map<String, Object> map ) {
+		if( map.containsKey( ID ) ) setId( (String)map.get( ID ) );
 		return this;
 	}
 

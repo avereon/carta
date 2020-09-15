@@ -1,6 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.Points;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
@@ -90,10 +89,10 @@ public class CsaPoint extends CsaShape {
 		return map;
 	}
 
-	public CsaPoint updateFrom( Map<String, String> map ) {
+	public CsaPoint updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		setSize( ParseUtil.parseDouble( map.get( SIZE ) ) );
-		setType( map.get( TYPE ) );
+		setSize( (Double)map.get( SIZE ) );
+		setType( (String)map.get( TYPE ) );
 		return this;
 	}
 
