@@ -75,6 +75,7 @@
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED
+						--add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED
 					</argLine>
 				</configuration>
