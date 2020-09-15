@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.math.Points;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
@@ -40,16 +41,17 @@ public class CsaPoint extends CsaShape {
 		setOrigin( origin );
 	}
 
-	public Double getCalculatedSize() {
-		Double size = getSize();
-		return size == null ? DEFAULT_SIZE : size;
+	public double calcSize() {
+		String size = getSize();
+		if( size != null ) return MathEx.eval( size );
+		return DEFAULT_SIZE;
 	}
 
-	public Double getSize() {
+	public String getSize() {
 		return getValue( SIZE );
 	}
 
-	public CsaPoint setSize( Double size ) {
+	public CsaPoint setSize( String size ) {
 		setValue( SIZE, size );
 		return this;
 	}
@@ -91,7 +93,7 @@ public class CsaPoint extends CsaShape {
 
 	public CsaPoint updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		setSize( (Double)map.get( SIZE ) );
+		setSize( (String)map.get( SIZE ) );
 		setType( (String)map.get( TYPE ) );
 		return this;
 	}
@@ -120,13 +122,11 @@ public class CsaPoint extends CsaShape {
 		return cps;
 	}
 
-	private SettingsPage page;
-
 	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
-		String pointPath = "/com/avereon/cartesia/settings/point.xml";
+		String pagePath = "/com/avereon/cartesia/design/props/point.xml";
 		if( page == null ) {
-			page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pointPath ).get( "point" );
+			page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath ).get( "point" );
 			page.setOptionProviders( Map.of( "point-type-option-provider", new PointTypeOptionProvider( product ) ) );
 		}
 
@@ -134,7 +134,7 @@ public class CsaPoint extends CsaShape {
 	}
 
 	private double getRadius() {
-		return 0.5 * getCalculatedSize();
+		return 0.5 * calcSize();
 	}
 
 	private static class PointTypeOptionProvider implements SettingOptionProvider {

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="line">
+		<group id="line">
+		<setting key="draw-width" type="math-expression" editor="textline"/>
+		<setting key="draw-color" editor="color"/>
+		</group>
+	</page>
+
+</pages>

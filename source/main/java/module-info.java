@@ -8,6 +8,7 @@ module com.avereon.cartesia {
 	requires jep;
 
 	opens com.avereon.cartesia.bundles;
+	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
 
 	exports com.avereon.cartesia to com.avereon.xenon;

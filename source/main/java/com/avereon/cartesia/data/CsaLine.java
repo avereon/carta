@@ -68,12 +68,10 @@ public class CsaLine extends CsaShape {
 		return cps;
 	}
 
-	private SettingsPage page;
 	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
-		// TODO Fix implementation
-		String pointPath = "/com/avereon/cartesia/settings/point.xml";
-		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pointPath ).get( "point" );
+		String pagePath = "/com/avereon/cartesia/design/props/line.xml";
+		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath ).get( "line" );
 		return page;
 	}
 

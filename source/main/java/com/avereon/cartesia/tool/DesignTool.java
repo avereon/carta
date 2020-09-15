@@ -344,8 +344,8 @@ public abstract class DesignTool extends ProgramTool {
 	private void showPropertiesPage( CsaShape s ) {
 		try {
 			SettingsPage page = s.getPropertiesPage( getProduct() );
-			// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
-			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
+			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
+			getWorkspace().getEventBus().dispatch( event );
 		} catch( IOException e ) {
 			e.printStackTrace();
 		}
@@ -354,8 +354,8 @@ public abstract class DesignTool extends ProgramTool {
 	private void hidePropertiesPage( CsaShape s ) {
 		try {
 			SettingsPage page = s.getPropertiesPage( getProduct() );
-			// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
-			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page ) );
+			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );
+			getWorkspace().getEventBus().dispatch( event );
 		} catch( IOException e ) {
 			e.printStackTrace();
 		}

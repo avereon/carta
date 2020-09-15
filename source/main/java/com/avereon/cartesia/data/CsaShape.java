@@ -28,6 +28,8 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 
 	public static final NodeComparator<CsaShape> comparator;
 
+	protected SettingsPage page;
+
 	static {
 		comparator = new NodeComparator<>( ORDER );
 	}
