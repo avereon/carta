@@ -7,15 +7,14 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.CsaShape;
 import com.avereon.cartesia.data.Design;
-import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.tool.settings.SettingOptionProvider;
 import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
@@ -35,6 +34,7 @@ import javafx.stage.Screen;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public abstract class DesignTool extends ProgramTool {
 
@@ -340,16 +340,37 @@ public abstract class DesignTool extends ProgramTool {
 			c.getAddedSubList().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( true ) );
 		}
 
-		String pointPath = "/com/avereon/cartesia/settings/point.xml";
 		selectedShapes.stream().findFirst().map( CsaShape::getFrom ).ifPresent( s -> {
 			try {
-				SettingsPage page = new SettingsPageParser( getProduct(), new NodeSettingsWrapper( s ) ).parse( pointPath ).get( "point" );
+				SettingsPage page = s.getPropertiesPage( getProduct() );
+				page.setOptionProviders( Map.of("point-type-option-provider", new PointTypeOptionProvider() ) );
 				// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
 				getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
 			} catch( IOException e ) {
 				e.printStackTrace();
 			}
 		} );
+	}
+
+	private static class PointTypeOptionProvider implements SettingOptionProvider {
+
+		private static Map<String,String> names = Map.of( "standard", "Standard", "fancy", "Fancy" );
+
+		@Override
+		public List<String> getKeys() {
+			return List.of( "standard", "fancy" );
+		}
+
+		@Override
+		public String getName( String key ) {
+			return names.get(key);
+		}
+
+		@Override
+		public String getValue( String key ) {
+			return key;
+		}
+
 	}
 
 	private static class SelectWindow extends Rectangle {

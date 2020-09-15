@@ -4,10 +4,13 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeComparator;
+import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.tool.settings.SettingsPage;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -75,6 +78,8 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		return List.of();
 	}
+
+	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
 
 	<V extends Shape> V configureShape( V shape ) {
 		shape.getProperties().put( SHAPE_META_DATA, this );
