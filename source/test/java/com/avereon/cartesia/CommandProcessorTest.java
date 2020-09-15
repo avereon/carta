@@ -26,12 +26,6 @@ public class CommandProcessorTest implements NumericTest {
 	}
 
 	@Test
-	void testParseValue() throws Exception {
-		assertThat( processor.parseValue( "1/8" ), is( 0.125 ) );
-		assertThat( processor.parseValue( "sin(pi)" ), is( Math.sin( Math.PI ) ) );
-	}
-
-	@Test
 	void testParsePoint() {
 		assertThat( processor.parsePoint( "0" ), is( new Point3D( 0, 0, 0 ) ) );
 		assertThat( processor.parsePoint( "0,0" ), is( new Point3D( 0, 0, 0 ) ) );

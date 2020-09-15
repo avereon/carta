@@ -1,7 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.CsaShape;
-import com.avereon.cartesia.el.CasExpressionParser;
+import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
@@ -151,22 +151,13 @@ public class CommandProcessor {
 				polar = true;
 			}
 
-			Point3D point = null;
 			String[] coords = input.split( "," );
-			switch( coords.length ) {
-				case 1: {
-					point = new Point3D( parseValue( coords[ 0 ] ), 0, 0 );
-					break;
-				}
-				case 2: {
-					point = new Point3D( parseValue( coords[ 0 ] ), parseValue( coords[ 1 ] ), 0 );
-					break;
-				}
-				case 3: {
-					point = new Point3D( parseValue( coords[ 0 ] ), parseValue( coords[ 1 ] ), parseValue( coords[ 2 ] ) );
-					break;
-				}
-			}
+			Point3D point = switch( coords.length ) {
+				case 1 -> new Point3D( MathEx.parse( coords[ 0 ] ), 0, 0 );
+				case 2 -> new Point3D( MathEx.parse( coords[ 0 ] ), MathEx.parse( coords[ 1 ] ), 0 );
+				case 3 -> new Point3D( MathEx.parse( coords[ 0 ] ), MathEx.parse( coords[ 1 ] ), MathEx.parse( coords[ 2 ] ) );
+				default -> null;
+			};
 
 			if( point == null ) return null;
 			if( polar ) point = fromPolar( point );
@@ -181,15 +172,6 @@ public class CommandProcessor {
 		double angle = point.getX();
 		double radius = point.getY();
 		return new Point3D( radius * Math.cos( angle ), radius * Math.sin( angle ), 0 );
-	}
-
-	Double parseValue( String text ) throws ParseException {
-		CasExpressionParser jep = new CasExpressionParser();
-		jep.addStandardConstants();
-		jep.addStandardFunctions();
-		jep.parseExpression( text );
-		if( jep.hasError() ) throw new ParseException( jep.getErrorInfo(), -1 );
-		return jep.getValue();
 	}
 
 	private static class CommandTask extends Task<Void> {

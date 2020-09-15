@@ -1,13 +1,13 @@
-package com.avereon.cartesia.el;
+package com.avereon.cartesia.math.el;
 
 import org.nfunk.jep.ParseException;
 import org.nfunk.jep.function.PostfixMathCommand;
 
 import java.util.Stack;
 
-public class Deg extends PostfixMathCommand {
+public class Rad extends PostfixMathCommand {
 
-	public Deg() {
+	public Rad() {
 		super.numberOfParameters = 1;
 	}
 
@@ -15,16 +15,15 @@ public class Deg extends PostfixMathCommand {
 	public void run( Stack stack ) throws ParseException {
 		this.checkStack( stack );
 		Object value = stack.pop();
-		stack.push( this.toDegrees( value ) );
+		stack.push( this.toRadians( value ) );
 	}
 
-	public Object toDegrees( Object value ) throws ParseException {
+	public Object toRadians( Object value ) throws ParseException {
 		if( value instanceof Number ) {
-			return Math.toDegrees( ((Number)value).doubleValue() );
+			return Math.toRadians( ((Number)value).doubleValue() );
 		} else {
 			throw new ParseException( "Invalid parameter type" );
 		}
 	}
-
 
 }
