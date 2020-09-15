@@ -343,34 +343,12 @@ public abstract class DesignTool extends ProgramTool {
 		selectedShapes.stream().findFirst().map( CsaShape::getFrom ).ifPresent( s -> {
 			try {
 				SettingsPage page = s.getPropertiesPage( getProduct() );
-				page.setOptionProviders( Map.of("point-type-option-provider", new PointTypeOptionProvider() ) );
 				// TODO This event should be stored, somewhere in Xenon for the tool to pick it up if needed
 				getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
 			} catch( IOException e ) {
 				e.printStackTrace();
 			}
 		} );
-	}
-
-	private static class PointTypeOptionProvider implements SettingOptionProvider {
-
-		private static Map<String,String> names = Map.of( "standard", "Standard", "fancy", "Fancy" );
-
-		@Override
-		public List<String> getKeys() {
-			return List.of( "standard", "fancy" );
-		}
-
-		@Override
-		public String getName( String key ) {
-			return names.get(key);
-		}
-
-		@Override
-		public String getValue( String key ) {
-			return key;
-		}
-
 	}
 
 	private static class SelectWindow extends Rectangle {

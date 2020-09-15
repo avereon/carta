@@ -5,7 +5,9 @@ import com.avereon.cartesia.math.Points;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
+import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.tool.settings.SettingOptionProvider;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import javafx.geometry.Point3D;
@@ -54,15 +56,14 @@ public class CsaPoint extends CsaShape {
 	}
 
 	public Points.Type calcType() {
-		Points.Type type = getType();
-		return type == null ? DEFAULT_TYPE : type;
+		return Points.parseType( getType() );
 	}
 
-	public Points.Type getType() {
+	public String getType() {
 		return getValue( TYPE );
 	}
 
-	public CsaPoint setType( Points.Type type ) {
+	public CsaPoint setType( String type ) {
 		setValue( TYPE, type );
 		return this;
 	}
@@ -92,7 +93,7 @@ public class CsaPoint extends CsaShape {
 	public CsaPoint updateFrom( Map<String, String> map ) {
 		super.updateFrom( map );
 		setSize( ParseUtil.parseDouble( map.get( SIZE ) ) );
-		setType( Points.parsePointType( map.get( TYPE ) ) );
+		setType( map.get( TYPE ) );
 		return this;
 	}
 
@@ -121,15 +122,56 @@ public class CsaPoint extends CsaShape {
 	}
 
 	private SettingsPage page;
+
 	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pointPath = "/com/avereon/cartesia/settings/point.xml";
-		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pointPath ).get( "point" );
+		if( page == null ) {
+			// FIXME There is a bit of a challenge handling null values to represent default values
+			page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pointPath ).get( "point" );
+			page.setOptionProviders( Map.of( "point-type-option-provider", new PointTypeOptionProvider( product ) ) );
+		}
+
 		return page;
 	}
 
 	private double getRadius() {
 		return 0.5 * getCalculatedSize();
+	}
+
+	private static class PointTypeOptionProvider implements SettingOptionProvider {
+
+		private static List<String> keys;
+
+		private final ProgramProduct product;
+
+		private PointTypeOptionProvider( ProgramProduct product ) {
+			this.product = product;
+		}
+
+		static {
+			PointTypeOptionProvider.keys = List.of(
+				CsaPoint.DEFAULT_VALUE,
+				Points.Type.CROSS.name().toLowerCase(),
+				Points.Type.X.name().toLowerCase(),
+				Points.Type.REFERENCE.name().toLowerCase(),
+				Points.Type.CIRCLE.name().toLowerCase(),
+				Points.Type.DIAMOND.name().toLowerCase(),
+				Points.Type.SQUARE.name().toLowerCase()
+			);
+		}
+
+		@Override
+		public List<String> getKeys() {
+			return keys;
+		}
+
+		@Override
+		public String getName( String key ) {
+			if( key == null ) key = CsaPoint.DEFAULT_VALUE;
+			return product.rb().text( BundleKey.PROPS, "point-type-" + key );
+		}
+
 	}
 
 }

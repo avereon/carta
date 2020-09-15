@@ -5,6 +5,7 @@ import javafx.scene.shape.*;
 public class Points {
 
 	public enum Type {
+
 		CIRCLE( true ),
 		CROSS( false ),
 		DIAMOND( true ),
@@ -37,8 +38,7 @@ public class Points {
 		};
 	}
 
-	public static Type parsePointType( String type ) {
-		if( type == null ) return null;
+	public static Type parseType( String type ) {
 		try {
 			return Type.valueOf( type.toUpperCase() );
 		} catch( NullPointerException | IllegalArgumentException exception ) {
