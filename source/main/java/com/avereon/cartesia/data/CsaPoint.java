@@ -127,7 +127,6 @@ public class CsaPoint extends CsaShape {
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pointPath = "/com/avereon/cartesia/settings/point.xml";
 		if( page == null ) {
-			// FIXME There is a bit of a challenge handling null values to represent default values
 			page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pointPath ).get( "point" );
 			page.setOptionProviders( Map.of( "point-type-option-provider", new PointTypeOptionProvider( product ) ) );
 		}
@@ -151,7 +150,7 @@ public class CsaPoint extends CsaShape {
 
 		static {
 			PointTypeOptionProvider.keys = List.of(
-				CsaPoint.DEFAULT_VALUE,
+				NULL_VALUE_OPTION_KEY,
 				Points.Type.CROSS.name().toLowerCase(),
 				Points.Type.X.name().toLowerCase(),
 				Points.Type.REFERENCE.name().toLowerCase(),
@@ -168,7 +167,7 @@ public class CsaPoint extends CsaShape {
 
 		@Override
 		public String getName( String key ) {
-			if( key == null ) key = CsaPoint.DEFAULT_VALUE;
+			if( key.equals( NULL_VALUE_OPTION_KEY ) ) key = "default";
 			return product.rb().text( BundleKey.PROPS, "point-type-" + key );
 		}
 

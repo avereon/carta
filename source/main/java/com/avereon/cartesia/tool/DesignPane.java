@@ -121,7 +121,7 @@ public class DesignPane extends StackPane {
 		//removeActions.put( CsaLine.class, ( s ) -> doRemoveLine( (CsaLine)s ) );
 	}
 
-	public DesignPane loadDesign( Design design ) {
+	DesignPane loadDesign( Design design ) {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
@@ -135,15 +135,29 @@ public class DesignPane extends StackPane {
 
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
-		design.register( NodeEvent.CHILD_ADDED, this::doAction );
-		design.register( NodeEvent.VALUE_CHANGED, this::doAction );
-		design.register( NodeEvent.CHILD_REMOVED, this::doAction );
+		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
+		design.register( NodeEvent.VALUE_CHANGED, this::doValueChangedAction );
+		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
 
 		return this;
 	}
 
-	private void doAction( NodeEvent event ) {
+	private void doChildAddedAction( NodeEvent event ) {
 		Object value = event.getNewValue();
+		if( value == null ) return;
+		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
+		if( c != null ) c.accept( value );
+	}
+
+	private void doValueChangedAction( NodeEvent event ) {
+		com.avereon.data.Node node = event.getNode();
+		Consumer<Object> c = designActions.get( event.getEventType() ).get( node.getClass() );
+		if( c != null ) c.accept( node );
+	}
+
+	private void doChildRemovedAction( NodeEvent event ) {
+		Object value = event.getOldValue();
+		if( value == null ) return;
 		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
 		if( c != null ) c.accept( value );
 	}
@@ -174,7 +188,7 @@ public class DesignPane extends StackPane {
 
 	private void doAddShape( CsaShape designShape ) {
 		List<Shape> geometry = designShape.generateGeometry();
-		List<ConstructionPoint> cps = designShape.generateConstructionPoints( this, geometry  );
+		List<ConstructionPoint> cps = designShape.generateConstructionPoints( this, geometry );
 
 		DesignLayer yy = designShape.getParent();
 		Layer layer = layerMap.get( yy );
