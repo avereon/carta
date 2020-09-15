@@ -58,37 +58,37 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Color calcDrawColor() {
-		Color color = getDrawColor();
-		if( color != null ) return color;
+		String color = getDrawColor();
+		if( color != null ) return Colors.web( color );
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_COLOR;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).calcDrawColor();
-		return color;
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawColor();
+		return DEFAULT_DRAW_COLOR;
 	}
 
-	public Color getDrawColor() {
+	public String getDrawColor() {
 		return getValue( DRAW_COLOR );
 	}
 
-	public DesignDrawable setDrawColor( Color color ) {
+	public DesignDrawable setDrawColor( String color ) {
 		setValue( DRAW_COLOR, color );
 		return this;
 	}
 
 	public Color calcFillColor() {
-		Color color = getFillColor();
-		if( color != null ) return color;
+		String color = getFillColor();
+		if( color != null ) return Colors.web( color );
 		if( this instanceof DesignLayer ) return DEFAULT_FILL_COLOR;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) color = ((DesignLayer)parent).calcFillColor();
-		return color;
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcFillColor();
+		return DEFAULT_FILL_COLOR;
 	}
 
-	public Color getFillColor() {
+	public String getFillColor() {
 		return getValue( FILL_COLOR );
 	}
 
-	public DesignDrawable setFillColor( Color color ) {
+	public DesignDrawable setFillColor( String color ) {
 		setValue( FILL_COLOR, color );
 		return this;
 	}
@@ -111,8 +111,8 @@ public abstract class DesignDrawable extends DesignNode {
 		super.updateFrom( map );
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
-		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( Color.web( (String)map.get( DRAW_COLOR ) ) );
-		if( map.containsKey( FILL_COLOR ) ) setFillColor( Color.web( (String)map.get( FILL_COLOR ) ) );
+		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( (String)map.get( DRAW_COLOR ) );
+		if( map.containsKey( FILL_COLOR ) ) setFillColor( (String)map.get( FILL_COLOR ) );
 		return this;
 	}
 

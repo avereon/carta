@@ -92,11 +92,11 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		layer1.addLayer( layer2 );
 
 		CsaPoint point = new CsaPoint( new Point3D( 1, 2, 0 ) );
-		point.setDrawColor( Color.web( "0x0000ff80" ) );
+		point.setDrawColor( "0x0000ff80" );
 		layer1.addShape( point );
 
 		CsaLine line1 = new CsaLine( new Point3D( 2, 3, 0 ), new Point3D( 3, 4, 0 ) );
-		line1.setDrawColor( Color.GREEN );
+		line1.setDrawColor( "0x0000ff80" );
 		layer2.addShape( line1 );
 		CsaLine line2 = new CsaLine( new Point3D( 2, 5, 0 ), new Point3D( 3, 6, 0 ) );
 		layer2.addShape( line2 );

@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignPane;
@@ -71,7 +72,7 @@ public class CsaLine extends CsaShape {
 	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pagePath = "/com/avereon/cartesia/design/props/line.xml";
-		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath ).get( "line" );
+		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath, BundleKey.PROPS ).get( "line" );
 		return page;
 	}
 
