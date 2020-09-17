@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
+import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.ProgramProduct;
@@ -53,7 +54,7 @@ public class CsaLine extends CsaShape {
 	}
 
 	@Override
-	public List<Shape> generateGeometry() {
+	public List<Shape> generateGeometry( DesignGeometry geometry) {
 		Line line = new Line( getOrigin().getX(), getOrigin().getY(), getPoint().getX(), getPoint().getY() );
 		return List.of( configureShape( line ) );
 	}

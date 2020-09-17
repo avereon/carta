@@ -2,10 +2,12 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
+import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeComparator;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
@@ -21,8 +23,6 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 	public static final String ORIGIN = "origin";
 
 	public static final String SELECTED = "selected";
-
-	static final String SHAPE_META_DATA = "shape-meta-data";
 
 	static final String CONSTRUCTION_POINTS = "construction-points";
 
@@ -73,7 +73,7 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return comparator.compare( this, that );
 	}
 
-	public List<Shape> generateGeometry() {
+	public List<Shape> generateGeometry( DesignGeometry geometry ) {
 		return List.of();
 	}
 
@@ -83,23 +83,15 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 
 	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
 
+	@Override
 	<V extends Shape> V configureShape( V shape ) {
-		shape.getProperties().put( SHAPE_META_DATA, this );
-
-		shape.setStrokeWidth( calcDrawWidth() );
-		shape.setStroke( calcDrawColor() );
-		shape.setFill( calcFillColor() );
-
-		// Add listeners for property changes
-		register( DRAW_WIDTH, e -> shape.setStrokeWidth( calcDrawWidth() ) );
-		register( DRAW_COLOR, e -> shape.setStroke( calcDrawColor() ) );
-		register( FILL_COLOR, e -> shape.setFill( calcFillColor() ) );
+		super.configureShape( shape );
 
 		// Selection listener
-		register( CsaShape.SELECTED, e -> {
+		register( CsaShape.SELECTED, e -> Fx.run( () -> {
 			shape.setStroke( e.getNewValue() ? calcSelectDrawColor() : calcDrawColor() );
 			shape.setFill( e.getNewValue() ? calcSelectFillColor() : calcFillColor() );
-		} );
+		} ) );
 
 		return shape;
 	}

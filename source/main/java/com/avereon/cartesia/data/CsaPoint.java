@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.math.Points;
 import com.avereon.cartesia.tool.ConstructionPoint;
+import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.BundleKey;
@@ -104,7 +105,7 @@ public class CsaPoint extends CsaShape {
 	}
 
 	@Override
-	public List<Shape> generateGeometry() {
+	public List<Shape> generateGeometry( DesignGeometry geometry) {
 		double ox = getOrigin().getX();
 		double oy = getOrigin().getY();
 		Path path = Points.createPoint( calcType(), ox, oy, getRadius() );

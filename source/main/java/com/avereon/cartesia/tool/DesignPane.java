@@ -71,6 +71,8 @@ public class DesignPane extends StackPane {
 
 	private final Map<DesignLayer, Layer> layerMap;
 
+	private final Map<CsaShape, DesignGeometry> geometryMap;
+
 	private final Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions;
 
 	private Design design;
@@ -94,6 +96,7 @@ public class DesignPane extends StackPane {
 		setManaged( false );
 
 		layerMap = new ConcurrentHashMap<>();
+		geometryMap = new ConcurrentHashMap<>();
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
@@ -112,13 +115,14 @@ public class DesignPane extends StackPane {
 		addActions.put( CsaLine.class, ( s ) -> doAddShape( (CsaShape)s ) );
 
 		Map<Class<?>, Consumer<Object>> changeActions = designActions.computeIfAbsent( NodeEvent.VALUE_CHANGED, ( k ) -> new HashMap<>() );
+		changeActions.put( DesignLayer.class, ( o ) -> doUpdateLayer( (DesignLayer)o, "", "", "" ) );
 		changeActions.put( DesignLayer.class, ( o ) -> {
 			log.log( Log.WARN, "Layer changed --- still needs implementing" );
 		} );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
-		//removeActions.put( CsaPoint.class, ( s ) -> doRemovePoint( (CsaPoint)s ) );
-		//removeActions.put( CsaLine.class, ( s ) -> doRemoveLine( (CsaLine)s ) );
+		removeActions.put( CsaPoint.class, ( s ) -> doRemoveShape( (CsaPoint)s ) );
+		removeActions.put( CsaLine.class, ( s ) -> doRemoveShape( (CsaLine)s ) );
 	}
 
 	DesignPane loadDesign( Design design ) {
@@ -173,6 +177,11 @@ public class DesignPane extends StackPane {
 		Fx.run( () -> layers.getChildren().add( layer ) );
 	}
 
+	private void doUpdateLayer( DesignLayer yy, String key, Object oldValue, Object newValue ) {
+		// TODO How to handle the layer changing?
+		// This might be better left to other listeners
+	}
+
 	private void doRemoveLayer( DesignLayer yy ) {
 		Layer layer = layerMap.remove( yy );
 		if( layer != null ) ((Layer)layer.getParent()).getChildren().remove( layer );
@@ -186,15 +195,18 @@ public class DesignPane extends StackPane {
 		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
-	private void doAddShape( CsaShape designShape ) {
-		List<Shape> geometry = designShape.generateGeometry();
-		List<ConstructionPoint> cps = designShape.generateConstructionPoints( this, geometry );
+	private void doAddShape( CsaShape shape ) {
+		geometryMap.computeIfAbsent( shape, ( k ) -> {
+			DesignGeometry geometry = new DesignGeometry( this, shape );
+			geometry.addToPane();
+			return geometry;
+		} );
+	}
 
-		DesignLayer yy = designShape.getParent();
-		Layer layer = layerMap.get( yy );
-		Fx.run( () -> {
-			layer.getChildren().addAll( geometry );
-			reference.getChildren().addAll( cps );
+	private void doRemoveShape( CsaShape shape ) {
+		geometryMap.computeIfPresent( shape, ( k, v ) -> {
+			v.removeFromPane();
+			return null;
 		} );
 	}
 
@@ -257,6 +269,14 @@ public class DesignPane extends StackPane {
 	public final DoubleProperty zoomProperty() {
 		if( zoomProperty == null ) zoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
 		return zoomProperty;
+	}
+
+	Layer getShapeLayer(CsaShape shape ) {
+		return layerMap.get( shape.getLayer() );
+	}
+
+	Pane getReferenceLayer() {
+		return reference;
 	}
 
 	private DesignUnit getDesignUnit() {
