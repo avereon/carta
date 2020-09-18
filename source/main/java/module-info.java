@@ -11,6 +11,8 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
 
+	exports com.avereon.cartesia.data;
+
 	exports com.avereon.cartesia to com.avereon.xenon;
 	exports com.avereon.cartesia.cursor to com.avereon.zerra;
 	exports com.avereon.cartesia.icon to com.avereon.zerra;

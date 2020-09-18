@@ -108,110 +108,20 @@ public class DesignPane extends StackPane {
 		setupDesignActions( designActions = new HashMap<>() );
 	}
 
+	private void addOriginReferencePoint() {
+		reference.getChildren().add( new ConstructionPoint( Points.Type.REFERENCE ) );
+	}
+
 	private void setupDesignActions( Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions ) {
 		Map<Class<?>, Consumer<Object>> addActions = designActions.computeIfAbsent( NodeEvent.CHILD_ADDED, ( k ) -> new HashMap<>() );
 		addActions.put( DesignLayer.class, ( o ) -> doAddLayer( (DesignLayer)o ) );
-		addActions.put( DesignPoint.class, ( s ) -> doAddShape( (DesignShape)s ) );
-		addActions.put( DesignLine.class, ( s ) -> doAddShape( (DesignShape)s ) );
-
-		Map<Class<?>, Consumer<Object>> changeActions = designActions.computeIfAbsent( NodeEvent.VALUE_CHANGED, ( k ) -> new HashMap<>() );
-		changeActions.put( DesignLayer.class, ( o ) -> doUpdateLayer( (DesignLayer)o, "", "", "" ) );
-		changeActions.put( DesignLayer.class, ( o ) -> {
-			log.log( Log.WARN, "Layer changed --- still needs implementing" );
-		} );
+		addActions.put( DesignPoint.class, ( o ) -> doAddShape( (DesignShape)o ) );
+		addActions.put( DesignLine.class, ( o ) -> doAddShape( (DesignShape)o ) );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
-		removeActions.put( DesignPoint.class, ( s ) -> doRemoveShape( (DesignPoint)s ) );
-		removeActions.put( DesignLine.class, ( s ) -> doRemoveShape( (DesignLine)s ) );
-	}
-
-	DesignPane loadDesign( Design design ) {
-		if( this.design != null ) throw new IllegalStateException( "Design already set" );
-		this.design = Objects.requireNonNull( design );
-
-		layerMap.put( design.getRootLayer(), layers );
-
-		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
-		design.getRootLayer().getAllLayers().forEach( l -> l.getShapes().forEach( this::doAddNode ) );
-		design.getRootLayer().getAllLayers().forEach( this::doReorderLayer );
-
-		rescale( true );
-
-		// Design listeners
-		design.register( Design.UNIT, e -> rescale( true ) );
-		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
-		design.register( NodeEvent.VALUE_CHANGED, this::doValueChangedAction );
-		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
-
-		return this;
-	}
-
-	private void doChildAddedAction( NodeEvent event ) {
-		Object value = event.getNewValue();
-		if( value == null ) return;
-		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
-		if( c != null ) c.accept( value );
-	}
-
-	private void doValueChangedAction( NodeEvent event ) {
-		com.avereon.data.Node node = event.getNode();
-		Consumer<Object> c = designActions.get( event.getEventType() ).get( node.getClass() );
-		if( c != null ) c.accept( node );
-	}
-
-	private void doChildRemovedAction( NodeEvent event ) {
-		Object value = event.getOldValue();
-		if( value == null ) return;
-		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
-		if( c != null ) c.accept( value );
-	}
-
-	private void doAddNode( DesignNode node ) {
-		Consumer<Object> c = designActions.get( NodeEvent.CHILD_ADDED ).get( node.getClass() );
-		if( c != null ) c.accept( node );
-	}
-
-	private void doAddLayer( DesignLayer yy ) {
-		Layer parent = layerMap.get( yy.getParent() );
-		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
-		Fx.run( () -> layers.getChildren().add( layer ) );
-	}
-
-	private void doUpdateLayer( DesignLayer yy, String key, Object oldValue, Object newValue ) {
-		// TODO How to handle the layer changing?
-		// This might be better left to other listeners
-	}
-
-	private void doRemoveLayer( DesignLayer yy ) {
-		Layer layer = layerMap.remove( yy );
-		if( layer != null ) ((Layer)layer.getParent()).getChildren().remove( layer );
-	}
-
-	private void doReorderLayer( DesignLayer layer ) {
-		doReorderLayer( layerMap.get( layer ) );
-	}
-
-	private void doReorderLayer( Layer pane ) {
-		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
-	}
-
-	private void doAddShape( DesignShape shape ) {
-		geometryMap.computeIfAbsent( shape, ( k ) -> {
-			DesignGeometry geometry = new DesignGeometry( this, shape );
-			geometry.addToPane();
-			return geometry;
-		} );
-	}
-
-	private void doRemoveShape( DesignShape shape ) {
-		geometryMap.computeIfPresent( shape, ( k, v ) -> {
-			v.removeFromPane();
-			return null;
-		} );
-	}
-
-	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint( Points.Type.REFERENCE ) );
+		removeActions.put( DesignLayer.class, ( o ) -> doRemoveLayer( (DesignLayer)o ) );
+		removeActions.put( DesignPoint.class, ( o ) -> doRemoveShape( (DesignPoint)o ) );
+		removeActions.put( DesignLine.class, ( o ) -> doRemoveShape( (DesignLine)o ) );
 	}
 
 	public Design getDesign() {
@@ -271,16 +181,33 @@ public class DesignPane extends StackPane {
 		return zoomProperty;
 	}
 
+	DesignPane loadDesign( Design design ) {
+		if( this.design != null ) throw new IllegalStateException( "Design already set" );
+		this.design = Objects.requireNonNull( design );
+
+		layerMap.put( design.getRootLayer(), layers );
+
+		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
+		design.getRootLayer().getAllLayers().forEach( l -> l.getShapes().forEach( this::doAddNode ) );
+		design.getRootLayer().getAllLayers().forEach( this::doReorderLayer );
+
+		rescale( true );
+
+		// Design listeners
+		design.register( Design.UNIT, e -> rescale( true ) );
+		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
+		design.register( NodeEvent.VALUE_CHANGED, this::doValueChangedAction );
+		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
+
+		return this;
+	}
+
 	Layer getShapeLayer( DesignShape shape ) {
 		return layerMap.get( shape.getLayer() );
 	}
 
 	Pane getReferenceLayer() {
 		return reference;
-	}
-
-	private DesignUnit getDesignUnit() {
-		return design.getDesignUnit();
 	}
 
 	void recenter() {
@@ -353,7 +280,7 @@ public class DesignPane extends StackPane {
 
 	List<Shape> selectByAperture( Point3D anchor, double radius ) {
 		log.log( Log.TRACE, "a.radius=" + radius );
-		return selectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), false );
+		return doSelectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), false );
 	}
 
 	/**
@@ -372,7 +299,108 @@ public class DesignPane extends StackPane {
 		double h = Math.abs( a.getY() - b.getY() );
 
 		Rectangle box = new Rectangle( x, y, w, h );
-		return selectByShape( box, contains );
+		return doSelectByShape( box, contains );
+	}
+
+	DesignGeometry addDesignGeometry( DesignGeometry geometry ) {
+		Layer layer = getShapeLayer( geometry.getDesignShape() );
+
+		Fx.run( () -> {
+			layer.getChildren().addAll( geometry.getFxShapes() );
+			getReferenceLayer().getChildren().addAll( geometry.getConstructionPoints() );
+		} );
+
+		return geometry;
+	}
+
+	DesignGeometry removeDesignGeometry( DesignGeometry geometry ) {
+		Layer layer = getShapeLayer( geometry.getDesignShape() );
+
+		Fx.run( () -> {
+			getReferenceLayer().getChildren().removeAll( geometry.getConstructionPoints() );
+			layer.getChildren().removeAll( geometry.getFxShapes() );
+		} );
+
+		return geometry;
+	}
+
+	private List<Layer> getLayers( Layer root ) {
+		List<Layer> layers = new ArrayList<>();
+
+		root.getChildren().stream().filter( c -> c instanceof Layer ).map( c -> (Layer)c ).forEach( l -> {
+			layers.add( l );
+			layers.addAll( getLayers( l ) );
+		} );
+
+		return layers;
+	}
+
+	private DesignUnit getDesignUnit() {
+		return design.getDesignUnit();
+	}
+
+	private void rescale( boolean recalculateDpu ) {
+		if( recalculateDpu ) this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
+		double scale = this.dpu * getZoom();
+		setScaleX( scale );
+		setScaleY( -scale );
+		reference.setScaleX( 1 / scale );
+		reference.setScaleY( 1 / scale );
+	}
+
+	private void doChildAddedAction( NodeEvent event ) {
+		Object value = event.getNewValue();
+		if( value == null ) return;
+		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
+		if( c != null ) c.accept( value );
+	}
+
+	private void doValueChangedAction( NodeEvent event ) {
+//		com.avereon.data.Node node = event.getNode();
+//		Consumer<Object> c = designActions.get( event.getEventType() ).get( node.getClass() );
+//		if( c != null ) c.accept( node );
+	}
+
+	private void doChildRemovedAction( NodeEvent event ) {
+		Object value = event.getOldValue();
+		if( value == null ) return;
+		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
+		if( c != null ) c.accept( value );
+	}
+
+	private void doAddNode( DesignNode node ) {
+		Consumer<Object> c = designActions.get( NodeEvent.CHILD_ADDED ).get( node.getClass() );
+		if( c != null ) c.accept( node );
+	}
+
+	private void doAddLayer( DesignLayer yy ) {
+		Layer parent = layerMap.get( yy.getParent() );
+		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
+		Fx.run( () -> layers.getChildren().add( layer ) );
+	}
+
+	private void doRemoveLayer( DesignLayer yy ) {
+		Layer layer = layerMap.remove( yy );
+		if( layer != null ) ((Layer)layer.getParent()).getChildren().remove( layer );
+	}
+
+	private void doReorderLayer( DesignLayer layer ) {
+		doReorderLayer( layerMap.get( layer ) );
+	}
+
+	private void doReorderLayer( Layer pane ) {
+		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
+	}
+
+	private void doAddShape( DesignShape shape ) {
+		geometryMap.computeIfAbsent( shape, ( k ) -> addDesignGeometry( new DesignGeometry( this, shape ) ) );
+	}
+
+	private void doRemoveShape( DesignShape shape ) {
+		geometryMap.computeIfPresent( shape, ( k, v ) -> {
+			removeDesignGeometry( v );
+			return null;
+		} );
 	}
 
 	/**
@@ -384,7 +412,7 @@ public class DesignPane extends StackPane {
 	 * @param contains True to require selected shapes be contained by the selecting shape
 	 * @return The list of selected shapes
 	 */
-	private List<Shape> selectByShape( Shape selector, boolean contains ) {
+	private List<Shape> doSelectByShape( Shape selector, boolean contains ) {
 		// The shape must have a fill but no stroke
 		selector.setFill( Color.web( "0xff00ff80" ) );
 		//selector.setFill( Color.TRANSPARENT );
@@ -423,26 +451,6 @@ public class DesignPane extends StackPane {
 
 	private boolean isIntersecting( Shape selector, Shape shape ) {
 		return selector.getBoundsInLocal().intersects( shape.getBoundsInLocal() ) && !((Path)Shape.intersect( selector, shape )).getElements().isEmpty();
-	}
-
-	private List<Layer> getLayers( Layer root ) {
-		List<Layer> layers = new ArrayList<>();
-
-		root.getChildren().stream().filter( c -> c instanceof Layer ).map( c -> (Layer)c ).forEach( l -> {
-			layers.add( l );
-			layers.addAll( getLayers( l ) );
-		} );
-
-		return layers;
-	}
-
-	private void rescale( boolean recalculateDpu ) {
-		if( recalculateDpu ) this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
-		double scale = this.dpu * getZoom();
-		setScaleX( scale );
-		setScaleY( -scale );
-		reference.setScaleX( 1 / scale );
-		reference.setScaleY( 1 / scale );
 	}
 
 	private static class LayerSorter implements Comparator<Node> {
