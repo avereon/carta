@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.CsaShape;
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.zerra.javafx.Fx;
 import javafx.scene.shape.Shape;
 
@@ -10,7 +10,7 @@ public class DesignGeometry {
 
 	private final DesignPane pane;
 
-	private final CsaShape shape;
+	private final DesignShape shape;
 
 	private final DesignPane.Layer layer;
 
@@ -18,7 +18,7 @@ public class DesignGeometry {
 
 	private List<ConstructionPoint> cps;
 
-	public DesignGeometry( DesignPane pane, CsaShape shape ) {
+	public DesignGeometry( DesignPane pane, DesignShape shape ) {
 		this.pane = pane;
 		this.shape = shape;
 		this.layer = pane.getShapeLayer( shape );

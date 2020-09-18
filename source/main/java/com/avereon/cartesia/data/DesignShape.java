@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public abstract class CsaShape extends DesignDrawable implements Comparable<CsaShape> {
+public abstract class DesignShape extends DesignDrawable implements Comparable<DesignShape> {
 
 	public static final String SHAPE = "shape";
 
@@ -26,7 +26,7 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 
 	static final String CONSTRUCTION_POINTS = "construction-points";
 
-	public static final NodeComparator<CsaShape> comparator;
+	public static final NodeComparator<DesignShape> comparator;
 
 	protected SettingsPage page;
 
@@ -34,7 +34,7 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		comparator = new NodeComparator<>( ORDER );
 	}
 
-	public CsaShape() {
+	public DesignShape() {
 		addModifyingKeys( ORIGIN );
 	}
 
@@ -42,7 +42,7 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return getValue( ORIGIN );
 	}
 
-	public CsaShape setOrigin( Point3D origin ) {
+	public DesignShape setOrigin( Point3D origin ) {
 		setValue( ORIGIN, origin );
 		return this;
 	}
@@ -51,7 +51,7 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return getValue( SELECTED, false );
 	}
 
-	public CsaShape setSelected( boolean selected ) {
+	public DesignShape setSelected( boolean selected ) {
 		setValue( SELECTED, selected );
 		return this;
 	}
@@ -62,14 +62,14 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return map;
 	}
 
-	public CsaShape updateFrom( Map<String, Object> map ) {
+	public DesignShape updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setOrigin( ParseUtil.parsePoint3D( (String)map.get( ORIGIN ) ) );
 		return this;
 	}
 
 	@Override
-	public int compareTo( CsaShape that ) {
+	public int compareTo( DesignShape that ) {
 		return comparator.compare( this, that );
 	}
 
@@ -88,7 +88,7 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		super.configureShape( shape );
 
 		// Selection listener
-		register( CsaShape.SELECTED, e -> Fx.run( () -> {
+		register( DesignShape.SELECTED, e -> Fx.run( () -> {
 			shape.setStroke( e.getNewValue() ? calcSelectDrawColor() : calcDrawColor() );
 			shape.setFill( e.getNewValue() ? calcSelectFillColor() : calcFillColor() );
 		} ) );
@@ -103,8 +103,8 @@ public abstract class CsaShape extends DesignDrawable implements Comparable<CsaS
 		return cp;
 	}
 
-	public static CsaShape getFrom( Shape s ) {
-		return (CsaShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );
+	public static DesignShape getFrom( Shape s ) {
+		return (DesignShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );
 	}
 
 }

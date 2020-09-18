@@ -5,7 +5,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.CsaShape;
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.Design;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
@@ -295,7 +295,7 @@ public abstract class DesignTool extends ProgramTool {
 		if( selection.isEmpty() ) return false;
 
 		Shape shape = selection.get( 0 );
-		boolean selected = ((CsaShape)shape.getProperties().get( DesignPane.SHAPE_META_DATA )).isSelected();
+		boolean selected = ((DesignShape)shape.getProperties().get( DesignPane.SHAPE_META_DATA )).isSelected();
 		if( !modify || !selected ) {
 			selectedShapes().add( shape );
 		} else {
@@ -334,14 +334,14 @@ public abstract class DesignTool extends ProgramTool {
 
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
-			c.getRemoved().stream().findFirst().map( CsaShape::getFrom ).ifPresent( this::hidePropertiesPage );
-			c.getRemoved().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( false ) );
-			c.getAddedSubList().stream().map( CsaShape::getFrom ).forEach( s -> s.setSelected( true ) );
-			c.getAddedSubList().stream().findFirst().map( CsaShape::getFrom ).ifPresent( this::showPropertiesPage );
+			c.getRemoved().stream().findFirst().map( DesignShape::getFrom ).ifPresent( this::hidePropertiesPage );
+			c.getRemoved().stream().map( DesignShape::getFrom ).forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().stream().map( DesignShape::getFrom ).forEach( s -> s.setSelected( true ) );
+			c.getAddedSubList().stream().findFirst().map( DesignShape::getFrom ).ifPresent( this::showPropertiesPage );
 		}
 	}
 
-	private void showPropertiesPage( CsaShape s ) {
+	private void showPropertiesPage( DesignShape s ) {
 		try {
 			SettingsPage page = s.getPropertiesPage( getProduct() );
 			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
@@ -351,7 +351,7 @@ public abstract class DesignTool extends ProgramTool {
 		}
 	}
 
-	private void hidePropertiesPage( CsaShape s ) {
+	private void hidePropertiesPage( DesignShape s ) {
 		try {
 			SettingsPage page = s.getPropertiesPage( getProduct() );
 			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );

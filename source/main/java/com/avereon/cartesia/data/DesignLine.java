@@ -17,15 +17,15 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class CsaLine extends CsaShape {
+public class DesignLine extends DesignShape {
 
 	public static final String POINT = "point";
 
-	public CsaLine() {
+	public DesignLine() {
 		addModifyingKeys( ORIGIN, POINT );
 	}
 
-	public CsaLine( Point3D origin, Point3D point ) {
+	public DesignLine( Point3D origin, Point3D point ) {
 		this();
 		setOrigin( origin );
 		setPoint( point );
@@ -35,7 +35,7 @@ public class CsaLine extends CsaShape {
 		return getValue( POINT );
 	}
 
-	public CsaShape setPoint( Point3D point ) {
+	public DesignShape setPoint( Point3D point ) {
 		setValue( POINT, point );
 		return this;
 	}
@@ -47,7 +47,7 @@ public class CsaLine extends CsaShape {
 		return map;
 	}
 
-	public CsaLine updateFrom( Map<String, Object> map ) {
+	public DesignLine updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;

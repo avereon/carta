@@ -3,7 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.TestTimeouts;
-import com.avereon.cartesia.data.CsaLine;
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
@@ -64,7 +64,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
 		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		design.getCurrentLayer().addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
@@ -87,7 +87,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
 		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		design.getCurrentLayer().addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
@@ -117,7 +117,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
 		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new CsaLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		design.getCurrentLayer().addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
@@ -161,7 +161,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
 		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new CsaLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
+		design.getCurrentLayer().addShape( new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane

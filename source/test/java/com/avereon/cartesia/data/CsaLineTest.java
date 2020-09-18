@@ -1,6 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.data.CsaLine;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ public class CsaLineTest {
 
 	@Test
 	void testModify() {
-		CsaLine line = new CsaLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
 		assertTrue( line.isModified() );
 		line.setModified( false );
 		assertFalse( line.isModified() );
@@ -35,7 +34,7 @@ public class CsaLineTest {
 
 	@Test
 	void testOrigin() {
-		CsaLine point = new CsaLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		DesignLine point = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
 		assertThat( point.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
 
 		point.setOrigin( new Point3D( 1, 2, 3 ) );
@@ -44,7 +43,7 @@ public class CsaLineTest {
 
 	@Test
 	void testPoint() {
-		CsaLine point = new CsaLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		DesignLine point = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
 		assertThat( point.getPoint(), is( new Point3D( 0, 0, 0 ) ) );
 
 		point.setPoint( new Point3D( 1, 2, 3 ) );

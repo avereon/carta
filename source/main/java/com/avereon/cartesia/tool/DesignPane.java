@@ -71,7 +71,7 @@ public class DesignPane extends StackPane {
 
 	private final Map<DesignLayer, Layer> layerMap;
 
-	private final Map<CsaShape, DesignGeometry> geometryMap;
+	private final Map<DesignShape, DesignGeometry> geometryMap;
 
 	private final Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions;
 
@@ -111,8 +111,8 @@ public class DesignPane extends StackPane {
 	private void setupDesignActions( Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions ) {
 		Map<Class<?>, Consumer<Object>> addActions = designActions.computeIfAbsent( NodeEvent.CHILD_ADDED, ( k ) -> new HashMap<>() );
 		addActions.put( DesignLayer.class, ( o ) -> doAddLayer( (DesignLayer)o ) );
-		addActions.put( CsaPoint.class, ( s ) -> doAddShape( (CsaShape)s ) );
-		addActions.put( CsaLine.class, ( s ) -> doAddShape( (CsaShape)s ) );
+		addActions.put( DesignPoint.class, ( s ) -> doAddShape( (DesignShape)s ) );
+		addActions.put( DesignLine.class, ( s ) -> doAddShape( (DesignShape)s ) );
 
 		Map<Class<?>, Consumer<Object>> changeActions = designActions.computeIfAbsent( NodeEvent.VALUE_CHANGED, ( k ) -> new HashMap<>() );
 		changeActions.put( DesignLayer.class, ( o ) -> doUpdateLayer( (DesignLayer)o, "", "", "" ) );
@@ -121,8 +121,8 @@ public class DesignPane extends StackPane {
 		} );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
-		removeActions.put( CsaPoint.class, ( s ) -> doRemoveShape( (CsaPoint)s ) );
-		removeActions.put( CsaLine.class, ( s ) -> doRemoveShape( (CsaLine)s ) );
+		removeActions.put( DesignPoint.class, ( s ) -> doRemoveShape( (DesignPoint)s ) );
+		removeActions.put( DesignLine.class, ( s ) -> doRemoveShape( (DesignLine)s ) );
 	}
 
 	DesignPane loadDesign( Design design ) {
@@ -195,7 +195,7 @@ public class DesignPane extends StackPane {
 		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
-	private void doAddShape( CsaShape shape ) {
+	private void doAddShape( DesignShape shape ) {
 		geometryMap.computeIfAbsent( shape, ( k ) -> {
 			DesignGeometry geometry = new DesignGeometry( this, shape );
 			geometry.addToPane();
@@ -203,7 +203,7 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
-	private void doRemoveShape( CsaShape shape ) {
+	private void doRemoveShape( DesignShape shape ) {
 		geometryMap.computeIfPresent( shape, ( k, v ) -> {
 			v.removeFromPane();
 			return null;
@@ -271,7 +271,7 @@ public class DesignPane extends StackPane {
 		return zoomProperty;
 	}
 
-	Layer getShapeLayer(CsaShape shape ) {
+	Layer getShapeLayer( DesignShape shape ) {
 		return layerMap.get( shape.getLayer() );
 	}
 
@@ -449,8 +449,8 @@ public class DesignPane extends StackPane {
 
 		@Override
 		public int compare( Node o1, Node o2 ) {
-			CsaShape s1 = (CsaShape)o1.getProperties().get( SHAPE_META_DATA );
-			CsaShape s2 = (CsaShape)o2.getProperties().get( SHAPE_META_DATA );
+			DesignShape s1 = (DesignShape)o1.getProperties().get( SHAPE_META_DATA );
+			DesignShape s2 = (DesignShape)o2.getProperties().get( SHAPE_META_DATA );
 			return s2.getOrder() - s1.getOrder();
 		}
 

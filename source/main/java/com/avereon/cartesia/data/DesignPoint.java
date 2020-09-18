@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class CsaPoint extends CsaShape {
+public class DesignPoint extends DesignShape {
 
 	public static final String SIZE = "size";
 
@@ -33,11 +33,11 @@ public class CsaPoint extends CsaShape {
 
 	private static final double ZERO_DRAW_WIDTH = 0.0;
 
-	public CsaPoint() {
+	public DesignPoint() {
 		addModifyingKeys( ORIGIN, SIZE, TYPE );
 	}
 
-	public CsaPoint( Point3D origin ) {
+	public DesignPoint( Point3D origin ) {
 		this();
 		setOrigin( origin );
 	}
@@ -52,7 +52,7 @@ public class CsaPoint extends CsaShape {
 		return getValue( SIZE );
 	}
 
-	public CsaPoint setSize( String size ) {
+	public DesignPoint setSize( String size ) {
 		setValue( SIZE, size );
 		return this;
 	}
@@ -65,7 +65,7 @@ public class CsaPoint extends CsaShape {
 		return getValue( TYPE );
 	}
 
-	public CsaPoint setType( String type ) {
+	public DesignPoint setType( String type ) {
 		setValue( TYPE, type );
 		return this;
 	}
@@ -92,7 +92,7 @@ public class CsaPoint extends CsaShape {
 		return map;
 	}
 
-	public CsaPoint updateFrom( Map<String, Object> map ) {
+	public DesignPoint updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setSize( (String)map.get( SIZE ) );
 		setType( (String)map.get( TYPE ) );

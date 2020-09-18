@@ -77,16 +77,16 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 		return this;
 	}
 
-	public Set<CsaShape> getShapes() {
+	public Set<DesignShape> getShapes() {
 		return getValues( SHAPES );
 	}
 
-	public DesignLayer addShape( CsaShape shape ) {
+	public DesignLayer addShape( DesignShape shape ) {
 		addToSet( SHAPES, shape );
 		return this;
 	}
 
-	public DesignLayer removeShape( CsaShape shape ) {
+	public DesignLayer removeShape( DesignShape shape ) {
 		removeFromSet( SHAPES, shape );
 		return this;
 	}
@@ -100,7 +100,7 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asMap ) ) );
-		map.put( SHAPES, getShapes().stream().collect( Collectors.toMap( IdNode::getId, CsaShape::asMap ) ) );
+		map.put( SHAPES, getShapes().stream().collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
 		return map;
 	}
 

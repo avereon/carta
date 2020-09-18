@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.CsaShape;
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
@@ -107,8 +107,8 @@ public class CommandProcessor {
 			if( commandStack.isEmpty() ) {
 				if( !valueStack.isEmpty() ) {
 					Object value = valueStack.pop();
-					if( value instanceof CsaShape ) {
-						CsaShape shape = (CsaShape)value;
+					if( value instanceof DesignShape ) {
+						DesignShape shape = (DesignShape)value;
 						tool.getDesign().getCurrentLayer().addShape( shape );
 					}
 				}

@@ -4,7 +4,7 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.data.CsaLine;
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -28,7 +28,7 @@ public class LineCommand extends Command {
 		Object origin = processor.pullValue();
 
 		if( origin instanceof Point3D && point instanceof Point3D ) {
-			CsaLine line = new CsaLine( (Point3D)origin, (Point3D)point );
+			DesignLine line = new DesignLine( (Point3D)origin, (Point3D)point );
 			processor.pushValue( tool, line );
 		} else {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );

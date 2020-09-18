@@ -13,7 +13,7 @@ public class CsaPointTest {
 
 	@Test
 	void testModify() {
-		CsaPoint point = new CsaPoint( new Point3D( 0, 0, 0 ) );
+		DesignPoint point = new DesignPoint( new Point3D( 0, 0, 0 ) );
 		Assertions.assertTrue( point.isModified() );
 		point.setModified( false );
 		Assertions.assertFalse( point.isModified() );
@@ -31,7 +31,7 @@ public class CsaPointTest {
 
 	@Test
 	void testOrigin() {
-		CsaPoint point = new CsaPoint( new Point3D( 0, 0, 0 ) );
+		DesignPoint point = new DesignPoint( new Point3D( 0, 0, 0 ) );
 		assertThat( point.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
 
 		point.setOrigin( new Point3D( 1, 2, 3 ) );

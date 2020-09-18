@@ -97,8 +97,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 		// Add the shapes found in the layer
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
 		geometry.values().forEach( g -> {
-			String type = String.valueOf( g.get( CsaShape.SHAPE ) );
-			CsaShape shape = switch( type ) {
+			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
+			DesignShape shape = switch( type ) {
 				case "point" -> loadCsaPoint( g );
 				case "line" -> loadCsaLine( g );
 				default -> null;
@@ -117,12 +117,12 @@ public abstract class CartesiaDesignCodec extends Codec {
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 	}
 
-	private CsaPoint loadCsaPoint( Map<String, Object> map ) {
-		return new CsaPoint().updateFrom( map );
+	private DesignPoint loadCsaPoint( Map<String, Object> map ) {
+		return new DesignPoint().updateFrom( map );
 	}
 
-	private CsaLine loadCsaLine( Map<String, Object> map ) {
-		return new CsaLine().updateFrom( map );
+	private DesignLine loadCsaLine( Map<String, Object> map ) {
+		return new DesignLine().updateFrom( map );
 	}
 
 	String prettyPrint( byte[] buffer ) throws Exception {
