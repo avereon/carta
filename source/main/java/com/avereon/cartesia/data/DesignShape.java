@@ -7,7 +7,6 @@ import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeComparator;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
@@ -77,24 +76,11 @@ public abstract class DesignShape extends DesignDrawable implements Comparable<D
 		return List.of();
 	}
 
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
+	public List<ConstructionPoint> generateConstructionPoints( DesignGeometry geometry ) {
 		return List.of();
 	}
 
 	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
-
-	@Override
-	<V extends Shape> V configureShape( V shape ) {
-		super.configureShape( shape );
-
-		// Selection listener
-		register( DesignShape.SELECTED, e -> Fx.run( () -> {
-			shape.setStroke( e.getNewValue() ? calcSelectDrawColor() : calcDrawColor() );
-			shape.setFill( e.getNewValue() ? calcSelectFillColor() : calcFillColor() );
-		} ) );
-
-		return shape;
-	}
 
 	ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
 		ConstructionPoint cp = new ConstructionPoint();

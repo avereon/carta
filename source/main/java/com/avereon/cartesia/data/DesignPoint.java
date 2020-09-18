@@ -4,7 +4,6 @@ import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.math.Points;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignGeometry;
-import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
@@ -105,18 +104,18 @@ public class DesignPoint extends DesignShape {
 	}
 
 	@Override
-	public List<Shape> generateGeometry( DesignGeometry geometry) {
+	public List<Shape> generateGeometry( DesignGeometry geometry ) {
 		double ox = getOrigin().getX();
 		double oy = getOrigin().getY();
 		Path path = Points.createPoint( calcType(), ox, oy, getRadius() );
-		return List.of( configureShape( path ) );
+		return List.of( path );
 	}
 
 	@Override
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
-		Path path = (Path)shapes.get( 0 );
+	public List<ConstructionPoint> generateConstructionPoints( DesignGeometry geometry ) {
+		Path path = (Path)geometry.getFxShapes().get( 0 );
 		MoveTo m = ((MoveTo)path.getElements().get( 0 ));
-		ConstructionPoint o = cp( pane, m.xProperty(), m.yProperty() );
+		ConstructionPoint o = cp( geometry.getPane(), m.xProperty(), m.yProperty() );
 
 		List<ConstructionPoint> cps = List.of( o );
 		path.getProperties().put( CONSTRUCTION_POINTS, cps );

@@ -2,9 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.MathEx;
 import com.avereon.zerra.color.Colors;
-import com.avereon.zerra.javafx.Fx;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Shape;
 
 import java.util.Map;
 
@@ -18,7 +16,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String FILL_COLOR = "fill-color";
 
-	static final String SHAPE_META_DATA = "shape-meta-data";
+	public static final String SHAPE_META_DATA = "shape-meta-data";
 
 	private static final double DEFAULT_DRAW_WIDTH = 1.0;
 
@@ -124,19 +122,4 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	<V extends Shape> V configureShape( V shape ) {
-		shape.getProperties().put( SHAPE_META_DATA, this );
-
-		shape.setStrokeWidth( calcDrawWidth() );
-		shape.setStroke( calcDrawColor() );
-		shape.setFill( calcFillColor() );
-
-		// Add listeners for property changes
-		register( DRAW_WIDTH, e -> Fx.run( ()-> shape.setStrokeWidth( calcDrawWidth() ) ) );
-		register( DRAW_COLOR, e -> Fx.run( ()-> shape.setStroke( calcDrawColor() ) ) );
-		register( FILL_COLOR, e -> Fx.run( ()-> shape.setFill( calcFillColor()) ) );
-
-		return shape;
-	}
-
-	}
+}

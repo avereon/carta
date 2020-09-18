@@ -4,7 +4,6 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignGeometry;
-import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -54,16 +53,16 @@ public class DesignLine extends DesignShape {
 	}
 
 	@Override
-	public List<Shape> generateGeometry( DesignGeometry geometry) {
+	public List<Shape> generateGeometry( DesignGeometry geometry ) {
 		Line line = new Line( getOrigin().getX(), getOrigin().getY(), getPoint().getX(), getPoint().getY() );
-		return List.of( configureShape( line ) );
+		return List.of( line );
 	}
 
 	@Override
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
-		Line line = (Line)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, line.startXProperty(), line.startYProperty() );
-		ConstructionPoint p = cp( pane, line.endXProperty(), line.endYProperty() );
+	public List<ConstructionPoint> generateConstructionPoints( DesignGeometry geometry ) {
+		Line line = (Line)geometry.getFxShapes().get( 0 );
+		ConstructionPoint o = cp( geometry.getPane(), line.startXProperty(), line.startYProperty() );
+		ConstructionPoint p = cp( geometry.getPane(), line.endXProperty(), line.endYProperty() );
 
 		List<ConstructionPoint> cps = List.of( o, p );
 		line.getProperties().put( CONSTRUCTION_POINTS, cps );

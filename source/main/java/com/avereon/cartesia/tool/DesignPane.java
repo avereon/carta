@@ -304,10 +304,12 @@ public class DesignPane extends StackPane {
 
 	DesignGeometry addDesignGeometry( DesignGeometry geometry ) {
 		Layer layer = getShapeLayer( geometry.getDesignShape() );
+		List<Shape> shapes = new ArrayList<>( geometry.getFxShapes() );
+		List<ConstructionPoint> cps = new ArrayList<>( geometry.getConstructionPoints() );
 
 		Fx.run( () -> {
-			layer.getChildren().addAll( geometry.getFxShapes() );
-			getReferenceLayer().getChildren().addAll( geometry.getConstructionPoints() );
+			layer.getChildren().addAll( shapes );
+			getReferenceLayer().getChildren().addAll( cps );
 		} );
 
 		return geometry;
@@ -315,10 +317,12 @@ public class DesignPane extends StackPane {
 
 	DesignGeometry removeDesignGeometry( DesignGeometry geometry ) {
 		Layer layer = getShapeLayer( geometry.getDesignShape() );
+		List<Shape> shapes = new ArrayList<>( geometry.getFxShapes() );
+		List<ConstructionPoint> cps = new ArrayList<>( geometry.getConstructionPoints() );
 
 		Fx.run( () -> {
-			getReferenceLayer().getChildren().removeAll( geometry.getConstructionPoints() );
-			layer.getChildren().removeAll( geometry.getFxShapes() );
+			getReferenceLayer().getChildren().removeAll( cps );
+			layer.getChildren().removeAll( shapes );
 		} );
 
 		return geometry;
@@ -356,9 +360,9 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doValueChangedAction( NodeEvent event ) {
-//		com.avereon.data.Node node = event.getNode();
-//		Consumer<Object> c = designActions.get( event.getEventType() ).get( node.getClass() );
-//		if( c != null ) c.accept( node );
+		//		com.avereon.data.Node node = event.getNode();
+		//		Consumer<Object> c = designActions.get( event.getEventType() ).get( node.getClass() );
+		//		if( c != null ) c.accept( node );
 	}
 
 	private void doChildRemovedAction( NodeEvent event ) {
@@ -393,12 +397,16 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doAddShape( DesignShape shape ) {
-		geometryMap.computeIfAbsent( shape, ( k ) -> addDesignGeometry( new DesignGeometry( this, shape ) ) );
+		geometryMap.computeIfAbsent( shape, ( k ) -> {
+			DesignGeometry geometry = new DesignGeometry( this, shape );
+			geometry.addToPane();
+			return geometry;
+		} );
 	}
 
 	private void doRemoveShape( DesignShape shape ) {
 		geometryMap.computeIfPresent( shape, ( k, v ) -> {
-			removeDesignGeometry( v );
+			v.removeFromPane();
 			return null;
 		} );
 	}
