@@ -16,8 +16,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String FILL_COLOR = "fill-color";
 
-	public static final String SHAPE_META_DATA = "shape-meta-data";
-
 	private static final double DEFAULT_DRAW_WIDTH = 1.0;
 
 	private static final Color DEFAULT_DRAW_COLOR = Color.web( "0x000000ff" );

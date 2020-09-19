@@ -5,12 +5,10 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.util.Log;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.ProgramTool;
-import com.avereon.xenon.PropertiesToolEvent;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -22,6 +20,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -32,7 +31,9 @@ import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public abstract class DesignTool extends ProgramTool {
 
@@ -65,6 +66,7 @@ public abstract class DesignTool extends ProgramTool {
 	private final ObservableList<Shape> selectedShapes;
 
 	//private final PropertiesAction propertiesAction;
+	private final DeleteAction deleteAction;
 
 	private Point3D mousePoint;
 
@@ -82,6 +84,7 @@ public abstract class DesignTool extends ProgramTool {
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
+		this.deleteAction = new DeleteAction( product.getProgram() );
 		//this.propertiesAction = new PropertiesAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
@@ -204,6 +207,7 @@ public abstract class DesignTool extends ProgramTool {
 
 	@Override
 	protected void activate() throws ToolException {
+		pushAction( "delete", deleteAction );
 		getWorkspace().getStatusBar().addLeft( getCommandPrompt() );
 		getWorkspace().getStatusBar().addRight( getCoordinateStatus() );
 		requestFocus();
@@ -221,7 +225,11 @@ public abstract class DesignTool extends ProgramTool {
 
 	@Override
 	protected void conceal() throws ToolException {
-		//getProgram().getActionLibrary().getAction( "properties" ).pullAction( propertiesAction );
+		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
+	}
+
+	private void updateActionStates() {
+		deleteAction.updateEnabled();
 	}
 
 	private Point3D mouseToWorld( double x, double y, double z ) {
@@ -339,6 +347,12 @@ public abstract class DesignTool extends ProgramTool {
 			c.getAddedSubList().stream().map( DesignShape::getFrom ).forEach( s -> s.setSelected( true ) );
 			c.getAddedSubList().stream().findFirst().map( DesignShape::getFrom ).ifPresent( this::showPropertiesPage );
 		}
+		updateActionStates();
+	}
+
+	private void doDeleteShapes( Collection<DesignShape> shapes ) {
+		runTask( () -> shapes.forEach( s -> s.getLayer().removeShape( s ) ) );
+		selectedShapes.clear();
 	}
 
 	private void showPropertiesPage( DesignShape s ) {
@@ -375,6 +389,27 @@ public abstract class DesignTool extends ProgramTool {
 			setWidth( w );
 			setHeight( h );
 		}
+	}
+
+	private class DeleteAction extends Action {
+
+		protected DeleteAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return !selectedShapes().isEmpty();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			doDeleteShapes( selectedShapes()
+				.stream()
+				.map( s -> (DesignShape)s.getProperties().get( DesignShapeView.SHAPE_META_DATA ) )
+				.collect( Collectors.toSet() ) );
+		}
+
 	}
 
 }

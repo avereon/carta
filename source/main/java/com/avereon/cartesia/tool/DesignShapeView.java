@@ -10,6 +10,8 @@ import java.util.List;
 
 public class DesignShapeView extends DesignDrawableView {
 
+	public static final String SHAPE_META_DATA = "shape-meta-data";
+
 	private List<Shape> geometry;
 
 	private List<ConstructionPoint> cps;
@@ -66,7 +68,7 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private void configureShape( Shape shape ) {
-		shape.getProperties().put( DesignShape.SHAPE_META_DATA, getDesignShape() );
+		shape.getProperties().put( SHAPE_META_DATA, getDesignShape() );
 		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
 		shape.setStroke( getDesignShape().calcDrawColor() );
 		shape.setFill( getDesignShape().calcFillColor() );

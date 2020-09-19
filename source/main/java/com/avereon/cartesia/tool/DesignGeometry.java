@@ -28,11 +28,11 @@ public class DesignGeometry {
 		return generatorMap.get( shape.getClass()).apply( pane, shape );
 	}
 
-	public static DesignPointView from( DesignPane pane, DesignPoint point ) {
+	private static DesignPointView from( DesignPane pane, DesignPoint point ) {
 		return new DesignPointView( pane, point );
 	}
 
-	public static DesignLineView from( DesignPane pane, DesignLine line ) {
+	private static DesignLineView from( DesignPane pane, DesignLine line ) {
 		return new DesignLineView( pane, line );
 	}
 
