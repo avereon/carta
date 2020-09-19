@@ -374,7 +374,6 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doAddLayer( DesignLayer yy ) {
-		Layer parent = layerMap.get( yy.getParent() );
 		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
 		Fx.run( () -> layers.getChildren().add( layer ) );
 	}
@@ -461,8 +460,8 @@ public class DesignPane extends StackPane {
 
 		@Override
 		public int compare( Node o1, Node o2 ) {
-			DesignShape s1 = (DesignShape)o1.getProperties().get( SHAPE_META_DATA );
-			DesignShape s2 = (DesignShape)o2.getProperties().get( SHAPE_META_DATA );
+			DesignDrawable s1 = (DesignDrawable)o1.getProperties().get( SHAPE_META_DATA );
+			DesignDrawable s2 = (DesignDrawable)o2.getProperties().get( SHAPE_META_DATA );
 			return s2.getOrder() - s1.getOrder();
 		}
 

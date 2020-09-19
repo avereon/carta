@@ -8,9 +8,14 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.util.Log;
-import com.avereon.xenon.*;
+import com.avereon.xenon.Action;
+import com.avereon.xenon.Program;
+import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.tool.guide.Guide;
+import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
@@ -35,7 +40,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class DesignTool extends ProgramTool {
+public abstract class DesignTool extends GuidedTool {
 
 	public static final String RETICLE = "reticle";
 
@@ -49,11 +54,11 @@ public abstract class DesignTool extends ProgramTool {
 
 	private static final System.Logger log = Log.get();
 
+	private final DesignToolGuide guide;
+
 	private final CommandPrompt prompt;
 
 	private final CoordinateStatus coordinates;
-
-	private ReticleCursor reticle;
 
 	private final DesignPane designPane;
 
@@ -65,8 +70,9 @@ public abstract class DesignTool extends ProgramTool {
 
 	private final ObservableList<Shape> selectedShapes;
 
-	//private final PropertiesAction propertiesAction;
 	private final DeleteAction deleteAction;
+
+	private ReticleCursor reticle;
 
 	private Point3D mousePoint;
 
@@ -80,16 +86,15 @@ public abstract class DesignTool extends ProgramTool {
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
+		this.guide = new DesignToolGuide( product.getProgram() );
 		this.designPane = new DesignPane();
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.deleteAction = new DeleteAction( product.getProgram() );
-		//this.propertiesAction = new PropertiesAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectShapes );
-		//this.selectedShapes.addListener( (ListChangeListener<? super Shape>)c -> propertiesAction.updateEnabled() );
 		this.selectWindow = new SelectWindow();
 		this.selectWindow.getStyleClass().add( "select" );
 		this.selectPane = new Pane();
@@ -180,7 +185,9 @@ public abstract class DesignTool extends ProgramTool {
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
-		designPane.loadDesign( request.getAsset().getModel() );
+		Design design = request.getAsset().getModel();
+		guide.loadDesign( design );
+		designPane.loadDesign( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
 
 		// Keep the design pane centered when resizing
@@ -203,6 +210,11 @@ public abstract class DesignTool extends ProgramTool {
 		} );
 
 		designPane.recenter();
+	}
+
+	@Override
+	protected Guide getGuide() {
+		return guide;
 	}
 
 	@Override
