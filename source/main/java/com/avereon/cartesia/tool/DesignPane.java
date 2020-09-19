@@ -314,8 +314,6 @@ public class DesignPane extends StackPane {
 	}
 
 	void removeShapeGeometry( DesignShapeView view ) {
-		// FIXME Because the view is already removed from the layer it is null
-		//Layer layer = getShapeLayer( view.getDesignShape() );
 		Layer layer  = (Layer)view.getGeometry().get(0).getParent();
 		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
 		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );

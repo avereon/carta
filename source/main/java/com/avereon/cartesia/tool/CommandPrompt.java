@@ -2,7 +2,9 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CommandException;
 import com.avereon.cartesia.CommandMap;
+import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.data.Design;
+import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import javafx.application.Platform;
@@ -16,19 +18,26 @@ public class CommandPrompt extends BorderPane {
 
 	private static final System.Logger log = Log.get();
 
+	private static final boolean DEFAULT_AUTO_COMMAND = true;
+
 	private final DesignTool tool;
 
 	private final Label prompt;
 
 	private final TextField command;
 
-	private static final boolean DEFAULT_AUTO_COMMAND = true;
+	private boolean autoCommandEnabled;
 
 	public CommandPrompt( DesignTool tool ) {
 		this.tool = tool;
 		getStyleClass().add( "cartesia-command" );
 		setLeft( prompt = new Label() );
 		setCenter( command = new TextField() );
+
+		Settings productSettings = tool.getProduct().getSettings();
+		autoCommandEnabled = productSettings.get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
+		productSettings.register( "command-auto-start", e -> setAutoCommandEnabled( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+
 		command.addEventHandler( KeyEvent.ANY, this::key );
 
 		setPrompt( null );
@@ -38,6 +47,14 @@ public class CommandPrompt extends BorderPane {
 		if( TextUtil.isEmpty( prompt ) ) prompt = tool.getProduct().rb().text( "prompt", "command" );
 		final String effectivePrompt = prompt;
 		Platform.runLater( () -> this.prompt.setText( effectivePrompt ) );
+	}
+
+	public boolean isAutoCommandEnabled() {
+		return autoCommandEnabled;
+	}
+
+	public void setAutoCommandEnabled( boolean autoCommandEnabled ) {
+		this.autoCommandEnabled = autoCommandEnabled;
 	}
 
 	public void relay( Point3D point ) {
@@ -58,28 +75,27 @@ public class CommandPrompt extends BorderPane {
 		// If ENTER was pressed, then an attempt to process the text should be forced
 		// If a key was typed, and auto commands are enabled, and the text matched a command then it should be run
 
+		CommandProcessor processor = getDesign().getCommandProcessor();
 		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
 			switch( event.getCode() ) {
-				case ESCAPE: {
+				case ESCAPE -> {
 					// Cancel the command stack
-					getDesign().getCommandProcessor().cancel( tool );
+					processor.cancel( tool );
 					getDesign().clearSelected();
 					clear();
-					break;
 				}
-				case ENTER: {
-					if( TextUtil.isEmpty( command.getText() )) {
-						getDesign().getCommandProcessor().evaluate( tool, tool.getWorldPointAtMouse() );
+				case ENTER -> {
+					if( TextUtil.isEmpty( command.getText() ) ) {
+						processor.evaluate( tool, tool.getWorldPointAtMouse() );
 					} else {
 						process( command.getText() );
 					}
 					clear();
-					break;
 				}
 			}
 		} else if( event.getEventType() == KeyEvent.KEY_TYPED ) {
 			String id = command.getText();
-			boolean autoCommand = tool.getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
+			boolean autoCommand = processor.isAutoCommandSafe() && autoCommandEnabled;
 			if( autoCommand && CommandMap.hasCommand( id ) ) {
 				process( id );
 				clear();

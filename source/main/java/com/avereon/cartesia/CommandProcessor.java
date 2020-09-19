@@ -6,6 +6,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.task.Task;
+import com.avereon.zerra.javafx.Fx;
 import javafx.application.Platform;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
@@ -33,15 +34,19 @@ public class CommandProcessor {
 
 	private Point3D anchor;
 
+	private boolean isAutoCommandSafe;
+
 	public CommandProcessor() {
 		commandStack = new Stack<>();
 		valueStack = new Stack<>();
 		anchor = new Point3D( 0, 0, 0 );
+		isAutoCommandSafe = true;
 	}
 
 	public void cancel( DesignTool tool ) {
-		Platform.runLater( () -> tool.setCursor( Cursor.DEFAULT ) );
+		Fx.run( () -> tool.setCursor( Cursor.DEFAULT ) );
 		tool.getCommandPrompt().setPrompt( null );
+		isAutoCommandSafe = true;
 		commandStack.clear();
 		valueStack.clear();
 	}
@@ -49,8 +54,8 @@ public class CommandProcessor {
 	/**
 	 * Convenience method to evaluate known points
 	 *
-	 * @param tool
-	 * @param point
+	 * @param tool The design tool
+	 * @param point The selected point
 	 */
 	public void evaluate( DesignTool tool, Point3D point ) {
 		pushValue( tool, point );
@@ -60,8 +65,8 @@ public class CommandProcessor {
 		if( TextUtil.isEmpty( input ) ) return;
 
 		Class<Command> commandClass = CommandMap.get( input );
-		Point3D point = parsePoint( input );
 		String text = input.trim();
+		Point3D point = parsePoint( text );
 
 		if( commandClass != null ) {
 			try {
@@ -101,6 +106,10 @@ public class CommandProcessor {
 		return commandStack.isEmpty();
 	}
 
+	public boolean isAutoCommandSafe() {
+		return isAutoCommandSafe;
+	}
+
 	void nextCommand( DesignTool tool ) {
 		try {
 			// If there are no more commands but there is a shape on the value stack
@@ -117,6 +126,7 @@ public class CommandProcessor {
 			}
 		} finally {
 			Platform.runLater( () -> tool.setCursor( Cursor.DEFAULT ) );
+			isAutoCommandSafe = true;
 		}
 	}
 
@@ -126,6 +136,7 @@ public class CommandProcessor {
 
 	Command pullCommand( DesignTool tool ) {
 		Command command = commandStack.pop();
+		isAutoCommandSafe = command.isAutoCommandSafe();
 		if( commandStack.isEmpty() ) tool.getCommandPrompt().setPrompt( null );
 		return command;
 	}

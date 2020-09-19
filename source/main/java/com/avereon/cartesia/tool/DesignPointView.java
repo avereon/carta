@@ -18,8 +18,8 @@ public class DesignPointView extends DesignShapeView {
 	@Override
 	public void registerListeners() {
 		super.registerListeners();
-		getDesignShape().register( DesignPoint.TYPE, pointTypeHandler = e -> Fx.run( () -> updateGeometry() ) );
-		getDesignShape().register( DesignPoint.SIZE, pointSizeHandler = e -> Fx.run( () -> updateGeometry() ) );
+		getDesignShape().register( DesignPoint.TYPE, pointTypeHandler = e -> Fx.run( this::updateGeometry ) );
+		getDesignShape().register( DesignPoint.SIZE, pointSizeHandler = e -> Fx.run( this::updateGeometry ) );
 	}
 
 	@Override

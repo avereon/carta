@@ -31,6 +31,7 @@ public class CommandMap {
 		map.put( "pp", PointCommand.class );
 		map.put( "vv", CurveCommand.class );
 		map.put( "ww", PathCommand.class );
+		map.put( "yy", LayerCommand.class );
 
 		map.put( "pa", PanCommand.class );
 

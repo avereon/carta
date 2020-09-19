@@ -6,7 +6,11 @@ import java.util.List;
 
 public abstract class Command {
 
-	public List<Command> getPreSteps( DesignTool tool) {
+	public boolean isAutoCommandSafe() {
+		return true;
+	}
+
+	public List<Command> getPreSteps( DesignTool tool ) {
 		return List.of();
 	}
 
