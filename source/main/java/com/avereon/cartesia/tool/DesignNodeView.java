@@ -13,6 +13,10 @@ public class DesignNodeView {
 		this.node = node;
 	}
 
+	public DesignPane getPane() {
+		return pane;
+	}
+
 	public DesignNode getDesignNode() {
 		return node;
 	}

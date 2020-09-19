@@ -71,7 +71,7 @@ public class DesignPane extends StackPane {
 
 	private final Map<DesignLayer, Layer> layerMap;
 
-	private final Map<DesignShape, DesignGeometry> geometryMap;
+	private final Map<DesignShape, DesignShapeView> geometryMap;
 
 	private final Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions;
 
@@ -302,31 +302,55 @@ public class DesignPane extends StackPane {
 		return doSelectByShape( box, contains );
 	}
 
-	DesignGeometry addDesignGeometry( DesignGeometry geometry ) {
-		Layer layer = getShapeLayer( geometry.getDesignShape() );
-		List<Shape> shapes = new ArrayList<>( geometry.getFxShapes() );
-		List<ConstructionPoint> cps = new ArrayList<>( geometry.getConstructionPoints() );
+	void addShapeGeometry( DesignShapeView view ) {
+		Layer layer = getShapeLayer( view.getDesignShape() );
+		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
+		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
 
 		Fx.run( () -> {
 			layer.getChildren().addAll( shapes );
 			getReferenceLayer().getChildren().addAll( cps );
 		} );
-
-		return geometry;
 	}
 
-	DesignGeometry removeDesignGeometry( DesignGeometry geometry ) {
-		Layer layer = getShapeLayer( geometry.getDesignShape() );
-		List<Shape> shapes = new ArrayList<>( geometry.getFxShapes() );
-		List<ConstructionPoint> cps = new ArrayList<>( geometry.getConstructionPoints() );
+	void removeShapeGeometry( DesignShapeView view ) {
+		Layer layer = getShapeLayer( view.getDesignShape() );
+		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
+		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
 
 		Fx.run( () -> {
 			getReferenceLayer().getChildren().removeAll( cps );
 			layer.getChildren().removeAll( shapes );
 		} );
-
-		return geometry;
 	}
+
+//	@Deprecated
+//	DesignGeometry addDesignGeometry( DesignGeometry geometry ) {
+//		Layer layer = getShapeLayer( geometry.getDesignShape() );
+//		List<Shape> shapes = new ArrayList<>( geometry.getFxShapes() );
+//		List<ConstructionPoint> cps = new ArrayList<>( geometry.getConstructionPoints() );
+//
+//		Fx.run( () -> {
+//			layer.getChildren().addAll( shapes );
+//			getReferenceLayer().getChildren().addAll( cps );
+//		} );
+//
+//		return geometry;
+//	}
+//
+//	@Deprecated
+//	DesignGeometry removeDesignGeometry( DesignGeometry geometry ) {
+//		Layer layer = getShapeLayer( geometry.getDesignShape() );
+//		List<Shape> shapes = new ArrayList<>( geometry.getFxShapes() );
+//		List<ConstructionPoint> cps = new ArrayList<>( geometry.getConstructionPoints() );
+//
+//		Fx.run( () -> {
+//			getReferenceLayer().getChildren().removeAll( cps );
+//			layer.getChildren().removeAll( shapes );
+//		} );
+//
+//		return geometry;
+//	}
 
 	private List<Layer> getLayers( Layer root ) {
 		List<Layer> layers = new ArrayList<>();
@@ -398,15 +422,15 @@ public class DesignPane extends StackPane {
 
 	private void doAddShape( DesignShape shape ) {
 		geometryMap.computeIfAbsent( shape, ( k ) -> {
-			DesignGeometry geometry = new DesignGeometry( this, shape );
-			geometry.addToPane();
-			return geometry;
+			DesignShapeView view = DesignGeometry.from( this,shape );
+			if( view != null ) view.addShapeGeometry();
+			return view;
 		} );
 	}
 
 	private void doRemoveShape( DesignShape shape ) {
 		geometryMap.computeIfPresent( shape, ( k, v ) -> {
-			v.removeFromPane();
+			v.removeShapeGeometry();
 			return null;
 		} );
 	}
