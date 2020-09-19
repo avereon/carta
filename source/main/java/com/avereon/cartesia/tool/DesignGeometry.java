@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignPoint;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.data.NodeEvent;
@@ -11,23 +12,34 @@ import java.util.List;
 
 public class DesignGeometry {
 
+	@Deprecated
 	private final DesignPane pane;
 
+	@Deprecated
 	private final DesignShape designShape;
 
+	@Deprecated
 	private List<Shape> geometry;
 
+	@Deprecated
 	private List<ConstructionPoint> cps;
 
+	@Deprecated
 	private EventHandler<NodeEvent> drawWidthHandler;
 
+	@Deprecated
 	private EventHandler<NodeEvent> drawColorHandler;
 
+	@Deprecated
 	private EventHandler<NodeEvent> fillColorHandler;
 
+	@Deprecated
 	private EventHandler<NodeEvent> selectedHandler;
 
+	@Deprecated
 	private EventHandler<NodeEvent> pointTypeHandler;
+
+	@Deprecated
 	private EventHandler<NodeEvent> pointSizeHandler;
 
 	public DesignGeometry( DesignPane pane, DesignShape designShape ) {
@@ -52,6 +64,14 @@ public class DesignGeometry {
 		return cps;
 	}
 
+	public static DesignPointView from( DesignPane pane, DesignPoint point, Shape shape ) {
+		return new DesignPointView( pane, point, shape );
+	}
+
+	public static DesignLineView from( DesignPane pane, DesignLine line, Shape shape ) {
+		return new DesignLineView( pane, line, shape );
+	}
+
 	private void updateGeometry() {
 		pane.removeDesignGeometry( this );
 		generate();
@@ -69,8 +89,8 @@ public class DesignGeometry {
 	}
 
 	private void generate() {
-		geometry = designShape.generateGeometry( this );
-		cps = designShape.generateConstructionPoints( this );
+		geometry = designShape.generateGeometry();
+		cps = designShape.generateConstructionPoints( pane, geometry );
 
 		geometry.forEach( s -> configureGeometry( s ) );
 	}

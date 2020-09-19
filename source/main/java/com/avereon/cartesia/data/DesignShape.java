@@ -2,7 +2,6 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeComparator;
 import com.avereon.xenon.ProgramProduct;
@@ -72,11 +71,11 @@ public abstract class DesignShape extends DesignDrawable implements Comparable<D
 		return comparator.compare( this, that );
 	}
 
-	public List<Shape> generateGeometry( DesignGeometry geometry ) {
+	public List<Shape> generateGeometry() {
 		return List.of();
 	}
 
-	public List<ConstructionPoint> generateConstructionPoints( DesignGeometry geometry ) {
+	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		return List.of();
 	}
 
