@@ -1,6 +1,8 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.icon.CartesiaIcon;
+import com.avereon.cartesia.icon.LayerIcon;
+import com.avereon.cartesia.icon.LayersIcon;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
@@ -17,6 +19,8 @@ public class CartesiaMod extends Mod {
 	public void startup() throws Exception {
 		super.startup();
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
+		registerIcon( "layer", new LayerIcon() );
+		registerIcon( "layers", new LayersIcon() );
 
 		// Register Design2D
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
@@ -51,6 +55,8 @@ public class CartesiaMod extends Mod {
 		unregisterAssetType( design2dAssetType );
 
 		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
+		unregisterIcon( "layer", new LayerIcon() );
+		unregisterIcon( "layers", new LayersIcon() );
 		super.shutdown();
 	}
 

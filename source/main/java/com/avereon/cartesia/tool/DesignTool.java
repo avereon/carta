@@ -86,7 +86,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
-		this.guide = new DesignToolGuide( product.getProgram() );
+		this.guide = new DesignToolGuide( product );
 		this.designPane = new DesignPane();
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
