@@ -117,8 +117,7 @@ public class CommandProcessor {
 				if( !valueStack.isEmpty() ) {
 					Object value = valueStack.pop();
 					if( value instanceof DesignShape ) {
-						DesignShape shape = (DesignShape)value;
-						tool.getDesign().getCurrentLayer().addShape( shape );
+						tool.getCurrentLayer().addShape( (DesignShape)value );
 					}
 				}
 			} else {

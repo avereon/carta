@@ -21,8 +21,8 @@ public class DesignNodeView {
 		return node;
 	}
 
-	public void registerListeners() {}
+	void registerListeners() {}
 
-	public void unregisterListeners() {}
+	void unregisterListeners() {}
 
 }

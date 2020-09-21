@@ -86,7 +86,7 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	@Override
-	public void registerListeners() {
+	void registerListeners() {
 		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( () -> getShape().setStrokeWidth( getDesignShape().calcDrawWidth() ) ) );
 		getDesignShape().register( DesignShape.DRAW_COLOR, drawColorHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawColor() ) ) );
 		getDesignShape().register( DesignShape.FILL_COLOR, fillColorHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillColor() ) ) );
@@ -97,7 +97,7 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	@Override
-	public void unregisterListeners() {
+	void unregisterListeners() {
 		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
 		getDesignShape().unregister( DesignShape.FILL_COLOR, fillColorHandler );
 		getDesignShape().unregister( DesignShape.DRAW_COLOR, drawColorHandler );

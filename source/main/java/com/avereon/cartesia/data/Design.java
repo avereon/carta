@@ -66,12 +66,14 @@ public abstract class Design extends IdNode {
 		return getValue( ROOT_LAYER );
 	}
 
+	@Deprecated
 	public DesignLayer getCurrentLayer() {
 		// Current layer is a node link so the layer doesn't get removed from the layer tree
 		NodeLink<DesignLayer> link = getValue( CURRENT_LAYER );
 		return link == null ? null : link.getNode();
 	}
 
+	@Deprecated
 	public Design setCurrentLayer( DesignLayer layer ) {
 		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
 		// Current layer is a node link so the layer doesn't get removed from the layer tree

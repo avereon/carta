@@ -182,16 +182,28 @@ public abstract class DesignTool extends GuidedTool {
 		return selectedShapes;
 	}
 
+	private void doSetCurrentLayerById( String id ) {
+		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( currentLayer::set );
+	}
+
 	public void setCurrentLayer( DesignLayer layer ) {
-		getDesign().setCurrentLayer( layer );
+		currentLayer.set( layer );
 	}
 
 	public DesignLayer getCurrentLayer() {
-		return getDesign().getCurrentLayer();
+		return currentLayer.get();
 	}
 
-	public ObjectProperty<DesignLayer> currentdLayer() {
+	public ObjectProperty<DesignLayer> currentLayer() {
 		return currentLayer;
+	}
+
+	public boolean isLayerVisible( DesignLayer layer ) {
+		return designPane.isLayerVisible( layer );
+	}
+
+	public void setLayerVisible( DesignLayer layer, boolean visible ) {
+		designPane.setLayerVisible( layer, visible );
 	}
 
 	@Override
@@ -238,7 +250,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
-		newNodes.stream().findFirst().flatMap( n -> getDesign().findLayers( DesignLayer.ID, n.getId() ).stream().findFirst() ).ifPresent( this::setCurrentLayer );
+		newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
 	}
 
 	@Override

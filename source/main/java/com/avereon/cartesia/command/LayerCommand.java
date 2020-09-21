@@ -10,6 +10,9 @@ import com.avereon.xenon.notice.Notice;
 
 import java.util.List;
 
+/**
+ * This command adds a layer as a peer to the current layer
+ */
 public class LayerCommand extends Command {
 
 	private static final System.Logger log = Log.get();
@@ -24,12 +27,8 @@ public class LayerCommand extends Command {
 		Object name = processor.pullValue();
 
 		if( name instanceof String ) {
-			// TODO Create and add layer
-			log.log( Log.INFO, "Create layer name=" + name );
 			DesignLayer yy = new DesignLayer().setName( String.valueOf( name ) );
-
-			// TODO Where to add the layer, as a peer to the current layer or as a child
-			DesignLayer currentLayer = tool.getDesign().getCurrentLayer();
+			DesignLayer currentLayer = tool.getCurrentLayer();
 			DesignLayer parentLayer = currentLayer.getLayer();
 			parentLayer.addLayer( yy );
 		} else {

@@ -181,6 +181,15 @@ public class DesignPane extends StackPane {
 		return zoomProperty;
 	}
 
+	public boolean isLayerVisible( DesignLayer layer ) {
+		DesignLayerView view = layerMap.get(layer);
+		return view != null && view.isVisble();
+	}
+
+	public void setLayerVisible( DesignLayer layer, boolean visible ) {
+		Optional.ofNullable( layerMap.get(layer) ).ifPresent( v -> Fx.run( () -> v.setVisible( visible ) ) );
+	}
+
 	DesignPane loadDesign( Design design ) {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );

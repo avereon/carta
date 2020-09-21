@@ -2,15 +2,15 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.data.DesignShape;
 
-public class AddCommand extends Command {
+public class LayerToggleCommand extends Command {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Object shape = processor.pullValue();
-		if( shape instanceof DesignShape ) tool.getCurrentLayer().addShape( (DesignShape)shape );
+		DesignLayer layer = tool.getCurrentLayer();
+		tool.setLayerVisible( layer, !tool.isLayerVisible( layer ) );
 	}
 
 }

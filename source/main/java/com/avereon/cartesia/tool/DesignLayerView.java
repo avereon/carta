@@ -1,15 +1,10 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.data.NodeEvent;
-import com.avereon.event.EventHandler;
-import com.avereon.zerra.javafx.Fx;
 
 public class DesignLayerView extends DesignDrawableView {
 
 	private DesignPane.Layer layer;
-
-	private EventHandler<NodeEvent> layerVisibleHandler;
 
 	public DesignLayerView( DesignPane pane, DesignLayer layer ) {
 		super( pane, layer );
@@ -29,6 +24,14 @@ public class DesignLayerView extends DesignDrawableView {
 		return layer;
 	}
 
+	boolean isVisble() {
+		return this.layer.isVisible();
+	}
+
+	void setVisible( boolean visible ) {
+		this.layer.setVisible( visible );
+	}
+
 	void addLayerGeometry() {
 		getPane().addLayerGeometry( this );
 		registerListeners();
@@ -40,14 +43,14 @@ public class DesignLayerView extends DesignDrawableView {
 	}
 
 	@Override
-	public void registerListeners() {
+	void registerListeners() {
 		super.registerListeners();
-		getDesignLayer().register( DesignLayer.VISIBLE, layerVisibleHandler = e -> Fx.run( () -> getLayer().setVisible( e.getNewValue() ) ) );
+		//getDesignLayer().register( DesignLayer.VISIBLE, layerVisibleHandler = e -> Fx.run( () -> getLayer().setVisible( e.getNewValue() ) ) );
 	}
 
 	@Override
-	public void unregisterListeners() {
-		getDesignLayer().unregister( DesignLayer.VISIBLE, layerVisibleHandler );
+	void unregisterListeners() {
+		//getDesignLayer().unregister( DesignLayer.VISIBLE, layerVisibleHandler );
 		super.unregisterListeners();
 	}
 

@@ -13,7 +13,7 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 
 	public static final String UNIT = "unit";
 
-	public static final String VISIBLE = "visible";
+	// NOTE Visibility is a per tool setting
 
 	public static final String LAYERS = "layers";
 
@@ -56,15 +56,6 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 
 	public DesignLayer setDesignUnit( DesignUnit unit ) {
 		setValue( UNIT, unit );
-		return this;
-	}
-
-	public boolean isVisible() {
-		return getValue( VISIBLE, true );
-	}
-
-	public DesignLayer setVisible( boolean visible ) {
-		setValue( VISIBLE, visible );
 		return this;
 	}
 

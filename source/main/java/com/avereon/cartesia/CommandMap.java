@@ -40,6 +40,10 @@ public class CommandMap {
 		// sn - snap nearest
 		// sg - toggle snap to grid
 
+		map.put( "yh", LayerHideCommand.class );
+		map.put( "ys", LayerShowCommand.class );
+		map.put( "yt", LayerToggleCommand.class );
+
 		defaultCommands = Collections.unmodifiableMap( map );
 	}
 
