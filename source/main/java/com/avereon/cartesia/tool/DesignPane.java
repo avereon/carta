@@ -69,7 +69,7 @@ public class DesignPane extends StackPane {
 
 	private final Layer layers;
 
-	private final Map<DesignLayer, Layer> layerMap;
+	private final Map<DesignLayer, DesignLayerView> layerMap;
 
 	private final Map<DesignShape, DesignShapeView> geometryMap;
 
@@ -185,7 +185,7 @@ public class DesignPane extends StackPane {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
-		layerMap.put( design.getRootLayer(), layers );
+		layerMap.put( design.getRootLayer(), new DesignLayerView( this, design.getRootLayer(), layers ) );
 
 		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
 		design.getRootLayer().getAllLayers().forEach( l -> l.getShapes().forEach( this::doAddNode ) );
@@ -203,7 +203,7 @@ public class DesignPane extends StackPane {
 	}
 
 	Layer getShapeLayer( DesignShape shape ) {
-		return layerMap.get( shape.getLayer() );
+		return layerMap.get( shape.getLayer() ).getLayer();
 	}
 
 	Pane getReferenceLayer() {
@@ -302,6 +302,15 @@ public class DesignPane extends StackPane {
 		return doSelectByShape( box, contains );
 	}
 
+	void addLayerGeometry( DesignLayerView view ) {
+		Fx.run( () -> layers.getChildren().add( view.getLayer() ) );
+	}
+
+	void removeLayerGeometry( DesignLayerView view ) {
+		Layer layer = view.getLayer();
+		Fx.run( () -> ((Layer)layer.getParent()).getChildren().remove( layer  ) );
+	}
+
 	void addShapeGeometry( DesignShapeView view ) {
 		Layer layer = getShapeLayer( view.getDesignShape() );
 		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
@@ -374,17 +383,22 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doAddLayer( DesignLayer yy ) {
-		Layer layer = layerMap.computeIfAbsent( yy, k -> new Layer() );
-		Fx.run( () -> layers.getChildren().add( layer ) );
+		layerMap.computeIfAbsent( yy, k -> {
+			DesignLayerView view = new DesignLayerView( this, yy );
+			view.addLayerGeometry();
+			return view;
+		} );
 	}
 
 	private void doRemoveLayer( DesignLayer yy ) {
-		Layer layer = layerMap.remove( yy );
-		if( layer != null ) ((Layer)layer.getParent()).getChildren().remove( layer );
+		layerMap.computeIfPresent( yy, (k,v ) -> {
+			v.removeLayerGeometry();
+			return null;
+		} );
 	}
 
 	private void doReorderLayer( DesignLayer layer ) {
-		doReorderLayer( layerMap.get( layer ) );
+		doReorderLayer( layerMap.get( layer ).getLayer() );
 	}
 
 	private void doReorderLayer( Layer pane ) {
@@ -470,6 +484,6 @@ public class DesignPane extends StackPane {
 	/**
 	 * This is the internal layer that represents the design layer.
 	 */
-	static class Layer extends Pane {}
+	public static class Layer extends Pane {}
 
 }

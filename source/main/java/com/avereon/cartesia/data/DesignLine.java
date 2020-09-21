@@ -53,23 +53,6 @@ public class DesignLine extends DesignShape {
 	}
 
 	@Override
-	public List<Shape> generateGeometry() {
-		Line line = new Line( getOrigin().getX(), getOrigin().getY(), getPoint().getX(), getPoint().getY() );
-		return List.of( line );
-	}
-
-	@Override
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
-		Line line = (Line)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, line.startXProperty(), line.startYProperty() );
-		ConstructionPoint p = cp( pane, line.endXProperty(), line.endYProperty() );
-
-		List<ConstructionPoint> cps = List.of( o, p );
-		line.getProperties().put( CONSTRUCTION_POINTS, cps );
-		return cps;
-	}
-
-	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pagePath = "/com/avereon/cartesia/design/props/line.xml";
 		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath, BundleKey.PROPS ).get( "line" );

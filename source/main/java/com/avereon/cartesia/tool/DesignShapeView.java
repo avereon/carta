@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
@@ -11,6 +12,8 @@ import java.util.List;
 public class DesignShapeView extends DesignDrawableView {
 
 	public static final String SHAPE_META_DATA = "shape-meta-data";
+
+	static final String CONSTRUCTION_POINTS = "construction-points";
 
 	private List<Shape> geometry;
 
@@ -41,6 +44,14 @@ public class DesignShapeView extends DesignDrawableView {
 		return cps;
 	}
 
+	public List<Shape> generateGeometry() {
+		return List.of();
+	}
+
+	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
+		return List.of();
+	}
+
 	protected void updateGeometry() {
 		removeShapeGeometry();
 		generate();
@@ -62,8 +73,8 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private void generate() {
-		geometry = getDesignShape().generateGeometry();
-		cps = getDesignShape().generateConstructionPoints( getPane(), geometry );
+		geometry = generateGeometry();
+		cps = generateConstructionPoints( getPane(), geometry );
 		geometry.forEach( this::configureShape );
 	}
 
@@ -74,6 +85,7 @@ public class DesignShapeView extends DesignDrawableView {
 		shape.setFill( getDesignShape().calcFillColor() );
 	}
 
+	@Override
 	public void registerListeners() {
 		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( () -> getShape().setStrokeWidth( getDesignShape().calcDrawWidth() ) ) );
 		getDesignShape().register( DesignShape.DRAW_COLOR, drawColorHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawColor() ) ) );
@@ -84,11 +96,19 @@ public class DesignShapeView extends DesignDrawableView {
 		} ) );
 	}
 
+	@Override
 	public void unregisterListeners() {
 		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
 		getDesignShape().unregister( DesignShape.FILL_COLOR, fillColorHandler );
 		getDesignShape().unregister( DesignShape.DRAW_COLOR, drawColorHandler );
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
+	}
+
+	ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
+		ConstructionPoint cp = new ConstructionPoint();
+		cp.layoutXProperty().bind( xProperty.multiply( pane.scaleXProperty() ) );
+		cp.layoutYProperty().bind( yProperty.multiply( pane.scaleYProperty() ).negate() );
+		return cp;
 	}
 
 }

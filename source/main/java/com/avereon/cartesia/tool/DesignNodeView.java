@@ -21,4 +21,8 @@ public class DesignNodeView {
 		return node;
 	}
 
+	public void registerListeners() {}
+
+	public void unregisterListeners() {}
+
 }

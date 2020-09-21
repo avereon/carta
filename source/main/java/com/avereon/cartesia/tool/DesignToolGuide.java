@@ -70,7 +70,6 @@ public class DesignToolGuide extends Guide {
 	}
 
 	private void addLayer( DesignLayer layer ) {
-		log.log( Log.WARN, "parentid=" + layer.getLayer().getId() );
 		GuideNode parentGuideNode = nodes.get( layer.getLayer() );
 		GuideNode layerGuideNode = new GuideNode( getProgram(), layer.getId(), layer.getName(), "layer" );
 		addNode( parentGuideNode, layerGuideNode );

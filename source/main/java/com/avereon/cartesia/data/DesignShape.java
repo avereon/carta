@@ -11,7 +11,6 @@ import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public abstract class DesignShape extends DesignDrawable implements Comparable<DesignShape> {
@@ -21,8 +20,6 @@ public abstract class DesignShape extends DesignDrawable implements Comparable<D
 	public static final String ORIGIN = "origin";
 
 	public static final String SELECTED = "selected";
-
-	static final String CONSTRUCTION_POINTS = "construction-points";
 
 	public static final NodeComparator<DesignShape> comparator;
 
@@ -71,22 +68,7 @@ public abstract class DesignShape extends DesignDrawable implements Comparable<D
 		return comparator.compare( this, that );
 	}
 
-	public List<Shape> generateGeometry() {
-		return List.of();
-	}
-
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
-		return List.of();
-	}
-
 	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
-
-	ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
-		ConstructionPoint cp = new ConstructionPoint();
-		cp.layoutXProperty().bind( xProperty.multiply( pane.scaleXProperty() ) );
-		cp.layoutYProperty().bind( yProperty.multiply( pane.scaleYProperty() ).negate() );
-		return cp;
-	}
 
 	public static DesignShape getFrom( Shape s ) {
 		return (DesignShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );

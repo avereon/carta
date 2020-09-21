@@ -13,6 +13,8 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 
 	public static final String UNIT = "unit";
 
+	public static final String VISIBLE = "visible";
+
 	public static final String LAYERS = "layers";
 
 	public static final String SHAPES = "shapes";
@@ -57,10 +59,24 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 		return this;
 	}
 
+	public boolean isVisible() {
+		return getValue( VISIBLE, true );
+	}
+
+	public DesignLayer setVisible( boolean visible ) {
+		setValue( VISIBLE, visible );
+		return this;
+	}
+
 	public List<DesignLayer> getAllLayers() {
 		List<DesignLayer> layers = new ArrayList<>( getValues( LAYERS ) );
-		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toList()) );
+		layers.sort( new NodeComparator<>( DesignLayer.ORDER ) );
+		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toList() ) );
 		return layers;
+	}
+
+	public Set<DesignLayer> findLayers( String key, Object value ) {
+		return getAllLayers().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
 	}
 
 	public List<DesignLayer> getLayers() {
@@ -115,4 +131,8 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 		return comparator.compare( this, that );
 	}
 
+	@Override
+	public String toString() {
+		return super.toString( NAME );
+	}
 }

@@ -2,8 +2,6 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.math.Points;
-import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
@@ -12,9 +10,6 @@ import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.MoveTo;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Shape;
 
 import java.io.IOException;
 import java.util.List;
@@ -104,25 +99,6 @@ public class DesignPoint extends DesignShape {
 	}
 
 	@Override
-	public List<Shape> generateGeometry() {
-		double ox = getOrigin().getX();
-		double oy = getOrigin().getY();
-		Path path = Points.createPoint( calcType(), ox, oy, getRadius() );
-		return List.of( path );
-	}
-
-	@Override
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
-		Path path = (Path)shapes.get( 0 );
-		MoveTo m = ((MoveTo)path.getElements().get( 0 ));
-		ConstructionPoint o = cp( pane, m.xProperty(), m.yProperty() );
-
-		List<ConstructionPoint> cps = List.of( o );
-		path.getProperties().put( CONSTRUCTION_POINTS, cps );
-		return cps;
-	}
-
-	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pagePath = "/com/avereon/cartesia/design/props/point.xml";
 		if( page == null ) {
@@ -133,7 +109,7 @@ public class DesignPoint extends DesignShape {
 		return page;
 	}
 
-	private double getRadius() {
+	public double getRadius() {
 		return 0.5 * calcSize();
 	}
 

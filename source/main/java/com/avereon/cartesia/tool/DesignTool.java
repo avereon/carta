@@ -6,6 +6,7 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.util.Log;
 import com.avereon.xenon.Action;
@@ -15,6 +16,7 @@ import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.guide.Guide;
+import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
@@ -38,6 +40,7 @@ import javafx.stage.Screen;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class DesignTool extends GuidedTool {
@@ -70,6 +73,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final ObservableList<Shape> selectedShapes;
 
+	private final ObjectProperty<DesignLayer> currentLayer;
+
 	private final DeleteAction deleteAction;
 
 	private ReticleCursor reticle;
@@ -91,6 +96,8 @@ public abstract class DesignTool extends GuidedTool {
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
+		this.currentLayer = new SimpleObjectProperty<>();
+
 		this.deleteAction = new DeleteAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
@@ -175,6 +182,18 @@ public abstract class DesignTool extends GuidedTool {
 		return selectedShapes;
 	}
 
+	public void setCurrentLayer( DesignLayer layer ) {
+		getDesign().setCurrentLayer( layer );
+	}
+
+	public DesignLayer getCurrentLayer() {
+		return getDesign().getCurrentLayer();
+	}
+
+	public ObjectProperty<DesignLayer> currentdLayer() {
+		return currentLayer;
+	}
+
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
@@ -215,6 +234,11 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected Guide getGuide() {
 		return guide;
+	}
+
+	@Override
+	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
+		newNodes.stream().findFirst().flatMap( n -> getDesign().findLayers( DesignLayer.ID, n.getId() ).stream().findFirst() ).ifPresent( this::setCurrentLayer );
 	}
 
 	@Override
