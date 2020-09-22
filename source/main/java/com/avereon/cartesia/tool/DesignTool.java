@@ -55,6 +55,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final String SETTINGS_PAN = "pan";
 
+	private static final String CURRENT_LAYER = "layer";
+
+	private static final String VISIBLE_LAYERS = "visible-layers";
+
 	private static final System.Logger log = Log.get();
 
 	private final DesignToolGuide guide;
@@ -194,7 +198,7 @@ public abstract class DesignTool extends GuidedTool {
 		return currentLayer.get();
 	}
 
-	public ObjectProperty<DesignLayer> currentLayer() {
+	public ObjectProperty<DesignLayer> currentLayerProperty() {
 		return currentLayer;
 	}
 
@@ -228,6 +232,7 @@ public abstract class DesignTool extends GuidedTool {
 		// Get tool settings
 		setPan( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_PAN, "0,0,0" ) ) );
 		setZoom( Double.parseDouble( getSettings().get( SETTINGS_ZOOM, "1.0" ) ) );
+		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 
 		// Add pan property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
@@ -238,6 +243,11 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			getSettings().set( SETTINGS_ZOOM, n.doubleValue() );
+		} );
+
+		// Add current layer property listener
+		currentLayerProperty().addListener( ( p, o, n) -> {
+			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 
 		designPane.recenter();

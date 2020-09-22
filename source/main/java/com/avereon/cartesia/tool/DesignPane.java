@@ -182,12 +182,12 @@ public class DesignPane extends StackPane {
 	}
 
 	public boolean isLayerVisible( DesignLayer layer ) {
-		DesignLayerView view = layerMap.get(layer);
+		DesignLayerView view = layerMap.get( layer );
 		return view != null && view.isVisble();
 	}
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-		Optional.ofNullable( layerMap.get(layer) ).ifPresent( v -> Fx.run( () -> v.setVisible( visible ) ) );
+		Optional.ofNullable( layerMap.get( layer ) ).ifPresent( v -> Fx.run( () -> v.setVisible( visible ) ) );
 	}
 
 	DesignPane loadDesign( Design design ) {
@@ -317,13 +317,15 @@ public class DesignPane extends StackPane {
 
 	void removeLayerGeometry( DesignLayerView view ) {
 		Layer layer = view.getLayer();
-		Fx.run( () -> ((Layer)layer.getParent()).getChildren().remove( layer  ) );
+		Fx.run( () -> ((Layer)layer.getParent()).getChildren().remove( layer ) );
 	}
 
 	void addShapeGeometry( DesignShapeView view ) {
 		Layer layer = getShapeLayer( view.getDesignShape() );
 		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
 		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
+
+		shapes.forEach( s -> s.visibleProperty().bind( layer.visibleProperty() ) );
 
 		Fx.run( () -> {
 			layer.getChildren().addAll( shapes );
@@ -332,9 +334,11 @@ public class DesignPane extends StackPane {
 	}
 
 	void removeShapeGeometry( DesignShapeView view ) {
-		Layer layer  = (Layer)view.getGeometry().get(0).getParent();
+		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
 		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
 		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
+
+		shapes.forEach( s -> s.visibleProperty().unbind() );
 
 		Fx.run( () -> {
 			getReferenceLayer().getChildren().removeAll( cps );
@@ -400,7 +404,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doRemoveLayer( DesignLayer yy ) {
-		layerMap.computeIfPresent( yy, (k,v ) -> {
+		layerMap.computeIfPresent( yy, ( k, v ) -> {
 			v.removeLayerGeometry();
 			return null;
 		} );
@@ -416,7 +420,7 @@ public class DesignPane extends StackPane {
 
 	private void doAddShape( DesignShape shape ) {
 		geometryMap.computeIfAbsent( shape, ( k ) -> {
-			DesignShapeView view = DesignGeometry.from( this,shape );
+			DesignShapeView view = DesignGeometry.from( this, shape );
 			if( view != null ) view.addShapeGeometry();
 			return view;
 		} );

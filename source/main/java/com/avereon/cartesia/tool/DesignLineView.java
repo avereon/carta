@@ -27,6 +27,8 @@ public class DesignLineView extends DesignShapeView{
 		Line line = (Line)shapes.get( 0 );
 		ConstructionPoint o = cp( pane, line.startXProperty(), line.startYProperty() );
 		ConstructionPoint p = cp( pane, line.endXProperty(), line.endYProperty() );
+		o.visibleProperty().bind( line.visibleProperty() );
+		p.visibleProperty().bind( line.visibleProperty() );
 
 		List<ConstructionPoint> cps = List.of( o, p );
 		line.getProperties().put( CONSTRUCTION_POINTS, cps );

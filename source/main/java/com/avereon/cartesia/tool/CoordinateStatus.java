@@ -1,6 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.util.TextUtil;
+import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
@@ -56,19 +57,21 @@ public class CoordinateStatus extends HBox {
 	}
 
 	public void updatePosition( Point3D position ) {
-		if( isFraction ) {
-			xCoord.setText( "0 0/0" );
-			yCoord.setText( "0 0/0" );
-			zCoord.setText( "0 0/0" );
-		} else {
-			xCoord.setText( format.format( position.getX() ) );
-			yCoord.setText( format.format( position.getY() ) );
-			zCoord.setText( format.format( position.getZ() ) );
-		}
+		Fx.run( () -> {
+			if( isFraction ) {
+				xCoord.setText( "0 0/0" );
+				yCoord.setText( "0 0/0" );
+				zCoord.setText( "0 0/0" );
+			} else {
+				xCoord.setText( format.format( position.getX() ) );
+				yCoord.setText( format.format( position.getY() ) );
+				zCoord.setText( format.format( position.getZ() ) );
+			}
+		} );
 	}
 
 	public void updateZoom( double zoom ) {
-		zoomValue.setText( format.format( zoom ) );
+		Fx.run( () -> zoomValue.setText( format.format( zoom ) ) );
 	}
 
 	public void setShowZCoordinate( boolean showZ ) {

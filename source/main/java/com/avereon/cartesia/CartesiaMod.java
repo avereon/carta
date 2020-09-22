@@ -39,6 +39,8 @@ public class CartesiaMod extends Mod {
 
 		// Register the settings pages
 		registerSettingsPages();
+
+		CommandMap.verify();
 	}
 
 	@Override

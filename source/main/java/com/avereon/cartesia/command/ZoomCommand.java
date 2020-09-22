@@ -9,24 +9,25 @@ import javafx.geometry.Point3D;
 
 import java.util.List;
 
-public class PanCommand extends Command {
+public class ZoomCommand extends Command {
 
 	@Override
 	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptForPointCommand( tool, "pan-point" ) );
+		return List.of( new PromptForValueCommand( tool, "zoom" ) );
 	}
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Object origin = processor.pullValue();
+		Object zoom = processor.pullValue();
 
-		if( origin instanceof Point3D ) {
-			tool.setPan( tool.getPan().subtract( (Point3D)origin ) );
+		if( zoom instanceof Point3D ) {
+			tool.setZoom( ((Point3D)zoom).getX() );
 		} else {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
-			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", origin );
+			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-zoom", zoom );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 	}
+
 
 }

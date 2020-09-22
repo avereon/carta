@@ -1,17 +1,19 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
+import com.avereon.util.Log;
 
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandMap {
 
-	private static final Map<String, Class<? extends Command>> defaultCommands;
+	private static final System.Logger log = Log.get();
+
+	private static final Map<String, Class<? extends Command>> commands;
 
 	static {
-		Map<String, Class<? extends Command>> map = new HashMap<>();
+		commands = new ConcurrentHashMap<>();
 
 		// High level letters
 		// a - arc
@@ -26,34 +28,45 @@ public class CommandMap {
 		// y - layer
 		// z - zoom
 
-		map.put( "aa", ArcCommand.class );
-		map.put( "ll", LineCommand.class );
-		map.put( "pp", PointCommand.class );
-		map.put( "vv", CurveCommand.class );
-		map.put( "ww", PathCommand.class );
-		map.put( "yy", LayerCommand.class );
-		//map.put( "sy", SubLayerCommand.class );
+		add( "aa", ArcCommand.class );
+		add( "ll", LineCommand.class );
+		add( "pp", PointCommand.class );
+		add( "vv", CurveCommand.class );
+		add( "ww", PathCommand.class );
 
-		map.put( "pa", PanCommand.class );
+		add( "pa", PanCommand.class );
+		add( "vp", ViewPointCommand.class );
 
 		// gg - grid toggle
 		// sn - snap nearest
 		// sg - toggle snap to grid
 
-		map.put( "yh", LayerHideCommand.class );
-		map.put( "ys", LayerShowCommand.class );
-		map.put( "yt", LayerToggleCommand.class );
+		add( "yc", LayerCommand.class );
+		//add( "ys", SubLayerCommand.class );
+		add( "yh", LayerHideCommand.class );
+		add( "ys", LayerShowCommand.class );
+		add( "yy", LayerToggleCommand.class );
 
-		defaultCommands = Collections.unmodifiableMap( map );
+		add( "zm", ZoomCommand.class );
 	}
 
+	public static void verify() {}
+
 	public static boolean hasCommand( String id ) {
-		return defaultCommands.containsKey( id );
+		return commands.containsKey( id );
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public static <T extends Command> Class<T> get( String id ) {
-		return (Class<T>)defaultCommands.get( id );
+		return (Class<T>)commands.get( id );
 	}
 
+	private static void add( String key, Class<? extends Command> command ) {
+		Class<? extends Command> existing = commands.get( key );
+		if( existing == null ) {
+			commands.put( key, command );
+		} else {
+			log.log( Log.WARN, "Command already in use: command={0} existing={1} conflict={2}", key, existing, command );
+		}
+	}
 }

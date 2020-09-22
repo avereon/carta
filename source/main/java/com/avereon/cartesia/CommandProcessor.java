@@ -70,7 +70,7 @@ public class CommandProcessor {
 
 		if( commandClass != null ) {
 			try {
-				log.log( Log.WARN, "Command found {0}", commandClass.getName() );
+				log.log( Log.DEBUG, "Command found {0}", commandClass.getName() );
 				Command command = commandClass.getConstructor().newInstance();
 
 				// Push the command itself

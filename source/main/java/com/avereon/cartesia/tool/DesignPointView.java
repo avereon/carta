@@ -38,6 +38,7 @@ public class DesignPointView extends DesignShapeView {
 		Path path = (Path)shapes.get( 0 );
 		MoveTo m = ((MoveTo)path.getElements().get( 0 ));
 		ConstructionPoint o = cp( pane, m.xProperty(), m.yProperty() );
+		o.visibleProperty().bind( path.visibleProperty() );
 
 		List<ConstructionPoint> cps = List.of( o );
 		path.getProperties().put( CONSTRUCTION_POINTS, cps );
