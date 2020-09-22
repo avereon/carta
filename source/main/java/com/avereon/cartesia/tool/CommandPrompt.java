@@ -20,6 +20,8 @@ public class CommandPrompt extends BorderPane {
 
 	private static final boolean DEFAULT_AUTO_COMMAND = true;
 
+	private static final String SPACE = " ";
+
 	private final DesignTool tool;
 
 	private final Label prompt;
@@ -80,11 +82,13 @@ public class CommandPrompt extends BorderPane {
 			switch( event.getCode() ) {
 				case ESCAPE -> {
 					// Cancel the command stack
+					event.consume();
 					processor.cancel( tool );
 					getDesign().clearSelected();
 					clear();
 				}
 				case ENTER -> {
+					event.consume();
 					if( TextUtil.isEmpty( command.getText() ) ) {
 						processor.evaluate( tool, tool.getWorldPointAtMouse() );
 					} else {
@@ -96,7 +100,10 @@ public class CommandPrompt extends BorderPane {
 		} else if( event.getEventType() == KeyEvent.KEY_TYPED ) {
 			String id = command.getText();
 			boolean autoCommand = processor.isAutoCommandSafe() && autoCommandEnabled;
-			if( autoCommand && CommandMap.hasCommand( id ) ) {
+			if( SPACE.equals( event.getCharacter() ) && TextUtil.isEmpty( command.getText() ) ) {
+				process( processor.getPriorCommand() );
+				clear();
+			} else if( autoCommand && CommandMap.hasCommand( id ) ) {
 				process( id );
 				clear();
 			}

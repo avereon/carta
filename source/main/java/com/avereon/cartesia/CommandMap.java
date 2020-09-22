@@ -28,25 +28,32 @@ public class CommandMap {
 		// y - layer
 		// z - zoom
 
-		add( "aa", ArcCommand.class );
+		// Shape commands
+		add( "aa", ArcCommand.class ); // center-endpoint-endpoint
+		//add( "a3", Arc2Command.class ); // endpoint-midpoint-endpoint
+		//add( "cc", CircleCommand.class ); // center-radius
+		//add( "c3", Circle3Command.class ); // point-point-point
+		//add( "ee", EllipseCommand.class ); // center-radius-radius
+		//add( "e5", Ellipse5Command.class ); // point-point-point-point-point
 		add( "ll", LineCommand.class );
 		add( "pp", PointCommand.class );
 		add( "vv", CurveCommand.class );
 		add( "ww", PathCommand.class );
 
-		add( "pa", PanCommand.class );
-		add( "vp", ViewPointCommand.class );
-
 		// gg - grid toggle
 		// sn - snap nearest
 		// sg - toggle snap to grid
 
+		// Layer commands
 		add( "yc", LayerCommand.class );
-		//add( "ys", SubLayerCommand.class );
+		add( "ys", SubLayerCommand.class );
 		add( "yh", LayerHideCommand.class );
 		add( "ys", LayerShowCommand.class );
 		add( "yy", LayerToggleCommand.class );
 
+		// View commands
+		add( "pa", PanCommand.class );
+		add( "vp", ViewPointCommand.class );
 		add( "zm", ZoomCommand.class );
 	}
 

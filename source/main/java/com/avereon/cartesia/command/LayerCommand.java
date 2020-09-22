@@ -27,15 +27,22 @@ public class LayerCommand extends Command {
 		Object name = processor.pullValue();
 
 		if( name instanceof String ) {
-			DesignLayer yy = new DesignLayer().setName( String.valueOf( name ) );
-			DesignLayer currentLayer = tool.getCurrentLayer();
-			DesignLayer parentLayer = currentLayer.getLayer();
-			parentLayer.addLayer( yy );
+			addLayer( tool.getCurrentLayer(), new DesignLayer().setName( String.valueOf( name ) ) );
 		} else {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
 			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-layer", name );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
+	}
+
+	/**
+	 * This implementation adds the new layer as a peer to the current layer.
+	 *
+	 * @param currentLayer The current layer
+	 * @param yy The new layer
+	 */
+	void addLayer( DesignLayer currentLayer, DesignLayer yy ) {
+		currentLayer.getLayer().addLayer( yy );
 	}
 
 }

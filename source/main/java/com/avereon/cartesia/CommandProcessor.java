@@ -36,11 +36,18 @@ public class CommandProcessor {
 
 	private boolean isAutoCommandSafe;
 
+	private String priorCommand;
+
 	public CommandProcessor() {
 		commandStack = new Stack<>();
 		valueStack = new Stack<>();
 		anchor = new Point3D( 0, 0, 0 );
 		isAutoCommandSafe = true;
+		priorCommand = "";
+	}
+
+	public String getPriorCommand() {
+		return priorCommand;
 	}
 
 	public void cancel( DesignTool tool ) {
@@ -70,6 +77,8 @@ public class CommandProcessor {
 
 		if( commandClass != null ) {
 			try {
+				priorCommand = text;
+
 				log.log( Log.DEBUG, "Command found {0}", commandClass.getName() );
 				Command command = commandClass.getConstructor().newInstance();
 
@@ -81,7 +90,7 @@ public class CommandProcessor {
 				Collections.reverse( preSteps );
 				preSteps.forEach( this::pushCommand );
 
-				// Start the next task
+				// Start the command
 				tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
 			} catch( Exception exception ) {
 				throw new CommandException( exception );
