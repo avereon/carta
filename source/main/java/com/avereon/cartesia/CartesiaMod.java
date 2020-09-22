@@ -1,8 +1,8 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.icon.CartesiaIcon;
-import com.avereon.cartesia.icon.LayerIcon;
 import com.avereon.cartesia.icon.LayersIcon;
+import com.avereon.cartesia.icon.LayerIcon;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
