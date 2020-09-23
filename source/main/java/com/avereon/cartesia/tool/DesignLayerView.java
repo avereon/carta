@@ -11,7 +11,8 @@ public class DesignLayerView extends DesignDrawableView {
 		generate();
 	}
 
-	public DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPane.Layer layer ) {
+	// Special handing of the root layer pane
+	DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPane.Layer layer ) {
 		super( pane, designLayer );
 		this.layer = layer;
 	}
@@ -56,5 +57,7 @@ public class DesignLayerView extends DesignDrawableView {
 
 	private void generate() {
 		layer = new DesignPane.Layer();
+		layer.getProperties().put( DesignPane.SHAPE_META_DATA, getDesignLayer() );
 	}
+
 }

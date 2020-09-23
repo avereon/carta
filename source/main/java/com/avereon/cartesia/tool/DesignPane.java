@@ -212,7 +212,7 @@ public class DesignPane extends StackPane {
 	}
 
 	Layer getShapeLayer( DesignShape shape ) {
-		return layerMap.get( shape.getLayer() ).getLayer();
+		return layerMap.get( shape.getParentLayer() ).getLayer();
 	}
 
 	Pane getReferenceLayer() {
@@ -316,12 +316,19 @@ public class DesignPane extends StackPane {
 	}
 
 	void addLayerGeometry( DesignLayerView view ) {
-		Fx.run( () -> layers.getChildren().add( view.getLayer() ) );
+		Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+		Fx.run( () -> {
+			parent.getChildren().add( view.getLayer() );
+			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, view.getLayer() ) );
+		} );
 	}
 
 	void removeLayerGeometry( DesignLayerView view ) {
-		Layer layer = view.getLayer();
-		Fx.run( () -> ((Layer)layer.getParent()).getChildren().remove( layer ) );
+		Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+		Fx.run( () -> {
+			parent.getChildren().remove( view.getLayer() );
+			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, view.getLayer() ) );
+		} );
 	}
 
 	void addShapeGeometry( DesignShapeView view ) {

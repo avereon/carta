@@ -42,7 +42,7 @@ public class LayerCommand extends Command {
 	 * @param yy The new layer
 	 */
 	void addLayer( DesignLayer currentLayer, DesignLayer yy ) {
-		currentLayer.getLayer().addLayer( yy );
+		currentLayer.getParentLayer().addLayer( yy );
 	}
 
 }

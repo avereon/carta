@@ -30,7 +30,7 @@ public abstract class DesignDrawable extends DesignNode {
 		addModifyingKeys( DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
 	}
 
-	public DesignLayer getLayer() {
+	public DesignLayer getParentLayer() {
 		return getParent();
 	}
 

@@ -95,7 +95,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
-		this.guide = new DesignToolGuide( product );
+		this.guide = new DesignToolGuide( product, this );
 		this.designPane = new DesignPane();
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
@@ -186,10 +186,6 @@ public abstract class DesignTool extends GuidedTool {
 		return selectedShapes;
 	}
 
-	private void doSetCurrentLayerById( String id ) {
-		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( currentLayer::set );
-	}
-
 	public void setCurrentLayer( DesignLayer layer ) {
 		currentLayer.set( layer );
 	}
@@ -223,9 +219,7 @@ public abstract class DesignTool extends GuidedTool {
 		Design design = request.getAsset().getModel();
 		designPane.loadDesign( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
-
-		// Loading the guide depends on the design pane being loaded
-		guide.loadDesign( design, designPane );
+		guide.load( designPane );
 
 		// Keep the design pane centered when resizing
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
@@ -411,8 +405,12 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
-		runTask( () -> shapes.forEach( s -> s.getLayer().removeShape( s ) ) );
+		runTask( () -> shapes.forEach( s -> s.getParentLayer().removeShape( s ) ) );
 		selectedShapes.clear();
+	}
+
+	private void doSetCurrentLayerById( String id ) {
+		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( currentLayer::set );
 	}
 
 	private void showPropertiesPage( DesignShape s ) {

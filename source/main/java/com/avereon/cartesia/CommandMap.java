@@ -46,9 +46,10 @@ public class CommandMap {
 
 		// Layer commands
 		add( "yc", LayerCommand.class );
-		add( "ys", SubLayerCommand.class );
-		add( "yh", LayerHideCommand.class );
 		add( "yd", LayerShowCommand.class );
+		add( "yh", LayerHideCommand.class );
+		add( "ys", SubLayerCommand.class );
+		add( "yx", LayerDeleteCommand.class );
 		add( "yy", LayerToggleCommand.class );
 
 		// View commands

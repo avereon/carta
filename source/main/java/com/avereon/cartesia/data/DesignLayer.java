@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
 
@@ -126,4 +127,9 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 	public String toString() {
 		return super.toString( NAME );
 	}
+
+	public static DesignLayer getFrom( DesignPane.Layer l ) {
+		return (DesignLayer)l.getProperties().get( DesignPane.SHAPE_META_DATA );
+	}
+
 }
