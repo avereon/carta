@@ -11,6 +11,7 @@ import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
+import javafx.beans.value.ChangeListener;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,11 +22,13 @@ public class DesignToolGuide extends Guide {
 
 	private final ProgramProduct product;
 
-	private GuideNode layers;
+	private final Map<DesignNode, GuideNode> nodes;
 
 	private Design design;
 
-	private Map<DesignNode, GuideNode> nodes;
+	private DesignPane pane;
+
+	private ChangeListener<Boolean> visibleHandler;
 
 	public DesignToolGuide( ProgramProduct product ) {
 		this.product = product;
@@ -40,12 +43,14 @@ public class DesignToolGuide extends Guide {
 		return product.getProgram();
 	}
 
-	void loadDesign( Design design ) {
+	void loadDesign( Design design, DesignPane pane ) {
 		this.design = design;
+		this.pane = pane;
 
-		String layersLabel = getProduct().rb().textOr( BundleKey.LABEL, "layers", "Layers"  );
-		addNode( layers = new GuideNode( getProgram(), design.getRootLayer().getId(), layersLabel, "layers" ) );
+		String layersLabel = getProduct().rb().textOr( BundleKey.LABEL, "layers", "Layers" );
+		GuideNode layers = new GuideNode( getProgram(), design.getRootLayer().getId(), layersLabel, "layers" );
 		nodes.put( design.getRootLayer(), layers );
+		addNode( layers );
 
 		// Go through the design and generate the initial guide
 		design.getAllLayers().forEach( this::addLayer );
@@ -56,16 +61,12 @@ public class DesignToolGuide extends Guide {
 	}
 
 	private void doChildAddedAction( NodeEvent event ) {
-		Node parent = event.getNode();
 		Node child = event.getNewValue();
-
 		if( child instanceof DesignLayer ) addLayer( (DesignLayer)child );
 	}
 
 	private void doChildRemovedAction( NodeEvent event ) {
-		Node parent = event.getNode();
 		Node child = event.getOldValue();
-
 		if( child instanceof DesignLayer ) removeLayer( (DesignLayer)child );
 	}
 
@@ -74,9 +75,14 @@ public class DesignToolGuide extends Guide {
 		GuideNode layerGuideNode = new GuideNode( getProgram(), layer.getId(), layer.getName(), "layer" );
 		addNode( parentGuideNode, layerGuideNode );
 		nodes.put( layer, layerGuideNode );
+
+		visibleHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
+		pane.getDesignLayerView( layer ).getLayer().visibleProperty().addListener( visibleHandler );
 	}
 
 	private void removeLayer( DesignLayer layer ) {
+		pane.getDesignLayerView( layer ).getLayer().visibleProperty().removeListener( visibleHandler );
+
 		GuideNode parentGuideNode = nodes.get( layer.getLayer() );
 		GuideNode layerGuideNode = nodes.get( layer );
 		removeNode( parentGuideNode, layerGuideNode );

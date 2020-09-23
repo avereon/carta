@@ -48,7 +48,7 @@ public class CommandMap {
 		add( "yc", LayerCommand.class );
 		add( "ys", SubLayerCommand.class );
 		add( "yh", LayerHideCommand.class );
-		add( "ys", LayerShowCommand.class );
+		add( "yd", LayerShowCommand.class );
 		add( "yy", LayerToggleCommand.class );
 
 		// View commands
@@ -73,7 +73,7 @@ public class CommandMap {
 		if( existing == null ) {
 			commands.put( key, command );
 		} else {
-			log.log( Log.WARN, "Command already in use: command={0} existing={1} conflict={2}", key, existing, command );
+			log.log( Log.ERROR, "Command already in use: command={0} existing={1} conflict={2}", key, existing, command );
 		}
 	}
 }

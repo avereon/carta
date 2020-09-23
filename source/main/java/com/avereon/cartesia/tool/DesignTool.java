@@ -221,9 +221,11 @@ public abstract class DesignTool extends GuidedTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = request.getAsset().getModel();
-		guide.loadDesign( design );
 		designPane.loadDesign( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
+
+		// Loading the guide depends on the design pane being loaded
+		guide.loadDesign( design, designPane );
 
 		// Keep the design pane centered when resizing
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
@@ -246,7 +248,7 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 
 		// Add current layer property listener
-		currentLayerProperty().addListener( ( p, o, n) -> {
+		currentLayerProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 

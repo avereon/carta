@@ -219,6 +219,10 @@ public class DesignPane extends StackPane {
 		return reference;
 	}
 
+	DesignLayerView getDesignLayerView( DesignLayer layer ) {
+		return layerMap.get( layer );
+	}
+
 	void recenter() {
 		Parent parent = getParent();
 		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
