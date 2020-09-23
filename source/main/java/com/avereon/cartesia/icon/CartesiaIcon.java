@@ -45,7 +45,7 @@ public class CartesiaIcon extends SvgIcon {
 		double dX = cX + 0;
 		double dY = cY - (ARM_WIDTH / Math.sin( alpha ));
 
-		add( top() + left( aX, aY, bX, bY, cX, cY, dX, dY ) + right( aX, aY, bX, bY, cX, cY, dX, dY ) );
+		fill( top() + left( aX, aY, bX, bY, cX, cY, dX, dY ) + right( aX, aY, bX, bY, cX, cY, dX, dY ) );
 	}
 
 	private String top() {

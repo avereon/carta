@@ -31,9 +31,9 @@ public class LayersIcon extends SvgIcon {
 
 	public LayersIcon() {
 		super( 32, 32 );
-		add( upperLayer( -6 ) );
-		add( lowerLayer( 0 ) );
-		add( lowerLayer( 6 ) );
+		fill( upperLayer( -6 ) );
+		fill( lowerLayer( 0 ) );
+		fill( lowerLayer( 6 ) );
 	}
 
 	protected String upperLayer( double y ) {

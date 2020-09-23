@@ -13,7 +13,6 @@ public class LayerIcon extends SvgIcon {
 
 	public LayerIcon() {
 		super( 32, 32 );
-		add( getPath() );
 	}
 
 	protected String getPath() {

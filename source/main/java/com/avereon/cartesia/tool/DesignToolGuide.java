@@ -24,10 +24,6 @@ public class DesignToolGuide extends Guide {
 
 	private final Map<DesignNode, GuideNode> nodes;
 
-	private Design design;
-
-	private DesignPane pane;
-
 	private ChangeListener<Boolean> visibleHandler;
 
 	public DesignToolGuide( ProgramProduct product, DesignTool tool ) {
@@ -45,9 +41,7 @@ public class DesignToolGuide extends Guide {
 	}
 
 	void load( DesignPane pane ) {
-		this.design = tool.getDesign();
-		this.pane = pane;
-
+		Design design = tool.getDesign();
 		String layersLabel = getProduct().rb().textOr( BundleKey.LABEL, "layers", "Layers" );
 		GuideNode layers = new GuideNode( getProgram(), design.getRootLayer().getId(), layersLabel, "layers" );
 		nodes.put( design.getRootLayer(), layers );
