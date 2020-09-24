@@ -24,7 +24,7 @@ public class DesignToolGuide extends Guide {
 
 	private final Map<DesignNode, GuideNode> nodes;
 
-	private ChangeListener<Boolean> visibleHandler;
+	private ChangeListener<Boolean> showingHandler;
 
 	public DesignToolGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
@@ -62,23 +62,20 @@ public class DesignToolGuide extends Guide {
 		} );
 	}
 
-	private void addLayer( DesignLayer layer, DesignPane.Layer paneLayer ) {
-		GuideNode parentGuideNode = nodes.get( layer.getParentLayer() );
-		GuideNode layerGuideNode = new GuideNode( getProgram(), layer.getId(), layer.getName(), "layer" );
+	private void addLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
+		GuideNode parentGuideNode = nodes.get( designLayer.getParentLayer() );
+		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer" );
 		addNode( parentGuideNode, layerGuideNode );
-		nodes.put( layer, layerGuideNode );
+		nodes.put( designLayer, layerGuideNode );
 
-		visibleHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
-		paneLayer.visibleProperty().addListener( visibleHandler );
+		showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
+		layer.showingProperty().addListener( showingHandler );
 	}
 
-	private void removeLayer( DesignLayer layer, DesignPane.Layer paneLayer ) {
-		paneLayer.visibleProperty().removeListener( visibleHandler );
-
-		GuideNode parentGuideNode = nodes.get( layer.getParentLayer() );
-		GuideNode layerGuideNode = nodes.get( layer );
-		removeNode( parentGuideNode, layerGuideNode );
-		nodes.remove( layer );
+	private void removeLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
+		layer.visibleProperty().removeListener( showingHandler );
+		removeNode( nodes.get( designLayer ) );
+		nodes.remove( designLayer );
 	}
 
 }

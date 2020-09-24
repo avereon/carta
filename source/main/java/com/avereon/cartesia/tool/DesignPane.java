@@ -8,10 +8,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
@@ -183,7 +180,7 @@ public class DesignPane extends StackPane {
 
 	public boolean isLayerVisible( DesignLayer layer ) {
 		DesignLayerView view = layerMap.get( layer );
-		return view != null && view.isVisble();
+		return view != null && view.isVisible();
 	}
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
@@ -317,17 +314,20 @@ public class DesignPane extends StackPane {
 
 	void addLayerGeometry( DesignLayerView view ) {
 		Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+		Layer layer = view.getLayer();
 		Fx.run( () -> {
-			parent.getChildren().add( view.getLayer() );
-			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, view.getLayer() ) );
+			parent.getChildren().add( layer );
+			layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
+			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
 		} );
 	}
 
 	void removeLayerGeometry( DesignLayerView view ) {
-		Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+		Layer layer = view.getLayer();
 		Fx.run( () -> {
-			parent.getChildren().remove( view.getLayer() );
-			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, view.getLayer() ) );
+			((Layer)layer.getParent()).getChildren().remove( layer );
+			layer.showingProperty().unbind();
+			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 		} );
 	}
 
@@ -508,6 +508,18 @@ public class DesignPane extends StackPane {
 	/**
 	 * This is the internal layer that represents the design layer.
 	 */
-	public static class Layer extends Pane {}
+	public static class Layer extends Pane {
+
+		private final BooleanProperty showing;
+
+		public Layer() {
+			showing = new SimpleBooleanProperty( isVisible() );
+		}
+
+		public BooleanProperty showingProperty() {
+			return showing;
+		}
+
+	}
 
 }

@@ -25,7 +25,7 @@ public class DesignLayerView extends DesignDrawableView {
 		return layer;
 	}
 
-	boolean isVisble() {
+	boolean isVisible() {
 		return this.layer.isVisible();
 	}
 
