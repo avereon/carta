@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.shape.Shape;
@@ -86,9 +87,12 @@ public class DesignShapeView extends DesignDrawableView {
 		geometry.forEach( this::configureShape );
 		cps = generateConstructionPoints( getPane(), geometry );
 
+		Group cpGroup = new Group();
+		cpGroup.getChildren().addAll( cps );
+
 		group = new Group();
 		group.getChildren().addAll( geometry );
-		//group.getChildren().addAll( cps );
+		group.getChildren().addAll( cpGroup );
 		group.getProperties().put( DESIGN_DATA, getDesignShape() );
 	}
 
@@ -119,8 +123,10 @@ public class DesignShapeView extends DesignDrawableView {
 
 	ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
 		ConstructionPoint cp = new ConstructionPoint();
-		cp.layoutXProperty().bind( xProperty.multiply( pane.scaleXProperty() ) );
-		cp.layoutYProperty().bind( yProperty.multiply( pane.scaleYProperty() ).negate() );
+		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
+		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );
+		cp.layoutXProperty().bind( xProperty );
+		cp.layoutYProperty().bind( yProperty );
 		return cp;
 	}
 
