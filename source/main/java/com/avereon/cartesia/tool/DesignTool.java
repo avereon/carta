@@ -377,13 +377,9 @@ public abstract class DesignTool extends GuidedTool {
 
 	private boolean windowSelect( Point3D a, Point3D b, boolean contains ) {
 		selectedShapes().clear();
-
 		List<Shape> selection = designPane.windowSelect( a, b, contains );
-		if( selection.isEmpty() ) return false;
-
 		selectedShapes().addAll( selection );
-
-		return true;
+		return !selection.isEmpty();
 	}
 
 	private boolean isSelectModifyEvent( MouseEvent event ) {
