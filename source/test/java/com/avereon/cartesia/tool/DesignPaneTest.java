@@ -3,13 +3,14 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.TestTimeouts;
-import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.zerra.javafx.Fx;
 import com.avereon.zerra.javafx.JavaFxStarter;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import org.junit.jupiter.api.BeforeEach;
@@ -71,7 +72,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
 		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
-		Line line = (Line)construction.getChildren().get( 0 );
+		Group group = (Group)construction.getChildren().get( 0 );
+		Line line = (Line)group.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( -1.0 ) );
 		assertThat( line.getStartY(), is( 1.0 ) );
 		assertThat( line.getEndX(), is( 1.0 ) );
@@ -94,7 +96,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
 		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
-		Line line = (Line)construction.getChildren().get( 0 );
+		Group group = (Group)construction.getChildren().get( 0 );
+		Line line = (Line)group.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( -1.0 ) );
 		assertThat( line.getStartY(), is( 1.0 ) );
 		assertThat( line.getEndX(), is( 1.0 ) );
@@ -124,7 +127,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
 		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
-		Line line = (Line)construction.getChildren().get( 0 );
+		Group group = (Group)construction.getChildren().get( 0 );
+		Line line = (Line)group.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( -1.0 ) );
 		assertThat( line.getStartY(), is( 1.0 ) );
 		assertThat( line.getEndX(), is( 1.0 ) );
@@ -167,7 +171,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		// Now there should be a line in the pane
 		DesignPane.Layer layers = (DesignPane.Layer)pane.getChildren().get( 0 );
 		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
-		Line line = (Line)construction.getChildren().get( 0 );
+		Group group = (Group)construction.getChildren().get( 0 );
+		Line line = (Line)group.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( 1.0 ) );
 		assertThat( line.getStartY(), is( 2.0 ) );
 		assertThat( line.getEndX(), is( 3.0 ) );
