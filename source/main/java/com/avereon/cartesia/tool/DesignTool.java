@@ -282,6 +282,14 @@ public abstract class DesignTool extends GuidedTool {
 		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
 	}
 
+	static DesignLayer getDesignData( DesignPane.Layer l ) {
+		return (DesignLayer)l.getProperties().get( DesignShapeView.DESIGN_DATA );
+	}
+
+	static DesignShape getDesignData( Shape s ) {
+		return (DesignShape)s.getParent().getProperties().get( DesignShapeView.DESIGN_DATA );
+	}
+
 	private void updateActionStates() {
 		deleteAction.updateEnabled();
 	}
@@ -357,7 +365,7 @@ public abstract class DesignTool extends GuidedTool {
 		if( selection.isEmpty() ) return false;
 
 		Shape shape = selection.get( 0 );
-		boolean selected = ((DesignShape)shape.getProperties().get( DesignPane.SHAPE_META_DATA )).isSelected();
+		boolean selected = getDesignData( shape ).isSelected();
 		if( !modify || !selected ) {
 			selectedShapes().add( shape );
 		} else {
@@ -396,10 +404,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
-			c.getRemoved().stream().findFirst().map( DesignShape::getFrom ).ifPresent( this::hidePropertiesPage );
-			c.getRemoved().stream().map( DesignShape::getFrom ).forEach( s -> s.setSelected( false ) );
-			c.getAddedSubList().stream().map( DesignShape::getFrom ).forEach( s -> s.setSelected( true ) );
-			c.getAddedSubList().stream().findFirst().map( DesignShape::getFrom ).ifPresent( this::showPropertiesPage );
+			c.getRemoved().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::hidePropertiesPage );
+			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
+			c.getAddedSubList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 		}
 		updateActionStates();
 	}
@@ -462,10 +470,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			doDeleteShapes( selectedShapes()
-				.stream()
-				.map( s -> (DesignShape)s.getProperties().get( DesignShapeView.SHAPE_META_DATA ) )
-				.collect( Collectors.toSet() ) );
+			doDeleteShapes( selectedShapes().stream().map( DesignTool::getDesignData ).collect( Collectors.toSet() ) );
 		}
 
 	}

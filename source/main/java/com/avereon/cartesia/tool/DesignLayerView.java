@@ -57,7 +57,7 @@ public class DesignLayerView extends DesignDrawableView {
 
 	private void generate() {
 		layer = new DesignPane.Layer();
-		layer.getProperties().put( DesignPane.SHAPE_META_DATA, getDesignLayer() );
+		layer.getProperties().put( DesignShapeView.DESIGN_DATA, getDesignLayer() );
 	}
 
 }

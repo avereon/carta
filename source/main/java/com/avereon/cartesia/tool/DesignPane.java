@@ -11,6 +11,7 @@ import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
@@ -27,8 +28,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class DesignPane extends StackPane {
-
-	public static final String SHAPE_META_DATA = "shape-meta-data";
 
 	private static final System.Logger log = Log.get();
 
@@ -333,27 +332,32 @@ public class DesignPane extends StackPane {
 
 	void addShapeGeometry( DesignShapeView view ) {
 		Layer layer = getShapeLayer( view.getDesignShape() );
-		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
-		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
+		Group group = view.getGroup();
+		//List<Shape> shapes = new ArrayList<>( view.getGeometry() );
+		//List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
 
-		shapes.forEach( s -> s.visibleProperty().bind( layer.visibleProperty() ) );
+		group.visibleProperty().bind( layer.visibleProperty() );
+		//shapes.forEach( s -> s.visibleProperty().bind( layer.visibleProperty() ) );
 
 		Fx.run( () -> {
-			layer.getChildren().addAll( shapes );
-			getReferenceLayer().getChildren().addAll( cps );
+			layer.getChildren().add( group );
+			//getReferenceLayer().getChildren().addAll( cps );
 		} );
 	}
 
 	void removeShapeGeometry( DesignShapeView view ) {
-		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
-		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
-		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
+		Group group = view.getGroup();
+		Layer layer = (Layer)group.getParent();
+//		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
+//		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
+//		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
 
-		shapes.forEach( s -> s.visibleProperty().unbind() );
+		group.visibleProperty().unbind();
+//		shapes.forEach( s -> s.visibleProperty().unbind() );
 
 		Fx.run( () -> {
-			getReferenceLayer().getChildren().removeAll( cps );
-			layer.getChildren().removeAll( shapes );
+			//getReferenceLayer().getChildren().removeAll( cps );
+			layer.getChildren().remove( group );
 		} );
 	}
 
@@ -481,6 +485,8 @@ public class DesignPane extends StackPane {
 			.stream()
 			.filter( Node::isVisible )
 			.flatMap( l -> l.getChildren().stream() )
+			.filter( n -> n instanceof Group )
+			.flatMap( g -> ((Group)g).getChildren().stream() )
 			.filter( n -> n instanceof Shape )
 			.map( n -> (Shape)n )
 			.collect( Collectors.toList() );
@@ -498,8 +504,8 @@ public class DesignPane extends StackPane {
 
 		@Override
 		public int compare( Node o1, Node o2 ) {
-			DesignDrawable s1 = (DesignDrawable)o1.getProperties().get( SHAPE_META_DATA );
-			DesignDrawable s2 = (DesignDrawable)o2.getProperties().get( SHAPE_META_DATA );
+			DesignDrawable s1 = (DesignDrawable)o1.getProperties().get( DesignShapeView.DESIGN_DATA );
+			DesignDrawable s2 = (DesignDrawable)o2.getProperties().get( DesignShapeView.DESIGN_DATA );
 			return s2.getOrder() - s1.getOrder();
 		}
 

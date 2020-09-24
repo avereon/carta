@@ -54,11 +54,11 @@ public class DesignToolGuide extends Guide {
 		// Layer event handlers
 		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
 			DesignPane.Layer l = e.getLayer();
-			addLayer( DesignLayer.getFrom( l ), l );
+			addLayer( DesignTool.getDesignData( l ), l );
 		} );
 		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
 			DesignPane.Layer l = e.getLayer();
-			removeLayer( DesignLayer.getFrom( l ), l );
+			removeLayer( DesignTool.getDesignData( l ), l );
 		} );
 	}
 

@@ -17,13 +17,13 @@ public class DesignLineView extends DesignShapeView{
 	}
 
 	@Override
-	public List<Shape> generateGeometry() {
+	protected List<Shape> generateGeometry() {
 		Line line = new Line( getDesignLine().getOrigin().getX(), getDesignLine().getOrigin().getY(), getDesignLine().getPoint().getX(), getDesignLine().getPoint().getY() );
 		return List.of( line );
 	}
 
 	@Override
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
+	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Line line = (Line)shapes.get( 0 );
 		ConstructionPoint o = cp( pane, line.startXProperty(), line.startYProperty() );
 		ConstructionPoint p = cp( pane, line.endXProperty(), line.endYProperty() );

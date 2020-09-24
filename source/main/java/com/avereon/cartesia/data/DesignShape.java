@@ -1,12 +1,10 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
-import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignPane;
+import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.data.NodeComparator;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 
@@ -69,9 +67,5 @@ public abstract class DesignShape extends DesignDrawable implements Comparable<D
 	}
 
 	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
-
-	public static DesignShape getFrom( Shape s ) {
-		return (DesignShape)s.getProperties().get( DesignPane.SHAPE_META_DATA );
-	}
 
 }

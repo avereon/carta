@@ -26,7 +26,7 @@ public class DesignPointView extends DesignShapeView {
 	}
 
 	@Override
-	public List<Shape> generateGeometry() {
+	protected List<Shape> generateGeometry() {
 		double ox = getDesignPoint().getOrigin().getX();
 		double oy = getDesignPoint().getOrigin().getY();
 		Path path = Points.createPoint( getDesignPoint().calcType(), ox, oy, getDesignPoint().getRadius() );
@@ -34,7 +34,7 @@ public class DesignPointView extends DesignShapeView {
 	}
 
 	@Override
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
+	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Path path = (Path)shapes.get( 0 );
 		MoveTo m = ((MoveTo)path.getElements().get( 0 ));
 		ConstructionPoint o = cp( pane, m.xProperty(), m.yProperty() );

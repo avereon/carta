@@ -5,15 +5,18 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
+import javafx.scene.Group;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
 
 public class DesignShapeView extends DesignDrawableView {
 
-	public static final String SHAPE_META_DATA = "shape-meta-data";
-
 	static final String CONSTRUCTION_POINTS = "construction-points";
+
+	static final String DESIGN_DATA = "design-data";
+
+	private Group group;
 
 	private List<Shape> geometry;
 
@@ -36,19 +39,25 @@ public class DesignShapeView extends DesignDrawableView {
 		return (DesignShape)getDesignNode();
 	}
 
-	public List<Shape> getGeometry() {
-		return geometry;
+	public Group getGroup() {
+		return group;
 	}
 
-	public List<ConstructionPoint> getConstructionPoints() {
-		return cps;
-	}
+//	@Deprecated
+//	public List<Shape> getGeometry() {
+//		return geometry;
+//	}
 
-	public List<Shape> generateGeometry() {
+//	@Deprecated
+//	public List<ConstructionPoint> getConstructionPoints() {
+//		return cps;
+//	}
+
+	protected List<Shape> generateGeometry() {
 		return List.of();
 	}
 
-	public List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
+	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		return List.of();
 	}
 
@@ -69,17 +78,21 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private Shape getShape() {
-		return getGeometry().get( 0 );
+		return geometry.get( 0 );
 	}
 
 	private void generate() {
 		geometry = generateGeometry();
-		cps = generateConstructionPoints( getPane(), geometry );
 		geometry.forEach( this::configureShape );
+		cps = generateConstructionPoints( getPane(), geometry );
+
+		group = new Group();
+		group.getChildren().addAll( geometry );
+		//group.getChildren().addAll( cps );
+		group.getProperties().put( DESIGN_DATA, getDesignShape() );
 	}
 
 	private void configureShape( Shape shape ) {
-		shape.getProperties().put( SHAPE_META_DATA, getDesignShape() );
 		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
 		shape.setStroke( getDesignShape().calcDrawColor() );
 		shape.setFill( getDesignShape().calcFillColor() );
