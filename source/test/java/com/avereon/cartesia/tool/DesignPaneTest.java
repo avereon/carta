@@ -36,8 +36,6 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 
 	private static final double SCALE = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, DesignUnit.CENTIMETER );
 
-	private StackPane parent;
-
 	private Design design;
 
 	private DesignPane pane;
@@ -45,11 +43,12 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	@BeforeEach
 	public void setup() {
 		JavaFxStarter.startAndWait( FX_STARTUP_TIMEOUT );
-		parent = new StackPane();
-		parent.resize( PARENT_WIDTH, PARENT_HEIGHT );
 
 		design = new Design2D();
 		pane = new DesignPane().loadDesign( design );
+
+		StackPane parent = new StackPane();
+		parent.resize( PARENT_WIDTH, PARENT_HEIGHT );
 		parent.getChildren().add( pane );
 
 		assertThat( parent.getWidth(), is( PARENT_WIDTH ) );
@@ -64,8 +63,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	void testApertureSelect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
-		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
@@ -88,8 +86,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	void testWindowSelectWithIntersect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
-		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
@@ -119,8 +116,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	void testWindowSelectWithContains() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
-		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
+		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
@@ -164,8 +160,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	void testAddLine() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
 		design.getRootLayer().addLayer( layer );
-		design.setCurrentLayer( layer );
-		design.getCurrentLayer().addShape( new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
+		layer.addShape( new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane
