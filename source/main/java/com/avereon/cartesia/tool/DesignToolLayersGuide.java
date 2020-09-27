@@ -14,7 +14,7 @@ import javafx.beans.value.ChangeListener;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class DesignToolGuide extends Guide {
+public class DesignToolLayersGuide extends Guide {
 
 	private static final System.Logger log = Log.get();
 
@@ -26,10 +26,11 @@ public class DesignToolGuide extends Guide {
 
 	private ChangeListener<Boolean> showingHandler;
 
-	public DesignToolGuide( ProgramProduct product, DesignTool tool ) {
+	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.nodes = new ConcurrentHashMap<>();
+		setName( product.rb().textOr( BundleKey.LABEL, "layers", "Layers" ) );
 	}
 
 	ProgramProduct getProduct() {
@@ -42,10 +43,10 @@ public class DesignToolGuide extends Guide {
 
 	void load( DesignPane pane ) {
 		Design design = tool.getDesign();
-		String layersLabel = getProduct().rb().textOr( BundleKey.LABEL, "layers", "Layers" );
-		GuideNode layers = new GuideNode( getProgram(), design.getRootLayer().getId(), layersLabel, "layers" );
-		nodes.put( design.getRootLayer(), layers );
-		addNode( layers );
+		//String layersLabel = getProduct().rb().textOr( BundleKey.LABEL, "layers", "Layers" );
+		//GuideNode layers = new GuideNode( getProgram(), design.getRootLayer().getId(), layersLabel, "layers" );
+		//nodes.put( design.getRootLayer(), layers );
+		//addNode( layers );
 
 		// Go through the design and generate the initial guide
 		// Layers will populate when the tool view is generated

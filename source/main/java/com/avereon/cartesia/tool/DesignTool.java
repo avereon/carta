@@ -15,7 +15,6 @@ import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -61,7 +60,11 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final System.Logger log = Log.get();
 
-	private final DesignToolGuide guide;
+	private final DesignToolLayersGuide layersGuide;
+
+	private final DesignToolViewsGuide viewsGuide;
+
+	private final DesignToolPrintsGuide printsGuide;
 
 	private final CommandPrompt prompt;
 
@@ -95,7 +98,11 @@ public abstract class DesignTool extends GuidedTool {
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
-		this.guide = new DesignToolGuide( product, this );
+		this.layersGuide = new DesignToolLayersGuide( product, this );
+		this.viewsGuide = new DesignToolViewsGuide( product, this );
+		this.printsGuide = new DesignToolPrintsGuide( product, this );
+		getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
+
 		this.designPane = new DesignPane();
 		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
@@ -219,7 +226,7 @@ public abstract class DesignTool extends GuidedTool {
 		Design design = request.getAsset().getModel();
 		designPane.loadDesign( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
-		guide.load( designPane );
+		layersGuide.load( designPane );
 
 		// Keep the design pane centered when resizing
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
@@ -247,11 +254,6 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 
 		designPane.recenter();
-	}
-
-	@Override
-	protected Guide getGuide() {
-		return guide;
 	}
 
 	@Override
