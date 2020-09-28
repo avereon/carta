@@ -30,6 +30,7 @@ public class DesignToolLayersGuide extends Guide {
 		this.product = product;
 		this.tool = tool;
 		this.nodes = new ConcurrentHashMap<>();
+		setIcon( "layers" );
 		setName( product.rb().textOr( BundleKey.LABEL, "layers", "Layers" ) );
 	}
 
