@@ -25,7 +25,7 @@ public class DesignToolPrintsGuide extends Guide {
 		this.product = product;
 		this.tool = tool;
 		this.nodes = new ConcurrentHashMap<>();
-		setName( product.rb().textOr( BundleKey.LABEL, "prints", "Prints" ) );
+		setTitle( product.rb().textOr( BundleKey.LABEL, "prints", "Prints" ) );
 	}
 
 	ProgramProduct getProduct() {

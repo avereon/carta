@@ -25,7 +25,7 @@ public class DesignToolViewsGuide extends Guide {
 		this.product = product;
 		this.tool = tool;
 		this.nodes = new ConcurrentHashMap<>();
-		setName( product.rb().textOr( BundleKey.LABEL, "views", "Views" ) );
+		setTitle( product.rb().textOr( BundleKey.LABEL, "views", "Views" ) );
 	}
 
 	ProgramProduct getProduct() {
