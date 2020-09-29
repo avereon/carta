@@ -8,6 +8,7 @@ import com.avereon.zerra.javafx.Fx;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineCap;
 
 import java.util.List;
 
@@ -43,6 +44,13 @@ public class DesignPointView extends DesignShapeView {
 		List<ConstructionPoint> cps = List.of( o );
 		path.getProperties().put( CONSTRUCTION_POINTS, cps );
 		return cps;
+	}
+
+	protected void configureShape( Shape shape ) {
+		shape.setStrokeLineCap( StrokeLineCap.BUTT );
+		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
+		shape.setStroke( getDesignShape().calcDrawColor() );
+		shape.setFill( getDesignShape().calcDrawColor() );
 	}
 
 	@Override

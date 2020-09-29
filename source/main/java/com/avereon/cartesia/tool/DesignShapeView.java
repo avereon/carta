@@ -68,6 +68,12 @@ public class DesignShapeView extends DesignDrawableView {
 		addShapeGeometry();
 	}
 
+	protected void configureShape( Shape shape ) {
+		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
+		shape.setStroke( getDesignShape().calcDrawColor() );
+		shape.setFill( getDesignShape().calcFillColor() );
+	}
+
 	void addShapeGeometry() {
 		getPane().addShapeGeometry( this );
 		registerListeners();
@@ -94,12 +100,6 @@ public class DesignShapeView extends DesignDrawableView {
 		group.getChildren().addAll( geometry );
 		group.getChildren().addAll( cpGroup );
 		group.getProperties().put( DESIGN_DATA, getDesignShape() );
-	}
-
-	private void configureShape( Shape shape ) {
-		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
-		shape.setStroke( getDesignShape().calcDrawColor() );
-		shape.setFill( getDesignShape().calcFillColor() );
 	}
 
 	@Override
