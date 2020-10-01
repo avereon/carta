@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignNode;
 import com.avereon.util.Log;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
@@ -22,16 +21,30 @@ public class DesignToolLayersGuide extends Guide {
 
 	private final DesignTool tool;
 
-	private final Map<DesignNode, GuideNode> nodes;
+	private final Map<DesignLayer, GuideNode> layerNodes;
+
+	private final Map<GuideNode, DesignLayer> nodeLayers;
 
 	private ChangeListener<Boolean> showingHandler;
 
 	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
-		this.nodes = new ConcurrentHashMap<>();
+		this.layerNodes = new ConcurrentHashMap<>();
+		this.nodeLayers = new ConcurrentHashMap<>();
 		setIcon( "layers" );
 		setTitle( product.rb().textOr( BundleKey.LABEL, "layers", "Layers" ) );
+		setDragAndDropEnabled( true );
+	}
+
+	@Override
+	protected void moveNode( GuideNode source, GuideNode target, boolean below, boolean child ) {
+		// The item and target should have layers
+		DesignLayer sourceLayer = nodeLayers.get( source );
+		DesignLayer targetLayer = nodeLayers.get( target );
+
+		// NEXT Finish implementing moveNode()
+		log.log( Log.WARN, "Move layer " + sourceLayer + " to " + targetLayer );
 	}
 
 	ProgramProduct getProduct() {
@@ -65,10 +78,11 @@ public class DesignToolLayersGuide extends Guide {
 	}
 
 	private void addLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
-		GuideNode parentGuideNode = nodes.get( designLayer.getParentLayer() );
+		GuideNode parentGuideNode = layerNodes.get( designLayer.getParentLayer() );
 		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer" );
 		addNode( parentGuideNode, layerGuideNode );
-		nodes.put( designLayer, layerGuideNode );
+		layerNodes.put( designLayer, layerGuideNode );
+		nodeLayers.put( layerGuideNode, designLayer );
 
 		showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
 		layer.showingProperty().addListener( showingHandler );
@@ -76,8 +90,9 @@ public class DesignToolLayersGuide extends Guide {
 
 	private void removeLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
 		layer.visibleProperty().removeListener( showingHandler );
-		removeNode( nodes.get( designLayer ) );
-		nodes.remove( designLayer );
+		removeNode( layerNodes.get( designLayer ) );
+		nodeLayers.remove( layerNodes.get( designLayer ) );
+		layerNodes.remove( designLayer );
 	}
 
 }
