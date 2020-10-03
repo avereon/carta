@@ -44,7 +44,7 @@ public class DesignToolLayersGuide extends Guide {
 		DesignLayer targetLayer = nodeLayers.get( target );
 
 		// NEXT Finish implementing moveNode()
-		log.log( Log.WARN, "Move layer " + sourceLayer + " to " + targetLayer );
+		log.log( Log.WARN, "Move layer " + sourceLayer + " to " + targetLayer + " " + drop );
 	}
 
 	ProgramProduct getProduct() {
