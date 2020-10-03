@@ -38,7 +38,7 @@ public class DesignToolLayersGuide extends Guide {
 	}
 
 	@Override
-	protected void moveNode( GuideNode source, GuideNode target, boolean below, boolean child ) {
+	protected void moveNode( GuideNode source, GuideNode target, Guide.Drop drop ) {
 		// The item and target should have layers
 		DesignLayer sourceLayer = nodeLayers.get( source );
 		DesignLayer targetLayer = nodeLayers.get( target );
