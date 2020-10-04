@@ -1,8 +1,6 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.tool.DesignPane;
-import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeComparator;
 
@@ -77,8 +75,30 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 	}
 
 	public DesignLayer addLayer( DesignLayer layer ) {
+		return addLayer( layer, null, false );
+	}
+
+	public DesignLayer addLayer( DesignLayer layer, DesignLayer anchor, boolean after ) {
+		List<DesignLayer> layers = getLayers();
+
 		addToSet( LAYERS, layer );
+		int size = layers.size();
+		int insert = anchor == null ? -1 : layers.indexOf( anchor );
+		if( after ) insert++;
+		if( insert < 0 || insert > size ) insert = size;
+		layers.add( insert, layer );
+
+		updateOrder( layers );
+
 		return this;
+	}
+
+	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
+		int index = 0;
+		for( T item : list ) {
+			item.setOrder( index++ );
+		}
+		return list;
 	}
 
 	public DesignLayer removeLayer( DesignLayer layer ) {

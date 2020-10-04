@@ -39,12 +39,21 @@ public class DesignToolLayersGuide extends Guide {
 
 	@Override
 	protected void moveNode( GuideNode source, GuideNode target, Guide.Drop drop ) {
+		if( drop == Drop.NONE ) return;
+
 		// The item and target should have layers
 		DesignLayer sourceLayer = nodeLayers.get( source );
 		DesignLayer targetLayer = nodeLayers.get( target );
 
-		// NEXT Finish implementing moveNode()
-		log.log( Log.WARN, "Move layer " + sourceLayer + " to " + targetLayer + " " + drop );
+		log.log( Log.DEBUG, "Move layer " + sourceLayer + " to " + targetLayer + " " + drop );
+
+		sourceLayer.getParentLayer().removeLayer( sourceLayer );
+
+		if( drop == Drop.CHILD ) {
+			targetLayer.addLayer( sourceLayer );
+		} else {
+			targetLayer.getParentLayer().addLayer( sourceLayer, targetLayer, drop == Drop.BELOW );
+		}
 	}
 
 	ProgramProduct getProduct() {
@@ -65,6 +74,8 @@ public class DesignToolLayersGuide extends Guide {
 		// Go through the design and generate the initial guide
 		// Layers will populate when the tool view is generated
 		//design.getAllViews().forEach( this::addView );
+
+		// FIXME Layers are now ordered
 
 		// Layer event handlers
 		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
