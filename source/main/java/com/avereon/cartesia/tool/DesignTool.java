@@ -226,7 +226,9 @@ public abstract class DesignTool extends GuidedTool {
 		Design design = request.getAsset().getModel();
 		designPane.loadDesign( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
-		layersGuide.load( designPane );
+		layersGuide.link( designPane );
+		//viewsGuide.init( design );
+		//printsGuide.init( design );
 
 		// Keep the design pane centered when resizing
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );

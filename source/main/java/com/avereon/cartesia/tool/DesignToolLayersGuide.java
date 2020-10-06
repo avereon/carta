@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.util.Log;
 import com.avereon.xenon.Program;
@@ -41,7 +40,7 @@ public class DesignToolLayersGuide extends Guide {
 	protected void moveNode( GuideNode source, GuideNode target, Guide.Drop drop ) {
 		if( drop == Drop.NONE ) return;
 
-		// The item and target should have layers
+		// The source and target should have layers
 		DesignLayer sourceLayer = nodeLayers.get( source );
 		DesignLayer targetLayer = nodeLayers.get( target );
 
@@ -52,7 +51,7 @@ public class DesignToolLayersGuide extends Guide {
 		if( drop == Drop.CHILD ) {
 			targetLayer.addLayer( sourceLayer );
 		} else {
-			targetLayer.getParentLayer().addLayer( sourceLayer, targetLayer, drop == Drop.BELOW );
+			targetLayer.getParentLayer().addLayerBeforeOrAfter( sourceLayer, targetLayer, drop == Drop.BELOW );
 		}
 	}
 
@@ -64,20 +63,10 @@ public class DesignToolLayersGuide extends Guide {
 		return product.getProgram();
 	}
 
-	void load( DesignPane pane ) {
-		Design design = tool.getDesign();
-		//String layersLabel = getProduct().rb().textOr( BundleKey.LABEL, "layers", "Layers" );
-		//GuideNode layers = new GuideNode( getProgram(), design.getRootLayer().getId(), layersLabel, "layers" );
-		//nodes.put( design.getRootLayer(), layers );
-		//addNode( layers );
-
-		// Go through the design and generate the initial guide
-		// Layers will populate when the tool view is generated
-		//design.getAllViews().forEach( this::addView );
-
-		// FIXME Layers are now ordered
-
-		// Layer event handlers
+	void link( DesignPane pane ) {
+		// If the guide is linked before the design pane is loaded then these event
+		// handlers will populate the guide as the layers are created in the design
+		// pane.
 		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
 			DesignPane.Layer l = e.getLayer();
 			addLayer( DesignTool.getDesignData( l ), l );
@@ -91,6 +80,10 @@ public class DesignToolLayersGuide extends Guide {
 	private void addLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
 		GuideNode parentGuideNode = layerNodes.get( designLayer.getParentLayer() );
 		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer" );
+
+		designLayer.register( DesignLayer.ORDER, e -> layerGuideNode.setOrder( designLayer.getOrder() ) );
+		layerGuideNode.setOrder( designLayer.getOrder() );
+
 		addNode( parentGuideNode, layerGuideNode );
 		layerNodes.put( designLayer, layerGuideNode );
 		nodeLayers.put( layerGuideNode, designLayer );

@@ -2,28 +2,32 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
+import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
+import com.avereon.util.Log;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DesignLayer extends DesignDrawable implements Comparable<DesignLayer> {
+public class DesignLayer extends DesignDrawable {
+
+	private static final System.Logger log = Log.get();
 
 	public static final String NAME = "name";
 
 	public static final String UNIT = "unit";
 
-	// NOTE Visibility is a per tool setting
+	// NOTE Visibility is a setting in the design tool, not here
 
 	public static final String LAYERS = "layers";
 
 	public static final String SHAPES = "shapes";
 
-	private static final NodeComparator<DesignLayer> comparator;
+	//private static final NodeComparator<DesignLayer> comparator;
 
-	static {
-		comparator = new NodeComparator<>( ORDER, NAME );
-	}
+//	static {
+//		comparator = new NodeComparator<>( ORDER, NAME );
+//	}
 
 	public DesignLayer() {
 		defineNaturalKey( NAME );
@@ -75,28 +79,30 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 	}
 
 	public DesignLayer addLayer( DesignLayer layer ) {
-		return addLayer( layer, null, false );
+		addToSet( LAYERS, layer );
+		return this;
 	}
 
-	public DesignLayer addLayer( DesignLayer layer, DesignLayer anchor, boolean after ) {
+	public DesignLayer addLayerBeforeOrAfter( DesignLayer layer, DesignLayer anchor, boolean after ) {
 		List<DesignLayer> layers = getLayers();
 
-		addToSet( LAYERS, layer );
 		int size = layers.size();
 		int insert = anchor == null ? -1 : layers.indexOf( anchor );
 		if( after ) insert++;
 		if( insert < 0 || insert > size ) insert = size;
 		layers.add( insert, layer );
-
 		updateOrder( layers );
+		addLayer( layer );
 
 		return this;
 	}
 
 	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
+		// FIXME This is not ordering layers correctly
 		int index = 0;
 		for( T item : list ) {
 			item.setOrder( index++ );
+			log.log( Log.WARN, "index=" + index + "  order=" + item.getOrder() );
 		}
 		return list;
 	}
@@ -140,8 +146,8 @@ public class DesignLayer extends DesignDrawable implements Comparable<DesignLaye
 	}
 
 	@Override
-	public int compareTo( DesignLayer that ) {
-		return comparator.compare( this, that );
+	public <T extends Node> Comparator<T> getComparator() {
+		return new NodeComparator<>( ORDER, NAME );
 	}
 
 	@Override
