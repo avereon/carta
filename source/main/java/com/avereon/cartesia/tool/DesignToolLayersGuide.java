@@ -2,6 +2,8 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.data.NodeEvent;
+import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
@@ -25,6 +27,8 @@ public class DesignToolLayersGuide extends Guide {
 	private final Map<GuideNode, DesignLayer> nodeLayers;
 
 	private ChangeListener<Boolean> showingHandler;
+
+	private EventHandler<NodeEvent> orderHandler;
 
 	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
@@ -79,20 +83,21 @@ public class DesignToolLayersGuide extends Guide {
 
 	private void addLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
 		GuideNode parentGuideNode = layerNodes.get( designLayer.getParentLayer() );
-		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer" );
-
-		designLayer.register( DesignLayer.ORDER, e -> layerGuideNode.setOrder( designLayer.getOrder() ) );
-		layerGuideNode.setOrder( designLayer.getOrder() );
+		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer", designLayer.getOrder() );
 
 		addNode( parentGuideNode, layerGuideNode );
 		layerNodes.put( designLayer, layerGuideNode );
 		nodeLayers.put( layerGuideNode, designLayer );
 
 		showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
+		orderHandler = e -> layerGuideNode.setOrder( designLayer.getOrder() );
+
 		layer.showingProperty().addListener( showingHandler );
+		designLayer.register( DesignLayer.ORDER, orderHandler );
 	}
 
 	private void removeLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
+		designLayer.unregister( DesignLayer.ORDER, orderHandler );
 		layer.visibleProperty().removeListener( showingHandler );
 		removeNode( layerNodes.get( designLayer ) );
 		nodeLayers.remove( layerNodes.get( designLayer ) );

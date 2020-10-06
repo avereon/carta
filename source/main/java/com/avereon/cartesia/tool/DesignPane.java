@@ -312,18 +312,19 @@ public class DesignPane extends StackPane {
 	}
 
 	void addLayerGeometry( DesignLayerView view ) {
-		Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
-		Layer layer = view.getLayer();
 		Fx.run( () -> {
+			Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+			Layer layer = view.getLayer();
 			parent.getChildren().add( layer );
+			doReorderLayer( parent );
 			layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
 			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
 		} );
 	}
 
 	void removeLayerGeometry( DesignLayerView view ) {
-		Layer layer = view.getLayer();
 		Fx.run( () -> {
+			Layer layer = view.getLayer();
 			((Layer)layer.getParent()).getChildren().remove( layer );
 			layer.showingProperty().unbind();
 			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
