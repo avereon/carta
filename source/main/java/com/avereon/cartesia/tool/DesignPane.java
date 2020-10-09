@@ -313,18 +313,25 @@ public class DesignPane extends StackPane {
 
 	void addLayerGeometry( DesignLayerView view ) {
 		Fx.run( () -> {
+			//System.err.println( "Layer geometry added for " + view.getDesignLayer() );
+
 			Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
 			Layer layer = view.getLayer();
 			parent.getChildren().add( layer );
 			doReorderLayer( parent );
 			layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
 			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
+
+			//System.err.println( "Parent child count=" + parent.getChildren().size() );
+			System.err.println( "Adding layer=" + System.identityHashCode( layer ) + " child count=" + layer.getChildren().size() );
 		} );
 	}
 
 	void removeLayerGeometry( DesignLayerView view ) {
 		Fx.run( () -> {
 			Layer layer = view.getLayer();
+			System.err.println( "Removing layer=" + System.identityHashCode( layer ) + " child count=" + layer.getChildren().size() );
+
 			((Layer)layer.getParent()).getChildren().remove( layer );
 			layer.showingProperty().unbind();
 			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
@@ -417,6 +424,9 @@ public class DesignPane extends StackPane {
 			view.addLayerGeometry();
 			return view;
 		} );
+
+		// FIXME If the layer already had geometry it is not added
+		//yy.getShapes().forEach( this::doAddNode );
 	}
 
 	private void doRemoveLayer( DesignLayer yy ) {

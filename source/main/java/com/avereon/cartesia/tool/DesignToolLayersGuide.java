@@ -44,7 +44,10 @@ public class DesignToolLayersGuide extends Guide {
 	protected void moveNode( GuideNode source, GuideNode target, Guide.Drop drop ) {
 		if( drop == Drop.NONE ) return;
 
-		// The source and target should have layers
+		// NOTE This implementation operates directly on the data model which, in
+		// turn, causes events that update the guide accordingly.
+
+		// The source and target should have design layers
 		DesignLayer sourceLayer = nodeLayers.get( source );
 		DesignLayer targetLayer = nodeLayers.get( target );
 

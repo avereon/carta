@@ -4,17 +4,17 @@ import com.avereon.cartesia.data.DesignLayer;
 
 public class DesignLayerView extends DesignDrawableView {
 
-	private DesignPane.Layer layer;
+	private final DesignPane.Layer layer;
 
 	public DesignLayerView( DesignPane pane, DesignLayer layer ) {
-		super( pane, layer );
-		generate();
+		this( pane, layer, new DesignPane.Layer() );
 	}
 
 	// Special handing of the root layer pane
 	DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPane.Layer layer ) {
 		super( pane, designLayer );
 		this.layer = layer;
+		layer.getProperties().put( DesignShapeView.DESIGN_DATA, getDesignLayer() );
 	}
 
 	protected DesignLayer getDesignLayer() {
@@ -53,11 +53,6 @@ public class DesignLayerView extends DesignDrawableView {
 	void unregisterListeners() {
 		//getDesignLayer().unregister( DesignLayer.VISIBLE, layerVisibleHandler );
 		super.unregisterListeners();
-	}
-
-	private void generate() {
-		layer = new DesignPane.Layer();
-		layer.getProperties().put( DesignShapeView.DESIGN_DATA, getDesignLayer() );
 	}
 
 }
