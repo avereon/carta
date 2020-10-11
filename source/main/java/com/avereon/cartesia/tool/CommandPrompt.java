@@ -59,6 +59,10 @@ public class CommandPrompt extends BorderPane {
 		this.autoCommandEnabled = autoCommandEnabled;
 	}
 
+	public void mouse( Point3D point ) {
+		getDesign().getCommandProcessor().mouse( point );
+	}
+
 	public void relay( Point3D point ) {
 		getDesign().getCommandProcessor().evaluate( tool, point );
 	}

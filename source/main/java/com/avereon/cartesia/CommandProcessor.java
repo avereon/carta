@@ -7,7 +7,6 @@ import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.task.Task;
 import com.avereon.zerra.javafx.Fx;
-import javafx.application.Platform;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 
@@ -56,6 +55,10 @@ public class CommandProcessor {
 		isAutoCommandSafe = true;
 		commandStack.clear();
 		valueStack.clear();
+	}
+
+	public void mouse( Point3D point ) {
+		commandStack.stream().findFirst().ifPresent( c -> c.mouse( point ) );
 	}
 
 	/**
@@ -123,6 +126,7 @@ public class CommandProcessor {
 		try {
 			// If there are no more commands but there is a shape on the value stack
 			if( commandStack.isEmpty() ) {
+				Fx.run( () -> tool.setCursor( Cursor.DEFAULT ) );
 				if( !valueStack.isEmpty() ) {
 					Object value = valueStack.pop();
 					if( value instanceof DesignShape ) {
@@ -133,9 +137,13 @@ public class CommandProcessor {
 				tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
 			}
 		} finally {
-			Platform.runLater( () -> tool.setCursor( Cursor.DEFAULT ) );
+			// Don't set the cursor back to default here
 			isAutoCommandSafe = true;
 		}
+	}
+
+	Command peekCommand() {
+		return commandStack.peek();
 	}
 
 	void pushCommand( Command command ) {

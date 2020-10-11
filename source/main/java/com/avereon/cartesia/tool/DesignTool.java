@@ -317,6 +317,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void mouseMove( MouseEvent event ) {
 		mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
+		getCommandPrompt().mouse( mousePoint );
 		getCoordinateStatus().updatePosition( mousePoint );
 	}
 

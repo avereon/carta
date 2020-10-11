@@ -16,6 +16,11 @@ public class LineCommand extends Command {
 	private static final System.Logger log = Log.get();
 
 	@Override
+	public void mouse( Point3D point ) {
+		// NEXT This method receives the mouse movements to allow for preview
+	}
+
+	@Override
 	public List<Command> getPreSteps( DesignTool tool ) {
 		return List.of( new PromptForPointCommand( tool, "start-point" ), new PromptForPointCommand( tool, "end-point" ) );
 	}
