@@ -76,6 +76,9 @@ public class CommandPrompt extends BorderPane {
 	}
 
 	private void key( KeyEvent event ) {
+		// This prevents double events
+		event.consume();
+
 		// On each key event the situation needs to be evaluated...
 		// If ESC was pressed, then the whole command stack should be cancelled
 		// If ENTER was pressed, then an attempt to process the text should be forced
@@ -86,13 +89,11 @@ public class CommandPrompt extends BorderPane {
 			switch( event.getCode() ) {
 				case ESCAPE -> {
 					// Cancel the command stack
-					event.consume();
 					processor.cancel( tool );
 					getDesign().clearSelected();
 					clear();
 				}
 				case ENTER -> {
-					event.consume();
 					if( TextUtil.isEmpty( command.getText() ) ) {
 						processor.evaluate( tool, tool.getWorldPointAtMouse() );
 					} else {
