@@ -19,7 +19,6 @@ import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
-import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -137,7 +136,11 @@ public abstract class DesignTool extends GuidedTool {
 				e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
 			);
 
-		addEventFilter( KeyEvent.ANY, this::key );
+		// This listener works in conjunction with the command prompt to handle key events
+		this.prompt.parentProperty().addListener( ( p, o, n ) -> {
+			if( n == null && getScene() != null ) getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
+		} );
+
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
 		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
@@ -265,25 +268,21 @@ public abstract class DesignTool extends GuidedTool {
 
 	@Override
 	protected void activate() throws ToolException {
+		super.activate();
 		pushAction( "delete", deleteAction );
-		getWorkspace().getStatusBar().addLeft( getCommandPrompt() );
-		getWorkspace().getStatusBar().addRight( getCoordinateStatus() );
+		getWorkspace().getStatusBar().setLeft( getCommandPrompt() );
+		getWorkspace().getStatusBar().setRight( getCoordinateStatus() );
+		if( getScene() != null ) getScene().addEventHandler( KeyEvent.ANY, getCommandPrompt() );
 		requestFocus();
 	}
 
 	@Override
-	protected void deactivate() throws ToolException {
-		super.conceal();
-		Workspace workspace = getWorkspace();
-		if( workspace != null ) {
-			workspace.getStatusBar().removeRight( getCoordinateStatus() );
-			workspace.getStatusBar().removeLeft( getCommandPrompt() );
-		}
-	}
-
-	@Override
 	protected void conceal() throws ToolException {
+		super.conceal();
 		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
+		getWorkspace().getStatusBar().removeRight( getCoordinateStatus() );
+		getWorkspace().getStatusBar().removeLeft( getCommandPrompt() );
+		getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {
@@ -309,10 +308,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private CoordinateStatus getCoordinateStatus() {
 		return coordinates;
-	}
-
-	private void key( KeyEvent event ) {
-		getCommandPrompt().relay( event );
 	}
 
 	private void mouseMove( MouseEvent event ) {

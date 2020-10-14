@@ -8,13 +8,14 @@ import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 
-public class CommandPrompt extends BorderPane {
+public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> {
 
 	private static final System.Logger log = Log.get();
 
@@ -30,6 +31,8 @@ public class CommandPrompt extends BorderPane {
 
 	private boolean autoCommandEnabled;
 
+	private EventHandler<KeyEvent> keyEventHandler;
+
 	public CommandPrompt( DesignTool tool ) {
 		this.tool = tool;
 		getStyleClass().add( "cartesia-command" );
@@ -41,6 +44,7 @@ public class CommandPrompt extends BorderPane {
 		productSettings.register( "command-auto-start", e -> setAutoCommandEnabled( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 
 		command.addEventHandler( KeyEvent.ANY, this::key );
+
 
 		setPrompt( null );
 	}
@@ -67,12 +71,13 @@ public class CommandPrompt extends BorderPane {
 		getDesign().getCommandProcessor().evaluate( tool, point );
 	}
 
-	public void relay( KeyEvent event ) {
-		command.fireEvent( event );
-	}
-
 	private Design getDesign() {
 		return tool.getAssetModel();
+	}
+
+	@Override
+	public void handle( KeyEvent event ) {
+		command.fireEvent( event );
 	}
 
 	private void key( KeyEvent event ) {
