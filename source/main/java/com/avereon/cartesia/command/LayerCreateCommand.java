@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * This command adds a layer as a peer to the current layer
  */
-public class LayerCommand extends Command {
+public class LayerCreateCommand extends Command {
 
 	private static final System.Logger log = Log.get();
 

@@ -2,7 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLayer;
 
-public class SubLayerCommand extends LayerCommand {
+public class LayerSubLayerCommand extends LayerCreateCommand {
 
 	/**
 	 * This implementation adds the new layer to the current layer as a child.

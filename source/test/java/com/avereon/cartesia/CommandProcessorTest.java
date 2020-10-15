@@ -12,11 +12,11 @@ public class CommandProcessorTest implements NumericTest {
 
 	private static final double PI_OVER_4 = 0.25 * Math.PI;
 
-	private CommandProcessor processor;
+	private DefaultCommandProcessor processor;
 
 	@BeforeEach
 	void setup() {
-		processor = new CommandProcessor();
+		processor = new DefaultCommandProcessor();
 	}
 
 	@Test

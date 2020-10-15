@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.DefaultCommandProcessor;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
@@ -25,7 +26,10 @@ public abstract class Design extends IdNode {
 
 	private static final System.Logger log = Log.get();
 
+	@Deprecated
 	private final CommandProcessor commandProcessor;
+
+	private DesignContext context;
 
 	public Design() {
 		addModifyingKeys( NAME, UNIT, ROOT_LAYER );
@@ -37,7 +41,7 @@ public abstract class Design extends IdNode {
 		// Default values
 		setDesignUnit( DEFAULT_DESIGN_UNIT );
 
-		this.commandProcessor = new CommandProcessor();
+		this.commandProcessor = new DefaultCommandProcessor();
 	}
 
 	public String getName() {
@@ -58,14 +62,26 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	public CommandProcessor getCommandProcessor() {
-		return commandProcessor;
+	public DesignContext getDesignContext() {
+		return context;
+	}
+
+	public Design setDesignContext( DesignContext context ) {
+		if( this.context == null ) this.context = context;
+		return this;
 	}
 
 	public DesignLayer getRootLayer() {
 		return getValue( ROOT_LAYER );
 	}
 
+	// TODO Finish removing this method
+	@Deprecated
+	public CommandProcessor getCommandProcessor() {
+		return commandProcessor;
+	}
+
+	// TODO Finish removing this method
 	@Deprecated
 	public DesignLayer getCurrentLayer() {
 		// Current layer is a node link so the layer doesn't get removed from the layer tree
@@ -73,6 +89,7 @@ public abstract class Design extends IdNode {
 		return link == null ? null : link.getNode();
 	}
 
+	// TODO Finish removing this method
 	@Deprecated
 	public Design setCurrentLayer( DesignLayer layer ) {
 		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );

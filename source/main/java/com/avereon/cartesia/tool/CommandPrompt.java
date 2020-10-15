@@ -63,10 +63,12 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		this.autoCommandEnabled = autoCommandEnabled;
 	}
 
+	@Deprecated
 	public void mouse( Point3D point ) {
 		getDesign().getCommandProcessor().mouse( point );
 	}
 
+	@Deprecated
 	public void relay( Point3D point ) {
 		getDesign().getCommandProcessor().evaluate( tool, point );
 	}

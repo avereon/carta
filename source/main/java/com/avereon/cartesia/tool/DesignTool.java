@@ -6,6 +6,7 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignContext;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.util.Log;
@@ -141,6 +142,7 @@ public abstract class DesignTool extends GuidedTool {
 			if( n == null && getScene() != null ) getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
 		} );
 
+		addEventFilter( MouseEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
 		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
@@ -152,6 +154,16 @@ public abstract class DesignTool extends GuidedTool {
 		return getAssetModel();
 	}
 
+	public DesignContext getDesignContext() {
+		Design design = getDesign();
+		DesignContext context = design.getDesignContext();
+		if( context == null ) {
+			context = design.setDesignContext( new DesignContext( getProduct(), design ) ).getDesignContext();
+		}
+		return context;
+	}
+
+	@Deprecated
 	public CommandPrompt getCommandPrompt() {
 		return prompt;
 	}
@@ -282,7 +294,7 @@ public abstract class DesignTool extends GuidedTool {
 		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
 		getWorkspace().getStatusBar().removeRight( getCoordinateStatus() );
 		getWorkspace().getStatusBar().removeLeft( getCommandPrompt() );
-		getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
+		if( getScene() != null ) getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {
@@ -297,7 +309,7 @@ public abstract class DesignTool extends GuidedTool {
 		deleteAction.updateEnabled();
 	}
 
-	private Point3D mouseToWorld( double x, double y, double z ) {
+	Point3D mouseToWorld( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld( x, y, z );
 	}
 
@@ -311,9 +323,12 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void mouseMove( MouseEvent event ) {
+		getDesignContext().getCommandContext().handle( event );
+		getCoordinateStatus().updatePosition( event );
+
+		// TODO Remove
 		mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
 		getCommandPrompt().mouse( mousePoint );
-		getCoordinateStatus().updatePosition( mousePoint );
 	}
 
 	private void mousePress( MouseEvent event ) {

@@ -4,6 +4,7 @@ import com.avereon.util.TextUtil;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -56,18 +57,12 @@ public class CoordinateStatus extends HBox {
 		updateZoom( DesignPane.DEFAULT_ZOOM );
 	}
 
-	public void updatePosition( Point3D position ) {
-		Fx.run( () -> {
-			if( isFraction ) {
-				xCoord.setText( "0 0/0" );
-				yCoord.setText( "0 0/0" );
-				zCoord.setText( "0 0/0" );
-			} else {
-				xCoord.setText( format.format( position.getX() ) );
-				yCoord.setText( format.format( position.getY() ) );
-				zCoord.setText( format.format( position.getZ() ) );
-			}
-		} );
+	public DesignTool getTool() {
+		return tool;
+	}
+
+	public void updatePosition( MouseEvent event ) {
+		updatePosition( getTool().mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 	}
 
 	public void updateZoom( double zoom ) {
@@ -86,6 +81,20 @@ public class CoordinateStatus extends HBox {
 
 	public void setFractionPrecision( int unit ) {
 		isFraction = true;
+	}
+
+	private void updatePosition( Point3D position ) {
+		Fx.run( () -> {
+			if( isFraction ) {
+				xCoord.setText( "0 0/0" );
+				yCoord.setText( "0 0/0" );
+				zCoord.setText( "0 0/0" );
+			} else {
+				xCoord.setText( format.format( position.getX() ) );
+				yCoord.setText( format.format( position.getY() ) );
+				zCoord.setText( format.format( position.getZ() ) );
+			}
+		} );
 	}
 
 }
