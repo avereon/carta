@@ -3,6 +3,8 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignContext;
 import com.avereon.xenon.ProgramProduct;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
@@ -39,12 +41,20 @@ public class CommandContext {
 		return designContext;
 	}
 
+	public void handle( KeyEvent event ) {
+		// TODO Implement CommandContext.handle( KeyEvent )
+	}
+
 	public void handle( MouseEvent event ) {
-		// TODO Determine what command to call
+		// TODO Implement CommandContext.handle( MouseEvent )
+	}
+
+	public void handle( MouseDragEvent event ) {
+		// TODO Implement CommandContext.handle( MouseDragEvent )
 	}
 
 	public void handle( ScrollEvent event ) {
-		// TODO Determine what command to call
+		// TODO Implement CommandContext.handle( ScrollEvent )
 	}
 
 	private static class CommandExecuteRequest {

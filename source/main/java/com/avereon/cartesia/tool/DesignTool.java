@@ -29,6 +29,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -142,25 +143,24 @@ public abstract class DesignTool extends GuidedTool {
 			if( n == null && getScene() != null ) getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
 		} );
 
+		//addEventFilter( KeyEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
-		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
-		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
-		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
-		addEventFilter( ScrollEvent.SCROLL, this::zoom );
+		addEventFilter( ScrollEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
+		addEventFilter( MouseDragEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
+
+//		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
+//		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
+//		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
+//		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
+//		addEventFilter( ScrollEvent.SCROLL, this::zoom );
 	}
 
-	public Design getDesign() {
+	public final Design getDesign() {
 		return getAssetModel();
 	}
 
-	public DesignContext getDesignContext() {
-		Design design = getDesign();
-		DesignContext context = design.getDesignContext();
-		if( context == null ) {
-			context = design.setDesignContext( new DesignContext( getProduct(), design ) ).getDesignContext();
-		}
-		return context;
+	public final DesignContext getDesignContext() {
+		return getDesign().getDesignContext( getProduct() );
 	}
 
 	@Deprecated

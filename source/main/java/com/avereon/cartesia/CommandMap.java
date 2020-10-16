@@ -5,7 +5,9 @@ import com.avereon.util.Log;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.ProgramProduct;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandMap {
@@ -67,6 +69,10 @@ public class CommandMap {
 		//add( product, "zoom-window", ZoomWindowCommand.class );
 	}
 
+	public static Set<CommandMapping> getMappings() {
+		return new HashSet<>( shortcutCommands.values() );
+	}
+
 	public static boolean hasCommand( String shortcut ) {
 		return shortcutCommands.containsKey( shortcut );
 	}
@@ -83,7 +89,14 @@ public class CommandMap {
 			shortcutCommands.put( shortcut, new CommandMapping( key, shortcut, command, parameters ) );
 		} else {
 			CommandMapping existing = shortcutCommands.get( shortcut );
-			log.log( Log.ERROR, "Shortcut already used: shortcut={0} action={1} conflict={2} existing={3}", shortcut, key, command.getName(), existing.getCommand().getName() );
+			log.log(
+				Log.ERROR,
+				"Shortcut already used: shortcut={0} action={1} conflict={2} existing={3}",
+				shortcut,
+				key,
+				command.getName(),
+				existing.getCommand().getName()
+			);
 		}
 	}
 

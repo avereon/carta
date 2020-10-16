@@ -14,19 +14,18 @@ public class DesignContext {
 	public DesignContext( ProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
-
 		this.commandContext = new CommandContext( product, this );
 	}
 
-	public ProgramProduct getProduct() {
+	public final ProgramProduct getProduct() {
 		return product;
 	}
 
-	public Design getDesign() {
+	public final Design getDesign() {
 		return design;
 	}
 
-	public CommandContext getCommandContext() {
+	public final CommandContext getCommandContext() {
 		return commandContext;
 	}
 }

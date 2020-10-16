@@ -6,6 +6,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
+import com.avereon.xenon.ProgramProduct;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -62,7 +63,8 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	public DesignContext getDesignContext() {
+	public DesignContext getDesignContext( ProgramProduct product ) {
+		if( context == null ) context = new DesignContext( product, this );
 		return context;
 	}
 
