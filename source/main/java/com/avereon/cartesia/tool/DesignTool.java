@@ -6,7 +6,6 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignContext;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.util.Log;
@@ -29,7 +28,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -67,8 +65,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignToolPrintsGuide printsGuide;
 
-	private final CommandPrompt prompt;
-
 	private final CoordinateStatus coordinates;
 
 	private final DesignPane designPane;
@@ -105,7 +101,6 @@ public abstract class DesignTool extends GuidedTool {
 		getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
 
 		this.designPane = new DesignPane();
-		this.prompt = new CommandPrompt( this );
 		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
@@ -138,15 +133,10 @@ public abstract class DesignTool extends GuidedTool {
 				e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
 			);
 
-		// This listener works in conjunction with the command prompt to handle key events
-		this.prompt.parentProperty().addListener( ( p, o, n ) -> {
-			if( n == null && getScene() != null ) getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
-		} );
-
 		//addEventFilter( KeyEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		addEventFilter( MouseEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		addEventFilter( ScrollEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		addEventFilter( MouseDragEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
+		//addEventFilter( MouseEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
+		//addEventFilter( ScrollEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
+		//addEventFilter( MouseDragEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
 
 //		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
 //		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
@@ -160,12 +150,13 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public final DesignContext getDesignContext() {
+		// FIXME Causes NPE if not ready yet
 		return getDesign().getDesignContext( getProduct() );
 	}
 
 	@Deprecated
 	public CommandPrompt getCommandPrompt() {
-		return prompt;
+		return getDesignContext().getCommandPrompt();
 	}
 
 	public Point3D getWorldPointAtMouse() {
@@ -271,6 +262,8 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 
 		designPane.recenter();
+
+		// TODO Set the status bar???
 	}
 
 	@Override
@@ -282,9 +275,14 @@ public abstract class DesignTool extends GuidedTool {
 	protected void activate() throws ToolException {
 		super.activate();
 		pushAction( "delete", deleteAction );
-		getWorkspace().getStatusBar().setLeft( getCommandPrompt() );
 		getWorkspace().getStatusBar().setRight( getCoordinateStatus() );
-		if( getScene() != null ) getScene().addEventHandler( KeyEvent.ANY, getCommandPrompt() );
+		// FIXME Activate appears to be called before the resource is ready
+		// Should this move to isReady() or both?
+		if( getScene() != null ) {
+			CommandPrompt prompt = getCommandPrompt();
+			getScene().addEventHandler( KeyEvent.ANY, prompt );
+			getWorkspace().getStatusBar().setLeftItems( prompt );
+		}
 		requestFocus();
 	}
 
@@ -292,9 +290,12 @@ public abstract class DesignTool extends GuidedTool {
 	protected void conceal() throws ToolException {
 		super.conceal();
 		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
-		getWorkspace().getStatusBar().removeRight( getCoordinateStatus() );
-		getWorkspace().getStatusBar().removeLeft( getCommandPrompt() );
-		if( getScene() != null ) getScene().removeEventHandler( KeyEvent.ANY, getCommandPrompt() );
+		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
+		if( isLastTool() && getScene() != null ) {
+			CommandPrompt prompt = getCommandPrompt();
+			getWorkspace().getStatusBar().removeLeftItems( prompt );
+			getScene().removeEventHandler( KeyEvent.ANY, prompt );
+		}
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {

@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.DefaultCommandProcessor;
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
@@ -63,14 +64,9 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	public DesignContext getDesignContext( ProgramProduct product ) {
+	public synchronized DesignContext getDesignContext( ProgramProduct product ) {
 		if( context == null ) context = new DesignContext( product, this );
 		return context;
-	}
-
-	public Design setDesignContext( DesignContext context ) {
-		if( this.context == null ) this.context = context;
-		return this;
 	}
 
 	public DesignLayer getRootLayer() {

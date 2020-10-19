@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.Command;
-import com.avereon.cartesia.data.DesignContext;
 import com.avereon.xenon.ProgramProduct;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseDragEvent;

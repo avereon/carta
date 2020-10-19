@@ -18,11 +18,6 @@ public class Design2dAssetType extends AssetType {
 
 	@Override
 	public boolean assetNew( Program program, Asset asset ) throws AssetException {
-		return true;
-	}
-
-	@Override
-	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
 		// There might already be a model from assetNew()
 		Design2D design = asset.getModel();
 
@@ -37,6 +32,11 @@ public class Design2dAssetType extends AssetType {
 			design.setCurrentLayer( layer );
 		}
 
+		return true;
+	}
+
+	@Override
+	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
 		return true;
 	}
 

@@ -1,6 +1,6 @@
-package com.avereon.cartesia.data;
+package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.data.Design;
 import com.avereon.xenon.ProgramProduct;
 
 public class DesignContext {
@@ -11,9 +11,12 @@ public class DesignContext {
 
 	private final CommandContext commandContext;
 
+	private final CommandPrompt commandPrompt;
+
 	public DesignContext( ProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
+		this.commandPrompt = new CommandPrompt( product, design );
 		this.commandContext = new CommandContext( product, this );
 	}
 
@@ -25,7 +28,12 @@ public class DesignContext {
 		return design;
 	}
 
+	public final CommandPrompt getCommandPrompt() {
+		return commandPrompt;
+	}
+
 	public final CommandContext getCommandContext() {
 		return commandContext;
 	}
+
 }

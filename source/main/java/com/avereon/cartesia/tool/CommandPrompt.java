@@ -1,12 +1,12 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CommandException;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
+import com.avereon.xenon.ProgramProduct;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
@@ -23,7 +23,9 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private static final String SPACE = " ";
 
-	private final DesignTool tool;
+	private final ProgramProduct product;
+
+	private final Design design;
 
 	private final Label prompt;
 
@@ -33,24 +35,28 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private EventHandler<KeyEvent> keyEventHandler;
 
-	public CommandPrompt( DesignTool tool ) {
-		this.tool = tool;
+	public CommandPrompt( ProgramProduct product, Design design ) {
+		this.product = product;
+		this.design = design;
+
 		getStyleClass().add( "cartesia-command" );
 		setLeft( prompt = new Label() );
 		setCenter( command = new TextField() );
 
-		Settings productSettings = tool.getProduct().getSettings();
+		Settings productSettings = product.getSettings();
 		autoCommandEnabled = productSettings.get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 		productSettings.register( "command-auto-start", e -> setAutoCommandEnabled( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 
 		command.addEventHandler( KeyEvent.ANY, this::key );
-
-
 		setPrompt( null );
 	}
 
+	private ProgramProduct getProduct() {
+		return product;
+	}
+
 	public void setPrompt( String prompt ) {
-		if( TextUtil.isEmpty( prompt ) ) prompt = tool.getProduct().rb().text( "prompt", "command" );
+		if( TextUtil.isEmpty( prompt ) ) prompt = getProduct().rb().text( "prompt", "command" );
 		final String effectivePrompt = prompt;
 		Platform.runLater( () -> this.prompt.setText( effectivePrompt ) );
 	}
@@ -70,11 +76,11 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	@Deprecated
 	public void relay( Point3D point ) {
-		getDesign().getCommandProcessor().evaluate( tool, point );
+		//getDesign().getCommandProcessor().evaluate( tool, point );
 	}
 
 	private Design getDesign() {
-		return tool.getAssetModel();
+		return design;
 	}
 
 	@Override
@@ -96,13 +102,13 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 			switch( event.getCode() ) {
 				case ESCAPE -> {
 					// Cancel the command stack
-					processor.cancel( tool );
+					//processor.cancel( tool );
 					getDesign().clearSelected();
 					clear();
 				}
 				case ENTER -> {
 					if( TextUtil.isEmpty( command.getText() ) ) {
-						processor.evaluate( tool, tool.getWorldPointAtMouse() );
+						//processor.evaluate( tool, tool.getWorldPointAtMouse() );
 					} else {
 						process( command.getText() );
 					}
@@ -123,11 +129,11 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 	}
 
 	private void process( String command ) {
-		try {
-			getDesign().getCommandProcessor().evaluate( tool, command );
-		} catch( CommandException exception ) {
-			log.log( Log.ERROR, exception );
-		}
+//		try {
+//			getDesign().getCommandProcessor().evaluate( tool, command );
+//		} catch( CommandException exception ) {
+//			log.log( Log.ERROR, exception );
+//		}
 	}
 
 	private void clear() {
