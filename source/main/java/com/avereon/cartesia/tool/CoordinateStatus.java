@@ -1,10 +1,10 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.util.TextUtil;
+import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -12,8 +12,6 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 public class CoordinateStatus extends HBox {
-
-	private final DesignTool tool;
 
 	private final Label xCoord;
 
@@ -30,14 +28,13 @@ public class CoordinateStatus extends HBox {
 	private NumberFormat format;
 
 	@SuppressWarnings( "SuspiciousNameCombination" )
-	public CoordinateStatus( DesignTool tool ) {
-		this.tool = tool;
+	public CoordinateStatus( ProgramProduct product ) {
 		setPrecision( 4 );
 
-		String xPrompt = tool.getProduct().rb().textOr( "prompt", "x", "X:" );
-		String yPrompt = tool.getProduct().rb().textOr( "prompt", "y", "Y:" );
-		String zPrompt = tool.getProduct().rb().textOr( "prompt", "z", "Z:" );
-		String zoomPrompt = tool.getProduct().rb().textOr( "prompt", "zoom", "ZM:" );
+		String xPrompt = product.rb().textOr( "prompt", "x", "X:" );
+		String yPrompt = product.rb().textOr( "prompt", "y", "Y:" );
+		String zPrompt = product.rb().textOr( "prompt", "z", "Z:" );
+		String zoomPrompt = product.rb().textOr( "prompt", "zoom", "ZM:" );
 
 		xCoord = new Label( "0.0" );
 		yCoord = new Label( "0.0" );
@@ -55,14 +52,6 @@ public class CoordinateStatus extends HBox {
 
 		updatePosition( Point3D.ZERO );
 		updateZoom( DesignPane.DEFAULT_ZOOM );
-	}
-
-	public DesignTool getTool() {
-		return tool;
-	}
-
-	public void updatePosition( MouseEvent event ) {
-		updatePosition( getTool().mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 	}
 
 	public void updateZoom( double zoom ) {
@@ -83,7 +72,7 @@ public class CoordinateStatus extends HBox {
 		isFraction = true;
 	}
 
-	private void updatePosition( Point3D position ) {
+	public void updatePosition( Point3D position ) {
 		Fx.run( () -> {
 			if( isFraction ) {
 				xCoord.setText( "0 0/0" );

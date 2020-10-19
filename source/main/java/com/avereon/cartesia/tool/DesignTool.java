@@ -65,8 +65,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignToolPrintsGuide printsGuide;
 
-	private final CoordinateStatus coordinates;
-
 	private final DesignPane designPane;
 
 	private final Pane selectPane;
@@ -101,7 +99,6 @@ public abstract class DesignTool extends GuidedTool {
 		getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
 
 		this.designPane = new DesignPane();
-		this.coordinates = new CoordinateStatus( this );
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 
@@ -138,11 +135,11 @@ public abstract class DesignTool extends GuidedTool {
 		//addEventFilter( ScrollEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
 		//addEventFilter( MouseDragEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
 
-//		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
-//		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
-//		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
-//		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
-//		addEventFilter( ScrollEvent.SCROLL, this::zoom );
+		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
+		//		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
+		//		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
+		//		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
+		//		addEventFilter( ScrollEvent.SCROLL, this::zoom );
 	}
 
 	public final Design getDesign() {
@@ -150,7 +147,6 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public final DesignContext getDesignContext() {
-		// FIXME Causes NPE if not ready yet
 		return getDesign().getDesignContext( getProduct() );
 	}
 
@@ -263,6 +259,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		designPane.recenter();
 
+		if( isActive() ) activate();
 		// TODO Set the status bar???
 	}
 
@@ -275,27 +272,29 @@ public abstract class DesignTool extends GuidedTool {
 	protected void activate() throws ToolException {
 		super.activate();
 		pushAction( "delete", deleteAction );
-		getWorkspace().getStatusBar().setRight( getCoordinateStatus() );
-		// FIXME Activate appears to be called before the resource is ready
-		// Should this move to isReady() or both?
-		if( getScene() != null ) {
-			CommandPrompt prompt = getCommandPrompt();
-			getScene().addEventHandler( KeyEvent.ANY, prompt );
-			getWorkspace().getStatusBar().setLeftItems( prompt );
-		}
+		if( isReady() ) registerStatusBarItems();
 		requestFocus();
+	}
+
+	private void registerStatusBarItems() {
+		CommandPrompt prompt = getCommandPrompt();
+		getScene().addEventHandler( KeyEvent.ANY, prompt );
+		getWorkspace().getStatusBar().addLeftItems( prompt );
+		getWorkspace().getStatusBar().addRightItems( getCoordinateStatus() );
+	}
+
+	private void unregisterStatusBarItems() {
+		CommandPrompt prompt = getCommandPrompt();
+		getScene().removeEventHandler( KeyEvent.ANY, prompt );
+		getWorkspace().getStatusBar().removeLeftItems( prompt );
+		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
 		super.conceal();
 		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
-		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
-		if( isLastTool() && getScene() != null ) {
-			CommandPrompt prompt = getCommandPrompt();
-			getWorkspace().getStatusBar().removeLeftItems( prompt );
-			getScene().removeEventHandler( KeyEvent.ANY, prompt );
-		}
+		if( isLastTool() ) unregisterStatusBarItems();
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {
@@ -320,16 +319,12 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private CoordinateStatus getCoordinateStatus() {
-		return coordinates;
+		return getDesignContext().getCoordinateStatus();
 	}
 
 	private void mouseMove( MouseEvent event ) {
 		getDesignContext().getCommandContext().handle( event );
-		getCoordinateStatus().updatePosition( event );
-
-		// TODO Remove
-		mousePoint = mouseToWorld( event.getX(), event.getY(), event.getZ() );
-		getCommandPrompt().mouse( mousePoint );
+		getCoordinateStatus().updatePosition( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 	}
 
 	private void mousePress( MouseEvent event ) {
