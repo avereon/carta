@@ -1,22 +1,10 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
-import javafx.geometry.Point3D;
 
-import java.util.List;
+public class Command {
 
-public abstract class Command {
-
-	public boolean isAutoCommandSafe() {
-		return true;
-	}
-
-	public void mouse( Point3D point ) {}
-
-	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of();
-	}
-
-	public void evaluate( CommandProcessor processor, DesignTool tool ) throws CommandException {}
+	public void execute( CommandContext context, DesignTool tool, Object... parameters ) {}
 
 }

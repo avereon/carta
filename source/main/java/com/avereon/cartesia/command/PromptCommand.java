@@ -1,11 +1,11 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.BundleKey;
 
-public class PromptCommand extends Command {
+public class PromptCommand extends OldCommand {
 
 	private final String prompt;
 

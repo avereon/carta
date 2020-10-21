@@ -2,16 +2,17 @@ package com.avereon.cartesia;
 
 import java.util.Objects;
 
-public class CommandMapping {
+public class OldCommandMapping {
+
 	private final String action;
 
 	private final String shortcut;
 
-	private final Class<? extends Command> command;
+	private final Class<? extends OldCommand> command;
 
 	private final Object[] parameters;
 
-	public CommandMapping( String action, String shortcut, Class<? extends Command> command, Object... parameters ) {
+	public OldCommandMapping( String action, String shortcut, Class<? extends OldCommand> command, Object... parameters ) {
 		this.action = Objects.requireNonNull( action );
 		this.shortcut = Objects.requireNonNull( shortcut );
 		this.command = Objects.requireNonNull( command );
@@ -26,12 +27,11 @@ public class CommandMapping {
 		return shortcut;
 	}
 
-	public Class<? extends Command> getCommand() {
+	public Class<? extends OldCommand> getCommand() {
 		return command;
 	}
 
 	public Object[] getParameters() {
 		return parameters;
 	}
-
 }

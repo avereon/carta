@@ -1,10 +1,10 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
 
-public class PathCommand extends Command {
+public class PathCommand extends OldCommand {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {

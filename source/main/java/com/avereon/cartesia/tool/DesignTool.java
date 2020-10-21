@@ -130,16 +130,15 @@ public abstract class DesignTool extends GuidedTool {
 				e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
 			);
 
-		//addEventFilter( KeyEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		//addEventFilter( MouseEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		//addEventFilter( ScrollEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-		//addEventFilter( MouseDragEvent.ANY, e -> getDesignContext().getCommandContext().handle( e ) );
-
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
-		//		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
-		//		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
-		//		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
-		//		addEventFilter( ScrollEvent.SCROLL, this::zoom );
+		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
+		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
+		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
+		//addEventFilter( ScrollEvent.SCROLL, this::zoom );
+
+		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
+		//addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 	}
 
 	public final Design getDesign() {
@@ -148,6 +147,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	public final DesignContext getDesignContext() {
 		return getDesign().getDesignContext( getProduct() );
+	}
+
+	public final CommandContext getCommandContext() {
+		return getDesignContext().getCommandContext();
 	}
 
 	@Deprecated
@@ -215,6 +218,10 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.setLayerVisible( layer, visible );
 	}
 
+	public Point3D getViewPoint() {
+		return designPane.getViewPoint();
+	}
+
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
@@ -260,7 +267,6 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.recenter();
 
 		if( isActive() ) activate();
-		// TODO Set the status bar???
 	}
 
 	@Override
@@ -309,8 +315,8 @@ public abstract class DesignTool extends GuidedTool {
 		deleteAction.updateEnabled();
 	}
 
-	Point3D mouseToWorld( double x, double y, double z ) {
-		return designPane == null ? Point3D.ZERO : designPane.mouseToWorld( x, y, z );
+	public Point3D mouseToWorld( double x, double y, double z ) {
+		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
 	}
 
 	private void setReticle( ReticleCursor reticle ) {
@@ -323,7 +329,6 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void mouseMove( MouseEvent event ) {
-		getDesignContext().getCommandContext().handle( event );
 		getCoordinateStatus().updatePosition( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 	}
 
@@ -336,8 +341,6 @@ public abstract class DesignTool extends GuidedTool {
 			viewAnchor = designPane.getViewPoint();
 		} else if( isSelectMode() ) {
 			mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
-		} else {
-			getCommandPrompt().relay( getWorldPointAtMouse() );
 		}
 	}
 
@@ -356,8 +359,27 @@ public abstract class DesignTool extends GuidedTool {
 		dragAnchor = null;
 	}
 
-	private void zoom( ScrollEvent event ) {
-		if( Math.abs( event.getDeltaY() ) != 0.0 ) designPane.mouseZoom( event.getX(), event.getY(), event.getDeltaY() > 0 );
+	/**
+	 * Change the zoom value by a factor.
+	 *
+	 * @param x
+	 * @param y
+	 * @param factor
+	 */
+	public void zoom( double x, double y, double factor ) {
+		zoom( x, y, 0, factor );
+	}
+
+	/**
+	 * Change the zoom value by a factor.
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param factor
+	 */
+	public void zoom( double x, double y, double z, double factor ) {
+		Fx.run( () -> designPane.zoom( x, y, z, factor ) );
 	}
 
 	private void updateSelectWindow( Point3D anchor, Point3D mouse ) {

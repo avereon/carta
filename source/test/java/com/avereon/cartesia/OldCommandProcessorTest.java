@@ -8,7 +8,7 @@ import static com.avereon.zarra.test.PointCloseTo.closeTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class CommandProcessorTest implements NumericTest {
+public class OldCommandProcessorTest implements NumericTest {
 
 	private static final double PI_OVER_4 = 0.25 * Math.PI;
 

@@ -40,16 +40,16 @@ public class DesignPane extends StackPane {
 	/**
 	 * The number of steps required to reach the {@link #DEFAULT_ZOOM_MAGNIFICATION}.
 	 */
-	private static final int DEFAULT_ZOOM_STEPS = 4;
+	private static final int DEFAULT_ZOOM_STEPS = 3;
 
 	/**
 	 * This factor is applied to the zoom when zooming in or out. It is generated
 	 * by calculating a factor that will increase the zoom by a specific
 	 * magnification in a specific number of steps.
 	 */
-	static final double ZOOM_IN_FACTOR = Math.pow( DEFAULT_ZOOM_MAGNIFICATION, 1.0 / DEFAULT_ZOOM_STEPS );
+	public static final double ZOOM_IN_FACTOR = Math.pow( DEFAULT_ZOOM_MAGNIFICATION, 1.0 / DEFAULT_ZOOM_STEPS );
 
-	static final double ZOOM_OUT_FACTOR = 1.0 / ZOOM_IN_FACTOR;
+	public static final double ZOOM_OUT_FACTOR = 1.0 / ZOOM_IN_FACTOR;
 
 	static final double DEFAULT_ZOOM = 1;
 
@@ -257,13 +257,32 @@ public class DesignPane extends StackPane {
 	 * @param zoomIn True to zoom in, false to zoom out
 	 */
 	void mouseZoom( double mouseX, double mouseY, boolean zoomIn ) {
-		Point3D anchor = mouseToWorld( mouseX, mouseY, 0 );
+		Point3D anchor = parentToLocal( mouseX, mouseY, 0 );
 		Point3D offset = getViewPoint().subtract( anchor );
 
 		double zoomFactor = zoomIn ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
 		setZoom( getZoom() * zoomFactor );
-
 		setViewPoint( anchor.add( offset.multiply( 1 / zoomFactor ) ) );
+	}
+
+	/**
+	 * Change the zoom by the zoom factor. The zoom is centered on the provided
+	 * x, y, z coordinates. The coordinates are world coordinates. The current
+	 * zoom is multiplied by the zoom factor.
+	 *
+	 * @param x The world x coordinate of the zoom
+	 * @param y The world y coordinate of the zoom
+	 * @param z The world z coordinate of the zoom
+	 * @param factor The zoom factor
+	 */
+	void zoom( double x, double y, double z, double factor ) {
+		Fx.assertFxThread();
+		Point3D anchor = new Point3D( x, y, z );
+		Point3D offset = getViewPoint().subtract( anchor );
+
+		// The zoom has to be set before the viewpoint
+		setZoom( getZoom() * factor );
+		setViewPoint( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
 	Point3D mouseToWorld( double x, double y, double z ) {
@@ -354,12 +373,12 @@ public class DesignPane extends StackPane {
 	void removeShapeGeometry( DesignShapeView view ) {
 		Group group = view.getGroup();
 		Layer layer = (Layer)group.getParent();
-//		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
-//		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
-//		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
+		//		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
+		//		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
+		//		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
 
 		group.visibleProperty().unbind();
-//		shapes.forEach( s -> s.visibleProperty().unbind() );
+		//		shapes.forEach( s -> s.visibleProperty().unbind() );
 
 		Fx.run( () -> {
 			//getReferenceLayer().getChildren().removeAll( cps );

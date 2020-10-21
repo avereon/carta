@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.notice.Notice;
@@ -9,10 +9,10 @@ import javafx.geometry.Point3D;
 
 import java.util.List;
 
-public class CurveCommand extends Command {
+public class CurveCommand extends OldCommand {
 
 	@Override
-	public List<Command> getPreSteps( DesignTool tool ) {
+	public List<OldCommand> getPreSteps( DesignTool tool ) {
 		return List.of(
 			new PromptForPointCommand( tool, "start-point" ),
 			new PromptForPointCommand( tool, "control-point" ),

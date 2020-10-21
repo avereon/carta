@@ -28,7 +28,7 @@ public class DefaultCommandProcessor implements CommandProcessor {
 
 	private static final System.Logger log = Log.get();
 
-	private final Stack<Command> commandStack;
+	private final Stack<OldCommand> commandStack;
 
 	private final Stack<Object> valueStack;
 
@@ -80,7 +80,8 @@ public class DefaultCommandProcessor implements CommandProcessor {
 	public void evaluate( DesignTool tool, String input ) throws CommandException {
 		if( TextUtil.isEmpty( input ) ) return;
 
-		Class<Command> commandClass = CommandMap.get( input );
+		//Class<OldCommand> commandClass = CommandMap.get( input );
+		Class<OldCommand> commandClass = null;
 		String text = input.trim();
 		Point3D point = parsePoint( text );
 
@@ -89,13 +90,13 @@ public class DefaultCommandProcessor implements CommandProcessor {
 				priorCommand = text;
 
 				log.log( Log.DEBUG, "Command found {0}", commandClass.getName() );
-				Command command = commandClass.getConstructor().newInstance();
+				OldCommand command = commandClass.getConstructor().newInstance();
 
 				// Push the command itself
 				pushCommand( command );
 
 				// Push all the command pre steps
-				List<Command> preSteps = new ArrayList<>( command.getPreSteps( tool ) );
+				List<OldCommand> preSteps = new ArrayList<>( command.getPreSteps( tool ) );
 				Collections.reverse( preSteps );
 				preSteps.forEach( this::pushCommand );
 
@@ -153,16 +154,16 @@ public class DefaultCommandProcessor implements CommandProcessor {
 		}
 	}
 
-	Command peekCommand() {
+	OldCommand peekCommand() {
 		return commandStack.peek();
 	}
 
-	void pushCommand( Command command ) {
+	void pushCommand( OldCommand command ) {
 		commandStack.push( command );
 	}
 
-	Command pullCommand( DesignTool tool ) {
-		Command command = commandStack.pop();
+	OldCommand pullCommand( DesignTool tool ) {
+		OldCommand command = commandStack.pop();
 		isAutoCommandSafe = command.isAutoCommandSafe();
 		if( commandStack.isEmpty() ) tool.getCommandPrompt().setPrompt( null );
 		return command;
@@ -218,9 +219,9 @@ public class DefaultCommandProcessor implements CommandProcessor {
 
 		private final DesignTool tool;
 
-		private final Command command;
+		private final OldCommand command;
 
-		public CommandTask( CommandProcessor processor, DesignTool tool, Command command ) {
+		public CommandTask( CommandProcessor processor, DesignTool tool, OldCommand command ) {
 			this.processor = processor;
 			this.tool = tool;
 			this.command = command;

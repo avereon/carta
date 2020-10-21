@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.data.DesignLine;
@@ -11,7 +11,7 @@ import javafx.geometry.Point3D;
 
 import java.util.List;
 
-public class LineCommand extends Command {
+public class LineCommand extends OldCommand {
 
 	private static final System.Logger log = Log.get();
 
@@ -21,7 +21,7 @@ public class LineCommand extends Command {
 	}
 
 	@Override
-	public List<Command> getPreSteps( DesignTool tool ) {
+	public List<OldCommand> getPreSteps( DesignTool tool ) {
 		return List.of( new PromptForPointCommand( tool, "start-point" ), new PromptForPointCommand( tool, "end-point" ) );
 	}
 

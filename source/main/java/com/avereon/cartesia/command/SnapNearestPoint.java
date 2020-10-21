@@ -1,11 +1,11 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 
-public class SnapNearestPoint extends Command {
+public class SnapNearestPoint extends OldCommand {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {

@@ -9,12 +9,12 @@ import javafx.geometry.Point3D;
 
 import java.util.List;
 
-public class PointCommand extends Command {
+public class PointCommand extends OldCommand {
 
 	private static final System.Logger log = Log.get();
 
 	@Override
-	public List<Command> getPreSteps( DesignTool tool ) {
+	public List<OldCommand> getPreSteps( DesignTool tool ) {
 		return List.of( new PromptForPointCommand( tool, "select-point" ) );
 	}
 

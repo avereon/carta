@@ -1,33 +1,45 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.Command;
-import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-
-import java.util.List;
 
 public class ZoomCommand extends Command {
 
 	@Override
-	public List<Command> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptForValueCommand( tool, "zoom" ) );
-	}
+	public void execute( CommandContext context, DesignTool tool, Object... parameters ) {
+		// TODO Implement ZoomCommand.execute()
 
-	@Override
-	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Object zoom = processor.pullValue();
-
-		if( zoom instanceof Point3D ) {
-			tool.setZoom( ((Point3D)zoom).getX() );
-		} else {
-			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
-			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-zoom", zoom );
-			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		// This command requires exactly one value
+		if( parameters.length < 1 ) {
+			// Get the zoom value
 		}
+
+		// FIXME These parameters might be expressions
+		tool.setZoom( (Double)parameters[0] );
 	}
 
+	protected void zoomByFactor( DesignTool tool, double factor, Object... parameters ) {
+		Point3D viewpoint = tool.getViewPoint();
+		double x = viewpoint.getX();
+		double y = viewpoint.getY();
+		double z = viewpoint.getZ();
+
+		// FIXME These parameters might be expressions
+		switch( parameters.length ) {
+			case 2 -> {
+				x = (Double)parameters[ 0 ];
+				y = (Double)parameters[ 1 ];
+			}
+			case 3 -> {
+				x = (Double)parameters[ 0 ];
+				y = (Double)parameters[ 1 ];
+				z = (Double)parameters[ 2 ];
+			}
+		}
+
+		tool.zoom( x, y, z, factor );
+	}
 
 }
