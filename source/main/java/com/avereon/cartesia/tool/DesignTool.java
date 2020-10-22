@@ -134,9 +134,8 @@ public abstract class DesignTool extends GuidedTool {
 		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
 		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
-		//addEventFilter( ScrollEvent.SCROLL, this::zoom );
 
-		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+		//addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		//addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 	}
@@ -222,6 +221,37 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane.getViewPoint();
 	}
 
+	/**
+	 * Change the zoom value by a factor.
+	 *
+	 * @param x
+	 * @param y
+	 * @param factor
+	 */
+	public void zoom( double x, double y, double factor ) {
+		zoom( x, y, 0, factor );
+	}
+
+	/**
+	 * Change the zoom value by a factor.
+	 *
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @param factor
+	 */
+	public void zoom( double x, double y, double z, double factor ) {
+		Fx.run( () -> designPane.zoom( x, y, z, factor ) );
+	}
+
+	public Point3D mouseToWorld( double x, double y, double z ) {
+		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
+	}
+
+	public Point3D worldToMouse( double x, double y, double z ) {
+		return designPane == null ? Point3D.ZERO : designPane.localToParent( x, y, z );
+	}
+
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
@@ -278,7 +308,10 @@ public abstract class DesignTool extends GuidedTool {
 	protected void activate() throws ToolException {
 		super.activate();
 		pushAction( "delete", deleteAction );
-		if( isReady() ) registerStatusBarItems();
+		if( isReady() ) {
+			getDesignContext().getCommandContext().setLastActiveDesignTool( this );
+			registerStatusBarItems();
+		}
 		requestFocus();
 	}
 
@@ -313,10 +346,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void updateActionStates() {
 		deleteAction.updateEnabled();
-	}
-
-	public Point3D mouseToWorld( double x, double y, double z ) {
-		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
 	}
 
 	private void setReticle( ReticleCursor reticle ) {
@@ -357,29 +386,6 @@ public abstract class DesignTool extends GuidedTool {
 		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) windowSelect( dragAnchor, mouse, !event.isControlDown() );
 		selectWindow.resizeRelocate( 0, 0, 0, 0 );
 		dragAnchor = null;
-	}
-
-	/**
-	 * Change the zoom value by a factor.
-	 *
-	 * @param x
-	 * @param y
-	 * @param factor
-	 */
-	public void zoom( double x, double y, double factor ) {
-		zoom( x, y, 0, factor );
-	}
-
-	/**
-	 * Change the zoom value by a factor.
-	 *
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param factor
-	 */
-	public void zoom( double x, double y, double z, double factor ) {
-		Fx.run( () -> designPane.zoom( x, y, z, factor ) );
 	}
 
 	private void updateSelectWindow( Point3D anchor, Point3D mouse ) {

@@ -1,5 +1,8 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.MockProgramProduct;
+import com.avereon.cartesia.NumericTest;
+import com.avereon.xenon.ProgramProduct;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -8,15 +11,16 @@ import static com.avereon.zarra.test.PointCloseTo.closeTo;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class OldCommandProcessorTest implements NumericTest {
+public class CommandContextTest implements NumericTest {
 
 	private static final double PI_OVER_4 = 0.25 * Math.PI;
 
-	private DefaultCommandProcessor processor;
+	private CommandContext processor;
 
 	@BeforeEach
 	void setup() {
-		processor = new DefaultCommandProcessor();
+		ProgramProduct product = new MockProgramProduct();
+		processor = new CommandContext( product, null );
 	}
 
 	@Test
@@ -76,8 +80,7 @@ public class OldCommandProcessorTest implements NumericTest {
 		assertThat( processor.parsePoint( " 1 , 2 " ), is( new Point3D( 1, 2, 0 ) ) );
 		assertThat( processor.parsePoint( " @ 1 , 2 " ), is( new Point3D( 2, 3, 0 ) ) );
 		assertThat( processor.parsePoint( " > pi , 1 " ), closeTo( new Point3D( -1, 0, 0 ), TOLERANCE ) );
-		assertThat(
-			processor.parsePoint( " @ < rad ( 180 + 45 ) , 1 " ),
+		assertThat( processor.parsePoint( " @ < rad ( 180 + 45 ) , 1 " ),
 			closeTo( new Point3D( 1 - Math.cos( PI_OVER_4 ), 1 - Math.sin( PI_OVER_4 ), 0 ), TOLERANCE )
 		);
 	}

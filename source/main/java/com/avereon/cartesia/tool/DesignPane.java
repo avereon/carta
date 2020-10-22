@@ -40,7 +40,7 @@ public class DesignPane extends StackPane {
 	/**
 	 * The number of steps required to reach the {@link #DEFAULT_ZOOM_MAGNIFICATION}.
 	 */
-	private static final int DEFAULT_ZOOM_STEPS = 3;
+	private static final int DEFAULT_ZOOM_STEPS = 4;
 
 	/**
 	 * This factor is applied to the zoom when zooming in or out. It is generated
@@ -249,23 +249,6 @@ public class DesignPane extends StackPane {
 	}
 
 	/**
-	 * Zoom the design pane. Zoom in (scroll up) increases the scale. Zoom out
-	 * (scroll down) decreases the scale.
-	 *
-	 * @param mouseX The anchor point X coordinate
-	 * @param mouseY The anchor point Y coordinate
-	 * @param zoomIn True to zoom in, false to zoom out
-	 */
-	void mouseZoom( double mouseX, double mouseY, boolean zoomIn ) {
-		Point3D anchor = parentToLocal( mouseX, mouseY, 0 );
-		Point3D offset = getViewPoint().subtract( anchor );
-
-		double zoomFactor = zoomIn ? ZOOM_IN_FACTOR : ZOOM_OUT_FACTOR;
-		setZoom( getZoom() * zoomFactor );
-		setViewPoint( anchor.add( offset.multiply( 1 / zoomFactor ) ) );
-	}
-
-	/**
 	 * Change the zoom by the zoom factor. The zoom is centered on the provided
 	 * x, y, z coordinates. The coordinates are world coordinates. The current
 	 * zoom is multiplied by the zoom factor.
@@ -276,21 +259,12 @@ public class DesignPane extends StackPane {
 	 * @param factor The zoom factor
 	 */
 	void zoom( double x, double y, double z, double factor ) {
-		Fx.assertFxThread();
 		Point3D anchor = new Point3D( x, y, z );
 		Point3D offset = getViewPoint().subtract( anchor );
 
 		// The zoom has to be set before the viewpoint
 		setZoom( getZoom() * factor );
 		setViewPoint( anchor.add( offset.multiply( 1 / factor ) ) );
-	}
-
-	Point3D mouseToWorld( double x, double y, double z ) {
-		return parentToLocal( x, y, z );
-	}
-
-	Point3D worldToMouse( double x, double y, double z ) {
-		return localToParent( x, y, z );
 	}
 
 	List<Shape> apertureSelect( double x, double y, double z, DesignValue v ) {

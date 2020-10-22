@@ -1,15 +1,13 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-
-import java.util.List;
 
 public class LineCommand extends OldCommand {
 
@@ -20,10 +18,10 @@ public class LineCommand extends OldCommand {
 		// NEXT This method receives the mouse movements to allow for preview
 	}
 
-	@Override
-	public List<OldCommand> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptForPointCommand( tool, "start-point" ), new PromptForPointCommand( tool, "end-point" ) );
-	}
+//	@Override
+//	public List<OldCommand> getPreSteps( DesignTool tool ) {
+//		return List.of( new PromptForPointCommand( tool, "start-point" ), new PromptForPointCommand( tool, "end-point" ) );
+//	}
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {

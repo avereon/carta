@@ -215,11 +215,22 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 
 	@Test
 	void testZoomIn() {
-		pane.mouseZoom( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, ZOOM_IN );
+		Point3D point = pane.parentToLocal( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, 0 );
+		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_IN_FACTOR );
 		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
 		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
 		assertThat( pane.getScaleX(), closeTo( SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 		assertThat( pane.getScaleY(), closeTo( -SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+	}
+
+	@Test
+	void testZoomOut() {
+		Point3D point = pane.parentToLocal( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, 0 );
+		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_OUT_FACTOR );
+		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
+		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
+		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
 	}
 
 	@Test
@@ -228,9 +239,10 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		double worldY = -1;
 		double ex = PARENT_HALF_WIDTH + worldX * pane.getScaleX();
 		double ey = PARENT_HALF_HEIGHT + worldY * pane.getScaleY();
-		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
+		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 
-		pane.mouseZoom( ex, ey, ZOOM_IN );
+		Point3D point = pane.parentToLocal( ex, ey, 0 );
+		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_IN_FACTOR );
 
 		double newScale = SCALE * DesignPane.ZOOM_IN_FACTOR;
 		double offset = newScale - SCALE;
@@ -240,16 +252,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( pane.getTranslateY(), closeTo( PARENT_HALF_HEIGHT - offset, 1 ) );
 
 		// The mouse coords for the world point should still be the same
-		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
-	}
-
-	@Test
-	void testZoomOut() {
-		pane.mouseZoom( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, ZOOM_OUT );
-		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
-		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 	}
 
 	@Test
@@ -258,9 +261,10 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		double worldY = -1;
 		double ex = PARENT_HALF_WIDTH + worldX * pane.getScaleX();
 		double ey = PARENT_HALF_HEIGHT + worldY * pane.getScaleY();
-		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
+		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 
-		pane.mouseZoom( ex, ey, ZOOM_OUT );
+		Point3D point = pane.parentToLocal( ex, ey, 0 );
+		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_OUT_FACTOR );
 
 		double newScale = SCALE * DesignPane.ZOOM_OUT_FACTOR;
 		double offset = newScale - SCALE;
@@ -270,7 +274,7 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		assertThat( pane.getTranslateY(), closeTo( PARENT_HALF_HEIGHT - offset, 1 ) );
 
 		// The mouse coords for the world point should still be the same
-		assertThat( pane.worldToMouse( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
+		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 	}
 
 	@Test

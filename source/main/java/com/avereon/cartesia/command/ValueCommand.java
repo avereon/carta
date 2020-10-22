@@ -1,17 +1,16 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.Command;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 
-public class PromptForValueCommand extends PromptCommand {
+public class ValueCommand extends Command {
 
-	public PromptForValueCommand( String prompt ) {
-		super( prompt );
-	}
+	public ValueCommand() {}
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-		return super.execute( context, tool, parameters );
+		return parameters[0];
 	}
 
 }

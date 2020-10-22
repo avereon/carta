@@ -13,12 +13,9 @@ public class DesignContext {
 
 	private final CoordinateStatus coordinates;
 
-	private final CommandPrompt commandPrompt;
-
 	public DesignContext( ProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
-		this.commandPrompt = new CommandPrompt( product, design );
 		this.coordinates = new CoordinateStatus( product );
 		this.commandContext = new CommandContext( product, this );
 	}
@@ -31,16 +28,16 @@ public class DesignContext {
 		return design;
 	}
 
-	public final CommandPrompt getCommandPrompt() {
-		return commandPrompt;
-	}
-
 	public final CoordinateStatus getCoordinateStatus() {
 		return coordinates;
 	}
 
 	public final CommandContext getCommandContext() {
 		return commandContext;
+	}
+
+	public final CommandPrompt getCommandPrompt() {
+		return getCommandContext().getCommandPrompt();
 	}
 
 }

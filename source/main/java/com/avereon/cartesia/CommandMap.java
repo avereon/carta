@@ -1,6 +1,8 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.CameraZoomCommand;
+import com.avereon.cartesia.command.CameraZoomInCommand;
+import com.avereon.cartesia.command.CameraZoomOutCommand;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Action;
@@ -48,6 +50,13 @@ public class CommandMap {
 		add( SCROLL_WHEEL_UP, "zoom-in" );
 		add( SCROLL_WHEEL_DOWN, "zoom-out" );
 
+		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK, "select" );
+		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON3_DOWN_MASK, "snap-auto-nearest" );
+		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.CTRL_DOWN_MASK, "camera-spin" );
+		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.SHIFT_DOWN_MASK, "camera-move" );
+		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL, "camera-zoom-wheel" );
+		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL + MouseEvent.CTRL_DOWN_MASK, "camera-walk-wheel" );
+
 		// Shape commands
 		//		add( product, "draw-arc-2", ArcCommand.class ); // center-endpoint-endpoint
 		//add( "draw-arc-3", Arc2Command.class ); // endpoint-midpoint-endpoint
@@ -77,9 +86,9 @@ public class CommandMap {
 		// View commands
 		//		add( product, "view-pan", PanCommand.class );
 		//		add( product, "view-point", ViewPointCommand.class );
-		//		add( product, "zoom", OldZoomCommand.class );
-		add( product, "zoom-in", ZoomInCommand.class );
-		add( product, "zoom-out", ZoomOutCommand.class );
+		add( product, "zoom", CameraZoomCommand.class );
+		add( product, "zoom-in", CameraZoomInCommand.class );
+		add( product, "zoom-out", CameraZoomOutCommand.class );
 		//add( product, "zoom-window", ZoomWindowCommand.class );
 	}
 
@@ -88,7 +97,7 @@ public class CommandMap {
 	}
 
 	public static boolean hasCommand( String shortcut ) {
-		return actionCommands.containsKey( shortcut );
+		return shortcutActions.containsKey( shortcut );
 	}
 
 	@SuppressWarnings( "unchecked" )

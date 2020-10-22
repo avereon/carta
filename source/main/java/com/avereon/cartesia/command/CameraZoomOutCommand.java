@@ -12,11 +12,12 @@ import com.avereon.cartesia.tool.DesignTool;
  * provided it assumes the zoom will be centered around the current view point
  * and will use {@link DesignPane#ZOOM_OUT_FACTOR} as the zoom factor.</p>
  */
-public class ZoomOutCommand extends ZoomCommand {
+public class CameraZoomOutCommand extends CameraZoomCommand {
 
 	@Override
-	public void execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		zoomByFactor( tool, DesignPane.ZOOM_OUT_FACTOR, parameters );
+		return setComplete();
 	}
 
 }

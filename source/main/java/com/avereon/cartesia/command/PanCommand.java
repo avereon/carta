@@ -1,20 +1,18 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.CommandProcessor;
+import com.avereon.cartesia.OldCommand;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 
-import java.util.List;
-
 public class PanCommand extends OldCommand {
 
-	@Override
-	public List<OldCommand> getPreSteps( DesignTool tool ) {
-		return List.of( new PromptForPointCommand( tool, "pan-point" ) );
-	}
+//	@Override
+//	public List<OldCommand> getPreSteps( DesignTool tool ) {
+//		return List.of( new PromptForPointCommand( tool, "pan-point" ) );
+//	}
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {

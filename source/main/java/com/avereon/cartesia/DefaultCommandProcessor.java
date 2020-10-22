@@ -1,17 +1,14 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.math.MathEx;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
-import com.avereon.util.TextUtil;
 import com.avereon.xenon.task.Task;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 
-import java.text.ParseException;
-import java.util.*;
+import java.util.Stack;
 
 /**
  * The command processor handles processing commands for a design. It is common
@@ -78,38 +75,38 @@ public class DefaultCommandProcessor implements CommandProcessor {
 
 	@Override
 	public void evaluate( DesignTool tool, String input ) throws CommandException {
-		if( TextUtil.isEmpty( input ) ) return;
-
-		//Class<OldCommand> commandClass = CommandMap.get( input );
-		Class<OldCommand> commandClass = null;
-		String text = input.trim();
-		Point3D point = parsePoint( text );
-
-		if( commandClass != null ) {
-			try {
-				priorCommand = text;
-
-				log.log( Log.DEBUG, "Command found {0}", commandClass.getName() );
-				OldCommand command = commandClass.getConstructor().newInstance();
-
-				// Push the command itself
-				pushCommand( command );
-
-				// Push all the command pre steps
-				List<OldCommand> preSteps = new ArrayList<>( command.getPreSteps( tool ) );
-				Collections.reverse( preSteps );
-				preSteps.forEach( this::pushCommand );
-
-				// Start the command
-				tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
-			} catch( Exception exception ) {
-				throw new CommandException( exception );
-			}
-		} else if( point != null ) {
-			pushValue( tool, point );
-		} else if( !TextUtil.isEmpty( text ) ) {
-			pushValue( tool, text );
-		}
+//		if( TextUtil.isEmpty( input ) ) return;
+//
+//		//Class<OldCommand> commandClass = CommandMap.get( input );
+//		Class<OldCommand> commandClass = null;
+//		String text = input.trim();
+//		Point3D point = parsePoint( text );
+//
+//		if( commandClass != null ) {
+//			try {
+//				priorCommand = text;
+//
+//				log.log( Log.DEBUG, "Command found {0}", commandClass.getName() );
+//				OldCommand command = commandClass.getConstructor().newInstance();
+//
+//				// Push the command itself
+//				pushCommand( command );
+//
+//				// Push all the command pre steps
+//				List<OldCommand> preSteps = new ArrayList<>( command.getPreSteps( tool ) );
+//				Collections.reverse( preSteps );
+//				preSteps.forEach( this::pushCommand );
+//
+//				// Start the command
+//				tool.getProgram().getTaskManager().submit( new CommandTask( this, tool, pullCommand( tool ) ) );
+//			} catch( Exception exception ) {
+//				throw new CommandException( exception );
+//			}
+//		} else if( point != null ) {
+//			pushValue( tool, point );
+//		} else if( !TextUtil.isEmpty( text ) ) {
+//			pushValue( tool, text );
+//		}
 	}
 
 	@Override
@@ -167,50 +164,6 @@ public class DefaultCommandProcessor implements CommandProcessor {
 		isAutoCommandSafe = command.isAutoCommandSafe();
 		if( commandStack.isEmpty() ) tool.getCommandPrompt().setPrompt( null );
 		return command;
-	}
-
-	void setAnchor( Point3D anchor ) {
-		this.anchor = anchor;
-	}
-
-	Point3D parsePoint( String input ) {
-		input = Objects.requireNonNull( input ).trim();
-
-		try {
-			boolean relative = false;
-			boolean polar = false;
-
-			if( input.charAt( 0 ) == '@' ) {
-				input = input.substring( 1 ).trim();
-				relative = true;
-			}
-			if( input.charAt( 0 ) == '>' || input.charAt( 0 ) == '<' ) {
-				// Modifier > is for polar coords
-				input = input.substring( 1 ).trim();
-				polar = true;
-			}
-
-			String[] coords = input.split( "," );
-			Point3D point = switch( coords.length ) {
-				case 1 -> new Point3D( MathEx.parse( coords[ 0 ] ), 0, 0 );
-				case 2 -> new Point3D( MathEx.parse( coords[ 0 ] ), MathEx.parse( coords[ 1 ] ), 0 );
-				case 3 -> new Point3D( MathEx.parse( coords[ 0 ] ), MathEx.parse( coords[ 1 ] ), MathEx.parse( coords[ 2 ] ) );
-				default -> null;
-			};
-
-			if( point == null ) return null;
-			if( polar ) point = fromPolar( point );
-			if( relative ) point = anchor.add( point );
-			return point;
-		} catch( ParseException exception ) {
-			return null;
-		}
-	}
-
-	Point3D fromPolar( Point3D point ) {
-		double angle = point.getX();
-		double radius = point.getY();
-		return new Point3D( radius * Math.cos( angle ), radius * Math.sin( angle ), 0 );
 	}
 
 	private static class CommandTask extends Task<Void> {
