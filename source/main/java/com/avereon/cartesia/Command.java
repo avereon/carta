@@ -2,7 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.PromptForValueCommand;
 import com.avereon.cartesia.math.Geometry;
-import com.avereon.cartesia.math.Math;
+import com.avereon.cartesia.math.Maths;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -45,7 +45,7 @@ public class Command {
 	protected double asDouble( Object value ) throws Exception {
 		if( value instanceof Double ) return (Double)value;
 		if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
-		return Math.eval( String.valueOf( value ) );
+		return Maths.eval( String.valueOf( value ) );
 	}
 
 	protected Point3D asPoint( Object value, Point3D anchor ) throws Exception {

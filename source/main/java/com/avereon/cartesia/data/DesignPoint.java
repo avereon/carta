@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.Math;
+import com.avereon.cartesia.math.Maths;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
@@ -37,7 +37,7 @@ public class DesignPoint extends DesignShape {
 
 	public double calcSize() {
 		String size = getSize();
-		if( size != null ) return Math.evalNoException( size );
+		if( size != null ) return Maths.evalNoException( size );
 		return DEFAULT_SIZE;
 	}
 

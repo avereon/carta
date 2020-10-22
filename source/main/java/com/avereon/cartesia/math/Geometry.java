@@ -33,9 +33,9 @@ public class Geometry {
 
 			String[] coords = input.split( "," );
 			Point3D point = switch( coords.length ) {
-				case 1 -> new Point3D( Math.eval( coords[ 0 ] ), 0, 0 );
-				case 2 -> new Point3D( Math.eval( coords[ 0 ] ), Math.eval( coords[ 1 ] ), 0 );
-				case 3 -> new Point3D( Math.eval( coords[ 0 ] ), Math.eval( coords[ 1 ] ), Math.eval( coords[ 2 ] ) );
+				case 1 -> new Point3D( Maths.eval( coords[ 0 ] ), 0, 0 );
+				case 2 -> new Point3D( Maths.eval( coords[ 0 ] ), Maths.eval( coords[ 1 ] ), 0 );
+				case 3 -> new Point3D( Maths.eval( coords[ 0 ] ), Maths.eval( coords[ 1 ] ), Maths.eval( coords[ 2 ] ) );
 				default -> null;
 			};
 

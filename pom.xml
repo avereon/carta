@@ -71,6 +71,7 @@
 				<configuration>
 					<!-- The argLine and systemPropertyVariables should match the failsafe configuration below -->
 					<argLine>
+						--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED
