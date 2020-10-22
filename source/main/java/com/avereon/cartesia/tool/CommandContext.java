@@ -7,7 +7,6 @@ import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.zerra.javafx.Fx;
 import javafx.event.EventType;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
@@ -30,8 +29,6 @@ public class CommandContext {
 
 	private final ProgramProduct product;
 
-	private final DesignContext designContext;
-
 	private final BlockingDeque<CommandExecuteRequest> commandStack;
 
 	private CommandPrompt commandPrompt;
@@ -46,19 +43,14 @@ public class CommandContext {
 
 	private Point3D anchor;
 
-	public CommandContext( ProgramProduct product, DesignContext designContext ) {
+	public CommandContext( ProgramProduct product ) {
 		this.product = product;
-		this.designContext = designContext;
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorShortcut = TextUtil.EMPTY;
 	}
 
 	public ProgramProduct getProduct() {
 		return product;
-	}
-
-	public DesignContext getDesignContext() {
-		return designContext;
 	}
 
 	public CommandPrompt getCommandPrompt() {
@@ -71,10 +63,12 @@ public class CommandContext {
 	}
 
 	public void cancel() {
-		commandStack.forEach( c -> Fx.run( () -> c.getTool().setCursor( Cursor.DEFAULT ) ) );
+		commandStack.stream().filter( r -> r.getTool() != null ).map( CommandExecuteRequest::getTool ).forEach( t -> {
+			t.setCursor( Cursor.DEFAULT );
+			t.getDesign().clearSelected();
+		} );
 		commandStack.clear();
 
-		getDesignContext().getDesign().clearSelected();
 		getCommandPrompt().clear();
 		setInputMode( false );
 	}

@@ -20,7 +20,7 @@ public class PromptCommand extends Command {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		if( parameters.length == 0 ) {
-			context.getDesignContext().getCommandPrompt().setPrompt( prompt );
+			tool.getDesignContext().getCommandPrompt().setPrompt( prompt );
 			return incomplete();
 		}
 		return parameters[ 0 ];

@@ -53,9 +53,9 @@ public class Command {
 		return Geometry.parsePoint( String.valueOf( value ), anchor );
 	}
 
-	protected void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key, Command caller ) {
+	protected void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
 		String prompt = context.getProduct().rb().text( bundleKey, key );
-		DesignContext designContext = context.getDesignContext();
+		DesignContext designContext = tool.getDesignContext();
 		designContext.getCommandPrompt().setPrompt( prompt );
 
 		// At this point we need to wait around, not on a thread, for the user to enter the value

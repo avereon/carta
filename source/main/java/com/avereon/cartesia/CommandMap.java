@@ -48,8 +48,8 @@ public class CommandMap {
 		// z - zoom
 
 		// Input type actions
-		add( SCROLL_WHEEL_UP, "zoom-in" );
-		add( SCROLL_WHEEL_DOWN, "zoom-out" );
+		add( SCROLL_WHEEL_UP, "camera-zoom-in" );
+		add( SCROLL_WHEEL_DOWN, "camera-zoom-out" );
 
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK, "select" );
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON3_DOWN_MASK, "snap-auto-nearest" );

@@ -17,12 +17,12 @@ public class MeasureDistanceCommand extends MeasureCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		log.log( Log.WARN, "Parameter count=" + parameters.length );
 		if( parameters.length < 1 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "start-point", this );
+			promptForValue( context, tool, BundleKey.PROMPT, "start-point" );
 			return incomplete();
 		}
 
 		if( parameters.length < 2 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "select-point", this );
+			promptForValue( context, tool, BundleKey.PROMPT, "end-point" );
 			return incomplete();
 		}
 

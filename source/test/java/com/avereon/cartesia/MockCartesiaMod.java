@@ -9,8 +9,9 @@ import com.avereon.xenon.ProgramProduct;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.Callable;
 
-public class MockProgramProduct implements ProgramProduct {
+public class MockCartesiaMod implements ProgramProduct {
 
 	@Override
 	public ProductCard getCard() {
@@ -40,6 +41,17 @@ public class MockProgramProduct implements ProgramProduct {
 	@Override
 	public Program getProgram() {
 		return null;
+	}
+
+	@Override
+	public <T> void task( String name, Callable<T> callable ) {
+		// This implementation is not suitable for production
+		// but is very useful for unit testing
+		try {
+			callable.call();
+		} catch( Exception exception ) {
+			throw new RuntimeException( exception );
+		}
 	}
 
 }
