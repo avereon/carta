@@ -5,14 +5,13 @@ import com.avereon.cartesia.MockCartesiaMod;
 import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.command.ValueCommand;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.zarra.test.FxPlatformTestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class CommandContextTest extends FxPlatformTestCase implements NumericTest {
+public class CommandContextTest implements NumericTest {
 
 	private ProgramProduct product;
 
@@ -20,7 +19,6 @@ public class CommandContextTest extends FxPlatformTestCase implements NumericTes
 
 	@BeforeEach
 	public void setup() throws Exception {
-		super.setup();
 		product = new MockCartesiaMod();
 		processor = new CommandContext( product );
 	}
