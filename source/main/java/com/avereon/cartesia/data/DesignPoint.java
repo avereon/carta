@@ -1,7 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.MathEx;
-import com.avereon.cartesia.math.Points;
+import com.avereon.cartesia.math.Math;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
@@ -23,7 +22,7 @@ public class DesignPoint extends DesignShape {
 
 	private static final double DEFAULT_SIZE = 1.0;
 
-	private static final Points.Type DEFAULT_TYPE = Points.Type.CROSS;
+	private static final DesignPoints.Type DEFAULT_TYPE = DesignPoints.Type.CROSS;
 
 	private static final double ZERO_DRAW_WIDTH = 0.0;
 
@@ -38,7 +37,7 @@ public class DesignPoint extends DesignShape {
 
 	public double calcSize() {
 		String size = getSize();
-		if( size != null ) return MathEx.eval( size );
+		if( size != null ) return Math.evalNoException( size );
 		return DEFAULT_SIZE;
 	}
 
@@ -51,8 +50,8 @@ public class DesignPoint extends DesignShape {
 		return this;
 	}
 
-	public Points.Type calcType() {
-		return Points.parseType( getType() );
+	public DesignPoints.Type calcType() {
+		return DesignPoints.parseType( getType() );
 	}
 
 	public String getType() {
@@ -126,12 +125,12 @@ public class DesignPoint extends DesignShape {
 		static {
 			PointTypeOptionProvider.keys = List.of(
 				NULL_VALUE_OPTION_KEY,
-				Points.Type.CROSS.name().toLowerCase(),
-				Points.Type.X.name().toLowerCase(),
-				Points.Type.REFERENCE.name().toLowerCase(),
-				Points.Type.CIRCLE.name().toLowerCase(),
-				Points.Type.DIAMOND.name().toLowerCase(),
-				Points.Type.SQUARE.name().toLowerCase()
+				DesignPoints.Type.CROSS.name().toLowerCase(),
+				DesignPoints.Type.X.name().toLowerCase(),
+				DesignPoints.Type.REFERENCE.name().toLowerCase(),
+				DesignPoints.Type.CIRCLE.name().toLowerCase(),
+				DesignPoints.Type.DIAMOND.name().toLowerCase(),
+				DesignPoints.Type.SQUARE.name().toLowerCase()
 			);
 		}
 

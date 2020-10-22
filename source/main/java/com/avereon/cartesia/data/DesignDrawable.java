@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.MathEx;
+import com.avereon.cartesia.math.Math;
 import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
 
@@ -45,7 +45,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public double calcDrawWidth() {
 		String width = getDrawWidth();
-		if( width != null ) return MathEx.eval( width );
+		if( width != null ) return Math.evalNoException( width );
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_WIDTH;
 		DesignNode parent = getParent();
 		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawWidth();

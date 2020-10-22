@@ -3,6 +3,7 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.command.CameraZoomCommand;
 import com.avereon.cartesia.command.CameraZoomInCommand;
 import com.avereon.cartesia.command.CameraZoomOutCommand;
+import com.avereon.cartesia.command.MeasureDistanceCommand;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Action;
@@ -57,6 +58,18 @@ public class CommandMap {
 		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL, "camera-zoom-wheel" );
 		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL + MouseEvent.CTRL_DOWN_MASK, "camera-walk-wheel" );
 
+		// View commands
+		//		add( product, "camera-view-pan", PanCommand.class );
+		//		add( product, "camera-view-point", ViewPointCommand.class );
+		add( product, "camera-zoom", CameraZoomCommand.class );
+		add( product, "camera-zoom-in", CameraZoomInCommand.class );
+		add( product, "camera-zoom-out", CameraZoomOutCommand.class );
+		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
+
+		// Measure commands
+		//add( product, "measure-angle", MeasureAngleCommand.class );
+		add( product, "measure-distance", MeasureDistanceCommand.class );
+
 		// Shape commands
 		//		add( product, "draw-arc-2", ArcCommand.class ); // center-endpoint-endpoint
 		//add( "draw-arc-3", Arc2Command.class ); // endpoint-midpoint-endpoint
@@ -82,14 +95,6 @@ public class CommandMap {
 		//		add( product, "layer-sublayer", LayerSubLayerCommand.class );
 		//		add( product, "layer-delete", LayerDeleteCommand.class );
 		//		add( product, "layer-toggle", LayerToggleCommand.class );
-
-		// View commands
-		//		add( product, "view-pan", PanCommand.class );
-		//		add( product, "view-point", ViewPointCommand.class );
-		add( product, "zoom", CameraZoomCommand.class );
-		add( product, "zoom-in", CameraZoomInCommand.class );
-		add( product, "zoom-out", CameraZoomOutCommand.class );
-		//add( product, "zoom-window", ZoomWindowCommand.class );
 	}
 
 	public static Set<CommandMapping> getMappings() {

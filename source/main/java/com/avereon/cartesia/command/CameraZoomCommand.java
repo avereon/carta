@@ -3,7 +3,10 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+
+import java.text.ParseException;
 
 public class CameraZoomCommand extends CameraCommand {
 
@@ -15,7 +18,15 @@ public class CameraZoomCommand extends CameraCommand {
 			return incomplete();
 		}
 
-		tool.setZoom( asDouble( parameters[ 0 ] ) );
+		try {
+			tool.setZoom( asDouble( parameters[ 0 ] ) );
+			// TODO Create an undo command
+		} catch( ParseException exception ) {
+			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
+			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-zoom", exception.getMessage() );
+			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
+
 		return setComplete();
 	}
 

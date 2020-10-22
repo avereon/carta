@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignPoint;
-import com.avereon.cartesia.math.Points;
+import com.avereon.cartesia.data.DesignPoints;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
@@ -30,7 +30,7 @@ public class DesignPointView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		double ox = getDesignPoint().getOrigin().getX();
 		double oy = getDesignPoint().getOrigin().getY();
-		Path path = Points.createPoint( getDesignPoint().calcType(), ox, oy, getDesignPoint().getRadius() );
+		Path path = DesignPoints.createPoint( getDesignPoint().calcType(), ox, oy, getDesignPoint().getRadius() );
 		return List.of( path );
 	}
 

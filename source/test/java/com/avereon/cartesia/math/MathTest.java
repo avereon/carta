@@ -7,29 +7,29 @@ import java.text.ParseException;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class MathExTest {
+public class MathTest {
 
 	@Test
 	void testDeg() {
-		assertThat( MathEx.eval( "deg(pi)" ), is( Math.toDegrees( Math.PI ) ) );
+		assertThat( Math.evalNoException( "deg(pi)" ), is( java.lang.Math.toDegrees( java.lang.Math.PI ) ) );
 	}
 
 	@Test
 	void testRad() {
-		assertThat( MathEx.eval( "rad(270)" ), is( Math.toRadians( 270 ) ) );
+		assertThat( Math.evalNoException( "rad(270)" ), is( java.lang.Math.toRadians( 270 ) ) );
 	}
 
 	@Test
 	void testEval() {
-		assertThat( MathEx.eval( "1/8" ), is( 0.125 ) );
-		assertThat( MathEx.eval( "sin(pi)" ), is( Math.sin( Math.PI ) ) );
+		assertThat( Math.evalNoException( "1/8" ), is( 0.125 ) );
+		assertThat( Math.evalNoException( "sin(pi)" ), is( java.lang.Math.sin( java.lang.Math.PI ) ) );
 	}
 
 	@Test
 	void testParse() throws Exception {
-		assertThat( MathEx.parse( "1/8" ), is( 0.125 ) );
+		assertThat( Math.eval( "1/8" ), is( 0.125 ) );
 		try {
-			MathEx.parse( "not a valid expression" );
+			Math.eval( "not a valid expression" );
 		} catch( ParseException exception ) {
 			assertThat( exception.getMessage(), startsWith( "Unrecognized symbol \"not\"" ) );
 			assertThat( exception.getErrorOffset(), is( -1 ) );

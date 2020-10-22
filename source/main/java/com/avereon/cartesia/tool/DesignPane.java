@@ -3,7 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.math.Points;
+import com.avereon.cartesia.data.DesignPoints;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
@@ -105,7 +105,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint( Points.Type.REFERENCE ) );
+		reference.getChildren().add( new ConstructionPoint( DesignPoints.Type.REFERENCE ) );
 	}
 
 	private void setupDesignActions( Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions ) {

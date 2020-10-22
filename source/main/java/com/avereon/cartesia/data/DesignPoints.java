@@ -1,8 +1,9 @@
-package com.avereon.cartesia.math;
+package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.Constants;
 import javafx.scene.shape.*;
 
-public class Points {
+public class DesignPoints {
 
 	public enum Type {
 

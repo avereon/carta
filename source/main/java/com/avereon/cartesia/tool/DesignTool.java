@@ -28,6 +28,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -135,7 +136,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
-		//addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 	}
 
 	public final Design getDesign() {

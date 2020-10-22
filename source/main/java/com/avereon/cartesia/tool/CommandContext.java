@@ -3,8 +3,6 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.command.ValueCommand;
-import com.avereon.cartesia.math.MathEx;
-import com.avereon.settings.Settings;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
@@ -18,8 +16,8 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 
-import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -38,9 +36,7 @@ public class CommandContext {
 
 	private CommandPrompt commandPrompt;
 
-	private boolean autoCommandEnabled;
-
-	private String priorCommand;
+	private String priorShortcut;
 
 	private DesignTool lastActiveDesignTool;
 
@@ -54,11 +50,7 @@ public class CommandContext {
 		this.product = product;
 		this.designContext = designContext;
 		this.commandStack = new LinkedBlockingDeque<>();
-		this.priorCommand = TextUtil.EMPTY;
-
-		Settings productSettings = product.getSettings();
-		autoCommandEnabled = productSettings.get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
-		productSettings.register( "command-auto-start", e -> setAutoCommandEnabled( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+		this.priorShortcut = TextUtil.EMPTY;
 	}
 
 	public ProgramProduct getProduct() {
@@ -79,17 +71,12 @@ public class CommandContext {
 	}
 
 	public void cancel() {
-		// Cancel the command stack
 		commandStack.forEach( c -> Fx.run( () -> c.getTool().setCursor( Cursor.DEFAULT ) ) );
-		getCommandPrompt().setPrompt( TextUtil.EMPTY );
-		//isAutoCommandSafe = true;
 		commandStack.clear();
-		//valueStack.clear();
 
-		// Clear the design selection
 		getDesignContext().getDesign().clearSelected();
-		// Clear the command prompt
 		getCommandPrompt().clear();
+		setInputMode( false );
 	}
 
 	public void enter() {
@@ -106,17 +93,13 @@ public class CommandContext {
 
 	public void repeat() {
 		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
-			doCommand( getPriorCommand() );
+			doCommand( getPriorShortcut() );
 			getCommandPrompt().clear();
 		}
 	}
 
 	public boolean isAutoCommandEnabled() {
-		return autoCommandEnabled;
-	}
-
-	public void setAutoCommandEnabled( boolean autoCommandEnabled ) {
-		this.autoCommandEnabled = autoCommandEnabled;
+		return getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 	}
 
 	void text( String text ) {
@@ -127,11 +110,16 @@ public class CommandContext {
 	}
 
 	void handle( KeyEvent event ) {
+		Command currentCommand = getCurrentCommand();
+		if( currentCommand != null ) currentCommand.handle( event );
+
 		doProcessKeyEvent( event );
 	}
 
 	void handle( MouseEvent event ) {
-		// TODO Implement CommandContext.handle( MouseEvent )
+		Command currentCommand = getCurrentCommand();
+		if( currentCommand != null ) currentCommand.handle( event );
+
 		DesignTool tool = (DesignTool)event.getSource();
 		Point3D point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
 		if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) setAnchor( point );
@@ -139,7 +127,8 @@ public class CommandContext {
 	}
 
 	void handle( MouseDragEvent event ) {
-		// TODO Implement CommandContext.handle( MouseDragEvent )
+		Command currentCommand = getCurrentCommand();
+		if( currentCommand != null ) currentCommand.handle( event );
 	}
 
 	void handle( ScrollEvent event ) {
@@ -166,7 +155,7 @@ public class CommandContext {
 		lastActiveDesignTool = tool;
 	}
 
-	Point3D getMouse() {
+	public Point3D getMouse() {
 		return mouse;
 	}
 
@@ -174,52 +163,13 @@ public class CommandContext {
 		mouse = point;
 	}
 
-	Point3D getAnchor() {
+	public Point3D getAnchor() {
 		return anchor;
 	}
 
 	void setAnchor( Point3D anchor ) {
+		if( isInputMode() ) doCommand( new ValueCommand(), anchor );
 		this.anchor = anchor;
-	}
-
-	Point3D parsePoint( String input ) {
-		input = Objects.requireNonNull( input ).trim();
-
-		try {
-			boolean relative = false;
-			boolean polar = false;
-
-			if( input.charAt( 0 ) == '@' ) {
-				input = input.substring( 1 ).trim();
-				relative = true;
-			}
-			if( input.charAt( 0 ) == '>' || input.charAt( 0 ) == '<' ) {
-				// Modifier > is for polar coords
-				input = input.substring( 1 ).trim();
-				polar = true;
-			}
-
-			String[] coords = input.split( "," );
-			Point3D point = switch( coords.length ) {
-				case 1 -> new Point3D( MathEx.parse( coords[ 0 ] ), 0, 0 );
-				case 2 -> new Point3D( MathEx.parse( coords[ 0 ] ), MathEx.parse( coords[ 1 ] ), 0 );
-				case 3 -> new Point3D( MathEx.parse( coords[ 0 ] ), MathEx.parse( coords[ 1 ] ), MathEx.parse( coords[ 2 ] ) );
-				default -> null;
-			};
-
-			if( point == null ) return null;
-			if( polar ) point = fromPolar( point );
-			if( relative ) point = getAnchor().add( point );
-			return point;
-		} catch( ParseException exception ) {
-			return null;
-		}
-	}
-
-	Point3D fromPolar( Point3D point ) {
-		double angle = point.getX();
-		double radius = point.getY();
-		return new Point3D( radius * Math.cos( angle ), radius * Math.sin( angle ), 0 );
 	}
 
 	private boolean isInputMode() {
@@ -236,7 +186,7 @@ public class CommandContext {
 		Class<? extends Command> commandClass = CommandMap.get( input );
 
 		if( commandClass != null ) {
-			priorCommand = input;
+			priorShortcut = input;
 			doCommand( getLastActiveDesignTool(), commandClass );
 		} else {
 			log.log( Log.WARN, "Unknown command=" + input );
@@ -257,11 +207,39 @@ public class CommandContext {
 	}
 
 	private void doCommand( DesignTool tool, Command command, Object... parameters ) {
+		checkForCommonProblems( tool, command, parameters );
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
 			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
+	}
+
+	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters) {
+		if( command instanceof ValueCommand && commandStack.isEmpty() ) {
+			log.log( Log.WARN, "There is not a command waiting for the value: " + Arrays.toString( parameters ) );
+		}
+	}
+
+	private Object doProcessCommands() throws Exception {
+		Object result = null;
+		try {
+			for( CommandExecuteRequest request : new ArrayList<>( commandStack ) ) {
+				setInputMode( request.getCommand().isInputCommand() );
+				result = request.execute( result );
+				if( result == Command.INCOMPLETE ) break;
+				commandStack.remove( request );
+			}
+		} catch( Exception exception ) {
+			cancel();
+			throw exception;
+		}
+		return result;
+	}
+
+	private Command getCurrentCommand() {
+		CommandExecuteRequest request = commandStack.peek();
+		return request == null ? null : request.getCommand();
 	}
 
 	private void doProcessKeyEvent( KeyEvent event ) {
@@ -282,21 +260,8 @@ public class CommandContext {
 		}
 	}
 
-	private String getPriorCommand() {
-		return priorCommand;
-	}
-
-	private Object doProcessCommands() throws Exception {
-		Object result = null;
-		log.log( Log.WARN, "Command stack size=" + commandStack.size() );
-		for( CommandExecuteRequest request : new ArrayList<>( commandStack ) ) {
-			setInputMode( request.getCommand().isInputCommand() );
-			result = request.execute( result );
-			if( result == Command.INCOMPLETE ) break;
-			commandStack.remove( request );
-			setInputMode( false );
-		}
-		return result;
+	private String getPriorShortcut() {
+		return priorShortcut;
 	}
 
 	private static class CommandExecuteRequest {
@@ -307,7 +272,7 @@ public class CommandContext {
 
 		private final Command command;
 
-		private final Object[] parameters;
+		private Object[] parameters;
 
 		public CommandExecuteRequest( CommandContext context, DesignTool tool, Command command, Object... parameters ) {
 			this.context = context;
@@ -329,11 +294,8 @@ public class CommandContext {
 		}
 
 		public Object execute( Object priorResult ) throws Exception {
-			// No extra parameters
-			if( priorResult == null ) return command.execute( context, tool, parameters );
-
-			// Append prior result
-			return command.execute( context, tool, ArrayUtil.append( parameters, priorResult ) );
+			if( priorResult != null ) parameters = ArrayUtil.append( parameters, priorResult );
+			return command.execute( context, tool, parameters );
 		}
 
 	}

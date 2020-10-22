@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.math.Points;
+import com.avereon.cartesia.data.DesignPoints;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.layout.Region;
@@ -16,10 +16,10 @@ public class ConstructionPoint extends Region {
 	private DoubleProperty size;
 
 	public ConstructionPoint() {
-		this( Points.Type.X );
+		this( DesignPoints.Type.X );
 	}
 
-	ConstructionPoint( Points.Type type ) {
+	ConstructionPoint( DesignPoints.Type type ) {
 		getStyleClass().addAll( "construction-point" );
 		setManaged( false );
 		setType( type );
@@ -38,7 +38,7 @@ public class ConstructionPoint extends Region {
 		return size;
 	}
 
-	private void setType( Points.Type type ) {
+	private void setType( DesignPoints.Type type ) {
 		getChildren().addAll( getShapes( type ) );
 	}
 
@@ -46,8 +46,8 @@ public class ConstructionPoint extends Region {
 		return 0.5 * getSize();
 	}
 
-	private Collection<Shape> getShapes( Points.Type type ) {
-		return Set.of( Points.createPoint( type, 0, 0, getRadius() ) );
+	private Collection<Shape> getShapes( DesignPoints.Type type ) {
+		return Set.of( DesignPoints.createPoint( type, 0, 0, getRadius() ) );
 	}
 
 }
