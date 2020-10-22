@@ -81,8 +81,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private ReticleCursor reticle;
 
-	private Point3D mousePoint;
-
 	private Point3D dragAnchor;
 
 	private Point3D viewAnchor;
@@ -135,7 +133,7 @@ public abstract class DesignTool extends GuidedTool {
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
 		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
 
-		//addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		//addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 	}
@@ -155,10 +153,6 @@ public abstract class DesignTool extends GuidedTool {
 	@Deprecated
 	public CommandPrompt getCommandPrompt() {
 		return getDesignContext().getCommandPrompt();
-	}
-
-	public Point3D getWorldPointAtMouse() {
-		return mousePoint;
 	}
 
 	public Point3D getPan() {

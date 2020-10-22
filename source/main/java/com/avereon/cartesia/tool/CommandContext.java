@@ -46,6 +46,8 @@ public class CommandContext {
 
 	private boolean inputMode;
 
+	private Point3D mouse;
+
 	private Point3D anchor;
 
 	public CommandContext( ProgramProduct product, DesignContext designContext ) {
@@ -92,9 +94,8 @@ public class CommandContext {
 
 	public void enter() {
 		String input = getCommandPrompt().getText();
-		if( TextUtil.isEmpty( input ) ) {
-			// TODO Submit the world mouse point as a value
-			//evaluate( tool, tool.getWorldPointAtMouse() );
+		if( input.isEmpty() ) {
+			doCommand( new ValueCommand(), getMouse() );
 		} else if( isInputMode() ) {
 			doCommand( new ValueCommand(), input );
 		} else {
@@ -131,6 +132,10 @@ public class CommandContext {
 
 	void handle( MouseEvent event ) {
 		// TODO Implement CommandContext.handle( MouseEvent )
+		DesignTool tool = (DesignTool)event.getSource();
+		Point3D point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
+		if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) setAnchor( point );
+		setMouse( point );
 	}
 
 	void handle( MouseDragEvent event ) {
@@ -159,6 +164,18 @@ public class CommandContext {
 
 	void setLastActiveDesignTool( DesignTool tool ) {
 		lastActiveDesignTool = tool;
+	}
+
+	Point3D getMouse() {
+		return mouse;
+	}
+
+	void setMouse( Point3D point ) {
+		mouse = point;
+	}
+
+	Point3D getAnchor() {
+		return anchor;
 	}
 
 	void setAnchor( Point3D anchor ) {
@@ -192,7 +209,7 @@ public class CommandContext {
 
 			if( point == null ) return null;
 			if( polar ) point = fromPolar( point );
-			if( relative ) point = anchor.add( point );
+			if( relative ) point = getAnchor().add( point );
 			return point;
 		} catch( ParseException exception ) {
 			return null;

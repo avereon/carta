@@ -9,7 +9,7 @@ public class SnapNearestPoint extends OldCommand {
 
 	@Override
 	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		processor.pushValue( tool, findNearest( tool, tool.getWorldPointAtMouse() ) );
+		//processor.pushValue( tool, findNearest( tool, tool.getWorldPointAtMouse() ) );
 	}
 
 	private Point3D findNearest( DesignTool tool, Point3D point ) {
