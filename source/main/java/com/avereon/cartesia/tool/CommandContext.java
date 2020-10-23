@@ -49,12 +49,12 @@ public class CommandContext {
 		this.priorShortcut = TextUtil.EMPTY;
 	}
 
-	public ProgramProduct getProduct() {
+	public final ProgramProduct getProduct() {
 		return product;
 	}
 
 	public CommandPrompt getCommandPrompt() {
-		if( commandPrompt == null ) this.commandPrompt = new CommandPrompt( product, this );
+		if( commandPrompt == null ) this.commandPrompt = new CommandPrompt( getProduct(), this );
 		return commandPrompt;
 	}
 
@@ -68,9 +68,7 @@ public class CommandContext {
 			t.getDesign().clearSelected();
 		} );
 		commandStack.clear();
-
-		getCommandPrompt().clear();
-		setInputMode( false );
+		reset();
 	}
 
 	public void enter() {
@@ -82,14 +80,11 @@ public class CommandContext {
 		} else {
 			doCommand( input );
 		}
-		getCommandPrompt().clear();
+		reset();
 	}
 
 	public void repeat() {
-		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
-			doCommand( getPriorShortcut() );
-			getCommandPrompt().clear();
-		}
+		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) doCommand( getPriorShortcut() );
 	}
 
 	public boolean isSelectMode() {
@@ -170,6 +165,11 @@ public class CommandContext {
 		this.anchor = anchor;
 	}
 
+	private void reset() {
+		getCommandPrompt().clear();
+		setInputMode( false );
+	}
+
 	private boolean isInputMode() {
 		return inputMode;
 	}
@@ -227,6 +227,7 @@ public class CommandContext {
 				result = request.execute( result );
 				if( result == Command.INCOMPLETE ) break;
 				commandStack.remove( request );
+				reset();
 			}
 		} catch( Exception exception ) {
 			cancel();
