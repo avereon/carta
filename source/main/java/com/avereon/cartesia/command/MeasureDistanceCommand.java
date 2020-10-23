@@ -20,7 +20,6 @@ public class MeasureDistanceCommand extends MeasureCommand {
 			promptForValue( context, tool, BundleKey.PROMPT, "start-point" );
 			return incomplete();
 		}
-
 		if( parameters.length < 2 ) {
 			promptForValue( context, tool, BundleKey.PROMPT, "end-point" );
 			return incomplete();
@@ -36,7 +35,7 @@ public class MeasureDistanceCommand extends MeasureCommand {
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return setComplete();
+		return complete();
 	}
 
 }

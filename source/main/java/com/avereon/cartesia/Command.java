@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.command.PromptForValueCommand;
+import com.avereon.cartesia.command.PromptCommand;
 import com.avereon.cartesia.math.Geometry;
 import com.avereon.cartesia.math.Maths;
 import com.avereon.cartesia.tool.CommandContext;
@@ -16,8 +16,6 @@ public class Command {
 	public static final Object INCOMPLETE = new Object();
 
 	private static final Object COMPLETE = new Object();
-
-	private boolean complete;
 
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		return null;
@@ -37,8 +35,7 @@ public class Command {
 		return INCOMPLETE;
 	}
 
-	protected Object setComplete() {
-		complete = true;
+	protected Object complete() {
 		return COMPLETE;
 	}
 
@@ -60,7 +57,7 @@ public class Command {
 
 		// At this point we need to wait around, not on a thread, for the user to enter the value
 		// This should probably be done with a prompt command
-		context.submit( tool, new PromptForValueCommand( prompt ) );
+		context.submit( tool, new PromptCommand( prompt ) );
 	}
 
 }

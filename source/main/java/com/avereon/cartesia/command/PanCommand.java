@@ -1,30 +1,30 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.CommandProcessor;
-import com.avereon.cartesia.OldCommand;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.notice.Notice;
-import javafx.geometry.Point3D;
 
-public class PanCommand extends OldCommand {
+import java.text.ParseException;
 
-//	@Override
-//	public List<OldCommand> getPreSteps( DesignTool tool ) {
-//		return List.of( new PromptForPointCommand( tool, "pan-point" ) );
-//	}
+public class PanCommand extends CameraCommand {
 
 	@Override
-	public void evaluate( CommandProcessor processor, DesignTool tool ) {
-		Object origin = processor.pullValue();
+	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		if( parameters.length < 1 ) {
+			promptForValue( context, tool, BundleKey.PROMPT, "pan-point" );
+			return incomplete();
+		}
 
-		if( origin instanceof Point3D ) {
-			tool.setPan( tool.getPan().subtract( (Point3D)origin ) );
-		} else {
+		try {
+			tool.setPan( tool.getPan().subtract( asPoint( parameters[0], context.getAnchor() ) ) );
+		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
-			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", origin );
+			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", exception );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
+
+		return complete();
 	}
 
 }

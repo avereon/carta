@@ -425,7 +425,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private boolean isSelectMode() {
-		return getDesign().getCommandProcessor().isSelecting();
+		return getCommandContext().isSelectMode();
 	}
 
 	private boolean isWindowSelectMode( MouseEvent event ) {

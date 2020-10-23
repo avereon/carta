@@ -27,7 +27,7 @@ public class CameraZoomCommand extends CameraCommand {
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return setComplete();
+		return complete();
 	}
 
 	protected void zoomByFactor( DesignTool tool, double factor, Object... parameters ) throws Exception {

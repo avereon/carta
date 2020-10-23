@@ -92,6 +92,10 @@ public class CommandContext {
 		}
 	}
 
+	public boolean isSelectMode() {
+		return commandStack.isEmpty();
+	}
+
 	public boolean isAutoCommandEnabled() {
 		return getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 	}

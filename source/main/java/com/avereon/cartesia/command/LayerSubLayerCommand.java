@@ -10,8 +10,8 @@ public class LayerSubLayerCommand extends LayerCreateCommand {
 	 * @param currentLayer The current layer
 	 * @param yy The new layer
 	 */
-	void addLayer( DesignLayer currentLayer, DesignLayer yy ) {
-		currentLayer.addLayer( yy );
+	DesignLayer addLayer( DesignLayer currentLayer, DesignLayer yy ) {
+		return currentLayer.addLayer( yy );
 	}
 
 }

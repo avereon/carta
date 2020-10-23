@@ -87,7 +87,7 @@ public class CommandContextTest implements NumericTest {
 		public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 			if( parameters.length < needed ) return incomplete();
 			this.values = parameters;
-			return setComplete();
+			return complete();
 		}
 
 		public Object[] getValues() {

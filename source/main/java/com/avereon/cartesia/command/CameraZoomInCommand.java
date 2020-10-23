@@ -17,7 +17,7 @@ public class CameraZoomInCommand extends CameraZoomCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		zoomByFactor( tool, DesignPane.ZOOM_IN_FACTOR, parameters );
-		return setComplete();
+		return complete();
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.CommandProcessor;
-import com.avereon.cartesia.DefaultCommandProcessor;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
@@ -28,9 +26,6 @@ public abstract class Design extends IdNode {
 
 	private static final System.Logger log = Log.get();
 
-	@Deprecated
-	private final CommandProcessor commandProcessor;
-
 	private DesignContext context;
 
 	public Design() {
@@ -42,8 +37,6 @@ public abstract class Design extends IdNode {
 
 		// Default values
 		setDesignUnit( DEFAULT_DESIGN_UNIT );
-
-		this.commandProcessor = new DefaultCommandProcessor();
 	}
 
 	public String getName() {
@@ -71,12 +64,6 @@ public abstract class Design extends IdNode {
 
 	public DesignLayer getRootLayer() {
 		return getValue( ROOT_LAYER );
-	}
-
-	// TODO Finish removing this method
-	@Deprecated
-	public CommandProcessor getCommandProcessor() {
-		return commandProcessor;
 	}
 
 	// TODO Finish removing this method
