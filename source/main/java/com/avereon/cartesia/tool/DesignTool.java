@@ -128,15 +128,6 @@ public abstract class DesignTool extends GuidedTool {
 			.register( SELECT_APERTURE_UNIT,
 				e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
 			);
-
-		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
-		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
-		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
-		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
-
-		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
-		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
-		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 	}
 
 	public final Design getDesign() {
@@ -289,6 +280,16 @@ public abstract class DesignTool extends GuidedTool {
 			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 
+
+		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
+		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
+		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
+		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
+
+		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
+
 		designPane.recenter();
 
 		if( isActive() ) activate();
@@ -328,7 +329,7 @@ public abstract class DesignTool extends GuidedTool {
 	protected void conceal() throws ToolException {
 		super.conceal();
 		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
-		if( isLastTool() ) unregisterStatusBarItems();
+		if( isReady() && isLastTool() ) unregisterStatusBarItems();
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {
