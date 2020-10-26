@@ -4,7 +4,6 @@ import com.avereon.cartesia.command.PromptCommand;
 import com.avereon.cartesia.math.Geometry;
 import com.avereon.cartesia.math.Maths;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
@@ -52,11 +51,6 @@ public class Command {
 
 	protected void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
 		String prompt = context.getProduct().rb().text( bundleKey, key );
-		DesignContext designContext = tool.getDesignContext();
-		designContext.getCommandPrompt().setPrompt( prompt );
-
-		// At this point we need to wait around, not on a thread, for the user to enter the value
-		// This should probably be done with a prompt command
 		context.submit( tool, new PromptCommand( prompt ) );
 	}
 

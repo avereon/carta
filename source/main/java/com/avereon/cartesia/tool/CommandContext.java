@@ -97,8 +97,9 @@ public class CommandContext {
 
 	void text( String text ) {
 		if( isAutoCommandEnabled() && CommandMap.hasCommand( text ) ) {
-			doCommand( text );
+			// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
 			getCommandPrompt().clear();
+			doCommand( text );
 		}
 	}
 
