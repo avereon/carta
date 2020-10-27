@@ -8,7 +8,6 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.Program;
@@ -252,7 +251,8 @@ public abstract class DesignTool extends GuidedTool {
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
 
-		getAsset().register( NodeEvent.VALUE_CHANGED, e -> updateActionStates() );
+		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
+		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
@@ -359,12 +359,6 @@ public abstract class DesignTool extends GuidedTool {
 		return (DesignShape)s.getParent().getProperties().get( DesignShapeView.DESIGN_DATA );
 	}
 
-	private void updateActionStates() {
-		deleteAction.updateEnabled();
-		undoAction.updateEnabled();
-		redoAction.updateEnabled();
-	}
-
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
 		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
@@ -461,7 +455,7 @@ public abstract class DesignTool extends GuidedTool {
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 			c.getAddedSubList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 		}
-		updateActionStates();
+		deleteAction.updateEnabled();
 	}
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
