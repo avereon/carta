@@ -27,6 +27,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
@@ -244,6 +245,14 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( x, y, z );
 	}
 
+	public void setPreview( Node preview ) {
+		designPane.addPreview( preview );
+	}
+
+	public void clearPreview() {
+		designPane.clearPreview();
+	}
+
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
@@ -318,6 +327,13 @@ public abstract class DesignTool extends GuidedTool {
 		requestFocus();
 	}
 
+	@Override
+	protected void conceal() throws ToolException {
+		super.conceal();
+		unregisterActions();
+		if( isReady() && isLastTool() ) unregisterStatusBarItems();
+	}
+
 	private void registerStatusBarItems() {
 		CommandPrompt prompt = getCommandPrompt();
 		getScene().addEventHandler( KeyEvent.ANY, prompt );
@@ -330,13 +346,6 @@ public abstract class DesignTool extends GuidedTool {
 		getScene().removeEventHandler( KeyEvent.ANY, prompt );
 		getWorkspace().getStatusBar().removeLeftItems( prompt );
 		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
-	}
-
-	@Override
-	protected void conceal() throws ToolException {
-		super.conceal();
-		unregisterActions();
-		if( isReady() && isLastTool() ) unregisterStatusBarItems();
 	}
 
 	private void registerActions() {

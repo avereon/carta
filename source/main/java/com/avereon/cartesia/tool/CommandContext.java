@@ -66,6 +66,7 @@ public class CommandContext {
 		commandStack.stream().filter( r -> r.getTool() != null ).map( CommandExecuteRequest::getTool ).forEach( t -> {
 			t.setCursor( Cursor.DEFAULT );
 			t.getDesign().clearSelected();
+			t.clearPreview();
 		} );
 		commandStack.clear();
 		reset();
@@ -111,8 +112,7 @@ public class CommandContext {
 	}
 
 	void handle( MouseEvent event ) {
-		Command currentCommand = getCurrentCommand();
-		if( currentCommand != null ) currentCommand.handle( event );
+		commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
 
 		DesignTool tool = (DesignTool)event.getSource();
 		Point3D point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );

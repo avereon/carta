@@ -360,6 +360,18 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
+	void addPreview(Node... preview ) {
+		Fx.run( () -> this.preview.getChildren().addAll( preview ) );
+	}
+
+	void removePreview( Node... preview ) {
+		Fx.run( () -> this.preview.getChildren().removeAll( preview ) );
+	}
+
+	void clearPreview() {
+		Fx.run( () -> preview.getChildren().clear() );
+	}
+
 	private List<Layer> getLayers( Layer root ) {
 		List<Layer> layers = new ArrayList<>();
 
