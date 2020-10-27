@@ -8,6 +8,7 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.data.NodeEvent;
 import com.avereon.util.Log;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.Program;
@@ -80,6 +81,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DeleteAction deleteAction;
 
+	private final UndoAction undoAction;
+
+	private final RedoAction redoAction;
+
 	private ReticleCursor reticle;
 
 	private Point3D dragAnchor;
@@ -102,6 +107,8 @@ public abstract class DesignTool extends GuidedTool {
 		this.currentLayer = new SimpleObjectProperty<>();
 
 		this.deleteAction = new DeleteAction( product.getProgram() );
+		this.undoAction = new UndoAction( product.getProgram() );
+		this.redoAction = new RedoAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectShapes );
@@ -245,6 +252,7 @@ public abstract class DesignTool extends GuidedTool {
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
 
+		getAsset().register( NodeEvent.VALUE_CHANGED, e -> updateActionStates() );
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
@@ -280,7 +288,6 @@ public abstract class DesignTool extends GuidedTool {
 			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 
-
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
 		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
 		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
@@ -303,7 +310,7 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void activate() throws ToolException {
 		super.activate();
-		pushAction( "delete", deleteAction );
+		registerActions();
 		if( isReady() ) {
 			getDesignContext().getCommandContext().setLastActiveDesignTool( this );
 			registerStatusBarItems();
@@ -328,8 +335,20 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void conceal() throws ToolException {
 		super.conceal();
-		getProgram().getActionLibrary().getAction( "delete" ).pullAction( deleteAction );
+		unregisterActions();
 		if( isReady() && isLastTool() ) unregisterStatusBarItems();
+	}
+
+	private void registerActions() {
+		pushAction( "delete", deleteAction );
+		pushAction( "undo", undoAction );
+		pushAction( "redo", redoAction );
+	}
+
+	private void unregisterActions() {
+		pullAction( "delete", deleteAction );
+		pullAction( "undo", undoAction );
+		pullAction( "redo", redoAction );
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {
@@ -342,6 +361,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void updateActionStates() {
 		deleteAction.updateEnabled();
+		undoAction.updateEnabled();
+		redoAction.updateEnabled();
 	}
 
 	private void setReticle( ReticleCursor reticle ) {
@@ -502,6 +523,42 @@ public abstract class DesignTool extends GuidedTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			doDeleteShapes( selectedShapes().stream().map( DesignTool::getDesignData ).collect( Collectors.toSet() ) );
+		}
+
+	}
+
+	private class UndoAction extends Action {
+
+		protected UndoAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getAsset().getUndoManager().isUndoAvailable();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getAsset().getUndoManager().undo();
+		}
+
+	}
+
+	private class RedoAction extends Action {
+
+		protected RedoAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getAsset().getUndoManager().isRedoAvailable();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getAsset().getUndoManager().redo();
 		}
 
 	}
