@@ -384,9 +384,9 @@ public abstract class DesignTool extends GuidedTool {
 	private void mousePress( MouseEvent event ) {
 		// Drag anchor is used by select, pan (and others)
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
-		selectWindow.resizeRelocate( 0, 0, 0, 0 );
+		selectWindow.hide();
 
-		if( isPanMouseEvent( event ) ) {
+		if( isPanMode( event ) ) {
 			viewAnchor = designPane.getViewPoint();
 		} else if( isSelectMode() ) {
 			mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
@@ -394,7 +394,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void mouseDrag( MouseEvent event ) {
-		if( isPanMouseEvent( event ) ) {
+		if( isPanMode( event ) ) {
 			designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
 		} else if( isWindowSelectMode( event ) ) {
 			updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
@@ -404,7 +404,7 @@ public abstract class DesignTool extends GuidedTool {
 	private void mouseRelease( MouseEvent event ) {
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) windowSelect( dragAnchor, mouse, !event.isControlDown() );
-		selectWindow.resizeRelocate( 0, 0, 0, 0 );
+		selectWindow.hide();
 		dragAnchor = null;
 	}
 
@@ -445,7 +445,7 @@ public abstract class DesignTool extends GuidedTool {
 		return event.isControlDown() && event.isPrimaryButtonDown();
 	}
 
-	private boolean isPanMouseEvent( MouseEvent event ) {
+	private boolean isPanMode( MouseEvent event ) {
 		return event.isShiftDown() && event.isPrimaryButtonDown() && !event.isStillSincePress();
 	}
 
@@ -509,7 +509,17 @@ public abstract class DesignTool extends GuidedTool {
 			setY( y );
 			setWidth( w );
 			setHeight( h );
+			setVisible( true );
 		}
+
+		public void hide() {
+			setX( 0 );
+			setY( 0 );
+			setWidth( 0 );
+			setHeight( 0 );
+			setVisible( false );
+		}
+
 	}
 
 	private class DeleteAction extends Action {
