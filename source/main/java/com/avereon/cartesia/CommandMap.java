@@ -6,11 +6,9 @@ import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.ProgramProduct;
-import javafx.event.EventType;
 import javafx.scene.input.*;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandMap {
@@ -21,7 +19,7 @@ public class CommandMap {
 
 	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
-	private static final Map<EventKey, String> eventActions = new ConcurrentHashMap<>();
+	private static final Map<CommandEventKey, String> eventActions = new ConcurrentHashMap<>();
 
 	public static void load( ProgramProduct product ) {
 		// High level letters
@@ -34,33 +32,33 @@ public class CommandMap {
 		// s - snap
 		// t - text
 		// v - curve
+		// w - path?
 		// y - layer
 		// z - zoom
 
 		// Event type actions
-		add( new EventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "pen-down" );
-		add( new EventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
-		add( new EventKey( ScrollEvent.SCROLL ), "camera-zoom-gesture" );
-		add( new EventKey( ZoomEvent.ZOOM ), "camera-zoom-gesture" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "pen-down" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
 
-		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK, "select" );
-		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON3_DOWN_MASK, "snap-auto-nearest" );
-		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.CTRL_DOWN_MASK, "camera-spin" );
-		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.SHIFT_DOWN_MASK, "camera-move" );
-		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL, "camera-zoom-wheel" );
-		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL + MouseEvent.CTRL_DOWN_MASK, "camera-walk-wheel" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-spin" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
+		add( new CommandEventKey( ScrollEvent.SCROLL ), "camera-zoom" );
+		add( new CommandEventKey( ZoomEvent.ZOOM ), "camera-zoom" );
+		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
+		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 
 		// Basic command
 		add( product, "pen-down", PenDownCommand.class );
 
 		// View commands
-		add( product, "camera-view-pan", PanCommand.class );
+		add( product, "camera-move", CameraMoveCommand.class );
+		//add( product, "camera-spin", CameraSpinCommand.class );
 		add( product, "camera-view-point", ViewPointCommand.class );
+		//add( product, "camera-walk", CameraWalkCommand.class );
 		add( product, "camera-zoom", CameraZoomCommand.class );
 		add( product, "camera-zoom-in", CameraZoomInCommand.class );
 		add( product, "camera-zoom-out", CameraZoomOutCommand.class );
 		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
-		add( product, "camera-zoom-gesture", CameraZoomGestureCommand.class );
 
 		// Measure commands
 		//add( product, "measure-angle", MeasureAngleCommand.class );
@@ -103,17 +101,17 @@ public class CommandMap {
 	}
 
 	public static CommandMapping get( InputEvent event ) {
-		return getActionCommand( eventActions.getOrDefault( new EventKey( event ), TextUtil.EMPTY ) );
+		return getActionCommand( eventActions.getOrDefault( CommandEventKey.of( event ), TextUtil.EMPTY ) );
 	}
 
-	private static  CommandMapping getActionCommand( String action ) {
+	private static CommandMapping getActionCommand( String action ) {
 		if( TextUtil.isEmpty( action ) ) return null;
 		CommandMapping mapping = actionCommands.get( action );
 		if( mapping == null ) log.log( Log.WARN, "No command for action: " + action );
 		return mapping;
 	}
 
-	private static void add( EventKey key, String action ) {
+	private static void add( CommandEventKey key, String action ) {
 		eventActions.put( key, action );
 	}
 
@@ -134,70 +132,6 @@ public class CommandMap {
 				existing.getCommand().getName()
 			);
 		}
-	}
-
-	private static class EventKey {
-
-		private final EventType<?> type;
-
-		private boolean isControl;
-
-		private boolean isShift;
-
-		private boolean isAlt;
-
-		private boolean isMeta;
-
-		private boolean isDirect;
-
-		private boolean isInertia;
-
-		private MouseButton mouseButton;
-
-		public EventKey( InputEvent event ) {
-			this.type = event.getEventType();
-			if( event instanceof MouseEvent ) {
-				MouseEvent mouse = (MouseEvent)event;
-				this.isControl = mouse.isControlDown();
-				this.isShift = mouse.isShiftDown();
-				this.isAlt = mouse.isAltDown();
-				this.isMeta = mouse.isMetaDown();
-				this.mouseButton = mouse.getButton();
-			}
-			if( event instanceof GestureEvent ) {
-				GestureEvent gestureEvent = (GestureEvent)event;
-				this.isControl = gestureEvent.isControlDown();
-				this.isShift = gestureEvent.isShiftDown();
-				this.isAlt = gestureEvent.isAltDown();
-				this.isMeta = gestureEvent.isMetaDown();
-				this.isDirect = gestureEvent.isDirect();
-				this.isInertia = gestureEvent.isInertia();
-			}
-		}
-
-		public EventKey( EventType<?> type ) {
-			this.type = type;
-		}
-
-		public EventKey( EventType<?> type, MouseButton button ) {
-			this.type = type;
-			this.mouseButton = button;
-		}
-
-		@Override
-		public boolean equals( Object other ) {
-			if( this == other ) return true;
-			if( other == null || getClass() != other.getClass() ) return false;
-			EventKey eventKey = (EventKey)other;
-			return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
-				.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
-		}
-
-		@Override
-		public int hashCode() {
-			return Objects.hash( type, isControl, isShift, isAlt, isMeta, isDirect, isInertia, mouseButton );
-		}
-
 	}
 
 }

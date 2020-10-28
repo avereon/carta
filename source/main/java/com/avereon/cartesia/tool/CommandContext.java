@@ -83,6 +83,7 @@ public class CommandContext {
 
 	public void repeat() {
 		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) doCommand( getPriorShortcut() );
+		reset();
 	}
 
 	public boolean isSelectMode() {
@@ -108,12 +109,13 @@ public class CommandContext {
 	void handle( InputEvent event ) {
 		CommandMapping mapping = CommandMap.get( event );
 		if( mapping != null ) doCommand( event, mapping.getCommand(), mapping.getParameters() );
+		event.consume();
 	}
 
 	void handle( MouseEvent event ) {
 		DesignTool tool = (DesignTool)event.getSource();
 		setMouse( tool.mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
-		commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
+		if( !event.isConsumed() ) commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
 		handle( (InputEvent)event );
 	}
 
@@ -188,7 +190,9 @@ public class CommandContext {
 		checkForCommonProblems( tool, command, parameters );
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
-			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
+			CommandExecuteRequest request = new CommandExecuteRequest( this, tool, command, parameters );
+			commandStack.remove( request );
+			commandStack.push( request );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 	}
@@ -278,6 +282,16 @@ public class CommandContext {
 			if( priorResult != null ) parameters = ArrayUtil.append( parameters, priorResult );
 			return command.execute( context, tool, parameters );
 		}
+
+//		@Override
+//		public int hashCode() {
+//			return command.hashCode();
+//		}
+//
+//		@Override
+//		public boolean equals( Object other ) {
+//			return command.equals( other );
+//		}
 
 	}
 

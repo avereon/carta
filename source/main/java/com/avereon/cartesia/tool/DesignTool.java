@@ -86,7 +86,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private Point3D dragAnchor;
 
-	private Point3D viewAnchor;
+	//private Point3D viewAnchor;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -223,6 +223,18 @@ public abstract class DesignTool extends GuidedTool {
 	 */
 	public void zoom( Point3D anchor, double factor ) {
 		Fx.run( () -> designPane.zoom( anchor, factor ) );
+	}
+
+	/**
+	 * Pan the view by mouse coordinates.
+	 *
+	 * @param viewAnchor
+	 * @param dragAnchor
+	 * @param x
+	 * @param y
+	 */
+	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
+		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, x, y ) );
 	}
 
 	public Point3D mouseToWorld( double x, double y, double z ) {
@@ -384,7 +396,7 @@ public abstract class DesignTool extends GuidedTool {
 		selectWindow.hide();
 
 		if( isPanMode( event ) ) {
-			viewAnchor = designPane.getViewPoint();
+			//viewAnchor = designPane.getViewPoint();
 		} else if( isSelectMode() ) {
 			mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
 		}
@@ -392,7 +404,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void mouseDrag( MouseEvent event ) {
 		if( isPanMode( event ) ) {
-			designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
+			//designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
 		} else if( isWindowSelectMode( event ) ) {
 			updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
 		}
