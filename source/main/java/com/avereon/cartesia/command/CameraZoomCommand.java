@@ -5,7 +5,6 @@ import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-import javafx.scene.input.GestureEvent;
 
 import java.text.ParseException;
 
@@ -30,21 +29,8 @@ public class CameraZoomCommand extends CameraCommand {
 		return complete();
 	}
 
-	protected void zoomByFactor( DesignTool tool, double factor, Object... parameters ) {
-		Point3D viewpoint = tool.getViewPoint();
-		double x = viewpoint.getX();
-		double y = viewpoint.getY();
-		double z = viewpoint.getZ();
-
-		if( parameters.length ==1 && parameters[0] instanceof GestureEvent ) {
-			GestureEvent event = (GestureEvent)parameters[0];
-			Point3D point = tool.mouseToWorld( event.getX(), event.getY(), 0 );
-			x = point.getX();
-			y = point.getY();
-			z = point.getZ();
-		}
-
-		tool.zoom( x, y, z, factor );
+	protected void zoomByFactor( DesignTool tool, Point3D point, double factor ) {
+		tool.zoom( point, factor );
 	}
 
 }

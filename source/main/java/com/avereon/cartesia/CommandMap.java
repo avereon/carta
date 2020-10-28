@@ -14,22 +14,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandMap {
 
-	private static final EventType<ZoomEvent> ZOOM_IN = new EventType<>( ZoomEvent.ZOOM, "ZOOM_IN" );
-
-	private static final EventType<ZoomEvent> ZOOM_OUT = new EventType<>( ZoomEvent.ZOOM, "ZOOM_OUT" );
-
 	private static final System.Logger log = Log.get();
-
-	private static final Map<String, Class<? extends Command>> commands = new ConcurrentHashMap<>();
 
 	private static final Map<String, CommandMapping> actionCommands = new ConcurrentHashMap<>();
 
 	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
 	private static final Map<EventKey, String> eventActions = new ConcurrentHashMap<>();
-
-	@Deprecated
-	private static final Map<EventType<? extends InputEvent>, String> inputTypeActions = new ConcurrentHashMap<>();
 
 	public static void load( ProgramProduct product ) {
 		// High level letters
@@ -46,9 +37,9 @@ public class CommandMap {
 		// z - zoom
 
 		// Event type actions
-		add( new EventKey( ZOOM_IN ), "camera-zoom-in" );
-		add( new EventKey( ZOOM_OUT ), "camera-zoom-out" );
 		add( new EventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "pen-down" );
+		add( new EventKey( ScrollEvent.SCROLL ), "camera-zoom-gesture" );
+		add( new EventKey( ZoomEvent.ZOOM ), "camera-zoom-gesture" );
 
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK, "select" );
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON3_DOWN_MASK, "snap-auto-nearest" );
@@ -67,6 +58,7 @@ public class CommandMap {
 		add( product, "camera-zoom-in", CameraZoomInCommand.class );
 		add( product, "camera-zoom-out", CameraZoomOutCommand.class );
 		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
+		add( product, "camera-zoom-gesture", CameraZoomGestureCommand.class );
 
 		// Measure commands
 		//add( product, "measure-angle", MeasureAngleCommand.class );
@@ -123,10 +115,6 @@ public class CommandMap {
 		eventActions.put( key, action );
 	}
 
-	private static void add( EventType<? extends InputEvent> type, String action ) {
-		inputTypeActions.put( type, action );
-	}
-
 	private static void add( ProgramProduct product, String action, Class<? extends Command> command, Object... parameters ) {
 		String shortcut = product.rb().textOr( BundleKey.ACTION, action + Action.SHORTCUT_SUFFIX, "" ).toLowerCase();
 
@@ -148,7 +136,7 @@ public class CommandMap {
 
 	private static class EventKey {
 
-		private EventType<?> type;
+		private final EventType<?> type;
 
 		private boolean isControl;
 
@@ -182,22 +170,6 @@ public class CommandMap {
 				this.isMeta = gestureEvent.isMetaDown();
 				this.isDirect = gestureEvent.isDirect();
 				this.isInertia = gestureEvent.isInertia();
-				if( gestureEvent instanceof ScrollEvent ) {
-					// Zoom in is the equivalent of moving forward (positive delta y)
-					// Zoom out is the equivalent of moving backward (negative delta y)
-					ScrollEvent scrollEvent = (ScrollEvent)gestureEvent;
-					double deltaY = scrollEvent.getDeltaY();
-					if( this.type == ScrollEvent.SCROLL && deltaY != 0.0 ) {
-						this.type = deltaY > 0 ? CommandMap.ZOOM_IN : CommandMap.ZOOM_OUT;
-					}
-				}
-				if( gestureEvent instanceof ZoomEvent ) {
-					ZoomEvent zoomEvent = (ZoomEvent)gestureEvent;
-					double zoomFactor = zoomEvent.getZoomFactor();
-					if( this.type == ZoomEvent.ZOOM && zoomFactor != 0.0 ) {
-						this.type = zoomFactor > 0 ? CommandMap.ZOOM_IN : CommandMap.ZOOM_OUT;
-					}
-				}
 			}
 		}
 

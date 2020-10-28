@@ -214,24 +214,11 @@ public abstract class DesignTool extends GuidedTool {
 	/**
 	 * Change the zoom value by a factor.
 	 *
-	 * @param x
-	 * @param y
+	 * @param anchor
 	 * @param factor
 	 */
-	public void zoom( double x, double y, double factor ) {
-		zoom( x, y, 0, factor );
-	}
-
-	/**
-	 * Change the zoom value by a factor.
-	 *
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @param factor
-	 */
-	public void zoom( double x, double y, double z, double factor ) {
-		Fx.run( () -> designPane.zoom( x, y, z, factor ) );
+	public void zoom( Point3D anchor, double factor ) {
+		Fx.run( () -> designPane.zoom( anchor, factor ) );
 	}
 
 	public Point3D mouseToWorld( double x, double y, double z ) {

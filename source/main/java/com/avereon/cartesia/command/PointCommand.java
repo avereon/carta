@@ -23,14 +23,17 @@ public class PointCommand extends DrawCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			tool.setPreview( preview = DesignPoints.createPoint( DesignPoints.Type.CROSS, 0, 0, 0 ) );
+			Point3D mouse = context.getMouse();
+			tool.setPreview( preview = DesignPoints.createPoint( DesignPoints.Type.CROSS, 0, 0, 1 ) );
+			preview.setLayoutX( mouse.getX() );
+			preview.setLayoutY( mouse.getY() );
 			promptForValue( context, tool, BundleKey.PROMPT, "select-point" );
 			return incomplete();
 		}
 
 		try {
 			tool.clearPreview();
-			DesignPoint point = new DesignPoint( asPoint( parameters[0], context.getAnchor() ) );
+			DesignPoint point = new DesignPoint( asPoint( parameters[ 0 ], context.getAnchor() ) );
 			tool.getCurrentLayer().addShape( point );
 		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
@@ -43,13 +46,13 @@ public class PointCommand extends DrawCommand {
 
 	@Override
 	public void handle( MouseEvent event ) {
-		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED) {
+		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			Fx.run( () -> {
 				DesignTool tool = (DesignTool)event.getSource();
 				Point3D mouse = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
 				preview.setLayoutX( mouse.getX() );
 				preview.setLayoutY( mouse.getY() );
-			});
+			} );
 		}
 	}
 

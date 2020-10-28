@@ -220,7 +220,9 @@ public class CommandContext {
 				result = request.execute( result );
 				if( result == Command.INCOMPLETE ) break;
 				commandStack.remove( request );
-				reset();
+
+				// FIXME This breaks the unit tests
+				//reset();
 			}
 		} catch( Exception exception ) {
 			cancel();

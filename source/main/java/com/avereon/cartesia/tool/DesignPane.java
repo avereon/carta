@@ -258,8 +258,20 @@ public class DesignPane extends StackPane {
 	 * @param z The world z coordinate of the zoom
 	 * @param factor The zoom factor
 	 */
+	@Deprecated
 	void zoom( double x, double y, double z, double factor ) {
-		Point3D anchor = new Point3D( x, y, z );
+		zoom( new Point3D(x,y,z), factor );
+	}
+
+	/**
+	 * Change the zoom by the zoom factor. The zoom is centered on the provided
+	 * anchor point in world coordinates. The current zoom is multiplied by the
+	 * zoom factor.
+	 *
+	 * @param anchor The anchor point in world coordinates
+	 * @param factor The zoom factor
+	 */
+	void zoom( Point3D anchor, double factor ) {
 		Point3D offset = getViewPoint().subtract( anchor );
 
 		// The zoom has to be set before the viewpoint
