@@ -494,17 +494,18 @@ public class DesignPane extends StackPane {
 		selector.setStrokeWidth( 0.0 );
 		selector.setStroke( null );
 
-		List<Shape> shapes = getVisibleShapes();
-		Collections.reverse( shapes );
-
 		// check for contains or intersecting
+		List<Shape> selected;
+		List<Shape> shapes = getVisibleShapes();
 		try {
 			select.getChildren().add( selector );
 			if( contains ) {
-				return shapes.stream().filter( s -> isContained( selector, s ) ).collect( Collectors.toList() );
+				selected = shapes.stream().filter( s -> isContained( selector, s ) ).collect( Collectors.toList() );
 			} else {
-				return shapes.stream().filter( s -> isIntersecting( selector, s ) ).collect( Collectors.toList() );
+				selected = shapes.stream().filter( s -> isIntersecting( selector, s ) ).collect( Collectors.toList() );
 			}
+			Collections.reverse( selected );
+			return selected;
 		} finally {
 			select.getChildren().remove( selector );
 		}
