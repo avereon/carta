@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.data.DesignPoints;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Point3D;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Shape;
 
@@ -31,6 +32,10 @@ public class ConstructionPoint extends Region {
 
 	public void setSize( double size ) {
 		sizeProperty().set( size );
+	}
+
+	public Point3D getLocation() {
+		return new Point3D( getLayoutX(), getLayoutY(), 0 );
 	}
 
 	private DoubleProperty sizeProperty() {

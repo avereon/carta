@@ -511,7 +511,7 @@ public class DesignPane extends StackPane {
 		}
 	}
 
-	private List<Shape> getVisibleShapes() {
+	List<Shape> getVisibleShapes() {
 		return getLayers( layers )
 			.stream()
 			.filter( Node::isVisible )

@@ -13,15 +13,13 @@ import java.util.List;
 
 public class DesignShapeView extends DesignDrawableView {
 
-	static final String CONSTRUCTION_POINTS = "construction-points";
-
 	static final String DESIGN_DATA = "design-data";
+
+	private static final String CONSTRUCTION_POINTS = "construction-points";
 
 	private Group group;
 
 	private List<Shape> geometry;
-
-	private List<ConstructionPoint> cps;
 
 	private EventHandler<NodeEvent> drawWidthHandler;
 
@@ -43,16 +41,6 @@ public class DesignShapeView extends DesignDrawableView {
 	public Group getGroup() {
 		return group;
 	}
-
-//	@Deprecated
-//	public List<Shape> getGeometry() {
-//		return geometry;
-//	}
-
-//	@Deprecated
-//	public List<ConstructionPoint> getConstructionPoints() {
-//		return cps;
-//	}
 
 	protected List<Shape> generateGeometry() {
 		return List.of();
@@ -91,7 +79,7 @@ public class DesignShapeView extends DesignDrawableView {
 	private void generate() {
 		geometry = generateGeometry();
 		geometry.forEach( this::configureShape );
-		cps = generateConstructionPoints( getPane(), geometry );
+		List<ConstructionPoint> cps = generateConstructionPoints( getPane(), geometry );
 
 		Group cpGroup = new Group();
 		cpGroup.getChildren().addAll( cps );
@@ -121,13 +109,24 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
 	}
 
-	ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
+	@SuppressWarnings( "unchecked" )
+	public static List<ConstructionPoint> getConstructionPoints( Shape shape ) {
+		List<ConstructionPoint> cps = (List<ConstructionPoint>)shape.getProperties().get( CONSTRUCTION_POINTS );
+		return cps == null ? List.of() : cps;
+	}
+
+	static ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
 		ConstructionPoint cp = new ConstructionPoint();
 		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
 		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );
 		cp.layoutXProperty().bind( xProperty );
 		cp.layoutYProperty().bind( yProperty );
 		return cp;
+	}
+
+	static List<ConstructionPoint> setConstructionPoints( Shape shape, List<ConstructionPoint> cps ) {
+		shape.getProperties().put( CONSTRUCTION_POINTS, cps );
+		return cps;
 	}
 
 }

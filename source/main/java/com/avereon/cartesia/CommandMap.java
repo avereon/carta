@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Action;
@@ -38,6 +39,7 @@ public class CommandMap {
 
 		// Event type actions
 		add( new EventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "pen-down" );
+		add( new EventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
 		add( new EventKey( ScrollEvent.SCROLL ), "camera-zoom-gesture" );
 		add( new EventKey( ZoomEvent.ZOOM ), "camera-zoom-gesture" );
 
@@ -81,6 +83,7 @@ public class CommandMap {
 		// gg - grid toggle
 		// sn - snap nearest
 		// sg - toggle snap to grid
+		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
 
 		// Layer commands
 		add( product, "layer-create", LayerCreateCommand.class );
@@ -95,20 +98,19 @@ public class CommandMap {
 		return shortcutActions.containsKey( shortcut );
 	}
 
-	public static <T extends Command> Class<T> get( String shortcut ) {
+	public static CommandMapping get( String shortcut ) {
 		return getActionCommand( shortcutActions.getOrDefault( shortcut, TextUtil.EMPTY ) );
 	}
 
-	public static <T extends Command> Class<T> get( InputEvent event ) {
+	public static CommandMapping get( InputEvent event ) {
 		return getActionCommand( eventActions.getOrDefault( new EventKey( event ), TextUtil.EMPTY ) );
 	}
 
-	@SuppressWarnings( "unchecked" )
-	private static <T extends Command> Class<T> getActionCommand( String action ) {
+	private static  CommandMapping getActionCommand( String action ) {
 		if( TextUtil.isEmpty( action ) ) return null;
 		CommandMapping mapping = actionCommands.get( action );
 		if( mapping == null ) log.log( Log.WARN, "No command for action: " + action );
-		return mapping == null ? null : (Class<T>)mapping.getCommand();
+		return mapping;
 	}
 
 	private static void add( EventKey key, String action ) {

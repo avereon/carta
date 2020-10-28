@@ -207,6 +207,10 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.setLayerVisible( layer, visible );
 	}
 
+	public List<Shape> getVisibleShapes() {
+		return designPane.getVisibleShapes();
+	}
+
 	public Point3D getViewPoint() {
 		return designPane.getViewPoint();
 	}
@@ -225,8 +229,16 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
 	}
 
+	public Point3D mouseToWorld( Point3D point ) {
+		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( point );
+	}
+
 	public Point3D worldToMouse( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( x, y, z );
+	}
+
+	public Point3D worldToMouse( Point3D point ) {
+		return designPane == null ? Point3D.ZERO : designPane.localToParent( point );
 	}
 
 	public void setPreview( Node preview ) {

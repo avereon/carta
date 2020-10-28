@@ -40,10 +40,7 @@ public class DesignPointView extends DesignShapeView {
 		MoveTo m = ((MoveTo)path.getElements().get( 0 ));
 		ConstructionPoint o = cp( pane, m.xProperty(), m.yProperty() );
 		o.visibleProperty().bind( path.visibleProperty() );
-
-		List<ConstructionPoint> cps = List.of( o );
-		path.getProperties().put( CONSTRUCTION_POINTS, cps );
-		return cps;
+		return setConstructionPoints( path, List.of( o ) );
 	}
 
 	protected void configureShape( Shape shape ) {

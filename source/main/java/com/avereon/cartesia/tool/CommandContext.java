@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandMap;
+import com.avereon.cartesia.CommandMapping;
 import com.avereon.cartesia.command.ValueCommand;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
@@ -104,29 +105,16 @@ public class CommandContext {
 		doProcessKeyEvent( event );
 	}
 
+	void handle( InputEvent event ) {
+		CommandMapping mapping = CommandMap.get( event );
+		if( mapping != null ) doCommand( event, mapping.getCommand(), mapping.getParameters() );
+	}
+
 	void handle( MouseEvent event ) {
 		DesignTool tool = (DesignTool)event.getSource();
 		setMouse( tool.mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
-
 		commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
-
-		Class<? extends Command> command = CommandMap.get( event );
-		if( command != null ) doCommand( event, command );
-	}
-
-	void handle( MouseDragEvent event ) {
-		Class<? extends Command> command = CommandMap.get( event );
-		if( command != null ) doCommand( event, command );
-	}
-
-	void handle( ScrollEvent event ) {
-		Class<? extends Command> command = CommandMap.get( event );
-		if( command != null ) doCommand( event, command );
-	}
-
-	void handle( ZoomEvent event ) {
-		Class<? extends Command> command = CommandMap.get( event );
-		if( command != null ) doCommand( event, command );
+		handle( (InputEvent)event );
 	}
 
 	DesignTool getLastActiveDesignTool() {
@@ -169,11 +157,10 @@ public class CommandContext {
 	private void doCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return;
 
-		Class<? extends Command> commandClass = CommandMap.get( input );
-
-		if( commandClass != null ) {
+		CommandMapping mapping = CommandMap.get( input );
+		if( mapping != null ) {
 			priorShortcut = input;
-			doCommand( getLastActiveDesignTool(), commandClass );
+			doCommand( getLastActiveDesignTool(), mapping.getCommand(), mapping.getParameters() );
 		} else {
 			log.log( Log.WARN, "Unknown command=" + input );
 		}
@@ -181,7 +168,7 @@ public class CommandContext {
 
 	private void doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
 		DesignTool tool = (DesignTool)event.getSource();
-		doCommand( tool, commandClass, event );
+		doCommand( tool, commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
 	private void doCommand( Command command, Object... parameters ) {
