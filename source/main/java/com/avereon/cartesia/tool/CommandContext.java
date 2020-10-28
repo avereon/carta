@@ -7,13 +7,9 @@ import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
-import javafx.event.EventType;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseDragEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -105,40 +101,32 @@ public class CommandContext {
 	}
 
 	void handle( KeyEvent event ) {
-		Command currentCommand = getCurrentCommand();
-		if( currentCommand != null ) currentCommand.handle( event );
-
 		doProcessKeyEvent( event );
 	}
 
 	void handle( MouseEvent event ) {
+		DesignTool tool = (DesignTool)event.getSource();
+		setMouse( tool.mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
+
 		commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
 
-		DesignTool tool = (DesignTool)event.getSource();
-		Point3D point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
-		if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) setAnchor( point );
-		setMouse( point );
+		Class<? extends Command> command = CommandMap.get( event );
+		if( command != null ) doCommand( event, command );
 	}
 
 	void handle( MouseDragEvent event ) {
-		Command currentCommand = getCurrentCommand();
-		if( currentCommand != null ) currentCommand.handle( event );
+		Class<? extends Command> command = CommandMap.get( event );
+		if( command != null ) doCommand( event, command );
 	}
 
 	void handle( ScrollEvent event ) {
-		// Zoom in is the equivalent of moving forward (positive delta y)
-		// Zoom out is the equivalent of moving backward (negative delta y)
-		double deltaY = event.getDeltaY();
+		Class<? extends Command> command = CommandMap.get( event );
+		if( command != null ) doCommand( event, command );
+	}
 
-		EventType<ScrollEvent> type = event.getEventType();
-
-		if( type == ScrollEvent.SCROLL && deltaY != 0.0 ) {
-			type = deltaY > 0 ? CommandMap.SCROLL_WHEEL_UP : CommandMap.SCROLL_WHEEL_DOWN;
-			DesignTool tool = (DesignTool)event.getSource();
-			Point3D point = tool.mouseToWorld( event.getX(), event.getY(), 0 );
-			Class<? extends Command> command = CommandMap.get( type );
-			if( command != null ) doCommand( tool, command, point.getX(), point.getY() );
-		}
+	void handle( ZoomEvent event ) {
+		Class<? extends Command> command = CommandMap.get( event );
+		if( command != null ) doCommand( event, command );
 	}
 
 	DesignTool getLastActiveDesignTool() {
@@ -161,8 +149,7 @@ public class CommandContext {
 		return anchor;
 	}
 
-	void setAnchor( Point3D anchor ) {
-		if( isInputMode() ) doCommand( new ValueCommand(), anchor );
+	public void setAnchor( Point3D anchor ) {
 		this.anchor = anchor;
 	}
 
@@ -192,6 +179,11 @@ public class CommandContext {
 		}
 	}
 
+	private void doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
+		DesignTool tool = (DesignTool)event.getSource();
+		doCommand( tool, commandClass, event );
+	}
+
 	private void doCommand( Command command, Object... parameters ) {
 		doCommand( getLastActiveDesignTool(), command, parameters );
 	}
@@ -214,7 +206,7 @@ public class CommandContext {
 		}
 	}
 
-	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters) {
+	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters ) {
 		if( command instanceof ValueCommand && commandStack.isEmpty() ) {
 			log.log( Log.WARN, "There is not a command waiting for the value: " + Arrays.toString( parameters ) );
 		}

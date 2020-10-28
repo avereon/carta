@@ -15,7 +15,7 @@ import com.avereon.cartesia.tool.DesignTool;
 public class CameraZoomOutCommand extends CameraZoomCommand {
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		zoomByFactor( tool, DesignPane.ZOOM_OUT_FACTOR, parameters );
 		return complete();
 	}

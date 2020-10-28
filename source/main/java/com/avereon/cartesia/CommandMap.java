@@ -6,28 +6,29 @@ import com.avereon.util.TextUtil;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.ProgramProduct;
 import javafx.event.EventType;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.*;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandMap {
 
-	public static final EventType<ScrollEvent> SCROLL_WHEEL_UP = new EventType<>( ScrollEvent.SCROLL, "SCROLL_WHEEL_UP" );
+	private static final EventType<ZoomEvent> ZOOM_IN = new EventType<>( ZoomEvent.ZOOM, "ZOOM_IN" );
 
-	public static final EventType<ScrollEvent> SCROLL_WHEEL_DOWN = new EventType<>( ScrollEvent.SCROLL, "SCROLL_WHEEL_DOWN" );
+	private static final EventType<ZoomEvent> ZOOM_OUT = new EventType<>( ZoomEvent.ZOOM, "ZOOM_OUT" );
 
 	private static final System.Logger log = Log.get();
 
 	private static final Map<String, Class<? extends Command>> commands = new ConcurrentHashMap<>();
 
-	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
-
 	private static final Map<String, CommandMapping> actionCommands = new ConcurrentHashMap<>();
 
+	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
+
+	private static final Map<EventKey, String> eventActions = new ConcurrentHashMap<>();
+
+	@Deprecated
 	private static final Map<EventType<? extends InputEvent>, String> inputTypeActions = new ConcurrentHashMap<>();
 
 	public static void load( ProgramProduct product ) {
@@ -44,9 +45,10 @@ public class CommandMap {
 		// y - layer
 		// z - zoom
 
-		// Input type actions
-		add( SCROLL_WHEEL_UP, "camera-zoom-in" );
-		add( SCROLL_WHEEL_DOWN, "camera-zoom-out" );
+		// Event type actions
+		add( new EventKey( ZOOM_IN ), "camera-zoom-in" );
+		add( new EventKey( ZOOM_OUT ), "camera-zoom-out" );
+		add( new EventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "pen-down" );
 
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK, "select" );
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON3_DOWN_MASK, "snap-auto-nearest" );
@@ -54,6 +56,9 @@ public class CommandMap {
 		//mouseActionKeys.put( MouseEvent.MOUSE_PRESSED + MouseEvent.BUTTON1_DOWN_MASK + MouseEvent.SHIFT_DOWN_MASK, "camera-move" );
 		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL, "camera-zoom-wheel" );
 		//mouseActionKeys.put( MouseEvent.MOUSE_WHEEL + MouseEvent.CTRL_DOWN_MASK, "camera-walk-wheel" );
+
+		// Basic command
+		add( product, "pen-down", PenDownCommand.class );
 
 		// View commands
 		add( product, "camera-view-pan", PanCommand.class );
@@ -94,24 +99,28 @@ public class CommandMap {
 		add( product, "layer-toggle", LayerToggleCommand.class );
 	}
 
-	public static Set<CommandMapping> getMappings() {
-		return new HashSet<>( actionCommands.values() );
-	}
-
 	public static boolean hasCommand( String shortcut ) {
 		return shortcutActions.containsKey( shortcut );
 	}
 
-	@SuppressWarnings( "unchecked" )
 	public static <T extends Command> Class<T> get( String shortcut ) {
-		CommandMapping mapping = actionCommands.get( shortcutActions.getOrDefault( shortcut, TextUtil.EMPTY ) );
-		return mapping == null ? null : (Class<T>)mapping.getCommand();
+		return getActionCommand( shortcutActions.getOrDefault( shortcut, TextUtil.EMPTY ) );
+	}
+
+	public static <T extends Command> Class<T> get( InputEvent event ) {
+		return getActionCommand( eventActions.getOrDefault( new EventKey( event ), TextUtil.EMPTY ) );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public static <T extends Command> Class<T> get( EventType<? extends InputEvent> type ) {
-		CommandMapping mapping = actionCommands.get( inputTypeActions.getOrDefault( type, TextUtil.EMPTY ) );
+	private static <T extends Command> Class<T> getActionCommand( String action ) {
+		if( TextUtil.isEmpty( action ) ) return null;
+		CommandMapping mapping = actionCommands.get( action );
+		if( mapping == null ) log.log( Log.WARN, "No command for action: " + action );
 		return mapping == null ? null : (Class<T>)mapping.getCommand();
+	}
+
+	private static void add( EventKey key, String action ) {
+		eventActions.put( key, action );
 	}
 
 	private static void add( EventType<? extends InputEvent> type, String action ) {
@@ -135,6 +144,86 @@ public class CommandMap {
 				existing.getCommand().getName()
 			);
 		}
+	}
+
+	private static class EventKey {
+
+		private EventType<?> type;
+
+		private boolean isControl;
+
+		private boolean isShift;
+
+		private boolean isAlt;
+
+		private boolean isMeta;
+
+		private boolean isDirect;
+
+		private boolean isInertia;
+
+		private MouseButton mouseButton;
+
+		public EventKey( InputEvent event ) {
+			this.type = event.getEventType();
+			if( event instanceof MouseEvent ) {
+				MouseEvent mouse = (MouseEvent)event;
+				this.isControl = mouse.isControlDown();
+				this.isShift = mouse.isShiftDown();
+				this.isAlt = mouse.isAltDown();
+				this.isMeta = mouse.isMetaDown();
+				this.mouseButton = mouse.getButton();
+			}
+			if( event instanceof GestureEvent ) {
+				GestureEvent gestureEvent = (GestureEvent)event;
+				this.isControl = gestureEvent.isControlDown();
+				this.isShift = gestureEvent.isShiftDown();
+				this.isAlt = gestureEvent.isAltDown();
+				this.isMeta = gestureEvent.isMetaDown();
+				this.isDirect = gestureEvent.isDirect();
+				this.isInertia = gestureEvent.isInertia();
+				if( gestureEvent instanceof ScrollEvent ) {
+					// Zoom in is the equivalent of moving forward (positive delta y)
+					// Zoom out is the equivalent of moving backward (negative delta y)
+					ScrollEvent scrollEvent = (ScrollEvent)gestureEvent;
+					double deltaY = scrollEvent.getDeltaY();
+					if( this.type == ScrollEvent.SCROLL && deltaY != 0.0 ) {
+						this.type = deltaY > 0 ? CommandMap.ZOOM_IN : CommandMap.ZOOM_OUT;
+					}
+				}
+				if( gestureEvent instanceof ZoomEvent ) {
+					ZoomEvent zoomEvent = (ZoomEvent)gestureEvent;
+					double zoomFactor = zoomEvent.getZoomFactor();
+					if( this.type == ZoomEvent.ZOOM && zoomFactor != 0.0 ) {
+						this.type = zoomFactor > 0 ? CommandMap.ZOOM_IN : CommandMap.ZOOM_OUT;
+					}
+				}
+			}
+		}
+
+		public EventKey( EventType<?> type ) {
+			this.type = type;
+		}
+
+		public EventKey( EventType<?> type, MouseButton button ) {
+			this.type = type;
+			this.mouseButton = button;
+		}
+
+		@Override
+		public boolean equals( Object other ) {
+			if( this == other ) return true;
+			if( other == null || getClass() != other.getClass() ) return false;
+			EventKey eventKey = (EventKey)other;
+			return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
+				.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash( type, isControl, isShift, isAlt, isMeta, isDirect, isInertia, mouseButton );
+		}
+
 	}
 
 }

@@ -5,6 +5,7 @@ import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+import javafx.scene.input.GestureEvent;
 
 import java.text.ParseException;
 
@@ -20,7 +21,6 @@ public class CameraZoomCommand extends CameraCommand {
 
 		try {
 			tool.setZoom( asDouble( parameters[ 0 ] ) );
-			// TODO Create an undo command
 		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
 			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-zoom", exception.getMessage() );
@@ -30,22 +30,18 @@ public class CameraZoomCommand extends CameraCommand {
 		return complete();
 	}
 
-	protected void zoomByFactor( DesignTool tool, double factor, Object... parameters ) throws Exception {
+	protected void zoomByFactor( DesignTool tool, double factor, Object... parameters ) {
 		Point3D viewpoint = tool.getViewPoint();
 		double x = viewpoint.getX();
 		double y = viewpoint.getY();
 		double z = viewpoint.getZ();
 
-		switch( parameters.length ) {
-			case 2 -> {
-				x = asDouble( parameters[ 0 ] );
-				y = asDouble( parameters[ 1 ] );
-			}
-			case 3 -> {
-				x = asDouble( parameters[ 0 ] );
-				y = asDouble( parameters[ 1 ] );
-				z = asDouble( parameters[ 2 ] );
-			}
+		if( parameters.length ==1 && parameters[0] instanceof GestureEvent ) {
+			GestureEvent event = (GestureEvent)parameters[0];
+			Point3D point = tool.mouseToWorld( event.getX(), event.getY(), 0 );
+			x = point.getX();
+			y = point.getY();
+			z = point.getZ();
 		}
 
 		tool.zoom( x, y, z, factor );
