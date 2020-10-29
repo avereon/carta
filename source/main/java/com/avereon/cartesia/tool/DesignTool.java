@@ -395,17 +395,13 @@ public abstract class DesignTool extends GuidedTool {
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		selectWindow.hide();
 
-		if( isPanMode( event ) ) {
-			//viewAnchor = designPane.getViewPoint();
-		} else if( isSelectMode() ) {
+		if( isSelectMode() ) {
 			mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
 		}
 	}
 
 	private void mouseDrag( MouseEvent event ) {
-		if( isPanMode( event ) ) {
-			//designPane.mousePan( viewAnchor, dragAnchor, event.getX(), event.getY() );
-		} else if( isWindowSelectMode( event ) ) {
+		if( isWindowSelectMode( event ) ) {
 			updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
 		}
 	}
@@ -452,10 +448,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private boolean isSelectModifyEvent( MouseEvent event ) {
 		return event.isControlDown() && event.isPrimaryButtonDown();
-	}
-
-	private boolean isPanMode( MouseEvent event ) {
-		return event.isShiftDown() && event.isPrimaryButtonDown() && !event.isStillSincePress();
 	}
 
 	private boolean isSelectMode() {

@@ -25,10 +25,8 @@ public class CameraMoveCommand extends CameraCommand {
 			return incomplete();
 		}
 
-		// FIXME This command is not working correctly
 		if( parameters[ 0 ] instanceof MouseEvent ) {
 			MouseEvent event = (MouseEvent)parameters[ 0 ];
-			System.out.println( "Mouse event=" + event );
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
 				return complete();
 			}
@@ -55,9 +53,9 @@ public class CameraMoveCommand extends CameraCommand {
 	public void handle( MouseEvent event ) {
 		DesignTool tool = (DesignTool)event.getSource();
 		if( eventKey != null ) {
-			if( eventKey.matches( CommandEventKey.of( event ), MouseEvent.MOUSE_DRAGGED ) ) {
+			if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {
 				tool.pan( viewAnchor, dragAnchor, event.getX(), event.getY() );
-			} else if( eventKey.matches( CommandEventKey.of( event ), MouseEvent.MOUSE_RELEASED ) ) {
+			} else if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_RELEASED ) ) {
 				tool.getCommandContext().submit( tool, this, event );
 			}
 		}

@@ -68,14 +68,29 @@ public class CommandEventKey {
 		this.isMeta = isMeta;
 	}
 
+	/**
+	 * This matches all the attributes of this event key with the specified event
+	 * key. This is the equivalent of calling equals().
+	 *
+	 * @param eventKey The event key to match against
+	 * @return True if this event key matches, false otherwise
+	 */
 	public boolean matches( CommandEventKey eventKey ) {
 		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
 			.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
 	}
 
+	/**
+	 * This matches all the attributes of this event key with the specified event
+	 * key  except for the event type which it matches with the specified type.
+	 *
+	 * @param eventKey The event key to match against
+	 * @param type The specific event type to match
+	 * @return True if this event key matches, false otherwise
+	 */
 	public boolean matches( CommandEventKey eventKey, EventType<?> type ) {
-		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
-			.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
+		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && this.type
+			.equals( type ) && mouseButton == eventKey.mouseButton;
 	}
 
 	@Override

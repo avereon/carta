@@ -14,6 +14,7 @@ import javafx.scene.input.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -106,17 +107,19 @@ public class CommandContext {
 		doProcessKeyEvent( event );
 	}
 
-	void handle( InputEvent event ) {
-		CommandMapping mapping = CommandMap.get( event );
-		if( mapping != null ) doCommand( event, mapping.getCommand(), mapping.getParameters() );
-		event.consume();
-	}
-
 	void handle( MouseEvent event ) {
 		DesignTool tool = (DesignTool)event.getSource();
 		setMouse( tool.mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 		if( !event.isConsumed() ) commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
-		handle( (InputEvent)event );
+		doEventCommand( event );
+	}
+
+	void handle( ScrollEvent event ) {
+		doEventCommand( event );
+	}
+
+	void handle( ZoomEvent event ) {
+		doEventCommand( event );
 	}
 
 	DesignTool getLastActiveDesignTool() {
@@ -156,6 +159,12 @@ public class CommandContext {
 		this.inputMode = mode;
 	}
 
+	private void doEventCommand( InputEvent event ) {
+		CommandMapping mapping = CommandMap.get( event );
+		if( mapping != null ) doCommand( event, mapping.getCommand(), mapping.getParameters() );
+		event.consume();
+	}
+
 	private void doCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return;
 
@@ -190,9 +199,8 @@ public class CommandContext {
 		checkForCommonProblems( tool, command, parameters );
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
-			CommandExecuteRequest request = new CommandExecuteRequest( this, tool, command, parameters );
-			commandStack.remove( request );
-			commandStack.push( request );
+			commandStack.removeIf( r -> r.getCommand() == command );
+			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 	}
@@ -206,7 +214,9 @@ public class CommandContext {
 	private Object doProcessCommands() throws Exception {
 		Object result = null;
 		try {
-			for( CommandExecuteRequest request : new ArrayList<>( commandStack ) ) {
+			List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
+			log.log( Log.TRACE, "Request stack size=" + requests.size() );
+			for( CommandExecuteRequest request : requests ) {
 				setInputMode( request.getCommand().isInputCommand() );
 				result = request.execute( result );
 				if( result == Command.INCOMPLETE ) break;
@@ -283,15 +293,15 @@ public class CommandContext {
 			return command.execute( context, tool, parameters );
 		}
 
-//		@Override
-//		public int hashCode() {
-//			return command.hashCode();
-//		}
-//
-//		@Override
-//		public boolean equals( Object other ) {
-//			return command.equals( other );
-//		}
+		//		@Override
+		//		public int hashCode() {
+		//			return command.hashCode();
+		//		}
+		//
+		//		@Override
+		//		public boolean equals( Object other ) {
+		//			return command.equals( other );
+		//		}
 
 	}
 
