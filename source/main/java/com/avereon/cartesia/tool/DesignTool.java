@@ -84,7 +84,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private ReticleCursor reticle;
 
-	private Point3D dragAnchor;
+	//private Point3D dragAnchor;
 
 	//private Point3D viewAnchor;
 
@@ -305,10 +305,7 @@ public abstract class DesignTool extends GuidedTool {
 			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 
-		addEventFilter( MouseEvent.MOUSE_MOVED, this::mouseMove );
-		addEventFilter( MouseEvent.MOUSE_PRESSED, this::mousePress );
-		addEventFilter( MouseEvent.MOUSE_DRAGGED, this::mouseDrag );
-		addEventFilter( MouseEvent.MOUSE_RELEASED, this::mouseRelease );
+		addEventFilter( MouseEvent.MOUSE_MOVED, this::updateCoordinateStatus );
 
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -386,76 +383,44 @@ public abstract class DesignTool extends GuidedTool {
 		return getDesignContext().getCoordinateStatus();
 	}
 
-	private void mouseMove( MouseEvent event ) {
+	private void updateCoordinateStatus( MouseEvent event ) {
 		getCoordinateStatus().updatePosition( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 	}
 
-	private void mousePress( MouseEvent event ) {
-		// Drag anchor is used by select, pan (and others)
-		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
-		selectWindow.hide();
-
-		if( isSelectMode() ) {
-			mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectModifyEvent( event ) );
-		}
-	}
-
-	private void mouseDrag( MouseEvent event ) {
-		if( isWindowSelectMode( event ) ) {
-			updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
-		}
-	}
-
-	private void mouseRelease( MouseEvent event ) {
-		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-		if( isSelectMode() && selectWindow.getWidth() > 0 && selectWindow.getHeight() > 0 ) windowSelect( dragAnchor, mouse, !event.isControlDown() );
-		selectWindow.hide();
-		dragAnchor = null;
-	}
-
-	private void updateSelectWindow( Point3D anchor, Point3D mouse ) {
+	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {
 		if( anchor == null ) return;
 		double x = Math.min( anchor.getX(), mouse.getX() );
 		double y = Math.min( anchor.getY(), mouse.getY() );
 		double w = Math.abs( anchor.getX() - mouse.getX() );
 		double h = Math.abs( anchor.getY() - mouse.getY() );
-		Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
-	}
-
-	private boolean mouseSelect( double x, double y, double z, boolean modify ) {
-		if( !modify ) selectedShapes().clear();
-
-		List<Shape> selection = designPane.apertureSelect( x, y, z, getSelectTolerance() );
-		if( selection.isEmpty() ) return false;
-
-		Shape shape = selection.get( 0 );
-		boolean selected = getDesignData( shape ).isSelected();
-		if( !modify || !selected ) {
-			selectedShapes().add( shape );
+		if( w == 0 || h == 0 ) {
+			Fx.run( selectWindow::hide );
 		} else {
-			selectedShapes().remove( shape );
+			Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
 		}
-
-		return true;
 	}
 
-	private boolean windowSelect( Point3D a, Point3D b, boolean contains ) {
-		selectedShapes().clear();
-		List<Shape> selection = designPane.windowSelect( a, b, contains );
-		selectedShapes().addAll( selection );
-		return !selection.isEmpty();
+	public void mouseSelect( double x, double y, double z, boolean toggle ) {
+		Fx.run( () -> {
+			if( !toggle ) selectedShapes().clear();
+
+			List<Shape> selection = designPane.apertureSelect( x, y, z, getSelectTolerance() );
+			selection.stream().findFirst().ifPresent( shape -> {
+				if( toggle && getDesignData( shape ).isSelected() ) {
+					selectedShapes().remove( shape );
+				} else {
+					selectedShapes().add( shape );
+				}
+			} );
+		} );
 	}
 
-	private boolean isSelectModifyEvent( MouseEvent event ) {
-		return event.isControlDown() && event.isPrimaryButtonDown();
-	}
-
-	private boolean isSelectMode() {
-		return getCommandContext().isSelectMode();
-	}
-
-	private boolean isWindowSelectMode( MouseEvent event ) {
-		return isSelectMode() && !event.isStillSincePress();
+	public void windowSelect( Point3D a, Point3D b, boolean contains ) {
+		Fx.run( () -> {
+			selectedShapes().clear();
+			List<Shape> selection = designPane.windowSelect( a, b, contains );
+			selectedShapes().addAll( selection );
+		} );
 	}
 
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {

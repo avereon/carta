@@ -68,21 +68,13 @@ public class CommandEventKey {
 		this.isMeta = isMeta;
 	}
 
-	/**
-	 * This matches all the attributes of this event key with the specified event
-	 * key. This is the equivalent of calling equals().
-	 *
-	 * @param eventKey The event key to match against
-	 * @return True if this event key matches, false otherwise
-	 */
-	public boolean matches( CommandEventKey eventKey ) {
-		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
-			.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
+	public MouseButton getButton() {
+		return mouseButton;
 	}
 
 	/**
 	 * This matches all the attributes of this event key with the specified event
-	 * key  except for the event type which it matches with the specified type.
+	 * key except for the event type which it matches with the specified type.
 	 *
 	 * @param eventKey The event key to match against
 	 * @param type The specific event type to match
@@ -97,7 +89,9 @@ public class CommandEventKey {
 	public boolean equals( Object other ) {
 		if( this == other ) return true;
 		if( other == null || getClass() != other.getClass() ) return false;
-		return matches( (CommandEventKey)other );
+		CommandEventKey eventKey = (CommandEventKey)other;
+		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
+			.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
 	}
 
 	@Override

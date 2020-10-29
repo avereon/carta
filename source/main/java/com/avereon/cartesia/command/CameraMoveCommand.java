@@ -55,7 +55,7 @@ public class CameraMoveCommand extends CameraCommand {
 		if( eventKey != null ) {
 			if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {
 				tool.pan( viewAnchor, dragAnchor, event.getX(), event.getY() );
-			} else if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_RELEASED ) ) {
+			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED && event.getButton() == eventKey.getButton() ) {
 				tool.getCommandContext().resubmit( tool, this, event );
 			}
 		}

@@ -37,10 +37,12 @@ public class CommandMap {
 		// z - zoom
 
 		// Event type actions
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "pen-down" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
 
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-spin" );
+		// FIXME Conflicts with select
+		//add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-spin" );
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
 		add( new CommandEventKey( ScrollEvent.SCROLL ), "camera-zoom" );
 		add( new CommandEventKey( ZoomEvent.ZOOM ), "camera-zoom" );
@@ -48,7 +50,7 @@ public class CommandMap {
 		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 
 		// Basic command
-		add( product, "pen-down", PenDownCommand.class );
+		add( product, "select", SelectCommand.class );
 
 		// View commands
 		add( product, "camera-move", CameraMoveCommand.class );

@@ -3,11 +3,13 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMapping;
+import com.avereon.cartesia.command.SelectCommand;
 import com.avereon.cartesia.command.ValueCommand;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.*;
@@ -75,10 +77,35 @@ public class CommandContext {
 		reset();
 	}
 
-	public void enter() {
+	public void enter( KeyEvent event ) {
 		String input = getCommandPrompt().getText();
 		if( input.isEmpty() ) {
-			doCommand( new ValueCommand(), getMouse() );
+			DesignTool tool = getLastActiveDesignTool();
+			Point3D mouse = tool.worldToMouse( getMouse() );
+			Point2D screen = tool.localToScreen( mouse );
+			MouseEvent mEvent = new MouseEvent(
+				getLastActiveDesignTool(),
+				null,
+				MouseEvent.MOUSE_RELEASED,
+				mouse.getX(),
+				mouse.getY(),
+				screen.getX(),
+				screen.getY(),
+				MouseButton.PRIMARY,
+				1,
+				event.isShiftDown(),
+				event.isControlDown(),
+				event.isAltDown(),
+				event.isMetaDown(),
+				true,
+				false,
+				false,
+				true,
+				false,
+				true,
+				null
+			);
+			doCommand( new SelectCommand(), mEvent );
 		} else if( isInputMode() ) {
 			doCommand( new ValueCommand(), input );
 		} else {
@@ -92,8 +119,16 @@ public class CommandContext {
 		reset();
 	}
 
-	public boolean isSelectMode() {
-		return commandStack.isEmpty();
+	public boolean isPenMode() {
+		return commandStack.size() > 1;
+	}
+
+	public boolean isSingleSelectMode( MouseEvent event ) {
+		return commandStack.size() == 1 && event.isStillSincePress();
+	}
+
+	public boolean isWindowSelectMode( MouseEvent event ) {
+		return commandStack.size() == 1 && !event.isStillSincePress();
 	}
 
 	public boolean isAutoCommandEnabled() {
@@ -225,9 +260,6 @@ public class CommandContext {
 				result = request.execute( result );
 				if( result == Command.INCOMPLETE ) break;
 				commandStack.remove( request );
-
-				// FIXME This breaks the unit tests
-				//reset();
 			}
 		} catch( Exception exception ) {
 			cancel();
@@ -253,7 +285,7 @@ public class CommandContext {
 		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
 			switch( event.getCode() ) {
 				case ESCAPE -> cancel();
-				case ENTER -> enter();
+				case ENTER -> enter( event );
 				case SPACE -> repeat();
 			}
 		}
