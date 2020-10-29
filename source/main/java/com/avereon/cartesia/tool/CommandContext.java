@@ -60,6 +60,11 @@ public class CommandContext {
 		doCommand( tool, command, parameters );
 	}
 
+	public void resubmit( DesignTool tool, Command command, Object... parameters ) {
+		commandStack.removeIf( r -> r.getCommand() == command );
+		submit( tool, command, parameters );
+	}
+
 	public void cancel() {
 		commandStack.stream().filter( r -> r.getTool() != null ).map( CommandExecuteRequest::getTool ).forEach( t -> {
 			t.setCursor( Cursor.DEFAULT );
@@ -199,7 +204,6 @@ public class CommandContext {
 		checkForCommonProblems( tool, command, parameters );
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
-			commandStack.removeIf( r -> r.getCommand() == command );
 			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
