@@ -84,9 +84,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private ReticleCursor reticle;
 
-	//private Point3D dragAnchor;
-
-	//private Point3D viewAnchor;
+	private Workplane workplane;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
