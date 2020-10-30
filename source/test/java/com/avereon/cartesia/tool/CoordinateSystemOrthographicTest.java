@@ -1,26 +1,77 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.NumericTest;
+import com.avereon.cartesia.match.Near;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Line;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static com.avereon.zarra.test.PointCloseTo.closeTo;
 
-
-public class CoordinateSystemOrthographicTest implements NumericTest {
+public class CoordinateSystemOrthographicTest {
 
 	@Test
-	public void testFindNearest() {
+	void testFindNearest() {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 1, 1 );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ), Near.near( Point3D.ZERO ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ), Near.near( Point3D.ZERO ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ), Near.near( Point3D.ZERO ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( 0.3, -0.2, 0 ) ), Near.near( Point3D.ZERO ) );
+
+		workplane.setSnapSpacingX( 0.2 );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( -14.623984, 2.34873, 0 ) ), Near.near( new Point3D( -14.6, 2, 0 ) ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( -4.623984, -6.34873, 0 ) ), Near.near( new Point3D( -4.6, -6, 0 ) ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( 7.623984, -23.34873, 0 ) ), Near.near( new Point3D( 7.6, -23, 0 ) ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, new Point3D( 67.623984, 13.34873, 0 ) ), Near.near( new Point3D( 67.6, 13, 0 ) ) );
+	}
+
+	@Test
+	void testFindNearestAtZero() {
 		Workplane workplane = new Workplane();
 		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, Point3D.ZERO ), is( Point3D.ZERO ) );
+	}
 
+	@Test
+	void testFindNearestOffsetOrigin() {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 1, 1 );
 		workplane.setOrigin( new Point3D( 0.3, 0.2, 0 ) );
-		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, Point3D.ZERO ), is( new Point3D( 0.3, 0.2, 0 ) ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( 0.3, 0.2, 0 ) ) );
 
 		workplane.setOrigin( new Point3D( 0.7, 0.8, 0 ) );
-		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, Point3D.ZERO ), closeTo( new Point3D( -0.3, -0.2, 0 ), TOLERANCE ) );
+		assertThat( CoordinateSystem.ORTHOGRAPHIC.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( -0.3, -0.2, 0 ) ) );
+	}
+
+	@Test
+	void testGetOffsets() {
+		CoordinateSystemOrthographic system = new CoordinateSystemOrthographic();
+		assertThat( system.getOffsets( 0, 1, -0.5, 0.5 ), contains( 0.0 ) );
+		assertThat( system.getOffsets( 0, 1, -1, 1 ), contains( -1.0, 0.0, 1.0 ) );
+		assertThat( system.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ), contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 ) );
+	}
+
+	@Test
+	void getGridLinesCommon() {
+		Workplane workplane = new Workplane( -10, -8, 10, 8, 1, 0.5, 0.1 );
+		Set<Line> lines = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
+
+		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
+		// Y lines = 8 - -8 = 16 / 0.5 + 1 = 33
+		// All lines = 41 + 33
+		assertThat( lines.size(), is( 74 ) );
+	}
+
+	@Test
+	void getGridLinesOffOrigin() {
+		Workplane workplane = new Workplane( 5, 4, 10, 8, 1, 0.5, 0.1 );
+		Set<Line> lines = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
+
+		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11
+		// Y lines = 8 - 4 = 4 / 0.5 + 1 = 9
+		// All lines = 11 + 9
+		assertThat( lines.size(), is( 20 ) );
 	}
 
 }

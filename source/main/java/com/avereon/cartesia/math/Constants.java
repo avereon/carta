@@ -6,4 +6,7 @@ public interface Constants {
 
 	double SQRT_TWO = java.lang.Math.sqrt( 2 );
 
+	double PI_OVER_4 = 0.25 * Math.PI;
+
+	double DISTANCE_TOLERANCE = 1e-12;
 }

@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.TestTimeouts;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
@@ -16,11 +15,13 @@ import javafx.scene.shape.Line;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import static com.avereon.cartesia.match.Near.near;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DesignPaneTest implements NumericTest, TestTimeouts {
+public class DesignPaneTest implements TestTimeouts {
 
 	private static final double PARENT_WIDTH = 1600.0;
 
@@ -29,10 +30,6 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	private static final double PARENT_HALF_WIDTH = 0.5 * PARENT_WIDTH;
 
 	private static final double PARENT_HALF_HEIGHT = 0.5 * PARENT_HEIGHT;
-
-	private static final boolean ZOOM_IN = true;
-
-	private static final boolean ZOOM_OUT = false;
 
 	private static final double SCALE = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, DesignUnit.CENTIMETER );
 
@@ -219,8 +216,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_IN_FACTOR );
 		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
 		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
-		assertThat( pane.getScaleX(), closeTo( SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleX(), near( SCALE * DesignPane.ZOOM_IN_FACTOR ) );
+		assertThat( pane.getScaleY(), near( -SCALE * DesignPane.ZOOM_IN_FACTOR ) );
 	}
 
 	@Test
@@ -229,8 +226,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_OUT_FACTOR );
 		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
 		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE ) );
+		assertThat( pane.getScaleX(), near( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR ) );
+		assertThat( pane.getScaleY(), near( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR ) );
 	}
 
 	@Test
@@ -246,10 +243,10 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 
 		double newScale = SCALE * DesignPane.ZOOM_IN_FACTOR;
 		double offset = newScale - SCALE;
-		assertThat( pane.getScaleX(), closeTo( newScale, TOLERANCE ) );
-		assertThat( -pane.getScaleY(), closeTo( newScale, TOLERANCE ) );
-		assertThat( pane.getTranslateX(), closeTo( PARENT_HALF_WIDTH + offset, TOLERANCE ) );
-		assertThat( pane.getTranslateY(), closeTo( PARENT_HALF_HEIGHT - offset, 1 ) );
+		assertThat( pane.getScaleX(), near( newScale ) );
+		assertThat( -pane.getScaleY(), near( newScale ) );
+		assertThat( pane.getTranslateX(), near( PARENT_HALF_WIDTH + offset ) );
+		assertThat( pane.getTranslateY(), near( PARENT_HALF_HEIGHT - offset, 1 ) );
 
 		// The mouse coords for the world point should still be the same
 		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
@@ -268,10 +265,10 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 
 		double newScale = SCALE * DesignPane.ZOOM_OUT_FACTOR;
 		double offset = newScale - SCALE;
-		assertThat( pane.getScaleX(), closeTo( newScale, TOLERANCE ) );
-		assertThat( -pane.getScaleY(), closeTo( newScale, TOLERANCE ) );
-		assertThat( pane.getTranslateX(), closeTo( PARENT_HALF_WIDTH + offset, TOLERANCE ) );
-		assertThat( pane.getTranslateY(), closeTo( PARENT_HALF_HEIGHT - offset, 1 ) );
+		assertThat( pane.getScaleX(), near( newScale ) );
+		assertThat( -pane.getScaleY(), near( newScale ) );
+		assertThat( pane.getTranslateX(), near( PARENT_HALF_WIDTH + offset ) );
+		assertThat( pane.getTranslateY(), near( PARENT_HALF_HEIGHT - offset, 1 ) );
 
 		// The mouse coords for the world point should still be the same
 		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
@@ -281,8 +278,8 @@ public class DesignPaneTest implements NumericTest, TestTimeouts {
 	void testChangeDesignUnitCausesRescale() {
 		design.setDesignUnit( DesignUnit.MILLIMETER );
 		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.getDesignUnit() );
-		assertThat( pane.getScaleX(), closeTo( 1.0 * scale, TOLERANCE ) );
-		assertThat( pane.getScaleY(), closeTo( -1.0 * scale, TOLERANCE ) );
+		assertThat( pane.getScaleX(), near( 1.0 * scale ) );
+		assertThat( pane.getScaleY(), near( -1.0 * scale ) );
 	}
 
 }

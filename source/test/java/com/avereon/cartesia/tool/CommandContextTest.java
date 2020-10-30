@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.MockCartesiaMod;
-import com.avereon.cartesia.NumericTest;
 import com.avereon.cartesia.command.ValueCommand;
 import com.avereon.xenon.ProgramProduct;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
-public class CommandContextTest implements NumericTest {
+public class CommandContextTest {
 
 	private ProgramProduct product;
 
