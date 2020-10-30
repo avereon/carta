@@ -2,10 +2,10 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.match.Near;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;
 
-import java.util.Set;
+import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
@@ -55,7 +55,7 @@ public class CoordinateSystemOrthographicTest {
 	@Test
 	void getGridLinesCommon() {
 		Workplane workplane = new Workplane( -10, -8, 10, 8, 1, 0.5, 0.1 );
-		Set<Line> lines = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
+		List<Shape> lines = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
 
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
 		// Y lines = 8 - -8 = 16 / 0.5 + 1 = 33
@@ -66,7 +66,7 @@ public class CoordinateSystemOrthographicTest {
 	@Test
 	void getGridLinesOffOrigin() {
 		Workplane workplane = new Workplane( 5, 4, 10, 8, 1, 0.5, 0.1 );
-		Set<Line> lines = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
+		List<Shape> lines = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
 
 		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11
 		// Y lines = 8 - 4 = 4 / 0.5 + 1 = 9

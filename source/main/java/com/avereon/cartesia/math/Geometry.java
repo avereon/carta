@@ -10,6 +10,18 @@ public class Geometry {
 
 	private static final System.Logger log = Log.get();
 
+	public static Point3D polarToCartesian( Point3D point ) {
+		double x = point.getX() * Math.cos( Math.toRadians( point.getY() ) );
+		double y = point.getX() * Math.sin( Math.toRadians( point.getY() ) );
+		return new Point3D( x, y, 0 );
+	}
+
+	public static Point3D cartesianToPolar( Point3D point ) {
+		double r = Point3D.ZERO.distance( point );
+		double a = Math.toDegrees( Math.atan2( point.getY(), point.getX() ) );
+		return new Point3D( r, a, 0 );
+	}
+
 	public static Point3D parsePoint( String input ) {
 		return parsePoint( input, null );
 	}

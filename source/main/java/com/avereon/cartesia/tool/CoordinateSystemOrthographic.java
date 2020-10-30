@@ -4,6 +4,7 @@ import com.avereon.cartesia.math.Constants;
 import com.avereon.math.Arithmetic;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Shape;
 
 import java.util.*;
 
@@ -22,8 +23,13 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 	}
 
 	@Override
-	public Set<Line> getGridLines( Workplane workplane ) {
-		Set<Line> grid = new HashSet<>();
+	public List<Shape> getGridDots( Workplane workplane ) {
+		return List.of();
+	}
+
+	@Override
+	public List<Shape> getGridLines( Workplane workplane ) {
+		List<Shape> grid = new ArrayList<>();
 
 		Point3D origin = workplane.getOrigin();
 		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
