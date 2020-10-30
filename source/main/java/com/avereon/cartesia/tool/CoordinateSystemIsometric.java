@@ -14,12 +14,12 @@ public class CoordinateSystemIsometric implements CoordinateSystem {
 
 	@Override
 	public List<Shape> getGridDots( Workplane workplane) {
-		return null;
+		return List.of();
 	}
 
 	@Override
 	public List<Shape> getGridLines( Workplane workplane) {
-		return null;
+		return List.of();
 	}
 
 }

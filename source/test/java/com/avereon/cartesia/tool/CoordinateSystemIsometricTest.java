@@ -1,3 +1,20 @@
 package com.avereon.cartesia.tool;
 
-public class CoordinateSystemIsometricTest {}
+import javafx.scene.shape.Shape;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+public class CoordinateSystemIsometricTest {
+
+	@Test
+	void testGetGridDots() {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 90, 1, 45, 1, 45 );
+		List<Shape> dots = CoordinateSystem.ISOMETRIC.getGridDots( workplane );
+		assertThat( dots.size(), is( 0 ) );
+	}
+
+}

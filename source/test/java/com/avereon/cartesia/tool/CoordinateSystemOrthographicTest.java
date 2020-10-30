@@ -46,10 +46,16 @@ public class CoordinateSystemOrthographicTest {
 
 	@Test
 	void testGetOffsets() {
-		CoordinateSystemOrthographic system = new CoordinateSystemOrthographic();
-		assertThat( system.getOffsets( 0, 1, -0.5, 0.5 ), contains( 0.0 ) );
-		assertThat( system.getOffsets( 0, 1, -1, 1 ), contains( -1.0, 0.0, 1.0 ) );
-		assertThat( system.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ), contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 ) );
+		assertThat( CoordinateSystem.getOffsets( 0, 1, -0.5, 0.5 ), contains( 0.0 ) );
+		assertThat( CoordinateSystem.getOffsets( 0, 1, -1, 1 ), contains( -1.0, 0.0, 1.0 ) );
+		assertThat( CoordinateSystem.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ), contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 ) );
+	}
+
+	@Test
+	void testGetGridDots() {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 90, 1, 45, 1, 45 );
+		List<Shape> dots = CoordinateSystem.ORTHOGRAPHIC.getGridDots( workplane );
+		assertThat( dots.size(), is( 0 ) );
 	}
 
 	@Test

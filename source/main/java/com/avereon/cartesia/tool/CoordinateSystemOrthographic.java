@@ -1,12 +1,12 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.math.Constants;
 import com.avereon.math.Arithmetic;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CoordinateSystemOrthographic implements CoordinateSystem {
 
@@ -46,71 +46,49 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		List<Double> axisOffsetsY = new ArrayList<>();
 		if( origin.getX() >= boundaryX1 && origin.getX() <= boundaryX2 ) axisOffsetsX.add( origin.getX() );
 		if( origin.getY() >= boundaryY1 && origin.getY() <= boundaryY2 ) axisOffsetsY.add( origin.getY() );
-		List<Double> majorOffsetsX = getOffsets( origin.getX(), majorIntervalX, boundaryX1, boundaryX2 );
-		List<Double> majorOffsetsY = getOffsets( origin.getY(), majorIntervalY, boundaryY1, boundaryY2 );
-		List<Double> minorOffsetsX = getOffsets( origin.getX(), minorIntervalX, boundaryX1, boundaryX2 );
-		List<Double> minorOffsetsY = getOffsets( origin.getY(), minorIntervalY, boundaryY1, boundaryY2 );
+		List<Double> majorOffsetsX = CoordinateSystem.getOffsets( origin.getX(), majorIntervalX, boundaryX1, boundaryX2 );
+		List<Double> majorOffsetsY = CoordinateSystem.getOffsets( origin.getY(), majorIntervalY, boundaryY1, boundaryY2 );
+		List<Double> minorOffsetsX = CoordinateSystem.getOffsets( origin.getX(), minorIntervalX, boundaryX1, boundaryX2 );
+		List<Double> minorOffsetsY = CoordinateSystem.getOffsets( origin.getY(), minorIntervalY, boundaryY1, boundaryY2 );
 
 		// Check for conflicts
-		minorOffsetsX.removeIf( value -> isNearAny( value, majorOffsetsX ) );
-		minorOffsetsY.removeIf( value -> isNearAny( value, majorOffsetsY ) );
-		majorOffsetsX.removeIf( value -> isNearAny( value, axisOffsetsX ) );
-		majorOffsetsY.removeIf( value -> isNearAny( value, axisOffsetsY ) );
+		minorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsX ) );
+		minorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsY ) );
+		majorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsX ) );
+		majorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsY ) );
 
 		for( double value : minorOffsetsX ) {
-			Line line = new Line( value, boundaryY1, value, boundaryY2 );
-			line.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
-			grid.add( line );
+			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+			shape.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
+			grid.add( shape );
 		}
 		for( double value : minorOffsetsY ) {
-			Line line = new Line( boundaryX1, value, boundaryX2, value );
-			line.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
-			grid.add( line );
+			Line shape = new Line( boundaryX1, value, boundaryX2, value );
+			shape.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
+			grid.add( shape );
 		}
 		for( double value : majorOffsetsX ) {
-			Line line = new Line( value, boundaryY1, value, boundaryY2 );
-			line.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
-			grid.add( line );
+			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+			shape.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
+			grid.add( shape );
 		}
 		for( double value : majorOffsetsY ) {
-			Line line = new Line( boundaryX1, value, boundaryX2, value );
-			line.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
-			grid.add( line );
+			Line shape = new Line( boundaryX1, value, boundaryX2, value );
+			shape.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
+			grid.add( shape );
 		}
 		for( double value : axisOffsetsX ) {
-			Line line = new Line( value, boundaryY1, value, boundaryY2 );
-			line.setStroke( Workplane.DEFAULT_AXIS_COLOR );
-			grid.add( line );
+			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+			shape.setStroke( Workplane.DEFAULT_AXIS_COLOR );
+			grid.add( shape );
 		}
 		for( double value : axisOffsetsY ) {
-			Line line = new Line( boundaryX1, value, boundaryX2, value );
-			line.setStroke( Workplane.DEFAULT_AXIS_COLOR );
-			grid.add( line );
+			Line shape = new Line( boundaryX1, value, boundaryX2, value );
+			shape.setStroke( Workplane.DEFAULT_AXIS_COLOR );
+			grid.add( shape );
 		}
 
 		return grid;
-	}
-
-	boolean isNearAny( Double value, Collection<Double> values ) {
-		for( Double check : values ) {
-			if( Math.abs( check - value ) <= Constants.DISTANCE_TOLERANCE ) return true;
-		}
-		return false;
-	}
-
-	List<Double> getOffsets( double origin, double spacing, double lowLimit, double highLimit ) {
-		double x1 = Arithmetic.nearestAbove( lowLimit - origin, spacing ) + origin;
-		double x2 = Arithmetic.nearestBelow( highLimit - origin, spacing ) + origin;
-
-		int count = (int)((x2 - x1) / spacing) + 1;
-		List<Double> offsets = new ArrayList<>( count );
-
-		for( int index = 0; index < count; index++ ) {
-			double value = index * spacing + x1;
-			if( value <= x2 ) offsets.add( value );
-		}
-
-		return offsets;
 	}
 
 }
