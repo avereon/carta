@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface CoordinateSystem {
 
-	CoordinateSystem ORTHOGRAPHIC = new CoordinateSystemOrthographic();
+	CoordinateSystem ISO = new CoordinateSystemIsometric();
 
-	CoordinateSystem ISOMETRIC = new CoordinateSystemIsometric();
+	CoordinateSystem ORTHO = new CoordinateSystemOrthographic();
 
 	CoordinateSystem POLAR = new CoordinateSystemPolar();
 

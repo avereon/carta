@@ -1,5 +1,7 @@
 package com.avereon.cartesia.tool;
 
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
@@ -238,6 +240,14 @@ public class Workplane {
 	public Workplane setMajorIntervalZ( double majorIntervalZ ) {
 		this.majorIntervalZ = majorIntervalZ;
 		return this;
+	}
+
+	public Bounds getBounds() {
+		double boundaryXmin = Math.min( getBoundaryX1(), getBoundaryX2() );
+		double boundaryXmax = Math.max( getBoundaryX1(), getBoundaryX2() );
+		double boundaryYmin = Math.min( getBoundaryY1(), getBoundaryY2() );
+		double boundaryYmax = Math.max( getBoundaryY1(), getBoundaryY2() );
+		return new BoundingBox( boundaryXmin, boundaryYmin, boundaryXmax - boundaryXmin, boundaryYmax - boundaryYmin );
 	}
 
 }

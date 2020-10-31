@@ -9,6 +9,7 @@ import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -83,7 +84,12 @@ public class DesignPane extends StackPane {
 
 	private double dpu;
 
+	// FIXME Should workplane use observable properties?
+	private Workplane workplane;
+
 	public DesignPane() {
+		this.workplane = new Workplane();
+
 		select = new Pane();
 		reference = new Pane();
 		preview = new Pane();
@@ -93,7 +99,6 @@ public class DesignPane extends StackPane {
 
 		addOriginReferencePoint();
 		setManaged( false );
-		updateGrid();
 
 		layerMap = new ConcurrentHashMap<>();
 		geometryMap = new ConcurrentHashMap<>();
@@ -108,17 +113,44 @@ public class DesignPane extends StackPane {
 		setupDesignActions( designActions = new HashMap<>() );
 	}
 
-	private void updateGrid() {
-		//grid.getChildren().addAll( CoordinateSystem.ORTHOGRAPHIC.getGridLines( new Workplane( -10, -8, 10, 8, 1, 1, 0.5, 0.5, 0.1, 0.1 ) ) );
-		//grid.getChildren().addAll( CoordinateSystem.POLAR.getGridLines( new Workplane( -10, -8, 10, 8, 1, 30, 0.5, 10, 0.1, 1 ) ) );
-		//cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
+	private void validateGrid() {
+		// TODO Determine the view port bounding box
+		// TODO Make sure the bounding box is contained in the workplane
+		// TODO If not, create a new workplane and reload the lines
 
-		Workplane workplane = new Workplane( -10, -8, 10, 8, 1, 1, 0.5, 0.5, 0.1, 0.1 );
-		workplane = new Workplane( -10, -8, 10, 8, 1, 30, 0.5, 10, 0.1, 1 );
-		List<Shape> grid = CoordinateSystem.POLAR.getGridLines( workplane );
-		grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
-		this.grid.getChildren().clear();
-		this.grid.getChildren().addAll( grid );
+		Bounds viewport = getBoundsInParent();
+//		if( workplane.getBounds().contains( viewport ) ) {
+//			// Just keep going
+//		} else {
+			Workplane oldWorkplane = workplane;
+
+			double x = viewport.getMinX();
+			double y = viewport.getMinY();
+			double w =  viewport.getWidth();
+			double h =  viewport.getHeight();
+
+			System.err.println( "bounds=" + getBoundsInParent() );
+			System.err.println( "viewport=" + viewport );
+
+			workplane = new Workplane(
+				x,
+				y,
+				x + w,
+				y + h,
+				oldWorkplane.getMajorIntervalX(),
+				oldWorkplane.getMajorIntervalY(),
+				oldWorkplane.getMinorIntervalX(),
+				oldWorkplane.getMinorIntervalY(),
+				oldWorkplane.getSnapSpacingX(),
+				oldWorkplane.getSnapSpacingY()
+			);
+
+			this.grid.getChildren().clear();
+
+			List<Shape> grid = CoordinateSystem.ORTHO.getGridLines( workplane );
+			grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
+			this.grid.getChildren().addAll( grid );
+//		}
 	}
 
 	private void addOriginReferencePoint() {
@@ -135,6 +167,10 @@ public class DesignPane extends StackPane {
 		removeActions.put( DesignLayer.class, ( o ) -> doRemoveLayer( (DesignLayer)o ) );
 		removeActions.put( DesignPoint.class, ( o ) -> doRemoveShape( (DesignPoint)o ) );
 		removeActions.put( DesignLine.class, ( o ) -> doRemoveShape( (DesignLine)o ) );
+	}
+
+	public Layer getLayers() {
+		return layers;
 	}
 
 	public Design getDesign() {
@@ -212,7 +248,7 @@ public class DesignPane extends StackPane {
 		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
 
 		rescale( true );
-
+		validateGrid();
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
 		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
@@ -239,6 +275,7 @@ public class DesignPane extends StackPane {
 		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
 		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
 		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
+		//validateGrid();
 	}
 
 	/**
@@ -423,6 +460,7 @@ public class DesignPane extends StackPane {
 		setScaleY( -scale );
 		reference.setScaleX( 1 / scale );
 		reference.setScaleY( 1 / scale );
+		//validateGrid();
 	}
 
 	private void doChildAddedAction( NodeEvent event ) {

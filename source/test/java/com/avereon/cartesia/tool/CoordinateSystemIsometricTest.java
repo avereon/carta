@@ -13,7 +13,7 @@ public class CoordinateSystemIsometricTest {
 	@Test
 	void testGetGridDots() {
 		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 90, 1, 45, 1, 45 );
-		List<Shape> dots = CoordinateSystem.ISOMETRIC.getGridDots( workplane );
+		List<Shape> dots = CoordinateSystem.ISO.getGridDots( workplane );
 		assertThat( dots.size(), is( 0 ) );
 	}
 

@@ -114,6 +114,9 @@ public abstract class DesignTool extends GuidedTool {
 
 		getChildren().addAll( designPane, selectPane );
 
+		designPane.prefWidthProperty().bind( widthProperty() );
+		designPane.prefHeightProperty().bind( heightProperty() );
+
 		// Initial values from settings
 		setReticle( ReticleCursor.valueOf( product.getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
 		double selectApertureRadius = Double.parseDouble( product.getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
