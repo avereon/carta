@@ -114,7 +114,8 @@ public class DesignPane extends StackPane {
 		//cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
 
 		Workplane workplane = new Workplane( -10, -8, 10, 8, 1, 1, 0.5, 0.5, 0.1, 0.1 );
-		List<Shape> grid = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
+		workplane = new Workplane( -10, -8, 10, 8, 1, 30, 0.5, 10, 0.1, 1 );
+		List<Shape> grid = CoordinateSystem.POLAR.getGridLines( workplane );
 		grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
 		this.grid.getChildren().clear();
 		this.grid.getChildren().addAll( grid );

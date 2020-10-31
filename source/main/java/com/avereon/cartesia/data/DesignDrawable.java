@@ -22,9 +22,9 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final Color DEFAULT_FILL_COLOR = Color.web( "0x202030ff" );
 
-	private static final Color DEFAULT_SELECT_DRAW_COLOR = Colors.web( "#ff00ffff" );
+	private static final Color DEFAULT_SELECT_DRAW_COLOR = Colors.web( "#ff00ff40" );
 
-	private static final Color DEFAULT_SELECT_FILL_COLOR = Colors.web( "#ff00ff40" );
+	private static final Color DEFAULT_SELECT_FILL_COLOR = Colors.web( "#ff00ff20" );
 
 	protected DesignDrawable() {
 		addModifyingKeys( DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
