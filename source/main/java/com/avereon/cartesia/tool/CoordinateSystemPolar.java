@@ -5,6 +5,7 @@ import com.avereon.cartesia.math.Geometry;
 import com.avereon.math.Arithmetic;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
@@ -92,12 +93,14 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			if( value > maxR ) maxR = value;
 			Circle shape = new Circle( origin.getX(), origin.getY(), value );
 			shape.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
+			shape.setFill( Color.TRANSPARENT );
 			grid.add( shape );
 		}
 		for( double value : majorOffsetsR ) {
 			if( value > maxR ) maxR = value;
 			Circle shape = new Circle( origin.getX(), origin.getY(), value );
 			shape.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
+			shape.setFill( Color.TRANSPARENT );
 			grid.add( shape );
 		}
 		// Lines (angles) need to be centered at origin
@@ -122,6 +125,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			shape.setStroke( Workplane.DEFAULT_AXIS_COLOR );
 			grid.add( shape );
 		}
+
+		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );
 
 		return grid;
 	}

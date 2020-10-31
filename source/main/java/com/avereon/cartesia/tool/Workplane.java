@@ -19,11 +19,11 @@ public class Workplane {
 
 	public static final boolean DEFAULT_GRID_SNAP_ENABLED = false;
 
-	public static final Color DEFAULT_AXIS_COLOR = Color.web( "#20408060" );
+	public static final Color DEFAULT_AXIS_COLOR = Color.web( "#80a0d060" );
 
-	public static final Color DEFAULT_MAJOR_GRID_COLOR = Color.web( "#20408020" );
+	public static final Color DEFAULT_MAJOR_GRID_COLOR = Color.web( "#80a0d020" );
 
-	public static final Color DEFAULT_MINOR_GRID_COLOR = Color.web( "#20408010" );
+	public static final Color DEFAULT_MINOR_GRID_COLOR = Color.web( "#80a0d010" );
 
 	private Point3D origin = Point3D.ZERO;
 

@@ -88,6 +88,8 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 			grid.add( shape );
 		}
 
+		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );
+
 		return grid;
 	}
 

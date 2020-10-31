@@ -3,11 +3,11 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.data.DesignPoints;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -65,6 +65,8 @@ public class DesignPane extends StackPane {
 
 	private final Layer layers;
 
+	private final Pane grid;
+
 	private final Map<DesignLayer, DesignLayerView> layerMap;
 
 	private final Map<DesignShape, DesignShapeView> geometryMap;
@@ -86,10 +88,12 @@ public class DesignPane extends StackPane {
 		reference = new Pane();
 		preview = new Pane();
 		layers = new Layer();
-		getChildren().addAll( layers, preview, reference, select );
+		grid = new Pane();
+		getChildren().addAll( grid, layers, preview, reference, select );
 
 		addOriginReferencePoint();
 		setManaged( false );
+		updateGrid();
 
 		layerMap = new ConcurrentHashMap<>();
 		geometryMap = new ConcurrentHashMap<>();
@@ -102,6 +106,18 @@ public class DesignPane extends StackPane {
 
 		// The design action map
 		setupDesignActions( designActions = new HashMap<>() );
+	}
+
+	private void updateGrid() {
+		//grid.getChildren().addAll( CoordinateSystem.ORTHOGRAPHIC.getGridLines( new Workplane( -10, -8, 10, 8, 1, 1, 0.5, 0.5, 0.1, 0.1 ) ) );
+		//grid.getChildren().addAll( CoordinateSystem.POLAR.getGridLines( new Workplane( -10, -8, 10, 8, 1, 30, 0.5, 10, 0.1, 1 ) ) );
+		//cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
+
+		Workplane workplane = new Workplane( -10, -8, 10, 8, 1, 1, 0.5, 0.5, 0.1, 0.1 );
+		List<Shape> grid = CoordinateSystem.ORTHOGRAPHIC.getGridLines( workplane );
+		grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
+		this.grid.getChildren().clear();
+		this.grid.getChildren().addAll( grid );
 	}
 
 	private void addOriginReferencePoint() {
@@ -260,7 +276,7 @@ public class DesignPane extends StackPane {
 	 */
 	@Deprecated
 	void zoom( double x, double y, double z, double factor ) {
-		zoom( new Point3D(x,y,z), factor );
+		zoom( new Point3D( x, y, z ), factor );
 	}
 
 	/**
@@ -372,7 +388,7 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
-	void addPreview(Node... preview ) {
+	void addPreview( Node... preview ) {
 		Fx.run( () -> this.preview.getChildren().addAll( preview ) );
 	}
 
