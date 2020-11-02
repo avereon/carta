@@ -1,21 +1,22 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.data.Node;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
-public class Workplane {
+public class Workplane extends Node {
 
 	public static final double DEFAULT_BOUNDARY_X = 10.0;
 
 	public static final double DEFAULT_BOUNDARY_Y = 10.0;
 
-	public static final double DEFAULT_GRID_SIZE = 0.1;
+	public static final String DEFAULT_MAJOR_GRID_SIZE = "1.0";
 
-	public static final double DEFAULT_MINOR_GRID_SIZE = 0.5;
+	public static final String DEFAULT_MINOR_GRID_SIZE = "0.5";
 
-	public static final double DEFAULT_MAJOR_GRID_SIZE = 1.0;
+	public static final String DEFAULT_SNAP_GRID_SIZE = "0.1";
 
 	public static final boolean DEFAULT_GRID_VISIBLE = false;
 
@@ -27,40 +28,65 @@ public class Workplane {
 
 	public static final Color DEFAULT_MINOR_GRID_COLOR = Color.web( "#80a0d010" );
 
-	private Point3D origin = Point3D.ZERO;
+	public static final String ORIGIN = "origin";
 
-	private double boundaryX1 = -DEFAULT_BOUNDARY_X;
+	public static final String BOUNDARY_X1 = "boundary-x1";
 
-	private double boundaryY1 = -DEFAULT_BOUNDARY_Y;
+	public static final String BOUNDARY_Y1 = "boundary-y1";
 
-	private double boundaryX2 = DEFAULT_BOUNDARY_X;
+	public static final String BOUNDARY_X2 = "boundary-x2";
 
-	private double boundaryY2 = DEFAULT_BOUNDARY_Y;
+	public static final String BOUNDARY_Y2 = "boundary-y2";
 
-	private double snapSpacingX = DEFAULT_GRID_SIZE;
+	public static final String MAJOR_GRID_X = "major-grid-x";
 
-	private double snapSpacingY = DEFAULT_GRID_SIZE;
+	public static final String MAJOR_GRID_Y = "major-grid-y";
 
-	private double snapSpacingZ = DEFAULT_GRID_SIZE;
+	public static final String MAJOR_GRID_Z = "major-grid-z";
 
-	private double minorIntervalX = DEFAULT_MINOR_GRID_SIZE;
+	public static final String MINOR_GRID_X = "minor-grid-x";
 
-	private double minorIntervalY = DEFAULT_MINOR_GRID_SIZE;
+	public static final String MINOR_GRID_Y = "minor-grid-y";
 
-	private double minorIntervalZ = DEFAULT_MINOR_GRID_SIZE;
+	public static final String MINOR_GRID_Z = "minor-grid-z";
 
-	private double majorIntervalX = DEFAULT_MAJOR_GRID_SIZE;
+	public static final String SNAP_GRID_X = "snap-grid-x";
 
-	private double majorIntervalY = DEFAULT_MAJOR_GRID_SIZE;
+	public static final String SNAP_GRID_Y = "snap-grid-y";
 
-	private double majorIntervalZ = DEFAULT_MAJOR_GRID_SIZE;
+	public static final String SNAP_GRID_Z = "snap-grid-z";
 
-	public Workplane() {}
+	private static final String ZERO = "0";
+
+	public Workplane() {
+		this( -DEFAULT_BOUNDARY_X,
+			-DEFAULT_BOUNDARY_Y,
+			DEFAULT_BOUNDARY_X,
+			DEFAULT_BOUNDARY_Y,
+			DEFAULT_MAJOR_GRID_SIZE,
+			DEFAULT_MINOR_GRID_SIZE,
+			DEFAULT_SNAP_GRID_SIZE
+		);
+	}
 
 	public Workplane(
-		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, double majorInterval, double minorInterval, double snapSpacing
+		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this( Point3D.ZERO, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorInterval, majorInterval, minorInterval, minorInterval, snapSpacing, snapSpacing );
+		this( Point3D.ZERO,
+			boundaryX1,
+			boundaryY1,
+			boundaryX2,
+			boundaryY2,
+			majorGrid,
+			majorGrid,
+			majorGrid,
+			minorGrid,
+			minorGrid,
+			minorGrid,
+			snapGrid,
+			snapGrid,
+			snapGrid
+		);
 	}
 
 	public Workplane(
@@ -68,12 +94,12 @@ public class Workplane {
 		double boundaryY1,
 		double boundaryX2,
 		double boundaryY2,
-		double majorIntervalX,
-		double majorIntervalY,
-		double minorIntervalX,
-		double minorIntervalY,
-		double snapSpacingX,
-		double snapSpacingY
+		String majorGridX,
+		String majorGridY,
+		String minorGridX,
+		String minorGridY,
+		String snapGridX,
+		String snapGridY
 	) {
 		this(
 			Point3D.ZERO,
@@ -81,12 +107,15 @@ public class Workplane {
 			boundaryY1,
 			boundaryX2,
 			boundaryY2,
-			majorIntervalX,
-			majorIntervalY,
-			minorIntervalX,
-			minorIntervalY,
-			snapSpacingX,
-			snapSpacingY
+			majorGridX,
+			majorGridY,
+			ZERO,
+			minorGridX,
+			minorGridY,
+			ZERO,
+			snapGridX,
+			snapGridY,
+			ZERO
 		);
 	}
 
@@ -96,149 +125,155 @@ public class Workplane {
 		double boundaryY1,
 		double boundaryX2,
 		double boundaryY2,
-		double majorIntervalX,
-		double majorIntervalY,
-		double minorIntervalX,
-		double minorIntervalY,
-		double snapSpacingX,
-		double snapSpacingY
+		String majorGridX,
+		String majorGridY,
+		String majorGridZ,
+		String minorGridX,
+		String minorGridY,
+		String minorGridZ,
+		String snapGridX,
+		String snapGridY,
+		String snapGridZ
 	) {
-		this.origin = origin;
-		this.boundaryX1 = boundaryX1;
-		this.boundaryY1 = boundaryY1;
-		this.boundaryX2 = boundaryX2;
-		this.boundaryY2 = boundaryY2;
-		this.snapSpacingX = snapSpacingX;
-		this.snapSpacingY = snapSpacingY;
-		this.minorIntervalX = minorIntervalX;
-		this.minorIntervalY = minorIntervalY;
-		this.majorIntervalX = majorIntervalX;
-		this.majorIntervalY = majorIntervalY;
+		setOrigin( origin );
+		setBoundaryX1( boundaryX1 );
+		setBoundaryY1( boundaryY1 );
+		setBoundaryX2( boundaryX2 );
+		setBoundaryY2( boundaryY2 );
+		setMajorGridX( majorGridX );
+		setMajorGridY( majorGridY );
+		setMajorGridZ( majorGridZ );
+		setMinorGridX( minorGridX );
+		setMinorGridY( minorGridY );
+		setMinorGridZ( minorGridZ );
+		setSnapGridX( snapGridX );
+		setSnapGridY( snapGridY );
+		setSnapGridZ( snapGridZ );
 	}
 
 	public Point3D getOrigin() {
-		return origin;
+		return getValue( ORIGIN );
 	}
 
 	public Workplane setOrigin( Point3D origin ) {
-		this.origin = origin;
+		setValue( ORIGIN, origin );
 		return this;
 	}
 
 	public double getBoundaryX1() {
-		return boundaryX1;
+		return getValue( BOUNDARY_X1 );
 	}
 
 	public Workplane setBoundaryX1( double boundaryX1 ) {
-		this.boundaryX1 = boundaryX1;
+		setValue( BOUNDARY_X1, boundaryX1 );
 		return this;
 	}
 
 	public double getBoundaryY1() {
-		return boundaryY1;
+		return getValue( BOUNDARY_Y1 );
 	}
 
 	public Workplane setBoundaryY1( double boundaryY1 ) {
-		this.boundaryY1 = boundaryY1;
+		setValue( BOUNDARY_Y1, boundaryY1 );
 		return this;
 	}
 
 	public double getBoundaryX2() {
-		return boundaryX2;
+		return getValue( BOUNDARY_X2 );
 	}
 
 	public Workplane setBoundaryX2( double boundaryX2 ) {
-		this.boundaryX2 = boundaryX2;
+		setValue( BOUNDARY_X2, boundaryX2 );
 		return this;
 	}
 
 	public double getBoundaryY2() {
-		return boundaryY2;
+		return getValue( BOUNDARY_Y2 );
 	}
 
 	public Workplane setBoundaryY2( double boundaryY2 ) {
-		this.boundaryY2 = boundaryY2;
+		setValue( BOUNDARY_Y2, boundaryY2 );
 		return this;
 	}
 
-	public double getSnapSpacingX() {
-		return snapSpacingX;
+	public String getMajorGridX() {
+		return getValue( MAJOR_GRID_X );
 	}
 
-	public Workplane setSnapSpacingX( double snapSpacingX ) {
-		this.snapSpacingX = snapSpacingX;
+	public Workplane setMajorGridX( String majorGridX ) {
+		setValue( MAJOR_GRID_X, majorGridX );
 		return this;
 	}
 
-	public double getSnapSpacingY() {
-		return snapSpacingY;
+	public String getMajorGridY() {
+		return getValue( MAJOR_GRID_Y );
 	}
 
-	public Workplane setSnapSpacingY( double snapSpacingY ) {
-		this.snapSpacingY = snapSpacingY;
+	public Workplane setMajorGridY( String majorGridY ) {
+		setValue( MAJOR_GRID_Y, majorGridY );
 		return this;
 	}
 
-	public double getSnapSpacingZ() {
-		return snapSpacingZ;
+	public String getMajorGridZ() {
+		return getValue( MAJOR_GRID_Z );
 	}
 
-	public Workplane setSnapSpacingZ( double snapSpacingZ ) {
-		this.snapSpacingZ = snapSpacingZ;
+	public Workplane setMajorGridZ( String majorGridZ ) {
+		setValue( MAJOR_GRID_Z, majorGridZ );
 		return this;
 	}
 
-	public double getMinorIntervalX() {
-		return minorIntervalX;
+	public String getMinorGridX() {
+		return getValue( MINOR_GRID_X );
 	}
 
-	public Workplane setMinorIntervalX( double minorIntervalX ) {
-		this.minorIntervalX = minorIntervalX;
+	public Workplane setMinorGridX( String minorGridX ) {
+		setValue( MINOR_GRID_X, minorGridX );
 		return this;
 	}
 
-	public double getMinorIntervalY() {
-		return minorIntervalY;
+	public String getMinorGridY() {
+		return getValue( MINOR_GRID_Y );
 	}
 
-	public Workplane setMinorIntervalY( double minorIntervalY ) {
-		this.minorIntervalY = minorIntervalY;
+	public Workplane setMinorGridY( String minorGridY ) {
+		setValue( MINOR_GRID_Y, minorGridY );
 		return this;
 	}
 
-	public double getMinorIntervalZ() {
-		return minorIntervalZ;
+	public String getMinorGridZ() {
+		return getValue( MINOR_GRID_Z );
 	}
 
-	public Workplane setMinorIntervalZ( double minorIntervalZ ) {
-		this.minorIntervalZ = minorIntervalZ;
+	public Workplane setMinorGridZ( String minorGridZ ) {
+		setValue( MINOR_GRID_Z, minorGridZ );
 		return this;
 	}
 
-	public double getMajorIntervalX() {
-		return majorIntervalX;
+	public String getSnapGridX() {
+		return getValue( SNAP_GRID_X );
 	}
 
-	public Workplane setMajorIntervalX( double majorIntervalX ) {
-		this.majorIntervalX = majorIntervalX;
+	public Workplane setSnapGridX( String snapGridX ) {
+		setValue( SNAP_GRID_X, snapGridX );
 		return this;
 	}
 
-	public double getMajorIntervalY() {
-		return majorIntervalY;
+	public String getSnapGridY() {
+		return getValue( SNAP_GRID_Y );
 	}
 
-	public Workplane setMajorIntervalY( double majorIntervalY ) {
-		this.majorIntervalY = majorIntervalY;
+	public Workplane setSnapGridY( String snapGridY ) {
+		setValue( SNAP_GRID_Y, snapGridY );
 		return this;
 	}
 
-	public double getMajorIntervalZ() {
-		return majorIntervalZ;
+	public String getSnapGridZ() {
+		return getValue( SNAP_GRID_Z );
 	}
 
-	public Workplane setMajorIntervalZ( double majorIntervalZ ) {
-		this.majorIntervalZ = majorIntervalZ;
+	public Workplane setSnapGridZ( String snapGridZ ) {
+		setValue( SNAP_GRID_Z, snapGridZ );
 		return this;
 	}
 

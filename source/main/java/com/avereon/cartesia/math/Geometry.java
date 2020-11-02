@@ -3,7 +3,6 @@ package com.avereon.cartesia.math;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
-import java.text.ParseException;
 import java.util.Objects;
 
 public class Geometry {
@@ -62,7 +61,7 @@ public class Geometry {
 				}
 			}
 			return point;
-		} catch( ParseException exception ) {
+		} catch( ExpressionException exception ) {
 			return null;
 		}
 	}

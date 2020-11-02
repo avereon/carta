@@ -13,11 +13,14 @@ public class DesignContext {
 
 	private final CoordinateStatus coordinates;
 
+	private final Workplane workplane;
+
 	public DesignContext( ProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
 		this.coordinates = new CoordinateStatus( product );
 		this.commandContext = new CommandContext( product );
+		this.workplane = new Workplane();
 	}
 
 	public final ProgramProduct getProduct() {
@@ -38,6 +41,10 @@ public class DesignContext {
 
 	public final CommandPrompt getCommandPrompt() {
 		return getCommandContext().getCommandPrompt();
+	}
+
+	public final Workplane getWorkplane() {
+		return workplane;
 	}
 
 }

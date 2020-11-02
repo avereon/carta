@@ -11,8 +11,8 @@ import static org.hamcrest.Matchers.is;
 public class CoordinateSystemIsometricTest {
 
 	@Test
-	void testGetGridDots() {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 90, 1, 45, 1, 45 );
+	void testGetGridDots() throws Exception {
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "1", "1", "1", "1", "1" );
 		List<Shape> dots = CoordinateSystem.ISO.getGridDots( workplane );
 		assertThat( dots.size(), is( 0 ) );
 	}

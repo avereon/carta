@@ -15,7 +15,7 @@ public class Maths {
 	 * @return The value of the expression
 	 * @throws ParseException
 	 */
-	public static double eval( String expression ) throws ParseException {
+	public static double eval( String expression ) throws ExpressionException {
 		return Expressions.eval( expression );
 	}
 
@@ -40,10 +40,13 @@ public class Maths {
 			addFunction( "rad", new Rad() );
 		}
 
-		public static double eval( String expression ) throws ParseException {
+		public static double eval( String expression ) throws ExpressionException {
 			Expressions parser = new Expressions();
 			parser.parseExpression( expression );
-			if( parser.hasError() ) throw new ParseException( parser.getErrorInfo(), -1 );
+			if( parser.hasError() ) {
+				ParseException parseException = new ParseException( parser.getErrorInfo(), -1 );
+				throw new ExpressionException( parseException.getMessage(), parseException );
+			}
 			return parser.getValue();
 		}
 

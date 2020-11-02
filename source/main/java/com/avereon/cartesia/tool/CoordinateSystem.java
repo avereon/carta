@@ -17,11 +17,11 @@ public interface CoordinateSystem {
 
 	CoordinateSystem POLAR = new CoordinateSystemPolar();
 
-	Point3D getNearest( Workplane workplane, Point3D point );
+	Point3D getNearest( Workplane workplane, Point3D point ) throws Exception;
 
-	List<Shape> getGridDots( Workplane workplane );
+	List<Shape> getGridDots( Workplane workplane ) throws Exception;
 
-	List<Shape> getGridLines( Workplane workplane );
+	List<Shape> getGridLines( Workplane workplane ) throws Exception;
 
 	static boolean isNearAny( Double value, Collection<Double> values ) {
 		for( Double check : values ) {

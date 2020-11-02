@@ -20,20 +20,20 @@ public class MathsTest {
 	}
 
 	@Test
-	void testEval() {
-		assertThat( Maths.evalNoException( "1/8" ), is( 0.125 ) );
-		assertThat( Maths.evalNoException( "sin(pi)" ), is( java.lang.Math.sin( java.lang.Math.PI ) ) );
-	}
-
-	@Test
-	void testParse() throws Exception {
+	void testEval() throws Exception {
 		assertThat( Maths.eval( "1/8" ), is( 0.125 ) );
 		try {
 			Maths.eval( "not a valid expression" );
-		} catch( ParseException exception ) {
+		} catch( ExpressionException exception ) {
 			assertThat( exception.getMessage(), startsWith( "Unrecognized symbol \"not\"" ) );
-			assertThat( exception.getErrorOffset(), is( -1 ) );
+			assertThat( ((ParseException)exception.getCause()).getErrorOffset(), is( -1 ) );
 		}
+	}
+
+	@Test
+	void testEvalNoException() {
+		assertThat( Maths.evalNoException( "1/8" ), is( 0.125 ) );
+		assertThat( Maths.evalNoException( "sin(pi)" ), is( java.lang.Math.sin( java.lang.Math.PI ) ) );
 	}
 
 }

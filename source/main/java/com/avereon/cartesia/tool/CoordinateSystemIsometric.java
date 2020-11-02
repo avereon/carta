@@ -8,17 +8,17 @@ import java.util.List;
 public class CoordinateSystemIsometric implements CoordinateSystem {
 
 	@Override
-	public Point3D getNearest( Workplane workplane, Point3D point) {
+	public Point3D getNearest( Workplane workplane, Point3D point) throws Exception {
 		return null;
 	}
 
 	@Override
-	public List<Shape> getGridDots( Workplane workplane) {
+	public List<Shape> getGridDots( Workplane workplane) throws Exception {
 		return List.of();
 	}
 
 	@Override
-	public List<Shape> getGridLines( Workplane workplane) {
+	public List<Shape> getGridLines( Workplane workplane) throws Exception {
 		return List.of();
 	}
 

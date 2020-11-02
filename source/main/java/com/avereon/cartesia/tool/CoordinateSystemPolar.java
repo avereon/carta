@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.Constants;
 import com.avereon.cartesia.math.Geometry;
+import com.avereon.cartesia.math.Maths;
 import com.avereon.math.Arithmetic;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
@@ -16,18 +17,17 @@ import java.util.List;
 public class CoordinateSystemPolar implements CoordinateSystem {
 
 	@Override
-	public Point3D getNearest( Workplane workplane, Point3D point ) {
+	public Point3D getNearest( Workplane workplane, Point3D point ) throws Exception {
 		// This can be determined by calculating the nearest point
 		// and then converting from polar to cartesian coordinates
 		point = point.subtract( workplane.getOrigin() );
 		point = Geometry.cartesianToPolar( point );
 
 		point = new Point3D(
-			Arithmetic.nearest( point.getX(), workplane.getSnapSpacingX() ),
-			Arithmetic.nearest( point.getY(), workplane.getSnapSpacingY() ),
-			Arithmetic.nearest( point.getZ(), workplane.getSnapSpacingZ() )
+			Arithmetic.nearest( point.getX(), Maths.eval( workplane.getSnapGridX() ) ),
+			Arithmetic.nearest( point.getY(), Maths.eval( workplane.getSnapGridY() ) ),
+			Arithmetic.nearest( point.getZ(), Maths.eval( workplane.getSnapGridZ() ) )
 		);
-		System.err.println( "polar=" + point );
 
 		point = Geometry.polarToCartesian( point );
 		point = point.add( workplane.getOrigin() );
@@ -41,7 +41,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 	}
 
 	@Override
-	public List<Shape> getGridLines( Workplane workplane ) {
+	public List<Shape> getGridLines( Workplane workplane ) throws Exception {
 		// The x spacing will be radius
 		// The y spacing will be angle in degrees
 
@@ -68,11 +68,11 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		double boundaryRmin = bb.contains( Point3D.ZERO ) ? 0.0 : Math.min( minX, minY );
 		double boundaryRmax = Math.max( da, Math.max( db, Math.max( dc, dd ) ) );
 
-		double minorIntervalR = workplane.getMinorIntervalX();
-		double majorIntervalR = workplane.getMajorIntervalX();
+		double minorIntervalR = Maths.eval( workplane.getMinorGridX() );
+		double majorIntervalR = Maths.eval( workplane.getMajorGridX() );
 
-		double minorIntervalA = workplane.getMinorIntervalY();
-		double majorIntervalA = workplane.getMajorIntervalY();
+		double minorIntervalA = Maths.eval( workplane.getMinorGridY() );
+		double majorIntervalA = Maths.eval( workplane.getMajorGridY() );
 
 		// Get all offsets
 		List<Double> majorOffsetsR = CoordinateSystem.getOffsets( 0, majorIntervalR, boundaryRmin, boundaryRmax );

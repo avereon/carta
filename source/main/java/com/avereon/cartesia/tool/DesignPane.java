@@ -7,9 +7,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -84,12 +82,7 @@ public class DesignPane extends StackPane {
 
 	private double dpu;
 
-	// FIXME Should workplane use observable properties?
-	private Workplane workplane;
-
 	public DesignPane() {
-		this.workplane = new Workplane();
-
 		select = new Pane();
 		reference = new Pane();
 		preview = new Pane();
@@ -111,50 +104,6 @@ public class DesignPane extends StackPane {
 
 		// The design action map
 		setupDesignActions( designActions = new HashMap<>() );
-	}
-
-	private void validateGrid() {
-		// TODO Determine the view port bounding box
-		// TODO Make sure the bounding box is contained in the workplane
-		// TODO If not, create a new workplane and reload the lines
-
-		Bounds viewport = getBoundsInParent();
-//		if( workplane.getBounds().contains( viewport ) ) {
-//			// Just keep going
-//		} else {
-			Workplane oldWorkplane = workplane;
-
-			double x = viewport.getMinX();
-			double y = viewport.getMinY();
-			double w =  viewport.getWidth();
-			double h =  viewport.getHeight();
-
-			System.err.println( "bounds=" + getBoundsInParent() );
-			System.err.println( "viewport=" + viewport );
-
-			workplane = new Workplane(
-				x,
-				y,
-				x + w,
-				y + h,
-				oldWorkplane.getMajorIntervalX(),
-				oldWorkplane.getMajorIntervalY(),
-				oldWorkplane.getMinorIntervalX(),
-				oldWorkplane.getMinorIntervalY(),
-				oldWorkplane.getSnapSpacingX(),
-				oldWorkplane.getSnapSpacingY()
-			);
-
-			this.grid.getChildren().clear();
-
-			List<Shape> grid = CoordinateSystem.ORTHO.getGridLines( workplane );
-			grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
-			this.grid.getChildren().addAll( grid );
-//		}
-	}
-
-	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint( DesignPoints.Type.REFERENCE ) );
 	}
 
 	private void setupDesignActions( Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions ) {
@@ -248,7 +197,7 @@ public class DesignPane extends StackPane {
 		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
 
 		rescale( true );
-		validateGrid();
+
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
 		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
@@ -436,6 +385,17 @@ public class DesignPane extends StackPane {
 
 	void clearPreview() {
 		Fx.run( () -> preview.getChildren().clear() );
+	}
+
+	void setGrid( List<Shape> grid ) {
+		Fx.run( () -> {
+			this.grid.getChildren().clear();
+			this.grid.getChildren().addAll( grid );
+		} );
+	}
+
+	private void addOriginReferencePoint() {
+		reference.getChildren().add( new ConstructionPoint( DesignPoints.Type.REFERENCE ) );
 	}
 
 	private List<Layer> getLayers( Layer root ) {

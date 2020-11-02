@@ -8,6 +8,8 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.data.NodeEvent;
+import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.Program;
@@ -282,8 +284,12 @@ public abstract class DesignTool extends GuidedTool {
 		//printsGuide.init( design );
 
 		// Keep the design pane centered when resizing
+		// These should be added before updating the pan and zoom
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
 		heightProperty().addListener( ( p, o, n ) -> designPane.recenter() );
+
+		// Workplane settings
+		configureWorkpane();
 
 		// Get tool settings
 		setPan( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_PAN, "0,0,0" ) ) );
@@ -307,15 +313,62 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 
 		addEventFilter( MouseEvent.MOUSE_MOVED, this::updateCoordinateStatus );
-
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
-		designPane.recenter();
-
 		if( isActive() ) activate();
+		designPane.recenter();
+	}
+
+	private void configureWorkpane() {
+		Settings settings = getAsset().getSettings();
+		Workplane workplane = getDesignContext().getWorkplane();
+
+		//workplane.setOrigin( /* parse a point */ );
+		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+
+		workplane.register( Workplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( Workplane.MAJOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( Workplane.MAJOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( Workplane.MINOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( Workplane.MINOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( Workplane.MINOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( Workplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+
+		settings.register( "workpane-major-grid-x", e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-major-grid-y", e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-major-grid-z", e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-minor-grid-x", e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-minor-grid-y", e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-minor-grid-z", e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-snap-grid-x", e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-snap-grid-y", e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-snap-grid-z", e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
+
+		// Rebuild the grid before adding the value change listener
+		rebuildGrid();
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
+	}
+
+	private void rebuildGrid() {
+		try {
+			CoordinateSystem system = CoordinateSystem.ORTHO;
+			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
+		} catch( Exception exception ) {
+			log.log( Log.ERROR, "Error creating grid", exception );
+		}
 	}
 
 	@Override

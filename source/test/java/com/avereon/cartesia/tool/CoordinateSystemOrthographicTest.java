@@ -14,14 +14,14 @@ import static org.hamcrest.Matchers.is;
 public class CoordinateSystemOrthographicTest {
 
 	@Test
-	void testFindNearest() {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 1, 1 );
+	void testFindNearest() throws Exception {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ), Near.near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ), Near.near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ), Near.near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( 0.3, -0.2, 0 ) ), Near.near( Point3D.ZERO ) );
 
-		workplane.setSnapSpacingX( 0.2 );
+		workplane.setSnapGridX( "0.2" );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( -14.623984, 2.34873, 0 ) ), Near.near( new Point3D( -14.6, 2, 0 ) ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( -4.623984, -6.34873, 0 ) ), Near.near( new Point3D( -4.6, -6, 0 ) ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( 7.623984, -23.34873, 0 ) ), Near.near( new Point3D( 7.6, -23, 0 ) ) );
@@ -29,14 +29,14 @@ public class CoordinateSystemOrthographicTest {
 	}
 
 	@Test
-	void testFindNearestAtZero() {
+	void testFindNearestAtZero() throws Exception {
 		Workplane workplane = new Workplane();
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, Point3D.ZERO ), is( Point3D.ZERO ) );
 	}
 
 	@Test
-	void testFindNearestOffsetOrigin() {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 1, 1 );
+	void testFindNearestOffsetOrigin() throws Exception {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
 		workplane.setOrigin( new Point3D( 0.3, 0.2, 0 ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( 0.3, 0.2, 0 ) ) );
 
@@ -45,22 +45,25 @@ public class CoordinateSystemOrthographicTest {
 	}
 
 	@Test
-	void testGetOffsets() {
+	void testGetOffsets() throws Exception {
 		assertThat( CoordinateSystem.getOffsets( 0, 1, -0.5, 0.5 ), contains( 0.0 ) );
 		assertThat( CoordinateSystem.getOffsets( 0, 1, -1, 1 ), contains( -1.0, 0.0, 1.0 ) );
-		assertThat( CoordinateSystem.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ), contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 ) );
+		assertThat(
+			CoordinateSystem.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ),
+			contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 )
+		);
 	}
 
 	@Test
-	void testGetGridDots() {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, 1, 90, 1, 45, 1, 45 );
+	void testGetGridDots() throws Exception {
+		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
 		List<Shape> dots = CoordinateSystem.ORTHO.getGridDots( workplane );
 		assertThat( dots.size(), is( 0 ) );
 	}
 
 	@Test
-	void getGridLinesCommon() {
-		Workplane workplane = new Workplane( -10, -8, 10, 8, 1, 0.5, 0.1 );
+	void getGridLinesCommon() throws Exception {
+		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		List<Shape> lines = CoordinateSystem.ORTHO.getGridLines( workplane );
 
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
@@ -70,8 +73,8 @@ public class CoordinateSystemOrthographicTest {
 	}
 
 	@Test
-	void getGridLinesOffOrigin() {
-		Workplane workplane = new Workplane( 5, 4, 10, 8, 1, 0.5, 0.1 );
+	void getGridLinesOffOrigin() throws Exception {
+		Workplane workplane = new Workplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
 		List<Shape> lines = CoordinateSystem.ORTHO.getGridLines( workplane );
 
 		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11
