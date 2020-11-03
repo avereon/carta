@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.math.Geometry;
 import com.avereon.cartesia.math.Maths;
 import com.avereon.math.Arithmetic;
 import javafx.geometry.Point3D;
@@ -13,13 +14,14 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 
 	@Override
 	public Point3D getNearest( Workplane workplane, Point3D point ) throws Exception {
-		point = point.subtract( workplane.getOrigin() );
+		Point3D origin = Geometry.parsePoint( workplane.getOrigin() );
+		point = point.subtract( origin );
 		point = new Point3D(
 			Arithmetic.nearest( point.getX(), Maths.eval( workplane.getSnapGridX() ) ),
 			Arithmetic.nearest( point.getY(), Maths.eval( workplane.getSnapGridY() ) ),
 			Arithmetic.nearest( point.getZ(), Maths.eval( workplane.getSnapGridZ() ) )
 		);
-		point = point.add( workplane.getOrigin() );
+		point = point.add( origin );
 		return point;
 	}
 
@@ -32,7 +34,7 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 	public List<Shape> getGridLines( Workplane workplane ) throws Exception {
 		List<Shape> grid = new ArrayList<>();
 
-		Point3D origin = workplane.getOrigin();
+		Point3D origin = Geometry.parsePoint( workplane.getOrigin() );
 		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
 		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
 		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() );

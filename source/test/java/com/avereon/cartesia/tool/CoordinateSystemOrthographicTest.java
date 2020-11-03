@@ -37,10 +37,10 @@ public class CoordinateSystemOrthographicTest {
 	@Test
 	void testFindNearestOffsetOrigin() throws Exception {
 		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
-		workplane.setOrigin( new Point3D( 0.3, 0.2, 0 ) );
+		workplane.setOrigin( "0.3, 0.2, 0" );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( 0.3, 0.2, 0 ) ) );
 
-		workplane.setOrigin( new Point3D( 0.7, 0.8, 0 ) );
+		workplane.setOrigin( "0.7, 0.8, 0" );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( -0.3, -0.2, 0 ) ) );
 	}
 
@@ -48,8 +48,7 @@ public class CoordinateSystemOrthographicTest {
 	void testGetOffsets() throws Exception {
 		assertThat( CoordinateSystem.getOffsets( 0, 1, -0.5, 0.5 ), contains( 0.0 ) );
 		assertThat( CoordinateSystem.getOffsets( 0, 1, -1, 1 ), contains( -1.0, 0.0, 1.0 ) );
-		assertThat(
-			CoordinateSystem.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ),
+		assertThat( CoordinateSystem.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ),
 			contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 )
 		);
 	}

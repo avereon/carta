@@ -39,11 +39,12 @@ public class CoordinateSystemPolarTest {
 	@Test
 	void testFindNearestOffsetOrigin() throws Exception {
 		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
-		workplane.setOrigin( new Point3D( 0.3, 0.2, 0 ) );
+		workplane.setOrigin( "0.3, 0.2, 0" );
 		assertThat( CoordinateSystem.POLAR.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( 0.3, 0.2, 0 ) ) );
 
-		workplane.setOrigin( new Point3D( 0.7, 0.8, 0 ) );
-		assertThat( CoordinateSystem.POLAR.getNearest( workplane, Point3D.ZERO ),
+		workplane.setOrigin( "0.7, 0.8, 0" );
+		assertThat(
+			CoordinateSystem.POLAR.getNearest( workplane, Point3D.ZERO ),
 			Near.near( new Point3D( 0.7 - Constants.SQRT_ONE_HALF, 0.8 - Constants.SQRT_ONE_HALF, 0 ) )
 		);
 	}

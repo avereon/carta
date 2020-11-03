@@ -7,6 +7,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -391,6 +392,7 @@ public class DesignPane extends StackPane {
 		Fx.run( () -> {
 			this.grid.getChildren().clear();
 			this.grid.getChildren().addAll( grid );
+			grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ));
 		} );
 	}
 

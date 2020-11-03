@@ -20,7 +20,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 	public Point3D getNearest( Workplane workplane, Point3D point ) throws Exception {
 		// This can be determined by calculating the nearest point
 		// and then converting from polar to cartesian coordinates
-		point = point.subtract( workplane.getOrigin() );
+		Point3D origin = Geometry.parsePoint( workplane.getOrigin() );
+		point = point.subtract( origin );
 		point = Geometry.cartesianToPolar( point );
 
 		point = new Point3D(
@@ -30,7 +31,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		);
 
 		point = Geometry.polarToCartesian( point );
-		point = point.add( workplane.getOrigin() );
+		point = point.add( origin );
 
 		return point;
 	}
@@ -47,7 +48,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 
 		List<Shape> grid = new ArrayList<>();
 
-		Point3D origin = workplane.getOrigin();
+		Point3D origin = Geometry.parsePoint( workplane.getOrigin() );
 		double boundaryXmin = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) - origin.getX();
 		double boundaryXmax = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) - origin.getX();
 		double boundaryYmin = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();

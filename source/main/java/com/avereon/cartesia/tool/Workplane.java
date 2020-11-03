@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool;
 import com.avereon.data.Node;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 
 public class Workplane extends Node {
@@ -11,6 +10,8 @@ public class Workplane extends Node {
 	public static final double DEFAULT_BOUNDARY_X = 10.0;
 
 	public static final double DEFAULT_BOUNDARY_Y = 10.0;
+
+	public static final String DEFAULT_ORIGIN = "0,0,0";
 
 	public static final String DEFAULT_MAJOR_GRID_SIZE = "1.0";
 
@@ -72,7 +73,7 @@ public class Workplane extends Node {
 	public Workplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this( Point3D.ZERO,
+		this( DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -102,7 +103,7 @@ public class Workplane extends Node {
 		String snapGridY
 	) {
 		this(
-			Point3D.ZERO,
+			DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -120,7 +121,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane(
-		Point3D origin,
+		String origin,
 		double boundaryX1,
 		double boundaryY1,
 		double boundaryX2,
@@ -151,11 +152,11 @@ public class Workplane extends Node {
 		setSnapGridZ( snapGridZ );
 	}
 
-	public Point3D getOrigin() {
+	public String getOrigin() {
 		return getValue( ORIGIN );
 	}
 
-	public Workplane setOrigin( Point3D origin ) {
+	public Workplane setOrigin( String origin ) {
 		setValue( ORIGIN, origin );
 		return this;
 	}
@@ -283,6 +284,14 @@ public class Workplane extends Node {
 		double boundaryYmin = Math.min( getBoundaryY1(), getBoundaryY2() );
 		double boundaryYmax = Math.max( getBoundaryY1(), getBoundaryY2() );
 		return new BoundingBox( boundaryXmin, boundaryYmin, boundaryXmax - boundaryXmin, boundaryYmax - boundaryYmin );
+	}
+
+	public Workplane setBounds( Bounds bounds ) {
+		setBoundaryX1( bounds.getMinX() );
+		setBoundaryY1( bounds.getMinY() );
+		setBoundaryX2( bounds.getMaxX() );
+		setBoundaryY2( bounds.getMaxY() );
+		return this;
 	}
 
 }

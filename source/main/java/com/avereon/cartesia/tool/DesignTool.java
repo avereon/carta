@@ -28,6 +28,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.input.*;
@@ -289,22 +290,29 @@ public abstract class DesignTool extends GuidedTool {
 		heightProperty().addListener( ( p, o, n ) -> designPane.recenter() );
 
 		// Workplane settings
-		configureWorkpane();
+		configureWorkplane();
 
 		// Get tool settings
 		setPan( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_PAN, "0,0,0" ) ) );
 		setZoom( Double.parseDouble( getSettings().get( SETTINGS_ZOOM, "1.0" ) ) );
 		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 
+		// Add layout bounds property listener
+		layoutBoundsProperty().addListener( ( p, o, n ) -> {
+			validateGrid();
+		} );
+
 		// Add pan property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( SETTINGS_PAN, n.getX() + "," + n.getY() + "," + n.getZ() );
+			validateGrid();
 		} );
 
 		// Add zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			getSettings().set( SETTINGS_ZOOM, n.doubleValue() );
+			validateGrid();
 		} );
 
 		// Add current layer property listener
@@ -320,55 +328,6 @@ public abstract class DesignTool extends GuidedTool {
 
 		if( isActive() ) activate();
 		designPane.recenter();
-	}
-
-	private void configureWorkpane() {
-		Settings settings = getAsset().getSettings();
-		Workplane workplane = getDesignContext().getWorkplane();
-
-		//workplane.setOrigin( /* parse a point */ );
-		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-
-		workplane.register( Workplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( Workplane.MAJOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( Workplane.MAJOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( Workplane.MINOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( Workplane.MINOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( Workplane.MINOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( Workplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-
-		settings.register( "workpane-major-grid-x", e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-major-grid-y", e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-major-grid-z", e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-minor-grid-x", e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-minor-grid-y", e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-minor-grid-z", e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-snap-grid-x", e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-snap-grid-y", e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-snap-grid-z", e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
-
-		// Rebuild the grid before adding the value change listener
-		rebuildGrid();
-		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
-	}
-
-	private void rebuildGrid() {
-		try {
-			CoordinateSystem system = CoordinateSystem.ORTHO;
-			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
-		} catch( Exception exception ) {
-			log.log( Log.ERROR, "Error creating grid", exception );
-		}
 	}
 
 	@Override
@@ -420,14 +379,6 @@ public abstract class DesignTool extends GuidedTool {
 		pullAction( "redo", redoAction );
 	}
 
-	static DesignLayer getDesignData( DesignPane.Layer l ) {
-		return (DesignLayer)l.getProperties().get( DesignShapeView.DESIGN_DATA );
-	}
-
-	static DesignShape getDesignData( Shape s ) {
-		return (DesignShape)s.getParent().getProperties().get( DesignShapeView.DESIGN_DATA );
-	}
-
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
 		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
@@ -477,6 +428,69 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 	}
 
+	private void configureWorkplane() {
+		Settings settings = getAsset().getSettings();
+		Workplane workplane = getDesignContext().getWorkplane();
+
+		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", Workplane.DEFAULT_ORIGIN ) );
+		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+
+		workplane.register( Workplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
+		workplane.register( Workplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( Workplane.MAJOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( Workplane.MAJOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( Workplane.MINOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( Workplane.MINOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( Workplane.MINOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( Workplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+
+		settings.register( "workpane-origin", e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-major-grid-x", e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-major-grid-y", e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-major-grid-z", e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-minor-grid-x", e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-minor-grid-y", e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-minor-grid-z", e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-snap-grid-x", e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-snap-grid-y", e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( "workpane-snap-grid-z", e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
+
+		// Rebuild the grid before adding the value change listener
+		rebuildGrid();
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
+	}
+
+	private void validateGrid() {
+		if( !gridIsValid() ) rebuildGrid();
+	}
+
+	private boolean gridIsValid() {
+		Bounds b = designPane.parentToLocal( getLayoutBounds() );
+		System.err.println( "dp bounds=" + b );
+		return getDesignContext().getWorkplane().getBounds().contains( b );
+	}
+
+	private void rebuildGrid() {
+		try {
+			Workplane workplane = getDesignContext().getWorkplane();
+			CoordinateSystem system = CoordinateSystem.ORTHO;
+			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
+			designPane.setGrid( system.getGridLines( workplane ) );
+		} catch( Exception exception ) {
+			log.log( Log.ERROR, "Error creating grid", exception );
+		}
+	}
+
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
 			c.getRemoved().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::hidePropertiesPage );
@@ -514,6 +528,14 @@ public abstract class DesignTool extends GuidedTool {
 		} catch( IOException e ) {
 			e.printStackTrace();
 		}
+	}
+
+	static DesignLayer getDesignData( DesignPane.Layer l ) {
+		return (DesignLayer)l.getProperties().get( DesignShapeView.DESIGN_DATA );
+	}
+
+	static DesignShape getDesignData( Shape s ) {
+		return (DesignShape)s.getParent().getProperties().get( DesignShapeView.DESIGN_DATA );
 	}
 
 	private static class SelectWindow extends Rectangle {
