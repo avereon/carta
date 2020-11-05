@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.Geometry;
-import com.avereon.cartesia.math.Maths;
 import com.avereon.math.Arithmetic;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Line;
@@ -13,25 +12,25 @@ import java.util.List;
 public class CoordinateSystemOrthographic implements CoordinateSystem {
 
 	@Override
-	public Point3D getNearest( Workplane workplane, Point3D point ) throws Exception {
+	public Point3D getNearest( Workplane workplane, Point3D point ) {
 		Point3D origin = Geometry.parsePoint( workplane.getOrigin() );
 		point = point.subtract( origin );
 		point = new Point3D(
-			Arithmetic.nearest( point.getX(), Maths.eval( workplane.getSnapGridX() ) ),
-			Arithmetic.nearest( point.getY(), Maths.eval( workplane.getSnapGridY() ) ),
-			Arithmetic.nearest( point.getZ(), Maths.eval( workplane.getSnapGridZ() ) )
+			Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
+			Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ),
+			Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() )
 		);
 		point = point.add( origin );
 		return point;
 	}
 
 	@Override
-	public List<Shape> getGridDots( Workplane workplane ) throws Exception {
+	public List<Shape> getGridDots( Workplane workplane ) {
 		return List.of();
 	}
 
 	@Override
-	public List<Shape> getGridLines( Workplane workplane ) throws Exception {
+	public List<Shape> getGridLines( Workplane workplane ) {
 		List<Shape> grid = new ArrayList<>();
 
 		Point3D origin = Geometry.parsePoint( workplane.getOrigin() );
@@ -39,10 +38,10 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
 		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() );
 		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() );
-		double minorIntervalX = Maths.eval( workplane.getMinorGridX() );
-		double minorIntervalY = Maths.eval( workplane.getMinorGridY() );
-		double majorIntervalX = Maths.eval( workplane.getMajorGridX() );
-		double majorIntervalY = Maths.eval( workplane.getMajorGridY() );
+		double majorIntervalX = workplane.calcMajorGridX();
+		double majorIntervalY = workplane.calcMajorGridY();
+		double minorIntervalX = workplane.calcMinorGridX();
+		double minorIntervalY = workplane.calcMinorGridY();
 
 		// Get all offsets
 		List<Double> axisOffsetsX = new ArrayList<>();

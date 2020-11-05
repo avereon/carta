@@ -454,37 +454,24 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
 		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
 
-		settings.register( "workpane-origin", e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-major-grid-x", e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-major-grid-y", e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-major-grid-z", e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-minor-grid-x", e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-minor-grid-y", e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-minor-grid-z", e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-snap-grid-x", e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-snap-grid-y", e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
-		settings.register( "workpane-snap-grid-z", e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
-
-		// Rebuild the grid before adding the value change listener
-		rebuildGrid();
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
+		validateGrid();
 	}
 
 	private void validateGrid() {
-		if( !gridIsValid() ) rebuildGrid();
-	}
-
-	private boolean gridIsValid() {
-		Bounds b = designPane.parentToLocal( getLayoutBounds() );
-		System.err.println( "dp bounds=" + b );
-		return getDesignContext().getWorkplane().getBounds().contains( b );
+		Fx.run( this::rebuildGrid );
 	}
 
 	private void rebuildGrid() {
 		try {
+			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
+			boolean contained = getDesignContext().getWorkplane().getBounds().contains( bounds );
+			if( contained ) return;
+
 			Workplane workplane = getDesignContext().getWorkplane();
+			workplane.setBounds( bounds );
+
 			CoordinateSystem system = CoordinateSystem.ORTHO;
-			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
 			designPane.setGrid( system.getGridLines( workplane ) );
 		} catch( Exception exception ) {
 			log.log( Log.ERROR, "Error creating grid", exception );

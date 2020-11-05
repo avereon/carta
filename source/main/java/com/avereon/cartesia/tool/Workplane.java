@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.math.Maths;
 import com.avereon.data.Node;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -59,6 +60,24 @@ public class Workplane extends Node {
 
 	private static final String ZERO = "0";
 
+	private double majorGridX;
+
+	private double majorGridY;
+
+	private double majorGridZ;
+
+	private double minorGridX;
+
+	private double minorGridY;
+
+	private double minorGridZ;
+
+	private double snapGridX;
+
+	private double snapGridY;
+
+	private double snapGridZ;
+
 	public Workplane() {
 		this( -DEFAULT_BOUNDARY_X,
 			-DEFAULT_BOUNDARY_Y,
@@ -102,8 +121,7 @@ public class Workplane extends Node {
 		String snapGridX,
 		String snapGridY
 	) {
-		this(
-			DEFAULT_ORIGIN,
+		this( DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -197,13 +215,22 @@ public class Workplane extends Node {
 		return this;
 	}
 
+	public double calcMajorGridX() {
+		return majorGridX;
+	}
+
 	public String getMajorGridX() {
 		return getValue( MAJOR_GRID_X );
 	}
 
 	public Workplane setMajorGridX( String majorGridX ) {
+		this.majorGridX = Maths.evalNoException( majorGridX );
 		setValue( MAJOR_GRID_X, majorGridX );
 		return this;
+	}
+
+	public double calcMajorGridY() {
+		return majorGridY;
 	}
 
 	public String getMajorGridY() {
@@ -211,8 +238,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMajorGridY( String majorGridY ) {
+		this.majorGridY = Maths.evalNoException( majorGridY );
 		setValue( MAJOR_GRID_Y, majorGridY );
 		return this;
+	}
+
+	public double calcMajorGridZ() {
+		return majorGridZ;
 	}
 
 	public String getMajorGridZ() {
@@ -220,8 +252,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMajorGridZ( String majorGridZ ) {
+		this.majorGridZ = Maths.evalNoException( majorGridZ );
 		setValue( MAJOR_GRID_Z, majorGridZ );
 		return this;
+	}
+
+	public double calcMinorGridX() {
+		return minorGridX;
 	}
 
 	public String getMinorGridX() {
@@ -229,8 +266,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMinorGridX( String minorGridX ) {
+		this.minorGridX = Maths.evalNoException( minorGridX );
 		setValue( MINOR_GRID_X, minorGridX );
 		return this;
+	}
+
+	public double calcMinorGridY() {
+		return minorGridY;
 	}
 
 	public String getMinorGridY() {
@@ -238,8 +280,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMinorGridY( String minorGridY ) {
+		this.minorGridY = Maths.evalNoException( minorGridY );
 		setValue( MINOR_GRID_Y, minorGridY );
 		return this;
+	}
+
+	public double calcMinorGridZ() {
+		return minorGridZ;
 	}
 
 	public String getMinorGridZ() {
@@ -247,8 +294,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMinorGridZ( String minorGridZ ) {
+		this.minorGridZ = Maths.evalNoException( minorGridZ );
 		setValue( MINOR_GRID_Z, minorGridZ );
 		return this;
+	}
+
+	public double calcSnapGridX() {
+		return snapGridX;
 	}
 
 	public String getSnapGridX() {
@@ -256,8 +308,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setSnapGridX( String snapGridX ) {
+		this.snapGridX = Maths.evalNoException( snapGridX );
 		setValue( SNAP_GRID_X, snapGridX );
 		return this;
+	}
+
+	public double calcSnapGridY() {
+		return snapGridY;
 	}
 
 	public String getSnapGridY() {
@@ -265,8 +322,13 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setSnapGridY( String snapGridY ) {
+		this.snapGridY = Maths.evalNoException( snapGridY );
 		setValue( SNAP_GRID_Y, snapGridY );
 		return this;
+	}
+
+	public double calcSnapGridZ() {
+		return snapGridZ;
 	}
 
 	public String getSnapGridZ() {
@@ -274,6 +336,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setSnapGridZ( String snapGridZ ) {
+		this.snapGridZ = Maths.evalNoException( snapGridZ );
 		setValue( SNAP_GRID_Z, snapGridZ );
 		return this;
 	}
