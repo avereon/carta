@@ -148,8 +148,6 @@ public class CommandContext {
 	}
 
 	void handle( MouseEvent event ) {
-		DesignTool tool = (DesignTool)event.getSource();
-		setMouse( tool.mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
 		if( !event.isConsumed() ) commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
 		doEventCommand( event );
 	}

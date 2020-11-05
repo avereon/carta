@@ -41,13 +41,13 @@ public class CurveCommand extends DrawCommand {
 
 		try {
 			// Get the start point last
-			Point3D origin = asPoint( parameters[0], context.getAnchor() );
+			Point3D origin = asPoint( tool, parameters[0], context.getAnchor() );
 			// Get the start point last
-			Object c2 = asPoint( parameters[1], context.getAnchor() );
+			Object c2 = asPoint( tool, parameters[1], context.getAnchor() );
 			// Get the start point last
-			Object c3 = asPoint( parameters[2], context.getAnchor() );
+			Object c3 = asPoint( tool, parameters[2], context.getAnchor() );
 			// Get the end point first
-			Object point = asPoint( parameters[3], context.getAnchor() );
+			Object point = asPoint( tool, parameters[3], context.getAnchor() );
 
 			//DesignCurve curve = new DesignCurve( origin, c2, c3, point );
 			// TODO Create an undo command

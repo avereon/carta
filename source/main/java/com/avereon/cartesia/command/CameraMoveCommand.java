@@ -39,7 +39,7 @@ public class CameraMoveCommand extends CameraCommand {
 		}
 
 		try {
-			tool.setPan( tool.getPan().subtract( asPoint( parameters[ 0 ], context.getAnchor() ) ) );
+			tool.setPan( tool.getPan().subtract( asPoint( tool, parameters[ 0 ], context.getAnchor() ) ) );
 		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
 			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-point", exception );

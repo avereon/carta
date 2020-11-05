@@ -24,7 +24,7 @@ public class CameraZoomCommand extends CameraCommand {
 
 		if( parameters[ 0 ] instanceof GestureEvent ) {
 			GestureEvent event = (GestureEvent)parameters[ 0 ];
-			Point3D point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
+			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 
 			if( event.getEventType() == ScrollEvent.SCROLL ) {
 				double deltaY = ((ScrollEvent)event).getDeltaY();

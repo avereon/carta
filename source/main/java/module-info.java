@@ -12,6 +12,7 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.settings;
 
 	exports com.avereon.cartesia.data;
+	exports com.avereon.cartesia.snap;
 
 	exports com.avereon.cartesia to com.avereon.xenon;
 	exports com.avereon.cartesia.cursor to com.avereon.zerra;

@@ -33,7 +33,7 @@ public class PointCommand extends DrawCommand {
 
 		try {
 			tool.clearPreview();
-			DesignPoint point = new DesignPoint( asPoint( parameters[ 0 ], context.getAnchor() ) );
+			DesignPoint point = new DesignPoint( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 			tool.getCurrentLayer().addShape( point );
 		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
@@ -49,7 +49,7 @@ public class PointCommand extends DrawCommand {
 		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			Fx.run( () -> {
 				DesignTool tool = (DesignTool)event.getSource();
-				Point3D mouse = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
+				Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 				preview.setLayoutX( mouse.getX() );
 				preview.setLayoutY( mouse.getY() );
 			} );

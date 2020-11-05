@@ -29,8 +29,8 @@ public class MeasureDistanceCommand extends MeasureCommand {
 		}
 
 		try {
-			Point3D p1 = asPoint( parameters[ 0 ], context.getAnchor() );
-			Point3D p2 = asPoint( parameters[ 1 ], context.getAnchor() );
+			Point3D p1 = asPoint( tool, parameters[ 0 ], context.getAnchor() );
+			Point3D p2 = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			double distance = p1.distance( p2 );
 
 			String title = context.getProduct().rb().text( BundleKey.NOTICE, "measurement" );

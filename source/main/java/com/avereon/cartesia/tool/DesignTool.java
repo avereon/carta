@@ -87,8 +87,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private ReticleCursor reticle;
 
-	private Workplane workplane;
-
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		getStyleClass().add( "design-tool" );
@@ -241,12 +239,27 @@ public abstract class DesignTool extends GuidedTool {
 		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, x, y ) );
 	}
 
+	public Point3D mouseToWorld( Point3D point ) {
+		return mouseToWorld( point.getX(), point.getY(), point.getZ() );
+	}
+
 	public Point3D mouseToWorld( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
 	}
 
-	public Point3D mouseToWorld( Point3D point ) {
-		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( point );
+	public Point3D mouseToWorkplane( Point3D point ) {
+		return mouseToWorkplane( point.getX(), point.getY(), point.getZ() );
+	}
+
+	public Point3D mouseToWorkplane( double x, double y, double z ) {
+		CoordinateSystem system = getDesignContext().getCoordinateSystem();
+		Workplane workplane = getDesignContext().getWorkplane();
+		boolean gridSnapEnabled = workplane.isGridSnapEnabled();
+
+		Point3D worldPoint = mouseToWorld( x, y, z );
+		if( gridSnapEnabled ) worldPoint = system.getNearest( workplane, worldPoint );
+
+		return worldPoint;
 	}
 
 	public Point3D worldToMouse( double x, double y, double z ) {
@@ -263,6 +276,22 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void clearPreview() {
 		designPane.clearPreview();
+	}
+
+	public boolean isGridVisible() {
+		return getDesignContext().getWorkplane().isGridVisible();
+	}
+
+	public void setGridVisible( boolean visible ) {
+		getDesignContext().getWorkplane().setGridVisible( visible );
+	}
+
+	public boolean isGridSnapEnabled() {
+		return getDesignContext().getWorkplane().isGridSnapEnabled();
+	}
+
+	public void setGridSnapEnabled( boolean enabled ) {
+		getDesignContext().getWorkplane().setGridSnapEnabled( enabled );
 	}
 
 	@Override
@@ -320,7 +349,11 @@ public abstract class DesignTool extends GuidedTool {
 			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 
-		addEventFilter( MouseEvent.MOUSE_MOVED, this::updateCoordinateStatus );
+		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
+			designPane.setGridVisible( e.getNewValue() );
+		} );
+
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -388,10 +421,6 @@ public abstract class DesignTool extends GuidedTool {
 		return getDesignContext().getCoordinateStatus();
 	}
 
-	private void updateCoordinateStatus( MouseEvent event ) {
-		getCoordinateStatus().updatePosition( mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
-	}
-
 	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {
 		if( anchor == null ) return;
 		double x = Math.min( anchor.getX(), mouse.getX() );
@@ -442,6 +471,8 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setGridVisible( Boolean.parseBoolean( getAsset().getSettings().get( "grid-visible", Workplane.DEFAULT_GRID_VISIBLE ) ) );
+		workplane.setGridSnapEnabled( Boolean.parseBoolean( getAsset().getSettings().get( "grid-snap", Workplane.DEFAULT_GRID_SNAP_ENABLED ) ) );
 
 		workplane.register( Workplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
 		workplane.register( Workplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
@@ -453,23 +484,28 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( Workplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
 		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
 		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( Workplane.GRID_VISIBLE, e -> settings.set( "grid-visible", e.getNewValue() ) );
+		workplane.register( Workplane.GRID_SNAP, e -> settings.set( "grid-snap", e.getNewValue() ) );
+
+		workplane.register( Workplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
+		workplane.register( Workplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
 
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
-		validateGrid();
+		Fx.run( this::rebuildGrid );
 	}
 
 	private void validateGrid() {
-		Fx.run( this::rebuildGrid );
+		Fx.run( () -> {
+			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
+			if( getDesignContext().getWorkplane().getBounds().contains( bounds ) ) return;
+			rebuildGrid();
+		} );
 	}
 
 	private void rebuildGrid() {
 		try {
-			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
-			boolean contained = getDesignContext().getWorkplane().getBounds().contains( bounds );
-			if( contained ) return;
-
 			Workplane workplane = getDesignContext().getWorkplane();
-			workplane.setBounds( bounds );
+			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
 
 			CoordinateSystem system = CoordinateSystem.ORTHO;
 			designPane.setGrid( system.getGridLines( workplane ) );

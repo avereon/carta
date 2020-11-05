@@ -31,7 +31,7 @@ public class SelectCommand extends Command {
 	}
 
 	private Object mousePressed( CommandContext context, DesignTool tool, MouseEvent event ) {
-		context.setAnchor( tool.mouseToWorld( event.getX(), event.getY(), event.getZ() ) );
+		context.setAnchor( tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() ) );
 		eventKey = CommandEventKey.of( event );
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		return incomplete();
@@ -39,7 +39,7 @@ public class SelectCommand extends Command {
 
 	private Object mouseReleased( CommandContext context, DesignTool tool, MouseEvent event ) {
 		if( context.isPenMode() ) {
-			return tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
+			return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 		} else if( context.isSingleSelectMode( event ) ) {
 			tool.mouseSelect( event.getX(), event.getY(), event.getZ(), isSelectToggleEvent( event ) );
 			return complete();

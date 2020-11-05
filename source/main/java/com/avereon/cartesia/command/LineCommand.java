@@ -26,7 +26,7 @@ public class LineCommand extends DrawCommand {
 			return incomplete();
 		}
 		if( parameters.length < 2 ) {
-			Point3D start = asPoint( parameters[ 0 ], context.getAnchor() );
+			Point3D start = asPoint( tool, parameters[ 0 ], context.getAnchor() );
 			tool.setPreview( preview = new Line( start.getX(), start.getY(), start.getX(), start.getY() ) );
 			promptForValue( context, tool, BundleKey.PROMPT, "end-point" );
 			return incomplete();
@@ -34,8 +34,8 @@ public class LineCommand extends DrawCommand {
 
 		try {
 			tool.clearPreview();
-			Point3D p1 = asPoint( parameters[ 0 ], context.getAnchor() );
-			Point3D p2 = asPoint( parameters[ 1 ], context.getAnchor() );
+			Point3D p1 = asPoint( tool, parameters[ 0 ], context.getAnchor() );
+			Point3D p2 = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			DesignLine line = new DesignLine( p1, p2 );
 			tool.getCurrentLayer().addShape( line );
 		} catch( ParseException exception ) {
@@ -52,7 +52,7 @@ public class LineCommand extends DrawCommand {
 		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			Fx.run( () -> {
 				DesignTool tool = (DesignTool)event.getSource();
-				Point3D mouse = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
+				Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 				preview.setEndX( mouse.getX() );
 				preview.setEndY( mouse.getY() );
 			} );

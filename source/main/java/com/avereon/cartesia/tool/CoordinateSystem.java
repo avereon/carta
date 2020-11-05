@@ -17,7 +17,7 @@ public interface CoordinateSystem {
 
 	CoordinateSystem POLAR = new CoordinateSystemPolar();
 
-	Point3D getNearest( Workplane workplane, Point3D point ) throws Exception;
+	Point3D getNearest( Workplane workplane, Point3D point );
 
 	List<Shape> getGridDots( Workplane workplane ) throws Exception;
 

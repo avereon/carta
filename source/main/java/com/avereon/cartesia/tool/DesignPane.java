@@ -396,6 +396,10 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
+	void setGridVisible( boolean visible ) {
+		Fx.run( () -> this.grid.setVisible( visible ) );
+	}
+
 	private void addOriginReferencePoint() {
 		reference.getChildren().add( new ConstructionPoint( DesignPoints.Type.REFERENCE ) );
 	}

@@ -58,6 +58,10 @@ public class Workplane extends Node {
 
 	public static final String SNAP_GRID_Z = "snap-grid-z";
 
+	public static final String GRID_VISIBLE = "grid-visible";
+
+	public static final String GRID_SNAP = "grid-snap";
+
 	private static final String ZERO = "0";
 
 	private double majorGridX;
@@ -168,6 +172,9 @@ public class Workplane extends Node {
 		setSnapGridX( snapGridX );
 		setSnapGridY( snapGridY );
 		setSnapGridZ( snapGridZ );
+
+		setGridVisible( DEFAULT_GRID_VISIBLE );
+		setGridSnapEnabled( DEFAULT_GRID_SNAP_ENABLED );
 	}
 
 	public String getOrigin() {
@@ -338,6 +345,24 @@ public class Workplane extends Node {
 	public Workplane setSnapGridZ( String snapGridZ ) {
 		this.snapGridZ = Maths.evalNoException( snapGridZ );
 		setValue( SNAP_GRID_Z, snapGridZ );
+		return this;
+	}
+
+	public boolean isGridVisible() {
+		return getValue( GRID_VISIBLE );
+	}
+
+	public Workplane setGridVisible( boolean visible ) {
+		setValue( GRID_VISIBLE, visible );
+		return this;
+	}
+
+	public boolean isGridSnapEnabled() {
+		return getValue( GRID_SNAP );
+	}
+
+	public Workplane setGridSnapEnabled( boolean enabled ) {
+		setValue( GRID_SNAP, enabled );
 		return this;
 	}
 

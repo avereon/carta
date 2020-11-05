@@ -41,9 +41,10 @@ public class Command {
 		return Maths.eval( String.valueOf( value ) );
 	}
 
-	protected Point3D asPoint( Object value, Point3D anchor ) throws Exception {
+	protected Point3D asPoint( DesignTool tool, Object value, Point3D anchor ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
-		return Geometry.parsePoint( String.valueOf( value ), anchor );
+		Point3D point = Geometry.parsePoint( String.valueOf( value ), anchor );
+		return tool.mouseToWorkplane( point == null ? Point3D.ZERO : point );
 	}
 
 	protected void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
