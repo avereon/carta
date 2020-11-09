@@ -497,18 +497,17 @@ public abstract class DesignTool extends GuidedTool {
 	private void validateGrid() {
 		Fx.run( () -> {
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
-			if( getDesignContext().getWorkplane().getBounds().contains( bounds ) ) return;
+			Workplane workplane = getDesignContext().getWorkplane();
+			if( workplane.getBounds().contains( bounds ) ) return;
+			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
 			rebuildGrid();
 		} );
 	}
 
 	private void rebuildGrid() {
 		try {
-			Workplane workplane = getDesignContext().getWorkplane();
-			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
-
 			CoordinateSystem system = CoordinateSystem.ORTHO;
-			designPane.setGrid( system.getGridLines( workplane ) );
+			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
 		} catch( Exception exception ) {
 			log.log( Log.ERROR, "Error creating grid", exception );
 		}

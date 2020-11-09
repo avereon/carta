@@ -2,6 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.snap.SnapGrid;
+import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Action;
@@ -87,7 +88,7 @@ public class CommandMap {
 		// sn - snap nearest
 		// sg - toggle snap to grid
 		add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() );
-		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapGrid() );
+		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
 
 		// Layer commands

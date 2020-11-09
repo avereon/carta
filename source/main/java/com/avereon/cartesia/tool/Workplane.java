@@ -20,9 +20,9 @@ public class Workplane extends Node {
 
 	public static final String DEFAULT_SNAP_GRID_SIZE = "0.1";
 
-	public static final boolean DEFAULT_GRID_VISIBLE = false;
+	public static final boolean DEFAULT_GRID_VISIBLE = true;
 
-	public static final boolean DEFAULT_GRID_SNAP_ENABLED = false;
+	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
 
 	public static final Color DEFAULT_AXIS_COLOR = Color.web( "#80a0d060" );
 
