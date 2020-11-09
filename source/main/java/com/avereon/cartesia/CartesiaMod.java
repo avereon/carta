@@ -4,6 +4,7 @@ import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
+import com.avereon.zenna.icon.PauseIcon;
 
 public class CartesiaMod extends Mod {
 
@@ -20,6 +21,11 @@ public class CartesiaMod extends Mod {
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
+
+		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
+		registerIcon( "snap-grid-toggle-disabled", new PauseIcon() );
+
+		registerAction( this.rb(), "snap-grid-toggle" );
 
 		// Register Design2D
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
@@ -55,10 +61,14 @@ public class CartesiaMod extends Mod {
 		unregisterTool( design2dAssetType, Design2dEditor.class );
 		unregisterAssetType( design2dAssetType );
 
-		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
-		unregisterIcon( "layer", new LayerVisibleIcon() );
-		unregisterIcon( "layers", new LayersIcon() );
+		unregisterAction( "snap-grid-toggle" );
+
+		unregisterIcon( "snap-grid-toggle-disabled", new PauseIcon() );
+		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
 		unregisterIcon( "layer-hidden", new LayerHiddenIcon() );
+		unregisterIcon( "layers", new LayersIcon() );
+		unregisterIcon( "layer", new LayerVisibleIcon() );
+		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
 		super.shutdown();
 	}
 

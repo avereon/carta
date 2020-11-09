@@ -5,7 +5,6 @@ import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.Action;
 import com.avereon.xenon.ProgramProduct;
 import javafx.scene.input.*;
 
@@ -15,6 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CommandMap {
 
 	private static final System.Logger log = Log.get();
+
+	public static final String COMMAND_SUFFIX = ".command";
 
 	private static final Map<String, CommandMapping> actionCommands = new ConcurrentHashMap<>();
 
@@ -124,7 +125,7 @@ public class CommandMap {
 	}
 
 	private static void add( ProgramProduct product, String action, Class<? extends Command> command, Object... parameters ) {
-		String shortcut = product.rb().textOr( BundleKey.ACTION, action + Action.SHORTCUT_SUFFIX, "" ).toLowerCase();
+		String shortcut = product.rb().textOr( BundleKey.ACTION, action + COMMAND_SUFFIX, "" ).toLowerCase();
 
 		if( !actionCommands.containsKey( action ) ) {
 			shortcutActions.put( shortcut, action );

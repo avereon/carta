@@ -119,6 +119,10 @@ public class CommandContext {
 		reset();
 	}
 
+	public void command( String input ) {
+		doCommand( input );
+	}
+
 	public boolean isPenMode() {
 		return commandStack.size() > 1;
 	}

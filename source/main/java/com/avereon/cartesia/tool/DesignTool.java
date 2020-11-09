@@ -1,9 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
@@ -40,7 +37,10 @@ import javafx.stage.Screen;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class DesignTool extends GuidedTool {
@@ -60,6 +60,8 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
 	private static final System.Logger log = Log.get();
+
+	private final Map<String, Action> commandActions;
 
 	private final DesignToolLayersGuide layersGuide;
 
@@ -92,6 +94,8 @@ public abstract class DesignTool extends GuidedTool {
 		getStyleClass().add( "design-tool" );
 
 		addStylesheet( CartesiaMod.STYLESHEET );
+
+		this.commandActions = new ConcurrentHashMap<>();
 
 		this.layersGuide = new DesignToolLayersGuide( product, this );
 		this.viewsGuide = new DesignToolViewsGuide( product, this );
@@ -371,8 +375,8 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void activate() throws ToolException {
 		super.activate();
-		registerActions();
 		if( isReady() ) {
+			registerActions();
 			getDesignContext().getCommandContext().setLastActiveDesignTool( this );
 			registerStatusBarItems();
 		}
@@ -401,15 +405,38 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
+		pushToolActions( "snap-grid-toggle" );
+
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
+
+		pushCommandAction( "snap-grid-toggle", () -> isGridSnapEnabled() ? "enabled" : "disabled" );
 	}
 
 	private void unregisterActions() {
+		pullCommandAction( "snap-grid-toggle" );
+
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
+
+		pullToolActions();
+	}
+
+	private void pushCommandAction( String key ) {
+		pushCommandAction( key, () -> null );
+	}
+
+	private void pushCommandAction( String key, Supplier<String> supplier ) {
+		String shortcut = getProduct().rb().textOr( BundleKey.ACTION, key + CommandMap.COMMAND_SUFFIX, "" ).toLowerCase();
+		Action action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), shortcut ) );
+		action.setState( supplier.get() );
+		pushAction( key, action );
+	}
+
+	private void pullCommandAction( String key ) {
+		pullAction( key, commandActions.get( key ) );
 	}
 
 	private void setReticle( ReticleCursor reticle ) {
@@ -636,6 +663,27 @@ public abstract class DesignTool extends GuidedTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			getAsset().getUndoManager().redo();
+		}
+
+	}
+
+	private class CommandAction extends Action {
+
+		private final String shortcut;
+
+		protected CommandAction( Program program, String shortcut ) {
+			super( program );
+			this.shortcut = shortcut;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getCommandContext().command( shortcut );
 		}
 
 	}
