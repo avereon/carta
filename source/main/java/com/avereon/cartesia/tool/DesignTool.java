@@ -5,6 +5,8 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.snap.Snap;
+import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.data.NodeEvent;
 import com.avereon.settings.Settings;
 import com.avereon.util.Log;
@@ -60,6 +62,8 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
 	private static final System.Logger log = Log.get();
+
+	private static final Snap gridSnap = new SnapGrid();
 
 	private final Map<String, Action> commandActions;
 
@@ -256,14 +260,10 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public Point3D mouseToWorkplane( double x, double y, double z ) {
-		CoordinateSystem system = getDesignContext().getCoordinateSystem();
+		Point3D worldPoint = mouseToWorld( x, y, z );
 		Workplane workplane = getDesignContext().getWorkplane();
 		boolean gridSnapEnabled = workplane.isGridSnapEnabled();
-
-		Point3D worldPoint = mouseToWorld( x, y, z );
-		if( gridSnapEnabled ) worldPoint = system.getNearest( workplane, worldPoint );
-
-		return worldPoint;
+		return gridSnapEnabled ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
 
 	public Point3D worldToMouse( double x, double y, double z ) {
