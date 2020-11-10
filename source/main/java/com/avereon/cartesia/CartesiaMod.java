@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.DesignLayerOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
@@ -38,6 +39,8 @@ public class CartesiaMod extends Mod {
 		//ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
 		//design3dEditorRegistration.setName( "Design 3D Editor" );
 		//registerTool( design3dAssetType, design3dEditorRegistration );
+
+		getProgram().getSettingsManager().putOptionProvider( "design-layers", new DesignLayerOptionProvider( this ) );
 
 		// Load the default settings
 		loadDefaultSettings();

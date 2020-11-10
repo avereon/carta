@@ -87,9 +87,9 @@ public abstract class Design extends IdNode {
 		return getRootLayer().findLayers( key, value );
 	}
 
-	public Set<DesignLayer> getAllLayers() {
-		Set<DesignLayer> layers = new HashSet<>( getRootLayer().getAllLayers() );
-		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toSet() ) );
+	public List<DesignLayer> getAllLayers() {
+		List<DesignLayer> layers = new ArrayList<>( getRootLayer().getAllLayers() );
+		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toList() ) );
 		return layers;
 	}
 
