@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.snap.Snap;
@@ -545,6 +546,8 @@ public abstract class DesignTool extends GuidedTool {
 			c.getRemoved().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::hidePropertiesPage );
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
+
+			// TODO Show a combined properties page
 			c.getAddedSubList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 		}
 		deleteAction.updateEnabled();
@@ -556,10 +559,13 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void doSetCurrentLayerById( String id ) {
-		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( currentLayer::set );
+		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( y -> {
+			currentLayerProperty().set( y );
+			showPropertiesPage( y );
+		} );
 	}
 
-	private void showPropertiesPage( DesignShape s ) {
+	private void showPropertiesPage( DesignDrawable s ) {
 		try {
 			SettingsPage page = s.getPropertiesPage( getProduct() );
 			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
@@ -569,7 +575,7 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	private void hidePropertiesPage( DesignShape s ) {
+	private void hidePropertiesPage( DesignDrawable s ) {
 		try {
 			SettingsPage page = s.getPropertiesPage( getProduct() );
 			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );

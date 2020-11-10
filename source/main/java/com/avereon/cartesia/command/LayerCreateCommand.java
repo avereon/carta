@@ -16,7 +16,7 @@ public class LayerCreateCommand extends LayerCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		if( parameters.length < 1 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "name" );
+			promptForValue( context, tool, BundleKey.PROMPT, "layer-name" );
 			return incomplete();
 		}
 

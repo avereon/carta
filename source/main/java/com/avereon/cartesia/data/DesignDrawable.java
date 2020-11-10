@@ -1,9 +1,12 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
+import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
 
+import java.io.IOException;
 import java.util.Map;
 
 public abstract class DesignDrawable extends DesignNode {
@@ -25,6 +28,8 @@ public abstract class DesignDrawable extends DesignNode {
 	private static final Color DEFAULT_SELECT_DRAW_COLOR = Colors.web( "#ff00ff40" );
 
 	private static final Color DEFAULT_SELECT_FILL_COLOR = Colors.web( "#ff00ff20" );
+
+	protected SettingsPage page;
 
 	protected DesignDrawable() {
 		addModifyingKeys( DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
@@ -104,6 +109,8 @@ public abstract class DesignDrawable extends DesignNode {
 	public Color calcSelectFillColor() {
 		return DEFAULT_SELECT_FILL_COLOR;
 	}
+
+	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();

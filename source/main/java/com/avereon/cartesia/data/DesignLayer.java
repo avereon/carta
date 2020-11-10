@@ -1,11 +1,17 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
+import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.util.Log;
+import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.tool.settings.SettingsPage;
+import com.avereon.xenon.tool.settings.SettingsPageParser;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -124,6 +130,13 @@ public class DesignLayer extends DesignDrawable {
 	public DesignLayer removeShape( DesignShape shape ) {
 		removeFromSet( SHAPES, shape );
 		return this;
+	}
+
+	@Override
+	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
+		String pagePath = "/com/avereon/cartesia/design/props/layer.xml";
+		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath, BundleKey.PROPS ).get( "layer" );
+		return page;
 	}
 
 	public Map<String, Object> asMap() {

@@ -3,11 +3,8 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.tool.settings.SettingsPage;
 import javafx.geometry.Point3D;
 
-import java.io.IOException;
 import java.util.Comparator;
 import java.util.Map;
 
@@ -18,8 +15,6 @@ public abstract class DesignShape extends DesignDrawable {
 	public static final String ORIGIN = "origin";
 
 	public static final String SELECTED = "selected";
-
-	protected SettingsPage page;
 
 	public DesignShape() {
 		addModifyingKeys( ORIGIN );
@@ -59,7 +54,5 @@ public abstract class DesignShape extends DesignDrawable {
 	public <T extends Node> Comparator<T> getComparator() {
 		return new NodeComparator<>( ORDER );
 	}
-
-	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
 
 }

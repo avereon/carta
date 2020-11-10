@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="layer">
+		<group id="layer">
+			<setting key="name" editor="textline"/>
+			<setting key="draw-width" editor="textline" type="math-expression"/>
+			<setting key="draw-color" editor="color"/>
+			<setting key="fill-color" editor="color"/>
+		</group>
+	</page>
+
+</pages>
