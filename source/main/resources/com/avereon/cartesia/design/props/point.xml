@@ -4,10 +4,11 @@
 
 	<page id="point">
 		<group id="point">
-		<setting key="type" editor="combobox" provider="point-type-option-provider"/>
-		<setting key="size" type="math-expression" editor="textline"/>
-		<setting key="draw-width" type="math-expression" editor="textline"/>
-		<setting key="draw-color" editor="color"/>
+			<setting key="layer" editor="combobox" provider="design-layers"/>
+			<setting key="type" editor="combobox" provider="point-type-option-provider"/>
+			<setting key="size" type="math-expression" editor="textline"/>
+			<setting key="draw-width" type="math-expression" editor="textline"/>
+			<setting key="draw-color" editor="color"/>
 		</group>
 	</page>
 
