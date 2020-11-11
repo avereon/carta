@@ -261,6 +261,7 @@ public class CommandContext {
 				setInputMode( request.getCommand().isInputCommand() );
 				result = request.execute( result );
 				if( result == Command.INCOMPLETE ) break;
+				if( result instanceof Point3D ) setAnchor( (Point3D)result );
 				commandStack.remove( request );
 			}
 		} catch( Exception exception ) {

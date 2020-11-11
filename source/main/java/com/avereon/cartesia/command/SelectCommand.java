@@ -31,7 +31,6 @@ public class SelectCommand extends Command {
 	}
 
 	private Object mousePressed( CommandContext context, DesignTool tool, MouseEvent event ) {
-		context.setAnchor( tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() ) );
 		eventKey = CommandEventKey.of( event );
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		return incomplete();
