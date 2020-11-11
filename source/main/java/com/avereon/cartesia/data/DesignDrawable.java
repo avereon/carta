@@ -43,9 +43,10 @@ public abstract class DesignDrawable extends DesignNode {
 		return getValue( ORDER, 0 );
 	}
 
-	public DesignDrawable setOrder( int order ) {
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setOrder( int order ) {
 		setValue( ORDER, order );
-		return this;
+		return (T)this;
 	}
 
 	public double calcDrawWidth() {

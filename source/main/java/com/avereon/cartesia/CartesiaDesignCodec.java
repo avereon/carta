@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
-import java.util.Objects;
 
 public abstract class CartesiaDesignCodec extends Codec {
 
@@ -92,7 +91,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private void loadLayer( Design design, DesignLayer parent, String currentLayerId, Map<String, Object> map ) {
 		DesignLayer layer = new DesignLayer().updateFrom( map );
 		parent.addLayer( layer );
-		if( Objects.equals( currentLayerId, layer.getId() ) ) design.setCurrentLayer( layer );
 
 		// Add the shapes found in the layer
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );

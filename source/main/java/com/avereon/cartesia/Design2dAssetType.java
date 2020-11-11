@@ -29,7 +29,6 @@ public class Design2dAssetType extends AssetType {
 			String constructionLayerName = getProduct().rb().textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 			DesignLayer layer = new DesignLayer().setName( constructionLayerName );
 			design.getRootLayer().addLayer( layer );
-			design.setCurrentLayer( layer );
 		}
 
 		return true;

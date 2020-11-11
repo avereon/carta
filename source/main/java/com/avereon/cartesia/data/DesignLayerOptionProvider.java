@@ -19,7 +19,6 @@ public class DesignLayerOptionProvider implements SettingOptionProvider {
 
 	@Override
 	public List<String> getKeys() {
-		// FIXME The option provider is not returning valid results
 		Optional<Design> optional = getDesign();
 		if( optional.isEmpty() ) return List.of();
 		return optional.get().getAllLayers().stream().map( IdNode::getId ).collect( Collectors.toList() );
@@ -34,7 +33,7 @@ public class DesignLayerOptionProvider implements SettingOptionProvider {
 		List<DesignLayer> layers = optional.get().getAllLayers();
 		DesignLayer layer = layers.stream().filter( l -> l.getId().equals( key ) ).findAny().orElse( notfound );
 
-		return layer == notfound ? TextUtil.EMPTY : layer.getName();
+		return layer == notfound ? key : layer.getName();
 	}
 
 	private Optional<Design> getDesign() {

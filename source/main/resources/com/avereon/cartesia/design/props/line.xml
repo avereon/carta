@@ -4,7 +4,7 @@
 
 	<page id="line">
 		<group id="line">
-		<setting key="layer" editor="combobox" option-provider="design-layers"/>
+		<setting key="layer" editor="combobox" provider="design-layers"/>
 		<setting key="draw-width" type="math-expression" editor="textline"/>
 		<setting key="draw-color" editor="color"/>
 		</group>

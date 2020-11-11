@@ -74,23 +74,21 @@ public abstract class Design extends IdNode {
 		return link == null ? null : link.getNode();
 	}
 
-	// TODO Finish removing this method
-	@Deprecated
-	public Design setCurrentLayer( DesignLayer layer ) {
-		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
-		// Current layer is a node link so the layer doesn't get removed from the layer tree
-		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
-		return this;
-	}
+//	// TODO Finish removing this method
+//	@Deprecated
+//	public Design setCurrentLayer( DesignLayer layer ) {
+//		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
+//		// Current layer is a node link so the layer doesn't get removed from the layer tree
+//		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
+//		return this;
+//	}
 
 	public Set<DesignLayer> findLayers( String key, Object value ) {
 		return getRootLayer().findLayers( key, value );
 	}
 
 	public List<DesignLayer> getAllLayers() {
-		List<DesignLayer> layers = new ArrayList<>( getRootLayer().getAllLayers() );
-		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toList() ) );
-		return layers;
+		return getRootLayer().getAllLayers();
 	}
 
 	public Set<DesignView> getViews() {
@@ -117,7 +115,6 @@ public abstract class Design extends IdNode {
 
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
-		map.put( CURRENT_LAYER, getCurrentLayer().getId() );
 		map.put( DesignLayer.LAYERS, getRootLayer().getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
 		return map;
 	}

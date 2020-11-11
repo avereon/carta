@@ -5,7 +5,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DesignTest {
@@ -64,7 +64,7 @@ public class DesignTest {
 	}
 
 	@Test
-	void testAddLayerAndSave() {
+	void testAddLayerAndClearModified() {
 		Design design = new MockDesign();
 		design.setModified( false );
 		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
@@ -78,6 +78,28 @@ public class DesignTest {
 		design.setModified( false );
 		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( false ) );
+	}
+
+	@Test
+	void testGetAllLayers() {
+		Design design = new MockDesign();
+
+		// Using names that are in reverse order helps ensure the nodes are not ordered by name
+		DesignLayer layer0 = new DesignLayer().setName( "layer-f" ).setOrder( 0 );
+		DesignLayer layer1 = new DesignLayer().setName( "layer-e" ).setOrder( 1 );
+		DesignLayer layer00 = new DesignLayer().setName( "layer-d" ).setOrder( 0 );
+		DesignLayer layer01 = new DesignLayer().setName( "layer-c" ).setOrder( 1 );
+		DesignLayer layer10 = new DesignLayer().setName( "layer-b" ).setOrder( 0 );
+		DesignLayer layer11 = new DesignLayer().setName( "layer-a" ).setOrder( 1 );
+
+		design.getRootLayer().addLayer( layer0 );
+		design.getRootLayer().addLayer( layer1 );
+		layer0.addLayer( layer00 );
+		layer0.addLayer( layer01 );
+		layer1.addLayer( layer10 );
+		layer1.addLayer( layer11 );
+
+		assertThat( design.getAllLayers(), contains( layer0, layer00, layer01, layer1, layer10, layer11));
 	}
 
 	private static class MockDesign extends Design {}

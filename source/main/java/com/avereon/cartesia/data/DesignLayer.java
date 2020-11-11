@@ -70,9 +70,11 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public List<DesignLayer> getAllLayers() {
-		List<DesignLayer> layers = new ArrayList<>( getValues( LAYERS ) );
-		layers.sort( new NodeComparator<>( DesignLayer.ORDER ) );
-		layers.addAll( layers.stream().flatMap( l -> l.getAllLayers().stream() ).collect( Collectors.toList() ) );
+		List<DesignLayer> layers = new ArrayList<>();
+		getLayers().forEach( layer ->  {
+			layers.add( layer );
+			layers.addAll( layer.getAllLayers() );
+		} );
 		return layers;
 	}
 
@@ -81,7 +83,7 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public List<DesignLayer> getLayers() {
-		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER ) );
+		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER, DesignLayer.NAME ) );
 	}
 
 	public DesignLayer addLayer( DesignLayer layer ) {

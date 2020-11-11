@@ -101,8 +101,6 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		DesignLine line2 = new DesignLine( new Point3D( 2, 5, 0 ), new Point3D( 3, 6, 0 ) );
 		layer2.addShape( line2 );
 
-		design.setCurrentLayer( layer2 );
-
 		return design;
 	}
 
