@@ -5,7 +5,6 @@ import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
-import com.avereon.zenna.icon.PauseIcon;
 
 public class CartesiaMod extends Mod {
 
@@ -23,8 +22,8 @@ public class CartesiaMod extends Mod {
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
 
-		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
-		registerIcon( "snap-grid-toggle-disabled", new PauseIcon() );
+		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
+		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 
 		registerAction( this.rb(), "snap-grid-toggle" );
 
@@ -66,7 +65,7 @@ public class CartesiaMod extends Mod {
 
 		unregisterAction( "snap-grid-toggle" );
 
-		unregisterIcon( "snap-grid-toggle-disabled", new PauseIcon() );
+		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
 		unregisterIcon( "layer-hidden", new LayerHiddenIcon() );
 		unregisterIcon( "layers", new LayersIcon() );
