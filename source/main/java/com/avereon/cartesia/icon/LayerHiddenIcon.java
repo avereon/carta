@@ -13,7 +13,7 @@ public class LayerHiddenIcon extends LayerIcon {
 	@Override
 	protected void doRender() {
 		fill( getPath(), Colors.mix( (Color)getStrokePaint(), Color.TRANSPARENT, 0.5 ) );
-		draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 5 * r, 10 * r, 6 * r );
+		draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 2 * r, 4 * r, 4 * r );
 		//draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 4 * r, 8 * r, 2 * r, 4 * r, 2 * r );
 		//draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 3 * r, 6 * r, 3 * r, 4 * r, 3 * r );
 		super.doRender();
