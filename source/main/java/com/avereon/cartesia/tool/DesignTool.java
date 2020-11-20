@@ -43,7 +43,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class DesignTool extends GuidedTool {
@@ -135,14 +134,8 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Settings listeners
 		product.getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		product
-			.getSettings()
-			.register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		product
-			.getSettings()
-			.register( SELECT_APERTURE_UNIT,
-				e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
-			);
+		product.getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		product.getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 	}
 
 	public final Design getDesign() {
@@ -406,17 +399,26 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
-		pushToolActions( "snap-grid-toggle" );
+		pushToolActions( "grid-toggle", "snap-grid-toggle" );
 
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
 
-		pushCommandAction( "snap-grid-toggle", () -> isGridSnapEnabled() ? "enabled" : "disabled" );
+		// FIXME Is there a more consice way of doing this? There will be others
+		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
+		getDesignContext().getWorkplane().register( Workplane.GRID_SNAP, e -> {
+			snapGridToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
+		} );
+		Action gridVisiblelToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
+		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
+			gridVisiblelToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
+		} );
 	}
 
 	private void unregisterActions() {
 		pullCommandAction( "snap-grid-toggle" );
+		pullCommandAction( "grid-toggle" );
 
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
@@ -425,15 +427,16 @@ public abstract class DesignTool extends GuidedTool {
 		pullToolActions();
 	}
 
-	private void pushCommandAction( String key ) {
-		pushCommandAction( key, () -> null );
+	private Action pushCommandAction( String key ) {
+		return pushCommandAction( key, null );
 	}
 
-	private void pushCommandAction( String key, Supplier<String> supplier ) {
+	private Action pushCommandAction( String key, String initialActionState ) {
 		String shortcut = getProduct().rb().textOr( BundleKey.ACTION, key + CommandMap.COMMAND_SUFFIX, "" ).toLowerCase();
 		Action action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), shortcut ) );
-		action.setState( supplier.get() );
+		action.setState( initialActionState );
 		pushAction( key, action );
+		return action;
 	}
 
 	private void pullCommandAction( String key ) {
