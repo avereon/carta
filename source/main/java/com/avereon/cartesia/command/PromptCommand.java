@@ -23,6 +23,8 @@ public class PromptCommand extends Command {
 			tool.getDesignContext().getCommandPrompt().setPrompt( prompt );
 			return incomplete();
 		}
+
+		tool.getDesignContext().getCommandPrompt().clear();
 		return parameters[ 0 ];
 	}
 

@@ -13,7 +13,7 @@ public class Command {
 
 	public static final Object INCOMPLETE = new Object();
 
-	private static final Object COMPLETE = new Object();
+	public static final Object COMPLETE = new Object();
 
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		return null;

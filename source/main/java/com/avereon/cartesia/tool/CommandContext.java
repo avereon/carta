@@ -253,20 +253,22 @@ public class CommandContext {
 	}
 
 	private Object doProcessCommands() throws Exception {
-		Object result = null;
-		try {
-			List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
-			log.log( Log.TRACE, "Request stack size=" + requests.size() );
-			for( CommandExecuteRequest request : requests ) {
-				setInputMode( request.getCommand().isInputCommand() );
-				result = request.execute( result );
-				if( result == Command.INCOMPLETE ) break;
-				if( result instanceof Point3D ) setAnchor( (Point3D)result );
-				commandStack.remove( request );
+		Object result = Command.COMPLETE;
+		synchronized( commandStack ) {
+			try {
+				List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
+				for( CommandExecuteRequest request : requests ) {
+					setInputMode( request.getCommand().isInputCommand() );
+					result = request.execute( result );
+					if( result == Command.INCOMPLETE ) break;
+					if( result instanceof Point3D ) setAnchor( (Point3D)result );
+					commandStack.remove( request );
+				}
+				if( commandStack.size() != 0 ) log.log( Log.DEBUG, "remaining commands=" + commandStack );
+			} catch( Exception exception ) {
+				cancel();
+				throw exception;
 			}
-		} catch( Exception exception ) {
-			cancel();
-			throw exception;
 		}
 		return result;
 	}
@@ -328,7 +330,8 @@ public class CommandContext {
 		}
 
 		public Object execute( Object priorResult ) throws Exception {
-			if( priorResult != null ) parameters = ArrayUtil.append( parameters, priorResult );
+			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A result of INCOMPLETE was passed to execute" );
+			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
 			return command.execute( context, tool, parameters );
 		}
 
@@ -342,6 +345,10 @@ public class CommandContext {
 		//			return command.equals( other );
 		//		}
 
+		@Override
+		public String toString() {
+			return command.getClass().getSimpleName();
+		}
 	}
 
 }
