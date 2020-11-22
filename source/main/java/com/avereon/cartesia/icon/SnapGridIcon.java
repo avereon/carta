@@ -30,11 +30,11 @@ public class SnapGridIcon extends SvgIcon {
 			double offset = INDENT + SPACING * index;
 			draw( "M" + offset + " " + MIN + " L" + offset + " " + MAX, 2 );
 			draw( "M" + MIN + " " + offset + " L" + MAX + " " + offset, 2 );
-			if( enabled ) {
-				fill( circle( C, C, RADIUS ) );
-			} else {
-				draw( circle( C, C, RADIUS + 2 ), 1 );
-			}
+		}
+		if( enabled ) {
+			fill( circle( C, C, RADIUS ) );
+		} else {
+			draw( circle( C, C, RADIUS + 2 ), 1 );
 		}
 	}
 

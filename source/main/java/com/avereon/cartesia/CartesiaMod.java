@@ -21,7 +21,8 @@ public class CartesiaMod extends Mod {
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
-
+		registerIcon( "grid-toggle-enabled", new GridIcon( true ) );
+		registerIcon( "grid-toggle-disabled", new GridIcon( false ) );
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 
@@ -69,6 +70,8 @@ public class CartesiaMod extends Mod {
 
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
+		unregisterIcon( "grid-toggle-disabled", new GridIcon() );
+		unregisterIcon( "grid-toggle-enabled", new GridIcon() );
 		unregisterIcon( "layer-hidden", new LayerHiddenIcon() );
 		unregisterIcon( "layers", new LayersIcon() );
 		unregisterIcon( "layer", new LayerVisibleIcon() );
