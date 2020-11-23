@@ -126,16 +126,7 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.prefWidthProperty().bind( widthProperty() );
 		designPane.prefHeightProperty().bind( heightProperty() );
 
-		// Initial values from settings
-		setReticle( ReticleCursor.valueOf( product.getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
-		double selectApertureRadius = Double.parseDouble( product.getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
-		DesignUnit selectApertureUnit = DesignUnit.valueOf( product.getSettings().get( SELECT_APERTURE_UNIT, DesignUnit.MILLIMETER.name() ).toUpperCase() );
-		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
-
-		// Settings listeners
-		product.getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		product.getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		product.getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		// Settings and settings listeners should go in ready()
 	}
 
 	public final Design getDesign() {
@@ -316,13 +307,48 @@ public abstract class DesignTool extends GuidedTool {
 		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
 		heightProperty().addListener( ( p, o, n ) -> designPane.recenter() );
 
+		// NOTE What listeners should be registered before configuring things???
+		// There are two ways of handing the initialization of properties that change
+		// 1. Initialize the properties from settings, then add listeners afterward.
+		//    This is safer, but does not allow the listener logic to be triggered.
+		// 2. Add listeners, then initialize the properties. This approach has the
+		//    benefit of triggering the listeners, but, depending on the listener,
+		//    that could be problematic if the listener gets caught in a loop.
+		//    Another downside to this approach is that several listeners might call
+		//    the same logic (possibly expensive logic) causing an unnecessary
+		//    delay.
+		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
+			// This one is particularly interesting because the design pane is not
+			// technically the authoritative source of the grid visible property, and
+			// it's not the design pane that sets up the listener, the design tool
+			// does. That makes this one unique...for now.
+			// I guess in the FX world this would be a bind, but that isn't available
+			// yet with data nodes.
+			designPane.setGridVisible( e.getNewValue() );
+		} );
+
 		// Workplane settings
 		configureWorkplane();
 
 		// Get tool settings
+		double selectApertureRadius = Double.parseDouble( getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( getSettings().get( SELECT_APERTURE_UNIT, DesignUnit.MILLIMETER.name() ).toUpperCase() );
+		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
 		setPan( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_PAN, "0,0,0" ) ) );
 		setZoom( Double.parseDouble( getSettings().get( SETTINGS_ZOOM, "1.0" ) ) );
+		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
 		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+
+		// Settings listeners
+		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		getSettings().register(
+			SELECT_APERTURE_RADIUS,
+			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
+		);
+		getSettings().register(
+			SELECT_APERTURE_UNIT,
+			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
+		);
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> {
@@ -347,10 +373,6 @@ public abstract class DesignTool extends GuidedTool {
 			getSettings().set( CURRENT_LAYER, n.getId() );
 		} );
 
-		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
-			designPane.setGridVisible( e.getNewValue() );
-		} );
-
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -359,6 +381,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		if( isActive() ) activate();
 		designPane.recenter();
+		validateGrid();
 	}
 
 	@Override
@@ -405,7 +428,7 @@ public abstract class DesignTool extends GuidedTool {
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
 
-		// FIXME Is there a more consice way of doing this? There will be others
+		// FIXME Is there a more concise way of doing this? There will be others
 		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
 		getDesignContext().getWorkplane().register( Workplane.GRID_SNAP, e -> {
 			snapGridToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
@@ -502,8 +525,8 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setGridVisible( Boolean.parseBoolean( getAsset().getSettings().get( "grid-visible", Workplane.DEFAULT_GRID_VISIBLE ) ) );
-		workplane.setGridSnapEnabled( Boolean.parseBoolean( getAsset().getSettings().get( "grid-snap", Workplane.DEFAULT_GRID_SNAP_ENABLED ) ) );
+		setGridVisible( getAsset().getSettings().get( Workplane.GRID_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_VISIBLE ) );
+		setGridSnapEnabled( getAsset().getSettings().get( Workplane.GRID_SNAP, Boolean.class, Workplane.DEFAULT_GRID_SNAP_ENABLED ) );
 
 		workplane.register( Workplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
 		workplane.register( Workplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
@@ -515,8 +538,8 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( Workplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
 		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
 		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( Workplane.GRID_VISIBLE, e -> settings.set( "grid-visible", e.getNewValue() ) );
-		workplane.register( Workplane.GRID_SNAP, e -> settings.set( "grid-snap", e.getNewValue() ) );
+		workplane.register( Workplane.GRID_VISIBLE, e -> settings.set( Workplane.GRID_VISIBLE, e.getNewValue() ) );
+		workplane.register( Workplane.GRID_SNAP, e -> settings.set( Workplane.GRID_SNAP, e.getNewValue() ) );
 
 		workplane.register( Workplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
 		workplane.register( Workplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
