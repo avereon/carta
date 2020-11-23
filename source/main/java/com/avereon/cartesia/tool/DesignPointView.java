@@ -46,8 +46,8 @@ public class DesignPointView extends DesignShapeView {
 	protected void configureShape( Shape shape ) {
 		shape.setStrokeLineCap( StrokeLineCap.BUTT );
 		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
-		shape.setStroke( getDesignShape().calcDrawColor() );
-		shape.setFill( getDesignShape().calcDrawColor() );
+		shape.setStroke( getDesignShape().calcDrawPaint() );
+		shape.setFill( getDesignShape().calcDrawPaint() );
 	}
 
 	@Override

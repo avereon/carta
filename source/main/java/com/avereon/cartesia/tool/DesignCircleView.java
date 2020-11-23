@@ -21,8 +21,8 @@ public class DesignCircleView extends DesignShapeView {
 		DesignCircle dCircle = getDesignCircle();
 		Circle circle = new Circle( getDesignCircle().getOrigin().getX(), getDesignCircle().getOrigin().getY(), getDesignCircle().getRadius() );
 		circle.setStrokeWidth( dCircle.calcDrawWidth() );
-		circle.setStroke( dCircle.calcDrawColor() );
-		circle.setFill( dCircle.calcFillColor() );
+		circle.setStroke( dCircle.calcDrawPaint() );
+		circle.setFill( dCircle.calcFillPaint() );
 		return List.of( circle );
 	}
 

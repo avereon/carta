@@ -51,8 +51,8 @@ public class DrawCircleCommand extends DrawCommand {
 			Point3D p2 = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			DesignCircle circle = new DesignCircle( p1, p1.distance( p2 ) );
 			circle.setDrawWidth( tool.getCommandContext().getDrawWidth() );
-			circle.setDrawColor( tool.getCommandContext().getDrawPaint().toString() );
-			circle.setFillColor( tool.getCommandContext().getFillPaint().toString() );
+			circle.setDrawPaint( tool.getCommandContext().getDrawPaint().toString() );
+			circle.setFillPaint( tool.getCommandContext().getFillPaint().toString() );
 			tool.getCurrentLayer().addShape( circle );
 		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );

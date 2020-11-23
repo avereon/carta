@@ -534,8 +534,8 @@ public class DesignPane extends StackPane {
 	 * @return The list of selected shapes
 	 */
 	private List<Shape> doSelectByShape( Shape selector, boolean contains ) {
-		// The shape must have a fill but no stroke. The selector color in not
-		// important since the selector shape is not shown
+		// The shape must have a fill but no stroke. The selector color is not
+		// important since the selector shape is not shown, is just needs to be set.
 		selector.setFill( Color.TRANSPARENT );
 		selector.setStrokeWidth( 0.0 );
 		selector.setStroke( null );

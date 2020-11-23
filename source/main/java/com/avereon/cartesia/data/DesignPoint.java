@@ -69,8 +69,8 @@ public class DesignPoint extends DesignShape {
 	}
 
 	@Override
-	public Paint calcFillColor() {
-		return calcDrawColor();
+	public Paint calcFillPaint() {
+		return calcDrawPaint();
 	}
 
 	protected Map<String, Object> asMap() {

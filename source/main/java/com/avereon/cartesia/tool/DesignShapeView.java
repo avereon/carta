@@ -23,9 +23,9 @@ public class DesignShapeView extends DesignDrawableView {
 
 	private EventHandler<NodeEvent> drawWidthHandler;
 
-	private EventHandler<NodeEvent> drawColorHandler;
+	private EventHandler<NodeEvent> drawPaintHandler;
 
-	private EventHandler<NodeEvent> fillColorHandler;
+	private EventHandler<NodeEvent> fillPaintHandler;
 
 	private EventHandler<NodeEvent> selectedHandler;
 
@@ -58,8 +58,8 @@ public class DesignShapeView extends DesignDrawableView {
 
 	protected void configureShape( Shape shape ) {
 		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
-		shape.setStroke( getDesignShape().calcDrawColor() );
-		shape.setFill( getDesignShape().calcFillColor() );
+		shape.setStroke( getDesignShape().calcDrawPaint() );
+		shape.setFill( getDesignShape().calcFillPaint() );
 	}
 
 	void addShapeGeometry() {
@@ -93,19 +93,19 @@ public class DesignShapeView extends DesignDrawableView {
 	@Override
 	void registerListeners() {
 		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( () -> getShape().setStrokeWidth( getDesignShape().calcDrawWidth() ) ) );
-		getDesignShape().register( DesignShape.DRAW_COLOR, drawColorHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawColor() ) ) );
-		getDesignShape().register( DesignShape.FILL_COLOR, fillColorHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillColor() ) ) );
+		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawPaint() ) ) );
+		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillPaint() ) ) );
 		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> {
-			getShape().setStroke( e.getNewValue() ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawColor() );
-			getShape().setFill( e.getNewValue() ? getPane().getSelectFillPaint() : getDesignShape().calcFillColor() );
+			getShape().setStroke( e.getNewValue() ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawPaint() );
+			getShape().setFill( e.getNewValue() ? getPane().getSelectFillPaint() : getDesignShape().calcFillPaint() );
 		} ) );
 	}
 
 	@Override
 	void unregisterListeners() {
 		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
-		getDesignShape().unregister( DesignShape.FILL_COLOR, fillColorHandler );
-		getDesignShape().unregister( DesignShape.DRAW_COLOR, drawColorHandler );
+		getDesignShape().unregister( DesignShape.FILL_PAINT, fillPaintHandler );
+		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
 	}
 

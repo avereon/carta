@@ -16,22 +16,20 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String DRAW_WIDTH = "draw-width";
 
-	// FIXME Change these names to _PAINT
-	public static final String DRAW_COLOR = "draw-color";
+	public static final String DRAW_PAINT = "draw-paint";
 
-	// FIXME Change these names to _PAINT
-	public static final String FILL_COLOR = "fill-color";
+	public static final String FILL_PAINT = "fill-paint";
 
 	private static final double DEFAULT_DRAW_WIDTH = 1.0;
 
-	private static final Color DEFAULT_DRAW_COLOR = Color.web( "0x000000ff" );
+	private static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
 
-	private static final Color DEFAULT_FILL_COLOR = Color.web( "0x202030ff" );
+	private static final Color DEFAULT_FILL_PAINT = Color.web( "0x202030ff" );
 
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
-		addModifyingKeys( DRAW_WIDTH, DRAW_COLOR, FILL_COLOR );
+		addModifyingKeys( DRAW_WIDTH, DRAW_PAINT, FILL_PAINT );
 	}
 
 	public DesignLayer getParentLayer() {
@@ -66,39 +64,41 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public Paint calcDrawColor() {
-		String color = getDrawColor();
-		if( color != null ) return Colors.web( color );
-		if( this instanceof DesignLayer ) return DEFAULT_DRAW_COLOR;
+	public Paint calcDrawPaint() {
+		String paint = getDrawPaint();
+		// TODO Parse a paint instead of a color
+		if( paint != null ) return Colors.web( paint );
+		if( this instanceof DesignLayer ) return DEFAULT_DRAW_PAINT;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawColor();
-		return DEFAULT_DRAW_COLOR;
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawPaint();
+		return DEFAULT_DRAW_PAINT;
 	}
 
-	public String getDrawColor() {
-		return getValue( DRAW_COLOR );
+	public String getDrawPaint() {
+		return getValue( DRAW_PAINT );
 	}
 
-	public DesignDrawable setDrawColor( String color ) {
-		setValue( DRAW_COLOR, color );
+	public DesignDrawable setDrawPaint( String color ) {
+		setValue( DRAW_PAINT, color );
 		return this;
 	}
 
-	public Paint calcFillColor() {
-		String color = getFillColor();
-		if( color != null ) return Colors.web( color );
-		if( this instanceof DesignLayer ) return DEFAULT_FILL_COLOR;
+	public Paint calcFillPaint() {
+		String paint = getFillPaint();
+		// TODO Parse a paint instead of a color
+		if( paint != null ) return Colors.web( paint );
+		if( this instanceof DesignLayer ) return DEFAULT_FILL_PAINT;
 		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcFillColor();
-		return DEFAULT_FILL_COLOR;
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcFillPaint();
+		return DEFAULT_FILL_PAINT;
 	}
 
-	public String getFillColor() {
-		return getValue( FILL_COLOR );
+	public String getFillPaint() {
+		return getValue( FILL_PAINT );
 	}
 
-	public DesignDrawable setFillColor( String color ) {
-		setValue( FILL_COLOR, color );
+	public DesignDrawable setFillPaint( String color ) {
+		setValue( FILL_PAINT, color );
 		return this;
 	}
 
@@ -106,16 +106,21 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_COLOR, FILL_COLOR ) );
+		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_PAINT, FILL_PAINT ) );
 		return map;
 	}
 
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
+
+		// Old keys
+		if( map.containsKey( "draw-color" ) ) setDrawPaint( (String)map.get( "draw-color" ) );
+		if( map.containsKey( "fill-color" ) ) setFillPaint( (String)map.get( "fill-color" ) );
+
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
-		if( map.containsKey( DRAW_COLOR ) ) setDrawColor( (String)map.get( DRAW_COLOR ) );
-		if( map.containsKey( FILL_COLOR ) ) setFillColor( (String)map.get( FILL_COLOR ) );
+		if( map.containsKey( DRAW_PAINT ) ) setDrawPaint( (String)map.get( DRAW_PAINT ) );
+		if( map.containsKey( FILL_PAINT ) ) setFillPaint( (String)map.get( FILL_PAINT ) );
 		return this;
 	}
 
