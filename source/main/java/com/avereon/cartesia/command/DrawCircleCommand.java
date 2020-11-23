@@ -31,7 +31,7 @@ public class DrawCircleCommand extends DrawCommand {
 			preview.setStrokeWidth( Maths.eval( tool.getCommandContext().getDrawWidth() ) );
 			preview.setStroke( tool.getCommandContext().getDrawPaint() );
 			preview.setFill( tool.getCommandContext().getFillPaint() );
-			promptForValue( context, tool, BundleKey.PROMPT, "start-point" );
+			promptForValue( context, tool, BundleKey.PROMPT, "center" );
 			step = 1;
 			return incomplete();
 		}
@@ -40,7 +40,7 @@ public class DrawCircleCommand extends DrawCommand {
 			Point3D start = asPoint( tool, parameters[ 0 ], context.getAnchor() );
 			preview.setCenterX( start.getX() );
 			preview.setCenterY( start.getY() );
-			promptForValue( context, tool, BundleKey.PROMPT, "end-point" );
+			promptForValue( context, tool, BundleKey.PROMPT, "radius" );
 			step = 2;
 			return incomplete();
 		}
