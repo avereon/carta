@@ -27,8 +27,11 @@ public class CommandMap {
 		// High level letters
 		// a - arc
 		// c - circle
+		// d - draw (size, paint, pattern, etc.)
 		// e - ellipse
+		// f - fill (paint, pattern, pattern offset, etc.)
 		// g - grid
+		// k - color/paint
 		// l - line
 		// p - point
 		// s - snap
@@ -37,19 +40,6 @@ public class CommandMap {
 		// w - path?
 		// y - layer
 		// z - zoom
-
-		// Event type actions
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
-
-		// FIXME Conflicts with select
-		//add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-spin" );
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
-		add( new CommandEventKey( ScrollEvent.SCROLL ), "camera-zoom" );
-		add( new CommandEventKey( ZoomEvent.ZOOM ), "camera-zoom" );
-		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
-		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 
 		// Basic command
 		add( product, "select", SelectCommand.class );
@@ -60,16 +50,42 @@ public class CommandMap {
 		add( product, "camera-view-point", ViewPointCommand.class );
 		//add( product, "camera-walk", CameraWalkCommand.class );
 		add( product, "camera-zoom", CameraZoomCommand.class );
+		//add( product, "camera-zoom-all", CameraZoomAllCommand.class );
 		add( product, "camera-zoom-in", CameraZoomInCommand.class );
 		add( product, "camera-zoom-out", CameraZoomOutCommand.class );
 		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
 
 		// Grid commands
+		// gg - grid toggle
 		add( product, "grid-toggle", GridToggleCommand.class );
 
 		// Measure commands
 		//add( product, "measure-angle", MeasureAngleCommand.class );
 		add( product, "measure-distance", MeasureDistanceCommand.class );
+
+		// Draw setting commands
+		// In GCAD these were initially managed with simple commands. Later on you could tell the
+		// pattern changed to use grouped settings. There multiple options here:
+		// 1. Use simple commands for each setting. This could end up using a lot of commands
+		//    unless three-letter commands (or two-letter with extra) are allowed.
+		// 2. Use a single command to show the properties/settings for a context. Such as,
+		//    DS for design draw/fill settings,
+		//    YS for current layer draw/fill settings and
+		//    LS or PS for new shape draw/fill settings.
+		// 3. A combination of both ideas above where simple commands are defined for common actions.
+		//
+		// There are several settings each for draw and fill:
+		//   Draw has size/width, paint/color, pattern, pattern offset, cap, join
+		//   Fill has paint/color, pattern/image, pattern offset
+		// design draw width
+		// design draw paint
+		// design fill paint
+		// layer draw width
+		// layer draw paint
+		// layer fill paint
+		// shape draw width
+		// shape draw paint
+		// shape fill paint
 
 		// Shape commands
 		add( product, "draw-arc-2", DrawArcCommand.class ); // center-endpoint-endpoint
@@ -85,13 +101,6 @@ public class CommandMap {
 		add( product, "draw-curve-4", CurveCommand.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-path", PathCommand.class );
 
-		// gg - grid toggle
-		// sn - snap nearest
-		// sg - toggle snap to grid
-		add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() );
-		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
-		add( product, "snap-grid-toggle", SnapGridToggle.class );
-
 		// Layer commands
 		add( product, "layer-create", LayerCreateCommand.class );
 		add( product, "layer-show", LayerShowCommand.class );
@@ -99,6 +108,26 @@ public class CommandMap {
 		add( product, "layer-sublayer", LayerSubLayerCommand.class );
 		add( product, "layer-delete", LayerDeleteCommand.class );
 		add( product, "layer-toggle", LayerToggleCommand.class );
+
+		// Snap commands
+		// sn - snap nearest
+		// sg - toggle snap to grid
+		add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() );
+		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
+		add( product, "snap-grid-toggle", SnapGridToggle.class );
+
+		// Event type actions
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
+
+		// FIXME Conflicts with select
+		//add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-spin" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
+		add( new CommandEventKey( ScrollEvent.SCROLL ), "camera-zoom" );
+		add( new CommandEventKey( ZoomEvent.ZOOM ), "camera-zoom" );
+		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
+		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 	}
 
 	public static boolean hasCommand( String shortcut ) {
