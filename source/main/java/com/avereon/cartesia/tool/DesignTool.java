@@ -380,6 +380,7 @@ public abstract class DesignTool extends GuidedTool {
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
 		if( isActive() ) activate();
+		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.recenter();
 		validateGrid();
 	}
