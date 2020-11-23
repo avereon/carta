@@ -96,8 +96,8 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().register( DesignShape.DRAW_COLOR, drawColorHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawColor() ) ) );
 		getDesignShape().register( DesignShape.FILL_COLOR, fillColorHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillColor() ) ) );
 		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> {
-			getShape().setStroke( e.getNewValue() ? getDesignShape().calcSelectDrawColor() : getDesignShape().calcDrawColor() );
-			getShape().setFill( e.getNewValue() ? getDesignShape().calcSelectFillColor() : getDesignShape().calcFillColor() );
+			getShape().setStroke( e.getNewValue() ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawColor() );
+			getShape().setFill( e.getNewValue() ? getPane().getSelectFillPaint() : getDesignShape().calcFillColor() );
 		} ) );
 	}
 

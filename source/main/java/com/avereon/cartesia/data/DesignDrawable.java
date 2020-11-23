@@ -28,10 +28,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final Color DEFAULT_FILL_COLOR = Color.web( "0x202030ff" );
 
-	private static final Color DEFAULT_SELECT_DRAW_COLOR = Colors.web( "#ff00ff40" );
-
-	private static final Color DEFAULT_SELECT_FILL_COLOR = Colors.web( "#ff00ff20" );
-
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
@@ -104,14 +100,6 @@ public abstract class DesignDrawable extends DesignNode {
 	public DesignDrawable setFillColor( String color ) {
 		setValue( FILL_COLOR, color );
 		return this;
-	}
-
-	public Color calcSelectDrawColor() {
-		return DEFAULT_SELECT_DRAW_COLOR;
-	}
-
-	public Color calcSelectFillColor() {
-		return DEFAULT_SELECT_FILL_COLOR;
 	}
 
 	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
