@@ -3,7 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.math.Maths;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.zerra.color.Colors;
+import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
@@ -66,8 +66,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public Paint calcDrawPaint() {
 		String paint = getDrawPaint();
-		// TODO Parse a paint instead of a color
-		if( paint != null ) return Colors.web( paint );
+		if( paint != null ) return Paints.parse( paint );
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_PAINT;
 		DesignNode parent = getParent();
 		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawPaint();
@@ -85,8 +84,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public Paint calcFillPaint() {
 		String paint = getFillPaint();
-		// TODO Parse a paint instead of a color
-		if( paint != null ) return Colors.web( paint );
+		if( paint != null ) return Paints.parse( paint );
 		if( this instanceof DesignLayer ) return DEFAULT_FILL_PAINT;
 		DesignNode parent = getParent();
 		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcFillPaint();
