@@ -434,9 +434,9 @@ public abstract class DesignTool extends GuidedTool {
 		getDesignContext().getWorkplane().register( Workplane.GRID_SNAP, e -> {
 			snapGridToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
 		} );
-		Action gridVisiblelToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
+		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
-			gridVisiblelToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
+			gridVisibleToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
 		} );
 	}
 
