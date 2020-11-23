@@ -13,7 +13,7 @@ import javafx.scene.shape.Line;
 
 import java.text.ParseException;
 
-public class LineCommand extends DrawCommand {
+public class DrawLineCommand extends DrawCommand {
 
 	private static final System.Logger log = Log.get();
 

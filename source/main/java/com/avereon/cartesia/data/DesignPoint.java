@@ -9,6 +9,7 @@ import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 import java.io.IOException;
 import java.util.List;
@@ -69,7 +70,7 @@ public class DesignPoint extends DesignShape {
 	}
 
 	@Override
-	public Color calcFillColor() {
+	public Paint calcFillColor() {
 		return calcDrawColor();
 	}
 

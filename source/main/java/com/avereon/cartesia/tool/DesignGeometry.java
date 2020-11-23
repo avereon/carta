@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.DesignCircle;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignPoint;
 import com.avereon.cartesia.data.DesignShape;
@@ -18,6 +19,7 @@ public class DesignGeometry {
 
 		generators.put( DesignPoint.class, ( pane, shape ) -> from( pane, (DesignPoint)shape ) );
 		generators.put( DesignLine.class, ( pane, shape ) -> from( pane, (DesignLine)shape ) );
+		generators.put( DesignCircle.class, ( pane, shape ) -> from( pane, (DesignCircle)shape ) );
 
 		generatorMap = Collections.unmodifiableMap( generators );
 	}
@@ -34,6 +36,10 @@ public class DesignGeometry {
 
 	private static DesignLineView from( DesignPane pane, DesignLine line ) {
 		return new DesignLineView( pane, line );
+	}
+
+	private static DesignCircleView from( DesignPane pane, DesignCircle circle ) {
+		return new DesignCircleView( pane, circle );
 	}
 
 }

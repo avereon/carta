@@ -99,6 +99,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 			DesignShape shape = switch( type ) {
 				case "point" -> loadCsaPoint( g );
 				case "line" -> loadCsaLine( g );
+				case "circle" -> loadDesignCircle( g );
 				default -> null;
 			};
 			layer.addShape( shape );
@@ -121,6 +122,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private DesignLine loadCsaLine( Map<String, Object> map ) {
 		return new DesignLine().updateFrom( map );
+	}
+
+	private DesignCircle loadDesignCircle( Map<String, Object> map ) {
+		return new DesignCircle().updateFrom( map );
 	}
 
 	String prettyPrint( byte[] buffer ) throws Exception {

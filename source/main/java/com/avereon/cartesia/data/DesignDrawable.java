@@ -5,6 +5,7 @@ import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 import java.io.IOException;
 import java.util.Map;
@@ -15,8 +16,10 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String DRAW_WIDTH = "draw-width";
 
+	// FIXME Change these names to _PAINT
 	public static final String DRAW_COLOR = "draw-color";
 
+	// FIXME Change these names to _PAINT
 	public static final String FILL_COLOR = "fill-color";
 
 	private static final double DEFAULT_DRAW_WIDTH = 1.0;
@@ -67,7 +70,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public Color calcDrawColor() {
+	public Paint calcDrawColor() {
 		String color = getDrawColor();
 		if( color != null ) return Colors.web( color );
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_COLOR;
@@ -85,7 +88,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public Color calcFillColor() {
+	public Paint calcFillColor() {
 		String color = getFillColor();
 		if( color != null ) return Colors.web( color );
 		if( this instanceof DesignLayer ) return DEFAULT_FILL_COLOR;

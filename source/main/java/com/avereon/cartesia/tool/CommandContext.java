@@ -13,6 +13,8 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -184,8 +186,32 @@ public class CommandContext {
 		return anchor;
 	}
 
-	public void setAnchor( Point3D anchor ) {
+	void setAnchor( Point3D anchor ) {
 		this.anchor = anchor;
+	}
+
+	public String getDrawWidth() {
+		return "1.0";
+	}
+
+	void setDrawWidth( String width ) {
+		// TODO Set the command context draw width
+	}
+
+	public Paint getDrawPaint() {
+		return Color.BLACK;
+	}
+
+	void setDrawPaint( Paint paint ) {
+		// TODO Set the command context draw paint
+	}
+
+	public Paint getFillPaint() {
+		return Color.TRANSPARENT;
+	}
+
+	void setFillPaint( Paint paint ) {
+		// TODO Set the command context fill paint
 	}
 
 	private void reset() {

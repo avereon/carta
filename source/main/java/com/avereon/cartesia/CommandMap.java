@@ -72,14 +72,14 @@ public class CommandMap {
 		add( product, "measure-distance", MeasureDistanceCommand.class );
 
 		// Shape commands
-		add( product, "draw-arc-2", ArcCommand.class ); // center-endpoint-endpoint
+		add( product, "draw-arc-2", DrawArcCommand.class ); // center-endpoint-endpoint
 		//add( "draw-arc-3", Arc3Command.class ); // endpoint-midpoint-endpoint
-		//add( "draw-circle-2", CircleCommand.class ); // center-radius
+		add( product, "draw-circle-2", DrawCircleCommand.class ); // center-radius
 		//add( "draw-circle-3", Circle3Command.class ); // point-point-point
 		//add( "draw-ellipse-3", EllipseCommand.class ); // center-radius-radius
 		//add( "draw-ellipse-5", Ellipse5Command.class ); // point-point-point-point-point
 		//add( "draw-ellipse-arc-5", EllipseArc5Command.class ); // center-radius-radius-endpoint-endpoint
-		add( product, "draw-line-2", LineCommand.class ); // endpoint-endpoint
+		add( product, "draw-line-2", DrawLineCommand.class ); // endpoint-endpoint
 		//add( product, "draw-line-perpendicular", LineCommand.class ); // shape-endpoint-endpoint
 		add( product, "draw-point", PointCommand.class ); // point
 		add( product, "draw-curve-4", CurveCommand.class ); // endpoint-midpoint-midpoint-endpoint
