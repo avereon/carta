@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import javafx.scene.paint.Color;
 
+// FIXME Some of this exists in CommandContext already
 public class PenContext {
 
 	public static final Object DESIGN_DRAW_COLOR = new Object();
