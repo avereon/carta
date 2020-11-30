@@ -36,6 +36,7 @@ public class Design2dAssetType extends AssetType {
 
 	@Override
 	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
+		asset.setCaptureUndoChanges( true );
 		return true;
 	}
 

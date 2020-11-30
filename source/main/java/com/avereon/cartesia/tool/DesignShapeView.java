@@ -42,6 +42,10 @@ public class DesignShapeView extends DesignDrawableView {
 		return group;
 	}
 
+	protected Shape getShape() {
+		return geometry.get( 0 );
+	}
+
 	protected List<Shape> generateGeometry() {
 		return List.of();
 	}
@@ -70,10 +74,6 @@ public class DesignShapeView extends DesignDrawableView {
 	void removeShapeGeometry() {
 		unregisterListeners();
 		getPane().removeShapeGeometry( this );
-	}
-
-	private Shape getShape() {
-		return geometry.get( 0 );
 	}
 
 	private void generate() {

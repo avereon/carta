@@ -20,7 +20,7 @@ public class DesignPoint extends DesignShape {
 
 	public static final String TYPE = "type";
 
-	private static final double DEFAULT_SIZE = 1.0;
+	public static final double DEFAULT_SIZE = 1.0;
 
 	private static final DesignPoints.Type DEFAULT_TYPE = DesignPoints.Type.CROSS;
 

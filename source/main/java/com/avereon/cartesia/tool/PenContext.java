@@ -1,7 +1,5 @@
 package com.avereon.cartesia.tool;
 
-import javafx.scene.paint.Color;
-
 // FIXME Some of this exists in CommandContext already
 public class PenContext {
 
@@ -23,11 +21,6 @@ public class PenContext {
 
 	private Object fillColor = DESIGN_FILL_COLOR;
 
-	public Color calcDrawColor() {
-		// FIXME Not sure I can get the layer or design color from here without some context
-		return Color.MAGENTA;
-	}
-
 	public String getDrawColor() {
 		return "";
 	}
@@ -36,22 +29,12 @@ public class PenContext {
 		return this;
 	}
 
-	public double calcDrawWidth() {
-		// FIXME Not sure I can get the layer or design width from here without some context
-		return 1;
-	}
-
 	public String getDrawWidth() {
 		return "";
 	}
 
 	public PenContext setDrawWidth( String expression ) {
 		return this;
-	}
-
-	public Color calcFillColor() {
-		// FIXME Not sure I can get the layer or design color from here without some context
-		return Color.MAGENTA;
 	}
 
 	public String getFillColor() {

@@ -11,10 +11,7 @@ import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.Cursor;
 import javafx.scene.input.*;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,11 +67,7 @@ public class CommandContext {
 	}
 
 	public void cancel() {
-		commandStack.stream().filter( r -> r.getTool() != null ).map( CommandExecuteRequest::getTool ).forEach( t -> {
-			t.setCursor( Cursor.DEFAULT );
-			t.getDesign().clearSelected();
-			t.clearPreview();
-		} );
+		commandStack.forEach( CommandExecuteRequest::cancel );
 		commandStack.clear();
 		reset();
 	}
@@ -190,27 +183,34 @@ public class CommandContext {
 		this.anchor = anchor;
 	}
 
-	public String getDrawWidth() {
-		return "1.0";
+	public String calcDrawWidth() throws Exception {
+		// FIXME Not sure I can get the layer or design width from here without some context
+		String width = "0.05";
+		//if( width == null ) width = getPenContext().getDrawWidth();
+		//if( width == null ) width = getCurrentLayer().getDrawWidth();
+		//if( width == null ) width = getDesign().getDrawWidth();
+		return width;
 	}
 
 	void setDrawWidth( String width ) {
 		// TODO Set the command context draw width
 	}
 
-	public Paint getDrawPaint() {
-		return Color.BLACK;
+	public String calcDrawPaint() {
+		// FIXME Not sure I can get the layer or design color from here without some context
+		return "#ff0000ff";
 	}
 
-	void setDrawPaint( Paint paint ) {
+	void setDrawPaint( String paint ) {
 		// TODO Set the command context draw paint
 	}
 
-	public Paint getFillPaint() {
-		return Color.TRANSPARENT;
+	public String calcFillPaint() {
+		// FIXME Not sure I can get the layer or design color from here without some context
+		return "#ff0000ff";
 	}
 
-	void setFillPaint( Paint paint ) {
+	void setFillPaint( String paint ) {
 		// TODO Set the command context fill paint
 	}
 
@@ -359,6 +359,14 @@ public class CommandContext {
 			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
 			return command.execute( context, tool, parameters );
+		}
+
+		public void cancel() {
+			try {
+				command.cancel( tool );
+			} catch( Exception exception ) {
+				log.log( Log.ERROR, exception );
+			}
 		}
 
 		//		@Override

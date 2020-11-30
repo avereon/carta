@@ -126,7 +126,7 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.prefWidthProperty().bind( widthProperty() );
 		designPane.prefHeightProperty().bind( heightProperty() );
 
-		// Settings and settings listeners should go in ready()
+		// Settings and settings listeners should go in the ready() method
 	}
 
 	public final Design getDesign() {
@@ -406,6 +406,10 @@ public abstract class DesignTool extends GuidedTool {
 		super.conceal();
 		unregisterActions();
 		if( isReady() && isLastTool() ) unregisterStatusBarItems();
+	}
+
+	public DesignPane getDesignPane() {
+		return designPane;
 	}
 
 	private void registerStatusBarItems() {

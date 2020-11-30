@@ -97,7 +97,7 @@ public class CommandMap {
 		//add( "draw-ellipse-arc-5", EllipseArc5Command.class ); // center-radius-radius-endpoint-endpoint
 		add( product, "draw-line-2", DrawLineCommand.class ); // endpoint-endpoint
 		//add( product, "draw-line-perpendicular", LineCommand.class ); // shape-endpoint-endpoint
-		add( product, "draw-point", PointCommand.class ); // point
+		add( product, "draw-point", DrawPointCommand.class ); // point
 		add( product, "draw-curve-4", CurveCommand.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-path", PathCommand.class );
 

@@ -14,6 +14,8 @@ import java.util.List;
 
 public class DesignPointView extends DesignShapeView {
 
+	private EventHandler<NodeEvent> originHandler;
+
 	private EventHandler<NodeEvent> pointTypeHandler;
 
 	private EventHandler<NodeEvent> pointSizeHandler;
@@ -27,7 +29,7 @@ public class DesignPointView extends DesignShapeView {
 	}
 
 	@Override
-	protected List<Shape> generateGeometry() {
+	public List<Shape> generateGeometry() {
 		double ox = getDesignPoint().getOrigin().getX();
 		double oy = getDesignPoint().getOrigin().getY();
 		Path path = DesignPoints.createPoint( getDesignPoint().calcType(), ox, oy, getDesignPoint().getRadius() );
@@ -43,16 +45,22 @@ public class DesignPointView extends DesignShapeView {
 		return setConstructionPoints( path, List.of( o ) );
 	}
 
-	protected void configureShape( Shape shape ) {
+	public void configureShape( Shape shape ) {
+		// Do the normal stuff
+		super.configureShape( shape );
+
+		// But then do some things different for points
 		shape.setStrokeLineCap( StrokeLineCap.BUTT );
-		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
-		shape.setStroke( getDesignShape().calcDrawPaint() );
 		shape.setFill( getDesignShape().calcDrawPaint() );
 	}
 
 	@Override
 	void registerListeners() {
 		super.registerListeners();
+		getDesignShape().register( DesignPoint.ORIGIN, originHandler = e -> Fx.run( () -> {
+			getShape().setLayoutX( getDesignPoint().getOrigin().getX() );
+			getShape().setLayoutY( getDesignPoint().getOrigin().getY() );
+		}));
 		getDesignShape().register( DesignPoint.TYPE, pointTypeHandler = e -> Fx.run( this::updateGeometry ) );
 		getDesignShape().register( DesignPoint.SIZE, pointSizeHandler = e -> Fx.run( this::updateGeometry ) );
 	}
@@ -61,6 +69,7 @@ public class DesignPointView extends DesignShapeView {
 	void unregisterListeners() {
 		getDesignShape().unregister( DesignPoint.SIZE, pointSizeHandler );
 		getDesignShape().unregister( DesignPoint.TYPE, pointTypeHandler );
+		getDesignShape().unregister( DesignPoint.ORIGIN, originHandler );
 		super.unregisterListeners();
 	}
 

@@ -20,7 +20,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String FILL_PAINT = "fill-paint";
 
-	private static final double DEFAULT_DRAW_WIDTH = 1.0;
+	private static final double DEFAULT_DRAW_WIDTH = 0.05;
 
 	private static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
 
