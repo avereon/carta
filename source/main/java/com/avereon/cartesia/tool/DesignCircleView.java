@@ -36,9 +36,15 @@ public class DesignCircleView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Circle circle = (Circle)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, circle.centerXProperty(), circle.centerYProperty() );
-		o.visibleProperty().bind( circle.visibleProperty() );
-		return setConstructionPoints( circle, List.of( o ) );
+		ConstructionPoint origin = cp( pane, circle.centerXProperty(), circle.centerYProperty() );
+		origin.visibleProperty().bind( circle.visibleProperty() );
+
+		ConstructionPoint a = cp( pane, circle.centerXProperty().add( circle.getRadius() ), circle.centerYProperty().add( 0 ) );
+		ConstructionPoint b = cp( pane, circle.centerXProperty().add( 0 ), circle.centerYProperty().subtract( circle.getRadius() ) );
+		ConstructionPoint c = cp( pane, circle.centerXProperty().subtract( circle.getRadius() ), circle.centerYProperty().add( 0 ) );
+		ConstructionPoint d = cp( pane, circle.centerXProperty().add( 0 ), circle.centerYProperty().add( circle.getRadius() ) );
+
+		return setConstructionPoints( circle, List.of( origin, a, b, c, d ) );
 	}
 
 	@Override
@@ -47,10 +53,10 @@ public class DesignCircleView extends DesignShapeView {
 		getDesignShape().register( DesignCircle.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((Circle)getShape()).setCenterX( getDesignCircle().getOrigin().getX() );
 			((Circle)getShape()).setCenterY( getDesignCircle().getOrigin().getY() );
-		}));
+		} ) );
 		getDesignShape().register( DesignCircle.RADIUS, radiusHandler = e -> Fx.run( () -> {
 			((Circle)getShape()).setRadius( getDesignCircle().getRadius() );
-		}));
+		} ) );
 	}
 
 	@Override

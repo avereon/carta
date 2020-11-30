@@ -5,6 +5,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.shape.Shape;
@@ -116,11 +117,15 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	static ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {
+		return cp( pane, xProperty.add( 0 ), yProperty.add( 0 ) );
+	}
+
+	static ConstructionPoint cp( DesignPane pane, NumberBinding xBinding, NumberBinding yBinding ) {
 		ConstructionPoint cp = new ConstructionPoint();
 		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
 		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );
-		cp.layoutXProperty().bind( xProperty );
-		cp.layoutYProperty().bind( yProperty );
+		cp.layoutXProperty().bind( xBinding );
+		cp.layoutYProperty().bind( yBinding );
 		return cp;
 	}
 
