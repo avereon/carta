@@ -7,8 +7,8 @@
 			<setting key="name" editor="textline"/>
 			<setting key="layer" editor="combobox" provider="design-layers"/>
 			<setting key="draw-width" editor="textline" type="math-expression"/>
-			<setting key="draw-color" editor="color"/>
-			<setting key="fill-color" editor="color"/>
+			<setting key="draw-paint" editor="color"/>
+			<setting key="fill-paint" editor="color"/>
 		</group>
 	</page>
 
