@@ -18,7 +18,7 @@ public class CameraZoomCommand extends CameraCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// This command requires one value as the zoom value
 		if( parameters.length < 1 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "zoom" );
+			promptForNumber( context, tool, BundleKey.PROMPT, "zoom" );
 			return incomplete();
 		}
 

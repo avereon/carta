@@ -21,7 +21,7 @@ public class CameraMoveCommand extends CameraCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "pan-point" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "pan-point" );
 			return incomplete();
 		}
 

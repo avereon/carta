@@ -55,7 +55,22 @@ public class Command {
 		return Geometry.parsePoint( String.valueOf( value ), anchor );
 	}
 
-	protected void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
+	protected void promptForNumber( CommandContext context, DesignTool tool, String bundleKey, String key ) {
+		tool.setCursor( tool.getReticle() );
+		promptForValue( context, tool, bundleKey, key );
+	}
+
+	protected void promptForPoint( CommandContext context, DesignTool tool, String bundleKey, String key ) {
+		tool.setCursor( tool.getReticle() );
+		promptForValue( context, tool, bundleKey, key );
+	}
+
+	protected void promptForText( CommandContext context, DesignTool tool, String bundleKey, String key ) {
+		tool.setCursor( Cursor.TEXT );
+		promptForValue( context, tool, bundleKey, key );
+	}
+
+	private void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
 		String prompt = context.getProduct().rb().text( bundleKey, key );
 		context.submit( tool, new PromptCommand( prompt ) );
 	}

@@ -20,21 +20,20 @@ public class DrawCircleCommand extends DrawCommand {
 
 		if( parameters.length < 1 ) {
 			setPreview( tool, new DesignCircle( context.getMouse(), 0D ) );
-			promptForValue( context, tool, BundleKey.PROMPT, "center" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "center" );
 			step = 1;
 			return incomplete();
 		}
 
 		if( parameters.length < 2 ) {
 			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
-			promptForValue( context, tool, BundleKey.PROMPT, "radius" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "radius" );
 			step = 2;
 			return incomplete();
 		}
 
 		if( parameters.length < 3 ) {
-			DesignCircle preview = getPreview();
-			preview.setRadius( asPoint( tool, parameters[ 1 ], context.getAnchor() ).distance( preview.getOrigin() ) );
+			((DesignCircle)getPreview()).setRadius( asDouble( parameters[ 1 ] ) );
 		}
 
 		return commitPreview( tool );

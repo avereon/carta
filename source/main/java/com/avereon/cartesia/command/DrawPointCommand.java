@@ -19,7 +19,7 @@ public class DrawPointCommand extends DrawCommand {
 			// Need to start with the point at ZERO until it is added
 			setPreview( tool, new DesignPoint( Point3D.ZERO ) );
 			getPreview().setOrigin( context.getMouse() );
-			promptForValue( context, tool, BundleKey.PROMPT, "select-point" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "select-point" );
 			return incomplete();
 		}
 

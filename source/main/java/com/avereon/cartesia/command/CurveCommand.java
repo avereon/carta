@@ -23,19 +23,19 @@ public class CurveCommand extends DrawCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "point" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "point" );
 			return incomplete();
 		}
 		if( parameters.length < 2 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "point" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "point" );
 			return incomplete();
 		}
 		if( parameters.length < 3 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "point" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "point" );
 			return incomplete();
 		}
 		if( parameters.length < 4 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "point" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "point" );
 			return incomplete();
 		}
 

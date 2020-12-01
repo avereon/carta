@@ -15,7 +15,7 @@ public class ViewPointCommand extends CameraCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForValue( context, tool, BundleKey.PROMPT, "select-viewpoint" );
+			promptForPoint( context, tool, BundleKey.PROMPT, "select-viewpoint" );
 			return incomplete();
 		}
 

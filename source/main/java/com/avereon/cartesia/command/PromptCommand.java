@@ -25,6 +25,8 @@ public class PromptCommand extends Command {
 		}
 
 		tool.getDesignContext().getCommandPrompt().clear();
+		tool.setCursor( null );
+
 		return parameters[ 0 ];
 	}
 
