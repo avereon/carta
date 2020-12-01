@@ -18,6 +18,7 @@ public abstract class DrawCommand extends Command {
 		this.preview = preview;
 		tool.getAsset().setCaptureUndoChanges( false );
 		tool.getCurrentLayer().addShape( preview );
+		preview.setPreview( true );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -26,6 +27,7 @@ public abstract class DrawCommand extends Command {
 	}
 
 	protected Object commitPreview(DesignTool tool) {
+		preview.setPreview( false );
 		tool.getCurrentLayer().removeShape( preview );
 		tool.getAsset().setCaptureUndoChanges( true );
 		tool.getCurrentLayer().addShape( preview );

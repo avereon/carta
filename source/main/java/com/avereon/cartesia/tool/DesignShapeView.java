@@ -1,20 +1,25 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
 
 public class DesignShapeView extends DesignDrawableView {
 
-	static final String DESIGN_DATA = "design-data";
+	private static final System.Logger log = Log.get();
+
+	private static final String DESIGN_DATA = "design-data";
 
 	private static final String CONSTRUCTION_POINTS = "construction-points";
 
@@ -88,7 +93,7 @@ public class DesignShapeView extends DesignDrawableView {
 		group = new Group();
 		group.getChildren().addAll( geometry );
 		group.getChildren().addAll( cpGroup );
-		group.getProperties().put( DESIGN_DATA, getDesignShape() );
+		setDesignData( group, getDesignShape() );
 	}
 
 	@Override
@@ -110,10 +115,24 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
 	}
 
+	public static DesignDrawable getDesignData( Node node ) {
+		DesignDrawable data = (DesignDrawable)node.getProperties().get( DESIGN_DATA );
+		if( data == null ) log.log( Log.WARN, "Missing design data for " + node );
+		return data;
+	}
+
+	public static DesignShape getDesignData( Shape s ) {
+		return (DesignShape)getDesignData( s.getParent() );
+	}
+
+	public static DesignDrawable setDesignData( Node node, DesignDrawable data ) {
+		node.getProperties().put( DESIGN_DATA, data );
+		return data;
+	}
+
 	@SuppressWarnings( "unchecked" )
 	public static List<ConstructionPoint> getConstructionPoints( Shape shape ) {
-		List<ConstructionPoint> cps = (List<ConstructionPoint>)shape.getProperties().get( CONSTRUCTION_POINTS );
-		return cps == null ? List.of() : cps;
+		return (List<ConstructionPoint>)shape.getProperties().getOrDefault( CONSTRUCTION_POINTS, List.of() );
 	}
 
 	static ConstructionPoint cp( DesignPane pane, DoubleProperty xProperty, DoubleProperty yProperty ) {

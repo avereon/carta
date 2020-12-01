@@ -16,6 +16,8 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String SELECTED = "selected";
 
+	public static final String PREVIEW = "preview";
+
 	public DesignShape() {
 		addModifyingKeys( ORIGIN );
 	}
@@ -26,6 +28,15 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public DesignShape setOrigin( Point3D origin ) {
 		setValue( ORIGIN, origin );
+		return this;
+	}
+
+	public boolean isPreview() {
+		return getValue( PREVIEW, false );
+	}
+
+	public DesignShape setPreview( boolean preview ) {
+		setValue( PREVIEW, preview ? true : null );
 		return this;
 	}
 

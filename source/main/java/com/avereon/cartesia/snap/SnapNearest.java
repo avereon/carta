@@ -1,5 +1,6 @@
 package com.avereon.cartesia.snap;
 
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
@@ -24,17 +25,19 @@ public class SnapNearest implements Snap {
 
 		// Go through all the reference points, convert them to screen coordinates and find the nearest
 		double distance;
-		double lastDistance = Double.MAX_VALUE;
+		double minDistance = Double.MAX_VALUE;
 		Point3D nearest = null;
 
 		Collection<Shape> forms = tool.getVisibleShapes();
-		for( Shape form : forms ) {
-			List<ConstructionPoint> cps = DesignShapeView.getConstructionPoints( form );
+		for( Shape shape : forms ) {
+			DesignShape data = DesignShapeView.getDesignData( shape );
+			if( data == null || data.isPreview() ) continue;
+			List<ConstructionPoint> cps = DesignShapeView.getConstructionPoints( shape );
 			for( ConstructionPoint cp : cps ) {
 				distance = cursor.distance( tool.worldToMouse( cp.getLayoutX(), cp.getLayoutY(), 0 ) );
-				if( distance < lastDistance ) {
+				if( distance < minDistance ) {
 					nearest = cp.getLocation();
-					lastDistance = distance;
+					minDistance = distance;
 				}
 			}
 		}

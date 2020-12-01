@@ -617,11 +617,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	static DesignLayer getDesignData( DesignPane.Layer l ) {
-		return (DesignLayer)l.getProperties().get( DesignShapeView.DESIGN_DATA );
+		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
 
 	static DesignShape getDesignData( Shape s ) {
-		return (DesignShape)s.getParent().getProperties().get( DesignShapeView.DESIGN_DATA );
+		return DesignShapeView.getDesignData( s );
 	}
 
 	private static class SelectWindow extends Rectangle {

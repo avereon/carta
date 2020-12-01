@@ -23,6 +23,10 @@ public class DrawPointCommand extends DrawCommand {
 			return incomplete();
 		}
 
+		if( parameters.length < 2 ) {
+			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+		}
+
 		return commitPreview(tool);
 	}
 

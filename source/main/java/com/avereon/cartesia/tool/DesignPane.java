@@ -573,8 +573,8 @@ public class DesignPane extends StackPane {
 
 		@Override
 		public int compare( Node o1, Node o2 ) {
-			DesignDrawable s1 = (DesignDrawable)o1.getProperties().get( DesignShapeView.DESIGN_DATA );
-			DesignDrawable s2 = (DesignDrawable)o2.getProperties().get( DesignShapeView.DESIGN_DATA );
+			DesignDrawable s1 = DesignShapeView.getDesignData( o1 );
+			DesignDrawable s2 = DesignShapeView.getDesignData( o2 );
 			return s2.getOrder() - s1.getOrder();
 		}
 

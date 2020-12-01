@@ -32,7 +32,11 @@ public class DrawLineCommand extends DrawCommand {
 			return incomplete();
 		}
 
-		return commitPreview( tool);
+		if( parameters.length < 3 ) {
+			((DesignLine)getPreview()).setPoint( asPoint( tool, parameters[ 1 ], context.getAnchor() ) );
+		}
+
+		return commitPreview( tool );
 	}
 
 	@Override

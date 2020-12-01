@@ -32,6 +32,11 @@ public class DrawCircleCommand extends DrawCommand {
 			return incomplete();
 		}
 
+		if( parameters.length < 3 ) {
+			DesignCircle preview = getPreview();
+			preview.setRadius( asPoint( tool, parameters[ 1 ], context.getAnchor() ).distance( preview.getOrigin() ) );
+		}
+
 		return commitPreview( tool );
 	}
 
