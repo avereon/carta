@@ -64,8 +64,8 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignPane.Layer layers = pane.getLayers();
-		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
+		DesignPaneLayer layers = pane.getLayerPane();
+		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
@@ -87,8 +87,8 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignPane.Layer layers = pane.getLayers();
-		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
+		DesignPaneLayer layers = pane.getLayerPane();
+		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
@@ -117,8 +117,8 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignPane.Layer layers = pane.getLayers();
-		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
+		DesignPaneLayer layers = pane.getLayerPane();
+		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
@@ -149,7 +149,7 @@ public class DesignPaneTest implements TestTimeouts {
 		design.getRootLayer().addLayer( layer );
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
-		DesignPane.Layer layers = pane.getLayers();
+		DesignPaneLayer layers = pane.getLayerPane();
 		assertThat( layers.getChildren().size(), is( 1 ) );
 	}
 
@@ -161,8 +161,8 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithInterrupt( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane
-		DesignPane.Layer layers = pane.getLayers();
-		DesignPane.Layer construction = (DesignPane.Layer)layers.getChildren().get( 0 );
+		DesignPaneLayer layers = pane.getLayerPane();
+		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( 1.0 ) );

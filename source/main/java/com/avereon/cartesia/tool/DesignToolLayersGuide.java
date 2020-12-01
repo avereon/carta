@@ -75,16 +75,16 @@ public class DesignToolLayersGuide extends Guide {
 		// handlers will populate the guide as the layers are created in the design
 		// pane.
 		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
-			DesignPane.Layer l = e.getLayer();
+			DesignPaneLayer l = e.getLayer();
 			addLayer( DesignTool.getDesignData( l ), l );
 		} );
 		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
-			DesignPane.Layer l = e.getLayer();
+			DesignPaneLayer l = e.getLayer();
 			removeLayer( DesignTool.getDesignData( l ), l );
 		} );
 	}
 
-	private void addLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
+	private void addLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
 		GuideNode parentGuideNode = layerNodes.get( designLayer.getParentLayer() );
 		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer", designLayer.getOrder() );
 
@@ -99,7 +99,7 @@ public class DesignToolLayersGuide extends Guide {
 		designLayer.register( DesignLayer.ORDER, orderHandler );
 	}
 
-	private void removeLayer( DesignLayer designLayer, DesignPane.Layer layer ) {
+	private void removeLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
 		designLayer.unregister( DesignLayer.ORDER, orderHandler );
 		layer.visibleProperty().removeListener( showingHandler );
 		removeNode( layerNodes.get( designLayer ) );

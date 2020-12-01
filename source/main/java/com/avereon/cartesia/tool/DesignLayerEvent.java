@@ -9,9 +9,9 @@ public class DesignLayerEvent extends javafx.event.Event  {
 
 	public static final EventType<DesignLayerEvent> LAYER_REMOVED = new EventType<>("LAYER_REMOVED");
 
-	private final DesignPane.Layer layer;
+	private final DesignPaneLayer layer;
 
-	public DesignLayerEvent( DesignPane source, EventType<? extends Event> eventType, DesignPane.Layer layer ) {
+	public DesignLayerEvent( DesignPane source, EventType<? extends Event> eventType, DesignPaneLayer layer ) {
 		super( source, null, eventType );
 		this.layer = layer;
 	}
@@ -20,7 +20,7 @@ public class DesignLayerEvent extends javafx.event.Event  {
 		return (DesignPane)getSource();
 	}
 
-	public DesignPane.Layer getLayer() {
+	public DesignPaneLayer getLayer() {
 		return layer;
 	}
 

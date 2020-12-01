@@ -9,7 +9,12 @@ import com.avereon.util.Log;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.*;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -66,7 +71,7 @@ public class DesignPane extends StackPane {
 
 	private final Pane reference;
 
-	private final Layer layers;
+	private final DesignPaneLayer layers;
 
 	private final Pane grid;
 
@@ -75,6 +80,8 @@ public class DesignPane extends StackPane {
 	private final Map<DesignShape, DesignShapeView> geometryMap;
 
 	private final Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions;
+
+	private final ObservableSet<DesignLayer> visibleLayers;
 
 	private Design design;
 
@@ -94,7 +101,7 @@ public class DesignPane extends StackPane {
 		select = new Pane();
 		reference = new Pane();
 		preview = new Pane();
-		layers = new Layer();
+		layers = new DesignPaneLayer();
 		grid = new Pane();
 		getChildren().addAll( grid, layers, preview, reference, select );
 
@@ -103,6 +110,8 @@ public class DesignPane extends StackPane {
 
 		layerMap = new ConcurrentHashMap<>();
 		geometryMap = new ConcurrentHashMap<>();
+		visibleLayers = FXCollections.observableSet();
+		//visibleLayers.addListener( (ListChangeListener<? super Shape>)this::doUpdateVisibleLayers );
 
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
@@ -128,7 +137,7 @@ public class DesignPane extends StackPane {
 		removeActions.put( DesignCircle.class, ( o ) -> doRemoveShape( (DesignCircle)o ) );
 	}
 
-	public Layer getLayers() {
+	DesignPaneLayer getLayerPane() {
 		return layers;
 	}
 
@@ -212,13 +221,24 @@ public class DesignPane extends StackPane {
 		return selectFillPaint;
 	}
 
+	public ObservableSet<DesignLayer> visibleLayersProperty() {
+		return visibleLayers;
+	}
+
 	public boolean isLayerVisible( DesignLayer layer ) {
 		DesignLayerView view = layerMap.get( layer );
 		return view != null && view.isVisible();
 	}
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-		Optional.ofNullable( layerMap.get( layer ) ).ifPresent( v -> Fx.run( () -> v.setVisible( visible ) ) );
+		Optional.ofNullable( layerMap.get( layer ) ).ifPresent( v -> Fx.run( () -> {
+			v.setVisible( visible );
+			if( visible ) {
+				visibleLayers.add( layer );
+			} else {
+				visibleLayers.remove( layer );
+			}
+		} ) );
 	}
 
 	DesignPane loadDesign( Design design ) {
@@ -240,7 +260,7 @@ public class DesignPane extends StackPane {
 		return this;
 	}
 
-	Layer getShapeLayer( DesignShape shape ) {
+	DesignPaneLayer getShapeLayer( DesignShape shape ) {
 		return layerMap.get( shape.getParentLayer() ).getLayer();
 	}
 
@@ -349,8 +369,8 @@ public class DesignPane extends StackPane {
 		Fx.run( () -> {
 			//System.err.println( "Layer geometry added for " + view.getDesignLayer() );
 
-			Layer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
-			Layer layer = view.getLayer();
+			DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+			DesignPaneLayer layer = view.getLayer();
 			parent.getChildren().add( layer );
 			doReorderLayer( parent );
 			layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
@@ -363,17 +383,17 @@ public class DesignPane extends StackPane {
 
 	void removeLayerGeometry( DesignLayerView view ) {
 		Fx.run( () -> {
-			Layer layer = view.getLayer();
+			DesignPaneLayer layer = view.getLayer();
 			//System.err.println( "Removing layer=" + System.identityHashCode( layer ) + " child count=" + layer.getChildren().size() );
 
-			((Layer)layer.getParent()).getChildren().remove( layer );
+			((DesignPaneLayer)layer.getParent()).getChildren().remove( layer );
 			layer.showingProperty().unbind();
 			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 		} );
 	}
 
 	void addShapeGeometry( DesignShapeView view ) {
-		Layer layer = getShapeLayer( view.getDesignShape() );
+		DesignPaneLayer layer = getShapeLayer( view.getDesignShape() );
 		Group group = view.getGroup();
 		//List<Shape> shapes = new ArrayList<>( view.getGeometry() );
 		//List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
@@ -389,7 +409,7 @@ public class DesignPane extends StackPane {
 
 	void removeShapeGeometry( DesignShapeView view ) {
 		Group group = view.getGroup();
-		Layer layer = (Layer)group.getParent();
+		DesignPaneLayer layer = (DesignPaneLayer)group.getParent();
 		//		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
 		//		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
 		//		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
@@ -431,10 +451,10 @@ public class DesignPane extends StackPane {
 		reference.getChildren().add( new ConstructionPoint( DesignPoints.Type.REFERENCE ) );
 	}
 
-	private List<Layer> getLayers( Layer root ) {
-		List<Layer> layers = new ArrayList<>();
+	private List<DesignPaneLayer> getLayers( DesignPaneLayer root ) {
+		List<DesignPaneLayer> layers = new ArrayList<>();
 
-		root.getChildren().stream().filter( c -> c instanceof Layer ).map( c -> (Layer)c ).forEach( l -> {
+		root.getChildren().stream().filter( c -> c instanceof DesignPaneLayer ).map( c -> (DesignPaneLayer)c ).forEach( l -> {
 			layers.add( l );
 			layers.addAll( getLayers( l ) );
 		} );
@@ -507,7 +527,7 @@ public class DesignPane extends StackPane {
 		doReorderLayer( layerMap.get( layer ).getLayer() );
 	}
 
-	private void doReorderLayer( Layer pane ) {
+	private void doReorderLayer( DesignPaneLayer pane ) {
 		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
 	}
 
@@ -557,6 +577,14 @@ public class DesignPane extends StackPane {
 		}
 	}
 
+	List<DesignPaneLayer> getLayers() {
+		return getLayers( layers );
+	}
+
+	List<DesignPaneLayer> getVisibleLayers() {
+		return getLayers( layers ).stream().filter( Node::isVisible ).collect( Collectors.toList());
+	}
+
 	List<Shape> getVisibleShapes() {
 		return getLayers( layers ).stream().filter( Node::isVisible ).flatMap( l -> l.getChildren().stream() ).filter( n -> n instanceof Group ).flatMap( g -> ((Group)g).getChildren().stream() ).filter( n -> n instanceof Shape ).map( n -> (Shape)n ).collect( Collectors.toList() );
 	}
@@ -576,23 +604,6 @@ public class DesignPane extends StackPane {
 			DesignDrawable s1 = DesignShapeView.getDesignData( o1 );
 			DesignDrawable s2 = DesignShapeView.getDesignData( o2 );
 			return s2.getOrder() - s1.getOrder();
-		}
-
-	}
-
-	/**
-	 * This is the internal layer that represents the design layer.
-	 */
-	public static class Layer extends Pane {
-
-		private final BooleanProperty showing;
-
-		public Layer() {
-			showing = new SimpleBooleanProperty( isVisible() );
-		}
-
-		public BooleanProperty showingProperty() {
-			return showing;
 		}
 
 	}

@@ -8,9 +8,11 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
+import com.avereon.data.IdNode;
 import com.avereon.data.NodeEvent;
 import com.avereon.settings.Settings;
 import com.avereon.util.Log;
+import com.avereon.util.TypeReference;
 import com.avereon.xenon.Action;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
@@ -27,6 +29,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -43,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class DesignTool extends GuidedTool {
@@ -202,6 +206,18 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.setLayerVisible( layer, visible );
 	}
 
+	List<String> getVisibleLayerIds() {
+		return getFilteredLayers( DesignPaneLayer::isVisible ).stream().map( IdNode::getId ).collect( Collectors.toList() );
+	}
+
+	public List<DesignLayer> getVisibleLayers() {
+		return getFilteredLayers( DesignPaneLayer::isVisible );
+	}
+
+	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignPaneLayer> filter ) {
+		return designPane.getLayers().stream().filter( filter ).map( y -> (DesignLayer)DesignShapeView.getDesignData( y ) ).collect( Collectors.toList() );
+	}
+
 	public List<Shape> getVisibleShapes() {
 		return designPane.getVisibleShapes();
 	}
@@ -339,16 +355,14 @@ public abstract class DesignTool extends GuidedTool {
 		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
 		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 
+		// Restore the list of visible layers
+		Set<String> visibleLayerIds = getSettings().get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
+		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register(
-			SELECT_APERTURE_RADIUS,
-			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
-		);
-		getSettings().register(
-			SELECT_APERTURE_UNIT,
-			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
-		);
+		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> {
@@ -368,6 +382,8 @@ public abstract class DesignTool extends GuidedTool {
 			validateGrid();
 		} );
 
+		designPane.visibleLayersProperty().addListener( this::doUpdateVisibleLayers );
+
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( CURRENT_LAYER, n.getId() );
@@ -383,6 +399,10 @@ public abstract class DesignTool extends GuidedTool {
 		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.recenter();
 		validateGrid();
+	}
+
+	private void doUpdateVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
+		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
 	}
 
 	@Override
@@ -574,12 +594,17 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
-			c.getRemoved().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::hidePropertiesPage );
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 
+			if( c.getList().size() > 1 ) {
+				c.getList().parallelStream().map( DesignTool::getDesignData ).forEach( this::hidePropertiesPage );
+			} else if( c.getList().size() == 1 ) {
+				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
+			}
+			c.getRemoved().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::hidePropertiesPage );
+
 			// TODO Show a combined properties page
-			c.getAddedSubList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 		}
 		deleteAction.updateEnabled();
 	}
@@ -616,7 +641,7 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	static DesignLayer getDesignData( DesignPane.Layer l ) {
+	static DesignLayer getDesignData( DesignPaneLayer l ) {
 		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
 
