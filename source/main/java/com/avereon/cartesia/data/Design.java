@@ -74,14 +74,12 @@ public abstract class Design extends IdNode {
 		return link == null ? null : link.getNode();
 	}
 
-//	// TODO Finish removing this method
-//	@Deprecated
-//	public Design setCurrentLayer( DesignLayer layer ) {
-//		if( !getAllLayers().contains( layer ) ) throw new IllegalArgumentException( "Layer does not belong to this design" );
-//		// Current layer is a node link so the layer doesn't get removed from the layer tree
-//		setValue( CURRENT_LAYER, new NodeLink<>( Objects.requireNonNull( layer ) ) );
-//		return this;
-//	}
+	public DesignLayer findLayerById( String id ) {
+		for( DesignLayer layer : getAllLayers() ) {
+			if( layer.getId().equals( id ) ) return layer;
+		}
+		return null;
+	}
 
 	public Set<DesignLayer> findLayers( String key, Object value ) {
 		return getRootLayer().findLayers( key, value );

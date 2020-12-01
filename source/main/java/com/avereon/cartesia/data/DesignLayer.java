@@ -13,6 +13,7 @@ import com.avereon.xenon.tool.settings.SettingsPageParser;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class DesignLayer extends DesignDrawable {
@@ -91,6 +92,7 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer addLayerBeforeOrAfter( DesignLayer layer, DesignLayer anchor, boolean after ) {
 		List<DesignLayer> layers = getLayers();
 
@@ -105,16 +107,14 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
-		// FIXME This is not ordering layers correctly
-		int index = 0;
-		for( T item : list ) {
-			item.setOrder( index++ );
-			log.log( Log.WARN, "index=" + index + "  order=" + item.getOrder() );
-		}
+		AtomicInteger counter = new AtomicInteger(0);
+		list.forEach( i -> i.setOrder( counter.getAndIncrement() ) );
 		return list;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer removeLayer( DesignLayer layer ) {
 		removeFromSet( LAYERS, layer );
 		return this;
@@ -129,9 +129,29 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
+	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer removeShape( DesignShape shape ) {
 		removeFromSet( SHAPES, shape );
 		return this;
+	}
+
+	@SuppressWarnings( "UnusedReturnValue" )
+	public <T extends DesignDrawable> T addDrawable( T thingy ) {
+		if( thingy instanceof DesignShape ) {
+			addShape( (DesignShape)thingy );
+		} else if( thingy instanceof DesignLayer ) {
+			addLayer( (DesignLayer)thingy );
+		}
+		return thingy;
+	}
+
+	public <T extends DesignDrawable> T removeDrawable( T thingy ) {
+		if( thingy instanceof DesignShape ) {
+			removeShape( (DesignShape)thingy );
+		} else if( thingy instanceof DesignLayer ) {
+			removeLayer( (DesignLayer)thingy );
+		}
+		return thingy;
 	}
 
 	@Override

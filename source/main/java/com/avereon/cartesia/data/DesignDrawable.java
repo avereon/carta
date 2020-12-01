@@ -100,6 +100,31 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
+	@Override
+	@SuppressWarnings( "unchecked" )
+	public <T> T getValue( String key ) {
+		// NOTE This is a bit of a workaround since "layer" is not a real value
+		if( "layer".equals( key ) ) return (T)getParentLayer().getId();
+		return super.getValue( key );
+	}
+
+	@Override
+	public <T> T setValue( String key, T newValue ) {
+		if( "layer".equals( key ) ) return changeLayer( newValue );
+		return super.setValue( key, newValue );
+	}
+
+	private <T> T changeLayer( T newValue ) {
+		String newLayerId = String.valueOf( newValue );
+		if( getValue( "layer" ).equals( newLayerId ) ) return newValue;
+
+		Design design = getDesign();
+		DesignLayer newLayer = design.findLayerById( newLayerId );
+		newLayer.addDrawable( getParentLayer().removeDrawable( this ) );
+
+		return newValue;
+	}
+
 	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
 
 	protected Map<String, Object> asMap() {
