@@ -41,7 +41,8 @@ public class CartesiaMod extends Mod {
 		//design3dEditorRegistration.setName( "Design 3D Editor" );
 		//registerTool( design3dAssetType, design3dEditorRegistration );
 
-		getProgram().getSettingsManager().putOptionProvider( "design-layers", new DesignLayerOptionProvider( this ) );
+		getProgram().getSettingsManager().putOptionProvider( "design-layer-layers", new DesignLayerOptionProvider( this, true ) );
+		getProgram().getSettingsManager().putOptionProvider( "design-shape-layers", new DesignLayerOptionProvider( this, false ) );
 
 		// Load the default settings
 		loadDefaultSettings();

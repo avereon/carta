@@ -32,9 +32,9 @@ public class DesignLayer extends DesignDrawable {
 
 	//private static final NodeComparator<DesignLayer> comparator;
 
-//	static {
-//		comparator = new NodeComparator<>( ORDER, NAME );
-//	}
+	//	static {
+	//		comparator = new NodeComparator<>( ORDER, NAME );
+	//	}
 
 	public DesignLayer() {
 		defineNaturalKey( NAME );
@@ -61,6 +61,19 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
+	public boolean isRootLayer() {
+		return this == getDesign().getRootLayer();
+	}
+
+	public String getFullName() {
+		if( isRootLayer() ) {
+			return "/";
+		} else if( getParentLayer().isRootLayer() ) {
+			return getName();
+		}
+		return getParentLayer().getFullName() + "/" + getName();
+	}
+
 	public DesignUnit getDesignUnit() {
 		return getValue( UNIT );
 	}
@@ -72,7 +85,7 @@ public class DesignLayer extends DesignDrawable {
 
 	public List<DesignLayer> getAllLayers() {
 		List<DesignLayer> layers = new ArrayList<>();
-		getLayers().forEach( layer ->  {
+		getLayers().forEach( layer -> {
 			layers.add( layer );
 			layers.addAll( layer.getAllLayers() );
 		} );
@@ -109,7 +122,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@SuppressWarnings( "UnusedReturnValue" )
 	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
-		AtomicInteger counter = new AtomicInteger(0);
+		AtomicInteger counter = new AtomicInteger( 0 );
 		list.forEach( i -> i.setOrder( counter.getAndIncrement() ) );
 		return list;
 	}

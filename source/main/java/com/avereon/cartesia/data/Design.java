@@ -3,7 +3,6 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
-import com.avereon.data.NodeLink;
 import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 
@@ -20,6 +19,7 @@ public abstract class Design extends IdNode {
 
 	public static final String ROOT_LAYER = "root-layer";
 
+	@Deprecated
 	public static final String CURRENT_LAYER = "current-layer";
 
 	public static final String VIEWS = "views";
@@ -66,16 +66,8 @@ public abstract class Design extends IdNode {
 		return getValue( ROOT_LAYER );
 	}
 
-	// TODO Finish removing this method
-	@Deprecated
-	public DesignLayer getCurrentLayer() {
-		// Current layer is a node link so the layer doesn't get removed from the layer tree
-		NodeLink<DesignLayer> link = getValue( CURRENT_LAYER );
-		return link == null ? null : link.getNode();
-	}
-
 	public DesignLayer findLayerById( String id ) {
-		for( DesignLayer layer : getAllLayers() ) {
+		for( DesignLayer layer : getAllLayersAndRoot() ) {
 			if( layer.getId().equals( id ) ) return layer;
 		}
 		return null;
@@ -83,6 +75,13 @@ public abstract class Design extends IdNode {
 
 	public Set<DesignLayer> findLayers( String key, Object value ) {
 		return getRootLayer().findLayers( key, value );
+	}
+
+	public List<DesignLayer> getAllLayersAndRoot() {
+		List<DesignLayer> layers = new ArrayList<>();
+		layers.add( getRootLayer() );
+		layers.addAll( getRootLayer().getAllLayers() );
+		return layers;
 	}
 
 	public List<DesignLayer> getAllLayers() {

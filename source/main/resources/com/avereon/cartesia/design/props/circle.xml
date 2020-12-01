@@ -4,7 +4,7 @@
 
 	<page id="circle">
 		<group id="circle">
-			<setting key="layer" editor="combobox" provider="design-layers"/>
+			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
 			<setting key="draw-width" type="math-expression" editor="textline"/>
 			<setting key="draw-paint" editor="color"/>
 			<setting key="fill-paint" editor="color"/>

@@ -66,7 +66,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
 		Design2D design = new Design2D();
-		design.getRootLayer().removeLayer( design.getCurrentLayer() );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 
@@ -76,10 +75,9 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
 
 		design.updateFrom( map );
-		String currentLayerId = String.valueOf( map.get( Design.CURRENT_LAYER ) );
 
 		// Load layers
-		layers.values().forEach( l -> loadLayer( design, design.getRootLayer(), currentLayerId, l ));
+		layers.values().forEach( l -> loadLayer( design, design.getRootLayer(), l ));
 
 		// Load views
 		views.values().forEach( v -> design.addView( new DesignView().updateFrom( v ) ) );
@@ -88,7 +86,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void loadLayer( Design design, DesignLayer parent, String currentLayerId, Map<String, Object> map ) {
+	private void loadLayer( Design design, DesignLayer parent, Map<String, Object> map ) {
 		DesignLayer layer = new DesignLayer().updateFrom( map );
 		parent.addLayer( layer );
 
@@ -106,7 +104,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		} );
 
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
-		layers.values().forEach( l -> loadLayer( design, layer, currentLayerId, l ));
+		layers.values().forEach( l -> loadLayer( design, layer, l ));
 	}
 
 	@Override

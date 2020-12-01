@@ -5,7 +5,7 @@
 	<page id="layer">
 		<group id="layer">
 			<setting key="name" editor="textline"/>
-			<setting key="layer" editor="combobox" provider="design-layers"/>
+			<setting key="layer" editor="combobox" provider="design-layer-layers"/>
 			<setting key="draw-width" editor="textline" type="math-expression"/>
 			<setting key="draw-paint" editor="color"/>
 			<setting key="fill-paint" editor="color"/>
