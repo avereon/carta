@@ -33,7 +33,6 @@ import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -275,14 +274,6 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( point );
 	}
 
-	public void setPreview( Node preview ) {
-		designPane.addPreview( preview );
-	}
-
-	public void clearPreview() {
-		designPane.clearPreview();
-	}
-
 	public boolean isGridVisible() {
 		return getDesignContext().getWorkplane().isGridVisible();
 	}
@@ -382,6 +373,7 @@ public abstract class DesignTool extends GuidedTool {
 			validateGrid();
 		} );
 
+		// Add visible layers listener
 		designPane.visibleLayersProperty().addListener( this::doUpdateVisibleLayers );
 
 		// Add current layer property listener

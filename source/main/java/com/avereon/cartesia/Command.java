@@ -24,7 +24,6 @@ public class Command {
 		if( tool != null ) {
 			tool.setCursor( Cursor.DEFAULT );
 			tool.getDesign().clearSelected();
-			tool.clearPreview();
 		}
 	}
 
