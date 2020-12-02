@@ -170,7 +170,10 @@ public class DesignLayer extends DesignDrawable {
 	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pagePath = "/com/avereon/cartesia/design/props/layer.xml";
-		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath, BundleKey.PROPS ).get( "layer" );
+		if( page == null ) {
+			page = new SettingsPageParser( product ).parse( pagePath, BundleKey.PROPS ).get( "layer" );
+			page.setSettings( new NodeSettingsWrapper( this )  );
+		}
 		return page;
 	}
 

@@ -2,18 +2,13 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.ParseUtil;
-import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class DesignLine extends DesignShape {
@@ -55,7 +50,10 @@ public class DesignLine extends DesignShape {
 	@Override
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pagePath = "/com/avereon/cartesia/design/props/line.xml";
-		if( page == null ) page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath, BundleKey.PROPS ).get( "line" );
+		if( page == null ) {
+			page = new SettingsPageParser( product ).parse( pagePath, BundleKey.PROPS ).get( "line" );
+			page.setSettings( new NodeSettingsWrapper( this )  );
+		}
 		return page;
 	}
 

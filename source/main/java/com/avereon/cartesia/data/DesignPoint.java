@@ -96,7 +96,8 @@ public class DesignPoint extends DesignShape {
 	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
 		String pagePath = "/com/avereon/cartesia/design/props/point.xml";
 		if( page == null ) {
-			page = new SettingsPageParser( product, new NodeSettingsWrapper( this ) ).parse( pagePath, BundleKey.PROPS ).get( "point" );
+			page = new SettingsPageParser( product ).parse( pagePath, BundleKey.PROPS ).get( "point" );
+			page.setSettings( new NodeSettingsWrapper( this )  );
 			page.setOptionProviders( Map.of( "point-type-option-provider", new PointTypeOptionProvider( product ) ) );
 		}
 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="shape">
+		<group id="shape">
+			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
+			<setting key="draw-width" type="math-expression" editor="textline"/>
+			<setting key="draw-paint" editor="color"/>
+			<setting key="fill-paint" editor="color"/>
+		</group>
+	</page>
+
+</pages>
