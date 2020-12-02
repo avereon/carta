@@ -1,13 +1,11 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
-import java.io.IOException;
 import java.util.Map;
 
 public abstract class DesignDrawable extends DesignNode {
@@ -124,8 +122,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 		return newValue;
 	}
-
-	public abstract SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException;
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();

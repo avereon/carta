@@ -2,14 +2,12 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignDrawable;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeEvent;
+import com.avereon.data.NodeSettingsWrapper;
 import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.util.TypeReference;
@@ -39,7 +37,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -88,6 +85,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
+	private final DesignPropertiesMap designPropertiesMap;
+
 	private final DeleteAction deleteAction;
 
 	private final UndoAction undoAction;
@@ -102,6 +101,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		addStylesheet( CartesiaMod.STYLESHEET );
 
+		this.designPropertiesMap = new DesignPropertiesMap( product );
 		this.commandActions = new ConcurrentHashMap<>();
 
 		this.layersGuide = new DesignToolLayersGuide( product, this );
@@ -352,8 +352,12 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		getSettings().register( SELECT_APERTURE_RADIUS,
+			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
+		);
+		getSettings().register( SELECT_APERTURE_UNIT,
+			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
+		);
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> {
@@ -614,23 +618,17 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void showPropertiesPage( DesignDrawable s ) {
-		try {
-			SettingsPage page = s.getPropertiesPage( getProduct() );
-			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
-			getWorkspace().getEventBus().dispatch( event );
-		} catch( IOException e ) {
-			e.printStackTrace();
-		}
+		SettingsPage page = designPropertiesMap.getSettingsPage( s.getClass() );
+		page.setSettings( new NodeSettingsWrapper( s ) );
+		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
+		getWorkspace().getEventBus().dispatch( event );
 	}
 
 	private void hidePropertiesPage( DesignDrawable s ) {
-		try {
-			SettingsPage page = s.getPropertiesPage( getProduct() );
-			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );
-			getWorkspace().getEventBus().dispatch( event );
-		} catch( IOException e ) {
-			e.printStackTrace();
-		}
+		SettingsPage page = designPropertiesMap.getSettingsPage( s.getClass() );
+		page.setSettings( new NodeSettingsWrapper( s ) );
+		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );
+		getWorkspace().getEventBus().dispatch( event );
 	}
 
 	static DesignLayer getDesignData( DesignPaneLayer l ) {

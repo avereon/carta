@@ -1,13 +1,7 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.BundleKey;
-import com.avereon.data.NodeSettingsWrapper;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.xenon.tool.settings.SettingsPageParser;
 import javafx.geometry.Point3D;
 
-import java.io.IOException;
 import java.util.Map;
 
 public class DesignCircle extends DesignShape {
@@ -46,16 +40,6 @@ public class DesignCircle extends DesignShape {
 		super.updateFrom( map );
 		setRadius( (Double)map.get( RADIUS ) );
 		return this;
-	}
-
-	@Override
-	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
-		String pagePath = "/com/avereon/cartesia/design/props/circle.xml";
-		if( page == null ) {
-			page = new SettingsPageParser( product ).parse( pagePath, BundleKey.PROPS ).get( CIRCLE );
-			page.setSettings( new NodeSettingsWrapper( this )  );
-		}
-		return page;
 	}
 
 	@Override

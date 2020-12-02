@@ -1,17 +1,9 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
-import com.avereon.data.NodeSettingsWrapper;
-import com.avereon.xenon.BundleKey;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.tool.settings.SettingOptionProvider;
-import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.xenon.tool.settings.SettingsPageParser;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class DesignPoint extends DesignShape {
@@ -92,55 +84,8 @@ public class DesignPoint extends DesignShape {
 		return super.toString( ORIGIN );
 	}
 
-	@Override
-	public SettingsPage getPropertiesPage( ProgramProduct product ) throws IOException {
-		String pagePath = "/com/avereon/cartesia/design/props/point.xml";
-		if( page == null ) {
-			page = new SettingsPageParser( product ).parse( pagePath, BundleKey.PROPS ).get( "point" );
-			page.setSettings( new NodeSettingsWrapper( this )  );
-			page.setOptionProviders( Map.of( "point-type-option-provider", new PointTypeOptionProvider( product ) ) );
-		}
-
-		return page;
-	}
-
 	public double getRadius() {
 		return 0.5 * calcSize();
-	}
-
-	private static class PointTypeOptionProvider implements SettingOptionProvider {
-
-		private static List<String> keys;
-
-		private final ProgramProduct product;
-
-		private PointTypeOptionProvider( ProgramProduct product ) {
-			this.product = product;
-		}
-
-		static {
-			PointTypeOptionProvider.keys = List.of(
-				NULL_VALUE_OPTION_KEY,
-				DesignPoints.Type.CROSS.name().toLowerCase(),
-				DesignPoints.Type.X.name().toLowerCase(),
-				DesignPoints.Type.REFERENCE.name().toLowerCase(),
-				DesignPoints.Type.CIRCLE.name().toLowerCase(),
-				DesignPoints.Type.DIAMOND.name().toLowerCase(),
-				DesignPoints.Type.SQUARE.name().toLowerCase()
-			);
-		}
-
-		@Override
-		public List<String> getKeys() {
-			return keys;
-		}
-
-		@Override
-		public String getName( String key ) {
-			if( key.equals( NULL_VALUE_OPTION_KEY ) ) key = "default";
-			return product.rb().text( BundleKey.PROPS, "point-type-" + key );
-		}
-
 	}
 
 }
