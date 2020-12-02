@@ -26,9 +26,10 @@ public abstract class DrawCommand extends Command {
 		return (T)preview;
 	}
 
-	protected Object commitPreview(DesignTool tool) {
+	protected Object commitPreview( DesignTool tool ) {
 		preview.setPreview( false );
 		tool.getCurrentLayer().removeShape( preview );
+		// FIXME I think this is capturing some of the remove shape events
 		tool.getAsset().setCaptureUndoChanges( true );
 		tool.getCurrentLayer().addShape( preview );
 		return complete();
