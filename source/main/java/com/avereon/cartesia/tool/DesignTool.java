@@ -590,6 +590,8 @@ public abstract class DesignTool extends GuidedTool {
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 
+			System.out.println( "select shape count=" + c.getList().size() );
+
 			if( c.getList().size() > 1 ) {
 				// Show a combined properties page
 				Set<DesignDrawable> designData = c.getList().parallelStream().map( DesignTool::getDesignData ).collect( Collectors.toSet() );
