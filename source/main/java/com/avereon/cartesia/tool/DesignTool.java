@@ -6,6 +6,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.data.IdNode;
+import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
@@ -352,12 +353,8 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register( SELECT_APERTURE_RADIUS,
-			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
-		);
-		getSettings().register( SELECT_APERTURE_UNIT,
-			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
-		);
+		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> {
@@ -594,15 +591,27 @@ public abstract class DesignTool extends GuidedTool {
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 
 			if( c.getList().size() > 1 ) {
-				c.getList().parallelStream().map( DesignTool::getDesignData ).forEach( this::hidePropertiesPage );
+				// Show a combined properties page
+				Set<DesignDrawable> designData = c.getList().parallelStream().map( DesignTool::getDesignData ).collect( Collectors.toSet() );
+				showPropertiesPage( new MultiNodeSettings( designData ), DesignShape.class );
 			} else if( c.getList().size() == 1 ) {
 				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
+			} else {
+				getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
 			}
-			c.getRemoved().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::hidePropertiesPage );
-
-			// TODO Show a combined properties page
 		}
 		deleteAction.updateEnabled();
+	}
+
+	private void showPropertiesPage( DesignDrawable drawable ) {
+		showPropertiesPage( new NodeSettings( drawable ), drawable.getClass() );
+	}
+
+	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
+		SettingsPage page = designPropertiesMap.getSettingsPage( type );
+		page.setSettings( settings );
+		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
+		getWorkspace().getEventBus().dispatch( event );
 	}
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
@@ -615,21 +624,6 @@ public abstract class DesignTool extends GuidedTool {
 			currentLayerProperty().set( y );
 			showPropertiesPage( y );
 		} );
-	}
-
-	private void showPropertiesPage( DesignDrawable s ) {
-		SettingsPage page = designPropertiesMap.getSettingsPage( s.getClass() );
-		// NEXT Update NodeSettingsWrapper to support multiple nodes
-		page.setSettings( new NodeSettings( s ) );
-		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
-		getWorkspace().getEventBus().dispatch( event );
-	}
-
-	private void hidePropertiesPage( DesignDrawable s ) {
-		SettingsPage page = designPropertiesMap.getSettingsPage( s.getClass() );
-		page.setSettings( new NodeSettings( s ) );
-		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );
-		getWorkspace().getEventBus().dispatch( event );
 	}
 
 	static DesignLayer getDesignData( DesignPaneLayer l ) {
