@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
@@ -26,6 +27,7 @@ public class DesignLineView extends DesignShapeView{
 	@Override
 	protected List<Shape> generateGeometry() {
 		Line line = new Line( getDesignLine().getOrigin().getX(), getDesignLine().getOrigin().getY(), getDesignLine().getPoint().getX(), getDesignLine().getPoint().getY() );
+		line.setFill( Color.GREEN );
 		return List.of( line );
 	}
 

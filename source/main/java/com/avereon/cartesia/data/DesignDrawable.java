@@ -22,7 +22,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
 
-	private static final Color DEFAULT_FILL_PAINT = Color.web( "0x202030ff" );
+	private static final Color DEFAULT_FILL_PAINT = null;
 
 	protected SettingsPage page;
 

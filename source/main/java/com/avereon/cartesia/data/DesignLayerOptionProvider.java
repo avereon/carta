@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.data.IdNode;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
 
 import java.util.List;
@@ -52,7 +53,9 @@ public class DesignLayerOptionProvider implements SettingOptionProvider {
 	}
 
 	private Optional<Design> getDesign() {
-		Object model = product.getProgram().getAssetManager().getCurrentAsset().getModel();
+		Asset currentAsset = product.getProgram().getAssetManager().getCurrentAsset();
+		if( currentAsset == null ) return Optional.empty();
+		Object model = currentAsset.getModel();
 		if( model instanceof Design ) return Optional.of( (Design)model );
 		return Optional.empty();
 	}

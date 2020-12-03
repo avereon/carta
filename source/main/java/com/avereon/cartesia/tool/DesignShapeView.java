@@ -5,12 +5,15 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
+import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
@@ -82,6 +85,22 @@ public class DesignShapeView extends DesignDrawableView {
 		getPane().removeShapeGeometry( this );
 	}
 
+	@Override
+	void registerListeners() {
+		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( () -> getShape().setStrokeWidth( getDesignShape().calcDrawWidth() ) ) );
+		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawPaint() ) ) );
+		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillPaint() ) ) );
+		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> setSelected( e.getNewValue() ) ) );
+	}
+
+	@Override
+	void unregisterListeners() {
+		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
+		getDesignShape().unregister( DesignShape.FILL_PAINT, fillPaintHandler );
+		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
+		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
+	}
+
 	private void generate() {
 		geometry = generateGeometry();
 		geometry.forEach( this::configureShape );
@@ -96,23 +115,17 @@ public class DesignShapeView extends DesignDrawableView {
 		setDesignData( group, getDesignShape() );
 	}
 
-	@Override
-	void registerListeners() {
-		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( () -> getShape().setStrokeWidth( getDesignShape().calcDrawWidth() ) ) );
-		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawPaint() ) ) );
-		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillPaint() ) ) );
-		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> {
-			getShape().setStroke( e.getNewValue() ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawPaint() );
-			getShape().setFill( e.getNewValue() ? getPane().getSelectFillPaint() : getDesignShape().calcFillPaint() );
-		} ) );
-	}
+	private void setSelected( boolean selected ) {
+		Paint fillPaint = getDesignShape().calcFillPaint();
+		Paint selectedFillPaint = getPane().getSelectFillPaint();
 
-	@Override
-	void unregisterListeners() {
-		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
-		getDesignShape().unregister( DesignShape.FILL_PAINT, fillPaintHandler );
-		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
-		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
+		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
+			double opacity = ((Color)fillPaint).getOpacity();
+			selectedFillPaint = opacity == 0.0? null : Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
+		}
+
+		getShape().setStroke( selected ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawPaint() );
+		getShape().setFill( selected ? selectedFillPaint : fillPaint );
 	}
 
 	public static DesignDrawable getDesignData( Node node ) {
