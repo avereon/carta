@@ -7,7 +7,7 @@ import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeEvent;
-import com.avereon.data.NodeSettingsWrapper;
+import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.util.TypeReference;
@@ -619,14 +619,15 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void showPropertiesPage( DesignDrawable s ) {
 		SettingsPage page = designPropertiesMap.getSettingsPage( s.getClass() );
-		page.setSettings( new NodeSettingsWrapper( s ) );
+		// NEXT Update NodeSettingsWrapper to support multiple nodes
+		page.setSettings( new NodeSettings( s ) );
 		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
 		getWorkspace().getEventBus().dispatch( event );
 	}
 
 	private void hidePropertiesPage( DesignDrawable s ) {
 		SettingsPage page = designPropertiesMap.getSettingsPage( s.getClass() );
-		page.setSettings( new NodeSettingsWrapper( s ) );
+		page.setSettings( new NodeSettings( s ) );
 		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, page );
 		getWorkspace().getEventBus().dispatch( event );
 	}
