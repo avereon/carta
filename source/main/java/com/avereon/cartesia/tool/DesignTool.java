@@ -585,6 +585,13 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
+	private void doSetCurrentLayerById( String id ) {
+		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( y -> {
+			currentLayerProperty().set( y );
+			showPropertiesPage( y );
+		} );
+	}
+
 	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
@@ -617,13 +624,6 @@ public abstract class DesignTool extends GuidedTool {
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
 		runTask( () -> shapes.forEach( s -> s.getParentLayer().removeShape( s ) ) );
 		selectedShapes.clear();
-	}
-
-	private void doSetCurrentLayerById( String id ) {
-		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( y -> {
-			currentLayerProperty().set( y );
-			showPropertiesPage( y );
-		} );
 	}
 
 	static DesignLayer getDesignData( DesignPaneLayer l ) {
