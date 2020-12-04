@@ -6,35 +6,35 @@
 		<group id="line">
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
 
-			<setting key="draw-paint-source" editor="combobox">
+			<setting id="draw-paint" key="draw-paint-source" editor="combobox">
 				<option key="layer" value=""/>
 				<option key="custom"/>
 			</setting>
-			<setting key="draw-paint" editor="color" on-dependency-failure="hide">
+			<setting id="draw-paint-custom" key="draw-paint" editor="color" on-dependency-failure="hide">
 				<dependency key="draw-paint-source" value="custom"/>
 			</setting>
 
-			<setting key="draw-width-source" editor="combobox">
+			<setting id="draw-width" key="draw-width-source" editor="combobox">
 				<option key="layer" value=""/>
 				<option key="custom"/>
 			</setting>
-			<setting key="draw-width" type="math-expression" editor="textline" on-dependency-failure="hide">
+			<setting id="draw-width-custom" key="draw-width" type="math-expression" editor="textline" on-dependency-failure="hide">
 				<dependency key="draw-width-source" value="custom"/>
 			</setting>
 
-			<setting key="draw-pattern-source" editor="combobox">
+			<setting id="draw-pattern" key="draw-pattern-source" editor="combobox">
 				<option key="layer" value=""/>
 				<option key="custom"/>
 			</setting>
-			<setting key="draw-pattern" type="csv" editor="textline" on-dependency-failure="hide">
+			<setting id="draw-pattern-custom" key="draw-pattern" type="csv" editor="textline" on-dependency-failure="hide">
 				<dependency key="draw-pattern-source" value="custom"/>
 			</setting>
 
-			<setting key="draw-cap-source" editor="combobox">
+			<setting id="draw-cap" key="draw-cap-source" editor="combobox">
 				<option key="layer" value=""/>
 				<option key="custom"/>
 			</setting>
-			<setting key="draw-cap" editor="combobox" on-dependency-failure="hide">
+			<setting id="draw-cap-custom" key="draw-cap" editor="combobox" on-dependency-failure="hide">
 				<dependency key="draw-cap-source" value="custom"/>
 				<option key="butt"/>
 				<option key="round"/>
