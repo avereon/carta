@@ -7,7 +7,7 @@
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
 
 			<setting id="draw-paint" key="draw-paint-source" editor="combobox">
-				<option key="layer" value=""/>
+				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
 			<setting id="draw-paint-custom" key="draw-paint" editor="color">
@@ -15,7 +15,7 @@
 			</setting>
 
 			<setting id="draw-width" key="draw-width-source" editor="combobox">
-				<option key="layer" value=""/>
+				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
 			<setting id="draw-width-custom" key="draw-width" type="math-expression" editor="textline">
@@ -23,7 +23,7 @@
 			</setting>
 
 			<setting id="draw-pattern" key="draw-pattern-source" editor="combobox">
-				<option key="layer" value=""/>
+				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
 			<setting id="draw-pattern-custom" key="draw-pattern" type="csv" editor="textline">
@@ -31,7 +31,7 @@
 			</setting>
 
 			<setting id="draw-cap" key="draw-cap-source" editor="combobox">
-				<option key="layer" value=""/>
+				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
 			<setting id="draw-cap-custom" key="draw-cap" editor="combobox">

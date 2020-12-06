@@ -1,10 +1,12 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
+import com.avereon.data.NodeEvent;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeLineCap;
 
 import java.util.Map;
 
@@ -12,15 +14,35 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String ORDER = "order";
 
-	public static final String DRAW_WIDTH = "draw-width";
-
 	public static final String DRAW_PAINT = "draw-paint";
 
+	public static final String DRAW_WIDTH = "draw-width";
+
+	public static final String DRAW_PATTERN = "draw-pattern";
+
+	public static final String DRAW_CAP = "draw-cap";
+
 	public static final String FILL_PAINT = "fill-paint";
+
+	private static final String VIRTUAL_LAYER = "layer";
+
+	private static final String VIRTUAL_DRAW_PAINT_SOURCE = "draw-paint-source";
+
+	private static final String VIRTUAL_DRAW_WIDTH_SOURCE = "draw-width-source";
+
+	private static final String VIRTUAL_DRAW_PATTERN_SOURCE = "draw-pattern-source";
+
+	private static final String VIRTUAL_DRAW_CAP_SOURCE = "draw-cap-source";
+
+	private static final String VIRTUAL_FILL_PAINT_SOURCE = "fill-paint-source";
 
 	private static final double DEFAULT_DRAW_WIDTH = 0.05;
 
 	private static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
+
+	private static final StrokeLineCap DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE;
+
+	private static final String DEFAULT_DRAW_PATTERN = null;
 
 	private static final Color DEFAULT_FILL_PAINT = null;
 
@@ -50,7 +72,7 @@ public abstract class DesignDrawable extends DesignNode {
 		if( this instanceof DesignLayer ) return DEFAULT_DRAW_WIDTH;
 		DesignNode parent = getParent();
 		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawWidth();
-		return Double.NaN;
+		return DEFAULT_DRAW_WIDTH;
 	}
 
 	public String getDrawWidth() {
@@ -75,8 +97,44 @@ public abstract class DesignDrawable extends DesignNode {
 		return getValue( DRAW_PAINT );
 	}
 
-	public DesignDrawable setDrawPaint( String color ) {
-		setValue( DRAW_PAINT, color );
+	public DesignDrawable setDrawPaint( String paint ) {
+		setValue( DRAW_PAINT, paint );
+		return this;
+	}
+
+	public String calcDrawPattern() {
+		String pattern = getDrawPaint();
+		if( pattern != null ) return pattern;
+		if( this instanceof DesignLayer ) return DEFAULT_DRAW_PATTERN;
+		DesignNode parent = getParent();
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawPattern();
+		return DEFAULT_DRAW_PATTERN;
+	}
+
+	public String getDrawPattern() {
+		return getValue( DRAW_PATTERN );
+	}
+
+	public DesignDrawable setDrawPattern( String pattern ) {
+		setValue( DRAW_PATTERN, pattern );
+		return this;
+	}
+
+	public StrokeLineCap calcDrawCap() {
+		String cap = getDrawCap();
+		if( cap != null ) return StrokeLineCap.valueOf( cap.toUpperCase() );
+		if( this instanceof DesignLayer ) return DEFAULT_DRAW_CAP;
+		DesignNode parent = getParent();
+		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawCap();
+		return DEFAULT_DRAW_CAP;
+	}
+
+	public String getDrawCap() {
+		return getValue( DRAW_CAP, DEFAULT_DRAW_CAP.name().toLowerCase() );
+	}
+
+	public DesignDrawable setDrawCap( String cap ) {
+		setValue( DRAW_CAP, cap );
 		return this;
 	}
 
@@ -101,32 +159,26 @@ public abstract class DesignDrawable extends DesignNode {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public <T> T getValue( String key ) {
-		// NOTE This is a bit of a workaround since "layer" is not a real value
-		if( "layer".equals( key ) ) return (T)getParentLayer().getId();
-		return super.getValue( key );
+		return switch( key ) {
+			case VIRTUAL_LAYER -> (T)getParentLayer().getId();
+			case VIRTUAL_DRAW_PAINT_SOURCE -> (T)(getDrawPaint() == null ? "layer" : "custom");
+			case VIRTUAL_DRAW_WIDTH_SOURCE -> (T)(getDrawWidth() == null ? "layer" : "custom");
+			case VIRTUAL_DRAW_PATTERN_SOURCE -> (T)(getDrawPattern() == null ? "layer" : "custom");
+			case VIRTUAL_DRAW_CAP_SOURCE -> (T)(getDrawCap() == null ? "layer" : "custom");
+			default -> super.getValue( key );
+		};
 	}
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
-		if( "layer".equals( key ) ) return changeLayer( newValue );
-		return super.setValue( key, newValue );
-	}
-
-	private <T> T changeLayer( T newValue ) {
-		String newLayerId = String.valueOf( newValue );
-		if( getValue( "layer" ).equals( newLayerId ) ) return newValue;
-
-		Design design = getDesign();
-		DesignLayer newLayer = design.findLayerById( newLayerId );
-		newLayer.addDrawable( getParentLayer().removeDrawable( this ) );
-
-		return newValue;
-	}
-
-	protected Map<String, Object> asMap() {
-		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_PAINT, FILL_PAINT ) );
-		return map;
+		return switch( key ) {
+			case VIRTUAL_LAYER -> changeLayer( newValue );
+			case VIRTUAL_DRAW_PAINT_SOURCE -> changeDrawPaint( newValue );
+			case VIRTUAL_DRAW_WIDTH_SOURCE -> changeDrawWidth( newValue );
+			case VIRTUAL_DRAW_PATTERN_SOURCE -> changeDrawPattern( newValue );
+			case VIRTUAL_DRAW_CAP_SOURCE -> changeDrawCap( newValue );
+			default -> super.setValue( key, newValue );
+		};
 	}
 
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
@@ -141,6 +193,59 @@ public abstract class DesignDrawable extends DesignNode {
 		if( map.containsKey( DRAW_PAINT ) ) setDrawPaint( (String)map.get( DRAW_PAINT ) );
 		if( map.containsKey( FILL_PAINT ) ) setFillPaint( (String)map.get( FILL_PAINT ) );
 		return this;
+	}
+
+	protected Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
+		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_PAINT, FILL_PAINT ) );
+		return map;
+	}
+
+	private <T> T changeLayer( T newValue ) {
+		String newLayerId = String.valueOf( newValue );
+		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
+
+		Design design = getDesign();
+		DesignLayer newLayer = design.findLayerById( newLayerId );
+		newLayer.addDrawable( getParentLayer().removeDrawable( this ) );
+
+		return newValue;
+	}
+
+	private <T> T changeDrawPaint( T newValue ) {
+		boolean isCustom = "custom".equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_DRAW_PAINT_SOURCE );
+		setDrawPaint( isCustom ? Paints.toString( DEFAULT_DRAW_PAINT ) : null );
+		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_SOURCE, oldValue, newValue ) );
+		return newValue;
+	}
+
+	private <T> T changeDrawWidth( T newValue ) {
+		boolean isCustom = "custom".equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_DRAW_WIDTH_SOURCE );
+		setDrawWidth( isCustom ? String.valueOf( DEFAULT_DRAW_WIDTH ) : null );
+		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_SOURCE, oldValue, newValue ) );
+		return newValue;
+	}
+
+	private <T> T changeDrawPattern( T newValue ) {
+		boolean isCustom = "custom".equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_SOURCE );
+		setDrawPattern( isCustom ? DEFAULT_DRAW_PATTERN : null );
+		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_SOURCE, oldValue, newValue ) );
+		return newValue;
+	}
+
+	private <T> T changeDrawCap( T newValue ) {
+		boolean isCustom = "custom".equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_DRAW_CAP_SOURCE );
+		setDrawCap( isCustom ? DEFAULT_DRAW_CAP.name().toLowerCase() : null );
+		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_SOURCE, oldValue, newValue ) );
+		return newValue;
 	}
 
 }
