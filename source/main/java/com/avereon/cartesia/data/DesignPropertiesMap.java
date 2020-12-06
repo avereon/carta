@@ -34,10 +34,7 @@ public class DesignPropertiesMap {
 
 	private static SettingsPage loadPage( ProgramProduct product, String key ) {
 		try {
-			SettingsPage page = loadSettingsPage( product, key );
-			// FIXME Not working to provide values :-(
-			page.setOptionProviders( Map.of( "point-type-option-provider", new PointTypeOptionProvider( product ) ) );
-			return page;
+			return loadSettingsPage( product, key );
 		} catch( IOException exception ) {
 			exception.printStackTrace();
 		}

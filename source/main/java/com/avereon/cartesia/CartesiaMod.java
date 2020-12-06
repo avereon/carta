@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.DesignLayerOptionProvider;
+import com.avereon.cartesia.data.PointTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
@@ -41,6 +42,7 @@ public class CartesiaMod extends Mod {
 		//design3dEditorRegistration.setName( "Design 3D Editor" );
 		//registerTool( design3dAssetType, design3dEditorRegistration );
 
+		getProgram().getSettingsManager().putOptionProvider( "point-type-option-provider", new PointTypeOptionProvider( this ) );
 		getProgram().getSettingsManager().putOptionProvider( "design-layer-layers", new DesignLayerOptionProvider( this, true ) );
 		getProgram().getSettingsManager().putOptionProvider( "design-shape-layers", new DesignLayerOptionProvider( this, false ) );
 
