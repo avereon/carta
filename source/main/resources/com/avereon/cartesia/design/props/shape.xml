@@ -5,9 +5,50 @@
 	<page id="shape">
 		<group id="shape">
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
-			<setting key="draw-width" type="math-expression" editor="textline"/>
-			<setting key="draw-paint" editor="color"/>
-			<setting key="fill-paint" editor="color"/>
+
+			<setting id="draw-paint" key="draw-paint-source" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-paint-custom" key="draw-paint" editor="color">
+				<dependency key="draw-paint-source" value="custom"/>
+			</setting>
+
+			<setting id="draw-width" key="draw-width-source" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-width-custom" key="draw-width" type="math-expression" editor="textline">
+				<dependency key="draw-width-source" value="custom"/>
+			</setting>
+
+			<setting id="draw-pattern" key="draw-pattern-source" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-pattern-custom" key="draw-pattern" type="csv" editor="textline">
+				<dependency key="draw-pattern-source" value="custom"/>
+			</setting>
+
+			<setting id="draw-cap" key="draw-cap-source" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-cap-custom" key="draw-cap" editor="combobox">
+				<dependency key="draw-cap-source" value="custom"/>
+				<option key="butt"/>
+				<option key="round"/>
+				<option key="square"/>
+			</setting>
+
+			<setting id="fill-paint" key="fill-paint-source" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="fill-paint-custom" key="fill-paint" editor="color">
+				<dependency key="fill-paint-source" value="custom"/>
+			</setting>
+
 		</group>
 	</page>
 

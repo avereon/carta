@@ -36,6 +36,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final String VIRTUAL_FILL_PAINT_SOURCE = "fill-paint-source";
 
+	// TODO These defaults should only be used for layers, they should be null otherwise
 	private static final double DEFAULT_DRAW_WIDTH = 0.05;
 
 	private static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
@@ -69,10 +70,12 @@ public abstract class DesignDrawable extends DesignNode {
 	public double calcDrawWidth() {
 		String width = getDrawWidth();
 		if( width != null ) return Maths.evalNoException( width );
-		if( this instanceof DesignLayer ) return DEFAULT_DRAW_WIDTH;
-		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawWidth();
-		return DEFAULT_DRAW_WIDTH;
+
+		// Layers with null values return the default
+		if( isLayer() ) return DEFAULT_DRAW_WIDTH;
+
+		// Use the shape parent layer to get the value
+		return ((DesignLayer)getParent()).calcDrawWidth();
 	}
 
 	public String getDrawWidth() {
@@ -87,10 +90,12 @@ public abstract class DesignDrawable extends DesignNode {
 	public Paint calcDrawPaint() {
 		String paint = getDrawPaint();
 		if( paint != null ) return Paints.parse( paint );
-		if( this instanceof DesignLayer ) return DEFAULT_DRAW_PAINT;
-		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawPaint();
-		return DEFAULT_DRAW_PAINT;
+
+		// Layers with null values return the default
+		if( isLayer() ) return DEFAULT_DRAW_PAINT;
+
+		// Use the shape parent layer to get the value
+		return ((DesignLayer)getParent()).calcDrawPaint();
 	}
 
 	public String getDrawPaint() {
@@ -105,10 +110,12 @@ public abstract class DesignDrawable extends DesignNode {
 	public String calcDrawPattern() {
 		String pattern = getDrawPaint();
 		if( pattern != null ) return pattern;
-		if( this instanceof DesignLayer ) return DEFAULT_DRAW_PATTERN;
-		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawPattern();
-		return DEFAULT_DRAW_PATTERN;
+
+		// Layers with null values return the default
+		if( isLayer() ) return DEFAULT_DRAW_PATTERN;
+
+		// Use the shape parent layer to get the value
+		return ((DesignLayer)getParent()).calcDrawPattern();
 	}
 
 	public String getDrawPattern() {
@@ -123,10 +130,12 @@ public abstract class DesignDrawable extends DesignNode {
 	public StrokeLineCap calcDrawCap() {
 		String cap = getDrawCap();
 		if( cap != null ) return StrokeLineCap.valueOf( cap.toUpperCase() );
-		if( this instanceof DesignLayer ) return DEFAULT_DRAW_CAP;
-		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcDrawCap();
-		return DEFAULT_DRAW_CAP;
+
+		// Layers with null values return the default
+		if( isLayer() ) return DEFAULT_DRAW_CAP;
+
+		// Use the shape parent layer to get the value
+		return ((DesignLayer)getParent()).calcDrawCap();
 	}
 
 	public String getDrawCap() {
@@ -141,10 +150,12 @@ public abstract class DesignDrawable extends DesignNode {
 	public Paint calcFillPaint() {
 		String paint = getFillPaint();
 		if( paint != null ) return Paints.parse( paint );
-		if( this instanceof DesignLayer ) return DEFAULT_FILL_PAINT;
-		DesignNode parent = getParent();
-		if( parent instanceof DesignLayer ) return ((DesignLayer)parent).calcFillPaint();
-		return DEFAULT_FILL_PAINT;
+
+		// Layers with null values return the default
+		if( isLayer() ) return DEFAULT_FILL_PAINT;
+
+		// Use the shape parent layer to get the value
+		return ((DesignLayer)getParent()).calcFillPaint();
 	}
 
 	public String getFillPaint() {
@@ -165,6 +176,7 @@ public abstract class DesignDrawable extends DesignNode {
 			case VIRTUAL_DRAW_WIDTH_SOURCE -> (T)(getDrawWidth() == null ? "layer" : "custom");
 			case VIRTUAL_DRAW_PATTERN_SOURCE -> (T)(getDrawPattern() == null ? "layer" : "custom");
 			case VIRTUAL_DRAW_CAP_SOURCE -> (T)(getDrawCap() == null ? "layer" : "custom");
+			case VIRTUAL_FILL_PAINT_SOURCE -> (T)(getFillPaint() == null ? "layer" : "custom");
 			default -> super.getValue( key );
 		};
 	}
@@ -177,6 +189,7 @@ public abstract class DesignDrawable extends DesignNode {
 			case VIRTUAL_DRAW_WIDTH_SOURCE -> changeDrawWidth( newValue );
 			case VIRTUAL_DRAW_PATTERN_SOURCE -> changeDrawPattern( newValue );
 			case VIRTUAL_DRAW_CAP_SOURCE -> changeDrawCap( newValue );
+			case VIRTUAL_FILL_PAINT_SOURCE -> changeFillPaint( newValue );
 			default -> super.setValue( key, newValue );
 		};
 	}
@@ -199,6 +212,10 @@ public abstract class DesignDrawable extends DesignNode {
 		Map<String, Object> map = super.asMap();
 		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_PAINT, FILL_PAINT ) );
 		return map;
+	}
+
+	private boolean isLayer() {
+		return this instanceof DesignLayer;
 	}
 
 	private <T> T changeLayer( T newValue ) {
@@ -245,6 +262,15 @@ public abstract class DesignDrawable extends DesignNode {
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_SOURCE );
 		setDrawCap( isCustom ? DEFAULT_DRAW_CAP.name().toLowerCase() : null );
 		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_SOURCE, oldValue, newValue ) );
+		return newValue;
+	}
+
+	private <T> T changeFillPaint( T newValue ) {
+		boolean isCustom = "custom".equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_FILL_PAINT_SOURCE );
+		setFillPaint( isCustom ? Paints.toString( DEFAULT_FILL_PAINT ) : null );
+		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_SOURCE, oldValue, newValue ) );
 		return newValue;
 	}
 
