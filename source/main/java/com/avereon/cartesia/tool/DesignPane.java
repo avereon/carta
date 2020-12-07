@@ -62,9 +62,9 @@ public class DesignPane extends StackPane {
 
 	static final Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
 
-	static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.web( "#ff00c0ff" );
+	static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
 
-	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.web( "#ff00c040" );
+	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
 	private final Pane select;
 
