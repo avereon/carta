@@ -6,3 +6,11 @@
 .design-tool .construction-point > * {
 	-fx-stroke: #808080;
 }
+
+/*
+This needs to be moved to xenon for the properties tool to pick it up
+*/
+.paint-picker-swatch {
+	-fx-padding: 0;
+	-fx-border-color: none;
+}

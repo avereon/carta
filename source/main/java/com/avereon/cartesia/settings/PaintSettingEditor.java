@@ -2,6 +2,7 @@ package com.avereon.cartesia.settings;
 
 import com.avereon.settings.SettingsEvent;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.UiFactory;
 import com.avereon.xenon.tool.settings.Setting;
 import com.avereon.xenon.tool.settings.SettingEditor;
 import com.avereon.zerra.color.Colors;
@@ -9,10 +10,7 @@ import com.avereon.zerra.color.Paints;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
@@ -24,6 +22,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Callback;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PaintSettingEditor extends SettingEditor implements EventHandler<ActionEvent> {
 
@@ -137,6 +136,7 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 				setGraphic( null );
 				setText( null );
 			} else {
+				System.err.println( "paint=" + item.getPaint() );
 				setText( item.getPaint() );
 			}
 		}
@@ -149,69 +149,69 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 		public ListCell<PaintEntry> call( ListView<PaintEntry> param ) {
 			final ListCell<PaintEntry> cell = new ListCell<>() {
 
-				{
-					super.setPrefWidth( 100 );
-				}
-
 				@Override
 				public void updateItem( PaintEntry item, boolean empty ) {
 					super.updateItem( item, empty );
 
 					if( item != null ) {
 						if( "custom".equals( item.getKey() ) ) {
-							setGraphic( new PaintPallette( item ) );
+							setGraphic( new PaintPalette( item ) );
 						} else {
-							setGraphic( new Label( item.getLabel(), new Circle( 10, Paints.parse( item.getPaint() ) ) ) );
+							setGraphic( new Label( item.getLabel(), new Circle( 8, Paints.parse( item.getPaint() ) ) ) );
 						}
 					} else {
 						setGraphic( null );
 						setText( null );
 					}
 				}
+
 			};
 			return cell;
 		}
 
 	}
 
-	private static class PaintPallette extends VBox {
+	private static class PaintPalette extends VBox {
 
-		private PaintEntry entry;
+		private final PaintEntry entry;
 
 		private List<Color> bases;
 
-		public PaintPallette( PaintEntry entry ) {
+		public PaintPalette( PaintEntry entry ) {
 			this.entry = entry;
 
-			bases = List.of( Color.BLACK, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.PURPLE, Color.WHITE );
+			setSpacing( UiFactory.PAD );
+			bases = List.of( Color.GRAY, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.PURPLE );
 
 			for( double factor = 0.75; factor > 0.0; factor -= 0.25 ) {
-				HBox shades = new HBox();
-				for( Color base : bases ) {
-					Color color = Colors.getShade( base, factor );
-					shades.getChildren().add( new Rectangle(16,16,color) );
-				}
+				final double shadeFactor = factor;
+				HBox shades = new HBox( UiFactory.PAD );
+				shades.getChildren().addAll( bases.stream().map( base -> getButton( Colors.getShade( base, shadeFactor ) ) ).collect( Collectors.toList() ) );
 				getChildren().add( shades );
 			}
 
-			HBox hue = new HBox();
-			for( Color base : bases ) {
-				hue.getChildren().add( new Rectangle(16,16,base) );
-			}
+			HBox hue = new HBox( UiFactory.PAD );
+			hue.getChildren().addAll( bases.stream().map( this::getButton ).collect( Collectors.toList() ) );
 			getChildren().add( hue );
 
 			for( double factor = 0.25; factor < 1.0; factor += 0.25 ) {
-				HBox tints = new HBox();
-				for( Color base : bases ) {
-					Color color = Colors.getTint( base, factor );
-					tints.getChildren().add( new Rectangle(16,16,color) );
-				}
+				final double tintFactor = factor;
+				HBox tints = new HBox( UiFactory.PAD );
+				tints.getChildren().addAll( bases.stream().map( base -> getButton( Colors.getTint( base, tintFactor ) ) ).collect( Collectors.toList() ) );
 				getChildren().add( tints );
 			}
 
 		}
 
-		// TODO When the paint is selected set the paint in the paint entry
+		private Button getButton( Paint paint ) {
+			Button button = new Button( "", new Rectangle( 16, 16, paint ) );
+
+			// This needs to be moved to xenon for the properties tool to pick it up
+			button.getStyleClass().setAll( "paint-picker-swatch" );
+			button.onActionProperty().set( e -> entry.setPaint( Paints.toString( paint ) ) );
+
+			return button;
+		}
 
 	}
 
