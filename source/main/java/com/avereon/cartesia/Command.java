@@ -49,6 +49,12 @@ public class Command {
 		return Maths.eval( String.valueOf( value ) );
 	}
 
+	protected double asDouble( Point3D anchor, Object value ) throws Exception {
+		if( value instanceof Double ) return (Double)value;
+		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
+		return Maths.eval( String.valueOf( value ) );
+	}
+
 	protected Point3D asPoint( DesignTool tool, Object value, Point3D anchor ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
 		return Geometry.parsePoint( String.valueOf( value ), anchor );

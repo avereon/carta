@@ -33,7 +33,7 @@ public class DrawCircleCommand extends DrawCommand {
 		}
 
 		if( parameters.length < 3 ) {
-			((DesignCircle)getPreview()).setRadius( asDouble( parameters[ 1 ] ) );
+			((DesignCircle)getPreview()).setRadius( asDouble( getPreview().getOrigin(), parameters[ 1 ] ) );
 		}
 
 		return commitPreview( tool );
