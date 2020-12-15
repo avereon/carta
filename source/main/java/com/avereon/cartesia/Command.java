@@ -17,6 +17,8 @@ public class Command {
 
 	public static final Object COMPLETE = new Object();
 
+	public static final Object INVALID = new Object();
+
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		return null;
 	}
@@ -35,6 +37,10 @@ public class Command {
 	public void handle( KeyEvent event ) {}
 
 	public void handle( MouseEvent event ) {}
+
+	protected Object invalid() {
+		return INVALID;
+	}
 
 	protected Object incomplete() {
 		return INCOMPLETE;

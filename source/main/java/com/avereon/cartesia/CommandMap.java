@@ -116,6 +116,9 @@ public class CommandMap {
 		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
 
+		add( product, "trim-single", ExtendTrimCommand.class );
+		add( product, "trim-multi", MultiTrimCommand.class );
+
 		// Event type actions
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );

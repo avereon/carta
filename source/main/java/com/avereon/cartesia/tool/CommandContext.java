@@ -286,8 +286,9 @@ public class CommandContext {
 				for( CommandExecuteRequest request : requests ) {
 					setInputMode( request.getCommand().isInputCommand() );
 					result = request.execute( result );
-					if( result == Command.INCOMPLETE ) break;
+					if( result == Command.INVALID ) break;
 					if( result instanceof Point3D ) setAnchor( (Point3D)result );
+					if( result == Command.INCOMPLETE ) break;
 					commandStack.remove( request );
 				}
 				if( commandStack.size() != 0 ) log.log( Log.DEBUG, "remaining commands=" + commandStack );

@@ -1,6 +1,8 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
+import com.avereon.cartesia.math.Shapes;
+import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 
@@ -90,7 +92,9 @@ public class DesignPoint extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		return getOrigin().distance( point );
+		double[] o = Shapes.asPoint( getOrigin() );
+		double[] p = Shapes.asPoint( point );
+		return Geometry.distance( o, p );
 	}
 
 }

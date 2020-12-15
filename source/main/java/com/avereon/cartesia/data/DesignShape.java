@@ -1,6 +1,8 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.Shapes;
+import com.avereon.curve.math.Geometry;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
 import javafx.geometry.Point3D;
@@ -28,9 +30,9 @@ public abstract class DesignShape extends DesignDrawable {
 		return getValue( ORIGIN );
 	}
 
-	public DesignShape setOrigin( Point3D origin ) {
+	public <T extends DesignShape> T setOrigin( Point3D origin ) {
 		setValue( ORIGIN, origin );
-		return this;
+		return (T)this;
 	}
 
 	public boolean isPreview() {
@@ -69,7 +71,9 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public double distanceTo( Point3D point ) {
-		return Double.NaN;
+		double[] o = Shapes.asPoint( getOrigin() );
+		double[] p = Shapes.asPoint( point );
+		return Geometry.distance( o, p );
 	}
 
 }

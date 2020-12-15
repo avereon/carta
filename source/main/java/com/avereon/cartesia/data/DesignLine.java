@@ -1,6 +1,8 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.Shapes;
+import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 
 import java.util.Map;
@@ -48,10 +50,10 @@ public class DesignLine extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		// NEXT Compute distance to line
-		//return Geometry.getPointLineDistance( a,b,p );
-
-		return super.distanceTo( point );
+		double[] a = Shapes.asPoint( getOrigin() );
+		double[] b = Shapes.asPoint( getPoint() );
+		double[] p = Shapes.asPoint( point );
+		return Geometry.pointLineDistance( a, b, p );
 	}
 
 }

@@ -1,13 +1,13 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.DesignShapeDistanceComparator;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Point;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 public class Shapes {
 
@@ -94,24 +94,16 @@ public class Shapes {
 		if( shapes.isEmpty() ) return DesignShape.NONE;
 		if( shapes.size() == 1 ) return shapes.iterator().next();
 
-		double distance = Double.MAX_VALUE;
-		DesignShape shape = DesignShape.NONE;
-
-		for( DesignShape checkShape : shapes ) {
-			double checkDistance = checkShape.distanceTo( point );
-			if( checkDistance < distance ) {
-				distance = checkDistance;
-				shape = checkShape;
-			}
-		}
-		return shape;
+		List<DesignShape> sortedShapes = new ArrayList<>( shapes );
+		sortedShapes.sort( new DesignShapeDistanceComparator( point ) );
+		return sortedShapes.get(0);
 	}
 
-	static double[] asPoint( Point3D point ) {
+	public static double[] asPoint( Point3D point ) {
 		return Point.of( point.getX(), point.getY(), point.getZ() );
 	}
 
-	static Point3D toFxPoint( double[] point ) {
+	public static Point3D toFxPoint( double[] point ) {
 		return new Point3D( point[ 0 ], point[ 1 ], point[ 2 ] );
 	}
 

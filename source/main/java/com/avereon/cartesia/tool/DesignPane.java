@@ -344,7 +344,6 @@ public class DesignPane extends StackPane {
 	}
 
 	List<Shape> selectByAperture( Point3D anchor, double radius ) {
-		log.log( Log.TRACE, "a.radius=" + radius );
 		return doSelectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), false );
 	}
 
@@ -561,6 +560,8 @@ public class DesignPane extends StackPane {
 				selected = shapes.stream().filter( s -> isIntersecting( selector, s ) ).collect( Collectors.toList() );
 			}
 			Collections.reverse( selected );
+
+			// This list is in design order
 			return selected;
 		} finally {
 			select.getChildren().remove( selector );
