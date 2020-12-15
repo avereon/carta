@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.Shapes;
 import com.avereon.curve.math.Constants;
-import com.avereon.math.Arithmetic;
+import com.avereon.curve.math.Arithmetic;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
