@@ -10,6 +10,8 @@ import java.util.Map;
 
 public abstract class DesignShape extends DesignDrawable {
 
+	public static final DesignShape NONE = new DesignShape() {};
+
 	public static final String SHAPE = "shape";
 
 	public static final String ORIGIN = "origin";
@@ -64,6 +66,10 @@ public abstract class DesignShape extends DesignDrawable {
 	@Override
 	public <T extends Node> Comparator<T> getComparator() {
 		return new NodeComparator<>( ORDER );
+	}
+
+	public double distanceTo( Point3D point ) {
+		return Double.NaN;
 	}
 
 }

@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.match.Near;
-import com.avereon.cartesia.math.Constants;
+import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;

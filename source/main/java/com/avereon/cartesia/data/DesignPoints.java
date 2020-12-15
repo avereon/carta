@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.Constants;
+import com.avereon.curve.math.Constants;
 import javafx.scene.shape.*;
 
 public class DesignPoints {

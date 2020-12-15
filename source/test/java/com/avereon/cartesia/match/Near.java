@@ -1,6 +1,6 @@
 package com.avereon.cartesia.match;
 
-import com.avereon.zarra.test.PointCloseTo;
+import com.avereon.zarra.test.FxPointCloseTo;
 import javafx.geometry.Point3D;
 import org.hamcrest.Matcher;
 import org.hamcrest.number.IsCloseTo;
@@ -20,11 +20,11 @@ public class Near {
 	}
 
 	public static Matcher<Point3D> near( Point3D operand ) {
-		return new PointCloseTo( operand, TOLERANCE );
+		return new FxPointCloseTo( operand, TOLERANCE );
 	}
 
 	public static Matcher<Point3D> near( Point3D operand, double tolerance ) {
-		return new PointCloseTo( operand, tolerance );
+		return new FxPointCloseTo( operand, tolerance );
 	}
 
 }

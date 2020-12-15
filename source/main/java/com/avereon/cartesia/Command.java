@@ -1,7 +1,8 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.PromptCommand;
-import com.avereon.cartesia.math.Geometry;
+import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.math.Shapes;
 import com.avereon.cartesia.math.Maths;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -57,7 +58,7 @@ public class Command {
 
 	protected Point3D asPoint( DesignTool tool, Object value, Point3D anchor ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
-		return Geometry.parsePoint( String.valueOf( value ), anchor );
+		return Shapes.parsePoint( String.valueOf( value ), anchor );
 	}
 
 	protected void promptForNumber( CommandContext context, DesignTool tool, String bundleKey, String key ) {
@@ -73,6 +74,14 @@ public class Command {
 	protected void promptForText( CommandContext context, DesignTool tool, String bundleKey, String key ) {
 		tool.setCursor( Cursor.TEXT );
 		promptForValue( context, tool, bundleKey, key );
+	}
+
+	protected DesignShape selectNearestShapeAtMouse( CommandContext context, DesignTool tool ) {
+		return selectNearestShapeAtPoint( tool, context.getMouse() );
+	}
+
+	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
+		return Shapes.findNearestShapeToPoint( tool.selectShapes( point ), point );
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {

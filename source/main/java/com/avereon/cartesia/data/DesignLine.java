@@ -46,4 +46,12 @@ public class DesignLine extends DesignShape {
 		return super.toString( ORIGIN, POINT );
 	}
 
+	@Override
+	public double distanceTo( Point3D point ) {
+		// NEXT Compute distance to line
+		//return Geometry.getPointLineDistance( a,b,p );
+
+		return super.distanceTo( point );
+	}
+
 }

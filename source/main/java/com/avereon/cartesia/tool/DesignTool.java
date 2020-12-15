@@ -529,6 +529,10 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 	}
 
+	public List<DesignShape> selectShapes( Point3D mouse ) {
+		return designPane.apertureSelect( mouse.getX(), mouse.getY(), mouse.getZ(), getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+	}
+
 	private void configureWorkplane() {
 		Settings settings = getAsset().getSettings();
 		Workplane workplane = getDesignContext().getWorkplane();

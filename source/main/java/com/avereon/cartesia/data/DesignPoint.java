@@ -88,4 +88,9 @@ public class DesignPoint extends DesignShape {
 		return 0.5 * calcSize();
 	}
 
+	@Override
+	public double distanceTo( Point3D point ) {
+		return getOrigin().distance( point );
+	}
+
 }
