@@ -118,4 +118,5 @@ public class Shapes {
 	static Point3D fromPolar( Point3D point ) {
 		return toFxPoint( Geometry.polarToCartesian( Point.of( point.getX(), point.getY() ) ) );
 	}
+
 }

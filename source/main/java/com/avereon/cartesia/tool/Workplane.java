@@ -62,8 +62,6 @@ public class Workplane extends Node {
 
 	public static final String GRID_SNAP = "grid-snap";
 
-	private static final String ZERO = "0";
-
 	private double majorGridX;
 
 	private double majorGridY;
@@ -132,13 +130,13 @@ public class Workplane extends Node {
 			boundaryY2,
 			majorGridX,
 			majorGridY,
-			ZERO,
+			DEFAULT_MAJOR_GRID_SIZE,
 			minorGridX,
 			minorGridY,
-			ZERO,
+			DEFAULT_MINOR_GRID_SIZE,
 			snapGridX,
 			snapGridY,
-			ZERO
+			DEFAULT_SNAP_GRID_SIZE
 		);
 	}
 
