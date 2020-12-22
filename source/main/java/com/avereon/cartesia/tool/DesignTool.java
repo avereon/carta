@@ -119,7 +119,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.redoAction = new RedoAction( product.getProgram() );
 
 		this.selectedShapes = FXCollections.observableArrayList();
-		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectShapes );
+		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectedShapesChanged );
 		this.selectWindow = new SelectWindow();
 		this.selectWindow.getStyleClass().add( "select" );
 		this.selectPane = new Pane();
@@ -596,7 +596,7 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 	}
 
-	private void doSelectShapes( ListChangeListener.Change<? extends Shape> c ) {
+	private void doSelectedShapesChanged( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );

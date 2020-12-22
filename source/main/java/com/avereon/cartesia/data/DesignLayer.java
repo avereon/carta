@@ -169,7 +169,7 @@ public class DesignLayer extends DesignDrawable {
 
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
-		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asMap ) ) );
+		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
 		map.put( SHAPES, getShapes().stream().collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
 		return map;
 	}

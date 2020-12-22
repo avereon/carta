@@ -2,6 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
 import com.avereon.data.NodeEvent;
+import com.avereon.util.Log;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
@@ -11,6 +12,8 @@ import javafx.scene.shape.StrokeLineCap;
 import java.util.Map;
 
 public abstract class DesignDrawable extends DesignNode {
+
+	private static final System.Logger log = Log.get();
 
 	public static final String ORDER = "order";
 
@@ -223,8 +226,9 @@ public abstract class DesignDrawable extends DesignNode {
 		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
 
 		Design design = getDesign();
+		DesignLayer oldLayer = getParentLayer();
 		DesignLayer newLayer = design.findLayerById( newLayerId );
-		newLayer.addDrawable( getParentLayer().removeDrawable( this ) );
+		newLayer.addDrawable( oldLayer.removeDrawable( this ) );
 
 		return newValue;
 	}
