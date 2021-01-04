@@ -30,6 +30,8 @@ public class DesignShapeView extends DesignDrawableView {
 
 	private List<Shape> geometry;
 
+	private EventHandler<NodeEvent> parentChangedHandler;
+
 	private EventHandler<NodeEvent> drawWidthHandler;
 
 	private EventHandler<NodeEvent> drawPaintHandler;
@@ -87,9 +89,10 @@ public class DesignShapeView extends DesignDrawableView {
 
 	@Override
 	void registerListeners() {
-		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( () -> getShape().setStrokeWidth( getDesignShape().calcDrawWidth() ) ) );
-		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( () -> getShape().setStroke( getDesignShape().calcDrawPaint() ) ) );
-		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( () -> getShape().setFill( getDesignShape().calcFillPaint() ) ) );
+		getDesignShape().register( NodeEvent.PARENT_CHANGED, parentChangedHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> setSelected( e.getNewValue() ) ) );
 	}
 
@@ -99,6 +102,7 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( DesignShape.FILL_PAINT, fillPaintHandler );
 		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
+		getDesignShape().unregister( NodeEvent.PARENT_CHANGED, parentChangedHandler );
 	}
 
 	private void generate() {
@@ -115,13 +119,19 @@ public class DesignShapeView extends DesignDrawableView {
 		setDesignData( group, getDesignShape() );
 	}
 
+	private void updateShapeValues() {
+		getShape().setStrokeWidth( getDesignShape().calcDrawWidth() );
+		getShape().setStroke( getDesignShape().calcDrawPaint() );
+		getShape().setFill( getDesignShape().calcFillPaint() );
+	}
+
 	private void setSelected( boolean selected ) {
 		Paint fillPaint = getDesignShape().calcFillPaint();
 		Paint selectedFillPaint = getPane().getSelectFillPaint();
 
 		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
 			double opacity = ((Color)fillPaint).getOpacity();
-			selectedFillPaint = opacity == 0.0? null : Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
+			selectedFillPaint = opacity == 0.0 ? null : Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
 		}
 
 		getShape().setStroke( selected ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawPaint() );

@@ -421,7 +421,7 @@ public abstract class DesignTool extends GuidedTool {
 		if( isReady() && isLastTool() ) unregisterStatusBarItems();
 	}
 
-	public DesignPane getDesignPane() {
+	private DesignPane getDesignPane() {
 		return designPane;
 	}
 
