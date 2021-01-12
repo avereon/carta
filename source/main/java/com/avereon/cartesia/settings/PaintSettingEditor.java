@@ -49,13 +49,13 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 		label.setMinWidth( Region.USE_PREF_SIZE );
 
 		paintPicker.setId( rbKey );
-		paintPicker.setValue( new PaintEntry( "layer", "Layer", "#000000ff" ) );
 		paintPicker.setMaxWidth( Double.MAX_VALUE );
 
-		PaintEntry layer = new PaintEntry( "layer", "Layer", "#0000ffff" );
 		PaintEntry custom = new PaintEntry( "custom", "Custom", "#ff0000ff" );
+		PaintEntry layer = new PaintEntry( "layer", "Layer", "#00ff00ff" );
+		PaintEntry none = new PaintEntry( "none", "None", "#0000ffff" );
 
-		paintPicker.getItems().setAll( layer, custom );
+		paintPicker.getItems().setAll( none, layer, custom );
 		paintPicker.setCellFactory( new PaintEntryCellFactory() );
 		paintPicker.setButtonCell( new PaintEntryButtonCell() );
 		paintPicker.setValue( layer );
@@ -200,7 +200,6 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 				tints.getChildren().addAll( bases.stream().map( base -> getButton( Colors.getTint( base, tintFactor ) ) ).collect( Collectors.toList() ) );
 				getChildren().add( tints );
 			}
-
 		}
 
 		private Button getButton( Paint paint ) {
