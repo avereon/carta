@@ -14,6 +14,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.util.StringConverter;
 
+/*
+NEXT Take a look at DatePickerSkin to get some ideas.
+NEXT The ComboBoxBaseBehavior is in a protected package. :-(
+ */
 public class PaintPickerSkin extends ComboBoxPopupControl<Paint> {
 
 	private final Label displayNode;
@@ -39,7 +43,7 @@ public class PaintPickerSkin extends ComboBoxPopupControl<Paint> {
 		registerChangeListener( control.valueProperty(), e -> updatePaint() );
 		updatePaint();
 
-		if( control.isShowing() ) show();
+		//if( control.isShowing() ) show();
 	}
 
 	@Override

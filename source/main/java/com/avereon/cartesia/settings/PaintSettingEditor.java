@@ -30,14 +30,14 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 
 	private final Label label;
 
-	private final ComboBox<PaintEntry> paintPicker;
+	private final PaintPicker paintPicker;
 
 	private List<Node> nodes;
 
 	public PaintSettingEditor( ProgramProduct product, String bundleKey, Setting setting ) {
 		super( product, bundleKey, setting );
 		label = new Label();
-		paintPicker = new ComboBox<>();
+		paintPicker = new PaintPicker();
 	}
 
 	@Override
@@ -55,10 +55,10 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 		PaintEntry layer = new PaintEntry( "layer", "Layer", "#00ff00ff" );
 		PaintEntry none = new PaintEntry( "none", "None", "#0000ffff" );
 
-		paintPicker.getItems().setAll( none, layer, custom );
-		paintPicker.setCellFactory( new PaintEntryCellFactory() );
-		paintPicker.setButtonCell( new PaintEntryButtonCell() );
-		paintPicker.setValue( layer );
+		//paintPicker.getItems().setAll( none, layer, custom );
+		//paintPicker.setCellFactory( new PaintEntryCellFactory() );
+		//paintPicker.setButtonCell( new PaintEntryButtonCell() );
+		//paintPicker.setValue( layer );
 
 		nodes = List.of( label, paintPicker );
 
