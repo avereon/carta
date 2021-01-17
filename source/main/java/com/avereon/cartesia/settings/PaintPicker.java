@@ -1,34 +1,34 @@
 package com.avereon.cartesia.settings;
 
+import com.avereon.zerra.color.Paints;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBoxBase;
 import javafx.scene.control.Skin;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 
 import java.util.List;
 
-public class PaintPicker extends ComboBoxBase<Paint> {
+public class PaintPicker extends ComboBoxBase<String> {
 
 	private static final String DEFAULT_STYLE_CLASS = "color-picker";
 
-	private final ObservableList<Paint> customPaints = FXCollections.observableArrayList();
+	private final ObservableList<String> customPaints = FXCollections.observableArrayList();
 
 	public PaintPicker() {
-		this( Color.BLACK );
+		this( Paints.toString( Color.BLACK ) );
 	}
 
-	public PaintPicker( Paint paint ) {
+	public PaintPicker( String paint ) {
 		setValue( paint );
 		getStyleClass().add( DEFAULT_STYLE_CLASS );
 	}
 
-	public final ObservableList<Paint> getCustomPaints() {
+	public final ObservableList<String> getCustomPaints() {
 		return customPaints;
 	}
 
-	public final void setCustomPaints( List<Paint> paints ) {
+	public final void setCustomPaints( List<String> paints ) {
 		customPaints.setAll( paints );
 	}
 
