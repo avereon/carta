@@ -42,20 +42,21 @@ public class PaintPickerSkin extends ComboBoxPopupControl<String> {
 		registerChangeListener( control.valueProperty(), e -> updatePaint() );
 		updatePaint();
 
-		log.log( Log.INFO, "Making paint picker skin" );
-
 		if( control.isShowing() ) show();
+
+		log.log( Log.INFO, "PaintPickerSkin.constructor()" );
 	}
 
 	@Override
 	public void show() {
-		log.log( Log.INFO, "Showing paint picker..." );
+		log.log( Log.INFO, "PaintPickerSkin.show()" );
 		super.show();
 	}
 
 	@Override
 	protected Node getPopupContent() {
 		if( popupContent == null ) {
+			log.log( Log.INFO, "PaintPickerSkin.getPopupContent()" );
 			VBox content = new VBox();
 			content.getChildren().add( new Label( "POPUP CONTENT" ) );
 			//popupContent = new ColorPalette(colorPicker.getValue(), colorPicker);
@@ -66,11 +67,17 @@ public class PaintPickerSkin extends ComboBoxPopupControl<String> {
 		return popupContent;
 	}
 
+	/*
+	 * This is just like ColorPickerSkin
+	 */
 	@Override
 	protected TextField getEditor() {
 		return null;
 	}
 
+	/*
+	 * This is just like ColorPickerSkin
+	 */
 	@Override
 	protected StringConverter<String> getConverter() {
 		return null;
@@ -79,6 +86,18 @@ public class PaintPickerSkin extends ComboBoxPopupControl<String> {
 	@Override
 	public Node getDisplayNode() {
 		return displayNode;
+	}
+
+	public void showOrHide() {
+		if (getControl().isShowing()){
+			getControl().hide();
+		}else {
+			getControl().show();
+		}
+	}
+
+	private PaintPicker getControl() {
+		return (PaintPicker)getNode();
 	}
 
 //	/**

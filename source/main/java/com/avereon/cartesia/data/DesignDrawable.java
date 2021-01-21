@@ -2,6 +2,8 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.Maths;
 import com.avereon.data.NodeEvent;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
@@ -225,10 +227,15 @@ public abstract class DesignDrawable extends DesignNode {
 		String newLayerId = String.valueOf( newValue );
 		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
 
-		Design design = getDesign();
 		DesignLayer oldLayer = getParentLayer();
-		DesignLayer newLayer = design.findLayerById( newLayerId );
-		newLayer.addDrawable( oldLayer.removeDrawable( this ) );
+		try {
+			Txn.create();
+			DesignLayer newLayer = getDesign().findLayerById( newLayerId );
+			newLayer.addDrawable( oldLayer.removeDrawable( this ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error changing layer", exception );
+		}
 
 		return newValue;
 	}
@@ -237,8 +244,14 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = "custom".equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PAINT_SOURCE );
-		setDrawPaint( isCustom ? Paints.toString( DEFAULT_DRAW_PAINT ) : null );
-		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_SOURCE, oldValue, newValue ) );
+		try {
+			Txn.create();
+			setDrawPaint( isCustom ? Paints.toString( DEFAULT_DRAW_PAINT ) : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_SOURCE, oldValue, newValue ) ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error changing draw width", exception );
+		}
 		return newValue;
 	}
 
@@ -246,8 +259,14 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = "custom".equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_WIDTH_SOURCE );
-		setDrawWidth( isCustom ? String.valueOf( DEFAULT_DRAW_WIDTH ) : null );
-		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_SOURCE, oldValue, newValue ) );
+		try {
+			Txn.create();
+			setDrawWidth( isCustom ? String.valueOf( DEFAULT_DRAW_WIDTH ) : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_SOURCE, oldValue, newValue ) ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error setting draw width", exception );
+		}
 		return newValue;
 	}
 
@@ -255,8 +274,14 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = "custom".equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_SOURCE );
-		setDrawPattern( isCustom ? DEFAULT_DRAW_PATTERN : null );
-		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_SOURCE, oldValue, newValue ) );
+		try {
+			Txn.create();
+			setDrawPattern( isCustom ? DEFAULT_DRAW_PATTERN : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_SOURCE, oldValue, newValue ) ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error setting draw width", exception );
+		}
 		return newValue;
 	}
 
@@ -264,8 +289,14 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = "custom".equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_SOURCE );
-		setDrawCap( isCustom ? DEFAULT_DRAW_CAP.name().toLowerCase() : null );
-		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_SOURCE, oldValue, newValue ) );
+		try {
+			Txn.create();
+			setDrawCap( isCustom ? DEFAULT_DRAW_CAP.name().toLowerCase() : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_SOURCE, oldValue, newValue ) ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error setting draw width", exception );
+		}
 		return newValue;
 	}
 
@@ -273,8 +304,14 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = "custom".equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_SOURCE );
-		setFillPaint( isCustom ? Paints.toString( DEFAULT_FILL_PAINT ) : null );
-		getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_SOURCE, oldValue, newValue ) );
+		try {
+			Txn.create();
+			setFillPaint( isCustom ? Paints.toString( DEFAULT_FILL_PAINT ) : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_SOURCE, oldValue, newValue ) ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error setting draw width", exception );
+		}
 		return newValue;
 	}
 

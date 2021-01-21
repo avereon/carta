@@ -4,13 +4,14 @@
 
 	<page id="line">
 		<group id="line">
-			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
+			<setting id="layer" key="layer" editor="combobox" provider="design-shape-layers"/>
 
 			<setting id="draw-paint" key="draw-paint-source" editor="combobox">
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="draw-paint-custom" key="draw-paint" editor="paint">
+			<setting id="draw-paint-custom" key="draw-paint" editor="color">
+				<dependency key="draw-paint-source" value="custom"/>
 			</setting>
 
 			<setting id="draw-width" key="draw-width-source" editor="combobox">

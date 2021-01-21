@@ -11,10 +11,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
@@ -30,14 +27,20 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 
 	private final Label label;
 
-	private final PaintPicker paintPicker;
+	private final ComboBox<String> comboBox;
+
+	private final ColorPicker colorPicker;
+
+	//private final PaintPicker paintPicker;
 
 	private List<Node> nodes;
 
 	public PaintSettingEditor( ProgramProduct product, String bundleKey, Setting setting ) {
 		super( product, bundleKey, setting );
 		label = new Label();
-		paintPicker = new PaintPicker();
+		comboBox = new ComboBox<>();
+		colorPicker = new ColorPicker();
+		//paintPicker = new PaintPicker();
 	}
 
 	@Override
@@ -48,29 +51,39 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 		label.setText( product.rb().text( getBundleKey(), rbKey ) );
 		label.setMinWidth( Region.USE_PREF_SIZE );
 
-		paintPicker.setId( rbKey );
-		paintPicker.setMaxWidth( Double.MAX_VALUE );
+		comboBox.getItems().addAll( "Solid", "Linear", "Radial" );
+		comboBox.setMaxWidth( Double.MAX_VALUE );
+		HBox.setHgrow( comboBox, Priority.SOMETIMES );
+
+		colorPicker.setId( rbKey );
+		colorPicker.setMaxWidth( Double.MAX_VALUE );
+		HBox.setHgrow( colorPicker, Priority.ALWAYS );
 
 		PaintEntry custom = new PaintEntry( "custom", "Custom", "#ff0000ff" );
 		PaintEntry layer = new PaintEntry( "layer", "Layer", "#00ff00ff" );
 		PaintEntry none = new PaintEntry( "none", "None", "#0000ffff" );
 
+		//paintPicker.setId( rbKey );
+		//paintPicker.setMaxWidth( Double.MAX_VALUE );
 		//paintPicker.getItems().setAll( none, layer, custom );
 		//paintPicker.setCellFactory( new PaintEntryCellFactory() );
 		//paintPicker.setButtonCell( new PaintEntryButtonCell() );
 		//paintPicker.setValue( layer );
 
-		nodes = List.of( label, paintPicker );
+		nodes = List.of( label, comboBox, colorPicker );
 
 		// Add the event handlers
-		paintPicker.setOnAction( this );
+		colorPicker.setOnAction( this );
 
 		// Set component state
 		setDisable( setting.isDisable() );
 		setVisible( setting.isVisible() );
 
+		HBox box = new HBox( comboBox, colorPicker );
+		GridPane.setHgrow( box, Priority.ALWAYS );
+
 		// Add the components
-		pane.addRow( row, label, paintPicker );
+		pane.addRow( row, label, box );
 	}
 
 	@Override
