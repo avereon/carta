@@ -3,7 +3,7 @@ package com.avereon.cartesia.settings;
 import com.avereon.settings.SettingsEvent;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.UiFactory;
-import com.avereon.xenon.tool.settings.Setting;
+import com.avereon.xenon.tool.settings.SettingData;
 import com.avereon.xenon.tool.settings.SettingEditor;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.color.Paints;
@@ -34,7 +34,7 @@ public class PaintSettingEditor extends SettingEditor {
 
 	private List<Node> nodes;
 
-	public PaintSettingEditor( ProgramProduct product, String bundleKey, Setting setting ) {
+	public PaintSettingEditor( ProgramProduct product, String bundleKey, SettingData setting ) {
 		super( product, bundleKey, setting );
 		label = new Label();
 		comboBox = new ComboBox<>();
