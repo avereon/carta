@@ -41,6 +41,12 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final String VIRTUAL_FILL_PAINT_MODE = "fill-paint-mode";
 
+	private static final String MODE_LAYER = "layer";
+
+	private static final String MODE_CUSTOM = "custom";
+
+	private static final String MODE_NONE = "none";
+
 	// TODO These defaults should only be used for layers, they should be null otherwise
 	private static final double DEFAULT_DRAW_WIDTH = 0.05;
 
@@ -190,11 +196,11 @@ public abstract class DesignDrawable extends DesignNode {
 	public <T> T setValue( String key, T newValue ) {
 		return switch( key ) {
 			case VIRTUAL_LAYER -> changeLayer( newValue );
-			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaint( newValue );
-			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidth( newValue );
-			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPattern( newValue );
-			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCap( newValue );
-			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaint( newValue );
+			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
+			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidthMode( newValue );
+			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPatternMode( newValue );
+			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCapMode( newValue );
+			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaintMode( newValue );
 			default -> super.setValue( key, newValue );
 		};
 	}
@@ -240,13 +246,13 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawPaint( T newValue ) {
-		boolean isCustom = "custom".equals( newValue );
+	private <T> T changeDrawPaintMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PAINT_MODE );
 		try {
 			Txn.create();
-			setDrawPaint( isCustom ? Paints.toString( DEFAULT_DRAW_PAINT ) : null );
+			setDrawPaint( isCustom ? Paints.toString( calcDrawPaint() ) : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
@@ -255,13 +261,13 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawWidth( T newValue ) {
-		boolean isCustom = "custom".equals( newValue );
+	private <T> T changeDrawWidthMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_WIDTH_MODE );
 		try {
 			Txn.create();
-			setDrawWidth( isCustom ? String.valueOf( DEFAULT_DRAW_WIDTH ) : null );
+			setDrawWidth( isCustom ? String.valueOf( calcDrawWidth() ) : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
@@ -270,13 +276,13 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawPattern( T newValue ) {
-		boolean isCustom = "custom".equals( newValue );
+	private <T> T changeDrawPatternMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try {
 			Txn.create();
-			setDrawPattern( isCustom ? DEFAULT_DRAW_PATTERN : null );
+			setDrawPattern( isCustom ? calcDrawPattern() : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
@@ -285,13 +291,13 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawCap( T newValue ) {
-		boolean isCustom = "custom".equals( newValue );
+	private <T> T changeDrawCapMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
 		try {
 			Txn.create();
-			setDrawCap( isCustom ? DEFAULT_DRAW_CAP.name().toLowerCase() : null );
+			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
@@ -300,13 +306,13 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeFillPaint( T newValue ) {
-		boolean isCustom = "custom".equals( newValue );
+	private <T> T changeFillPaintMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_MODE );
 		try {
 			Txn.create();
-			setFillPaint( isCustom ? Paints.toString( DEFAULT_FILL_PAINT ) : null );
+			setFillPaint( isCustom ? Paints.toString( calcFillPaint() ) : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
