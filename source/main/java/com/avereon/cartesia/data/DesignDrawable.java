@@ -31,15 +31,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final String VIRTUAL_LAYER = "layer";
 
-	private static final String VIRTUAL_DRAW_PAINT_SOURCE = "draw-paint-source";
+	private static final String VIRTUAL_DRAW_PAINT_SOURCE = "draw-paint-mode";
 
-	private static final String VIRTUAL_DRAW_WIDTH_SOURCE = "draw-width-source";
+	private static final String VIRTUAL_DRAW_WIDTH_SOURCE = "draw-width-mode";
 
-	private static final String VIRTUAL_DRAW_PATTERN_SOURCE = "draw-pattern-source";
+	private static final String VIRTUAL_DRAW_PATTERN_SOURCE = "draw-pattern-mode";
 
-	private static final String VIRTUAL_DRAW_CAP_SOURCE = "draw-cap-source";
+	private static final String VIRTUAL_DRAW_CAP_SOURCE = "draw-cap-mode";
 
-	private static final String VIRTUAL_FILL_PAINT_SOURCE = "fill-paint-source";
+	private static final String VIRTUAL_FILL_PAINT_SOURCE = "fill-paint-mode";
 
 	// TODO These defaults should only be used for layers, they should be null otherwise
 	private static final double DEFAULT_DRAW_WIDTH = 0.05;
