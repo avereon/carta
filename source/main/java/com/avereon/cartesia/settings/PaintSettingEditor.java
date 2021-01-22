@@ -8,7 +8,6 @@ import com.avereon.xenon.tool.settings.SettingEditor;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.color.Paints;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -21,7 +20,7 @@ import javafx.util.Callback;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PaintSettingEditor extends SettingEditor implements EventHandler<ActionEvent> {
+public class PaintSettingEditor extends SettingEditor {
 
 	private static final Paint DEFAULT_PAINT = Color.BLACK;
 
@@ -46,7 +45,7 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 	@Override
 	public void addComponents( GridPane pane, int row ) {
 		String rbKey = setting.getBundleKey();
-		String value = setting.getSettings().get( key, Paints.toString( DEFAULT_PAINT ) );
+		String value = setting.getSettings().get( getKey(), Paints.toString( DEFAULT_PAINT ) );
 
 		label.setText( product.rb().text( getBundleKey(), rbKey ) );
 		label.setMinWidth( Region.USE_PREF_SIZE );
@@ -73,7 +72,7 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 		nodes = List.of( label, comboBox, colorPicker );
 
 		// Add the event handlers
-		colorPicker.setOnAction( this );
+		colorPicker.setOnAction( this::doPickerValueChanged );
 
 		// Set component state
 		setDisable( setting.isDisable() );
@@ -92,12 +91,7 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 	}
 
 	@Override
-	public void handle( ActionEvent event ) {
-		//setting.getSettings().set( setting.getKey(), Paints.parse( paintPicker.getValue() ) );
-	}
-
-	@Override
-	public void handle( SettingsEvent event ) {
+	protected void doSettingValueChanged( SettingsEvent event ) {
 		Object value = event.getNewValue();
 		Paint paint;
 		try {
@@ -106,6 +100,10 @@ public class PaintSettingEditor extends SettingEditor implements EventHandler<Ac
 			paint = DEFAULT_PAINT;
 		}
 		//if( event.getEventType() == SettingsEvent.CHANGED && key.equals( event.getKey() ) ) paintPicker.setValue( Paints.toString( paint ) );
+	}
+
+	private void doPickerValueChanged( ActionEvent event ) {
+		//setting.getSettings().set( setting.getKey(), Paints.parse( paintPicker.getValue() ) );
 	}
 
 	private static class PaintEntry {
