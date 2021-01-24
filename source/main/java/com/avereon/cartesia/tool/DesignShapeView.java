@@ -36,6 +36,10 @@ public class DesignShapeView extends DesignDrawableView {
 
 	private EventHandler<NodeEvent> drawPaintHandler;
 
+	private EventHandler<NodeEvent> drawCapHandler;
+
+	private EventHandler<NodeEvent> drawPatternHandler;
+
 	private EventHandler<NodeEvent> fillPaintHandler;
 
 	private EventHandler<NodeEvent> selectedHandler;
@@ -74,6 +78,7 @@ public class DesignShapeView extends DesignDrawableView {
 	protected void configureShape( Shape shape ) {
 		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
 		shape.setStroke( getDesignShape().calcDrawPaint() );
+		shape.setStrokeLineCap( getDesignShape().calcDrawCap() );
 		shape.setFill( getDesignShape().calcFillPaint() );
 	}
 
@@ -90,8 +95,10 @@ public class DesignShapeView extends DesignDrawableView {
 	@Override
 	void registerListeners() {
 		getDesignShape().register( NodeEvent.PARENT_CHANGED, parentChangedHandler = e -> Fx.run( this::updateShapeValues ) );
-		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.DRAW_CAP, drawCapHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.DRAW_PATTERN, drawPatternHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> setSelected( e.getNewValue() ) ) );
 	}
@@ -100,8 +107,10 @@ public class DesignShapeView extends DesignDrawableView {
 	void unregisterListeners() {
 		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
 		getDesignShape().unregister( DesignShape.FILL_PAINT, fillPaintHandler );
-		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
+		getDesignShape().unregister( DesignShape.DRAW_PATTERN, drawPatternHandler );
+		getDesignShape().unregister( DesignShape.DRAW_CAP, drawCapHandler );
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
+		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
 		getDesignShape().unregister( NodeEvent.PARENT_CHANGED, parentChangedHandler );
 	}
 
@@ -120,9 +129,7 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private void updateShapeValues() {
-		getShape().setStrokeWidth( getDesignShape().calcDrawWidth() );
-		getShape().setStroke( getDesignShape().calcDrawPaint() );
-		getShape().setFill( getDesignShape().calcFillPaint() );
+		configureShape( getShape() );
 	}
 
 	private void setSelected( boolean selected ) {

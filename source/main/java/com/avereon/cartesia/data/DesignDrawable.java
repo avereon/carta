@@ -5,6 +5,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
+import com.avereon.util.TextUtil;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
@@ -12,6 +13,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 
 import java.util.Map;
+import java.util.Set;
 
 public abstract class DesignDrawable extends DesignNode {
 
@@ -23,9 +25,9 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String DRAW_WIDTH = "draw-width";
 
-	public static final String DRAW_PATTERN = "draw-pattern";
-
 	public static final String DRAW_CAP = "draw-cap";
+
+	public static final String DRAW_PATTERN = "draw-pattern";
 
 	public static final String FILL_PAINT = "fill-paint";
 
@@ -41,9 +43,9 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final String VIRTUAL_FILL_PAINT_MODE = "fill-paint-mode";
 
-	private static final String MODE_LAYER = "layer";
-
 	private static final String MODE_CUSTOM = "custom";
+
+	private static final String MODE_LAYER = "layer";
 
 	private static final String MODE_NONE = "none";
 
@@ -58,10 +60,12 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final Color DEFAULT_FILL_PAINT = null;
 
+	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER, MODE_NONE );
+
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
-		addModifyingKeys( DRAW_WIDTH, DRAW_PAINT, FILL_PAINT );
+		addModifyingKeys( DRAW_WIDTH, DRAW_PAINT, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 	}
 
 	public DesignLayer getParentLayer() {
@@ -76,26 +80,6 @@ public abstract class DesignDrawable extends DesignNode {
 	public <T extends DesignDrawable> T setOrder( int order ) {
 		setValue( ORDER, order );
 		return (T)this;
-	}
-
-	public double calcDrawWidth() {
-		String width = getDrawWidth();
-		if( width != null ) return Maths.evalNoException( width );
-
-		// Layers with null values return the default
-		if( isLayer() ) return DEFAULT_DRAW_WIDTH;
-
-		// Use the shape parent layer to get the value
-		return ((DesignLayer)getParent()).calcDrawWidth();
-	}
-
-	public String getDrawWidth() {
-		return getValue( DRAW_WIDTH );
-	}
-
-	public DesignDrawable setDrawWidth( String width ) {
-		setValue( DRAW_WIDTH, width );
-		return this;
 	}
 
 	public Paint calcDrawPaint() {
@@ -118,8 +102,28 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
+	public double calcDrawWidth() {
+		String width = getDrawWidth();
+		if( width != null ) return Maths.evalNoException( width );
+
+		// Layers with null values return the default
+		if( isLayer() ) return DEFAULT_DRAW_WIDTH;
+
+		// Use the shape parent layer to get the value
+		return ((DesignLayer)getParent()).calcDrawWidth();
+	}
+
+	public String getDrawWidth() {
+		return getValue( DRAW_WIDTH );
+	}
+
+	public DesignDrawable setDrawWidth( String width ) {
+		setValue( DRAW_WIDTH, width );
+		return this;
+	}
+
 	public String calcDrawPattern() {
-		String pattern = getDrawPaint();
+		String pattern = getDrawPattern();
 		if( pattern != null ) return pattern;
 
 		// Layers with null values return the default
@@ -140,7 +144,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public StrokeLineCap calcDrawCap() {
 		String cap = getDrawCap();
-		if( cap != null ) return StrokeLineCap.valueOf( cap.toUpperCase() );
+		if( MODE_CUSTOM.equals( getValueMode( cap ) ) ) return StrokeLineCap.valueOf( cap.toUpperCase() );
 
 		// Layers with null values return the default
 		if( isLayer() ) return DEFAULT_DRAW_CAP;
@@ -183,26 +187,33 @@ public abstract class DesignDrawable extends DesignNode {
 	public <T> T getValue( String key ) {
 		return switch( key ) {
 			case VIRTUAL_LAYER -> (T)getParentLayer().getId();
-			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getDrawPaint() == null ? "layer" : "custom");
-			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getDrawWidth() == null ? "layer" : "custom");
-			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getDrawPattern() == null ? "layer" : "custom");
-			case VIRTUAL_DRAW_CAP_MODE -> (T)(getDrawCap() == null ? "layer" : "custom");
-			case VIRTUAL_FILL_PAINT_MODE -> (T)(getFillPaint() == null ? "layer" : "custom");
+			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
+			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
+			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
+			case VIRTUAL_DRAW_CAP_MODE -> (T)(getValueMode( getDrawCap() ));
+			case VIRTUAL_FILL_PAINT_MODE -> (T)(getValueMode( getFillPaint() ));
 			default -> super.getValue( key );
 		};
 	}
 
+	private String getValueMode( String value ) {
+		if( value == null ) return MODE_LAYER;
+		return nonCustomModes.contains( value ) ? value : MODE_CUSTOM;
+	}
+
 	@Override
 	public <T> T setValue( String key, T newValue ) {
-		return switch( key ) {
-			case VIRTUAL_LAYER -> changeLayer( newValue );
+		if( TextUtil.areEqual( key, VIRTUAL_LAYER ) ) return changeLayer( newValue );
+
+		switch( key ) {
 			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
 			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidthMode( newValue );
 			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPatternMode( newValue );
 			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCapMode( newValue );
 			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaintMode( newValue );
-			default -> super.setValue( key, newValue );
-		};
+		}
+
+		return super.setValue( key, newValue );
 	}
 
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
@@ -215,13 +226,15 @@ public abstract class DesignDrawable extends DesignNode {
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
 		if( map.containsKey( DRAW_PAINT ) ) setDrawPaint( (String)map.get( DRAW_PAINT ) );
+		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
+		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( (String)map.get( DRAW_PATTERN ) );
 		if( map.containsKey( FILL_PAINT ) ) setFillPaint( (String)map.get( FILL_PAINT ) );
 		return this;
 	}
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_WIDTH, DRAW_PAINT, FILL_PAINT ) );
+		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
 		return map;
 	}
 
@@ -256,7 +269,7 @@ public abstract class DesignDrawable extends DesignNode {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error changing draw width", exception );
+			log.log( Log.ERROR, "Error changing draw paint", exception );
 		}
 		return newValue;
 	}
@@ -276,6 +289,22 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
+	private <T> T changeDrawCapMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( getValueMode( String.valueOf( newValue ) ) );
+
+		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
+		System.err.println( "Changing cap mode...: from " + oldValue + " to " + newValue );
+		try {
+			Txn.create();
+			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ) );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
+			Txn.commit();
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error setting draw cap", exception );
+		}
+		return newValue;
+	}
+
 	private <T> T changeDrawPatternMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
@@ -286,22 +315,7 @@ public abstract class DesignDrawable extends DesignNode {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting draw width", exception );
-		}
-		return newValue;
-	}
-
-	private <T> T changeDrawCapMode( T newValue ) {
-		boolean isCustom = MODE_CUSTOM.equals( newValue );
-
-		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
-		try {
-			Txn.create();
-			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : null );
-			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
-			Txn.commit();
-		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting draw width", exception );
+			log.log( Log.ERROR, "Error setting draw patter", exception );
 		}
 		return newValue;
 	}
