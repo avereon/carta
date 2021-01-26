@@ -9,7 +9,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class CsaPointTest {
+public class DesignPointTest {
 
 	@Test
 	void testModify() {

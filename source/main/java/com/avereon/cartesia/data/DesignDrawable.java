@@ -43,11 +43,11 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final String VIRTUAL_FILL_PAINT_MODE = "fill-paint-mode";
 
-	private static final String MODE_CUSTOM = "custom";
+	static final String MODE_CUSTOM = "custom";
 
-	private static final String MODE_LAYER = "layer";
+	static final String MODE_LAYER = "layer";
 
-	private static final String MODE_NONE = "none";
+	static final String MODE_NONE = "none";
 
 	// TODO These defaults should only be used for layers, they should be null otherwise
 	private static final double DEFAULT_DRAW_WIDTH = 0.05;
@@ -154,7 +154,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawCap() {
-		return getValue( DRAW_CAP, DEFAULT_DRAW_CAP.name().toLowerCase() );
+		return getValue( DRAW_CAP, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawCap( String cap ) {
@@ -196,9 +196,11 @@ public abstract class DesignDrawable extends DesignNode {
 		};
 	}
 
-	private String getValueMode( String value ) {
+	String getValueMode( String value ) {
 		if( value == null ) return MODE_LAYER;
-		return nonCustomModes.contains( value ) ? value : MODE_CUSTOM;
+		String result =  nonCustomModes.contains( value ) ? value : MODE_CUSTOM;
+		//System.out.println( "Evaluated " + value + " as " + result );
+		return result;
 	}
 
 	@Override
@@ -289,16 +291,17 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawCapMode( T newValue ) {
+	static <T> T changeDrawCapMode( final DesignDrawable drawable, final T newValue ) {
+		return drawable.changeDrawCapMode( newValue );
+	}
+
+	private <T> T changeDrawCapMode( final T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( getValueMode( String.valueOf( newValue ) ) );
 
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
-		System.err.println( "Changing cap mode...: from " + oldValue + " to " + newValue );
-		try {
-			Txn.create();
-			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ) );
+		try(Txn ignored = Txn.create()) {
+			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
-			Txn.commit();
 		} catch( TxnException exception ) {
 			log.log( Log.ERROR, "Error setting draw cap", exception );
 		}
