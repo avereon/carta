@@ -50,15 +50,15 @@ public abstract class DesignDrawable extends DesignNode {
 	static final String MODE_NONE = "none";
 
 	// TODO These defaults should only be used for layers, they should be null otherwise
-	private static final double DEFAULT_DRAW_WIDTH = 0.05;
+	static final double DEFAULT_DRAW_WIDTH = 0.05;
 
-	private static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
+	static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
 
-	private static final StrokeLineCap DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE;
+	static final StrokeLineCap DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE;
 
-	private static final String DEFAULT_DRAW_PATTERN = null;
+	static final String DEFAULT_DRAW_PATTERN = null;
 
-	private static final Color DEFAULT_FILL_PAINT = null;
+	static final Color DEFAULT_FILL_PAINT = null;
 
 	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER, MODE_NONE );
 
@@ -84,7 +84,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public Paint calcDrawPaint() {
 		String paint = getDrawPaint();
-		if( paint != null ) return Paints.parse( paint );
+		if( isCustomValue( paint ) ) return Paints.parse( paint );
 
 		// Layers with null values return the default
 		if( isLayer() ) return DEFAULT_DRAW_PAINT;
@@ -94,7 +94,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawPaint() {
-		return getValue( DRAW_PAINT );
+		return getValue( DRAW_PAINT, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawPaint( String paint ) {
@@ -104,7 +104,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public double calcDrawWidth() {
 		String width = getDrawWidth();
-		if( width != null ) return Maths.evalNoException( width );
+		if( isCustomValue( width ) ) return Maths.evalNoException( width );
 
 		// Layers with null values return the default
 		if( isLayer() ) return DEFAULT_DRAW_WIDTH;
@@ -114,7 +114,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawWidth() {
-		return getValue( DRAW_WIDTH );
+		return getValue( DRAW_WIDTH, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawWidth( String width ) {
@@ -124,7 +124,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public String calcDrawPattern() {
 		String pattern = getDrawPattern();
-		if( pattern != null ) return pattern;
+		if( isCustomValue( pattern ) ) return pattern;
 
 		// Layers with null values return the default
 		if( isLayer() ) return DEFAULT_DRAW_PATTERN;
@@ -134,7 +134,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawPattern() {
-		return getValue( DRAW_PATTERN );
+		return getValue( DRAW_PATTERN, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawPattern( String pattern ) {
@@ -144,7 +144,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public StrokeLineCap calcDrawCap() {
 		String cap = getDrawCap();
-		if( MODE_CUSTOM.equals( getValueMode( cap ) ) ) return StrokeLineCap.valueOf( cap.toUpperCase() );
+		if( isCustomValue( cap ) ) return StrokeLineCap.valueOf( cap.toUpperCase() );
 
 		// Layers with null values return the default
 		if( isLayer() ) return DEFAULT_DRAW_CAP;
@@ -164,7 +164,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public Paint calcFillPaint() {
 		String paint = getFillPaint();
-		if( paint != null ) return Paints.parse( paint );
+		if( isCustomValue( paint ) ) return Paints.parse( paint );
 
 		// Layers with null values return the default
 		if( isLayer() ) return DEFAULT_FILL_PAINT;
@@ -174,7 +174,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getFillPaint() {
-		return getValue( FILL_PAINT );
+		return getValue( FILL_PAINT, MODE_LAYER );
 	}
 
 	public DesignDrawable setFillPaint( String color ) {
@@ -196,11 +196,14 @@ public abstract class DesignDrawable extends DesignNode {
 		};
 	}
 
+	boolean isCustomValue( String value ) {
+		return getValueMode( value ).equals( MODE_CUSTOM );
+	}
+
 	String getValueMode( String value ) {
 		if( value == null ) return MODE_LAYER;
-		String result =  nonCustomModes.contains( value ) ? value : MODE_CUSTOM;
-		//System.out.println( "Evaluated " + value + " as " + result );
-		return result;
+		if( nonCustomModes.contains( value ) ) return value;
+		return MODE_CUSTOM;
 	}
 
 	@Override
@@ -261,7 +264,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawPaintMode( T newValue ) {
+	<T> T changeDrawPaintMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PAINT_MODE );
@@ -276,7 +279,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawWidthMode( T newValue ) {
+	<T> T changeDrawWidthMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_WIDTH_MODE );
@@ -291,15 +294,11 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	static <T> T changeDrawCapMode( final DesignDrawable drawable, final T newValue ) {
-		return drawable.changeDrawCapMode( newValue );
-	}
-
-	private <T> T changeDrawCapMode( final T newValue ) {
+	<T> T changeDrawCapMode( final T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( getValueMode( String.valueOf( newValue ) ) );
 
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
-		try(Txn ignored = Txn.create()) {
+		try( Txn ignored = Txn.create() ) {
 			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
@@ -308,7 +307,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeDrawPatternMode( T newValue ) {
+	<T> T changeDrawPatternMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
@@ -323,7 +322,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return newValue;
 	}
 
-	private <T> T changeFillPaintMode( T newValue ) {
+	<T> T changeFillPaintMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_MODE );
