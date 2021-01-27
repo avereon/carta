@@ -123,19 +123,19 @@ public class DesignDrawableTest {
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getDrawPattern(), is( String.valueOf( DesignDrawable.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( drawable.getDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
 		assertThat( drawable.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawPattern( "1/8,1/4" );
-		assertThat( drawable.getDrawPattern(), is( String.valueOf( DesignDrawable.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( drawable.getDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
 		assertThat( drawable.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
 	}
 
 	@Test
 	void testSetDrawPatternWhenDrawPatternModeIsLayer() {
 		// Change paint value
-		layer.setDrawPattern( String.valueOf( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
+		layer.setDrawPattern( DesignDrawable.DEFAULT_DRAW_PATTERN );
 		drawable.setDrawPattern( "0.5,0.5" );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getDrawPattern(), is( "0.5,0.5" ) );
