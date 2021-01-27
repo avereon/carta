@@ -49,16 +49,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	static final String MODE_NONE = "none";
 
-	// TODO These defaults should only be used for layers, they should be null otherwise
 	static final double DEFAULT_DRAW_WIDTH = 0.05;
 
 	static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
 
 	static final StrokeLineCap DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE;
 
-	static final String DEFAULT_DRAW_PATTERN = null;
+	static final String DEFAULT_DRAW_PATTERN = "1";
 
-	static final Color DEFAULT_FILL_PAINT = null;
+	static final Color DEFAULT_FILL_PAINT = Color.web( "0x000000ff" );
 
 	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER, MODE_NONE );
 
