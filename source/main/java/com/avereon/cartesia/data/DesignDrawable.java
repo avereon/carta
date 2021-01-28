@@ -47,8 +47,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	static final String MODE_LAYER = "layer";
 
-	static final String MODE_NONE = "none";
-
 	static final double DEFAULT_DRAW_WIDTH = 0.05;
 
 	static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
@@ -57,9 +55,9 @@ public abstract class DesignDrawable extends DesignNode {
 
 	static final String DEFAULT_DRAW_PATTERN = "1";
 
-	static final Color DEFAULT_FILL_PAINT = Color.web( "0x000000ff" );
+	static final Color DEFAULT_FILL_PAINT = Color.web( "0x00000080" );
 
-	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER, MODE_NONE );
+	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER );
 
 	protected SettingsPage page;
 

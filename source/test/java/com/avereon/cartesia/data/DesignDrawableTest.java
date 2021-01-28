@@ -38,7 +38,6 @@ public class DesignDrawableTest {
 	void testGetValueMode() {
 		assertThat( drawable.getValueMode( null ), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.getValueMode( DesignDrawable.MODE_LAYER ), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.getValueMode( DesignDrawable.MODE_NONE ), is( DesignDrawable.MODE_NONE ) );
 		assertThat( drawable.getValueMode( "" ), is( DesignDrawable.MODE_CUSTOM ) );
 	}
 
@@ -59,12 +58,10 @@ public class DesignDrawableTest {
 
 	@Test
 	void testSetDrawPaintWhenDrawPaintModeIsLayer() {
-		// Change paint value
-		layer.setDrawPaint( Paints.toString( Color.WHITE ) );
-		drawable.setDrawPaint( Paints.toString( Color.BLACK ) );
+		drawable.setDrawPaint( Paints.toString( Color.GREEN ) );
 		assertThat( drawable.getValueMode( drawable.getDrawPaint() ), is( DesignDrawable.MODE_CUSTOM ) );
-		assertThat( drawable.getDrawPaint(), is( Paints.toString( Color.BLACK ) ) );
-		assertThat( drawable.calcDrawPaint(), is( Color.BLACK ) );
+		assertThat( drawable.getDrawPaint(), is( Paints.toString( Color.GREEN ) ) );
+		assertThat( drawable.calcDrawPaint(), is( Color.GREEN ) );
 	}
 
 	@Test
@@ -84,8 +81,6 @@ public class DesignDrawableTest {
 
 	@Test
 	void testSetDrawWidthWhenDrawWidthModeIsLayer() {
-		// Change paint value
-		layer.setDrawWidth( String.valueOf( DesignDrawable.DEFAULT_DRAW_WIDTH ) );
 		drawable.setDrawWidth( String.valueOf( 0.03 ) );
 		assertThat( drawable.getValueMode( drawable.getDrawWidth() ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getDrawWidth(), is( String.valueOf( 0.03 ) ) );
@@ -98,19 +93,17 @@ public class DesignDrawableTest {
 		drawable.changeDrawCapMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawCap() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getDrawCap(), is( StrokeLineCap.SQUARE.name().toLowerCase() ) );
-		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.SQUARE ) );
+		assertThat( drawable.getDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP.name().toLowerCase() ) );
+		assertThat( drawable.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );
-		assertThat( drawable.getDrawCap(), is( StrokeLineCap.SQUARE.name().toLowerCase() ) );
-		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.SQUARE ) );
+		assertThat( drawable.getDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP.name().toLowerCase() ) );
+		assertThat( drawable.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
 	}
 
 	@Test
 	void testSetDrawCapWhenDrawCapModeIsLayer() {
-		// Change cap value
-		layer.setDrawCap( StrokeLineCap.SQUARE.name().toLowerCase() );
 		drawable.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );
 		assertThat( drawable.getValueMode( drawable.getDrawCap() ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getDrawCap(), is( StrokeLineCap.ROUND.name().toLowerCase() ) );
@@ -134,8 +127,6 @@ public class DesignDrawableTest {
 
 	@Test
 	void testSetDrawPatternWhenDrawPatternModeIsLayer() {
-		// Change paint value
-		layer.setDrawPattern( DesignDrawable.DEFAULT_DRAW_PATTERN );
 		drawable.setDrawPattern( "0.5,0.5" );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getDrawPattern(), is( "0.5,0.5" ) );
@@ -148,23 +139,21 @@ public class DesignDrawableTest {
 		drawable.changeFillPaintMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getFillPaint() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getFillPaint(), is( Paints.toString( Color.BLACK ) ) );
-		assertThat( drawable.calcFillPaint(), is( Color.BLACK ) );
+		assertThat( drawable.getFillPaint(), is( Paints.toString( DesignDrawable.DEFAULT_FILL_PAINT ) ) );
+		assertThat( drawable.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setFillPaint( Paints.toString( Color.WHITE ) );
-		assertThat( drawable.getFillPaint(), is( Paints.toString( Color.BLACK ) ) );
-		assertThat( drawable.calcFillPaint(), is( Color.BLACK ) );
+		assertThat( drawable.getFillPaint(), is( Paints.toString( DesignDrawable.DEFAULT_FILL_PAINT ) ) );
+		assertThat( drawable.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
 	}
 
 	@Test
 	void testSetFillPaintWhenFillPaintModeIsLayer() {
-		// Change paint value
-		layer.setFillPaint( Paints.toString( Color.WHITE ) );
-		drawable.setFillPaint( Paints.toString( Color.BLACK ) );
+		drawable.setFillPaint( Paints.toString( Color.RED ) );
 		assertThat( drawable.getValueMode( drawable.getFillPaint() ), is( DesignDrawable.MODE_CUSTOM ) );
-		assertThat( drawable.getFillPaint(), is( Paints.toString( Color.BLACK ) ) );
-		assertThat( drawable.calcFillPaint(), is( Color.BLACK ) );
+		assertThat( drawable.getFillPaint(), is( Paints.toString( Color.RED ) ) );
+		assertThat( drawable.calcFillPaint(), is( Color.RED ) );
 	}
 
 }
