@@ -91,7 +91,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawPaint() {
-		return getValue( DRAW_PAINT, MODE_LAYER );
+		return getProp( DRAW_PAINT, Paints.toString( DEFAULT_DRAW_PAINT ) );
 	}
 
 	public DesignDrawable setDrawPaint( String paint ) {
@@ -111,7 +111,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawWidth() {
-		return getValue( DRAW_WIDTH, MODE_LAYER );
+		return getProp( DRAW_WIDTH, String.valueOf( DEFAULT_DRAW_WIDTH) );
 	}
 
 	public DesignDrawable setDrawWidth( String width ) {
@@ -131,7 +131,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawPattern() {
-		return getValue( DRAW_PATTERN, MODE_LAYER );
+		return getProp( DRAW_PATTERN, DEFAULT_DRAW_PATTERN );
 	}
 
 	public DesignDrawable setDrawPattern( String pattern ) {
@@ -151,7 +151,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawCap() {
-		return getValue( DRAW_CAP, MODE_LAYER );
+		return getProp( DRAW_CAP, DEFAULT_DRAW_CAP.name().toLowerCase() );
 	}
 
 	public DesignDrawable setDrawCap( String cap ) {
@@ -171,12 +171,16 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getFillPaint() {
-		return getValue( FILL_PAINT, MODE_LAYER );
+		return getProp( FILL_PAINT, Paints.toString( DEFAULT_FILL_PAINT) );
 	}
 
 	public DesignDrawable setFillPaint( String color ) {
 		setValue( FILL_PAINT, color );
 		return this;
+	}
+
+	private String getProp( String key, String defaultValue ) {
+		return getValue( key, isLayer() ? defaultValue : MODE_LAYER );
 	}
 
 	@Override

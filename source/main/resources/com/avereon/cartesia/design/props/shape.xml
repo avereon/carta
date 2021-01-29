@@ -22,14 +22,6 @@
 				<dependency key="draw-width-mode" value="custom"/>
 			</setting>
 
-			<setting id="draw-pattern" key="draw-pattern-mode" editor="combobox">
-				<option key="layer"/>
-				<option key="custom"/>
-			</setting>
-			<setting id="draw-pattern-custom" key="draw-pattern" type="csv" editor="textline">
-				<dependency key="draw-pattern-mode" value="custom"/>
-			</setting>
-
 			<setting id="draw-cap" key="draw-cap-mode" editor="combobox">
 				<option key="layer"/>
 				<option key="custom"/>
@@ -39,6 +31,14 @@
 				<option key="square"/>
 				<option key="round"/>
 				<option key="butt"/>
+			</setting>
+
+			<setting id="draw-pattern" key="draw-pattern-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-pattern-custom" key="draw-pattern" type="csv" editor="textline">
+				<dependency key="draw-pattern-mode" value="custom"/>
 			</setting>
 
 			<setting id="fill-paint" key="fill-paint-mode" editor="combobox">

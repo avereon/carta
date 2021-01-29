@@ -7,8 +7,22 @@
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
 			<setting key="type" editor="combobox" provider="point-type-option-provider"/>
 			<setting key="size" type="math-expression" editor="textline"/>
-			<setting key="draw-width" type="math-expression" editor="textline"/>
-			<setting key="draw-paint" editor="color"/>
+
+			<setting id="draw-paint" key="draw-paint-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-paint-custom" key="draw-paint" editor="color">
+				<dependency key="draw-paint-mode" value="custom"/>
+			</setting>
+
+			<setting id="draw-width" key="draw-width-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-width-custom" key="draw-width" type="math-expression" editor="textline">
+				<dependency key="draw-width-mode" value="custom"/>
+			</setting>
 		</group>
 	</page>
 

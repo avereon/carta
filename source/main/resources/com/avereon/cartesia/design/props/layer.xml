@@ -6,8 +6,8 @@
 		<group id="layer-title">
 			<setting key="name" editor="textline"/>
 			<setting key="layer" editor="combobox" provider="design-layer-layers"/>
-			<setting key="draw-width" editor="textline" type="math-expression"/>
 			<setting key="draw-paint" editor="color"/>
+			<setting key="draw-width" editor="textline" type="math-expression"/>
 			<setting key="draw-cap" editor="combobox">
 				<option key="square"/>
 				<option key="round"/>

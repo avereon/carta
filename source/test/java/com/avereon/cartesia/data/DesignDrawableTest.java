@@ -42,6 +42,24 @@ public class DesignDrawableTest {
 	}
 
 	@Test
+	void testLayerDefaults() {
+		assertThat( layer.getDrawPaint(), is( Paints.toString( DesignDrawable.DEFAULT_DRAW_PAINT ) ) );
+		assertThat( layer.getDrawWidth(), is( String.valueOf( DesignDrawable.DEFAULT_DRAW_WIDTH ) ) );
+		assertThat( layer.getDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP.name().toLowerCase() ) );
+		assertThat( layer.getDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
+		assertThat( layer.getFillPaint(), is( Paints.toString( DesignDrawable.DEFAULT_FILL_PAINT ) ) );
+	}
+
+	@Test
+	void testLayerCalcDefaults() {
+		assertThat( layer.calcDrawPaint(), is( DesignDrawable.DEFAULT_DRAW_PAINT ) );
+		assertThat( layer.calcDrawWidth(), is( DesignDrawable.DEFAULT_DRAW_WIDTH ) );
+		assertThat( layer.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
+		assertThat( layer.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
+		assertThat( layer.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
+	}
+
+	@Test
 	void testChangeDrawPaintModeFromDefaultToCustom() {
 		// Change mode to custom to copy current calcDrawPaint value
 		drawable.changeDrawPaintMode( DesignDrawable.MODE_CUSTOM );
