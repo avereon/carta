@@ -299,7 +299,7 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = MODE_CUSTOM.equals( getValueMode( String.valueOf( newValue ) ) );
 
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
-		try( Txn ignored = Txn.create(true) ) {
+		try( Txn ignored = Txn.create() ) {
 			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
