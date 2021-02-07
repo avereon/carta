@@ -19,12 +19,15 @@ public class Command {
 
 	public static final Object INVALID = new Object();
 
+	private DesignShape preview;
+
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		return null;
 	}
 
 	public void cancel( DesignTool tool ) throws Exception {
 		if( tool != null ) {
+			tool.getCurrentLayer().removeShape( preview );
 			tool.setCursor( Cursor.DEFAULT );
 			tool.getDesign().clearSelected();
 		}
@@ -88,6 +91,33 @@ public class Command {
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
 		return Shapes.findNearestShapeToPoint( tool.selectShapes( point ), point );
+	}
+
+	protected void setPreview( DesignTool tool, DesignShape preview ) {
+		this.preview = preview;
+		tool.getAsset().setCaptureUndoChanges( false );
+		tool.getCurrentLayer().addShape( preview );
+		preview.setPreview( true );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	protected <T extends DesignShape> T getPreview() {
+		return (T)preview;
+	}
+
+	protected Object commitPreview( DesignTool tool ) {
+		tool.getCurrentLayer().removeShape( preview );
+		preview.setPreview( false );
+		// FIXME I think this is capturing some of the remove shape events
+		tool.getAsset().setCaptureUndoChanges( true );
+		tool.getCurrentLayer().addShape( preview );
+		return complete();
+	}
+
+	protected Object removePreview( DesignTool tool ) {
+		tool.getCurrentLayer().removeShape( preview );
+		preview.setPreview( false );
+		return complete();
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
