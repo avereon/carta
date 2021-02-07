@@ -111,7 +111,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawWidth() {
-		return getProp( DRAW_WIDTH, String.valueOf( DEFAULT_DRAW_WIDTH) );
+		return getProp( DRAW_WIDTH, String.valueOf( DEFAULT_DRAW_WIDTH ) );
 	}
 
 	public DesignDrawable setDrawWidth( String width ) {
@@ -167,11 +167,11 @@ public abstract class DesignDrawable extends DesignNode {
 		if( isLayer() ) return DEFAULT_FILL_PAINT;
 
 		// Use the shape parent layer to get the value
-		return ((DesignLayer)getParent()).calcFillPaint();
+		return getParentLayer().calcFillPaint();
 	}
 
 	public String getFillPaint() {
-		return getProp( FILL_PAINT, Paints.toString( DEFAULT_FILL_PAINT) );
+		return getProp( FILL_PAINT, Paints.toString( DEFAULT_FILL_PAINT ) );
 	}
 
 	public DesignDrawable setFillPaint( String color ) {

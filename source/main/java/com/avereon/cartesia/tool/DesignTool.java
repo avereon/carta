@@ -203,7 +203,16 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-		designPane.setLayerVisible( layer, visible );
+		if( !visible ) {
+			// Only hide the specified layer
+			designPane.setLayerVisible( layer, visible );
+		} else {
+			// Show the specified layer and parent layers
+			while( !layer.isRootLayer() ) {
+				designPane.setLayerVisible( layer, visible );
+				layer = layer.getParentLayer();
+			}
+		}
 	}
 
 	List<String> getVisibleLayerIds() {
