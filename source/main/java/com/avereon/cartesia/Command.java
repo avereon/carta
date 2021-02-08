@@ -108,7 +108,6 @@ public class Command {
 	protected Object commitPreview( DesignTool tool ) {
 		tool.getCurrentLayer().removeShape( preview );
 		preview.setPreview( false );
-		// FIXME I think this is capturing some of the remove shape events
 		tool.getAsset().setCaptureUndoChanges( true );
 		tool.getCurrentLayer().addShape( preview );
 		return complete();
