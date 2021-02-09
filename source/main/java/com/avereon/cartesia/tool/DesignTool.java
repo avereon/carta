@@ -362,8 +362,14 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		getSettings().register(
+			SELECT_APERTURE_RADIUS,
+			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
+		);
+		getSettings().register(
+			SELECT_APERTURE_UNIT,
+			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
+		);
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> {
@@ -515,6 +521,10 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
+	public void mouseSelect( Point3D mouse ) {
+		mouseSelect( mouse.getX(), mouse.getY(), mouse.getZ(), false );
+	}
+
 	public void mouseSelect( double x, double y, double z, boolean toggle ) {
 		Fx.run( () -> {
 			if( !toggle ) selectedShapes().clear();
@@ -539,7 +549,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public List<DesignShape> selectShapes( Point3D mouse ) {
-		return designPane.apertureSelect( mouse.getX(), mouse.getY(), mouse.getZ(), getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+		return designPane
+			.apertureSelect( mouse.getX(), mouse.getY(), mouse.getZ(), getSelectTolerance() )
+			.stream()
+			.map( DesignShapeView::getDesignData )
+			.collect( Collectors.toList() );
 	}
 
 	private void configureWorkplane() {
@@ -617,7 +631,7 @@ public abstract class DesignTool extends GuidedTool {
 			} else if( c.getList().size() == 1 ) {
 				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 			} else {
-				getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
+				hidePropertiesPage();
 			}
 		}
 		deleteAction.updateEnabled();
@@ -632,6 +646,10 @@ public abstract class DesignTool extends GuidedTool {
 		page.setSettings( settings );
 		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
 		getWorkspace().getEventBus().dispatch( event );
+	}
+
+	private void hidePropertiesPage() {
+		getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
 	}
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {

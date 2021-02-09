@@ -2,14 +2,19 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.PromptCommand;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.math.Shapes;
 import com.avereon.cartesia.math.Maths;
+import com.avereon.cartesia.math.Shapes;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.util.Log;
+import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+
+import java.util.List;
+import java.util.function.Supplier;
 
 public class Command {
 
@@ -18,6 +23,8 @@ public class Command {
 	public static final Object COMPLETE = new Object();
 
 	public static final Object INVALID = new Object();
+
+	private static final System.Logger log = Log.get();
 
 	private DesignShape preview;
 
@@ -90,7 +97,50 @@ public class Command {
 	}
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
-		return Shapes.findNearestShapeToPoint( tool.selectShapes( point ), point );
+		try {
+			List<DesignShape> shapes = FxProducer.get( () -> tool.selectShapes( point ) );
+			return Shapes.findNearestShapeToPoint( shapes, point );
+		} catch( InterruptedException exception ) {
+			log.log( Log.ERROR, exception );
+		}
+
+		return DesignShape.NONE;
+	}
+
+	private static class FxProducer<T> {
+
+		private final Supplier<T> supplier;
+
+		private T result;
+
+		private boolean flag;
+
+		public FxProducer( Supplier<T> supplier ) {
+			this.supplier = supplier;
+		}
+
+		public static <T> T get( Supplier<T> supplier ) throws InterruptedException {
+			return new FxProducer<>( supplier ).get();
+		}
+
+		public synchronized T get() throws InterruptedException {
+			if( Fx.isFxThread() ) {
+				result = supplier.get();
+			} else {
+				Fx.run( () -> this.set( supplier.get() ) );
+				while( !flag ) {
+					this.wait( 1000 );
+				}
+			}
+			return result;
+		}
+
+		private synchronized void set( T result ) {
+			this.result = result;
+			this.flag = true;
+			this.notifyAll();
+		}
+
 	}
 
 	protected void setPreview( DesignTool tool, DesignShape preview ) {
