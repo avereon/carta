@@ -156,17 +156,15 @@ public class Command {
 	}
 
 	protected Object commitPreview( DesignTool tool ) {
-		tool.getCurrentLayer().removeShape( preview );
-		preview.setPreview( false );
-		tool.getAsset().setCaptureUndoChanges( true );
+		removePreview( tool );
 		tool.getCurrentLayer().addShape( preview );
 		return complete();
 	}
 
-	protected Object removePreview( DesignTool tool ) {
+	protected void removePreview( DesignTool tool ) {
 		tool.getCurrentLayer().removeShape( preview );
 		preview.setPreview( false );
-		return complete();
+		tool.getAsset().setCaptureUndoChanges( true );
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
