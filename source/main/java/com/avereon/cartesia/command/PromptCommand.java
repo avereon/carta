@@ -14,6 +14,10 @@ public class PromptCommand extends Command {
 
 	@Override
 	public boolean isInputCommand() {
+		// FIXME This breaks auto-commands
+		// This command should probably not set input command because it does not
+		// know the scope of the command that called it. This command should
+		// probably just return the current command context input mode.
 		return true;
 	}
 

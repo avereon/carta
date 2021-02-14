@@ -225,6 +225,7 @@ public class CommandContext {
 	}
 
 	private void setInputMode( boolean mode ) {
+		if( mode != this.inputMode ) log.log( Log.WARN, new Throwable( "input-mode="+mode));
 		this.inputMode = mode;
 	}
 
