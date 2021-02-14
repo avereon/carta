@@ -110,8 +110,6 @@ public class CommandMap {
 		add( product, "layer-toggle", LayerToggleCommand.class );
 
 		// Snap commands
-		// sn - snap nearest
-		// sg - toggle snap to grid
 		add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() );
 		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
