@@ -545,7 +545,7 @@ public class DesignPane extends StackPane {
 	private List<Shape> doSelectByShape( Shape selector, boolean contains ) {
 		// The shape must have a fill but no stroke. The selector color is not
 		// important since the selector shape is not shown, is just needs to be set.
-		selector.setFill( Color.TRANSPARENT );
+		selector.setFill( Color.RED );
 		selector.setStrokeWidth( 0.0 );
 		selector.setStroke( null );
 
@@ -589,11 +589,17 @@ public class DesignPane extends StackPane {
 	}
 
 	private boolean isContained( Shape selector, Shape shape ) {
-		return selector.getBoundsInLocal().contains( shape.getBoundsInLocal() );
+		// This first test is an optimization to determine if the the accurate test needs to be used
+		if( !selector.getLayoutBounds().intersects( shape.getLayoutBounds() ) ) return false;
+		// This is the slow but accurate test if the shape is contained
+		return ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
 	}
 
 	private boolean isIntersecting( Shape selector, Shape shape ) {
-		return selector.getBoundsInLocal().intersects( shape.getBoundsInLocal() ) && !((Path)Shape.intersect( selector, shape )).getElements().isEmpty();
+		// This first test is an optimization to determine if the the accurate test needs to be used
+		if( !selector.getLayoutBounds().intersects( shape.getLayoutBounds() ) ) return false;
+		// This is the slow but accurate test if the shape is intersecting
+		return !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
 	}
 
 	private static class LayerSorter implements Comparator<Node> {
