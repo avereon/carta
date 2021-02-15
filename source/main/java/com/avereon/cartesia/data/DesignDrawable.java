@@ -8,7 +8,6 @@ import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 
@@ -47,16 +46,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	static final String MODE_LAYER = "layer";
 
-	static final double DEFAULT_DRAW_WIDTH = 0.05;
-
-	static final Color DEFAULT_DRAW_PAINT = Color.web( "0x000000ff" );
-
-	static final StrokeLineCap DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE;
-
-	static final String DEFAULT_DRAW_PATTERN = "1";
-
-	static final Color DEFAULT_FILL_PAINT = Color.web( "0x00000080" );
-
 	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER );
 
 	protected SettingsPage page;
@@ -82,16 +71,11 @@ public abstract class DesignDrawable extends DesignNode {
 	public Paint calcDrawPaint() {
 		String paint = getDrawPaint();
 		if( isCustomValue( paint ) ) return Paints.parse( paint );
-
-		// Layers with null values return the default
-		if( isLayer() ) return DEFAULT_DRAW_PAINT;
-
-		// Use the shape parent layer to get the value
 		return ((DesignLayer)getParent()).calcDrawPaint();
 	}
 
 	public String getDrawPaint() {
-		return getProp( DRAW_PAINT, Paints.toString( DEFAULT_DRAW_PAINT ) );
+		return getValue( DRAW_PAINT, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawPaint( String paint ) {
@@ -102,16 +86,11 @@ public abstract class DesignDrawable extends DesignNode {
 	public double calcDrawWidth() {
 		String width = getDrawWidth();
 		if( isCustomValue( width ) ) return Maths.evalNoException( width );
-
-		// Layers with null values return the default
-		if( isLayer() ) return DEFAULT_DRAW_WIDTH;
-
-		// Use the shape parent layer to get the value
 		return ((DesignLayer)getParent()).calcDrawWidth();
 	}
 
 	public String getDrawWidth() {
-		return getProp( DRAW_WIDTH, String.valueOf( DEFAULT_DRAW_WIDTH ) );
+		return getValue( DRAW_WIDTH, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawWidth( String width ) {
@@ -122,16 +101,11 @@ public abstract class DesignDrawable extends DesignNode {
 	public String calcDrawPattern() {
 		String pattern = getDrawPattern();
 		if( isCustomValue( pattern ) ) return pattern;
-
-		// Layers with null values return the default
-		if( isLayer() ) return DEFAULT_DRAW_PATTERN;
-
-		// Use the shape parent layer to get the value
 		return ((DesignLayer)getParent()).calcDrawPattern();
 	}
 
 	public String getDrawPattern() {
-		return getProp( DRAW_PATTERN, DEFAULT_DRAW_PATTERN );
+		return getValue( DRAW_PATTERN, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawPattern( String pattern ) {
@@ -142,16 +116,11 @@ public abstract class DesignDrawable extends DesignNode {
 	public StrokeLineCap calcDrawCap() {
 		String cap = getDrawCap();
 		if( isCustomValue( cap ) ) return StrokeLineCap.valueOf( cap.toUpperCase() );
-
-		// Layers with null values return the default
-		if( isLayer() ) return DEFAULT_DRAW_CAP;
-
-		// Use the shape parent layer to get the value
 		return ((DesignLayer)getParent()).calcDrawCap();
 	}
 
 	public String getDrawCap() {
-		return getProp( DRAW_CAP, DEFAULT_DRAW_CAP.name().toLowerCase() );
+		return getValue( DRAW_CAP, MODE_LAYER );
 	}
 
 	public DesignDrawable setDrawCap( String cap ) {
@@ -162,25 +131,16 @@ public abstract class DesignDrawable extends DesignNode {
 	public Paint calcFillPaint() {
 		String paint = getFillPaint();
 		if( isCustomValue( paint ) ) return Paints.parse( paint );
-
-		// Layers with null values return the default
-		if( isLayer() ) return DEFAULT_FILL_PAINT;
-
-		// Use the shape parent layer to get the value
 		return getParentLayer().calcFillPaint();
 	}
 
 	public String getFillPaint() {
-		return getProp( FILL_PAINT, Paints.toString( DEFAULT_FILL_PAINT ) );
+		return getValue( FILL_PAINT, MODE_LAYER );
 	}
 
 	public DesignDrawable setFillPaint( String color ) {
 		setValue( FILL_PAINT, color );
 		return this;
-	}
-
-	private String getProp( String key, String defaultValue ) {
-		return getValue( key, isLayer() ? defaultValue : MODE_LAYER );
 	}
 
 	@Override
@@ -244,6 +204,7 @@ public abstract class DesignDrawable extends DesignNode {
 		return map;
 	}
 
+	@Deprecated
 	private boolean isLayer() {
 		return this instanceof DesignLayer;
 	}

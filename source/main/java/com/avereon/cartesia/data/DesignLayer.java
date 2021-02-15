@@ -1,10 +1,14 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.math.Maths;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
 import com.avereon.util.Log;
+import com.avereon.zerra.color.Paints;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.StrokeLineCap;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -24,6 +28,16 @@ public class DesignLayer extends DesignDrawable {
 
 	public static final String SHAPES = "shapes";
 
+	static final String DEFAULT_DRAW_PAINT = "#000000ff";
+
+	static final String DEFAULT_DRAW_WIDTH = "0.05";
+
+	static final String DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE.name().toLowerCase();
+
+	static final String DEFAULT_DRAW_PATTERN = "0";
+
+	static final String DEFAULT_FILL_PAINT = "#00000080";
+
 	//private static final NodeComparator<DesignLayer> comparator;
 
 	//	static {
@@ -33,6 +47,12 @@ public class DesignLayer extends DesignDrawable {
 	public DesignLayer() {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, UNIT, LAYERS, SHAPES );
+
+		setDrawPaint( DEFAULT_DRAW_PAINT );
+		setDrawWidth( DEFAULT_DRAW_WIDTH );
+		setDrawPattern( DEFAULT_DRAW_PATTERN);
+		setDrawCap( DEFAULT_DRAW_CAP );
+		setFillPaint( DEFAULT_FILL_PAINT );
 	}
 
 	/**
@@ -143,24 +163,75 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	@SuppressWarnings( "UnusedReturnValue" )
-	public <T extends DesignDrawable> T addDrawable( T thingy ) {
-		if( thingy instanceof DesignShape ) {
-			addShape( (DesignShape)thingy );
-		} else if( thingy instanceof DesignLayer ) {
-			addLayer( (DesignLayer)thingy );
+	public <T extends DesignDrawable> T addDrawable( T drawable ) {
+		if( drawable instanceof DesignShape ) {
+			addShape( (DesignShape)drawable );
+		} else if( drawable instanceof DesignLayer ) {
+			addLayer( (DesignLayer)drawable );
 		}
-		return thingy;
+		return drawable;
 	}
 
-	public <T extends DesignDrawable> T removeDrawable( T thingy ) {
-		if( thingy instanceof DesignShape ) {
-			removeShape( (DesignShape)thingy );
-		} else if( thingy instanceof DesignLayer ) {
-			removeLayer( (DesignLayer)thingy );
+	public <T extends DesignDrawable> T removeDrawable( T drawable ) {
+		if( drawable instanceof DesignShape ) {
+			removeShape( (DesignShape)drawable );
+		} else if( drawable instanceof DesignLayer ) {
+			removeLayer( (DesignLayer)drawable );
 		}
-		return thingy;
+		return drawable;
 	}
 
+	@Override
+	public String getDrawPaint() {
+		return getValue( DRAW_PAINT, DEFAULT_DRAW_PAINT );
+	}
+
+	@Override
+	public Paint calcDrawPaint() {
+		return Paints.parse( getDrawPaint() );
+	}
+
+	@Override
+	public String getDrawWidth() {
+		return getValue( DRAW_WIDTH, DEFAULT_DRAW_WIDTH );
+	}
+
+	@Override
+	public double calcDrawWidth() {
+		return Maths.evalNoException( getDrawWidth() );
+	}
+
+	@Override
+	public String getDrawPattern() {
+		return getValue( DRAW_PATTERN, DEFAULT_DRAW_PATTERN );
+	}
+
+	@Override
+	public String calcDrawPattern() {
+		return getDrawPattern();
+	}
+
+	@Override
+	public String getDrawCap() {
+		return getValue( DRAW_CAP, DEFAULT_DRAW_CAP );
+	}
+
+	@Override
+	public StrokeLineCap calcDrawCap() {
+		return StrokeLineCap.valueOf( getDrawCap().toUpperCase() );
+	}
+
+	@Override
+	public String getFillPaint() {
+		return getValue( FILL_PAINT, DEFAULT_FILL_PAINT );
+	}
+
+	@Override
+	public Paint calcFillPaint() {
+		return Paints.parse( getFillPaint() );
+	}
+
+	@Override
 	public Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.putAll( asMap( NAME ) );

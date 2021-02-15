@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.Maths;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -23,15 +24,15 @@ public class DesignDrawableTest {
 
 		// Check the default values
 		assertThat( drawable.getDrawPaint(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawPaint(), is( DesignDrawable.DEFAULT_DRAW_PAINT ) );
+		assertThat( drawable.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
 		assertThat( drawable.getDrawWidth(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawWidth(), is( DesignDrawable.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 		assertThat( drawable.getDrawCap(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
+		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 		assertThat( drawable.getDrawPattern(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( drawable.getFillPaint(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
+		assertThat( drawable.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
 
 	@Test
@@ -43,20 +44,20 @@ public class DesignDrawableTest {
 
 	@Test
 	void testLayerDefaults() {
-		assertThat( layer.getDrawPaint(), is( Paints.toString( DesignDrawable.DEFAULT_DRAW_PAINT ) ) );
-		assertThat( layer.getDrawWidth(), is( String.valueOf( DesignDrawable.DEFAULT_DRAW_WIDTH ) ) );
-		assertThat( layer.getDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP.name().toLowerCase() ) );
-		assertThat( layer.getDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
-		assertThat( layer.getFillPaint(), is( Paints.toString( DesignDrawable.DEFAULT_FILL_PAINT ) ) );
+		assertThat( layer.getDrawPaint(), is( DesignLayer.DEFAULT_DRAW_PAINT ) );
+		assertThat( layer.getDrawWidth(), is( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( layer.getDrawCap(), is( DesignLayer.DEFAULT_DRAW_CAP ) );
+		assertThat( layer.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( layer.getFillPaint(), is( DesignLayer.DEFAULT_FILL_PAINT ) );
 	}
 
 	@Test
 	void testLayerCalcDefaults() {
-		assertThat( layer.calcDrawPaint(), is( DesignDrawable.DEFAULT_DRAW_PAINT ) );
-		assertThat( layer.calcDrawWidth(), is( DesignDrawable.DEFAULT_DRAW_WIDTH ) );
-		assertThat( layer.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
-		assertThat( layer.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
-		assertThat( layer.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
+		assertThat( layer.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
+		assertThat( layer.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
+		assertThat( layer.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
+		assertThat( layer.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( layer.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
 
 	@Test
@@ -88,13 +89,13 @@ public class DesignDrawableTest {
 		drawable.changeDrawWidthMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawWidth() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getDrawWidth(), is( String.valueOf( DesignDrawable.DEFAULT_DRAW_WIDTH ) ) );
-		assertThat( drawable.calcDrawWidth(), is( DesignDrawable.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.getDrawWidth(), is( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawWidth( String.valueOf( 1.0 ) );
-		assertThat( drawable.getDrawWidth(), is( String.valueOf( DesignDrawable.DEFAULT_DRAW_WIDTH ) ) );
-		assertThat( drawable.calcDrawWidth(), is( DesignDrawable.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.getDrawWidth(), is( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 	}
 
 	@Test
@@ -111,13 +112,13 @@ public class DesignDrawableTest {
 		drawable.changeDrawCapMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawCap() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP.name().toLowerCase() ) );
-		assertThat( drawable.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
+		assertThat( drawable.getDrawCap(), is( DesignLayer.DEFAULT_DRAW_CAP ) );
+		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );
-		assertThat( drawable.getDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP.name().toLowerCase() ) );
-		assertThat( drawable.calcDrawCap(), is( DesignDrawable.DEFAULT_DRAW_CAP ) );
+		assertThat( drawable.getDrawCap(), is( DesignLayer.DEFAULT_DRAW_CAP ) );
+		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 	}
 
 	@Test
@@ -134,13 +135,13 @@ public class DesignDrawableTest {
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawPattern( "1/8,1/4" );
-		assertThat( drawable.getDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.calcDrawPattern(), is( DesignDrawable.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 	}
 
 	@Test
@@ -157,13 +158,13 @@ public class DesignDrawableTest {
 		drawable.changeFillPaintMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getFillPaint() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
-		assertThat( drawable.getFillPaint(), is( Paints.toString( DesignDrawable.DEFAULT_FILL_PAINT ) ) );
-		assertThat( drawable.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
+		assertThat( drawable.getFillPaint(), is( DesignLayer.DEFAULT_FILL_PAINT ) );
+		assertThat( drawable.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setFillPaint( Paints.toString( Color.WHITE ) );
-		assertThat( drawable.getFillPaint(), is( Paints.toString( DesignDrawable.DEFAULT_FILL_PAINT ) ) );
-		assertThat( drawable.calcFillPaint(), is( DesignDrawable.DEFAULT_FILL_PAINT ) );
+		assertThat( drawable.getFillPaint(), is( DesignLayer.DEFAULT_FILL_PAINT ) );
+		assertThat( drawable.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
 
 	@Test

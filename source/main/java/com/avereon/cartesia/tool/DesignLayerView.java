@@ -14,7 +14,7 @@ public class DesignLayerView extends DesignDrawableView {
 	DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPaneLayer layer ) {
 		super( pane, designLayer );
 		this.layer = layer;
-		DesignShapeView.setDesignData( layer, getDesignLayer() );
+		DesignShapeView.setDesignData( layer, designLayer );
 	}
 
 	protected DesignLayer getDesignLayer() {
