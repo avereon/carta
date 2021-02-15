@@ -24,10 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Circle;
-import javafx.scene.shape.Path;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -332,19 +329,26 @@ public class DesignPane extends StackPane {
 		setViewPoint( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
-	List<Shape> apertureSelect( double x, double y, double z, DesignValue v ) {
-		// Convert the aperture radius and unit to world values
-		double pixels = v.getUnit().to( v.getValue(), DesignUnit.INCH ) * getDpi();
-		Point2D aperture = parentToLocal( getTranslateX() + pixels, getTranslateY() + pixels );
-		return selectByAperture( parentToLocal( x, y, z ), aperture.getX() );
+	List<Shape> mousePointSelect( Point3D p, DesignValue v ) {
+		double pixels = valueToPixels( v );
+		Point2D point = new Point2D( getTranslateX() + pixels, getTranslateY() - pixels );
+		return pointSelect( parentToLocal( p ), parentToLocal( point ) );
 	}
 
-	List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
-		return selectByWindow( parentToLocal( a ), parentToLocal( b ), contains );
+	List<Shape> mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
+		return windowSelect( parentToLocal( a ), parentToLocal( b ), contains );
 	}
 
-	List<Shape> selectByAperture( Point3D anchor, double radius ) {
-		return doSelectByShape( new Circle( anchor.getX(), anchor.getY(), radius ), false );
+	List<Shape> pointSelect( Point3D anchor, DesignValue v ) {
+		return pointSelect( anchor, v.getValue() );
+	}
+
+	List<Shape> pointSelect( Point3D anchor, double radius ) {
+		return pointSelect( anchor, new Point2D( radius, radius ) );
+	}
+
+	List<Shape> pointSelect( Point3D anchor, Point2D aperture ) {
+		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), aperture.getX(), aperture.getY() ), false );
 	}
 
 	/**
@@ -355,7 +359,7 @@ public class DesignPane extends StackPane {
 	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
 	 * @return The set of selected nodes
 	 */
-	List<Shape> selectByWindow( Point3D a, Point3D b, boolean contains ) {
+	List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
@@ -452,6 +456,10 @@ public class DesignPane extends StackPane {
 
 	private DesignUnit getDesignUnit() {
 		return design.getDesignUnit();
+	}
+
+	private double valueToPixels( DesignValue v ) {
+		return v.getUnit().to( v.getValue(), DesignUnit.INCH ) * getDpi();
 	}
 
 	private void rescale( boolean recalculateDpu ) {

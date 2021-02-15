@@ -12,7 +12,7 @@ import java.util.Map;
 
 public abstract class DesignShape extends DesignDrawable {
 
-	public static final DesignShape NONE = new DesignShape() {};
+	public static final DesignShape NONE = new DesignShape() {}.setId( "NONE" );
 
 	public static final String SHAPE = "shape";
 

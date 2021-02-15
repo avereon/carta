@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.Maths;
 import com.avereon.cartesia.math.Shapes;
 import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
@@ -13,8 +14,8 @@ import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class Command {
 
@@ -89,14 +90,15 @@ public class Command {
 		promptForValue( context, tool, key, true );
 	}
 
-	protected DesignShape selectNearestShapeAtMouse( CommandContext context, DesignTool tool ) {
-		return selectNearestShapeAtPoint( tool, context.getMouse() );
-	}
+//	protected DesignShape selectNearestShapeAtMouse( CommandContext context, DesignTool tool ) {
+//		return selectNearestShapeAtMouse( tool, context.getMouse() );
+//	}
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
 		try {
-			List<DesignShape> shapes = FxProducer.get( () -> tool.selectShapes( point ) );
-			return Shapes.findNearestShapeToPoint( shapes, point );
+			tool.pointSelect( point );
+			Fx.waitForWithInterrupt( 1000 );
+			return Shapes.findNearestShapeToPoint( tool.selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList()), point );
 		} catch( InterruptedException exception ) {
 			log.log( Log.ERROR, exception );
 		}

@@ -14,28 +14,32 @@ public class ExtendTrimCommand extends Command {
 
 	private static final System.Logger log = Log.get();
 
-	private DesignShape shape;
+	private DesignShape trim;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		if( parameters.length < 1 && tool.selectedShapes().size() < 1 ) {
+		if( parameters.length < 1 ) {
 			promptForPoint( context, tool, "select-trim-shape" );
 			return incomplete();
 		}
 
-		if( parameters.length < 2 && tool.selectedShapes().size() < 2) {
-			tool.mouseSelect( (Point3D)parameters[0] );
-			//shape = selectNearestShapeAtMouse( context, tool );
-			//if( shape == DesignShape.NONE ) return invalid();
+		if( parameters.length < 2 ) {
+			trim = selectNearestShapeAtPoint( tool, (Point3D)parameters[ 0 ] );
+			if( trim == DesignShape.NONE ) return invalid();
 			promptForPoint( context, tool, "select-trim-edge" );
 			return incomplete();
 		}
 
-		tool.mouseSelect( context.getMouse() );
-//		DesignShape edge = selectNearestShapeAtMouse( context, tool );
-//		if( edge == DesignShape.NONE ) return invalid();
+		tool.mousePointSelect( context.getMouse() );
+		DesignShape edge = selectNearestShapeAtPoint( tool, (Point3D)parameters[ 1 ] );
+		if( edge == DesignShape.NONE ) return invalid();
 
-		// TODO Extend/trim the shape to the edge
+		log.log( Log.WARN, "shape-to-trim=" + trim );
+		log.log( Log.WARN, "shape-as-edge=" + edge );
+
+		// NEXT Extend/trim the shape to the edge
+
+		tool.clearSelected();
 
 		return complete();
 	}

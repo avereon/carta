@@ -362,12 +362,10 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register(
-			SELECT_APERTURE_RADIUS,
+		getSettings().register( SELECT_APERTURE_RADIUS,
 			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
 		);
-		getSettings().register(
-			SELECT_APERTURE_UNIT,
+		getSettings().register( SELECT_APERTURE_UNIT,
 			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
 		);
 
@@ -521,15 +519,15 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	public void mouseSelect( Point3D mouse ) {
-		mouseSelect( mouse.getX(), mouse.getY(), mouse.getZ(), false );
+	public void mousePointSelect( Point3D mouse ) {
+		mousePointSelect( mouse, false );
 	}
 
-	public void mouseSelect( double x, double y, double z, boolean toggle ) {
+	public void mousePointSelect( Point3D mouse, boolean toggle ) {
 		Fx.run( () -> {
 			if( !toggle ) selectedShapes().clear();
 
-			List<Shape> selection = designPane.apertureSelect( x, y, z, getSelectTolerance() );
+			List<Shape> selection = designPane.mousePointSelect( mouse, getSelectTolerance() );
 			selection.stream().findFirst().ifPresent( shape -> {
 				if( toggle && getDesignData( shape ).isSelected() ) {
 					selectedShapes().remove( shape );
@@ -540,17 +538,48 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 	}
 
-	public void windowSelect( Point3D a, Point3D b, boolean contains ) {
+	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
 		Fx.run( () -> {
 			selectedShapes().clear();
-			List<Shape> selection = designPane.windowSelect( a, b, contains );
+			List<Shape> selection = designPane.mouseWindowSelect( a, b, contains );
 			selectedShapes().addAll( selection );
 		} );
 	}
 
-	public List<DesignShape> selectShapes( Point3D mouse ) {
+	public void pointSelect( Point3D point ) {
+		pointSelect( point, false );
+	}
+
+	public void pointSelect( Point3D point, boolean toggle ) {
+		Fx.run( () -> {
+			if( !toggle ) selectedShapes().clear();
+
+			List<Shape> selection = designPane.pointSelect( point, getSelectTolerance() );
+			selection.stream().findFirst().ifPresent( shape -> {
+				if( toggle && getDesignData( shape ).isSelected() ) {
+					selectedShapes().remove( shape );
+				} else {
+					selectedShapes().add( shape );
+				}
+			} );
+		} );
+	}
+
+	public void clearSelected() {
+		selectedShapes().clear();
+	}
+
+	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
 		return designPane
-			.apertureSelect( mouse.getX(), mouse.getY(), mouse.getZ(), getSelectTolerance() )
+			.mousePointSelect( mouse, getSelectTolerance() )
+			.stream()
+			.map( DesignShapeView::getDesignData )
+			.collect( Collectors.toList() );
+	}
+
+	public List<DesignShape> findShapesWithPoint( Point3D point ) {
+		return designPane
+			.pointSelect( point, getSelectTolerance() )
 			.stream()
 			.map( DesignShapeView::getDesignData )
 			.collect( Collectors.toList() );
