@@ -5,14 +5,12 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
-import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 
@@ -133,13 +131,16 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private void doSetSelected( boolean selected ) {
+		if( ((DesignDrawable)getDesignNode()).getParentLayer() == null ) return;
+
 		Paint fillPaint = getDesignShape().calcFillPaint();
 		Paint selectedFillPaint = getPane().getSelectFillPaint();
 
-		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
-			double opacity = ((Color)fillPaint).getOpacity();
-			selectedFillPaint = opacity == 0.0 ? null : Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
-		}
+//		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
+//			double opacity = ((Color)fillPaint).getOpacity();
+//			selectedFillPaint = Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
+//			selectedFillPaint = Colors.opaque( (Color)selectedFillPaint );
+//		}
 
 		getShape().setStroke( selected ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawPaint() );
 		getShape().setFill( selected ? selectedFillPaint : fillPaint );

@@ -35,8 +35,8 @@ public class Command {
 	public void cancel( DesignTool tool ) throws Exception {
 		if( tool != null ) {
 			tool.getCurrentLayer().removeShape( preview );
-			tool.setCursor( Cursor.DEFAULT );
 			tool.getDesign().clearSelected();
+			tool.setCursor( Cursor.DEFAULT );
 		}
 	}
 
