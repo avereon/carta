@@ -24,14 +24,14 @@ public class MeasureDistanceCommand extends MeasureCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			setPreview( tool, new DesignLine( context.getMouse(), context.getMouse() ) );
-			promptForPoint( context, tool, BundleKey.PROMPT, "start-point" );
+			promptForPoint( context, tool, "start-point" );
 			step = 1;
 			return incomplete();
 		}
 
 		if( parameters.length < 2 ) {
 			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
-			promptForPoint( context, tool, BundleKey.PROMPT, "end-point" );
+			promptForPoint( context, tool, "end-point" );
 			step = 2;
 			return incomplete();
 		}

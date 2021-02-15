@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignCircle;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -20,14 +19,14 @@ public class DrawCircleCommand extends DrawCommand {
 
 		if( parameters.length < 1 ) {
 			setPreview( tool, new DesignCircle( context.getMouse(), 0D ) );
-			promptForPoint( context, tool, BundleKey.PROMPT, "center" );
+			promptForPoint( context, tool, "center" );
 			step = 1;
 			return incomplete();
 		}
 
 		if( parameters.length < 2 ) {
 			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
-			promptForPoint( context, tool, BundleKey.PROMPT, "radius" );
+			promptForPoint( context, tool, "radius" );
 			step = 2;
 			return incomplete();
 		}

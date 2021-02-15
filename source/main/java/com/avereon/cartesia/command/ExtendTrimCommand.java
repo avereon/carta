@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
@@ -20,7 +19,7 @@ public class ExtendTrimCommand extends Command {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 && tool.selectedShapes().size() < 1 ) {
-			promptForPoint( context, tool, BundleKey.PROMPT, "select-trim-shape" );
+			promptForPoint( context, tool, "select-trim-shape" );
 			return incomplete();
 		}
 
@@ -28,7 +27,7 @@ public class ExtendTrimCommand extends Command {
 			tool.mouseSelect( (Point3D)parameters[0] );
 			//shape = selectNearestShapeAtMouse( context, tool );
 			//if( shape == DesignShape.NONE ) return invalid();
-			promptForPoint( context, tool, BundleKey.PROMPT, "select-trim-edge" );
+			promptForPoint( context, tool, "select-trim-edge" );
 			return incomplete();
 		}
 

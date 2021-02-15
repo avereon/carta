@@ -135,7 +135,6 @@ public class CommandContext {
 	}
 
 	void text( String text ) {
-		log.log( Log.WARN, "input-mode=" + isInputMode() + " auto-command=" + isAutoCommandEnabled() + " has-command=" + CommandMap.hasCommand( text ) );
 		if( !isInputMode() && isAutoCommandEnabled() && CommandMap.hasCommand( text ) ) {
 			// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
 			getCommandPrompt().clear();
@@ -220,12 +219,11 @@ public class CommandContext {
 		setInputMode( false );
 	}
 
-	private boolean isInputMode() {
+	boolean isInputMode() {
 		return inputMode;
 	}
 
 	private void setInputMode( boolean mode ) {
-		if( mode != this.inputMode ) log.log( Log.WARN, new Throwable( "input-mode="+mode));
 		this.inputMode = mode;
 	}
 

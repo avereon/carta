@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -20,14 +19,14 @@ public class DrawLineCommand extends DrawCommand {
 
 		if( parameters.length < 1 ) {
 			setPreview( tool, new DesignLine( context.getMouse(), context.getMouse() ) );
-			promptForPoint( context, tool, BundleKey.PROMPT, "start-point" );
+			promptForPoint( context, tool, "start-point" );
 			step = 1;
 			return incomplete();
 		}
 
 		if( parameters.length < 2 ) {
 			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
-			promptForPoint( context, tool, BundleKey.PROMPT, "end-point" );
+			promptForPoint( context, tool, "end-point" );
 			step = 2;
 			return incomplete();
 		}

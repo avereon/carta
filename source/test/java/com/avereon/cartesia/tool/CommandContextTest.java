@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.MockCartesiaMod;
+import com.avereon.cartesia.command.PromptCommand;
 import com.avereon.cartesia.command.ValueCommand;
 import com.avereon.xenon.ProgramProduct;
 import org.junit.jupiter.api.BeforeEach;
@@ -9,17 +10,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommandContextTest {
 
 	private ProgramProduct product;
 
-	private CommandContext processor;
+	private CommandContext context;
 
 	@BeforeEach
 	public void setup() throws Exception {
-		product = new MockCartesiaMod();
-		processor = new CommandContext( product );
+		this.product = new MockCartesiaMod();
+		this.context = new CommandContext( product );
 	}
 
 	@Test
@@ -31,21 +34,21 @@ public class CommandContextTest {
 	@Test
 	void testCommand() {
 		TestCommand command = new TestCommand();
-		processor.submit( null, command );
+		context.submit( null, command );
 		assertThat( command.getValues().length, is( 0 ) );
 	}
 
 	@Test
 	void testCommandWithOneParameter() {
 		TestCommand command = new TestCommand();
-		processor.submit( null, command, "0" );
+		context.submit( null, command, "0" );
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 	}
 
 	@Test
 	void testCommandWithTwoParameters() {
 		TestCommand command = new TestCommand();
-		processor.submit( null, command, "0", "1" );
+		context.submit( null, command, "0", "1" );
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 		assertThat( command.getValues()[ 1 ], is( "1" ) );
 	}
@@ -53,19 +56,31 @@ public class CommandContextTest {
 	@Test
 	void testCommandThatNeedsOneValue() {
 		TestCommand command = new TestCommand( 1 );
-		processor.submit( null, command );
-		processor.submit( null, new ValueCommand(), "hello" );
+		context.submit( null, command );
+		context.submit( null, new ValueCommand(), "hello" );
 		assertThat( command.getValues()[ 0 ], is( "hello" ) );
 	}
 
 	@Test
 	void testCommandThatNeedsTwoValues() {
 		TestCommand command = new TestCommand( 2 );
-		processor.submit( null, command );
-		processor.submit( null, new ValueCommand(), "0" );
-		processor.submit( null, new ValueCommand(), "1" );
+		context.submit( null, command );
+		context.submit( null, new ValueCommand(), "0" );
+		context.submit( null, new ValueCommand(), "1" );
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 		assertThat( command.getValues()[ 1 ], is( "1" ) );
+	}
+
+	@Test
+	void testPromptCommandInputMode() {
+		assertFalse( context.isInputMode() );
+
+		TestCommand command = new TestCommand( 0 );
+		context.submit( null, command );
+		context.submit( null, new PromptCommand( "", false ) );
+		assertFalse( context.isInputMode() );
+		context.submit( null, new PromptCommand( "", true ) );
+		assertTrue( context.isInputMode() );
 	}
 
 	private static class TestCommand extends Command {

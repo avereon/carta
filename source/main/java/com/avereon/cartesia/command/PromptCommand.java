@@ -8,21 +8,22 @@ public class PromptCommand extends Command {
 
 	private final String prompt;
 
-	public PromptCommand( String prompt ) {
+	private final boolean isText;
+
+	public PromptCommand( String prompt, boolean isText ) {
 		this.prompt = prompt;
+		this.isText = isText;
 	}
 
 	@Override
 	public boolean isInputCommand() {
-		// FIXME This breaks auto-commands
-		// This command should probably not set input command because it does not
-		// know the scope of the command that called it. This command should
-		// probably just return the current command context input mode.
-		return true;
+		return isText;
 	}
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+		if( tool == null ) return COMPLETE;
+
 		if( parameters.length == 0 ) {
 			tool.getDesignContext().getCommandPrompt().setPrompt( prompt );
 			return incomplete();

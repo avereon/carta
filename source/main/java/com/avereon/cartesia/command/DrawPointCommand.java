@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignPoint;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -19,7 +18,7 @@ public class DrawPointCommand extends DrawCommand {
 			// Need to start with the point at ZERO until it is added
 			setPreview( tool, new DesignPoint( Point3D.ZERO ) );
 			getPreview().setOrigin( context.getMouse() );
-			promptForPoint( context, tool, BundleKey.PROMPT, "select-point" );
+			promptForPoint( context, tool, "select-point" );
 			return incomplete();
 		}
 

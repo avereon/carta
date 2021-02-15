@@ -77,19 +77,16 @@ public class Command {
 		return Shapes.parsePoint( String.valueOf( value ), anchor );
 	}
 
-	protected void promptForNumber( CommandContext context, DesignTool tool, String bundleKey, String key ) {
-		tool.setCursor( tool.getReticle() );
-		promptForValue( context, tool, bundleKey, key );
+	protected void promptForNumber( CommandContext context, DesignTool tool, String key ) {
+		promptForValue( context, tool, key, false );
 	}
 
-	protected void promptForPoint( CommandContext context, DesignTool tool, String bundleKey, String key ) {
-		tool.setCursor( tool.getReticle() );
-		promptForValue( context, tool, bundleKey, key );
+	protected void promptForPoint( CommandContext context, DesignTool tool, String key ) {
+		promptForValue( context, tool, key, false );
 	}
 
-	protected void promptForText( CommandContext context, DesignTool tool, String bundleKey, String key ) {
-		tool.setCursor( Cursor.TEXT );
-		promptForValue( context, tool, bundleKey, key );
+	protected void promptForText( CommandContext context, DesignTool tool, String key ) {
+		promptForValue( context, tool, key, true );
 	}
 
 	protected DesignShape selectNearestShapeAtMouse( CommandContext context, DesignTool tool ) {
@@ -167,9 +164,10 @@ public class Command {
 		tool.getAsset().setCaptureUndoChanges( true );
 	}
 
-	private void promptForValue( CommandContext context, DesignTool tool, String bundleKey, String key ) {
-		String prompt = context.getProduct().rb().text( bundleKey, key );
-		context.submit( tool, new PromptCommand( prompt ) );
+	private void promptForValue( CommandContext context, DesignTool tool, String key, boolean isText ) {
+		tool.setCursor( isText ? Cursor.TEXT : tool.getReticle() );
+		String prompt = tool.getProduct().rb().text( BundleKey.PROMPT, key );
+		context.submit( tool, new PromptCommand( prompt, isText ) );
 	}
 
 }
