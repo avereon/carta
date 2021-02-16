@@ -8,7 +8,7 @@ import javafx.scene.paint.Paint;
 
 import java.util.Map;
 
-public class DesignPoint extends DesignShape {
+public class DesignMarker extends DesignShape {
 
 	public static final String SIZE = "size";
 
@@ -16,15 +16,13 @@ public class DesignPoint extends DesignShape {
 
 	public static final double DEFAULT_SIZE = 1.0;
 
-	private static final DesignPoints.Type DEFAULT_TYPE = DesignPoints.Type.CROSS;
-
 	private static final double ZERO_DRAW_WIDTH = 0.0;
 
-	public DesignPoint() {
+	public DesignMarker() {
 		addModifyingKeys( ORIGIN, SIZE, TYPE );
 	}
 
-	public DesignPoint( Point3D origin ) {
+	public DesignMarker( Point3D origin ) {
 		this();
 		setOrigin( origin );
 	}
@@ -39,20 +37,20 @@ public class DesignPoint extends DesignShape {
 		return getValue( SIZE );
 	}
 
-	public DesignPoint setSize( String size ) {
+	public DesignMarker setSize( String size ) {
 		setValue( SIZE, size );
 		return this;
 	}
 
-	public DesignPoints.Type calcType() {
-		return DesignPoints.parseType( getType() );
+	public DesignMarkers.Type calcType() {
+		return DesignMarkers.parseType( getType() );
 	}
 
 	public String getType() {
 		return getValue( TYPE );
 	}
 
-	public DesignPoint setType( String type ) {
+	public DesignMarker setType( String type ) {
 		setValue( TYPE, type );
 		return this;
 	}
@@ -74,7 +72,7 @@ public class DesignPoint extends DesignShape {
 		return map;
 	}
 
-	public DesignPoint updateFrom( Map<String, Object> map ) {
+	public DesignMarker updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setSize( (String)map.get( SIZE ) );
 		setType( (String)map.get( TYPE ) );

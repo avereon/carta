@@ -3,7 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.curve.math.Constants;
 import javafx.scene.shape.*;
 
-public class DesignPoints {
+public class DesignMarkers {
 
 	public enum Type {
 

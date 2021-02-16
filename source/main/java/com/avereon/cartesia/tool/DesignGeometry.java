@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignCircle;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.data.DesignPoint;
+import com.avereon.cartesia.data.DesignMarker;
 import com.avereon.cartesia.data.DesignShape;
 
 import java.util.Collections;
@@ -17,7 +17,7 @@ public class DesignGeometry {
 	static {
 		Map<Class<? extends DesignShape>, BiFunction<DesignPane, DesignShape, ? extends DesignShapeView>> generators = new HashMap<>();
 
-		generators.put( DesignPoint.class, ( pane, shape ) -> from( pane, (DesignPoint)shape ) );
+		generators.put( DesignMarker.class, ( pane, shape ) -> from( pane, (DesignMarker)shape ) );
 		generators.put( DesignLine.class, ( pane, shape ) -> from( pane, (DesignLine)shape ) );
 		generators.put( DesignCircle.class, ( pane, shape ) -> from( pane, (DesignCircle)shape ) );
 
@@ -30,8 +30,8 @@ public class DesignGeometry {
 		return generatorMap.get( shape.getClass()).apply( pane, shape );
 	}
 
-	private static DesignPointView from( DesignPane pane, DesignPoint point ) {
-		return new DesignPointView( pane, point );
+	private static DesignMarkerView from( DesignPane pane, DesignMarker point ) {
+		return new DesignMarkerView( pane, point );
 	}
 
 	private static DesignLineView from( DesignPane pane, DesignLine line ) {

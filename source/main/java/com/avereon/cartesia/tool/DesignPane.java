@@ -121,13 +121,13 @@ public class DesignPane extends StackPane {
 	private void setupDesignActions() {
 		Map<Class<?>, Consumer<Object>> addActions = designActions.computeIfAbsent( NodeEvent.CHILD_ADDED, ( k ) -> new HashMap<>() );
 		addActions.put( DesignLayer.class, ( o ) -> doAddLayer( (DesignLayer)o ) );
-		addActions.put( DesignPoint.class, ( o ) -> doAddShape( (DesignShape)o ) );
+		addActions.put( DesignMarker.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignLine.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignCircle.class, ( o ) -> doAddShape( (DesignShape)o ) );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
 		removeActions.put( DesignLayer.class, ( o ) -> doRemoveLayer( (DesignLayer)o ) );
-		removeActions.put( DesignPoint.class, ( o ) -> doRemoveShape( (DesignPoint)o ) );
+		removeActions.put( DesignMarker.class, ( o ) -> doRemoveShape( (DesignMarker)o ) );
 		removeActions.put( DesignLine.class, ( o ) -> doRemoveShape( (DesignLine)o ) );
 		removeActions.put( DesignCircle.class, ( o ) -> doRemoveShape( (DesignCircle)o ) );
 	}
@@ -440,7 +440,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint( DesignPoints.Type.REFERENCE ) );
+		reference.getChildren().add( new ConstructionPoint( DesignMarkers.Type.REFERENCE ) );
 	}
 
 	private List<DesignPaneLayer> getLayers( DesignPaneLayer root ) {

@@ -1,5 +1,7 @@
 package com.avereon.cartesia.math;
 
+import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.DesignTool;
@@ -13,18 +15,16 @@ public class Trim {
 		if( trim instanceof DesignLine ) {
 			if( edge instanceof DesignLine ) {
 				lineToLine( tool, (DesignLine)trim, (DesignLine)edge, trimPoint );
-//			} else if( edge instanceof DesignEllipse ) {
-//
-//			} else if( edge instanceof DesignCurve ) {
-//
+			} else if( edge instanceof DesignArc ) {
+				lineToEllipse( tool, (DesignLine)trim, (DesignArc)edge, trimPoint, edgePoint );
+			} else if( edge instanceof DesignCurve ) {
+				lineToCurve( tool, (DesignLine)trim, (DesignCurve)edge, trimPoint, edgePoint );
 			}
-//		} else if( trim instanceof DesignCircle ) {
-//			ellipseToLine(tool, (DesignCircle)trim, (DesignLine)edge, trimPoint, edgePoint );
-//		} else if( trim instanceof DesignCurve ) {
-//			curveToLine( tool, (DesignCurve)trim, (DesignLine)edge, trimPoint, edgePoint );
+		} else if( trim instanceof DesignArc ) {
+			ellipseToLine( tool, (DesignArc)trim, (DesignLine)edge, trimPoint, edgePoint );
+		} else if( trim instanceof DesignCurve ) {
+			curveToLine( tool, (DesignCurve)trim, (DesignLine)edge, trimPoint, edgePoint );
 		}
-
-		// TODO Logic to trim different combinations of shapes
 	}
 
 	public static void lineToLine( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
@@ -39,16 +39,20 @@ public class Trim {
 		}
 	}
 
-	public static void lineToEllipse( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	public static void lineToEllipse( DesignTool tool, DesignLine trim, DesignArc edge, Point3D trimPoint, Point3D edgePoint ) {
+		// TODO Trim.lineToEllipse()
 	}
 
-	public static void lineToCurve( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	public static void lineToCurve( DesignTool tool, DesignLine trim, DesignCurve edge, Point3D trimPoint, Point3D edgePoint ) {
+		// TODO Trim.lineToCurve()
 	}
 
-	public static void ellipseToLine( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	public static void ellipseToLine( DesignTool tool, DesignArc trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
+		// TODO Trim.ellipseToLine()
 	}
 
-	public static void curveToLine( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	public static void curveToLine( DesignTool tool, DesignCurve trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
+		// TODO Trim.curveToLine()
 	}
 
 	private static Point3D getNearestOnScreen( DesignTool tool, DesignLine line, Point3D screenPoint ) {

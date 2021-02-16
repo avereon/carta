@@ -24,7 +24,7 @@ public class DesignPropertiesMap {
 		pages.put( DesignShape.class, loadPage( product, "shape" ) );
 		pages.put( DesignCircle.class, loadPage( product, "circle" ) );
 		pages.put( DesignLine.class, loadPage( product, "line" ) );
-		pages.put( DesignPoint.class, loadPage( product, "point" ) );
+		pages.put( DesignMarker.class, loadPage( product, "point" ) );
 		propertiesPages = Collections.unmodifiableMap( pages );
 	}
 

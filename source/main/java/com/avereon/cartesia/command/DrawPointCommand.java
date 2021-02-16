@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.data.DesignPoint;
+import com.avereon.cartesia.data.DesignMarker;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
@@ -16,7 +16,7 @@ public class DrawPointCommand extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			// Need to start with the point at ZERO until it is added
-			setPreview( tool, new DesignPoint( Point3D.ZERO ) );
+			setPreview( tool, new DesignMarker( Point3D.ZERO ) );
 			getPreview().setOrigin( context.getWorldMouse() );
 			promptForPoint( context, tool, "select-point" );
 			return incomplete();
@@ -31,7 +31,7 @@ public class DrawPointCommand extends DrawCommand {
 
 	@Override
 	public void handle( MouseEvent event ) {
-		DesignPoint preview = getPreview();
+		DesignMarker preview = getPreview();
 		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			Fx.run( () -> {
 				DesignTool tool = (DesignTool)event.getSource();

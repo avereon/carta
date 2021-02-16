@@ -12,44 +12,45 @@ public class Meet {
 	 *
 	 * @param boundary
 	 */
-	public static final void lineToLine( Point3D point, Point3D point2, DesignLine line, DesignLine boundary ) {
-		//		Vector intersection = Intersection.getIntersection( line, boundary );
-		//		if( intersection == null ) return;
-		//
-		//		if( point == line.getP1() ) {
-		//			line.setP1( intersection );
-		//		} else {
-		//			line.setP2( intersection );
-		//		}
-		//
-		//		if( point2 == boundary.getP1() ) {
-		//			boundary.setP1( intersection );
-		//		} else {
-		//			boundary.setP2( intersection );
-		//		}
+	public static void lineToLine( Point3D point, Point3D point2, DesignLine line, DesignLine boundary ) {
+		List<Point3D> intersections = CadIntersection.getIntersections( line, boundary );
+		if( intersections.isEmpty() ) return;
+
+		Point3D intersection = intersections.get( 0 );
+		if( point == line.getOrigin() ) {
+			line.setOrigin( intersection );
+		} else {
+			line.setPoint( intersection );
+		}
+
+		if( point2 == boundary.getOrigin() ) {
+			boundary.setOrigin( intersection );
+		} else {
+			boundary.setPoint( intersection );
+		}
 	}
 
 	/**
 	 * Make two lines meet by moving the points on the lines nearest the
 	 * intersection to the intersection.
 	 *
-	 * @param line
-	 * @param edge
+	 * @param lineA The first line
+	 * @param lineB The other line
 	 */
-	public static void lineToLine( DesignLine line, DesignLine edge ) {
-		List<Point3D> intersections = CadIntersection.getIntersections( line, edge );
+	public static void lineToLine( DesignLine lineA, DesignLine lineB ) {
+		List<Point3D> intersections = CadIntersection.getIntersections( lineA, lineB );
 		if( intersections.isEmpty() ) return;
 
 		Point3D intersection = intersections.get( 0 );
-		if( CadGeometry.distance( line.getOrigin(), intersection ) < CadGeometry.distance( line.getPoint(), intersection ) ) {
-			line.setOrigin( intersection );
+		if( CadGeometry.distance( lineA.getOrigin(), intersection ) < CadGeometry.distance( lineA.getPoint(), intersection ) ) {
+			lineA.setOrigin( intersection );
 		} else {
-			line.setPoint( intersection );
+			lineA.setPoint( intersection );
 		}
-		if( CadGeometry.distance( edge.getOrigin(), intersection ) < CadGeometry.distance( edge.getPoint(), intersection ) ) {
-			edge.setOrigin( intersection );
+		if( CadGeometry.distance( lineB.getOrigin(), intersection ) < CadGeometry.distance( lineB.getPoint(), intersection ) ) {
+			lineB.setOrigin( intersection );
 		} else {
-			edge.setPoint( intersection );
+			lineB.setPoint( intersection );
 		}
 	}
 

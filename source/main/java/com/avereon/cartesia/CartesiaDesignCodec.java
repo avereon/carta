@@ -114,8 +114,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 	}
 
-	private DesignPoint loadCsaPoint( Map<String, Object> map ) {
-		return new DesignPoint().updateFrom( map );
+	private DesignMarker loadCsaPoint( Map<String, Object> map ) {
+		return new DesignMarker().updateFrom( map );
 	}
 
 	private DesignLine loadCsaLine( Map<String, Object> map ) {

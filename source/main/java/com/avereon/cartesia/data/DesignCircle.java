@@ -6,6 +6,10 @@ import javafx.geometry.Point3D;
 
 import java.util.Map;
 
+/**
+ * @deprecated In favor of the more general DesignArc
+ */
+@Deprecated
 public class DesignCircle extends DesignShape {
 
 	public static final String CIRCLE = "circle";

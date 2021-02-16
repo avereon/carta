@@ -91,7 +91,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		DesignLayer layer2 = new DesignLayer().setName( "Layer 2" );
 		layer1.addLayer( layer2 );
 
-		DesignPoint point = new DesignPoint( new Point3D( 1, 2, 0 ) );
+		DesignMarker point = new DesignMarker( new Point3D( 1, 2, 0 ) );
 		point.setDrawPaint( "0x0000ff80" );
 		layer1.addShape( point );
 

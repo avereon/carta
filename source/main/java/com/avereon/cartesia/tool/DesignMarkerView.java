@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.DesignPoint;
-import com.avereon.cartesia.data.DesignPoints;
+import com.avereon.cartesia.data.DesignMarker;
+import com.avereon.cartesia.data.DesignMarkers;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
@@ -12,7 +12,7 @@ import javafx.scene.shape.StrokeLineCap;
 
 import java.util.List;
 
-public class DesignPointView extends DesignShapeView {
+public class DesignMarkerView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> originHandler;
 
@@ -20,19 +20,19 @@ public class DesignPointView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> pointSizeHandler;
 
-	public DesignPointView( DesignPane pane, DesignPoint point ) {
+	public DesignMarkerView( DesignPane pane, DesignMarker point ) {
 		super( pane, point );
 	}
 
-	public DesignPoint getDesignPoint() {
-		return (DesignPoint)getDesignNode();
+	public DesignMarker getDesignMarker() {
+		return (DesignMarker)getDesignNode();
 	}
 
 	@Override
 	public List<Shape> generateGeometry() {
-		double ox = getDesignPoint().getOrigin().getX();
-		double oy = getDesignPoint().getOrigin().getY();
-		Path path = DesignPoints.createPoint( getDesignPoint().calcType(), ox, oy, getDesignPoint().getRadius() );
+		double ox = getDesignMarker().getOrigin().getX();
+		double oy = getDesignMarker().getOrigin().getY();
+		Path path = DesignMarkers.createPoint( getDesignMarker().calcType(), ox, oy, getDesignMarker().getRadius() );
 		return List.of( path );
 	}
 
@@ -57,19 +57,19 @@ public class DesignPointView extends DesignShapeView {
 	@Override
 	void registerListeners() {
 		super.registerListeners();
-		getDesignShape().register( DesignPoint.ORIGIN, originHandler = e -> Fx.run( () -> {
-			getShape().setLayoutX( getDesignPoint().getOrigin().getX() );
-			getShape().setLayoutY( getDesignPoint().getOrigin().getY() );
+		getDesignShape().register( DesignMarker.ORIGIN, originHandler = e -> Fx.run( () -> {
+			getShape().setLayoutX( getDesignMarker().getOrigin().getX() );
+			getShape().setLayoutY( getDesignMarker().getOrigin().getY() );
 		}));
-		getDesignShape().register( DesignPoint.TYPE, pointTypeHandler = e -> Fx.run( this::updateGeometry ) );
-		getDesignShape().register( DesignPoint.SIZE, pointSizeHandler = e -> Fx.run( this::updateGeometry ) );
+		getDesignShape().register( DesignMarker.TYPE, pointTypeHandler = e -> Fx.run( this::updateGeometry ) );
+		getDesignShape().register( DesignMarker.SIZE, pointSizeHandler = e -> Fx.run( this::updateGeometry ) );
 	}
 
 	@Override
 	void unregisterListeners() {
-		getDesignShape().unregister( DesignPoint.SIZE, pointSizeHandler );
-		getDesignShape().unregister( DesignPoint.TYPE, pointTypeHandler );
-		getDesignShape().unregister( DesignPoint.ORIGIN, originHandler );
+		getDesignShape().unregister( DesignMarker.SIZE, pointSizeHandler );
+		getDesignShape().unregister( DesignMarker.TYPE, pointTypeHandler );
+		getDesignShape().unregister( DesignMarker.ORIGIN, originHandler );
 		super.unregisterListeners();
 	}
 

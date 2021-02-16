@@ -9,11 +9,11 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class DesignPointTest {
+public class DesignMarkerTest {
 
 	@Test
 	void testModify() {
-		DesignPoint point = new DesignPoint( new Point3D( 0, 0, 0 ) );
+		DesignMarker point = new DesignMarker( new Point3D( 0, 0, 0 ) );
 		Assertions.assertTrue( point.isModified() );
 		point.setModified( false );
 		Assertions.assertFalse( point.isModified() );
@@ -31,7 +31,7 @@ public class DesignPointTest {
 
 	@Test
 	void testOrigin() {
-		DesignPoint point = new DesignPoint( new Point3D( 0, 0, 0 ) );
+		DesignMarker point = new DesignMarker( new Point3D( 0, 0, 0 ) );
 		assertThat( point.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
 
 		point.setOrigin( new Point3D( 1, 2, 3 ) );
