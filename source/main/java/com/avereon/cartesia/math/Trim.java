@@ -13,7 +13,15 @@ public class Trim {
 		if( trim instanceof DesignLine ) {
 			if( edge instanceof DesignLine ) {
 				lineToLine( tool, (DesignLine)trim, (DesignLine)edge, trimPoint );
+//			} else if( edge instanceof DesignEllipse ) {
+//
+//			} else if( edge instanceof DesignCurve ) {
+//
 			}
+//		} else if( trim instanceof DesignCircle ) {
+//			ellipseToLine(tool, (DesignCircle)trim, (DesignLine)edge, trimPoint, edgePoint );
+//		} else if( trim instanceof DesignCurve ) {
+//			curveToLine( tool, (DesignCurve)trim, (DesignLine)edge, trimPoint, edgePoint );
 		}
 
 		// TODO Logic to trim different combinations of shapes
@@ -31,10 +39,17 @@ public class Trim {
 		}
 	}
 
-	//lineToEllipse
-	//lineToCurve
-	//ellipseToLine
-	//curveToLine
+	public static void lineToEllipse( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	}
+
+	public static void lineToCurve( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	}
+
+	public static void ellipseToLine( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	}
+
+	public static void curveToLine( DesignTool tool, DesignLine trim, DesignLine edge, Point3D trimPoint ) {
+	}
 
 	private static Point3D getNearestOnScreen( DesignTool tool, DesignLine line, Point3D screenPoint ) {
 		double d1 = CadGeometry.distance( tool.worldToScreen( line.getOrigin() ), screenPoint );
