@@ -62,10 +62,12 @@ public class DesignContext {
 
 	public final void setMouse( MouseEvent event ) {
 		DesignTool tool = (DesignTool)event.getSource();
-		Point3D mouseOnWorkplane = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+		Point3D screenMouse = new Point3D( event.getX(), event.getY(), event.getZ() );
+		getCommandContext().setScreenMouse( screenMouse );
 
-		getCommandContext().setMouse( mouseOnWorkplane );
-		getCoordinateStatus().updatePosition( mouseOnWorkplane );
+		Point3D worldMouse = tool.mouseToWorkplane( screenMouse );
+		getCommandContext().setWorldMouse( worldMouse );
+		getCoordinateStatus().updatePosition( worldMouse );
 	}
 
 }

@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.math.Trim;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
@@ -16,6 +17,8 @@ public class ExtendTrimCommand extends Command {
 
 	private DesignShape trim;
 
+	private Point3D trimMouse;
+
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
@@ -24,22 +27,19 @@ public class ExtendTrimCommand extends Command {
 		}
 
 		if( parameters.length < 2 ) {
-			trim = selectNearestShapeAtPoint( tool, (Point3D)parameters[ 0 ] );
+			trimMouse = context.getScreenMouse();
+			trim = selectNearestShapeAtMouse( tool, trimMouse );
 			if( trim == DesignShape.NONE ) return invalid();
 			promptForPoint( context, tool, "select-trim-edge" );
 			return incomplete();
 		}
 
-		tool.mousePointSelect( context.getMouse() );
-		DesignShape edge = selectNearestShapeAtPoint( tool, (Point3D)parameters[ 1 ] );
+		Point3D edgeMouse = context.getScreenMouse();
+		DesignShape edge = selectNearestShapeAtMouse( tool, edgeMouse );
 		if( edge == DesignShape.NONE ) return invalid();
 
-		log.log( Log.WARN, "shape-to-trim=" + trim );
-		log.log( Log.WARN, "shape-as-edge=" + edge );
-
-		// NEXT Extend/trim the shape to the edge
-
 		tool.clearSelected();
+		Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
 
 		return complete();
 	}

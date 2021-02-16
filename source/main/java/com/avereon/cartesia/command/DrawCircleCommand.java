@@ -18,7 +18,7 @@ public class DrawCircleCommand extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 
 		if( parameters.length < 1 ) {
-			setPreview( tool, new DesignCircle( context.getMouse(), 0D ) );
+			setPreview( tool, new DesignCircle( context.getWorldMouse(), 0D ) );
 			promptForPoint( context, tool, "center" );
 			step = 1;
 			return incomplete();

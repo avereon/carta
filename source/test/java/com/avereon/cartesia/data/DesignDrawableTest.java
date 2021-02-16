@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.Maths;
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -26,7 +26,7 @@ public class DesignDrawableTest {
 		assertThat( drawable.getDrawPaint(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
 		assertThat( drawable.getDrawWidth(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
+		assertThat( drawable.calcDrawWidth(), is( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 		assertThat( drawable.getDrawCap(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 		assertThat( drawable.getDrawPattern(), is( DesignDrawable.MODE_LAYER ) );
@@ -54,7 +54,7 @@ public class DesignDrawableTest {
 	@Test
 	void testLayerCalcDefaults() {
 		assertThat( layer.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
-		assertThat( layer.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
+		assertThat( layer.calcDrawWidth(), is( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 		assertThat( layer.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 		assertThat( layer.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( layer.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
@@ -90,12 +90,12 @@ public class DesignDrawableTest {
 		assertThat( drawable.getValueMode( drawable.getDrawWidth() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the cap value is a copy of the layer cap value
 		assertThat( drawable.getDrawWidth(), is( DesignLayer.DEFAULT_DRAW_WIDTH ) );
-		assertThat( drawable.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
+		assertThat( drawable.calcDrawWidth(), is( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawWidth( String.valueOf( 1.0 ) );
 		assertThat( drawable.getDrawWidth(), is( DesignLayer.DEFAULT_DRAW_WIDTH ) );
-		assertThat( drawable.calcDrawWidth(), is( Maths.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
+		assertThat( drawable.calcDrawWidth(), is( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 	}
 
 	@Test

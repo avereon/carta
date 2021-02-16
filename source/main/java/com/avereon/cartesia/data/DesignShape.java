@@ -1,7 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
-import com.avereon.cartesia.math.Shapes;
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.curve.math.Geometry;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
@@ -71,8 +71,8 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public double distanceTo( Point3D point ) {
-		double[] o = Shapes.asPoint( getOrigin() );
-		double[] p = Shapes.asPoint( point );
+		double[] o = CadPoints.asPoint( getOrigin() );
+		double[] p = CadPoints.asPoint( point );
 		return Geometry.distance( o, p );
 	}
 

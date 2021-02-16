@@ -329,25 +329,25 @@ public class DesignPane extends StackPane {
 		setViewPoint( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
-	List<Shape> mousePointSelect( Point3D p, DesignValue v ) {
-		double pixels = valueToPixels( v );
-		Point2D point = new Point2D( getTranslateX() + pixels, getTranslateY() - pixels );
-		return pointSelect( parentToLocal( p ), parentToLocal( point ) );
+	List<Shape> screenPointSelect( Point3D point, DesignValue tolerance ) {
+		double pixels = valueToPixels( tolerance );
+		Point2D aperture = new Point2D( getTranslateX() + pixels, getTranslateY() - pixels );
+		return worldPointSelect( parentToLocal( point ), parentToLocal( aperture ) );
 	}
 
-	List<Shape> mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
+	List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
 		return windowSelect( parentToLocal( a ), parentToLocal( b ), contains );
 	}
 
-	List<Shape> pointSelect( Point3D anchor, DesignValue v ) {
-		return pointSelect( anchor, v.getValue() );
+	List<Shape> worldPointSelect( Point3D anchor, DesignValue v ) {
+		return worldPointSelect( anchor, v.getValue() );
 	}
 
-	List<Shape> pointSelect( Point3D anchor, double radius ) {
-		return pointSelect( anchor, new Point2D( radius, radius ) );
+	List<Shape> worldPointSelect( Point3D anchor, double radius ) {
+		return worldPointSelect( anchor, new Point2D( radius, radius ) );
 	}
 
-	List<Shape> pointSelect( Point3D anchor, Point2D aperture ) {
+	List<Shape> worldPointSelect( Point3D anchor, Point2D aperture ) {
 		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), aperture.getX(), aperture.getY() ), false );
 	}
 

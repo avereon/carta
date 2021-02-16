@@ -13,7 +13,7 @@ public class SnapAutoCommand extends SnapCommand {
 		Snap snap = (Snap)parameters[ 0 ];
 		if( snap == null ) return null;
 
-		Point3D point = context.getMouse();
+		Point3D point = context.getWorldMouse();
 		MouseEvent event = (MouseEvent)parameters[ 1 ];
 		if( event != null ) point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
 		return snap.snap( tool, point );

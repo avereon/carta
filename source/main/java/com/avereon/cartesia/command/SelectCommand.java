@@ -40,7 +40,7 @@ public class SelectCommand extends Command {
 		if( context.isPenMode() ) {
 			return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 		} else if( context.isSingleSelectMode( event ) ) {
-			tool.mousePointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );
+			tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );
 			return complete();
 		} else if( context.isWindowSelectMode( event ) ) {
 			tool.mouseWindowSelect( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectByContains( event ) );

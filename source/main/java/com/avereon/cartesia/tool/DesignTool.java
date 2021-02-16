@@ -276,11 +276,11 @@ public abstract class DesignTool extends GuidedTool {
 		return gridSnapEnabled ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
 
-	public Point3D worldToMouse( double x, double y, double z ) {
+	public Point3D worldToScreen( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( x, y, z );
 	}
 
-	public Point3D worldToMouse( Point3D point ) {
+	public Point3D worldToScreen( Point3D point ) {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( point );
 	}
 
@@ -519,15 +519,15 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	public void mousePointSelect( Point3D mouse ) {
-		mousePointSelect( mouse, false );
+	public void screenPointSelect( Point3D mouse ) {
+		screenPointSelect( mouse, false );
 	}
 
-	public void mousePointSelect( Point3D mouse, boolean toggle ) {
+	public void screenPointSelect( Point3D mouse, boolean toggle ) {
 		Fx.run( () -> {
 			if( !toggle ) selectedShapes().clear();
 
-			List<Shape> selection = designPane.mousePointSelect( mouse, getSelectTolerance() );
+			List<Shape> selection = designPane.screenPointSelect( mouse, getSelectTolerance() );
 			selection.stream().findFirst().ifPresent( shape -> {
 				if( toggle && getDesignData( shape ).isSelected() ) {
 					selectedShapes().remove( shape );
@@ -541,20 +541,20 @@ public abstract class DesignTool extends GuidedTool {
 	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
 		Fx.run( () -> {
 			selectedShapes().clear();
-			List<Shape> selection = designPane.mouseWindowSelect( a, b, contains );
+			List<Shape> selection = designPane.screenWindowSelect( a, b, contains );
 			selectedShapes().addAll( selection );
 		} );
 	}
 
-	public void pointSelect( Point3D point ) {
-		pointSelect( point, false );
+	public void worldPointSelect( Point3D point ) {
+		worldPointSelect( point, false );
 	}
 
-	public void pointSelect( Point3D point, boolean toggle ) {
+	public void worldPointSelect( Point3D point, boolean toggle ) {
 		Fx.run( () -> {
 			if( !toggle ) selectedShapes().clear();
 
-			List<Shape> selection = designPane.pointSelect( point, getSelectTolerance() );
+			List<Shape> selection = designPane.worldPointSelect( point, getSelectTolerance() );
 			selection.stream().findFirst().ifPresent( shape -> {
 				if( toggle && getDesignData( shape ).isSelected() ) {
 					selectedShapes().remove( shape );
@@ -571,7 +571,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
 		return designPane
-			.mousePointSelect( mouse, getSelectTolerance() )
+			.screenPointSelect( mouse, getSelectTolerance() )
 			.stream()
 			.map( DesignShapeView::getDesignData )
 			.collect( Collectors.toList() );
@@ -579,7 +579,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public List<DesignShape> findShapesWithPoint( Point3D point ) {
 		return designPane
-			.pointSelect( point, getSelectTolerance() )
+			.worldPointSelect( point, getSelectTolerance() )
 			.stream()
 			.map( DesignShapeView::getDesignData )
 			.collect( Collectors.toList() );

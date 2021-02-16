@@ -74,9 +74,9 @@ public class DesignPaneTest implements TestTimeouts {
 		assertThat( line.getEndX(), is( 1.0 ) );
 		assertThat( line.getEndY(), is( -1.0 ) );
 
-		assertTrue( pane.pointSelect( new Point3D( 1, 1, 0 ), 0.1 ).isEmpty() );
-		assertThat( pane.pointSelect( new Point3D( 0, 0, 0 ), 0.1 ), contains( line ) );
-		assertTrue( pane.pointSelect( new Point3D( -1, -1, 0 ), 0.1 ).isEmpty() );
+		assertTrue( pane.worldPointSelect( new Point3D( 1, 1, 0 ), 0.1 ).isEmpty() );
+		assertThat( pane.worldPointSelect( new Point3D( 0, 0, 0 ), 0.1 ), contains( line ) );
+		assertTrue( pane.worldPointSelect( new Point3D( -1, -1, 0 ), 0.1 ).isEmpty() );
 	}
 
 	@Test

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.Maths;
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
@@ -85,7 +85,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public double calcDrawWidth() {
 		String width = getDrawWidth();
-		if( isCustomValue( width ) ) return Maths.evalNoException( width );
+		if( isCustomValue( width ) ) return CadMath.evalNoException( width );
 		return ((DesignLayer)getParent()).calcDrawWidth();
 	}
 

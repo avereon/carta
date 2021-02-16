@@ -18,7 +18,7 @@ public class DrawLineCommand extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 
 		if( parameters.length < 1 ) {
-			setPreview( tool, new DesignLine( context.getMouse(), context.getMouse() ) );
+			setPreview( tool, new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			step = 1;
 			return incomplete();

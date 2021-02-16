@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.math.Maths;
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.data.Node;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
@@ -229,7 +229,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMajorGridX( String majorGridX ) {
-		this.majorGridX = Maths.evalNoException( majorGridX );
+		this.majorGridX = CadMath.evalNoException( majorGridX );
 		setValue( MAJOR_GRID_X, majorGridX );
 		return this;
 	}
@@ -243,7 +243,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMajorGridY( String majorGridY ) {
-		this.majorGridY = Maths.evalNoException( majorGridY );
+		this.majorGridY = CadMath.evalNoException( majorGridY );
 		setValue( MAJOR_GRID_Y, majorGridY );
 		return this;
 	}
@@ -257,7 +257,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMajorGridZ( String majorGridZ ) {
-		this.majorGridZ = Maths.evalNoException( majorGridZ );
+		this.majorGridZ = CadMath.evalNoException( majorGridZ );
 		setValue( MAJOR_GRID_Z, majorGridZ );
 		return this;
 	}
@@ -271,7 +271,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMinorGridX( String minorGridX ) {
-		this.minorGridX = Maths.evalNoException( minorGridX );
+		this.minorGridX = CadMath.evalNoException( minorGridX );
 		setValue( MINOR_GRID_X, minorGridX );
 		return this;
 	}
@@ -285,7 +285,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMinorGridY( String minorGridY ) {
-		this.minorGridY = Maths.evalNoException( minorGridY );
+		this.minorGridY = CadMath.evalNoException( minorGridY );
 		setValue( MINOR_GRID_Y, minorGridY );
 		return this;
 	}
@@ -299,7 +299,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setMinorGridZ( String minorGridZ ) {
-		this.minorGridZ = Maths.evalNoException( minorGridZ );
+		this.minorGridZ = CadMath.evalNoException( minorGridZ );
 		setValue( MINOR_GRID_Z, minorGridZ );
 		return this;
 	}
@@ -313,7 +313,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setSnapGridX( String snapGridX ) {
-		this.snapGridX = Maths.evalNoException( snapGridX );
+		this.snapGridX = CadMath.evalNoException( snapGridX );
 		setValue( SNAP_GRID_X, snapGridX );
 		return this;
 	}
@@ -327,7 +327,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setSnapGridY( String snapGridY ) {
-		this.snapGridY = Maths.evalNoException( snapGridY );
+		this.snapGridY = CadMath.evalNoException( snapGridY );
 		setValue( SNAP_GRID_Y, snapGridY );
 		return this;
 	}
@@ -341,7 +341,7 @@ public class Workplane extends Node {
 	}
 
 	public Workplane setSnapGridZ( String snapGridZ ) {
-		this.snapGridZ = Maths.evalNoException( snapGridZ );
+		this.snapGridZ = CadMath.evalNoException( snapGridZ );
 		setValue( SNAP_GRID_Z, snapGridZ );
 		return this;
 	}

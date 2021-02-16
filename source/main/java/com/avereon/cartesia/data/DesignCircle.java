@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.Shapes;
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 
@@ -51,8 +51,8 @@ public class DesignCircle extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		double[] o = Shapes.asPoint( getOrigin() );
-		double[] p = Shapes.asPoint( point );
+		double[] o = CadPoints.asPoint( getOrigin() );
+		double[] p = CadPoints.asPoint( point );
 		return Math.abs( Geometry.distance( o, p ) - getRadius() );
 	}
 

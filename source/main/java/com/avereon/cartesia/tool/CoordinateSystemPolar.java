@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.math.Shapes;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Arithmetic;
 import javafx.geometry.BoundingBox;
@@ -19,9 +19,9 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 	public Point3D getNearest( Workplane workplane, Point3D point ) {
 		// This can be determined by calculating the nearest point
 		// and then converting from polar to cartesian coordinates
-		Point3D origin = Shapes.parsePoint( workplane.getOrigin() );
+		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
 		point = point.subtract( origin );
-		point = Shapes.cartesianToPolarDegrees( point );
+		point = CadShapes.cartesianToPolarDegrees( point );
 
 		point = new Point3D(
 			Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
@@ -29,7 +29,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() )
 		);
 
-		point = Shapes.polarDegreesToCartesian( point );
+		point = CadShapes.polarDegreesToCartesian( point );
 		point = point.add( origin );
 
 		return point;
@@ -47,7 +47,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 
 		List<Shape> grid = new ArrayList<>();
 
-		Point3D origin = Shapes.parsePoint( workplane.getOrigin() );
+		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
 		double boundaryXmin = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) - origin.getX();
 		double boundaryXmax = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) - origin.getX();
 		double boundaryYmin = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
@@ -104,21 +104,21 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		}
 		// Lines (angles) need to be centered at origin
 		for( double value : minorOffsetsA ) {
-			Point3D p = Shapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
+			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
 			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
 			shape.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
 			grid.add( shape );
 		}
 		for( double value : majorOffsetsA ) {
-			Point3D p = Shapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
+			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
 			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
 			shape.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
 			grid.add( shape );
 		}
 		for( double value : axisOffsetsA ) {
-			Point3D p = Shapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
+			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
 			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
 			shape.setStroke( Workplane.DEFAULT_AXIS_COLOR );

@@ -38,7 +38,9 @@ public class CommandContext {
 
 	private boolean inputMode;
 
-	private Point3D mouse;
+	private Point3D screenMouse;
+
+	private Point3D worldMouse;
 
 	private Point3D anchor;
 
@@ -76,7 +78,7 @@ public class CommandContext {
 		String input = getCommandPrompt().getText();
 		if( input.isEmpty() ) {
 			DesignTool tool = getLastActiveDesignTool();
-			Point3D mouse = tool.worldToMouse( getMouse() );
+			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point2D screen = tool.localToScreen( mouse );
 			MouseEvent mEvent = new MouseEvent(
 				getLastActiveDesignTool(),
@@ -167,12 +169,20 @@ public class CommandContext {
 		lastActiveDesignTool = tool;
 	}
 
-	public Point3D getMouse() {
-		return mouse;
+	public Point3D getScreenMouse() {
+		return screenMouse;
 	}
 
-	void setMouse( Point3D point ) {
-		mouse = point;
+	public void setScreenMouse( Point3D screenMouse ) {
+		this.screenMouse = screenMouse;
+	}
+
+	public Point3D getWorldMouse() {
+		return worldMouse;
+	}
+
+	void setWorldMouse( Point3D point ) {
+		worldMouse = point;
 	}
 
 	public Point3D getAnchor() {

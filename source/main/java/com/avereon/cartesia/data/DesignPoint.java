@@ -1,7 +1,7 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.Maths;
-import com.avereon.cartesia.math.Shapes;
+import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
@@ -31,7 +31,7 @@ public class DesignPoint extends DesignShape {
 
 	public double calcSize() {
 		String size = getSize();
-		if( size != null ) return Maths.evalNoException( size );
+		if( size != null ) return CadMath.evalNoException( size );
 		return DEFAULT_SIZE;
 	}
 
@@ -92,8 +92,8 @@ public class DesignPoint extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		double[] o = Shapes.asPoint( getOrigin() );
-		double[] p = Shapes.asPoint( point );
+		double[] o = CadPoints.asPoint( getOrigin() );
+		double[] p = CadPoints.asPoint( point );
 		return Geometry.distance( o, p );
 	}
 

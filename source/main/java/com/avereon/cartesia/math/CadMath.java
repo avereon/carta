@@ -6,7 +6,7 @@ import org.nfunk.jep.JEP;
 
 import java.text.ParseException;
 
-public class Maths {
+public class CadMath {
 
 	/**
 	 * Evaluate the math expression.
@@ -15,7 +15,7 @@ public class Maths {
 	 * @return The value of the expression
 	 * @throws ParseException
 	 */
-	public static double eval( String expression ) throws ExpressionException {
+	public static double eval( String expression ) throws CadMathExpressionException {
 		return Expressions.eval( expression );
 	}
 
@@ -40,12 +40,12 @@ public class Maths {
 			addFunction( "rad", new Rad() );
 		}
 
-		public static double eval( String expression ) throws ExpressionException {
+		public static double eval( String expression ) throws CadMathExpressionException {
 			Expressions parser = new Expressions();
 			parser.parseExpression( expression );
 			if( parser.hasError() ) {
 				ParseException parseException = new ParseException( parser.getErrorInfo(), -1 );
-				throw new ExpressionException( parseException.getMessage(), parseException );
+				throw new CadMathExpressionException( parseException.getMessage(), parseException );
 			}
 			return parser.getValue();
 		}

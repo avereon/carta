@@ -21,7 +21,7 @@ public class SnapNearest implements Snap {
 	public Point3D snap( DesignTool tool, Point3D click ) {
 		if( click == null ) return null;
 
-		Point3D cursor = tool.worldToMouse( click );
+		Point3D cursor = tool.worldToScreen( click );
 
 		// Go through all the reference points, convert them to screen coordinates and find the nearest
 		double distance;
@@ -34,7 +34,7 @@ public class SnapNearest implements Snap {
 			if( data == null || data.isPreview() ) continue;
 			List<ConstructionPoint> cps = DesignShapeView.getConstructionPoints( shape );
 			for( ConstructionPoint cp : cps ) {
-				distance = cursor.distance( tool.worldToMouse( cp.getLayoutX(), cp.getLayoutY(), 0 ) );
+				distance = cursor.distance( tool.worldToScreen( cp.getLayoutX(), cp.getLayoutY(), 0 ) );
 				if( distance < minDistance ) {
 					nearest = cp.getLocation();
 					minDistance = distance;

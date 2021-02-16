@@ -1,7 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.math.Maths;
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
@@ -198,7 +198,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public double calcDrawWidth() {
-		return Maths.evalNoException( getDrawWidth() );
+		return CadMath.evalNoException( getDrawWidth() );
 	}
 
 	@Override

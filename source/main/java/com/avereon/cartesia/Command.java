@@ -2,8 +2,8 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.PromptCommand;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.math.Maths;
-import com.avereon.cartesia.math.Shapes;
+import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
@@ -64,18 +64,18 @@ public class Command {
 	protected double asDouble( Object value ) throws Exception {
 		if( value instanceof Double ) return (Double)value;
 		if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
-		return Maths.eval( String.valueOf( value ) );
+		return CadMath.eval( String.valueOf( value ) );
 	}
 
 	protected double asDouble( Point3D anchor, Object value ) throws Exception {
 		if( value instanceof Double ) return (Double)value;
 		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
-		return Maths.eval( String.valueOf( value ) );
+		return CadMath.eval( String.valueOf( value ) );
 	}
 
 	protected Point3D asPoint( DesignTool tool, Object value, Point3D anchor ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
-		return Shapes.parsePoint( String.valueOf( value ), anchor );
+		return CadShapes.parsePoint( String.valueOf( value ), anchor );
 	}
 
 	protected void promptForNumber( CommandContext context, DesignTool tool, String key ) {
@@ -90,15 +90,27 @@ public class Command {
 		promptForValue( context, tool, key, true );
 	}
 
-//	protected DesignShape selectNearestShapeAtMouse( CommandContext context, DesignTool tool ) {
-//		return selectNearestShapeAtMouse( tool, context.getMouse() );
-//	}
+	protected DesignShape selectNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
+		try {
+			tool.screenPointSelect( mouse );
+			Fx.waitForWithInterrupt( 1000 );
+
+			if( tool.selectedShapes().isEmpty() ) {
+				return DesignShape.NONE;
+			} else {
+				return DesignShapeView.getDesignData( tool.selectedShapes().get( 0 ) );
+			}
+		} catch( InterruptedException exception ) {
+			log.log( Log.ERROR, exception );
+			return DesignShape.NONE;
+		}
+	}
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
 		try {
-			tool.pointSelect( point );
+			tool.worldPointSelect( point );
 			Fx.waitForWithInterrupt( 1000 );
-			return Shapes.findNearestShapeToPoint( tool.selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList()), point );
+			return CadShapes.findNearestShapeToPoint( tool.selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList()), point );
 		} catch( InterruptedException exception ) {
 			log.log( Log.ERROR, exception );
 		}
