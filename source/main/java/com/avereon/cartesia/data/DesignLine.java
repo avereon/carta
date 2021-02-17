@@ -9,6 +9,8 @@ import java.util.Map;
 
 public class DesignLine extends DesignShape {
 
+	public static final String LINE = "line";
+
 	public static final String POINT = "point";
 
 	public DesignLine() {
@@ -32,7 +34,7 @@ public class DesignLine extends DesignShape {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.put( SHAPE, "line" );
+		map.put( SHAPE, LINE );
 		map.putAll( asMap( POINT ) );
 		return map;
 	}

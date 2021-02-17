@@ -1,53 +1,71 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.ParseUtil;
 import javafx.geometry.Point3D;
+
+import java.util.Map;
 
 public class DesignCurve extends DesignShape {
 
 	public static final String CURVE = "curve";
 
-	public static final String B = "b";
+	public static final String ORIGIN_CONTROL = "origin-control";
 
-	public static final String C = "c";
+	public static final String POINT_CONTROL = "point-control";
 
-	public static final String D = "d";
+	public static final String POINT = "point";
 
 	public DesignCurve() {
-		addModifyingKeys( B, C, D );
+		addModifyingKeys( ORIGIN_CONTROL, POINT_CONTROL, POINT );
 	}
 
-	public DesignCurve( Point3D origin, Point3D b, Point3D c, Point3D d ) {
+	public DesignCurve( Point3D origin, Point3D originControl, Point3D pointControl, Point3D point ) {
 		this();
 		setOrigin( origin );
-		setB( b );
-		setC( c );
-		setD( d );
+		setOriginControl( originControl );
+		setPointControl( pointControl );
+		setPoint( point );
 	}
 
-	public Point3D getB() {
-		return getValue( B );
+	public Point3D getOriginControl() {
+		return getValue( ORIGIN_CONTROL );
 	}
 
-	public DesignShape setB( Point3D value ) {
-		setValue( B, value );
+	public DesignShape setOriginControl( Point3D value ) {
+		setValue( ORIGIN_CONTROL, value );
 		return this;
 	}
 
-	public Point3D getC() {
-		return getValue( C );
+	public Point3D getPointControl() {
+		return getValue( POINT_CONTROL );
 	}
 
-	public DesignShape setC( Point3D value ) {
-		setValue( C, value );
+	public DesignShape setPointControl( Point3D value ) {
+		setValue( POINT_CONTROL, value );
 		return this;
 	}
 
-	public Point3D getD() {
-		return getValue( D );
+	public Point3D getPoint() {
+		return getValue( POINT );
 	}
 
-	public DesignShape setD( Point3D value ) {
-		setValue( D, value );
+	public DesignShape setPoint( Point3D value ) {
+		setValue( POINT, value );
+		return this;
+	}
+
+	protected Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
+		map.put( SHAPE, CURVE );
+		map.putAll( asMap( ORIGIN_CONTROL, POINT_CONTROL, POINT ) );
+		return map;
+	}
+
+	public DesignCurve updateFrom( Map<String, Object> map ) {
+		super.updateFrom( map );
+		setOriginControl( ParseUtil.parsePoint3D( (String)map.get( ORIGIN_CONTROL ) ) );
+		setPointControl( ParseUtil.parsePoint3D( (String)map.get( POINT_CONTROL ) ) );
+		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;
 	}
 

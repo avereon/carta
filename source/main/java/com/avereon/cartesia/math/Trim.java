@@ -16,12 +16,12 @@ public class Trim {
 			if( edge instanceof DesignLine ) {
 				lineToLine( tool, (DesignLine)trim, (DesignLine)edge, trimPoint );
 			} else if( edge instanceof DesignArc ) {
-				lineToEllipse( tool, (DesignLine)trim, (DesignArc)edge, trimPoint, edgePoint );
+				lineToArc( tool, (DesignLine)trim, (DesignArc)edge, trimPoint, edgePoint );
 			} else if( edge instanceof DesignCurve ) {
 				lineToCurve( tool, (DesignLine)trim, (DesignCurve)edge, trimPoint, edgePoint );
 			}
 		} else if( trim instanceof DesignArc ) {
-			ellipseToLine( tool, (DesignArc)trim, (DesignLine)edge, trimPoint, edgePoint );
+			arcToLine( tool, (DesignArc)trim, (DesignLine)edge, trimPoint, edgePoint );
 		} else if( trim instanceof DesignCurve ) {
 			curveToLine( tool, (DesignCurve)trim, (DesignLine)edge, trimPoint, edgePoint );
 		}
@@ -39,16 +39,16 @@ public class Trim {
 		}
 	}
 
-	public static void lineToEllipse( DesignTool tool, DesignLine trim, DesignArc edge, Point3D trimPoint, Point3D edgePoint ) {
-		// TODO Trim.lineToEllipse()
+	public static void lineToArc( DesignTool tool, DesignLine trim, DesignArc edge, Point3D trimPoint, Point3D edgePoint ) {
+		// TODO Trim.lineToArc()
 	}
 
 	public static void lineToCurve( DesignTool tool, DesignLine trim, DesignCurve edge, Point3D trimPoint, Point3D edgePoint ) {
 		// TODO Trim.lineToCurve()
 	}
 
-	public static void ellipseToLine( DesignTool tool, DesignArc trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
-		// TODO Trim.ellipseToLine()
+	public static void arcToLine( DesignTool tool, DesignArc trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
+		// TODO Trim.arcToLine()
 	}
 
 	public static void curveToLine( DesignTool tool, DesignCurve trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
