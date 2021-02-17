@@ -123,13 +123,13 @@ public class DesignPane extends StackPane {
 		addActions.put( DesignLayer.class, ( o ) -> doAddLayer( (DesignLayer)o ) );
 		addActions.put( DesignMarker.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignLine.class, ( o ) -> doAddShape( (DesignShape)o ) );
-		addActions.put( DesignCircle.class, ( o ) -> doAddShape( (DesignShape)o ) );
+		addActions.put( DesignArc.class, ( o ) -> doAddShape( (DesignShape)o ) );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
 		removeActions.put( DesignLayer.class, ( o ) -> doRemoveLayer( (DesignLayer)o ) );
 		removeActions.put( DesignMarker.class, ( o ) -> doRemoveShape( (DesignMarker)o ) );
 		removeActions.put( DesignLine.class, ( o ) -> doRemoveShape( (DesignLine)o ) );
-		removeActions.put( DesignCircle.class, ( o ) -> doRemoveShape( (DesignCircle)o ) );
+		removeActions.put( DesignArc.class, ( o ) -> doRemoveShape( (DesignArc)o ) );
 	}
 
 	DesignPaneLayer getLayerPane() {
@@ -184,7 +184,6 @@ public class DesignPane extends StackPane {
 	 * animation.
 	 *
 	 * @return the zoom for this {@code Design}
-	 * @defaultValue 1.0
 	 */
 	public final DoubleProperty zoomProperty() {
 		if( zoomProperty == null ) zoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
@@ -585,15 +584,7 @@ public class DesignPane extends StackPane {
 	}
 
 	List<Shape> getVisibleShapes() {
-		return getLayers( layers )
-			.stream()
-			.filter( Node::isVisible )
-			.flatMap( l -> l.getChildren().stream() )
-			.filter( n -> n instanceof Group )
-			.flatMap( g -> ((Group)g).getChildren().stream() )
-			.filter( n -> n instanceof Shape )
-			.map( n -> (Shape)n )
-			.collect( Collectors.toList() );
+		return getLayers( layers ).stream().filter( Node::isVisible ).flatMap( l -> l.getChildren().stream() ).filter( n -> n instanceof Group ).flatMap( g -> ((Group)g).getChildren().stream() ).filter( n -> n instanceof Shape ).map( n -> (Shape)n ).collect( Collectors.toList() );
 	}
 
 	private boolean isContained( Shape selector, Shape shape ) {

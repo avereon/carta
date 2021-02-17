@@ -672,6 +672,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
 		SettingsPage page = designPropertiesMap.getSettingsPage( type );
+		log.log( Log.ERROR, "Unable to find properties page for " + type.getName() );
 		page.setSettings( settings );
 		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
 		getWorkspace().getEventBus().dispatch( event );

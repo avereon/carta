@@ -33,8 +33,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	static final String CODEC_VERSION = "1";
 
-	static final String CURRENT_LAYER_ID = "current-layer";
-
 	private final Product product;
 
 	static {
@@ -77,7 +75,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		design.updateFrom( map );
 
 		// Load layers
-		layers.values().forEach( l -> loadLayer( design, design.getRootLayer(), l ));
+		layers.values().forEach( l -> loadLayer( design.getRootLayer(), l ) );
 
 		// Load views
 		views.values().forEach( v -> design.addView( new DesignView().updateFrom( v ) ) );
@@ -86,7 +84,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void loadLayer( Design design, DesignLayer parent, Map<String, Object> map ) {
+	private void loadLayer( DesignLayer parent, Map<String, Object> map ) {
 		DesignLayer layer = new DesignLayer().updateFrom( map );
 		parent.addLayer( layer );
 
@@ -95,19 +93,16 @@ public abstract class CartesiaDesignCodec extends Codec {
 		geometry.values().forEach( g -> {
 			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
 			DesignShape shape = switch( type ) {
-				case DesignMarker.POINT -> loadCsaPoint( g );
-				case DesignLine.LINE -> loadCsaLine( g );
-				case DesignCircle.CIRCLE -> loadDesignCircle( g );
-				case DesignCircle.ARC -> loadDesignCircle( g );
-				//case DesignCircle.CIRCLE -> loadDesignCircle( g );
-				case DesignCircle.ELLIPSE -> loadDesignCircle( g );
+				case DesignMarker.POINT -> loadDesignMarker( g );
+				case DesignLine.LINE -> loadDesignLine( g );
+				case DesignArc.ARC, DesignArc.CIRCLE, DesignArc.ELLIPSE -> loadDesignArc( g );
 				default -> null;
 			};
 			layer.addShape( shape );
 		} );
 
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
-		layers.values().forEach( l -> loadLayer( design, layer, l ));
+		layers.values().forEach( l -> loadLayer( layer, l ) );
 	}
 
 	@Override
@@ -117,23 +112,24 @@ public abstract class CartesiaDesignCodec extends Codec {
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 	}
 
-	private DesignMarker loadCsaPoint( Map<String, Object> map ) {
+	private DesignMarker loadDesignMarker( Map<String, Object> map ) {
 		return new DesignMarker().updateFrom( map );
 	}
 
-	private DesignLine loadCsaLine( Map<String, Object> map ) {
+	private DesignLine loadDesignLine( Map<String, Object> map ) {
 		return new DesignLine().updateFrom( map );
 	}
 
-	private DesignCircle loadDesignCircle( Map<String, Object> map ) {
-		return new DesignCircle().updateFrom( map );
+	private DesignArc loadDesignArc( Map<String, Object> map ) {
+		return new DesignArc().updateFrom( map );
 	}
 
+	@SuppressWarnings( "unused" )
 	String prettyPrint( byte[] buffer ) throws Exception {
 		JsonNode node = JSON_MAPPER.readValue( buffer, JsonNode.class );
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, node );
-		return new String( output.toByteArray(), TextUtil.CHARSET );
+		return output.toString( TextUtil.CHARSET );
 	}
 
 	public static class ColorSerializer extends JsonSerializer<Color> {

@@ -7,7 +7,7 @@ import javafx.geometry.Point3D;
 
 import java.util.Map;
 
-public class DesignCircle extends DesignShape {
+public class DesignArc extends DesignShape {
 
 	public enum Type {
 		CHORD,
@@ -38,27 +38,27 @@ public class DesignCircle extends DesignShape {
 
 	private static final System.Logger log = Log.get();
 
-	public DesignCircle() {
+	public DesignArc() {
 		addModifyingKeys( ORIGIN, RADIUS, X_RADIUS, Y_RADIUS, START, EXTENT, ROTATE, TYPE );
 	}
 
-	public DesignCircle( Point3D origin, double radius ) {
+	public DesignArc( Point3D origin, double radius ) {
 		this( origin, radius, radius, 0, 360, 0, Type.FULL );
 	}
 
-	public DesignCircle( Point3D origin, double radius, double start, double extent, Type type ) {
+	public DesignArc( Point3D origin, double radius, double start, double extent, Type type ) {
 		this( origin, radius, radius, start, extent, 0, type );
 	}
 
-	public DesignCircle( Point3D origin, double xRadius, double yRadius ) {
+	public DesignArc( Point3D origin, double xRadius, double yRadius ) {
 		this( origin, xRadius, yRadius, 0, 360, 0, Type.FULL );
 	}
 
-	public DesignCircle( Point3D origin, double xRadius, double yRadius, double start, double extent ) {
+	public DesignArc( Point3D origin, double xRadius, double yRadius, double start, double extent ) {
 		this( origin, xRadius, yRadius, start, extent, 0, Type.FULL );
 	}
 
-	public DesignCircle( Point3D origin, double xRadius, double yRadius, double start, double extent, double rotate, Type type ) {
+	public DesignArc( Point3D origin, double xRadius, double yRadius, double start, double extent, double rotate, Type type ) {
 		this();
 		setOrigin( origin );
 		if( xRadius == yRadius ) setRadius( xRadius );
@@ -74,7 +74,7 @@ public class DesignCircle extends DesignShape {
 		return getValue( RADIUS );
 	}
 
-	public DesignCircle setRadius( double value ) {
+	public DesignArc setRadius( double value ) {
 		setValue( RADIUS, value );
 		return this;
 	}
@@ -83,7 +83,7 @@ public class DesignCircle extends DesignShape {
 		return getValue( X_RADIUS, (Double)getValue( RADIUS ) );
 	}
 
-	public DesignCircle setXRadius( double value ) {
+	public DesignArc setXRadius( double value ) {
 		setValue( X_RADIUS, value );
 		return this;
 	}
@@ -92,7 +92,7 @@ public class DesignCircle extends DesignShape {
 		return getValue( Y_RADIUS, (Double)getValue( RADIUS ) );
 	}
 
-	public DesignCircle setYRadius( double value ) {
+	public DesignArc setYRadius( double value ) {
 		setValue( Y_RADIUS, value );
 		return this;
 	}
@@ -101,7 +101,7 @@ public class DesignCircle extends DesignShape {
 		return getValue( START );
 	}
 
-	public DesignCircle setStart( double value ) {
+	public DesignArc setStart( double value ) {
 		setValue( START, value );
 		return this;
 	}
@@ -110,7 +110,7 @@ public class DesignCircle extends DesignShape {
 		return getValue( EXTENT );
 	}
 
-	public DesignCircle setExtent( double value ) {
+	public DesignArc setExtent( double value ) {
 		setValue( EXTENT, value );
 		return this;
 	}
@@ -119,16 +119,16 @@ public class DesignCircle extends DesignShape {
 		return getValue( ROTATE );
 	}
 
-	public DesignCircle setRotate( double value ) {
+	public DesignArc setRotate( double value ) {
 		setValue( ROTATE, value );
 		return this;
 	}
 
-	public DesignCircle.Type getType() {
+	public DesignArc.Type getType() {
 		return getValue( TYPE );
 	}
 
-	public DesignCircle setType( DesignCircle.Type value ) {
+	public DesignArc setType( DesignArc.Type value ) {
 		setValue( TYPE, value );
 		return this;
 	}
@@ -143,7 +143,7 @@ public class DesignCircle extends DesignShape {
 		return map;
 	}
 
-	public DesignCircle updateFrom( Map<String, Object> map ) {
+	public DesignArc updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( RADIUS ) ) setRadius( (Double)map.get( RADIUS ) );
 		if( map.containsKey( X_RADIUS ) ) setXRadius( (Double)map.get( X_RADIUS ) );

@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.BundleKey;
+import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
@@ -12,6 +13,8 @@ import java.util.Map;
 
 public class DesignPropertiesMap {
 
+	private static final System.Logger log = Log.get();
+
 	private static final String propertiesPagePath = "/com/avereon/cartesia/design/props/";
 
 	private static final String propertiesPageExt = ".xml";
@@ -22,9 +25,7 @@ public class DesignPropertiesMap {
 		Map<Class<? extends DesignDrawable>, SettingsPage> pages = new HashMap<>();
 		pages.put( DesignLayer.class, loadPage( product, "layer" ) );
 		pages.put( DesignShape.class, loadPage( product, "shape" ) );
-		//pages.put( DesignCircle.class, loadPage( product, "arc" ) );
-		pages.put( DesignCircle.class, loadPage( product, "circle" ) );
-		//pages.put( DesignCircle.class, loadPage( product, "ellipse" ) );
+		pages.put( DesignArc.class, loadPage( product, "arc" ) );
 		pages.put( DesignLine.class, loadPage( product, "line" ) );
 		pages.put( DesignMarker.class, loadPage( product, "point" ) );
 		propertiesPages = Collections.unmodifiableMap( pages );
@@ -38,7 +39,7 @@ public class DesignPropertiesMap {
 		try {
 			return loadSettingsPage( product, key );
 		} catch( IOException exception ) {
-			exception.printStackTrace();
+			log.log( Log.ERROR, "Unable to load settings page for " + key, exception );
 		}
 		return null;
 	}

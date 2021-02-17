@@ -2,8 +2,8 @@
 
 <pages version="1.0">
 
-	<page id="circle">
-		<group id="circle-title">
+	<page id="arc">
+		<group id="arc-title">
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
 			<setting id="draw-paint" key="draw-paint-mode" editor="combobox">
 				<option key="layer"/>
