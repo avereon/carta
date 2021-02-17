@@ -21,7 +21,12 @@ public abstract class DesignShape extends DesignDrawable {
 	public static final String PREVIEW = "preview";
 
 	public DesignShape() {
+		this( null );
+	}
+
+	public DesignShape( Point3D origin ) {
 		addModifyingKeys( ORIGIN );
+		setOrigin( origin );
 	}
 
 	public Point3D getOrigin() {
@@ -71,6 +76,5 @@ public abstract class DesignShape extends DesignDrawable {
 	public double distanceTo( Point3D point ) {
 		return Double.NaN;
 	}
-
 
 }

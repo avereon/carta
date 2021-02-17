@@ -14,11 +14,11 @@ public class DesignLine extends DesignShape {
 	public static final String POINT = "point";
 
 	public DesignLine() {
-		addModifyingKeys( ORIGIN, POINT );
 	}
 
 	public DesignLine( Point3D origin, Point3D point ) {
-		this();
+		super( origin );
+		addModifyingKeys( ORIGIN, POINT );
 		setOrigin( origin );
 		setPoint( point );
 	}

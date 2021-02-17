@@ -1,9 +1,6 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.data.DesignCurve;
-import com.avereon.cartesia.data.DesignArc;
-import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 
@@ -15,13 +12,13 @@ public class Trim {
 		if( trim instanceof DesignLine ) {
 			if( edge instanceof DesignLine ) {
 				lineToLine( tool, (DesignLine)trim, (DesignLine)edge, trimPoint );
-			} else if( edge instanceof DesignArc ) {
-				lineToArc( tool, (DesignLine)trim, (DesignArc)edge, trimPoint, edgePoint );
+			} else if( edge instanceof DesignEllipse ) {
+				lineToArc( tool, (DesignLine)trim, (DesignEllipse)edge, trimPoint, edgePoint );
 			} else if( edge instanceof DesignCurve ) {
 				lineToCurve( tool, (DesignLine)trim, (DesignCurve)edge, trimPoint, edgePoint );
 			}
-		} else if( trim instanceof DesignArc ) {
-			arcToLine( tool, (DesignArc)trim, (DesignLine)edge, trimPoint, edgePoint );
+		} else if( trim instanceof DesignEllipse ) {
+			arcToLine( tool, (DesignEllipse)trim, (DesignLine)edge, trimPoint, edgePoint );
 		} else if( trim instanceof DesignCurve ) {
 			curveToLine( tool, (DesignCurve)trim, (DesignLine)edge, trimPoint, edgePoint );
 		}
@@ -39,7 +36,7 @@ public class Trim {
 		}
 	}
 
-	public static void lineToArc( DesignTool tool, DesignLine trim, DesignArc edge, Point3D trimPoint, Point3D edgePoint ) {
+	public static void lineToArc( DesignTool tool, DesignLine trim, DesignEllipse edge, Point3D trimPoint, Point3D edgePoint ) {
 		// TODO Trim.lineToArc()
 	}
 
@@ -47,7 +44,7 @@ public class Trim {
 		// TODO Trim.lineToCurve()
 	}
 
-	public static void arcToLine( DesignTool tool, DesignArc trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
+	public static void arcToLine( DesignTool tool, DesignEllipse trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
 		// TODO Trim.arcToLine()
 	}
 

@@ -25,6 +25,7 @@ public class DesignPropertiesMap {
 		Map<Class<? extends DesignDrawable>, SettingsPage> pages = new HashMap<>();
 		pages.put( DesignLayer.class, loadPage( product, "layer" ) );
 		pages.put( DesignShape.class, loadPage( product, "shape" ) );
+		pages.put( DesignEllipse.class, loadPage( product, "arc" ) );
 		pages.put( DesignArc.class, loadPage( product, "arc" ) );
 		pages.put( DesignLine.class, loadPage( product, "line" ) );
 		pages.put( DesignMarker.class, loadPage( product, "point" ) );

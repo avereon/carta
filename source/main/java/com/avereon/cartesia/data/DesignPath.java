@@ -8,6 +8,10 @@ public class DesignPath extends DesignShape {
 
 	public static final String CLOSED = "closed";
 
+	public DesignPath() {
+		super( null );
+	}
+
 	@Override
 	public double distanceTo( Point3D point ) {
 		return Double.NaN;

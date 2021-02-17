@@ -182,6 +182,12 @@ public abstract class DesignDrawable extends DesignNode {
 		return super.setValue( key, newValue );
 	}
 
+	protected Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
+		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
+		return map;
+	}
+
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 
@@ -196,17 +202,6 @@ public abstract class DesignDrawable extends DesignNode {
 		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( (String)map.get( DRAW_PATTERN ) );
 		if( map.containsKey( FILL_PAINT ) ) setFillPaint( (String)map.get( FILL_PAINT ) );
 		return this;
-	}
-
-	protected Map<String, Object> asMap() {
-		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
-		return map;
-	}
-
-	@Deprecated
-	private boolean isLayer() {
-		return this instanceof DesignLayer;
 	}
 
 	private <T> T changeLayer( T newValue ) {

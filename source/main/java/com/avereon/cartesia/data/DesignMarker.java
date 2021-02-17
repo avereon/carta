@@ -21,12 +21,12 @@ public class DesignMarker extends DesignShape {
 	private static final double ZERO_DRAW_WIDTH = 0.0;
 
 	public DesignMarker() {
-		addModifyingKeys( ORIGIN, SIZE, TYPE );
+		this( null );
 	}
 
 	public DesignMarker( Point3D origin ) {
-		this();
-		setOrigin( origin );
+		super( origin );
+		addModifyingKeys( ORIGIN, SIZE, TYPE );
 	}
 
 	public double calcSize() {

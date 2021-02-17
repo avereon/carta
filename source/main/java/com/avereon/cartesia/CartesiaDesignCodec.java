@@ -95,7 +95,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 			DesignShape shape = switch( type ) {
 				case DesignMarker.POINT -> loadDesignMarker( g );
 				case DesignLine.LINE -> loadDesignLine( g );
-				case DesignArc.ARC, DesignArc.CIRCLE, DesignArc.ELLIPSE -> loadDesignArc( g );
+				case DesignEllipse.CIRCLE, DesignEllipse.ELLIPSE -> loadDesignEllipse( g );
+				case DesignArc.ARC -> loadDesignArc( g );
 				default -> null;
 			};
 			layer.addShape( shape );
@@ -118,6 +119,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private DesignLine loadDesignLine( Map<String, Object> map ) {
 		return new DesignLine().updateFrom( map );
+	}
+
+	private DesignEllipse loadDesignEllipse( Map<String, Object> map ) {
+		return new DesignEllipse().updateFrom( map );
 	}
 
 	private DesignArc loadDesignArc( Map<String, Object> map ) {

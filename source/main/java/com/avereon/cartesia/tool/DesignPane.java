@@ -123,13 +123,15 @@ public class DesignPane extends StackPane {
 		addActions.put( DesignLayer.class, ( o ) -> doAddLayer( (DesignLayer)o ) );
 		addActions.put( DesignMarker.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignLine.class, ( o ) -> doAddShape( (DesignShape)o ) );
+		addActions.put( DesignEllipse.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignArc.class, ( o ) -> doAddShape( (DesignShape)o ) );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
 		removeActions.put( DesignLayer.class, ( o ) -> doRemoveLayer( (DesignLayer)o ) );
-		removeActions.put( DesignMarker.class, ( o ) -> doRemoveShape( (DesignMarker)o ) );
-		removeActions.put( DesignLine.class, ( o ) -> doRemoveShape( (DesignLine)o ) );
-		removeActions.put( DesignArc.class, ( o ) -> doRemoveShape( (DesignArc)o ) );
+		removeActions.put( DesignMarker.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
+		removeActions.put( DesignLine.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
+		removeActions.put( DesignEllipse.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
+		removeActions.put( DesignArc.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 	}
 
 	DesignPaneLayer getLayerPane() {

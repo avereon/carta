@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
@@ -18,7 +18,7 @@ public class DrawCircleCommand extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 
 		if( parameters.length < 1 ) {
-			setPreview( tool, new DesignArc( context.getWorldMouse(), 0 ) );
+			setPreview( tool, new DesignEllipse( context.getWorldMouse(), 0.0 ) );
 			promptForPoint( context, tool, "center" );
 			step = 1;
 			return incomplete();
@@ -32,7 +32,7 @@ public class DrawCircleCommand extends DrawCommand {
 		}
 
 		if( parameters.length < 3 ) {
-			((DesignArc)getPreview()).setRadius( asDouble( getPreview().getOrigin(), parameters[ 1 ] ) );
+			((DesignEllipse)getPreview()).setRadius( asDouble( getPreview().getOrigin(), parameters[ 1 ] ) );
 		}
 
 		return commitPreview( tool );
@@ -40,7 +40,7 @@ public class DrawCircleCommand extends DrawCommand {
 
 	@Override
 	public void handle( MouseEvent event ) {
-		DesignArc preview = getPreview();
+		DesignEllipse preview = getPreview();
 		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			Fx.run( () -> {
 				DesignTool tool = (DesignTool)event.getSource();

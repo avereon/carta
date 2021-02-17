@@ -7,7 +7,7 @@ import javafx.geometry.Point3D;
 
 import java.util.Map;
 
-public class DesignCurve extends DesignShape {
+public class DesignCurve extends DesignLine {
 
 	public static final String CURVE = "curve";
 
@@ -15,18 +15,15 @@ public class DesignCurve extends DesignShape {
 
 	public static final String POINT_CONTROL = "point-control";
 
-	public static final String POINT = "point";
-
 	public DesignCurve() {
-		addModifyingKeys( ORIGIN_CONTROL, POINT_CONTROL, POINT );
+		this( null, null, null, null );
 	}
 
 	public DesignCurve( Point3D origin, Point3D originControl, Point3D pointControl, Point3D point ) {
-		this();
-		setOrigin( origin );
+		super( origin, point );
+		addModifyingKeys( ORIGIN_CONTROL, POINT_CONTROL );
 		setOriginControl( originControl );
 		setPointControl( pointControl );
-		setPoint( point );
 	}
 
 	public Point3D getOriginControl() {
@@ -47,19 +44,10 @@ public class DesignCurve extends DesignShape {
 		return this;
 	}
 
-	public Point3D getPoint() {
-		return getValue( POINT );
-	}
-
-	public DesignShape setPoint( Point3D value ) {
-		setValue( POINT, value );
-		return this;
-	}
-
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, CURVE );
-		map.putAll( asMap( ORIGIN_CONTROL, POINT_CONTROL, POINT ) );
+		map.putAll( asMap( ORIGIN_CONTROL, POINT_CONTROL ) );
 		return map;
 	}
 
@@ -67,7 +55,6 @@ public class DesignCurve extends DesignShape {
 		super.updateFrom( map );
 		setOriginControl( ParseUtil.parsePoint3D( (String)map.get( ORIGIN_CONTROL ) ) );
 		setPointControl( ParseUtil.parsePoint3D( (String)map.get( POINT_CONTROL ) ) );
-		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;
 	}
 
