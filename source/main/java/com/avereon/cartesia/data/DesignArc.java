@@ -23,6 +23,8 @@ public class DesignArc extends DesignShape {
 
 	public static final String ELLIPSE = "ellipse";
 
+	public static final String RADIUS = "radius";
+
 	public static final String X_RADIUS = "x-radius";
 
 	public static final String Y_RADIUS = "y-radius";
@@ -136,12 +138,17 @@ public class DesignArc extends DesignShape {
 
 	public DesignArc updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		setXRadius( (Double)map.get( X_RADIUS ) );
-		setYRadius( (Double)map.get( Y_RADIUS ) );
-		setStart( (Double)map.get( START ) );
-		setExtent( (Double)map.get( EXTENT ) );
-		setRotate( (Double)map.get( ROTATE ) );
-		setType( Type.valueOf( ((String)map.get( TYPE )).toUpperCase() ) );
+		if( map.containsKey( RADIUS ) ) {
+			setXRadius( (Double)map.get( RADIUS ) );
+			setYRadius( (Double)map.get( RADIUS ) );
+		} else {
+			setXRadius( (Double)map.get( X_RADIUS ) );
+			setYRadius( (Double)map.get( Y_RADIUS ) );
+		}
+		if( map.containsKey( START ) ) setStart( (Double)map.get( START ) );
+		if( map.containsKey( EXTENT ) ) setExtent( (Double)map.get( EXTENT ) );
+		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
+		if( map.containsKey( TYPE ) ) setType( Type.valueOf( ((String)map.get( TYPE )).toUpperCase() ) );
 		return this;
 	}
 

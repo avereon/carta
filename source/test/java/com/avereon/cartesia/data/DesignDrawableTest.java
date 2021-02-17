@@ -18,7 +18,7 @@ public class DesignDrawableTest {
 
 	@BeforeEach
 	void setup() {
-		drawable = new DesignCircle();
+		drawable = new DesignLine();
 		layer = new DesignLayer();
 		layer.addDrawable( drawable );
 
