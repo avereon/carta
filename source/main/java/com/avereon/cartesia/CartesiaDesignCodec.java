@@ -97,10 +97,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 			DesignShape shape = switch( type ) {
 				case DesignMarker.POINT -> loadCsaPoint( g );
 				case DesignLine.LINE -> loadCsaLine( g );
-				case DesignArc.CIRCLE -> loadDesignCircle( g );
-				case DesignArc.ARC -> loadDesignArc( g );
-				//case DesignArc.CIRCLE -> loadDesignArc( g );
-				case DesignArc.ELLIPSE -> loadDesignArc( g );
+				case DesignCircle.CIRCLE -> loadDesignCircle( g );
+				case DesignCircle.ARC -> loadDesignCircle( g );
+				//case DesignCircle.CIRCLE -> loadDesignCircle( g );
+				case DesignCircle.ELLIPSE -> loadDesignCircle( g );
 				default -> null;
 			};
 			layer.addShape( shape );
@@ -125,13 +125,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return new DesignLine().updateFrom( map );
 	}
 
-	@Deprecated
 	private DesignCircle loadDesignCircle( Map<String, Object> map ) {
 		return new DesignCircle().updateFrom( map );
-	}
-
-	private DesignArc loadDesignArc( Map<String, Object> map ) {
-		return new DesignArc().updateFrom( map );
 	}
 
 	String prettyPrint( byte[] buffer ) throws Exception {
