@@ -1,6 +1,8 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.CadPoints;
+import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 
 import java.util.Map;
@@ -67,6 +69,16 @@ public class DesignCurve extends DesignShape {
 		setPointControl( ParseUtil.parsePoint3D( (String)map.get( POINT_CONTROL ) ) );
 		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;
+	}
+
+	@Override
+	public double distanceTo( Point3D point ) {
+		// TODO Improve DesignCurve.distanceTo()
+		// This implementation is a simple estimate based on the origin and point
+		double[] a = CadPoints.asPoint( getOrigin() );
+		double[] b = CadPoints.asPoint( getPoint() );
+		double[] p = CadPoints.asPoint( point );
+		return Geometry.pointLineDistance( a, b, p );
 	}
 
 }

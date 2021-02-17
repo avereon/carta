@@ -95,9 +95,12 @@ public abstract class CartesiaDesignCodec extends Codec {
 		geometry.values().forEach( g -> {
 			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
 			DesignShape shape = switch( type ) {
-				case "point" -> loadCsaPoint( g );
-				case "line" -> loadCsaLine( g );
-				case "circle" -> loadDesignCircle( g );
+				case DesignMarker.POINT -> loadCsaPoint( g );
+				case DesignLine.LINE -> loadCsaLine( g );
+				case DesignArc.CIRCLE -> loadDesignCircle( g );
+				case DesignArc.ARC -> loadDesignArc( g );
+				//case DesignArc.CIRCLE -> loadDesignArc( g );
+				case DesignArc.ELLIPSE -> loadDesignArc( g );
 				default -> null;
 			};
 			layer.addShape( shape );
@@ -122,8 +125,13 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return new DesignLine().updateFrom( map );
 	}
 
+	@Deprecated
 	private DesignCircle loadDesignCircle( Map<String, Object> map ) {
 		return new DesignCircle().updateFrom( map );
+	}
+
+	private DesignArc loadDesignArc( Map<String, Object> map ) {
+		return new DesignArc().updateFrom( map );
 	}
 
 	String prettyPrint( byte[] buffer ) throws Exception {
