@@ -24,6 +24,10 @@ public class CadOrientation {
 		this.orientation = new Orientation( CadPoints.asPoint( origin ), CadPoints.asPoint( normal ), CadPoints.asPoint( rotate ) );
 	}
 
+	private CadOrientation( Orientation orientation ) {
+		this.orientation = orientation;
+	}
+
 	public Point3D getOrigin() {
 		return CadPoints.toFxPoint( orientation.getOrigin() );
 	}
@@ -106,11 +110,7 @@ public class CadOrientation {
 	public String toJson() {return orientation.toJson();}
 
 	public static CadOrientation fromThreePoints( Point3D origin, Point3D xaxis, Point3D point ) {
-		Orientation orientation = Orientation.fromThreePoints( CadPoints.asPoint( origin ), CadPoints.asPoint( xaxis ), CadPoints.asPoint( point ) );
-		return new CadOrientation( CadPoints.toFxPoint( orientation.getOrigin() ),
-			CadPoints.toFxPoint( orientation.getNormal() ),
-			CadPoints.toFxPoint( orientation.getRotate() )
-		);
+		return new CadOrientation( Orientation.fromThreePoints( CadPoints.asPoint( origin ), CadPoints.asPoint( xaxis ), CadPoints.asPoint( point ) ) );
 	}
 
 	public static boolean areGeometricallyEqual( CadOrientation a, CadOrientation b ) {return Orientation.areGeometricallyEqual( a.orientation, b.orientation );}

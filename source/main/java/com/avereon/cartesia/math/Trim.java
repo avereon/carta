@@ -20,7 +20,7 @@ public class Trim {
 
 		// FIXME I think I can get rid of this 'if' tree
 		if( trim instanceof DesignLine ) {
-			update( tool, (DesignLine)trim, trimPoint, intersections );
+			update( tool, (DesignLine)trim, trimPoint, edgePoint, intersections );
 		} else if( trim instanceof DesignEllipse ) {
 			//			arcToLine( tool, (DesignEllipse)trim, (DesignLine)edge, trimPoint, edgePoint );
 		} else if( trim instanceof DesignCurve ) {
@@ -28,13 +28,13 @@ public class Trim {
 		}
 	}
 
-	private static void update( DesignTool tool, DesignLine line, Point3D trimPoint, Collection<Point3D> xns ) {
-		xns.stream().findFirst().ifPresent( x -> updateLine( tool, line, trimPoint, x ) );
+	private static void update( DesignTool tool, DesignLine line, Point3D trimPoint, Point3D edgePoint, Collection<Point3D> xns ) {
+		updateLine( tool, line, trimPoint, getNearestOnScreen( tool, edgePoint, xns ) );
 	}
 
-	private static void updateLine( DesignTool tool, DesignLine line, Point3D screenPoint, Point3D point ) {
+	private static void updateLine( DesignTool tool, DesignLine line, Point3D trimPoint, Point3D point ) {
 		if( point == null ) return;
-		if( getNearestOnScreen( tool, screenPoint, line ) == line.getOrigin() ) {
+		if( getNearestOnScreen( tool, trimPoint, line ) == line.getOrigin() ) {
 			line.setOrigin( point );
 		} else {
 			line.setPoint( point );
@@ -59,7 +59,7 @@ public class Trim {
 		return d1 < d2 ? line.getOrigin() : line.getPoint();
 	}
 
-	private static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, List<Point3D> intersections ) {
+	private static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, Collection<Point3D> intersections ) {
 		double delta;
 		double distance = Double.MAX_VALUE;
 		Point3D nearest = null;

@@ -4,6 +4,7 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.curve.math.Geometry;
+import com.avereon.curve.math.Vector;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
@@ -111,8 +112,9 @@ public class DesignEllipse extends DesignShape {
 
 	public CadOrientation getOrientation() {
 		Double rotate = getRotate();
-		Point3D rotateVector = CadPoints.toFxPoint( Geometry.polarToCartesian( new double[]{ 1.0, rotate == null ? 0 : rotate } ) );
-		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, rotateVector );
+		double rotateValue = rotate == null ? 0 : rotate;
+		Point3D rotateVector = CadPoints.toFxPoint( Vector.rotate( CadPoints.asPoint( CadPoints.UNIT_Y ), rotateValue ) );
+		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, CadPoints.UNIT_Y );
 	}
 
 	protected Map<String, Object> asMap() {

@@ -92,7 +92,7 @@ public class CadIntersection {
 			// Use the line-plane intersection method.
 			CadOrientation orientation = ellipse.getOrientation();
 			List<Point3D> points = linePlaneIntersection( line, orientation.getOrigin(), orientation.getNormal() );
-			return points.stream().findFirst().stream().filter(ellipse::isCoincident).collect( Collectors.toList() );
+			return points.stream().findFirst().stream().filter( ellipse::isCoincident ).collect( Collectors.toList() );
 		}
 
 		double rx = ellipse.getXRadius();
@@ -110,9 +110,9 @@ public class CadIntersection {
 		return points.stream().map( localToTarget::times ).collect( Collectors.toList() );
 	}
 
-	public static List<Point3D> intersectLineCircle( DesignLine a, DesignEllipse b ) {
-		Intersection2D intersection = Intersection2D.intersectLineCircle( CadPoints.asPoint( a.getOrigin() ), CadPoints.asPoint( a.getPoint() ), CadPoints.asPoint( b.getOrigin() ), b.getRadius() );
-		return CadPoints.toFxPoints( intersection.getPoints() );
+	// This implementation assumes that the circle is at the origin
+	static List<Point3D> intersectLineCircle( DesignLine a, DesignEllipse b ) {
+		return CadPoints.toFxPoints( Intersection2D.intersectLineCircle( CadPoints.asPoint( a.getOrigin() ), CadPoints.asPoint( a.getPoint() ), b.getRadius() ).getPoints() );
 	}
 
 	public static List<Point3D> intersectLineCurve( DesignLine a, DesignCurve b ) {
