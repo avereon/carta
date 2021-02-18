@@ -18,10 +18,10 @@ public class SnapNearest implements Snap {
 	}
 
 	@Override
-	public Point3D snap( DesignTool tool, Point3D click ) {
-		if( click == null ) return null;
+	public Point3D snap( DesignTool tool, Point3D point ) {
+		if( point == null ) return null;
 
-		Point3D cursor = tool.worldToScreen( click );
+		Point3D cursor = tool.worldToScreen( point );
 
 		// Go through all the reference points, convert them to screen coordinates and find the nearest
 		double distance;

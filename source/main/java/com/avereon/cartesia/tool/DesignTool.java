@@ -362,12 +362,8 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register( SELECT_APERTURE_RADIUS,
-			e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) )
-		);
-		getSettings().register( SELECT_APERTURE_UNIT,
-			e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) )
-		);
+		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> {
@@ -519,6 +515,10 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
+	public void screenPointFind( Point3D mouse ) {
+		screenPointSelect( mouse, false );
+	}
+
 	public void screenPointSelect( Point3D mouse ) {
 		screenPointSelect( mouse, false );
 	}
@@ -570,19 +570,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
-		return designPane
-			.screenPointSelect( mouse, getSelectTolerance() )
-			.stream()
-			.map( DesignShapeView::getDesignData )
-			.collect( Collectors.toList() );
+		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	public List<DesignShape> findShapesWithPoint( Point3D point ) {
-		return designPane
-			.worldPointSelect( point, getSelectTolerance() )
-			.stream()
-			.map( DesignShapeView::getDesignData )
-			.collect( Collectors.toList() );
+		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	private void configureWorkplane() {
@@ -672,10 +664,13 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
 		SettingsPage page = designPropertiesMap.getSettingsPage( type );
-		log.log( Log.ERROR, "Unable to find properties page for " + type.getName() );
-		page.setSettings( settings );
-		PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
-		getWorkspace().getEventBus().dispatch( event );
+		if( page != null ) {
+			page.setSettings( settings );
+			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
+			getWorkspace().getEventBus().dispatch( event );
+		} else {
+			log.log( Log.ERROR, "Unable to find properties page for " + type.getName() );
+		}
 	}
 
 	private void hidePropertiesPage() {

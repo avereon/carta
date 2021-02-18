@@ -14,9 +14,6 @@ import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
 public class Command {
 
 	public static final Object INCOMPLETE = new Object();
@@ -90,68 +87,20 @@ public class Command {
 		promptForValue( context, tool, key, true );
 	}
 
-	protected DesignShape selectNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
-		try {
-			tool.screenPointSelect( mouse );
-			Fx.waitForWithInterrupt( 1000 );
+	protected DesignShape findNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
+		return getNearestShape( tool, () -> tool.screenPointFind( mouse ) );
+	}
 
-			if( tool.selectedShapes().isEmpty() ) {
-				return DesignShape.NONE;
-			} else {
-				return DesignShapeView.getDesignData( tool.selectedShapes().get( 0 ) );
-			}
-		} catch( InterruptedException exception ) {
-			log.log( Log.ERROR, exception );
-			return DesignShape.NONE;
-		}
+	protected DesignShape findNearestShapeAtPoint( DesignTool tool, Point3D point ) {
+		return findNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
+	}
+
+	protected DesignShape selectNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
+		return getNearestShape( tool, () -> tool.screenPointSelect( mouse ) );
 	}
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
-		try {
-			tool.worldPointSelect( point );
-			Fx.waitForWithInterrupt( 1000 );
-			return CadShapes.findNearestShapeToPoint( tool.selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList()), point );
-		} catch( InterruptedException exception ) {
-			log.log( Log.ERROR, exception );
-		}
-
-		return DesignShape.NONE;
-	}
-
-	private static class FxProducer<T> {
-
-		private final Supplier<T> supplier;
-
-		private T result;
-
-		private boolean flag;
-
-		public FxProducer( Supplier<T> supplier ) {
-			this.supplier = supplier;
-		}
-
-		public static <T> T get( Supplier<T> supplier ) throws InterruptedException {
-			return new FxProducer<>( supplier ).get();
-		}
-
-		public synchronized T get() throws InterruptedException {
-			if( Fx.isFxThread() ) {
-				result = supplier.get();
-			} else {
-				Fx.run( () -> this.set( supplier.get() ) );
-				while( !flag ) {
-					this.wait( 1000 );
-				}
-			}
-			return result;
-		}
-
-		private synchronized void set( T result ) {
-			this.result = result;
-			this.flag = true;
-			this.notifyAll();
-		}
-
+		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
 	}
 
 	protected void setPreview( DesignTool tool, DesignShape preview ) {
@@ -182,6 +131,17 @@ public class Command {
 		tool.setCursor( isText ? Cursor.TEXT : tool.getReticle() );
 		String prompt = tool.getProduct().rb().text( BundleKey.PROMPT, key );
 		context.submit( tool, new PromptCommand( prompt, isText ) );
+	}
+
+	private DesignShape getNearestShape( DesignTool tool, Runnable get ) {
+		try {
+			get.run();
+			Fx.waitForWithInterrupt( 1000 );
+			return tool.selectedShapes().isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( tool.selectedShapes().get( 0 ) );
+		} catch( InterruptedException exception ) {
+			log.log( Log.ERROR, exception );
+			return DesignShape.NONE;
+		}
 	}
 
 }

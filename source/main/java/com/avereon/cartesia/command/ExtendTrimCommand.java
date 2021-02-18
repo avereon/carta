@@ -34,12 +34,14 @@ public class ExtendTrimCommand extends Command {
 			return incomplete();
 		}
 
-		Point3D edgeMouse = context.getScreenMouse();
-		DesignShape edge = selectNearestShapeAtMouse( tool, edgeMouse );
-		if( edge == DesignShape.NONE ) return invalid();
-
-		tool.clearSelected();
-		Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
+		try {
+			Point3D edgeMouse = context.getScreenMouse();
+			DesignShape edge = findNearestShapeAtMouse( tool, edgeMouse );
+			if( edge == DesignShape.NONE ) return invalid();
+			Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
+		} finally {
+			tool.clearSelected();
+		}
 
 		return complete();
 	}

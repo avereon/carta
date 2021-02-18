@@ -1,7 +1,11 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.curve.math.Geometry;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
@@ -52,7 +56,13 @@ public class DesignEllipse extends DesignShape {
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setRadius( Double value ) {
-		setValue( RADIUS, value );
+		try( Txn ignore = Txn.create() ) {
+			setValue( RADIUS, value );
+			setValue( X_RADIUS, value );
+			setValue( Y_RADIUS, value );
+		} catch( TxnException e ) {
+			log.log( Log.ERROR, e );
+		}
 		return (T)this;
 	}
 
@@ -84,6 +94,25 @@ public class DesignEllipse extends DesignShape {
 	public <T extends DesignEllipse> T setRotate( Double value ) {
 		setValue( ROTATE, value );
 		return (T)this;
+	}
+
+	/**
+	 * Test if a given point is on the ellipse.
+	 *
+	 * @param point
+	 * @return
+	 */
+	public boolean isCoincident( Point3D point ) {
+		Point3D local = getOrientation().getTargetToLocalTransform().times( point );
+		//Point3D test = getConstructionPoint( getXRadius(), getYRadius(), Math.atan2( local.y, local.x ) );
+		Point3D test = CadPoints.toFxPoint( Geometry.polarToCartesian( new double[]{ getXRadius(), getYRadius(), Math.atan2( local.getY(), local.getX() ) } ) );
+		return CadGeometry.areSamePoint( new Point3D( local.getX(), local.getY(), 0 ), new Point3D( test.getX(), test.getY(), 0 ) );
+	}
+
+	public CadOrientation getOrientation() {
+		Double rotate = getRotate();
+		Point3D rotateVector = CadPoints.toFxPoint( Geometry.polarToCartesian( new double[]{ 1.0, rotate == null ? 0 : rotate } ) );
+		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, rotateVector );
 	}
 
 	protected Map<String, Object> asMap() {
