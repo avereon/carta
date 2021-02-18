@@ -8,6 +8,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,29 +35,27 @@ public class Trim {
 
 	private static void updateLine( DesignTool tool, DesignLine line, Point3D trimPoint, Point3D point ) {
 		if( point == null ) return;
-		if( getNearestOnScreen( tool, trimPoint, line ) == line.getOrigin() ) {
+
+		Point3D o = line.getOrigin();
+		Point3D p = line.getPoint();
+		Point3D n = getNearestOnScreen( tool, trimPoint, o, p );
+		if( n == o ) {
 			line.setOrigin( point );
 		} else {
 			line.setPoint( point );
 		}
 	}
 
-	public static void lineToCurve( DesignTool tool, DesignLine trim, DesignCurve edge, Point3D trimPoint, Point3D edgePoint ) {
-		// TODO Trim.lineToCurve()
-	}
-
-	public static void arcToLine( DesignTool tool, DesignEllipse trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
+	public static void updateEllipse( DesignTool tool, DesignEllipse ellipse, Point3D trimPoint, Point3D point ) {
 		// TODO Trim.arcToLine()
 	}
 
-	public static void curveToLine( DesignTool tool, DesignCurve trim, DesignLine edge, Point3D trimPoint, Point3D edgePoint ) {
+	public static void updateCurve( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D point ) {
 		// TODO Trim.curveToLine()
 	}
 
-	private static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, DesignLine line ) {
-		double d1 = CadGeometry.distance( tool.worldToScreen( line.getOrigin() ), screenPoint );
-		double d2 = CadGeometry.distance( tool.worldToScreen( line.getPoint() ), screenPoint );
-		return d1 < d2 ? line.getOrigin() : line.getPoint();
+	private static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, Point3D... points ) {
+		return getNearestOnScreen( tool, screenPoint, Arrays.asList( points ) );
 	}
 
 	private static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, Collection<Point3D> intersections ) {
