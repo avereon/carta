@@ -7,6 +7,14 @@ import java.util.Arrays;
 
 public class CadGeometry {
 
+	public static double angle360( Point3D a ) {
+		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ) ) );
+	}
+
+	public static double angle360( Point3D a, Point3D b ) {
+		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
+	}
+
 	public static double distance( Point3D a, Point3D b ) {
 		return Geometry.distance( CadPoints.asPoint( a ), CadPoints.asPoint( b ) );
 	}
@@ -48,8 +56,16 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Geometry.polarToCartesian( CadPoints.asPoint( polar ) ) );
 	}
 
-	public static Point3D cartesianToPolar( Point3D polar ) {
-		return CadPoints.toFxPoint( Geometry.cartesianToPolar( CadPoints.asPoint( polar ) ) );
+	public static Point3D polarToCartesian360( Point3D polar ) {
+		return CadPoints.toFxPoint( Geometry.polarDegreesToCartesian( CadPoints.asPoint( polar ) ) );
+	}
+
+	public static Point3D cartesianToPolar( Point3D point ) {
+		return CadPoints.toFxPoint( Geometry.cartesianToPolar( CadPoints.asPoint( point ) ) );
+	}
+
+	public static Point3D cartesianToPolar360( Point3D point ) {
+		return CadPoints.toFxPoint( Geometry.cartesianToPolarDegrees( CadPoints.asPoint( point ) ) );
 	}
 
 }

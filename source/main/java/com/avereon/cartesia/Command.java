@@ -26,6 +26,8 @@ public class Command {
 
 	private static final System.Logger log = Log.get();
 
+	private int step;
+
 	private DesignShape preview;
 
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
@@ -113,6 +115,14 @@ public class Command {
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
 		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
+	}
+
+	protected int getStep() {
+		return step;
+	}
+
+	public void incrementStep() {
+		step++;
 	}
 
 	protected void setPreview( DesignTool tool, DesignShape preview ) {

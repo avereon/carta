@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.curve.math.Geometry;
+import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
 import java.util.Map;
@@ -12,6 +13,8 @@ public class DesignLine extends DesignShape {
 	public static final String LINE = "line";
 
 	public static final String POINT = "point";
+
+	private static final System.Logger log = Log.get();
 
 	public DesignLine() {
 	}

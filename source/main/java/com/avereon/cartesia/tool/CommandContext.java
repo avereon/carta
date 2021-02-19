@@ -9,6 +9,7 @@ import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
@@ -80,28 +81,7 @@ public class CommandContext {
 			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point2D screen = tool.localToScreen( mouse );
-			MouseEvent mEvent = new MouseEvent(
-				getLastActiveDesignTool(),
-				null,
-				MouseEvent.MOUSE_RELEASED,
-				mouse.getX(),
-				mouse.getY(),
-				screen.getX(),
-				screen.getY(),
-				MouseButton.PRIMARY,
-				1,
-				event.isShiftDown(),
-				event.isControlDown(),
-				event.isAltDown(),
-				event.isMetaDown(),
-				true,
-				false,
-				false,
-				true,
-				false,
-				true,
-				null
-			);
+			MouseEvent mEvent = new MouseEvent( getLastActiveDesignTool(), null, MouseEvent.MOUSE_RELEASED, mouse.getX(), mouse.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 1, event.isShiftDown(), event.isControlDown(), event.isAltDown(), event.isMetaDown(), true, false, false, true, false, true, null );
 			doCommand( new SelectCommand(), mEvent );
 		} else if( isInputMode() ) {
 			doCommand( new ValueCommand(), input );
@@ -225,7 +205,7 @@ public class CommandContext {
 	}
 
 	private void reset() {
-		getCommandPrompt().clear();
+		if( Fx.isFxThread() ) getCommandPrompt().clear();
 		setInputMode( false );
 	}
 
@@ -369,7 +349,12 @@ public class CommandContext {
 		public Object execute( Object priorResult ) throws Exception {
 			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
-			return command.execute( context, tool, parameters );
+			try {
+				return command.execute( context, tool, parameters );
+			} finally {
+				command.incrementStep();
+				if( tool != null ) tool.clearSelected();
+			}
 		}
 
 		public void cancel() {
@@ -379,16 +364,6 @@ public class CommandContext {
 				log.log( Log.ERROR, exception );
 			}
 		}
-
-		//		@Override
-		//		public int hashCode() {
-		//			return command.hashCode();
-		//		}
-		//
-		//		@Override
-		//		public boolean equals( Object other ) {
-		//			return command.equals( other );
-		//		}
 
 		@Override
 		public String toString() {

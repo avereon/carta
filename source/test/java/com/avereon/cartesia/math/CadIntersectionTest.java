@@ -50,7 +50,6 @@ public class CadIntersectionTest {
 
 		DesignLine c = new DesignLine( new Point3D( -2, 3, 0 ), new Point3D( 2, 3, 0 ) );
 		DesignEllipse d = new DesignEllipse( new Point3D( 1, 0, 0 ), 5.0 );
-		System.out.println( "xns=" + CadIntersection.getIntersections( c, d ) );
 		assertThat( CadIntersection.getIntersections( c, d ), containsInAnyOrder( near(new Point3D( -3, 3, 0 )), near(new Point3D( 5, 3, 0 )) ) );
 	}
 }

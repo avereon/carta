@@ -7,7 +7,6 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
-import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
@@ -17,62 +16,50 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 	private DesignShape reference;
 
-	private int step;
-
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-
+		// Step 1
 		if( parameters.length < 1 ) {
 			promptForShape( context, tool, "reference-shape-perpendicular" );
-			step = 1;
 			return incomplete();
 		}
 
+		// Step 2
 		if( parameters.length < 2 ) {
 			reference = selectNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 			if( reference == DesignShape.NONE ) return INVALID;
 
 			promptForPoint( context, tool, "start-point" );
-			step = 2;
 			return incomplete();
 		}
 
+		// Step 3
 		if( parameters.length < 3 ) {
 			Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			setPreview( tool, new DesignLine( point, point ) );
 			promptForPoint( context, tool, "end-point" );
-			step = 3;
 			return incomplete();
 		}
 
-		if( parameters.length < 4 ) {
-			Point3D origin = asPoint( tool, parameters[ 1 ], context.getAnchor() );
-			Point3D point = getPerpendicular( reference, origin, asPoint( tool, parameters[ 2 ], context.getAnchor() ) );
-			((DesignLine)getPreview()).setPoint( point );
-		}
-
-		try {
-			return commitPreview( tool );
-		} finally {
-			tool.clearSelected();
-		}
+		DesignShape shape = findNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+		Point3D origin = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+		Point3D point = getPerpendicular( shape, origin, asPoint( tool, parameters[ 2 ], context.getAnchor() ) );
+		((DesignLine)getPreview()).setPoint( point );
+		return commitPreview( tool );
 	}
 
 	@Override
 	public void handle( MouseEvent event ) {
-		DesignLine preview = getPreview();
-		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
+		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 
-			Fx.run( () -> {
-				if( step < 3 ) {
-					preview.setOrigin( mouse );
-					preview.setPoint( mouse );
-				} else {
+			switch( getStep() ) {
+				case 3 -> {
+					DesignLine preview = getPreview();
 					preview.setPoint( getPerpendicular( reference, preview.getOrigin(), mouse ) );
 				}
-			} );
+			}
 		}
 	}
 

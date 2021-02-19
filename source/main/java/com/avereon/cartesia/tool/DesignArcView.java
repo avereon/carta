@@ -1,6 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
@@ -17,6 +18,12 @@ public class DesignArcView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> yRadiusHandler;
 
+	private EventHandler<NodeEvent> rotateHandler;
+
+	private EventHandler<NodeEvent> startHandler;
+
+	private EventHandler<NodeEvent> extentHandler;
+
 	public DesignArcView( DesignPane pane, DesignArc arc ) {
 		super( pane, arc );
 	}
@@ -29,8 +36,8 @@ public class DesignArcView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		DesignArc designArc = getDesignArc();
 		Arc arc = new Arc( designArc.getOrigin().getX(), designArc.getOrigin().getY(), designArc.getXRadius(), designArc.getYRadius(), designArc.getStart(), designArc.getExtent() );
-		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
 		if( designArc.getRotate() != null ) arc.setRotate( designArc.getRotate() );
+		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
 		arc.setStrokeWidth( designArc.calcDrawWidth() );
 		arc.setStroke( designArc.calcDrawPaint() );
 		arc.setFill( designArc.calcFillPaint() );
@@ -56,23 +63,35 @@ public class DesignArcView extends DesignShapeView {
 	void registerListeners() {
 		super.registerListeners();
 		DesignArc designArc = getDesignArc();
-		getDesignShape().register( DesignArc.ORIGIN, originHandler = e -> Fx.run( () -> {
+		getDesignShape().register( DesignEllipse.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setCenterX( designArc.getOrigin().getX() );
 			((Arc)getShape()).setCenterY( designArc.getOrigin().getY() );
 		} ) );
-		getDesignShape().register( DesignArc.X_RADIUS, xRadiusHandler = e -> Fx.run( () -> {
+		getDesignShape().register( DesignEllipse.X_RADIUS, xRadiusHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setRadiusX( designArc.getXRadius() );
 		} ) );
-		getDesignShape().register( DesignArc.Y_RADIUS, yRadiusHandler = e -> Fx.run( () -> {
+		getDesignShape().register( DesignEllipse.Y_RADIUS, yRadiusHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setRadiusY( designArc.getYRadius() );
+		} ) );
+		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
+			getShape().setRotate( designArc.getRotate() );
+		} ) );
+		getDesignShape().register( DesignArc.START, startHandler = e -> Fx.run( () -> {
+			((Arc)getShape()).setStartAngle( -designArc.getStart() );
+		} ) );
+		getDesignShape().register( DesignArc.EXTENT, extentHandler = e -> Fx.run( () -> {
+			((Arc)getShape()).setLength( -designArc.getExtent() );
 		} ) );
 	}
 
 	@Override
 	void unregisterListeners() {
-		getDesignShape().unregister( DesignArc.Y_RADIUS, yRadiusHandler );
-		getDesignShape().unregister( DesignArc.X_RADIUS, xRadiusHandler );
-		getDesignShape().unregister( DesignArc.ORIGIN, originHandler );
+		getDesignShape().unregister( DesignArc.EXTENT, extentHandler );
+		getDesignShape().unregister( DesignArc.START, startHandler );
+		getDesignShape().unregister( DesignEllipse.ROTATE, rotateHandler );
+		getDesignShape().unregister( DesignEllipse.Y_RADIUS, xRadiusHandler );
+		getDesignShape().unregister( DesignEllipse.X_RADIUS, yRadiusHandler );
+		getDesignShape().unregister( DesignEllipse.ORIGIN, originHandler );
 		super.unregisterListeners();
 	}
 

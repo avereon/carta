@@ -17,6 +17,8 @@ public class DesignEllipseView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> yRadiusHandler;
 
+	private EventHandler<NodeEvent> rotateHandler;
+
 	public DesignEllipseView( DesignPane pane, DesignEllipse ellipse ) {
 		super( pane, ellipse );
 	}
@@ -67,10 +69,14 @@ public class DesignEllipseView extends DesignShapeView {
 		getDesignShape().register( DesignEllipse.Y_RADIUS, yRadiusHandler = e -> Fx.run( () -> {
 			((Ellipse)getShape()).setRadiusY( designEllipse.getYRadius() );
 		} ) );
+		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
+			getShape().setRotate( designEllipse.getRotate() );
+		} ) );
 	}
 
 	@Override
 	void unregisterListeners() {
+		getDesignShape().unregister( DesignEllipse.ROTATE, rotateHandler );
 		getDesignShape().unregister( DesignEllipse.Y_RADIUS, xRadiusHandler );
 		getDesignShape().unregister( DesignEllipse.X_RADIUS, yRadiusHandler );
 		getDesignShape().unregister( DesignEllipse.ORIGIN, originHandler );
