@@ -22,7 +22,7 @@ public class ExtendTrimCommand extends Command {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForPoint( context, tool, "select-trim-shape" );
+			promptForShape( context, tool, "select-trim-shape" );
 			return incomplete();
 		}
 
@@ -30,7 +30,7 @@ public class ExtendTrimCommand extends Command {
 			trimMouse = context.getScreenMouse();
 			trim = selectNearestShapeAtMouse( tool, trimMouse );
 			if( trim == DesignShape.NONE ) return invalid();
-			promptForPoint( context, tool, "select-trim-edge" );
+			promptForShape( context, tool, "select-trim-edge" );
 			return incomplete();
 		}
 

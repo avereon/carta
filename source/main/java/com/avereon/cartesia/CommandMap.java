@@ -5,6 +5,8 @@ import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
+import com.avereon.xenon.ActionLibrary;
+import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.ProgramProduct;
 import javafx.scene.input.*;
 
@@ -15,11 +17,9 @@ public class CommandMap {
 
 	private static final System.Logger log = Log.get();
 
-	public static final String COMMAND_SUFFIX = ".command";
+	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
-	private static final Map<String, CommandMapping> actionCommands = new ConcurrentHashMap<>();
-
-	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
+	private static final Map<String, String> commandActions = new ConcurrentHashMap<>();
 
 	private static final Map<CommandEventKey, String> eventActions = new ConcurrentHashMap<>();
 
@@ -65,7 +65,7 @@ public class CommandMap {
 
 		// Draw setting commands
 		// In GCAD these were initially managed with simple commands. Later on you could tell the
-		// pattern changed to use grouped settings. There multiple options here:
+		// pattern changed to use grouped settings. There are multiple options here:
 		// 1. Use simple commands for each setting. This could end up using a lot of commands
 		//    unless three-letter commands (or two-letter with extra) are allowed.
 		// 2. Use a single command to show the properties/settings for a context. Such as,
@@ -92,11 +92,11 @@ public class CommandMap {
 		//add( "draw-arc-3", Arc3Command.class ); // endpoint-midpoint-endpoint
 		add( product, "draw-circle-2", DrawCircleCommand.class ); // center-radius
 		//add( "draw-circle-3", Circle3Command.class ); // point-point-point
-		//add( "draw-ellipse-3", EllipseCommand.class ); // center-radius-radius
+		//add( "draw-ellipse-3", EllipseCommand.class ); // center-radius/start-extent
 		//add( "draw-ellipse-5", Ellipse5Command.class ); // point-point-point-point-point
-		//add( "draw-ellipse-arc-5", EllipseArc5Command.class ); // center-radius-radius-endpoint-endpoint
+		//add( "draw-ellipse-arc-5", EllipseArc5Command.class ); // center-radius-radius-start-extent
 		add( product, "draw-line-2", DrawLineCommand.class ); // endpoint-endpoint
-		//add( product, "draw-line-perpendicular", LineCommand.class ); // shape-endpoint-endpoint
+		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
 		add( product, "draw-point", DrawPointCommand.class ); // point
 		add( product, "draw-curve-4", CurveCommand.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-path", PathCommand.class );
@@ -129,23 +129,32 @@ public class CommandMap {
 		add( new CommandEventKey( ZoomEvent.ZOOM ), "camera-zoom" );
 		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
 		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
+
+		printCommandMapByCommand();
+		//printCommandMapByName();
+	}
+
+	private static void printCommandMapByCommand() {
+		actionCommands.values().stream().sorted().forEach( k -> {
+			System.out.println( k.getShortcut() + " -> " + k.getName() + " [" + k.getAction() + "]" );
+		} );
 	}
 
 	public static boolean hasCommand( String shortcut ) {
-		return shortcutActions.containsKey( shortcut );
+		return commandActions.containsKey( shortcut );
 	}
 
-	public static CommandMapping get( String shortcut ) {
-		return getActionCommand( shortcutActions.getOrDefault( shortcut, TextUtil.EMPTY ) );
+	public static CommandMetadata get( String shortcut ) {
+		return getActionCommand( commandActions.getOrDefault( shortcut, TextUtil.EMPTY ) );
 	}
 
-	public static CommandMapping get( InputEvent event ) {
+	public static CommandMetadata get( InputEvent event ) {
 		return getActionCommand( eventActions.getOrDefault( CommandEventKey.of( event ), TextUtil.EMPTY ) );
 	}
 
-	private static CommandMapping getActionCommand( String action ) {
+	private static CommandMetadata getActionCommand( String action ) {
 		if( TextUtil.isEmpty( action ) ) return null;
-		CommandMapping mapping = actionCommands.get( action );
+		CommandMetadata mapping = actionCommands.get( action );
 		if( mapping == null ) log.log( Log.WARN, "No command for action: " + action );
 		return mapping;
 	}
@@ -154,22 +163,20 @@ public class CommandMap {
 		eventActions.put( key, action );
 	}
 
-	private static void add( ProgramProduct product, String action, Class<? extends Command> command, Object... parameters ) {
-		String shortcut = product.rb().textOr( BundleKey.ACTION, action + COMMAND_SUFFIX, "" ).toLowerCase();
+	private static void add( ProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
+		ActionLibrary library = product.getProgram().getActionLibrary();
+		library.register( product.rb(), action );
+		ActionProxy proxy = library.getAction( action );
+
+		String name = proxy.getName();
+		String command = proxy.getCommand().toLowerCase();
 
 		if( !actionCommands.containsKey( action ) ) {
-			shortcutActions.put( shortcut, action );
-			actionCommands.put( action, new CommandMapping( action, shortcut, command, parameters ) );
+			commandActions.put( command, action );
+			actionCommands.put( action, new CommandMetadata( action, name, command, type, parameters ) );
 		} else {
-			CommandMapping existing = actionCommands.get( action );
-			log.log(
-				Log.ERROR,
-				"Shortcut already used: shortcut={0} action={1} conflict={2} existing={3}",
-				shortcut,
-				action,
-				command.getName(),
-				existing.getCommand().getName()
-			);
+			CommandMetadata existing = actionCommands.get( action );
+			log.log( Log.ERROR, "Shortcut already used: shortcut={0} action={1} conflict={2} existing={3}", command, action, type.getName(), existing.getType().getName() );
 		}
 	}
 

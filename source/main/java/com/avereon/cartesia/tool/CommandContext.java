@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandMap;
-import com.avereon.cartesia.CommandMapping;
+import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.command.SelectCommand;
 import com.avereon.cartesia.command.ValueCommand;
 import com.avereon.util.ArrayUtil;
@@ -238,18 +238,18 @@ public class CommandContext {
 	}
 
 	private void doEventCommand( InputEvent event ) {
-		CommandMapping mapping = CommandMap.get( event );
-		if( mapping != null ) doCommand( event, mapping.getCommand(), mapping.getParameters() );
+		CommandMetadata mapping = CommandMap.get( event );
+		if( mapping != null ) doCommand( event, mapping.getType(), mapping.getParameters() );
 		event.consume();
 	}
 
 	private void doCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return;
 
-		CommandMapping mapping = CommandMap.get( input );
+		CommandMetadata mapping = CommandMap.get( input );
 		if( mapping != null ) {
 			priorShortcut = input;
-			doCommand( getLastActiveDesignTool(), mapping.getCommand(), mapping.getParameters() );
+			doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
 		} else {
 			log.log( Log.WARN, "Unknown command=" + input );
 		}

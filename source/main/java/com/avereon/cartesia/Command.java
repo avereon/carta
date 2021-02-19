@@ -8,11 +8,13 @@ import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
-import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.shape.Shape;
+
+import java.util.List;
 
 public class Command {
 
@@ -76,19 +78,28 @@ public class Command {
 	}
 
 	protected void promptForNumber( CommandContext context, DesignTool tool, String key ) {
+		tool.setCursor( null );
 		promptForValue( context, tool, key, false );
 	}
 
 	protected void promptForPoint( CommandContext context, DesignTool tool, String key ) {
+		tool.setCursor( tool.getReticle() );
+		promptForValue( context, tool, key, false );
+	}
+
+	protected void promptForShape( CommandContext context, DesignTool tool, String key ) {
+		tool.setCursor( Cursor.HAND );
 		promptForValue( context, tool, key, false );
 	}
 
 	protected void promptForText( CommandContext context, DesignTool tool, String key ) {
+		tool.setCursor( Cursor.TEXT );
 		promptForValue( context, tool, key, true );
 	}
 
 	protected DesignShape findNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
-		return getNearestShape( tool, () -> tool.screenPointFind( mouse ) );
+		List<Shape> shapes = tool.screenPointFindAndWait( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get(0) );
 	}
 
 	protected DesignShape findNearestShapeAtPoint( DesignTool tool, Point3D point ) {
@@ -96,7 +107,8 @@ public class Command {
 	}
 
 	protected DesignShape selectNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
-		return getNearestShape( tool, () -> tool.screenPointSelect( mouse ) );
+		List<Shape> shapes = tool.screenPointSelectAndWait( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get(0) );
 	}
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
@@ -128,20 +140,8 @@ public class Command {
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String key, boolean isText ) {
-		tool.setCursor( isText ? Cursor.TEXT : tool.getReticle() );
 		String prompt = tool.getProduct().rb().text( BundleKey.PROMPT, key );
 		context.submit( tool, new PromptCommand( prompt, isText ) );
-	}
-
-	private DesignShape getNearestShape( DesignTool tool, Runnable get ) {
-		try {
-			get.run();
-			Fx.waitForWithInterrupt( 1000 );
-			return tool.selectedShapes().isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( tool.selectedShapes().get( 0 ) );
-		} catch( InterruptedException exception ) {
-			log.log( Log.ERROR, exception );
-			return DesignShape.NONE;
-		}
 	}
 
 }

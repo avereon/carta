@@ -1,6 +1,9 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.*;
+import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.DesignValue;
+import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
@@ -12,10 +15,7 @@ import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
 import com.avereon.util.Log;
 import com.avereon.util.TypeReference;
-import com.avereon.xenon.Action;
-import com.avereon.xenon.Program;
-import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.PropertiesToolEvent;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.guide.GuideNode;
@@ -38,10 +38,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -387,9 +384,7 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.visibleLayersProperty().addListener( this::doUpdateVisibleLayers );
 
 		// Add current layer property listener
-		currentLayerProperty().addListener( ( p, o, n ) -> {
-			getSettings().set( CURRENT_LAYER, n.getId() );
-		} );
+		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
 
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -477,13 +472,9 @@ public abstract class DesignTool extends GuidedTool {
 		pullToolActions();
 	}
 
-	private Action pushCommandAction( String key ) {
-		return pushCommandAction( key, null );
-	}
-
 	private Action pushCommandAction( String key, String initialActionState ) {
-		String shortcut = getProduct().rb().textOr( BundleKey.ACTION, key + CommandMap.COMMAND_SUFFIX, "" ).toLowerCase();
-		Action action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), shortcut ) );
+		ActionProxy proxy = getProgram().getActionLibrary().getAction( key );
+		Action action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), proxy.getCommand() ) );
 		action.setState( initialActionState );
 		pushAction( key, action );
 		return action;
@@ -515,8 +506,25 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	public void screenPointFind( Point3D mouse ) {
-		screenPointSelect( mouse, false );
+	public List<Shape> screenPointFindAndWait( Point3D mouse ) {
+		final List<Shape> selection = new ArrayList<>();
+		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selection::add ) );
+		try {
+			Fx.waitForWithInterrupt( 1000 );
+		} catch( InterruptedException exception ) {
+			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
+		}
+		return selection;
+	}
+
+	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
+		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selectedShapes()::add ) );
+		try {
+			Fx.waitForWithInterrupt( 1000 );
+		} catch( InterruptedException exception ) {
+			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
+		}
+		return selectedShapes();
 	}
 
 	public void screenPointSelect( Point3D mouse ) {

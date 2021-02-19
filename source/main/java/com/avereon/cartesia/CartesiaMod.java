@@ -29,8 +29,8 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 
-		registerAction( this.rb(), "snap-grid-toggle" );
-		registerAction( this.rb(), "grid-toggle" );
+		registerAction( rb(), "snap-grid-toggle" );
+		registerAction( rb(), "grid-toggle" );
 
 		// Register Design2D
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
