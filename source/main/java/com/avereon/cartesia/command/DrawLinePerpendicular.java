@@ -1,7 +1,9 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
@@ -27,8 +29,8 @@ public class DrawLinePerpendicular extends DrawCommand {
 		}
 
 		if( parameters.length < 2 ) {
-			reference = selectNearestShapeAtMouse( tool, context.getScreenMouse() );
-			if( reference == null ) return INVALID;
+			reference = selectNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+			if( reference == DesignShape.NONE ) return INVALID;
 
 			setPreview( tool, new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
@@ -37,17 +39,23 @@ public class DrawLinePerpendicular extends DrawCommand {
 		}
 
 		if( parameters.length < 3 ) {
-			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+			getPreview().setOrigin( asPoint( tool, parameters[ 1 ], context.getAnchor() ) );
 			promptForPoint( context, tool, "end-point" );
 			step = 3;
 			return incomplete();
 		}
 
 		if( parameters.length < 4 ) {
-			((DesignLine)getPreview()).setPoint( asPoint( tool, parameters[ 1 ], context.getAnchor() ) );
+			Point3D origin = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+			Point3D point = getPerpendicular( reference, origin, asPoint( tool, parameters[ 2 ], context.getAnchor() ) );
+			((DesignLine)getPreview()).setPoint( point );
 		}
 
-		return commitPreview( tool );
+		try {
+			return commitPreview( tool );
+		} finally {
+			tool.clearSelected();
+		}
 	}
 
 	@Override
@@ -58,10 +66,33 @@ public class DrawLinePerpendicular extends DrawCommand {
 			Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 
 			Fx.run( () -> {
-				if( step < 3 ) preview.setOrigin( mouse );
-				preview.setPoint( mouse );
+				if( step < 3 ) {
+					preview.setOrigin( mouse );
+					preview.setPoint( mouse );
+				}
+				if( step >= 3 ) {
+					preview.setPoint( getPerpendicular( reference, preview.getOrigin(), mouse ) );
+				}
 			} );
 		}
+	}
+
+	private Point3D getPerpendicular( DesignShape reference, Point3D origin, Point3D mouse ) {
+		if( reference instanceof DesignLine ) {
+			DesignLine line = (DesignLine)reference;
+			Point3D u = line.getPoint().subtract( line.getOrigin() );
+			Point3D v = new Point3D( -u.getY(), u.getX(), 0 ).normalize();
+			double m = mouse.subtract( origin ).dotProduct( v );
+			return origin.add( v.multiply( m ) );
+		} else if( reference instanceof DesignEllipse ) {
+			// This works well for circles and circle arcs, not for ellipses and ellipse arcs
+			DesignEllipse ellipse = (DesignEllipse)reference;
+			Point3D v = ellipse.getOrigin().subtract( origin ).normalize();
+			double m = mouse.subtract( origin ).dotProduct( v );
+			return origin.add( v.multiply( m ) );
+		}
+
+		return CadPoints.NONE;
 	}
 
 }

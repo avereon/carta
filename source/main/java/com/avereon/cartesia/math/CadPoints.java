@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 public class CadPoints {
 
+	public static final Point3D NONE = new Point3D( Double.NaN, Double.NaN, Double.NaN );
+
 	public static final Point3D UNIT_X = CadPoints.toFxPoint( Vector.UNIT_X );
 
 	public static final Point3D UNIT_Y = CadPoints.toFxPoint( Vector.UNIT_Y );

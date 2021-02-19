@@ -41,7 +41,6 @@ public class MeasureDistanceCommand extends MeasureCommand {
 			Point3D p2 = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			double distance = p1.distance( p2 );
 
-			// FIXME Because the title is the same, a second measurement does not show
 			String title = context.getProduct().rb().text( BundleKey.NOTICE, "measurement" );
 			String message = context.getProduct().rb().text( BundleKey.NOTICE, "distance", distance );
 			Notice notice = new Notice( title, message );
