@@ -1,5 +1,6 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -22,7 +23,8 @@ public class SnapSelectCommand extends SnapCommand {
 		try {
 			Snap snap = (Snap)parameters[ 0 ];
 			Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
-			return snap.snap( tool, point );
+			Point3D snapPoint = snap.snap( tool, point );
+			return snapPoint != CadPoints.NONE ? snapPoint : INVALID;
 		} finally {
 			tool.clearSelected();
 		}

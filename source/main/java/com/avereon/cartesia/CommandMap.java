@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.snap.SnapCenter;
 import com.avereon.cartesia.snap.SnapMidpoint;
 import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.util.Log;
@@ -111,7 +112,7 @@ public class CommandMap {
 
 		// Snap commands
 		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
-		//add( product, "snap-center", SnapSelectCommand.class, new SnapCenter() );
+		add( product, "snap-center", SnapSelectCommand.class, new SnapCenter() );
 		add( product, "snap-midpoint", SnapSelectCommand.class, new SnapMidpoint() );
 		add( product, "snap-nearest", SnapSelectCommand.class, new SnapNearest() );
 
