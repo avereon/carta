@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class DesignPane extends StackPane {
 
@@ -559,18 +560,16 @@ public class DesignPane extends StackPane {
 		selector.setStroke( null );
 
 		// check for contains or intersecting
-		List<Shape> selected;
 		List<Shape> shapes = getVisibleShapes();
 		try {
 			select.getChildren().add( selector );
-			if( contains ) {
-				selected = shapes.stream().filter( s -> isContained( selector, s ) ).collect( Collectors.toList() );
-			} else {
-				selected = shapes.stream().filter( s -> isIntersecting( selector, s ) ).collect( Collectors.toList() );
-			}
-			Collections.reverse( selected );
+
+			Stream<Shape> selectStream = shapes.stream().filter( s -> isIntersecting( selector, s ) );
+			if( contains ) selectStream = shapes.stream().filter( s -> isContained( selector, s ) );
 
 			// This list is in design order
+			List<Shape> selected = selectStream.filter( s -> !DesignShapeView.getDesignData( s ).isPreview() ).collect( Collectors.toList() );
+			Collections.reverse( selected );
 			return selected;
 		} finally {
 			select.getChildren().remove( selector );

@@ -1,7 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
-import com.avereon.cartesia.snap.SnapGrid;
+import com.avereon.cartesia.snap.SnapMidpoint;
 import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
@@ -110,9 +110,15 @@ public class CommandMap {
 		add( product, "layer-toggle", LayerToggleCommand.class );
 
 		// Snap commands
-		add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() );
-		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
+		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
+		//add( product, "snap-center", SnapSelectCommand.class, new SnapCenter() );
+		add( product, "snap-midpoint", SnapSelectCommand.class, new SnapMidpoint() );
+		add( product, "snap-nearest", SnapSelectCommand.class, new SnapNearest() );
+
+		// Snap auto commands
+		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
+		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
 
 		add( product, "trim-single", ExtendTrimCommand.class );
 		add( product, "trim-multi", MultiTrimCommand.class );
@@ -169,10 +175,11 @@ public class CommandMap {
 		ActionProxy proxy = library.getAction( action );
 
 		String name = proxy.getName();
-		String command = proxy.getCommand().toLowerCase();
+		String command = null;
+		if( proxy.getCommand() != null ) command = proxy.getCommand().toLowerCase();
 
 		if( !actionCommands.containsKey( action ) ) {
-			commandActions.put( command, action );
+			if( command != null ) commandActions.put( command, action );
 			actionCommands.put( action, new CommandMetadata( action, name, command, type, parameters ) );
 		} else {
 			CommandMetadata existing = actionCommands.get( action );

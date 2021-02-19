@@ -32,14 +32,14 @@ public class DrawLinePerpendicular extends DrawCommand {
 			reference = selectNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 			if( reference == DesignShape.NONE ) return INVALID;
 
-			setPreview( tool, new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			step = 2;
 			return incomplete();
 		}
 
 		if( parameters.length < 3 ) {
-			getPreview().setOrigin( asPoint( tool, parameters[ 1 ], context.getAnchor() ) );
+			Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+			setPreview( tool, new DesignLine( point, point ) );
 			promptForPoint( context, tool, "end-point" );
 			step = 3;
 			return incomplete();
@@ -69,8 +69,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 				if( step < 3 ) {
 					preview.setOrigin( mouse );
 					preview.setPoint( mouse );
-				}
-				if( step >= 3 ) {
+				} else {
 					preview.setPoint( getPerpendicular( reference, preview.getOrigin(), mouse ) );
 				}
 			} );

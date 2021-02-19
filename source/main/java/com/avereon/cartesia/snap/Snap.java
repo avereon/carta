@@ -7,6 +7,6 @@ public interface Snap {
 
 	String getPromptKey();
 
-	Point3D snap( DesignTool tool, Point3D mouse );
+	Point3D snap( DesignTool tool, Point3D point );
 
 }

@@ -24,7 +24,7 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 	public CommandMetadata( String action, String name, String shortcut, Class<? extends Command> type, Object... parameters ) {
 		this.action = Objects.requireNonNull( action );
 		this.name = Objects.requireNonNull( name );
-		this.shortcut = Objects.requireNonNull( shortcut );
+		this.shortcut = shortcut;
 		this.type = Objects.requireNonNull( type );
 		this.parameters = Objects.requireNonNull( parameters );
 	}
@@ -58,7 +58,11 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 
 		@Override
 		public int compare( CommandMetadata o1, CommandMetadata o2 ) {
-			return o1.getShortcut().compareTo( o2.getShortcut() );
+			String s1 = o1.getShortcut();
+			String s2 = o2.getShortcut();
+			if( s1 != null && s2 != null ) return s1.compareTo( s2 );
+
+			return o1.getAction().compareTo( o2.getAction() );
 		}
 
 	}

@@ -11,6 +11,14 @@ public class CadGeometry {
 		return Geometry.distance( CadPoints.asPoint( a ), CadPoints.asPoint( b ) );
 	}
 
+	public static Point3D midpoint( Point3D a, Point3D b ) {
+		return CadPoints.toFxPoint( Geometry.midpoint( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
+	}
+
+	public static Point3D midpoint( Point3D origin, double xRadius, double yRadius, double rotate, double start, double extent ) {
+		return CadPoints.toFxPoint( Geometry.midpoint( CadPoints.asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
+	}
+
 	public static double lineLineDistance( Point3D a, Point3D b, Point3D c, Point3D d ) {
 		return Geometry.lineLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ), CadPoints.asPoint( d ) );
 	}
