@@ -134,7 +134,7 @@ public class DesignShapeView extends DesignDrawableView {
 		if( ((DesignDrawable)getDesignNode()).getParentLayer() == null ) return;
 
 		Paint fillPaint = getDesignShape().calcFillPaint();
-		Paint selectedFillPaint = getPane().getSelectFillPaint();
+		Paint selectedFillPaint = fillPaint == null ? null : getPane().getSelectFillPaint();
 
 //		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
 //			double opacity = ((Color)fillPaint).getOpacity();

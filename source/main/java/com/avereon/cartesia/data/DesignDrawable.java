@@ -130,6 +130,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public Paint calcFillPaint() {
 		String paint = getFillPaint();
+		if( paint == null ) return null;
 		if( isCustomValue( paint ) ) return Paints.parse( paint );
 		return getParentLayer().calcFillPaint();
 	}

@@ -35,12 +35,19 @@ public class DesignArcView extends DesignShapeView {
 	@Override
 	protected List<Shape> generateGeometry() {
 		DesignArc designArc = getDesignArc();
-		Arc arc = new Arc( designArc.getOrigin().getX(), designArc.getOrigin().getY(), designArc.getXRadius(), designArc.getYRadius(), designArc.getStart(), designArc.getExtent() );
-		if( designArc.getRotate() != null ) arc.setRotate( designArc.getRotate() );
-		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
+		Arc arc = new Arc( designArc.getOrigin().getX(),
+			designArc.getOrigin().getY(),
+			designArc.getXRadius(),
+			designArc.getYRadius(),
+			-designArc.getStart(),
+			-designArc.getExtent()
+		);
+		//if( designArc.getRotate() != null ) arc.setRotate( designArc.getRotate() );
+		//if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
 		arc.setStrokeWidth( designArc.calcDrawWidth() );
 		arc.setStroke( designArc.calcDrawPaint() );
 		arc.setFill( designArc.calcFillPaint() );
+		arc.setFill( null );
 		return List.of( arc );
 	}
 

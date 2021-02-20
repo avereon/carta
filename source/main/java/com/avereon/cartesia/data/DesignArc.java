@@ -51,6 +51,7 @@ public class DesignArc extends DesignEllipse {
 	public DesignArc( Point3D origin, Double xRadius, Double yRadius, Double start, Double extent, Double rotate, Type type ) {
 		super( origin, xRadius, yRadius, rotate );
 		addModifyingKeys( START, EXTENT, TYPE );
+		if( type == Type.OPEN ) setFillPaint( null );
 		setStart( start );
 		setExtent( extent );
 		setType( type );
