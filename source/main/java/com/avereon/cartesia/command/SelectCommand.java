@@ -20,7 +20,7 @@ public class SelectCommand extends Command {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-		if( parameters.length < 1 ) return complete();
+		if( parameters.length < 1 ) return COMPLETE;
 
 		if( parameters[ 0 ] instanceof MouseEvent ) {
 			MouseEvent event = (MouseEvent)parameters[ 0 ];
@@ -32,13 +32,13 @@ public class SelectCommand extends Command {
 		}
 
 		// For this command the incoming parameter is the mouse event that triggered it
-		return complete();
+		return COMPLETE;
 	}
 
 	private Object mousePressed( CommandContext context, DesignTool tool, MouseEvent event ) {
 		eventKey = CommandEventKey.of( event );
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
-		return incomplete();
+		return INCOMPLETE;
 	}
 
 	private Object mouseReleased( CommandContext context, DesignTool tool, MouseEvent event ) {
@@ -46,12 +46,12 @@ public class SelectCommand extends Command {
 			return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 		} else if( context.isSingleSelectMode( event ) ) {
 			tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );
-			return complete();
+			return COMPLETE;
 		} else if( context.isWindowSelectMode( event ) ) {
 			tool.mouseWindowSelect( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectByContains( event ) );
-			return complete();
+			return COMPLETE;
 		}
-		return complete();
+		return COMPLETE;
 	}
 
 	@Override

@@ -8,7 +8,7 @@ public class LayerHideCommand extends LayerCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		tool.setLayerVisible( tool.getCurrentLayer(), false );
-		return complete();
+		return COMPLETE;
 	}
 
 }

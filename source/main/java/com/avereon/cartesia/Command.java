@@ -63,16 +63,6 @@ public class Command {
 		return getClass().getSimpleName();
 	}
 
-	@Deprecated
-	protected Object incomplete() {
-		return INCOMPLETE;
-	}
-
-	@Deprecated
-	protected Object complete() {
-		return COMPLETE;
-	}
-
 	protected double asDouble( Object value ) throws Exception {
 		if( value instanceof Double ) return (Double)value;
 		if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
@@ -147,7 +137,7 @@ public class Command {
 	protected Object commitPreview( DesignTool tool ) {
 		removePreview( tool );
 		tool.getCurrentLayer().addShape( preview );
-		return complete();
+		return COMPLETE;
 	}
 
 	protected void removePreview( DesignTool tool ) {

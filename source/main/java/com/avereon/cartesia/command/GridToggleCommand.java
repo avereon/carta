@@ -9,7 +9,7 @@ public class GridToggleCommand extends Command {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		tool.setGridVisible( !tool.isGridVisible() );
-		return complete();
+		return COMPLETE;
 	}
 
 }

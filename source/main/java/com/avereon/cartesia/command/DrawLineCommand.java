@@ -16,14 +16,14 @@ public class DrawLineCommand extends DrawCommand {
 		// Step 1
 		if( parameters.length < 1 ) {
 			promptForPoint( context, tool, "start-point" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
 			setPreview( tool, new DesignLine( asPoint( tool, parameters[ 0 ], context.getAnchor() ), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "end-point" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		((DesignLine)getPreview()).setPoint( asPoint( tool, parameters[ 1 ], context.getAnchor() ) );

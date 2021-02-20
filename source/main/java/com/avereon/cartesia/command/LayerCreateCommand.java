@@ -22,7 +22,7 @@ public class LayerCreateCommand extends LayerCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		if( parameters.length < 1 ) {
 			promptForText( context, tool, "layer-name" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		return addLayer( tool.getCurrentLayer(), new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) ) );

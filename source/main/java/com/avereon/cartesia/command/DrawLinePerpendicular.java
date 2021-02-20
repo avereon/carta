@@ -21,7 +21,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 		// Step 1
 		if( parameters.length < 1 ) {
 			promptForShape( context, tool, "reference-shape-perpendicular" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		// Step 2
@@ -30,7 +30,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 			if( reference == DesignShape.NONE ) return INVALID;
 
 			promptForPoint( context, tool, "start-point" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		// Step 3
@@ -38,7 +38,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 			Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			setPreview( tool, new DesignLine( point, point ) );
 			promptForPoint( context, tool, "end-point" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		DesignShape shape = findNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );

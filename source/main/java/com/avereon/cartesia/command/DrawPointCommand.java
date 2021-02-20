@@ -19,7 +19,7 @@ public class DrawPointCommand extends DrawCommand {
 			setPreview( tool, new DesignMarker( Point3D.ZERO ) );
 			getPreview().setOrigin( context.getWorldMouse() );
 			promptForPoint( context, tool, "select-point" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {

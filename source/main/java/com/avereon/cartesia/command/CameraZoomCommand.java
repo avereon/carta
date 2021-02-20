@@ -19,7 +19,7 @@ public class CameraZoomCommand extends CameraCommand {
 		// This command requires one value as the zoom value
 		if( parameters.length < 1 ) {
 			promptForNumber( context, tool, "zoom" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		if( parameters[ 0 ] instanceof GestureEvent ) {
@@ -35,7 +35,7 @@ public class CameraZoomCommand extends CameraCommand {
 				double zoomFactor = ((ZoomEvent)event).getZoomFactor();
 				if( zoomFactor != 0.0 ) zoomByFactor( tool, point, zoomFactor );
 			}
-			return complete();
+			return COMPLETE;
 		}
 
 		try {
@@ -46,7 +46,7 @@ public class CameraZoomCommand extends CameraCommand {
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return complete();
+		return COMPLETE;
 	}
 
 	protected void zoomByFactor( DesignTool tool, Point3D point, double factor ) {

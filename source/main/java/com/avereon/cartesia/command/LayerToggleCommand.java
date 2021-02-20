@@ -10,7 +10,7 @@ public class LayerToggleCommand extends LayerCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		DesignLayer layer = tool.getCurrentLayer();
 		tool.setLayerVisible( layer, !tool.isLayerVisible( layer ) );
-		return complete();
+		return COMPLETE;
 	}
 
 }

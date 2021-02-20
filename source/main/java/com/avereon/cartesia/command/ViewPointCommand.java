@@ -16,7 +16,7 @@ public class ViewPointCommand extends CameraCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForPoint( context, tool, "select-viewpoint" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		try {
@@ -27,7 +27,7 @@ public class ViewPointCommand extends CameraCommand {
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return complete();
+		return COMPLETE;
 	}
 
 

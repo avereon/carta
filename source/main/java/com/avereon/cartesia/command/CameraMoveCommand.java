@@ -22,19 +22,19 @@ public class CameraMoveCommand extends CameraCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForPoint( context, tool, "pan-point" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		if( parameters[ 0 ] instanceof MouseEvent ) {
 			MouseEvent event = (MouseEvent)parameters[ 0 ];
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
-				return complete();
+				return COMPLETE;
 			}
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 				eventKey = CommandEventKey.of( event );
 				viewAnchor = tool.getViewPoint();
 				dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
-				return incomplete();
+				return INCOMPLETE;
 			}
 		}
 
@@ -46,7 +46,7 @@ public class CameraMoveCommand extends CameraCommand {
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return complete();
+		return COMPLETE;
 	}
 
 	@Override

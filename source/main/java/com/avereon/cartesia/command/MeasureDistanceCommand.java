@@ -26,14 +26,14 @@ public class MeasureDistanceCommand extends MeasureCommand {
 			setPreview( tool, new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			step = 1;
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {
 			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 			promptForPoint( context, tool, "end-point" );
 			step = 2;
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		try {
@@ -63,7 +63,7 @@ public class MeasureDistanceCommand extends MeasureCommand {
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return complete();
+		return COMPLETE;
 	}
 
 	@Override

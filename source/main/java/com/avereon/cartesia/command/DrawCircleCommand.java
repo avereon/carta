@@ -16,14 +16,14 @@ public class DrawCircleCommand extends DrawCommand {
 		// Step 1
 		if( parameters.length < 1 ) {
 			promptForPoint( context, tool, "center" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
 			setPreview( tool, new DesignEllipse( asPoint( tool, parameters[ 0 ], context.getAnchor() ), 0.0 ) );
 			promptForPoint( context, tool, "radius" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		((DesignEllipse)getPreview()).setRadius( asDouble( getPreview().getOrigin(), parameters[ 1 ] ) );

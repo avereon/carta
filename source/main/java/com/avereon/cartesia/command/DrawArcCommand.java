@@ -18,7 +18,7 @@ public class DrawArcCommand extends DrawCommand {
 		// Step 1
 		if( parameters.length < 1 ) {
 			promptForPoint( context, tool, "center" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		// Step 2
@@ -27,7 +27,7 @@ public class DrawArcCommand extends DrawCommand {
 			preview.setFillPaint( "#00000000" );
 			setPreview( tool, preview );
 			promptForPoint( context, tool, "start" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		// Step 3
@@ -38,7 +38,7 @@ public class DrawArcCommand extends DrawCommand {
 			preview.setRadius( CadGeometry.distance( preview.getOrigin(), start ) );
 			preview.setStart( CadGeometry.angle360( start.subtract( preview.getOrigin() ) ) );
 			promptForPoint( context, tool, "extent" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		DesignArc arc = getPreview();
