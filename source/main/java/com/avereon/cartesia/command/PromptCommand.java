@@ -21,12 +21,17 @@ public class PromptCommand extends Command {
 	}
 
 	@Override
+	public boolean clearSelectionWhenComplete() {
+		return false;
+	}
+
+	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		if( tool == null ) return COMPLETE;
 
 		if( parameters.length == 0 ) {
 			tool.getDesignContext().getCommandPrompt().setPrompt( prompt );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		tool.getDesignContext().getCommandPrompt().clear();

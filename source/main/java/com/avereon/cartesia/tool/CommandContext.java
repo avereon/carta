@@ -14,10 +14,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -81,7 +78,28 @@ public class CommandContext {
 			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point2D screen = tool.localToScreen( mouse );
-			MouseEvent mEvent = new MouseEvent( getLastActiveDesignTool(), null, MouseEvent.MOUSE_RELEASED, mouse.getX(), mouse.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 1, event.isShiftDown(), event.isControlDown(), event.isAltDown(), event.isMetaDown(), true, false, false, true, false, true, null );
+			MouseEvent mEvent = new MouseEvent(
+				getLastActiveDesignTool(),
+				null,
+				MouseEvent.MOUSE_RELEASED,
+				mouse.getX(),
+				mouse.getY(),
+				screen.getX(),
+				screen.getY(),
+				MouseButton.PRIMARY,
+				1,
+				event.isShiftDown(),
+				event.isControlDown(),
+				event.isAltDown(),
+				event.isMetaDown(),
+				true,
+				false,
+				false,
+				true,
+				false,
+				true,
+				null
+			);
 			doCommand( new SelectCommand(), mEvent );
 		} else if( isInputMode() ) {
 			doCommand( new ValueCommand(), input );
@@ -275,13 +293,17 @@ public class CommandContext {
 				List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
 				for( CommandExecuteRequest request : requests ) {
 					setInputMode( request.getCommand().isInputCommand() );
-					result = request.execute( result );
+					result = request.executeCommandStep( result );
 					if( result == Command.INVALID ) break;
 					if( result instanceof Point3D ) setAnchor( (Point3D)result );
 					if( result == Command.INCOMPLETE ) break;
 					commandStack.remove( request );
 				}
-				if( commandStack.size() != 0 ) log.log( Log.DEBUG, "remaining commands=" + commandStack );
+
+				List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
+				Collections.reverse( invertedCommandStack );
+
+				if( commandStack.size() != 0 ) log.log( Log.DEBUG, "command stack=" + invertedCommandStack );
 			} catch( Exception exception ) {
 				cancel();
 				throw exception;
@@ -346,15 +368,26 @@ public class CommandContext {
 			return parameters;
 		}
 
-		public Object execute( Object priorResult ) throws Exception {
+		public Object executeCommandStep( Object priorResult ) throws Exception {
+
+			// NOTE Be judicious adding logic in this method.
+			// It is called for every step in a command and not just once per command
+
 			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
+
+			Object result = Command.INVALID;
 			try {
-				return command.execute( context, tool, parameters );
+				result = command.execute( context, tool, parameters );
 			} finally {
 				command.incrementStep();
-				if( tool != null ) tool.clearSelected();
+				if( result != Command.INCOMPLETE && tool != null && command.clearSelectionWhenComplete() ) {
+					System.out.println( "clear selected tool=" + tool );
+					tool.clearSelected();
+				}
 			}
+
+			return result;
 		}
 
 		public void cancel() {
@@ -367,7 +400,7 @@ public class CommandContext {
 
 		@Override
 		public String toString() {
-			return command.getClass().getSimpleName();
+			return command.toString();
 		}
 	}
 

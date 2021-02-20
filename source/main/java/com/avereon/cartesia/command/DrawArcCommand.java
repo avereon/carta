@@ -50,21 +50,17 @@ public class DrawArcCommand extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			DesignTool tool = (DesignTool)event.getSource();
-			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			DesignArc preview = getPreview();
+			if( preview != null ) {
+				DesignTool tool = (DesignTool)event.getSource();
+				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 
-			switch( getStep() ) {
-				case 2 -> {
-					DesignArc preview = getPreview();
-					preview.setRadius( CadGeometry.distance( preview.getOrigin(), point ) );
+				switch( getStep() ) {
+					case 2 -> preview.setRadius( CadGeometry.distance( preview.getOrigin(), point ) );
+					case 3 -> preview.setExtent( getExtent( preview, point, extentCcw ) );
 				}
-				case 3 -> {
-					DesignArc preview = getPreview();
-					preview.setExtent( getExtent( preview, point, extentCcw ) );
-				}
+				lastAnchor = point;
 			}
-
-			lastAnchor = point;
 		}
 	}
 

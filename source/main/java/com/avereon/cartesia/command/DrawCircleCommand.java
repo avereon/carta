@@ -33,13 +33,12 @@ public class DrawCircleCommand extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			DesignTool tool = (DesignTool)event.getSource();
-			Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-
-			switch( getStep() ) {
-				case 2 -> {
-					DesignEllipse preview = getPreview();
-					preview.setRadius( mouse.distance( preview.getOrigin() ) );
+			DesignEllipse preview = getPreview();
+			if( preview != null ) {
+				DesignTool tool = (DesignTool)event.getSource();
+				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+				switch( getStep() ) {
+					case 2 -> preview.setRadius( point.distance( preview.getOrigin() ) );
 				}
 			}
 		}

@@ -51,13 +51,12 @@ public class DrawLinePerpendicular extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			DesignTool tool = (DesignTool)event.getSource();
-			Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-
-			switch( getStep() ) {
-				case 3 -> {
-					DesignLine preview = getPreview();
-					preview.setPoint( getPerpendicular( reference, preview.getOrigin(), mouse ) );
+			DesignLine preview = getPreview();
+			if ( preview != null ) {
+				DesignTool tool = (DesignTool)event.getSource();
+				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+				switch( getStep() ) {
+					case 3 -> preview.setPoint( getPerpendicular( reference, preview.getOrigin(), point ) );
 				}
 			}
 		}

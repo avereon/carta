@@ -42,22 +42,33 @@ public class Command {
 		}
 	}
 
+	public void incrementStep() {
+		step++;
+	}
+
 	public boolean isInputCommand() {
 		return false;
+	}
+
+	public boolean clearSelectionWhenComplete() {
+		return true;
 	}
 
 	public void handle( KeyEvent event ) {}
 
 	public void handle( MouseEvent event ) {}
 
-	protected Object invalid() {
-		return INVALID;
+	@Override
+	public String toString() {
+		return getClass().getSimpleName();
 	}
 
+	@Deprecated
 	protected Object incomplete() {
 		return INCOMPLETE;
 	}
 
+	@Deprecated
 	protected Object complete() {
 		return COMPLETE;
 	}
@@ -119,10 +130,6 @@ public class Command {
 
 	protected int getStep() {
 		return step;
-	}
-
-	public void incrementStep() {
-		step++;
 	}
 
 	protected void setPreview( DesignTool tool, DesignShape preview ) {

@@ -99,9 +99,9 @@ public class CommandContextTest {
 
 		@Override
 		public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-			if( parameters.length < needed ) return incomplete();
+			if( parameters.length < needed ) return INCOMPLETE;
 			this.values = parameters;
-			return complete();
+			return COMPLETE;
 		}
 
 		public Object[] getValues() {

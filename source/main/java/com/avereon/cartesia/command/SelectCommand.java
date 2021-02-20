@@ -14,6 +14,11 @@ public class SelectCommand extends Command {
 	private Point3D dragAnchor;
 
 	@Override
+	public boolean clearSelectionWhenComplete() {
+		return false;
+	}
+
+	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		if( parameters.length < 1 ) return complete();
 

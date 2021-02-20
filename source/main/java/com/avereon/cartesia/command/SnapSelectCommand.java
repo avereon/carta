@@ -11,23 +11,26 @@ public class SnapSelectCommand extends SnapCommand {
 
 	private static final System.Logger log = Log.get();
 
+	private Snap snap;
+
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) return INVALID;
 
 		if( parameters.length < 2 ) {
+			snap = (Snap)parameters[ 0 ];
 			promptForShape( context, tool, "select-snap-shape" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
-		try {
-			Snap snap = (Snap)parameters[ 0 ];
-			Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
-			Point3D snapPoint = snap.snap( tool, point );
-			return snapPoint != CadPoints.NONE ? snapPoint : INVALID;
-		} finally {
-			tool.clearSelected();
-		}
+		Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+		Point3D snapPoint = snap.snap( tool, point );
+		return snapPoint != CadPoints.NONE ? snapPoint : INVALID;
+	}
+
+	@Override
+	public String toString() {
+		return snap.getClass().getSimpleName();
 	}
 
 }

@@ -23,27 +23,23 @@ public class ExtendTrimCommand extends Command {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForShape( context, tool, "select-trim-shape" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {
 			trimMouse = context.getScreenMouse();
 			trim = selectNearestShapeAtMouse( tool, trimMouse );
-			if( trim == DesignShape.NONE ) return invalid();
+			if( trim == DesignShape.NONE ) return INVALID;
 			promptForShape( context, tool, "select-trim-edge" );
-			return incomplete();
+			return INCOMPLETE;
 		}
 
-		try {
-			Point3D edgeMouse = context.getScreenMouse();
-			DesignShape edge = findNearestShapeAtMouse( tool, edgeMouse );
-			if( edge == DesignShape.NONE ) return invalid();
-			Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
-		} finally {
-			tool.clearSelected();
-		}
+		Point3D edgeMouse = context.getScreenMouse();
+		DesignShape edge = findNearestShapeAtMouse( tool, edgeMouse );
+		if( edge == DesignShape.NONE ) return INVALID;
+		Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
 
-		return complete();
+		return COMPLETE;
 	}
 
 }
