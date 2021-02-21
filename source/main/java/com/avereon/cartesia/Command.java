@@ -42,6 +42,10 @@ public class Command {
 		}
 	}
 
+	public int getStep() {
+		return step;
+	}
+
 	public void incrementStep() {
 		step++;
 	}
@@ -118,10 +122,6 @@ public class Command {
 		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
 	}
 
-	protected int getStep() {
-		return step;
-	}
-
 	protected void setPreview( DesignTool tool, DesignShape preview ) {
 		this.preview = preview;
 		tool.getAsset().setCaptureUndoChanges( false );
@@ -147,8 +147,8 @@ public class Command {
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String key, boolean isText ) {
-		String prompt = tool.getProduct().rb().text( BundleKey.PROMPT, key );
-		context.submit( tool, new Prompt( prompt, isText ) );
+		String text = tool.getProduct().rb().text( BundleKey.PROMPT, key );
+		context.submit( tool, new Prompt( text, isText ) );
 	}
 
 }

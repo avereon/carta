@@ -286,12 +286,21 @@ public class CommandContext {
 		}
 	}
 
+	private void logCommandStack() {
+		if( log.isLoggable( Log.DEBUG ) ) {
+			List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
+			Collections.reverse( invertedCommandStack );
+			if( commandStack.size() != 0 ) log.log( Log.DEBUG, "commands=" + invertedCommandStack );
+		}
+	}
+
 	private Object doProcessCommands() throws Exception {
 		Object result = Command.COMPLETE;
 		synchronized( commandStack ) {
 			try {
 				List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
 				for( CommandExecuteRequest request : requests ) {
+					logCommandStack();
 					setInputMode( request.getCommand().isInputCommand() );
 					result = request.executeCommandStep( result );
 					if( result == Command.INVALID ) break;
@@ -299,11 +308,6 @@ public class CommandContext {
 					if( result == Command.INCOMPLETE ) break;
 					commandStack.remove( request );
 				}
-
-				List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
-				Collections.reverse( invertedCommandStack );
-
-				if( commandStack.size() != 0 ) log.log( Log.DEBUG, "command stack=" + invertedCommandStack );
 			} catch( Exception exception ) {
 				cancel();
 				throw exception;
@@ -369,9 +373,8 @@ public class CommandContext {
 		}
 
 		public Object executeCommandStep( Object priorResult ) throws Exception {
-
 			// NOTE Be judicious adding logic in this method.
-			// It is called for every step in a command and not just once per command
+			// It is called for every step in a command
 
 			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
@@ -379,10 +382,9 @@ public class CommandContext {
 			Object result = Command.INVALID;
 			try {
 				result = command.execute( context, tool, parameters );
-			} finally {
 				command.incrementStep();
+			} finally {
 				if( result != Command.INCOMPLETE && tool != null && command.clearSelectionWhenComplete() ) {
-					System.out.println( "clear selected tool=" + tool );
 					tool.clearSelected();
 				}
 			}
@@ -400,7 +402,7 @@ public class CommandContext {
 
 		@Override
 		public String toString() {
-			return command.toString();
+			return command.toString() + ":" + command.getStep();
 		}
 	}
 
