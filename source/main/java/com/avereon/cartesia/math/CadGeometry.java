@@ -35,6 +35,10 @@ public class CadGeometry {
 		return Geometry.lineLineAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ), CadPoints.asPoint( d ) );
 	}
 
+	public static Point3D ellipsePoint360( Point3D o, double xRadius, double yRadius, double rotate, double angle ) {
+		return CadPoints.toFxPoint( Geometry.ellipsePoint( CadPoints.asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), Math.toRadians( angle ) ) );
+	}
+
 	public static Point3D getNormal( Point3D a, Point3D b, Point3D c ) {
 		return CadPoints.toFxPoint( Geometry.getNormal( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ) ) );
 	}

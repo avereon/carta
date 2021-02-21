@@ -39,8 +39,8 @@ public class DesignMarkerView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Path path = (Path)shapes.get( 0 );
-		MoveTo m = ((MoveTo)path.getElements().get( 0 ));
-		ConstructionPoint o = cp( pane, path, m.xProperty(), m.yProperty() );
+		MoveTo origin = ((MoveTo)path.getElements().get( 0 ));
+		ConstructionPoint o = cp( pane, path, origin.xProperty(), origin.yProperty() );
 		return setConstructionPoints( path, List.of( o ) );
 	}
 
@@ -59,7 +59,7 @@ public class DesignMarkerView extends DesignShapeView {
 		getDesignShape().register( DesignMarker.ORIGIN, originHandler = e -> Fx.run( () -> {
 			getShape().setLayoutX( getDesignMarker().getOrigin().getX() );
 			getShape().setLayoutY( getDesignMarker().getOrigin().getY() );
-		}));
+		} ) );
 		getDesignShape().register( DesignMarker.TYPE, pointTypeHandler = e -> Fx.run( this::updateGeometry ) );
 		getDesignShape().register( DesignMarker.SIZE, pointSizeHandler = e -> Fx.run( this::updateGeometry ) );
 	}

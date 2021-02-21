@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
@@ -9,12 +10,16 @@ import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.DoubleProperty;
+import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 
 public class DesignShapeView extends DesignDrawableView {
 
@@ -136,11 +141,11 @@ public class DesignShapeView extends DesignDrawableView {
 		Paint fillPaint = getDesignShape().calcFillPaint();
 		Paint selectedFillPaint = fillPaint == null ? null : getPane().getSelectFillPaint();
 
-//		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
-//			double opacity = ((Color)fillPaint).getOpacity();
-//			selectedFillPaint = Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
-//			selectedFillPaint = Colors.opaque( (Color)selectedFillPaint );
-//		}
+		//		if( fillPaint instanceof Color && selectedFillPaint instanceof Color ) {
+		//			double opacity = ((Color)fillPaint).getOpacity();
+		//			selectedFillPaint = Colors.mix( Colors.opaque( (Color)selectedFillPaint ), Color.TRANSPARENT, opacity );
+		//			selectedFillPaint = Colors.opaque( (Color)selectedFillPaint );
+		//		}
 
 		getShape().setStroke( selected ? getPane().getSelectDrawPaint() : getDesignShape().calcDrawPaint() );
 		getShape().setFill( selected ? selectedFillPaint : fillPaint );
@@ -167,7 +172,13 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	static ConstructionPoint cp( DesignPane pane, Shape shape, DoubleProperty xProperty, DoubleProperty yProperty ) {
-		return cp( pane, shape, xProperty.add( 0 ), yProperty.add( 0 ) );
+		Bindings.selectDouble( xProperty );
+
+		return cp( pane, shape, Bindings.selectDouble( xProperty ), Bindings.selectDouble( yProperty ) );
+	}
+
+	static ConstructionPoint cp( DesignPane pane, Shape shape, Callable<Double> xBinding, Callable<Double> yBinding ) {
+		return cp( pane, shape, Bindings.createDoubleBinding( xBinding ), Bindings.createDoubleBinding( yBinding ) );
 	}
 
 	static ConstructionPoint cp( DesignPane pane, Shape shape, NumberBinding xBinding, NumberBinding yBinding ) {
@@ -183,6 +194,14 @@ public class DesignShapeView extends DesignDrawableView {
 	static List<ConstructionPoint> setConstructionPoints( Shape shape, List<ConstructionPoint> cps ) {
 		shape.getProperties().put( CONSTRUCTION_POINTS, cps );
 		return cps;
+	}
+
+	static Point3D getArcPoint( Arc arc, double angle ) {
+		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), arc.getRotate(), angle );
+	}
+
+	static Point3D getEllipsePoint( Ellipse arc, double angle ) {
+		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), arc.getRotate(), angle );
 	}
 
 }
