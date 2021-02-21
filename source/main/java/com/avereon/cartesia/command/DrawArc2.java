@@ -7,7 +7,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class DrawArcCommand extends DrawCommand {
+public class DrawArc2 extends DrawCommand {
 
 	private boolean extentCcw;
 

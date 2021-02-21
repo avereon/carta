@@ -8,7 +8,7 @@ import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class DrawPointCommand extends DrawCommand {
+public class DrawMarker extends DrawCommand {
 
 	private static final System.Logger log = Log.get();
 

@@ -12,7 +12,7 @@ import javafx.scene.input.ZoomEvent;
 
 import java.text.ParseException;
 
-public class CameraZoomCommand extends CameraCommand {
+public class CameraZoom extends CameraCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {

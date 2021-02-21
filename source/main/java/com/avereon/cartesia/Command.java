@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.command.PromptCommand;
+import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
@@ -148,7 +148,7 @@ public class Command {
 
 	private void promptForValue( CommandContext context, DesignTool tool, String key, boolean isText ) {
 		String prompt = tool.getProduct().rb().text( BundleKey.PROMPT, key );
-		context.submit( tool, new PromptCommand( prompt, isText ) );
+		context.submit( tool, new Prompt( prompt, isText ) );
 	}
 
 }

@@ -8,34 +8,24 @@ import javafx.geometry.Point3D;
 
 import java.text.ParseException;
 
-public class CurveCommand extends DrawCommand {
-
-	//	@Override
-	//	public List<OldCommand> getPreSteps( DesignTool tool ) {
-	//		return List.of(
-	//			new PromptForPointCommand( tool, "start-point" ),
-	//			new PromptForPointCommand( tool, "control-point" ),
-	//			new PromptForPointCommand( tool, "control-point" ),
-	//			new PromptForPointCommand( tool, "end-point" )
-	//		);
-	//	}
+public class DrawCurve4 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForPoint( context, tool, "point" );
+			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}
 		if( parameters.length < 2 ) {
-			promptForPoint( context, tool, "point" );
+			promptForPoint( context, tool, "control-point" );
 			return INCOMPLETE;
 		}
 		if( parameters.length < 3 ) {
-			promptForPoint( context, tool, "point" );
+			promptForPoint( context, tool, "control-point" );
 			return INCOMPLETE;
 		}
 		if( parameters.length < 4 ) {
-			promptForPoint( context, tool, "point" );
+			promptForPoint( context, tool, "end-point" );
 			return INCOMPLETE;
 		}
 

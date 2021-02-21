@@ -1,13 +1,14 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.Command;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 
-public class LayerShowCommand extends LayerCommand {
+public class GridToggle extends Command {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-		tool.setLayerVisible( tool.getCurrentLayer(), true );
+		tool.setGridVisible( !tool.isGridVisible() );
 		return COMPLETE;
 	}
 

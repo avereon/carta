@@ -14,7 +14,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
 
-public class MeasureDistanceCommand extends MeasureCommand {
+public class MeasureDistance extends MeasureCommand {
 
 	private static final System.Logger log = Log.get();
 

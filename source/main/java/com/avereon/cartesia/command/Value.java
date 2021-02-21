@@ -1,16 +1,21 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.Command;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 
-public class LayerToggleCommand extends LayerCommand {
+public class Value extends Command {
+
+	public Value() {}
+
+	@Override
+	public boolean clearSelectionWhenComplete() {
+		return false;
+	}
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-		DesignLayer layer = tool.getCurrentLayer();
-		tool.setLayerVisible( layer, !tool.isLayerVisible( layer ) );
-		return COMPLETE;
+		return parameters[0];
 	}
 
 }

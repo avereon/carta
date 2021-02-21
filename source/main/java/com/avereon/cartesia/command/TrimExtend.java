@@ -11,7 +11,7 @@ import javafx.geometry.Point3D;
 /**
  * Select a shape to extend/trim then select the shape to be the extend/trim edge.
  */
-public class ExtendTrimCommand extends Command {
+public class TrimExtend extends Command {
 
 	private static final System.Logger log = Log.get();
 

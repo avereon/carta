@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
 
-public class CameraMoveCommand extends CameraCommand {
+public class CameraMove extends CameraCommand {
 
 	private CommandEventKey eventKey;
 

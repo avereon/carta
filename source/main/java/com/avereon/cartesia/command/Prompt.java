@@ -4,13 +4,13 @@ import com.avereon.cartesia.Command;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 
-public class PromptCommand extends Command {
+public class Prompt extends Command {
 
 	private final String prompt;
 
 	private final boolean isText;
 
-	public PromptCommand( String prompt, boolean isText ) {
+	public Prompt( String prompt, boolean isText ) {
 		this.prompt = prompt;
 		this.isText = isText;
 	}

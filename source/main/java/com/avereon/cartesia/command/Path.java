@@ -3,7 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 
-public class PathCommand extends DrawCommand {
+public class Path extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {

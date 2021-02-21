@@ -3,8 +3,8 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
-import com.avereon.cartesia.command.SelectCommand;
-import com.avereon.cartesia.command.ValueCommand;
+import com.avereon.cartesia.command.Select;
+import com.avereon.cartesia.command.Value;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
@@ -100,9 +100,9 @@ public class CommandContext {
 				true,
 				null
 			);
-			doCommand( new SelectCommand(), mEvent );
+			doCommand( new Select(), mEvent );
 		} else if( isInputMode() ) {
-			doCommand( new ValueCommand(), input );
+			doCommand( new Value(), input );
 		} else {
 			doCommand( input );
 		}
@@ -281,7 +281,7 @@ public class CommandContext {
 	}
 
 	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters ) {
-		if( command instanceof ValueCommand && commandStack.isEmpty() ) {
+		if( command instanceof Value && commandStack.isEmpty() ) {
 			log.log( Log.WARN, "There is not a command waiting for the value: " + Arrays.toString( parameters ) );
 		}
 	}

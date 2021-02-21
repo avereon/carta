@@ -6,7 +6,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class SnapAutoCommand extends SnapCommand {
+public class SnapAuto extends SnapCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {

@@ -7,7 +7,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
-public class SnapSelectCommand extends SnapCommand {
+public class SnapSelect extends SnapCommand {
 
 	private static final System.Logger log = Log.get();
 

@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -9,7 +8,7 @@ import com.avereon.util.Log;
 /**
  * This command adds a layer as a peer to the current layer
  */
-public class LayerCreateCommand extends LayerCommand {
+public class LayerCreate extends LayerCommand {
 
 	private static final System.Logger log = Log.get();
 

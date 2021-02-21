@@ -2,8 +2,8 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.MockCartesiaMod;
-import com.avereon.cartesia.command.PromptCommand;
-import com.avereon.cartesia.command.ValueCommand;
+import com.avereon.cartesia.command.Prompt;
+import com.avereon.cartesia.command.Value;
 import com.avereon.xenon.ProgramProduct;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,7 @@ public class CommandContextTest {
 	void testCommandThatNeedsOneValue() {
 		TestCommand command = new TestCommand( 1 );
 		context.submit( null, command );
-		context.submit( null, new ValueCommand(), "hello" );
+		context.submit( null, new Value(), "hello" );
 		assertThat( command.getValues()[ 0 ], is( "hello" ) );
 	}
 
@@ -65,8 +65,8 @@ public class CommandContextTest {
 	void testCommandThatNeedsTwoValues() {
 		TestCommand command = new TestCommand( 2 );
 		context.submit( null, command );
-		context.submit( null, new ValueCommand(), "0" );
-		context.submit( null, new ValueCommand(), "1" );
+		context.submit( null, new Value(), "0" );
+		context.submit( null, new Value(), "1" );
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 		assertThat( command.getValues()[ 1 ], is( "1" ) );
 	}
@@ -77,9 +77,9 @@ public class CommandContextTest {
 
 		TestCommand command = new TestCommand( 0 );
 		context.submit( null, command );
-		context.submit( null, new PromptCommand( "", false ) );
+		context.submit( null, new Prompt( "", false ) );
 		assertFalse( context.isInputMode() );
-		context.submit( null, new PromptCommand( "", true ) );
+		context.submit( null, new Prompt( "", true ) );
 		assertTrue( context.isInputMode() );
 	}
 

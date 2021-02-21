@@ -7,7 +7,7 @@ import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class DrawCircleCommand extends DrawCommand {
+public class DrawCircle2 extends DrawCommand {
 
 	private static final System.Logger log = Log.get();
 

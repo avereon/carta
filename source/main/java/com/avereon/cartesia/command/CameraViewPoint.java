@@ -8,7 +8,7 @@ import com.avereon.xenon.notice.Notice;
 
 import java.text.ParseException;
 
-public class ViewPointCommand extends CameraCommand {
+public class CameraViewPoint extends CameraCommand {
 
 	private static final System.Logger log = Log.get();
 

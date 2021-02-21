@@ -43,26 +43,26 @@ public class CommandMap {
 		// z - zoom
 
 		// Basic command
-		add( product, "select", SelectCommand.class );
+		add( product, "select", Select.class );
 
 		// View commands
-		add( product, "camera-move", CameraMoveCommand.class );
+		add( product, "camera-move", CameraMove.class );
 		//add( product, "camera-spin", CameraSpinCommand.class );
-		add( product, "camera-view-point", ViewPointCommand.class );
+		add( product, "camera-view-point", CameraViewPoint.class );
 		//add( product, "camera-walk", CameraWalkCommand.class );
-		add( product, "camera-zoom", CameraZoomCommand.class );
+		add( product, "camera-zoom", CameraZoom.class );
 		//add( product, "camera-zoom-all", CameraZoomAllCommand.class );
-		add( product, "camera-zoom-in", CameraZoomInCommand.class );
-		add( product, "camera-zoom-out", CameraZoomOutCommand.class );
+		add( product, "camera-zoom-in", CameraZoomIn.class );
+		add( product, "camera-zoom-out", CameraZoomOut.class );
 		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
 
 		// Grid commands
 		// gg - grid toggle
-		add( product, "grid-toggle", GridToggleCommand.class );
+		add( product, "grid-toggle", GridToggle.class );
 
 		// Measure commands
 		//add( product, "measure-angle", MeasureAngleCommand.class );
-		add( product, "measure-distance", MeasureDistanceCommand.class );
+		add( product, "measure-distance", MeasureDistance.class );
 
 		// Draw setting commands
 		// In GCAD these were initially managed with simple commands. Later on you could tell the
@@ -89,40 +89,40 @@ public class CommandMap {
 		// shape fill paint
 
 		// Shape commands
-		add( product, "draw-arc-2", DrawArcCommand.class ); // center-endpoint-endpoint
+		add( product, "draw-arc-2", DrawArc2.class ); // center-endpoint-endpoint
 		//add( "draw-arc-3", Arc3Command.class ); // endpoint-midpoint-endpoint
-		add( product, "draw-circle-2", DrawCircleCommand.class ); // center-radius
+		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		//add( "draw-circle-3", Circle3Command.class ); // point-point-point
+		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
 		//add( "draw-ellipse-3", EllipseCommand.class ); // center-radius/start-extent
 		//add( "draw-ellipse-5", Ellipse5Command.class ); // point-point-point-point-point
 		//add( "draw-ellipse-arc-5", EllipseArc5Command.class ); // center-radius-radius-start-extent
-		add( product, "draw-line-2", DrawLineCommand.class ); // endpoint-endpoint
+		add( product, "draw-line-2", DrawLine2.class ); // endpoint-endpoint
 		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
-		add( product, "draw-point", DrawPointCommand.class ); // point
-		add( product, "draw-curve-4", CurveCommand.class ); // endpoint-midpoint-midpoint-endpoint
-		add( product, "draw-path", PathCommand.class );
+		add( product, "draw-marker", DrawMarker.class ); // point
+		add( product, "draw-path", Path.class );
 
 		// Layer commands
-		add( product, "layer-create", LayerCreateCommand.class );
-		add( product, "layer-show", LayerShowCommand.class );
-		add( product, "layer-hide", LayerHideCommand.class );
-		add( product, "layer-sublayer", LayerSubLayerCommand.class );
-		add( product, "layer-delete", LayerDeleteCommand.class );
-		add( product, "layer-toggle", LayerToggleCommand.class );
+		add( product, "layer-create", LayerCreate.class );
+		add( product, "layer-show", LayerShow.class );
+		add( product, "layer-hide", LayerHide.class );
+		add( product, "layer-sublayer", LayerSubLayer.class );
+		add( product, "layer-delete", LayerDelete.class );
+		add( product, "layer-toggle", LayerToggle.class );
 
 		// Snap commands
 		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
-		add( product, "snap-center", SnapSelectCommand.class, new SnapCenter() );
-		add( product, "snap-midpoint", SnapSelectCommand.class, new SnapMidpoint() );
-		add( product, "snap-nearest", SnapSelectCommand.class, new SnapNearest() );
+		add( product, "snap-center", SnapSelect.class, new SnapCenter() );
+		add( product, "snap-midpoint", SnapSelect.class, new SnapMidpoint() );
+		add( product, "snap-nearest", SnapSelect.class, new SnapNearest() );
 
 		// Snap auto commands
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
-		add( product, "snap-auto-nearest", SnapAutoCommand.class, new SnapNearest() );
+		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearest() );
 
-		add( product, "trim-single", ExtendTrimCommand.class );
-		add( product, "trim-multi", MultiTrimCommand.class );
+		add( product, "trim-single", TrimExtend.class );
+		add( product, "trim-multi", TrimExtendMulti.class );
 
 		// Event type actions
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
@@ -143,7 +143,11 @@ public class CommandMap {
 
 	private static void printCommandMapByCommand() {
 		actionCommands.values().stream().sorted().forEach( k -> {
-			System.out.println( k.getShortcut() + " -> " + k.getName() + " [" + k.getAction() + "]" );
+			StringBuilder builder = new StringBuilder();
+			builder.append( k.getCommand() == null ? "  " : k.getCommand() ).append( " -> " ).append( k.getName() );
+			if( k.getShortcut() != null ) builder.append( " <" ).append( k.getShortcut() ).append( ">" );
+			builder.append( " [" ).append( k.getAction() ).append( "]" );
+			System.out.println( builder );
 		} );
 	}
 
@@ -178,13 +182,21 @@ public class CommandMap {
 		String name = proxy.getName();
 		String command = null;
 		if( proxy.getCommand() != null ) command = proxy.getCommand().toLowerCase();
+		String shortcut = proxy.getShortcut();
 
 		if( !actionCommands.containsKey( action ) ) {
 			if( command != null ) commandActions.put( command, action );
-			actionCommands.put( action, new CommandMetadata( action, name, command, type, parameters ) );
+			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );
 		} else {
 			CommandMetadata existing = actionCommands.get( action );
-			log.log( Log.ERROR, "Shortcut already used: shortcut={0} action={1} conflict={2} existing={3}", command, action, type.getName(), existing.getType().getName() );
+			log.log(
+				Log.ERROR,
+				"Shortcut already used: shortcut={0} action={1} conflict={2} existing={3}",
+				command,
+				action,
+				type.getName(),
+				existing.getType().getName()
+			);
 		}
 	}
 
