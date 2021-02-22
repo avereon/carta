@@ -14,7 +14,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Command {
 
@@ -26,9 +28,13 @@ public class Command {
 
 	private static final System.Logger log = Log.get();
 
+	private final List<DesignShape> preview;
+
 	private int step;
 
-	private DesignShape preview;
+	protected Command() {
+		this.preview = new CopyOnWriteArrayList<>();
+	}
 
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		return null;
@@ -36,7 +42,7 @@ public class Command {
 
 	public void cancel( DesignTool tool ) throws Exception {
 		if( tool != null ) {
-			tool.getCurrentLayer().removeShape( preview );
+			preview.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
 			tool.getDesign().clearSelected();
 			tool.setCursor( Cursor.DEFAULT );
 		}
@@ -79,6 +85,11 @@ public class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
+	protected Point3D asPoint( CommandContext context, Object value ) throws Exception {
+		if( value instanceof Point3D ) return (Point3D)value;
+		return CadShapes.parsePoint( String.valueOf( value ), context.getAnchor() );
+	}
+
 	protected Point3D asPoint( DesignTool tool, Object value, Point3D anchor ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
 		return CadShapes.parsePoint( String.valueOf( value ), anchor );
@@ -106,7 +117,7 @@ public class Command {
 
 	protected DesignShape findNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
 		List<Shape> shapes = tool.screenPointFindAndWait( mouse );
-		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get(0) );
+		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
 	}
 
 	protected DesignShape findNearestShapeAtPoint( DesignTool tool, Point3D point ) {
@@ -115,35 +126,47 @@ public class Command {
 
 	protected DesignShape selectNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
 		List<Shape> shapes = tool.screenPointSelectAndWait( mouse );
-		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get(0) );
+		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
 	}
 
 	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
 		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
 	}
 
-	protected void setPreview( DesignTool tool, DesignShape preview ) {
-		this.preview = preview;
+	protected void setPreview( DesignTool tool, DesignShape... shapes ) {
+		List<DesignShape> shapeList = Arrays.asList( shapes );
+		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
-		tool.getCurrentLayer().addShape( preview );
-		preview.setPreview( true );
+		shapeList.forEach( s -> {
+			tool.getCurrentLayer().addShape( s );
+			s.setPreview( true );
+		} );
 	}
 
 	@SuppressWarnings( "unchecked" )
 	protected <T extends DesignShape> T getPreview() {
-		return (T)preview;
+		return preview.isEmpty() ? null : (T)preview.get(0);
 	}
 
 	protected Object commitPreview( DesignTool tool ) {
-		removePreview( tool );
-		tool.getCurrentLayer().addShape( preview );
+		preview.forEach( s -> s.setPreview( false ) );
+		tool.getAsset().setCaptureUndoChanges( true );
+		preview.clear();
 		return COMPLETE;
 	}
 
-	protected void removePreview( DesignTool tool ) {
-		tool.getCurrentLayer().removeShape( preview );
-		preview.setPreview( false );
-		tool.getAsset().setCaptureUndoChanges( true );
+	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
+		List<DesignShape> shapeList = Arrays.asList( shapes );
+		shapeList.forEach( s -> {
+			tool.getCurrentLayer().removeShape( s );
+			s.setPreview( false );
+		} );
+		preview.removeAll( shapeList );
+	}
+
+	protected void clearPreview( DesignTool tool ) {
+		preview.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
+		preview.clear();
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String key, boolean isText ) {

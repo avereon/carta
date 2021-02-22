@@ -24,7 +24,6 @@ public class DrawArc2 extends DrawCommand {
 		// Step 2
 		if( parameters.length < 2 ) {
 			DesignArc preview = new DesignArc( asPoint( tool, parameters[ 0 ], context.getAnchor() ), 0.0, 0.0, 360., DesignArc.Type.OPEN );
-			preview.setFillPaint( "#00000000" );
 			setPreview( tool, preview );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;

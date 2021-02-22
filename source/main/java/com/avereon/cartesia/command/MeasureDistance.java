@@ -53,7 +53,7 @@ public class MeasureDistance extends MeasureCommand {
 			} ) );
 			context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
-			removePreview( tool );
+			clearPreview( tool );
 
 			log.log( Log.DEBUG, "Measured distance=" + distance );
 			return distance;

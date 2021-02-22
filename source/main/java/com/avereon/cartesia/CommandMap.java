@@ -90,7 +90,7 @@ public class CommandMap {
 
 		// Shape commands
 		add( product, "draw-arc-2", DrawArc2.class ); // center-endpoint-endpoint
-		//add( "draw-arc-3", Arc3Command.class ); // endpoint-midpoint-endpoint
+		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
 		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		//add( "draw-circle-3", Circle3Command.class ); // point-point-point
 		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
