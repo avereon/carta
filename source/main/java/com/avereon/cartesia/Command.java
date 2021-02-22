@@ -14,6 +14,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -133,40 +134,45 @@ public class Command {
 		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
 	}
 
+	@Deprecated
+	@SuppressWarnings( "unchecked" )
+	protected <T extends DesignShape> T getPreview() {
+		return preview.isEmpty() ? null : (T)preview.get( 0 );
+	}
+
 	protected void setPreview( DesignTool tool, DesignShape... shapes ) {
 		List<DesignShape> shapeList = Arrays.asList( shapes );
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
-		shapeList.forEach( s -> {
-			tool.getCurrentLayer().addShape( s );
-			s.setPreview( true );
-		} );
-	}
-
-	@Deprecated
-	@SuppressWarnings( "unchecked" )
-	protected <T extends DesignShape> T getPreview() {
-		return preview.isEmpty() ? null : (T)preview.get(0);
-	}
-
-	protected Object commitPreview( DesignTool tool ) {
-		preview.forEach( s -> s.setPreview( false ) );
-		tool.getAsset().setCaptureUndoChanges( true );
-		preview.clear();
-		return COMPLETE;
+		shapeList.forEach( s -> tool.getCurrentLayer().addShape( s ) );
+		shapeList.forEach( s -> s.setPreview( true ) );
 	}
 
 	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
-		List<DesignShape> shapeList = Arrays.asList( shapes );
-		shapeList.forEach( s -> {
-			tool.getCurrentLayer().removeShape( s );
-			s.setPreview( false );
-		} );
+		removePreview( tool, Arrays.asList( shapes ) );
+	}
+
+	protected void removePreview( DesignTool tool, List<DesignShape> shapeList ) {
+		shapeList.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
+		shapeList.forEach( s -> s.setPreview( false ) );
 		preview.removeAll( shapeList );
 	}
 
-	protected void clearPreview( DesignTool tool ) {
-		preview.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
+	protected Object commitPreview( DesignTool tool ) {
+		List<DesignShape> shapes = new ArrayList<>(preview);
+
+		// Clear preview enables capturing undo changes again
+		resetPreview( tool );
+
+		// Add the shapes to the layer like normal
+		shapes.forEach( s -> tool.getCurrentLayer().addShape( s ) );
+		return COMPLETE;
+	}
+
+	protected void resetPreview( DesignTool tool ) {
+		// The shapes have to be removed before capturing undo changes again
+		removePreview( tool, preview );
+		tool.getAsset().setCaptureUndoChanges( true );
 		preview.clear();
 	}
 

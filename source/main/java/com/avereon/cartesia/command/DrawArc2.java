@@ -34,6 +34,7 @@ public class DrawArc2 extends DrawCommand {
 		if( parameters.length < 2 ) {
 			Point3D origin = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( origin );
+			previewLine.setPoint( origin );
 			previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
 			setPreview( tool, previewArc );
 			promptForPoint( context, tool, "start" );
@@ -60,13 +61,15 @@ public class DrawArc2 extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			if( previewArc != null ) {
 				DesignTool tool = (DesignTool)event.getSource();
 				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 				spin = getSpin( previewArc, lastAnchor, point, spin );
 
 				switch( getStep() ) {
-					case 1 -> previewLine.setPoint( point );
+					case 1 -> {
+						previewLine.setOrigin( point );
+						previewLine.setPoint( point );
+					}
 					case 2 -> {
 						previewLine.setPoint( point );
 						previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
@@ -77,7 +80,6 @@ public class DrawArc2 extends DrawCommand {
 					}
 				}
 				lastAnchor = point;
-			}
 		}
 	}
 

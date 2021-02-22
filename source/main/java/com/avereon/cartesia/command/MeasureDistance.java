@@ -18,21 +18,19 @@ public class MeasureDistance extends MeasureCommand {
 
 	private static final System.Logger log = Log.get();
 
-	private int step;
+	private DesignLine preview;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			setPreview( tool, new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			setPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
-			step = 1;
 			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {
-			getPreview().setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+			preview.setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 			promptForPoint( context, tool, "end-point" );
-			step = 2;
 			return INCOMPLETE;
 		}
 
@@ -53,7 +51,7 @@ public class MeasureDistance extends MeasureCommand {
 			} ) );
 			context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
-			clearPreview( tool );
+			resetPreview( tool );
 
 			log.log( Log.DEBUG, "Measured distance=" + distance );
 			return distance;
@@ -68,14 +66,18 @@ public class MeasureDistance extends MeasureCommand {
 
 	@Override
 	public void handle( MouseEvent event ) {
-		DesignLine preview = getPreview();
-		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			Fx.run( () -> {
+		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
+			if( preview != null ) {
 				DesignTool tool = (DesignTool)event.getSource();
-				Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-				if( step < 2 ) preview.setOrigin( mouse );
-				preview.setPoint( mouse );
-			} );
+				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+				switch( getStep() ) {
+					case 1 -> {
+						preview.setOrigin( point );
+						preview.setPoint( point );
+					}
+					case 2 -> preview.setPoint( point );
+				}
+			}
 		}
 	}
 
