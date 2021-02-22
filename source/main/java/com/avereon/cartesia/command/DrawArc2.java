@@ -11,6 +11,8 @@ import javafx.scene.input.MouseEvent;
 
 public class DrawArc2 extends DrawCommand {
 
+	private DesignArc previewArc;
+
 	private Point3D lastAnchor;
 
 	private double spin;
@@ -25,8 +27,8 @@ public class DrawArc2 extends DrawCommand {
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			DesignArc preview = new DesignArc( asPoint( tool, parameters[ 0 ], context.getAnchor() ), 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
-			setPreview( tool, preview );
+			previewArc = new DesignArc( asPoint( tool, parameters[ 0 ], context.getAnchor() ), 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
+			setPreview( tool, previewArc );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;
 		}
@@ -35,16 +37,14 @@ public class DrawArc2 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			Point3D start = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 			lastAnchor = start;
-			DesignArc preview = getPreview();
-			preview.setRadius( CadGeometry.distance( preview.getOrigin(), start ) );
-			preview.setStart( CadGeometry.angle360( start.subtract( preview.getOrigin() ) ) );
-			preview.setExtent( 0.0 );
+			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), start ) );
+			previewArc.setStart( CadGeometry.angle360( start.subtract( previewArc.getOrigin() ) ) );
+			previewArc.setExtent( 0.0 );
 			promptForPoint( context, tool, "extent" );
 			return INCOMPLETE;
 		}
 
-		DesignArc arc = getPreview();
-		arc.setExtent( getExtent( arc, asPoint( tool, parameters[ 2 ], context.getAnchor() ), spin ) );
+		previewArc.setExtent( getExtent( previewArc, asPoint( tool, parameters[ 2 ], context.getAnchor() ), spin ) );
 
 		return commitPreview( tool );
 	}
@@ -52,16 +52,14 @@ public class DrawArc2 extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			DesignArc preview = getPreview();
-			if( preview != null ) {
+			if( previewArc != null ) {
 				DesignTool tool = (DesignTool)event.getSource();
 				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-
-				spin = updateCcwFlag( preview, lastAnchor, point, spin );
+				spin = updateSpin( previewArc, lastAnchor, point, spin );
 
 				switch( getStep() ) {
-					case 2 -> preview.setRadius( CadGeometry.distance( preview.getOrigin(), point ) );
-					case 3 -> preview.setExtent( getExtent( preview, point, spin ) );
+					case 2 -> previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
+					case 3 -> previewArc.setExtent( getExtent( previewArc, point, spin ) );
 				}
 				lastAnchor = point;
 			}
@@ -78,7 +76,7 @@ public class DrawArc2 extends DrawCommand {
 		return angle;
 	}
 
-	private static double updateCcwFlag( DesignArc arc, Point3D lastPoint, Point3D newPoint, double spin ) {
+	private static double updateSpin( DesignArc arc, Point3D lastPoint, Point3D newPoint, double spin ) {
 		if( arc == null || lastPoint == null || newPoint == null ) return spin;
 
 		// Use the arc information to create a transform to test the points

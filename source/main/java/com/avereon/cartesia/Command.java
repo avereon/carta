@@ -143,6 +143,7 @@ public class Command {
 		} );
 	}
 
+	@Deprecated
 	@SuppressWarnings( "unchecked" )
 	protected <T extends DesignShape> T getPreview() {
 		return preview.isEmpty() ? null : (T)preview.get(0);
