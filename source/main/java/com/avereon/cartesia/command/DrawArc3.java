@@ -26,7 +26,7 @@ public class DrawArc3 extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1
 		if( parameters.length < 1 ) {
-			setPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}
@@ -44,7 +44,7 @@ public class DrawArc3 extends DrawCommand {
 			removePreview( tool, previewLine );
 
 			mid = asPoint( context, parameters[ 1 ] );
-			setPreview( tool, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
+			addPreview( tool, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
 
 			promptForPoint( context, tool, "end-point" );
 			return INCOMPLETE;

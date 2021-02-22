@@ -23,7 +23,7 @@ public class MeasureDistance extends MeasureCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			setPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}

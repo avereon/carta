@@ -134,13 +134,7 @@ public class Command {
 		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
 	}
 
-	@Deprecated
-	@SuppressWarnings( "unchecked" )
-	protected <T extends DesignShape> T getPreview() {
-		return preview.isEmpty() ? null : (T)preview.get( 0 );
-	}
-
-	protected void setPreview( DesignTool tool, DesignShape... shapes ) {
+	protected void addPreview( DesignTool tool, DesignShape... shapes ) {
 		List<DesignShape> shapeList = Arrays.asList( shapes );
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );

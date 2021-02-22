@@ -25,7 +25,7 @@ public class DrawArc2 extends DrawCommand {
 		// Step 1
 		if( parameters.length < 1 ) {
 			previewLine = new DesignLine(context.getWorldMouse(),context.getWorldMouse() );
-			setPreview( tool, previewLine );
+			addPreview( tool, previewLine );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
@@ -36,7 +36,7 @@ public class DrawArc2 extends DrawCommand {
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
 			previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
-			setPreview( tool, previewArc );
+			addPreview( tool, previewArc );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;
 		}

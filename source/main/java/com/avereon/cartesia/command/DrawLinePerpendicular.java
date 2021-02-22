@@ -16,6 +16,8 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 	private DesignShape reference;
 
+	private DesignLine preview;
+
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1
@@ -29,14 +31,14 @@ public class DrawLinePerpendicular extends DrawCommand {
 			reference = selectNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 			if( reference == DesignShape.NONE ) return INVALID;
 
+			addPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
 		if( parameters.length < 3 ) {
-			Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
-			setPreview( tool, new DesignLine( point, point ) );
+			preview.setOrigin( asPoint( context, parameters[ 1 ] ) );
 			promptForPoint( context, tool, "end-point" );
 			return INCOMPLETE;
 		}
@@ -44,20 +46,21 @@ public class DrawLinePerpendicular extends DrawCommand {
 		DesignShape shape = findNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
 		Point3D origin = asPoint( tool, parameters[ 1 ], context.getAnchor() );
 		Point3D point = getPerpendicular( shape, origin, asPoint( tool, parameters[ 2 ], context.getAnchor() ) );
-		((DesignLine)getPreview()).setPoint( point );
+		preview.setPoint( point );
 		return commitPreview( tool );
 	}
 
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			DesignLine preview = getPreview();
-			if ( preview != null ) {
-				DesignTool tool = (DesignTool)event.getSource();
-				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-				switch( getStep() ) {
-					case 3 -> preview.setPoint( getPerpendicular( reference, preview.getOrigin(), point ) );
+			DesignTool tool = (DesignTool)event.getSource();
+			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			switch( getStep() ) {
+				case 2 -> {
+					preview.setOrigin( point );
+					preview.setPoint( point );
 				}
+				case 3 -> preview.setPoint( getPerpendicular( reference, preview.getOrigin(), point ) );
 			}
 		}
 	}
