@@ -47,7 +47,7 @@ public class CadGeometry {
 		Point3D sm = mid.subtract( start );
 		Point3D me = end.subtract( mid );
 		Point3D u = new Point3D( sm.getY(), -sm.getX(), 0 );
-		Point3D v = new Point3D( me.getY(), -me.getY(), 0 );
+		Point3D v = new Point3D( me.getY(), -me.getX(), 0 );
 
 		Point3D a = start.midpoint( mid );
 		Point3D b = a.add( u );
@@ -62,13 +62,17 @@ public class CadGeometry {
 		double startAngle = CadGeometry.angle360( start.subtract( origin ) );
 		double spin = getSpin( start, mid, end );
 
-		// FIXME This may not be calculating the correct angle
 		// This will be the smaller angle with the sign in the correct direction
-		double angle = CadGeometry.angle360( start.subtract( origin ), end.subtract( origin ) );
-		System.out.println( "angle=" + angle + " spin=" + spin );
+		double extent = CadGeometry.angle360( start.subtract( origin ), end.subtract( origin ) );
+		double angle = Math.abs( extent );
+		double sweep = Math.signum( extent );
 
-		double extent = angle;
-		if( Math.signum( angle ) != spin ) extent *= -1;
+		// If spin and sweep are in the same direction but the angle is small...add to the angle
+		if( spin > 0 && sweep > 0 && angle < 180 ) extent += 180;
+		if( spin < 0 && sweep < 0 && angle < 180 ) extent -= 180;
+
+		// If spin and swee are not in the same direction invert the extent
+		if( spin != sweep ) extent *= -1;
 
 		return new DesignArc( origin, radius, startAngle, extent, DesignArc.Type.OPEN );
 	}

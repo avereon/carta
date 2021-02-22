@@ -18,18 +18,23 @@ public class DrawArc3 extends DrawCommand {
 
 	private Point3D mid;
 
+	private Point3D lastAnchor;
+
+	private double spin;
+
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1
 		if( parameters.length < 1 ) {
+			setPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			start = asPoint( tool, parameters[ 0 ], context.getAnchor() );
-			setPreview( tool, previewLine = new DesignLine( start, start ) );
+			start = asPoint( context, parameters[ 0 ] );
+			previewLine.setOrigin( start );
 			promptForPoint( context, tool, "mid-point" );
 			return INCOMPLETE;
 		}
@@ -38,15 +43,20 @@ public class DrawArc3 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			removePreview( tool, previewLine );
 
-			mid = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+			mid = asPoint( context, parameters[ 1 ] );
 			setPreview( tool, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
 
 			promptForPoint( context, tool, "end-point" );
 			return INCOMPLETE;
 		}
 
-		DesignArc arc = getPreview();
-		//arc.setExtent( getExtent( arc, asPoint( tool, parameters[ 2 ], context.getAnchor() ), extentCcw ) );
+		DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, asPoint( context, parameters[ 2 ] ) );
+		if( arc != null ) {
+			previewArc.setOrigin( arc.getOrigin() );
+			previewArc.setRadius( arc.getRadius() );
+			previewArc.setStart( arc.getStart() );
+			previewArc.setExtent( arc.getExtent() );
+		}
 
 		return commitPreview( tool );
 	}
@@ -54,11 +64,14 @@ public class DrawArc3 extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 
 			switch( getStep() ) {
+				case 1 -> {
+					previewLine.setOrigin( point );
+					previewLine.setPoint( point );
+				}
 				case 2 -> previewLine.setPoint( point );
 				case 3 -> {
 					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
