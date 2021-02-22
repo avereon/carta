@@ -58,6 +58,8 @@ public class DrawArc3 extends DrawCommand {
 			previewArc.setExtent( arc.getExtent() );
 		}
 
+		System.out.println( "arc3="+previewArc);
+
 		return commitPreview( tool );
 	}
 

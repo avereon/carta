@@ -68,10 +68,10 @@ public class CadGeometry {
 		double sweep = Math.signum( extent );
 
 		// If spin and sweep are in the same direction but the angle is small...add to the angle
-		if( spin > 0 && sweep > 0 && angle < 180 ) extent += 180;
-		if( spin < 0 && sweep < 0 && angle < 180 ) extent -= 180;
+		if( spin > 0 && sweep > 0 && angle < 180 ) extent = sweep * (360 - angle);
+		if( spin < 0 && sweep < 0 && angle < 180 ) extent = sweep * (360 - angle);
 
-		// If spin and swee are not in the same direction invert the extent
+		// If spin and sweep are not in the same direction invert the extent
 		if( spin != sweep ) extent *= -1;
 
 		return new DesignArc( origin, radius, startAngle, extent, DesignArc.Type.OPEN );
