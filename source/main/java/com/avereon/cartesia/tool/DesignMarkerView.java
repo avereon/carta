@@ -57,8 +57,8 @@ public class DesignMarkerView extends DesignShapeView {
 	void registerListeners() {
 		super.registerListeners();
 		getDesignShape().register( DesignMarker.ORIGIN, originHandler = e -> Fx.run( () -> {
-			getShape().setLayoutX( getDesignMarker().getOrigin().getX() );
-			getShape().setLayoutY( getDesignMarker().getOrigin().getY() );
+			getShape().setLayoutX( getDesignShape().getOrigin().getX() );
+			getShape().setLayoutY( getDesignShape().getOrigin().getY() );
 		} ) );
 		getDesignShape().register( DesignMarker.TYPE, pointTypeHandler = e -> Fx.run( this::updateGeometry ) );
 		getDesignShape().register( DesignMarker.SIZE, pointSizeHandler = e -> Fx.run( this::updateGeometry ) );

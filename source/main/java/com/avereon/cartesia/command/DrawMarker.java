@@ -17,6 +17,7 @@ public class DrawMarker extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			// Need to start with the point at ZERO until it is added
+			// This is a bit of a fluke with how markers are generated
 			addPreview( tool, preview = new DesignMarker( Point3D.ZERO ) );
 			preview.setOrigin( context.getWorldMouse() );
 			promptForPoint( context, tool, "select-point" );
