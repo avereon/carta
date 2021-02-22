@@ -30,7 +30,7 @@ public class SnapSelect extends SnapCommand {
 
 	@Override
 	public String toString() {
-		return snap.getClass().getSimpleName();
+		return snap == null ? super.toString() : snap.getClass().getSimpleName();
 	}
 
 }
