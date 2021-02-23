@@ -152,11 +152,11 @@ public class CommandMap {
 	}
 
 	public static boolean hasCommand( String shortcut ) {
-		return commandActions.containsKey( shortcut );
+		return get(shortcut) != null;
 	}
 
 	public static CommandMetadata get( String shortcut ) {
-		return getActionCommand( commandActions.getOrDefault( shortcut, TextUtil.EMPTY ) );
+		return getActionCommand( commandActions.getOrDefault( shortcut.toLowerCase(), TextUtil.EMPTY ) );
 	}
 
 	public static CommandMetadata get( InputEvent event ) {
