@@ -89,14 +89,15 @@ public class CommandMap {
 		// shape fill paint
 
 		// Shape commands
-		add( product, "draw-arc-2", DrawArc2.class ); // center-endpoint-endpoint
+		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
 		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
 		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
-		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
-		//add( "draw-ellipse-3", EllipseCommand.class ); // center-radius/start-extent
-		//add( "draw-ellipse-5", Ellipse5Command.class ); // point-point-point-point-point
-		//add( "draw-ellipse-arc-5", EllipseArc5Command.class ); // center-radius-radius-start-extent
+		//add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
+		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
+		//add( product, "draw-ellipse-5", DrawEllipse5.class ); // point-point-point-point-point
+		//add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // center-radius-radius-start-extent
+		//add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // endpoint-point-point-point-endpoint
 		add( product, "draw-line-2", DrawLine2.class ); // endpoint-endpoint
 		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
 		add( product, "draw-marker", DrawMarker.class ); // point

@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
@@ -9,7 +8,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class DrawCircle3 extends DrawCommand {
+public class DrawEllipse3 extends DrawCommand {
 
 	private DesignLine previewLine;
 
@@ -24,35 +23,32 @@ public class DrawCircle3 extends DrawCommand {
 		// Step 1
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "start-point" );
+			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			start = asPoint( context, parameters[ 0 ] );
-			previewLine.setOrigin( start );
-			promptForPoint( context, tool, "mid-point" );
+			addPreview( tool, previewEllipse = new DesignEllipse( asPoint( context, parameters[ 0 ] ), 0.0 ) );
+			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
 		if( parameters.length < 3 ) {
-			removePreview( tool, previewLine );
-
-			mid = asPoint( context, parameters[ 1 ] );
-			addPreview( tool, previewEllipse = CadGeometry.circleFromThreePoints( start, mid, mid ) );
-
-			promptForPoint( context, tool, "end-point" );
+			Point3D point = asPoint( context, parameters[ 1 ] );
+			previewEllipse.setXRadius( CadGeometry.distance( previewEllipse.getOrigin(), point ) );
+			previewEllipse.setRotate( CadGeometry.angle360( point.subtract( previewEllipse.getOrigin() ) ) );
+			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
 
-		DesignEllipse ellipse = CadGeometry.circleFromThreePoints( start, mid, asPoint( context, parameters[ 2 ] ) );
-		if( ellipse != null ) {
-			previewEllipse.setOrigin( ellipse.getOrigin() );
-			previewEllipse.setRadius( ellipse.getRadius() );
-		}
+		// TODO Y-radius should be measured orthogonal to the X-radius
 
+		removePreview( tool, previewLine );
+		previewEllipse.setXRadius( asDouble( previewEllipse.getOrigin(), parameters[ 1 ] ) );
+		previewEllipse.setYRadius( asDouble( previewEllipse.getOrigin(), parameters[ 2 ] ) );
+		previewEllipse.setRotate( CadGeometry.angle360( asPoint( context, parameters[ 1 ] ).subtract( previewEllipse.getOrigin() ) ) );
 		return commitPreview( tool );
 	}
 
@@ -67,13 +63,14 @@ public class DrawCircle3 extends DrawCommand {
 					previewLine.setOrigin( point );
 					previewLine.setPoint( point );
 				}
-				case 2 -> previewLine.setPoint( point );
+				case 2 -> {
+					previewLine.setPoint( point );
+					previewEllipse.setXRadius( point.distance( previewEllipse.getOrigin() ) );
+					previewEllipse.setRotate( CadGeometry.angle360( point.subtract( previewEllipse.getOrigin() ) ) );
+				}
 				case 3 -> {
-					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
-					if( next != null ) {
-						previewEllipse.setOrigin( next.getOrigin() );
-						previewEllipse.setRadius( next.getRadius() );
-					}
+					previewLine.setPoint( point );
+					previewEllipse.setYRadius( point.distance( previewEllipse.getOrigin() ) );
 				}
 			}
 		}
