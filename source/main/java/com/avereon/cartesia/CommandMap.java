@@ -88,6 +88,12 @@ public class CommandMap {
 		// shape draw paint
 		// shape fill paint
 
+		// Modify commands
+		//add( product, "copy", Copy.class );
+		add( product, "move", Move.class );
+		add( product, "trim-single", TrimExtend.class );
+		add( product, "trim-multiple", TrimExtendMultiple.class );
+
 		// Shape commands
 		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
 		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
@@ -121,9 +127,6 @@ public class CommandMap {
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
 		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearest() );
-
-		add( product, "trim-single", TrimExtend.class );
-		add( product, "trim-multi", TrimExtendMulti.class );
 
 		// Event type actions
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );

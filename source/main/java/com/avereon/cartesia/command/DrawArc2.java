@@ -24,8 +24,7 @@ public class DrawArc2 extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1
 		if( parameters.length < 1 ) {
-			previewLine = new DesignLine(context.getWorldMouse(),context.getWorldMouse() );
-			addPreview( tool, previewLine );
+			addPreview( tool, previewLine = new DesignLine(context.getWorldMouse(),context.getWorldMouse() ) );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
