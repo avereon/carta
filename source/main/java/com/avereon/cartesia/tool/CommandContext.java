@@ -115,7 +115,7 @@ public class CommandContext {
 				doCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
 			} else if( getInputMode() == CommandContext.Input.TEXT ) {
 				doCommand( new Value(), input );
-			} else if( isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
+			} else {
 				doCommand( input );
 			}
 		} else if( isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
@@ -251,7 +251,7 @@ public class CommandContext {
 			priorShortcut = input;
 			doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
 		} else {
-			log.log( Log.WARN, new UnknownCommand( input ) );
+			throw new UnknownCommand( input );
 		}
 	}
 

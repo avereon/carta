@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
@@ -17,12 +18,15 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private final ProgramProduct product;
 
+	private final CommandContext context;
+
 	private final Label prompt;
 
 	private final TextField command;
 
 	public CommandPrompt( ProgramProduct product, CommandContext context ) {
 		this.product = product;
+		this.context = context;
 
 		getStyleClass().add( "cartesia-command" );
 		setLeft( prompt = new Label() );
@@ -33,7 +37,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		// one listening to just keys
 		// the other listening to the text
 		command.addEventHandler( KeyEvent.ANY, context::handle );
-		command.textProperty().addListener( ( p, o, n ) -> context.text( n ) );
+		command.textProperty().addListener( ( p, o, n ) -> this.textChanged( n ) );
 	}
 
 	private ProgramProduct getProduct() {
@@ -49,9 +53,21 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		return command.getText().trim();
 	}
 
+	private void textChanged( String text ) {
+		try {
+			context.text( text );
+		} catch( UnknownCommand exception ) {
+			log.log( Log.WARN, exception );
+		}
+	}
+
 	@Override
 	public void handle( KeyEvent event ) {
-		command.fireEvent( event );
+		try {
+			command.fireEvent( event );
+		} catch( UnknownCommand exception ) {
+			log.log( Log.WARN, exception );
+		}
 	}
 
 	public void clear() {
