@@ -28,7 +28,7 @@ public class DrawCircle2 extends DrawCommand {
 		// Step 2
 		if( parameters.length < 2 ) {
 			addPreview( tool, previewEllipse = new DesignEllipse( asPoint( context, parameters[ 0 ] ), 0.0 ) );
-			promptForPoint( context, tool, "radius" );
+			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
 

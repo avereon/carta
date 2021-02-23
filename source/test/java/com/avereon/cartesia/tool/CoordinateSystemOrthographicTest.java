@@ -15,7 +15,7 @@ public class CoordinateSystemOrthographicTest {
 
 	@Test
 	void testFindNearest() throws Exception {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "1", "1" );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ), Near.near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ), Near.near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ), Near.near( Point3D.ZERO ) );
@@ -30,13 +30,13 @@ public class CoordinateSystemOrthographicTest {
 
 	@Test
 	void testFindNearestAtZero() throws Exception {
-		Workplane workplane = new Workplane();
+		DesignWorkplane workplane = new DesignWorkplane();
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, Point3D.ZERO ), is( Point3D.ZERO ) );
 	}
 
 	@Test
 	void testFindNearestOffsetOrigin() throws Exception {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "1", "1" );
 		workplane.setOrigin( "0.3, 0.2, 0" );
 		assertThat( CoordinateSystem.ORTHO.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( 0.3, 0.2, 0 ) ) );
 
@@ -55,14 +55,14 @@ public class CoordinateSystemOrthographicTest {
 
 	@Test
 	void testGetGridDots() throws Exception {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
 		List<Shape> dots = CoordinateSystem.ORTHO.getGridDots( workplane );
 		assertThat( dots.size(), is( 0 ) );
 	}
 
 	@Test
 	void getGridLinesCommon() throws Exception {
-		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		List<Shape> lines = CoordinateSystem.ORTHO.getGridLines( workplane );
 
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
@@ -73,7 +73,7 @@ public class CoordinateSystemOrthographicTest {
 
 	@Test
 	void getGridLinesOffOrigin() throws Exception {
-		Workplane workplane = new Workplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
+		DesignWorkplane workplane = new DesignWorkplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
 		List<Shape> lines = CoordinateSystem.ORTHO.getGridLines( workplane );
 
 		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11

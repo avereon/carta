@@ -16,7 +16,7 @@ public class CoordinateSystemPolarTest {
 
 	@Test
 	void testFindNearest() throws Exception {
-		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
 		assertThat( CoordinateSystem.POLAR.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ), near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.POLAR.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ), near( Point3D.ZERO ) );
 		assertThat( CoordinateSystem.POLAR.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ), near( Point3D.ZERO ) );
@@ -32,13 +32,13 @@ public class CoordinateSystemPolarTest {
 
 	@Test
 	void testFindNearestAtZero() throws Exception {
-		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
 		assertThat( CoordinateSystem.POLAR.getNearest( workplane, Point3D.ZERO ), is( Point3D.ZERO ) );
 	}
 
 	@Test
 	void testFindNearestOffsetOrigin() throws Exception {
-		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
 		workplane.setOrigin( "0.3, 0.2, 0" );
 		assertThat( CoordinateSystem.POLAR.getNearest( workplane, Point3D.ZERO ), Near.near( new Point3D( 0.3, 0.2, 0 ) ) );
 
@@ -51,14 +51,14 @@ public class CoordinateSystemPolarTest {
 
 	@Test
 	void testGetGridDots() throws Exception {
-		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
 		List<Shape> dots = CoordinateSystem.POLAR.getGridDots( workplane );
 		assertThat( dots.size(), is( 0 ) );
 	}
 
 	@Test
 	void testGetGridLines() throws Exception {
-		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
+		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
 		List<Shape> lines = CoordinateSystem.POLAR.getGridLines( workplane );
 		assertThat( lines.size(), is( 44 ) );
 	}

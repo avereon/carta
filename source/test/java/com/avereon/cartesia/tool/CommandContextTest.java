@@ -10,8 +10,6 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class CommandContextTest {
 
@@ -73,14 +71,20 @@ public class CommandContextTest {
 
 	@Test
 	void testPromptCommandInputMode() {
-		assertFalse( context.isInputMode() );
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 
 		TestCommand command = new TestCommand( 0 );
 		context.submit( null, command );
-		context.submit( null, new Prompt( "", false ) );
-		assertFalse( context.isInputMode() );
-		context.submit( null, new Prompt( "", true ) );
-		assertTrue( context.isInputMode() );
+		context.submit( null, new Prompt( "", CommandContext.Input.NONE ) );
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		context.submit( null, new Prompt( "", CommandContext.Input.NUMBER ) );
+		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
+		context.submit( null, new Prompt( "", CommandContext.Input.POINT ) );
+		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
+		context.submit( null, new Prompt( "", CommandContext.Input.TEXT ) );
+		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
+		context.submit( null, new Prompt( "", CommandContext.Input.NONE ) );
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 	}
 
 	private static class TestCommand extends Command {

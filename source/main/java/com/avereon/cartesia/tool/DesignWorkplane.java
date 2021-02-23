@@ -6,7 +6,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 
-public class Workplane extends Node {
+public class DesignWorkplane extends Node {
 
 	public static final double DEFAULT_BOUNDARY_X = 10.0;
 
@@ -80,7 +80,7 @@ public class Workplane extends Node {
 
 	private double snapGridZ;
 
-	public Workplane() {
+	public DesignWorkplane() {
 		this( -DEFAULT_BOUNDARY_X,
 			-DEFAULT_BOUNDARY_Y,
 			DEFAULT_BOUNDARY_X,
@@ -91,7 +91,7 @@ public class Workplane extends Node {
 		);
 	}
 
-	public Workplane(
+	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
 		this( DEFAULT_ORIGIN,
@@ -111,7 +111,7 @@ public class Workplane extends Node {
 		);
 	}
 
-	public Workplane(
+	public DesignWorkplane(
 		double boundaryX1,
 		double boundaryY1,
 		double boundaryX2,
@@ -140,7 +140,7 @@ public class Workplane extends Node {
 		);
 	}
 
-	public Workplane(
+	public DesignWorkplane(
 		String origin,
 		double boundaryX1,
 		double boundaryY1,
@@ -179,7 +179,7 @@ public class Workplane extends Node {
 		return getValue( ORIGIN );
 	}
 
-	public Workplane setOrigin( String origin ) {
+	public DesignWorkplane setOrigin( String origin ) {
 		setValue( ORIGIN, origin );
 		return this;
 	}
@@ -188,7 +188,7 @@ public class Workplane extends Node {
 		return getValue( BOUNDARY_X1 );
 	}
 
-	public Workplane setBoundaryX1( double boundaryX1 ) {
+	public DesignWorkplane setBoundaryX1( double boundaryX1 ) {
 		setValue( BOUNDARY_X1, boundaryX1 );
 		return this;
 	}
@@ -197,7 +197,7 @@ public class Workplane extends Node {
 		return getValue( BOUNDARY_Y1 );
 	}
 
-	public Workplane setBoundaryY1( double boundaryY1 ) {
+	public DesignWorkplane setBoundaryY1( double boundaryY1 ) {
 		setValue( BOUNDARY_Y1, boundaryY1 );
 		return this;
 	}
@@ -206,7 +206,7 @@ public class Workplane extends Node {
 		return getValue( BOUNDARY_X2 );
 	}
 
-	public Workplane setBoundaryX2( double boundaryX2 ) {
+	public DesignWorkplane setBoundaryX2( double boundaryX2 ) {
 		setValue( BOUNDARY_X2, boundaryX2 );
 		return this;
 	}
@@ -215,7 +215,7 @@ public class Workplane extends Node {
 		return getValue( BOUNDARY_Y2 );
 	}
 
-	public Workplane setBoundaryY2( double boundaryY2 ) {
+	public DesignWorkplane setBoundaryY2( double boundaryY2 ) {
 		setValue( BOUNDARY_Y2, boundaryY2 );
 		return this;
 	}
@@ -228,7 +228,7 @@ public class Workplane extends Node {
 		return getValue( MAJOR_GRID_X );
 	}
 
-	public Workplane setMajorGridX( String majorGridX ) {
+	public DesignWorkplane setMajorGridX( String majorGridX ) {
 		this.majorGridX = CadMath.evalNoException( majorGridX );
 		setValue( MAJOR_GRID_X, majorGridX );
 		return this;
@@ -242,7 +242,7 @@ public class Workplane extends Node {
 		return getValue( MAJOR_GRID_Y );
 	}
 
-	public Workplane setMajorGridY( String majorGridY ) {
+	public DesignWorkplane setMajorGridY( String majorGridY ) {
 		this.majorGridY = CadMath.evalNoException( majorGridY );
 		setValue( MAJOR_GRID_Y, majorGridY );
 		return this;
@@ -256,7 +256,7 @@ public class Workplane extends Node {
 		return getValue( MAJOR_GRID_Z );
 	}
 
-	public Workplane setMajorGridZ( String majorGridZ ) {
+	public DesignWorkplane setMajorGridZ( String majorGridZ ) {
 		this.majorGridZ = CadMath.evalNoException( majorGridZ );
 		setValue( MAJOR_GRID_Z, majorGridZ );
 		return this;
@@ -270,7 +270,7 @@ public class Workplane extends Node {
 		return getValue( MINOR_GRID_X );
 	}
 
-	public Workplane setMinorGridX( String minorGridX ) {
+	public DesignWorkplane setMinorGridX( String minorGridX ) {
 		this.minorGridX = CadMath.evalNoException( minorGridX );
 		setValue( MINOR_GRID_X, minorGridX );
 		return this;
@@ -284,7 +284,7 @@ public class Workplane extends Node {
 		return getValue( MINOR_GRID_Y );
 	}
 
-	public Workplane setMinorGridY( String minorGridY ) {
+	public DesignWorkplane setMinorGridY( String minorGridY ) {
 		this.minorGridY = CadMath.evalNoException( minorGridY );
 		setValue( MINOR_GRID_Y, minorGridY );
 		return this;
@@ -298,7 +298,7 @@ public class Workplane extends Node {
 		return getValue( MINOR_GRID_Z );
 	}
 
-	public Workplane setMinorGridZ( String minorGridZ ) {
+	public DesignWorkplane setMinorGridZ( String minorGridZ ) {
 		this.minorGridZ = CadMath.evalNoException( minorGridZ );
 		setValue( MINOR_GRID_Z, minorGridZ );
 		return this;
@@ -312,7 +312,7 @@ public class Workplane extends Node {
 		return getValue( SNAP_GRID_X );
 	}
 
-	public Workplane setSnapGridX( String snapGridX ) {
+	public DesignWorkplane setSnapGridX( String snapGridX ) {
 		this.snapGridX = CadMath.evalNoException( snapGridX );
 		setValue( SNAP_GRID_X, snapGridX );
 		return this;
@@ -326,7 +326,7 @@ public class Workplane extends Node {
 		return getValue( SNAP_GRID_Y );
 	}
 
-	public Workplane setSnapGridY( String snapGridY ) {
+	public DesignWorkplane setSnapGridY( String snapGridY ) {
 		this.snapGridY = CadMath.evalNoException( snapGridY );
 		setValue( SNAP_GRID_Y, snapGridY );
 		return this;
@@ -340,7 +340,7 @@ public class Workplane extends Node {
 		return getValue( SNAP_GRID_Z );
 	}
 
-	public Workplane setSnapGridZ( String snapGridZ ) {
+	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
 		this.snapGridZ = CadMath.evalNoException( snapGridZ );
 		setValue( SNAP_GRID_Z, snapGridZ );
 		return this;
@@ -350,7 +350,7 @@ public class Workplane extends Node {
 		return getValue( GRID_VISIBLE );
 	}
 
-	public Workplane setGridVisible( boolean visible ) {
+	public DesignWorkplane setGridVisible( boolean visible ) {
 		setValue( GRID_VISIBLE, visible );
 		return this;
 	}
@@ -359,7 +359,7 @@ public class Workplane extends Node {
 		return getValue( GRID_SNAP );
 	}
 
-	public Workplane setGridSnapEnabled( boolean enabled ) {
+	public DesignWorkplane setGridSnapEnabled( boolean enabled ) {
 		setValue( GRID_SNAP, enabled );
 		return this;
 	}
@@ -372,7 +372,7 @@ public class Workplane extends Node {
 		return new BoundingBox( boundaryXmin, boundaryYmin, boundaryXmax - boundaryXmin, boundaryYmax - boundaryYmin );
 	}
 
-	public Workplane setBounds( Bounds bounds ) {
+	public DesignWorkplane setBounds( Bounds bounds ) {
 		setBoundaryX1( bounds.getMinX() );
 		setBoundaryY1( bounds.getMinY() );
 		setBoundaryX2( bounds.getMaxX() );

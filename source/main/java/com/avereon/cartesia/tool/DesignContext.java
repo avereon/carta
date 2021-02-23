@@ -15,7 +15,7 @@ public class DesignContext {
 
 	private final CoordinateStatus coordinates;
 
-	private final Workplane workplane;
+	private final DesignWorkplane workplane;
 
 	private CoordinateSystem coordinateSystem;
 
@@ -25,7 +25,7 @@ public class DesignContext {
 		this.commandContext = new CommandContext( product );
 		this.coordinates = new CoordinateStatus( product );
 		this.coordinateSystem = CoordinateSystem.ORTHO;
-		this.workplane = new Workplane();
+		this.workplane = new DesignWorkplane();
 	}
 
 	public final ProgramProduct getProduct() {
@@ -48,7 +48,7 @@ public class DesignContext {
 		return coordinates;
 	}
 
-	public final Workplane getWorkplane() {
+	public final DesignWorkplane getWorkplane() {
 		return workplane;
 	}
 

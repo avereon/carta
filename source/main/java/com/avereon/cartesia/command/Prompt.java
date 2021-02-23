@@ -8,16 +8,16 @@ public class Prompt extends Command {
 
 	private final String prompt;
 
-	private final boolean isText;
+	private final CommandContext.Input mode;
 
-	public Prompt( String prompt, boolean isText ) {
+	public Prompt( String prompt, CommandContext.Input mode ) {
 		this.prompt = prompt;
-		this.isText = isText;
+		this.mode = mode;
 	}
 
 	@Override
-	public boolean isInputCommand() {
-		return isText;
+	public CommandContext.Input getInputMode() {
+		return mode;
 	}
 
 	@Override

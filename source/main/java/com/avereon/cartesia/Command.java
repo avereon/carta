@@ -57,6 +57,11 @@ public class Command {
 		step++;
 	}
 
+	public CommandContext.Input getInputMode() {
+		return CommandContext.Input.NONE;
+	}
+
+	@Deprecated
 	public boolean isInputCommand() {
 		return false;
 	}
@@ -98,22 +103,22 @@ public class Command {
 
 	protected void promptForNumber( CommandContext context, DesignTool tool, String key ) {
 		tool.setCursor( null );
-		promptForValue( context, tool, key, false );
+		promptForValue( context, tool, key, CommandContext.Input.NUMBER );
 	}
 
 	protected void promptForPoint( CommandContext context, DesignTool tool, String key ) {
 		tool.setCursor( tool.getReticle() );
-		promptForValue( context, tool, key, false );
+		promptForValue( context, tool, key, CommandContext.Input.POINT );
 	}
 
 	protected void promptForShape( CommandContext context, DesignTool tool, String key ) {
 		tool.setCursor( Cursor.HAND );
-		promptForValue( context, tool, key, false );
+		promptForValue( context, tool, key, CommandContext.Input.NONE );
 	}
 
 	protected void promptForText( CommandContext context, DesignTool tool, String key ) {
 		tool.setCursor( Cursor.TEXT );
-		promptForValue( context, tool, key, true );
+		promptForValue( context, tool, key, CommandContext.Input.TEXT );
 	}
 
 	protected DesignShape findNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
@@ -170,9 +175,9 @@ public class Command {
 		preview.clear();
 	}
 
-	private void promptForValue( CommandContext context, DesignTool tool, String key, boolean isText ) {
+	private void promptForValue( CommandContext context, DesignTool tool, String key, CommandContext.Input mode ) {
 		String text = tool.getProduct().rb().text( BundleKey.PROMPT, key );
-		context.submit( tool, new Prompt( text, isText ) );
+		context.submit( tool, new Prompt( text, mode ) );
 	}
 
 }

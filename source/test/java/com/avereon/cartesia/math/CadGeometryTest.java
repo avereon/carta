@@ -123,7 +123,6 @@ public class CadGeometryTest {
 	void testArcFromThreePointsScenarioD() {
 		double start = CadGeometry.cartesianToPolar360( new Point3D( -1, -0.75, 0 ) ).getY();
 		double extent = -(360 + 2 * (start + 90));
-		System.out.println( "expect=" + extent );
 		DesignArc arc = CadGeometry.arcFromThreePoints( new Point3D( 1, 1, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 3, 1, 0 ) );
 		assertThat( arc.getOrigin(), near( new Point3D( 2, 1.75, 0 ) ) );
 		assertThat( arc.getRadius(), near( 1.25 ) );

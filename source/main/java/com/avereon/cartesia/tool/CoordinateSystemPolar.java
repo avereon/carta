@@ -16,7 +16,7 @@ import java.util.List;
 public class CoordinateSystemPolar implements CoordinateSystem {
 
 	@Override
-	public Point3D getNearest( Workplane workplane, Point3D point ) {
+	public Point3D getNearest( DesignWorkplane workplane, Point3D point ) {
 		// This can be determined by calculating the nearest point
 		// and then converting from polar to cartesian coordinates
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
@@ -36,12 +36,12 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 	}
 
 	@Override
-	public List<Shape> getGridDots( Workplane workplane ) {
+	public List<Shape> getGridDots( DesignWorkplane workplane ) {
 		return List.of();
 	}
 
 	@Override
-	public List<Shape> getGridLines( Workplane workplane ) {
+	public List<Shape> getGridLines( DesignWorkplane workplane ) {
 		// The x spacing will be radius
 		// The y spacing will be angle in degrees
 
@@ -91,14 +91,14 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		for( double value : minorOffsetsR ) {
 			if( value > maxR ) maxR = value;
 			Circle shape = new Circle( origin.getX(), origin.getY(), value );
-			shape.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
+			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
 			shape.setFill( Color.TRANSPARENT );
 			grid.add( shape );
 		}
 		for( double value : majorOffsetsR ) {
 			if( value > maxR ) maxR = value;
 			Circle shape = new Circle( origin.getX(), origin.getY(), value );
-			shape.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
+			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
 			shape.setFill( Color.TRANSPARENT );
 			grid.add( shape );
 		}
@@ -107,21 +107,21 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
 			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-			shape.setStroke( Workplane.DEFAULT_MINOR_GRID_COLOR );
+			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
 			grid.add( shape );
 		}
 		for( double value : majorOffsetsA ) {
 			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
 			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-			shape.setStroke( Workplane.DEFAULT_MAJOR_GRID_COLOR );
+			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
 			grid.add( shape );
 		}
 		for( double value : axisOffsetsA ) {
 			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
 			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-			shape.setStroke( Workplane.DEFAULT_AXIS_COLOR );
+			shape.setStroke( DesignWorkplane.DEFAULT_AXIS_COLOR );
 			grid.add( shape );
 		}
 

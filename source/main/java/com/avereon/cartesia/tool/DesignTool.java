@@ -268,7 +268,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public Point3D mouseToWorkplane( double x, double y, double z ) {
 		Point3D worldPoint = mouseToWorld( x, y, z );
-		Workplane workplane = getDesignContext().getWorkplane();
+		DesignWorkplane workplane = getDesignContext().getWorkplane();
 		boolean gridSnapEnabled = workplane.isGridSnapEnabled();
 		return gridSnapEnabled ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
@@ -331,7 +331,7 @@ public abstract class DesignTool extends GuidedTool {
 		//    Another downside to this approach is that several listeners might call
 		//    the same logic (possibly expensive logic) causing an unnecessary
 		//    delay.
-		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
+		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_VISIBLE, e -> {
 			// This one is particularly interesting because the design pane is not
 			// technically the authoritative source of the grid visible property, and
 			// it's not the design pane that sets up the listener, the design tool
@@ -452,11 +452,11 @@ public abstract class DesignTool extends GuidedTool {
 
 		// FIXME Is there a more concise way of doing this? There will be others
 		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
-		getDesignContext().getWorkplane().register( Workplane.GRID_SNAP, e -> {
+		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_SNAP, e -> {
 			snapGridToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
 		} );
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
-		getDesignContext().getWorkplane().register( Workplane.GRID_VISIBLE, e -> {
+		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_VISIBLE, e -> {
 			gridVisibleToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
 		} );
 	}
@@ -587,36 +587,36 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void configureWorkplane() {
 		Settings settings = getAsset().getSettings();
-		Workplane workplane = getDesignContext().getWorkplane();
+		DesignWorkplane workplane = getDesignContext().getWorkplane();
 
-		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", Workplane.DEFAULT_ORIGIN ) );
-		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", Workplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", Workplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", Workplane.DEFAULT_SNAP_GRID_SIZE ) );
-		setGridVisible( getAsset().getSettings().get( Workplane.GRID_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_VISIBLE ) );
-		setGridSnapEnabled( getAsset().getSettings().get( Workplane.GRID_SNAP, Boolean.class, Workplane.DEFAULT_GRID_SNAP_ENABLED ) );
+		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", DesignWorkplane.DEFAULT_ORIGIN ) );
+		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		setGridVisible( getAsset().getSettings().get( DesignWorkplane.GRID_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_VISIBLE ) );
+		setGridSnapEnabled( getAsset().getSettings().get( DesignWorkplane.GRID_SNAP, Boolean.class, DesignWorkplane.DEFAULT_GRID_SNAP_ENABLED ) );
 
-		workplane.register( Workplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
-		workplane.register( Workplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( Workplane.MAJOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( Workplane.MAJOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( Workplane.MINOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( Workplane.MINOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( Workplane.MINOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( Workplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( Workplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( Workplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( Workplane.GRID_VISIBLE, e -> settings.set( Workplane.GRID_VISIBLE, e.getNewValue() ) );
-		workplane.register( Workplane.GRID_SNAP, e -> settings.set( Workplane.GRID_SNAP, e.getNewValue() ) );
+		workplane.register( DesignWorkplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.MAJOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.MAJOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.MINOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.MINOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.MINOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		workplane.register( DesignWorkplane.GRID_VISIBLE, e -> settings.set( DesignWorkplane.GRID_VISIBLE, e.getNewValue() ) );
+		workplane.register( DesignWorkplane.GRID_SNAP, e -> settings.set( DesignWorkplane.GRID_SNAP, e.getNewValue() ) );
 
-		workplane.register( Workplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
-		workplane.register( Workplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
+		workplane.register( DesignWorkplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
+		workplane.register( DesignWorkplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
 
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
 		Fx.run( this::rebuildGrid );
@@ -625,7 +625,7 @@ public abstract class DesignTool extends GuidedTool {
 	private void validateGrid() {
 		Fx.run( () -> {
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
-			Workplane workplane = getDesignContext().getWorkplane();
+			DesignWorkplane workplane = getDesignContext().getWorkplane();
 			if( workplane.getBounds().contains( bounds ) ) return;
 			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
 			rebuildGrid();

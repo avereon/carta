@@ -29,6 +29,9 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		setCenter( command = new TextField() );
 		setPrompt( null );
 
+		// FIXME I have two slightly competing handlers here
+		// one listening to just keys
+		// the other listening to the text
 		command.addEventHandler( KeyEvent.ANY, context::handle );
 		command.textProperty().addListener( ( p, o, n ) -> context.text( n ) );
 	}

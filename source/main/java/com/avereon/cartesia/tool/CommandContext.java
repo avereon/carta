@@ -5,6 +5,8 @@ import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.command.Select;
 import com.avereon.cartesia.command.Value;
+import com.avereon.cartesia.error.UnknownCommand;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
@@ -20,6 +22,13 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class CommandContext {
 
+	public enum Input {
+		NONE,
+		NUMBER,
+		POINT,
+		TEXT
+	}
+
 	private static final System.Logger log = Log.get();
 
 	private static final boolean DEFAULT_AUTO_COMMAND = true;
@@ -34,7 +43,7 @@ public class CommandContext {
 
 	private DesignTool lastActiveDesignTool;
 
-	private boolean inputMode;
+	private Input inputMode;
 
 	private Point3D screenMouse;
 
@@ -46,6 +55,7 @@ public class CommandContext {
 		this.product = product;
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorShortcut = TextUtil.EMPTY;
+		this.inputMode = CommandContext.Input.NONE;
 	}
 
 	public final ProgramProduct getProduct() {
@@ -78,40 +88,39 @@ public class CommandContext {
 			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point2D screen = tool.localToScreen( mouse );
-			MouseEvent mEvent = new MouseEvent(
-				getLastActiveDesignTool(),
-				null,
-				MouseEvent.MOUSE_RELEASED,
-				mouse.getX(),
-				mouse.getY(),
-				screen.getX(),
-				screen.getY(),
-				MouseButton.PRIMARY,
-				1,
-				event.isShiftDown(),
-				event.isControlDown(),
-				event.isAltDown(),
-				event.isMetaDown(),
-				true,
-				false,
-				false,
-				true,
-				false,
-				true,
-				null
-			);
-			doCommand( new Select(), mEvent );
-		} else if( isInputMode() ) {
-			doCommand( new Value(), input );
+			MouseEvent mouseEvent = new MouseEvent( tool, null, MouseEvent.MOUSE_RELEASED, mouse.getX(), mouse.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 1, event.isShiftDown(), event.isControlDown(), event.isAltDown(), event.isMetaDown(), true, false, false, true, false, true, null );
+			doCommand( new Select(), mouseEvent );
 		} else {
-			doCommand( input );
+			text( input, true );
 		}
 		reset();
 	}
 
 	public void repeat() {
-		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) doCommand( getPriorShortcut() );
-		reset();
+		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
+			doCommand( getPriorShortcut() );
+			reset();
+		}
+	}
+
+	void text( String input ) {
+		text( input, false );
+	}
+
+	void text( String input, boolean hard ) {
+		if( hard ) {
+			if( getInputMode() == CommandContext.Input.NUMBER ) {
+				doCommand( new Value(), CadShapes.parsePoint( input ).getX() );
+			} else if( getInputMode() == CommandContext.Input.POINT ) {
+				doCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
+			} else if( getInputMode() == CommandContext.Input.TEXT ) {
+				doCommand( new Value(), input );
+			} else if( isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
+				doCommand( input );
+			}
+		} else if( isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
+			doCommand( input );
+		}
 	}
 
 	public void command( String input ) {
@@ -134,16 +143,9 @@ public class CommandContext {
 		return getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 	}
 
-	void text( String text ) {
-		if( !isInputMode() && isAutoCommandEnabled() && CommandMap.hasCommand( text ) ) {
-			// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
-			getCommandPrompt().clear();
-			doCommand( text );
-		}
-	}
-
 	void handle( KeyEvent event ) {
 		doProcessKeyEvent( event );
+		event.consume();
 	}
 
 	void handle( MouseEvent event ) {
@@ -224,15 +226,15 @@ public class CommandContext {
 
 	private void reset() {
 		if( Fx.isFxThread() ) getCommandPrompt().clear();
-		setInputMode( false );
+		setInputMode( CommandContext.Input.NONE );
 	}
 
-	boolean isInputMode() {
+	public Input getInputMode() {
 		return inputMode;
 	}
 
-	private void setInputMode( boolean mode ) {
-		this.inputMode = mode;
+	public void setInputMode( Input inputMode ) {
+		this.inputMode = inputMode;
 	}
 
 	private void doEventCommand( InputEvent event ) {
@@ -249,7 +251,7 @@ public class CommandContext {
 			priorShortcut = input;
 			doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
 		} else {
-			log.log( Log.WARN, "Unknown command=" + input );
+			log.log( Log.WARN, new UnknownCommand( input ) );
 		}
 	}
 
@@ -273,6 +275,10 @@ public class CommandContext {
 
 	private void doCommand( DesignTool tool, Command command, Object... parameters ) {
 		checkForCommonProblems( tool, command, parameters );
+
+		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
+		if( Fx.isRunning() ) getCommandPrompt().clear();
+
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
 			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
@@ -301,7 +307,7 @@ public class CommandContext {
 				List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
 				for( CommandExecuteRequest request : requests ) {
 					logCommandStack();
-					setInputMode( request.getCommand().isInputCommand() );
+					setInputMode( request.getCommand().getInputMode() );
 					result = request.executeCommandStep( result );
 					if( result == Command.INVALID ) break;
 					if( result instanceof Point3D ) setAnchor( (Point3D)result );
@@ -322,9 +328,6 @@ public class CommandContext {
 	}
 
 	private void doProcessKeyEvent( KeyEvent event ) {
-		// This prevents double events
-		event.consume();
-
 		// On each key event the situation needs to be evaluated...
 		// If ESC was pressed, then the whole command stack should be cancelled
 		// If ENTER was pressed, then an attempt to process the text should be forced
