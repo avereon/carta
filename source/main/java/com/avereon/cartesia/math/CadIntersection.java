@@ -69,14 +69,14 @@ public class CadIntersection {
 
 		// Transform all the points to the common plane
 		CadTransform transform = orientation.getTargetToLocalTransform();
-		p1 = transform.times( p1 );
-		p2 = transform.times( p2 );
-		p3 = transform.times( p3 );
-		p4 = transform.times( p4 );
+		p1 = transform.apply( p1 );
+		p2 = transform.apply( p2 );
+		p3 = transform.apply( p3 );
+		p4 = transform.apply( p4 );
 
 		Intersection2D xn = Intersection2D.intersectLineLine( CadPoints.asPoint( p1 ), CadPoints.asPoint( p2 ), CadPoints.asPoint( p3 ), CadPoints.asPoint( p4 ) );
 		if( xn.getType() == Intersection.Type.INTERSECTION ) {
-			return List.of( orientation.getLocalToTargetTransform().times( CadPoints.toFxPoint( xn.getPoints()[ 0 ] ) ) );
+			return List.of( orientation.getLocalToTargetTransform().apply( CadPoints.toFxPoint( xn.getPoints()[ 0 ] ) ) );
 		}
 
 		return List.of();
@@ -102,12 +102,12 @@ public class CadIntersection {
 		CadTransform localToTarget = ellipse.getOrientation().getLocalToTargetTransform().combine( CadTransform.scale( 1, ry / rx, 0 ) );
 
 		// Transform the line points according to the eccentricity of the ellipse
-		Point3D p1 = targetToLocal.times( line.getOrigin() );
-		Point3D p2 = targetToLocal.times( line.getPoint() );
+		Point3D p1 = targetToLocal.apply( line.getOrigin() );
+		Point3D p2 = targetToLocal.apply( line.getPoint() );
 		List<Point3D> points = intersectLineCircle( new DesignLine( p1, p2 ), ellipse );
 
 		// Transform the intersection points back to the world
-		return points.stream().map( localToTarget::times ).collect( Collectors.toList() );
+		return points.stream().map( localToTarget::apply ).collect( Collectors.toList() );
 	}
 
 	// This implementation assumes that the circle is at the origin

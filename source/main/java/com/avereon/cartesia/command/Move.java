@@ -1,15 +1,16 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class Move extends Command {
+public class Move extends EditCommand {
 
 	private DesignLine previewLine;
+
+	private Point3D anchor;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
@@ -20,7 +21,7 @@ public class Move extends Command {
 		// Ask for an anchor point
 		// Step 1
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine(context.getWorldMouse(),context.getWorldMouse() ) );
+			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
@@ -29,17 +30,17 @@ public class Move extends Command {
 
 		// Ask for a target point
 		if( parameters.length < 2 ) {
-			Point3D origin = asPoint( context, parameters[ 0 ] );
-			previewLine.setOrigin( origin );
-			previewLine.setPoint( origin );
+			anchor = asPoint( context, parameters[ 0 ] );
+			previewLine.setPoint( anchor ).setOrigin( anchor );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
 
 		// Clear the preview
-		removePreview( tool, previewLine );
+		resetPreview( tool );
 
 		// Move the selected shapes
+		moveShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 
 		return COMPLETE;
 	}

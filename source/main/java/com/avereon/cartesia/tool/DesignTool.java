@@ -585,6 +585,10 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
+	public List<DesignShape> getSelectedShapes() {
+		return selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+	}
+
 	private void configureWorkplane() {
 		Settings settings = getAsset().getSettings();
 		DesignWorkplane workplane = getDesignContext().getWorkplane();

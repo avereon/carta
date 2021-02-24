@@ -2,6 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
@@ -17,12 +18,12 @@ public class DesignLine extends DesignShape {
 	private static final System.Logger log = Log.get();
 
 	public DesignLine() {
+		this( null, null );
 	}
 
 	public DesignLine( Point3D origin, Point3D point ) {
 		super( origin );
-		addModifyingKeys( ORIGIN, POINT );
-		setOrigin( origin );
+		addModifyingKeys( POINT );
 		setPoint( point );
 	}
 
@@ -33,6 +34,20 @@ public class DesignLine extends DesignShape {
 	public DesignShape setPoint( Point3D point ) {
 		setValue( POINT, point );
 		return this;
+	}
+
+	@Override
+	public double distanceTo( Point3D point ) {
+		double[] a = CadPoints.asPoint( getOrigin() );
+		double[] b = CadPoints.asPoint( getPoint() );
+		double[] p = CadPoints.asPoint( point );
+		return Geometry.pointLineDistance( a, b, p );
+	}
+
+	@Override
+	public void apply( CadTransform transform ) {
+		setPoint( transform.apply( getPoint() ) );
+		setOrigin( transform.apply( getOrigin() ) );
 	}
 
 	protected Map<String, Object> asMap() {
@@ -51,14 +66,6 @@ public class DesignLine extends DesignShape {
 	@Override
 	public String toString() {
 		return super.toString( ORIGIN, POINT );
-	}
-
-	@Override
-	public double distanceTo( Point3D point ) {
-		double[] a = CadPoints.asPoint( getOrigin() );
-		double[] b = CadPoints.asPoint( getPoint() );
-		double[] p = CadPoints.asPoint( point );
-		return Geometry.pointLineDistance( a, b, p );
 	}
 
 }

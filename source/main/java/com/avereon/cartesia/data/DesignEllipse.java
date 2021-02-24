@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Vector;
 import com.avereon.transaction.Txn;
@@ -104,7 +105,7 @@ public class DesignEllipse extends DesignShape {
 	 * @return
 	 */
 	public boolean isCoincident( Point3D point ) {
-		Point3D local = getOrientation().getTargetToLocalTransform().times( point );
+		Point3D local = getOrientation().getTargetToLocalTransform().apply( point );
 		//Point3D test = getConstructionPoint( getXRadius(), getYRadius(), Math.atan2( local.y, local.x ) );
 		Point3D test = CadPoints.toFxPoint( Geometry.polarToCartesian( new double[]{ getXRadius(), getYRadius(), Math.atan2( local.getY(), local.getX() ) } ) );
 		return CadGeometry.areSamePoint( new Point3D( local.getX(), local.getY(), 0 ), new Point3D( test.getX(), test.getY(), 0 ) );
@@ -115,6 +116,20 @@ public class DesignEllipse extends DesignShape {
 		double rotateValue = rotate == null ? 0 : rotate;
 		Point3D rotateVector = CadPoints.toFxPoint( Vector.rotate( CadPoints.asPoint( CadPoints.UNIT_Y ), rotateValue ) );
 		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, CadPoints.UNIT_Y );
+	}
+
+	@Override
+	public double distanceTo( Point3D point ) {
+		// TODO Improve DesignEllipse.distanceTo()
+		// This implementation is a simple estimate based on the origin and radius
+		double[] o = CadPoints.asPoint( getOrigin() );
+		double[] p = CadPoints.asPoint( point );
+		return Math.abs( Geometry.distance( o, p ) - getRadius() );
+	}
+
+	@Override
+	public void apply( CadTransform transform ) {
+		setOrigin( transform.apply( getOrigin()) );
 	}
 
 	protected Map<String, Object> asMap() {
@@ -131,15 +146,6 @@ public class DesignEllipse extends DesignShape {
 		if( map.containsKey( Y_RADIUS ) ) setYRadius( (Double)map.get( Y_RADIUS ) );
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
-	}
-
-	@Override
-	public double distanceTo( Point3D point ) {
-		// TODO Improve DesignEllipse.distanceTo()
-		// This implementation is a simple estimate based on the origin and radius
-		double[] o = CadPoints.asPoint( getOrigin() );
-		double[] p = CadPoints.asPoint( point );
-		return Math.abs( Geometry.distance( o, p ) - getRadius() );
 	}
 
 	@Override

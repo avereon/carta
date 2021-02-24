@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
@@ -84,6 +85,20 @@ public class DesignArc extends DesignEllipse {
 		return this;
 	}
 
+	@Override
+	public double distanceTo( Point3D point ) {
+		// TODO Improve DesignArc.distanceTo()
+		// This implementation is a simple estimate based on the origin and radius
+		double[] o = CadPoints.asPoint( getOrigin() );
+		double[] p = CadPoints.asPoint( point );
+		return Math.abs( Geometry.distance( o, p ) - getRadius() );
+	}
+
+	@Override
+	public void apply( CadTransform transform ) {
+		setOrigin( transform.apply( getOrigin()) );
+	}
+
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, ARC );
@@ -97,15 +112,6 @@ public class DesignArc extends DesignEllipse {
 		if( map.containsKey( EXTENT ) ) setExtent( (Double)map.get( EXTENT ) );
 		if( map.containsKey( TYPE ) ) setType( Type.valueOf( ((String)map.get( TYPE )).toUpperCase() ) );
 		return this;
-	}
-
-	@Override
-	public double distanceTo( Point3D point ) {
-		// TODO Improve DesignArc.distanceTo()
-		// This implementation is a simple estimate based on the origin and radius
-		double[] o = CadPoints.asPoint( getOrigin() );
-		double[] p = CadPoints.asPoint( point );
-		return Math.abs( Geometry.distance( o, p ) - getRadius() );
 	}
 
 	@Override

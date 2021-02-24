@@ -1,7 +1,8 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
@@ -67,6 +68,22 @@ public class DesignMarker extends DesignShape {
 		return calcDrawPaint();
 	}
 
+	public double getRadius() {
+		return 0.5 * calcSize();
+	}
+
+	@Override
+	public double distanceTo( Point3D point ) {
+		double[] o = CadPoints.asPoint( getOrigin() );
+		double[] p = CadPoints.asPoint( point );
+		return Geometry.distance( o, p );
+	}
+
+	@Override
+	public void apply( CadTransform transform ) {
+		setOrigin( transform.apply( getOrigin()) );
+	}
+
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, POINT );
@@ -84,17 +101,6 @@ public class DesignMarker extends DesignShape {
 	@Override
 	public String toString() {
 		return super.toString( ORIGIN );
-	}
-
-	public double getRadius() {
-		return 0.5 * calcSize();
-	}
-
-	@Override
-	public double distanceTo( Point3D point ) {
-		double[] o = CadPoints.asPoint( getOrigin() );
-		double[] p = CadPoints.asPoint( point );
-		return Geometry.distance( o, p );
 	}
 
 }

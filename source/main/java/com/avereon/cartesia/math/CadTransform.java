@@ -52,19 +52,19 @@ public class CadTransform {
 		transform.setNegate( negate );
 	}
 
-	public Point3D times( Point3D vector ) {
+	public Point3D apply( Point3D vector ) {
 		return CadPoints.toFxPoint( transform.times( CadPoints.asPoint( vector ) ) );
 	}
 
-	public Point3D timesDirection( Point3D vector ) {
+	public Point3D applyDirection( Point3D vector ) {
 		return CadPoints.toFxPoint( transform.timesDirection( CadPoints.asPoint( vector ) ) );
 	}
 
-	public Point3D timesXY( Point3D vector ) {
+	public Point3D applyXY( Point3D vector ) {
 		return CadPoints.toFxPoint( transform.timesXY( CadPoints.asPoint( vector ) ) );
 	}
 
-	public double timesZ( Point3D vector ) {
+	public double applyZ( Point3D vector ) {
 		return transform.timesZ( CadPoints.asPoint( vector ) );
 	}
 

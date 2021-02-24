@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
 import javafx.geometry.Point3D;
@@ -56,6 +57,14 @@ public abstract class DesignShape extends DesignDrawable {
 		return this;
 	}
 
+	public double distanceTo( Point3D point ) {
+		return Double.NaN;
+	}
+
+	public void apply( CadTransform transform ) {
+		// Subclasses should implement this method
+	}
+
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.putAll( asMap( ORIGIN ) );
@@ -71,10 +80,6 @@ public abstract class DesignShape extends DesignDrawable {
 	@Override
 	public <T extends Node> Comparator<T> getComparator() {
 		return new NodeComparator<>( ORDER );
-	}
-
-	public double distanceTo( Point3D point ) {
-		return Double.NaN;
 	}
 
 }

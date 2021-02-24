@@ -99,8 +99,8 @@ public class DrawArc2 extends DrawCommand {
 		Point3D rotate = CadGeometry.polarToCartesian360( new Point3D( arc.getRadius(), arc.getStart() + 90, 0 ) );
 		CadTransform transform = CadTransform.localTransform( arc.getOrigin(), CadPoints.UNIT_Z, rotate );
 
-		Point3D lp = transform.times( lastPoint );
-		Point3D np = transform.times( newPoint );
+		Point3D lp = transform.apply( lastPoint );
+		Point3D np = transform.apply( newPoint );
 
 		if( lp.getX() > 0 & np.getX() > 0 ) {
 			if( np.getY() > 0 & lp.getY() < 0 ) return 1.0;
