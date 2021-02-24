@@ -56,8 +56,16 @@ public class DesignCurve extends DesignLine {
 	}
 
 	@Override
+	public DesignCurve clone() {
+		return new DesignCurve().copyFrom( this );
+	}
+
+	@Override
 	public void apply( CadTransform transform ) {
-		//setOrigin( transform.apply( getOrigin()) );
+		setOrigin( transform.apply( getOrigin() ) );
+		setOriginControl( transform.apply( getOriginControl() ) );
+		setPointControl( transform.apply( getPointControl() ) );
+		setPoint( transform.apply( getPoint() ) );
 	}
 
 	protected Map<String, Object> asMap() {

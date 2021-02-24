@@ -128,6 +128,11 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	@Override
+	public DesignEllipse clone() {
+		return new DesignEllipse().copyFrom( this );
+	}
+
+	@Override
 	public void apply( CadTransform transform ) {
 		setOrigin( transform.apply( getOrigin()) );
 	}

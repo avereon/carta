@@ -80,6 +80,11 @@ public class DesignMarker extends DesignShape {
 	}
 
 	@Override
+	public DesignMarker clone() {
+		return new DesignMarker().copyFrom( this );
+	}
+
+	@Override
 	public void apply( CadTransform transform ) {
 		setOrigin( transform.apply( getOrigin()) );
 	}

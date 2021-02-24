@@ -61,8 +61,12 @@ public abstract class DesignShape extends DesignDrawable {
 		return Double.NaN;
 	}
 
+	public DesignShape clone() {
+		throw new UnsupportedOperationException();
+	}
+
 	public void apply( CadTransform transform ) {
-		// Subclasses should implement this method
+		throw new UnsupportedOperationException();
 	}
 
 	protected Map<String, Object> asMap() {

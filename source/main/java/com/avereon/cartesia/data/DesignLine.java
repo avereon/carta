@@ -45,9 +45,14 @@ public class DesignLine extends DesignShape {
 	}
 
 	@Override
+	public DesignLine clone() {
+		return new DesignLine().copyFrom( this );
+	}
+
+	@Override
 	public void apply( CadTransform transform ) {
-		setPoint( transform.apply( getPoint() ) );
 		setOrigin( transform.apply( getOrigin() ) );
+		setPoint( transform.apply( getPoint() ) );
 	}
 
 	protected Map<String, Object> asMap() {

@@ -95,6 +95,11 @@ public class DesignArc extends DesignEllipse {
 	}
 
 	@Override
+	public DesignArc clone() {
+		return new DesignArc().copyFrom( this );
+	}
+
+	@Override
 	public void apply( CadTransform transform ) {
 		setOrigin( transform.apply( getOrigin()) );
 	}

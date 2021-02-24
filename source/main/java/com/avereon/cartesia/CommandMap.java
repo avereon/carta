@@ -89,7 +89,7 @@ public class CommandMap {
 		// shape fill paint
 
 		// Modify commands
-		//add( product, "copy", Copy.class );
+		add( product, "copy", Copy.class );
 		add( product, "move", Move.class );
 		add( product, "trim-single", TrimExtend.class );
 		add( product, "trim-multiple", TrimExtendMultiple.class );
