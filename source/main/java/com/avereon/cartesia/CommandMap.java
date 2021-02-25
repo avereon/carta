@@ -61,7 +61,7 @@ public class CommandMap {
 		add( product, "grid-toggle", GridToggle.class );
 
 		// Measure commands
-		//add( product, "measure-angle", MeasureAngleCommand.class );
+		//add( product, "measure-angle", MeasureAngle.class );
 		add( product, "measure-distance", MeasureDistance.class );
 
 		// Draw setting commands
@@ -90,8 +90,13 @@ public class CommandMap {
 
 		// Modify commands
 		add( product, "copy", Copy.class );
+		add( product, "extend", Trim.class );
+		//add( product, "mirror", MirrorTool.class );
 		add( product, "move", Move.class );
-		add( product, "trim-single", TrimExtend.class );
+		//add( product, "rotate", RotateTool.class );
+		//add( product, "scale", ScaleTool.class );
+		//add( product, "stretch", StretchTool.class );
+		add( product, "trim", Trim.class );
 		add( product, "trim-multiple", TrimExtendMultiple.class );
 
 		// Shape commands
@@ -99,7 +104,7 @@ public class CommandMap {
 		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
 		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
-		//add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
+		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
 		//add( product, "draw-ellipse-5", DrawEllipse5.class ); // point-point-point-point-point
 		//add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // center-radius-radius-start-extent

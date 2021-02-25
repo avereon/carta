@@ -18,6 +18,7 @@ public class DesignGeometry {
 		generators.put( DesignLine.class, ( pane, shape ) -> from( pane, (DesignLine)shape ) );
 		generators.put( DesignEllipse.class, ( pane, shape ) -> from( pane, (DesignEllipse)shape ) );
 		generators.put( DesignArc.class, ( pane, shape ) -> from( pane, (DesignArc)shape ) );
+		generators.put( DesignCurve.class, ( pane, shape ) -> from( pane, (DesignCurve)shape ) );
 
 		generatorMap = Collections.unmodifiableMap( generators );
 	}
@@ -42,6 +43,10 @@ public class DesignGeometry {
 
 	private static DesignArcView from( DesignPane pane, DesignArc arc ) {
 		return new DesignArcView( pane, arc );
+	}
+
+	private static DesignCurveView from( DesignPane pane, DesignCurve curve ) {
+		return new DesignCurveView( pane, curve );
 	}
 
 }
