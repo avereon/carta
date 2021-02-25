@@ -8,8 +8,8 @@ import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.NumberBinding;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.binding.DoubleBinding;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -171,17 +171,13 @@ public class DesignShapeView extends DesignDrawableView {
 		return (List<ConstructionPoint>)shape.getProperties().getOrDefault( CONSTRUCTION_POINTS, List.of() );
 	}
 
-	static ConstructionPoint cp( DesignPane pane, Shape shape, DoubleProperty xProperty, DoubleProperty yProperty ) {
-		Bindings.selectDouble( xProperty );
-
-		return cp( pane, shape, Bindings.selectDouble( xProperty ), Bindings.selectDouble( yProperty ) );
+	static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xProperty, Callable<Double> xAction, ObservableValue<Number> yProperty, Callable<Double> yAction ) {
+		DoubleBinding xBinding = Bindings.createDoubleBinding( xAction, xProperty );
+		DoubleBinding yBinding = Bindings.createDoubleBinding( yAction, yProperty );
+		return cp( pane, shape, xBinding, yBinding );
 	}
 
-	static ConstructionPoint cp( DesignPane pane, Shape shape, Callable<Double> xBinding, Callable<Double> yBinding ) {
-		return cp( pane, shape, Bindings.createDoubleBinding( xBinding ), Bindings.createDoubleBinding( yBinding ) );
-	}
-
-	static ConstructionPoint cp( DesignPane pane, Shape shape, NumberBinding xBinding, NumberBinding yBinding ) {
+	static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
 		ConstructionPoint cp = new ConstructionPoint();
 		cp.visibleProperty().bind( shape.visibleProperty() );
 		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
@@ -200,8 +196,8 @@ public class DesignShapeView extends DesignDrawableView {
 		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), arc.getRotate(), angle );
 	}
 
-	static Point3D getEllipsePoint( Ellipse arc, double angle ) {
-		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), arc.getRotate(), angle );
+	static Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
+		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), ellipse.getRotate(), angle );
 	}
 
 }

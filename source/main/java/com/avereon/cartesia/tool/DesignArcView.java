@@ -35,13 +35,7 @@ public class DesignArcView extends DesignShapeView {
 	@Override
 	protected List<Shape> generateGeometry() {
 		DesignArc designArc = getDesignArc();
-		Arc arc = new Arc( designArc.getOrigin().getX(),
-			designArc.getOrigin().getY(),
-			designArc.getXRadius(),
-			designArc.getYRadius(),
-			-designArc.getStart(),
-			-designArc.getExtent()
-		);
+		Arc arc = new Arc( designArc.getOrigin().getX(), designArc.getOrigin().getY(), designArc.getXRadius(), designArc.getYRadius(), -designArc.getStart(), -designArc.getExtent() );
 		if( designArc.getRotate() != null ) arc.setRotate( designArc.getRotate() );
 		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
 		arc.setStrokeWidth( designArc.calcDrawWidth() );
@@ -55,24 +49,13 @@ public class DesignArcView extends DesignShapeView {
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		// Points should be at the origin, each endpoint and the midpoint
 		Arc arc = (Arc)shapes.get( 0 );
-		ConstructionPoint origin = cp( pane, arc, arc.centerXProperty(), arc.centerYProperty() );
 
-		ConstructionPoint a = cp( pane, arc, () -> getArcPoint( arc, arc.getStartAngle() ).getX(), () -> getArcPoint( arc, arc.getStartAngle() ).getY() );
+		//ConstructionPoint origin = cp( pane, arc, arc.centerXProperty(), arc.centerYProperty() );
+		ConstructionPoint a = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getY() );
+		ConstructionPoint b = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY() );
+		ConstructionPoint c = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY() );
 
-		ConstructionPoint b = cp( pane,
-			arc,
-			() -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(),
-			() -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY()
-		);
-
-		ConstructionPoint c = cp(
-			pane,
-			arc,
-			() -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(),
-			() -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY()
-		);
-
-		setConstructionPoints( arc, List.of( origin, a, b, c ) );
+		setConstructionPoints( arc, List.of( a, b, c ) );
 
 		return getConstructionPoints( arc );
 	}
