@@ -100,7 +100,7 @@ public class CommandMap {
 		//add( product, "stretch", StretchTool.class );
 		// TODO Need to finish some trim interactions
 		add( product, "trim", Trim.class );
-		add( product, "trim-multiple", TrimExtendMultiple.class );
+		//add( product, "trim-multiple", TrimExtendMultiple.class );
 
 		// Shape commands
 		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
