@@ -27,7 +27,10 @@ public class DrawCircle2 extends DrawCommand {
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			addPreview( tool, previewEllipse = new DesignEllipse( asPoint( context, parameters[ 0 ] ), 0.0 ) );
+			Point3D origin = asPoint( context, parameters[ 0 ] );
+			addPreview( tool, previewEllipse = new DesignEllipse( origin, 0.0 ) );
+			previewLine.setOrigin( origin );
+			previewLine.setPoint( origin );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
