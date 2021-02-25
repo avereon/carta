@@ -29,6 +29,7 @@ public class DesignPropertiesMap {
 		pages.put( DesignArc.class, loadPage( product, "arc" ) );
 		pages.put( DesignLine.class, loadPage( product, "line" ) );
 		pages.put( DesignMarker.class, loadPage( product, "point" ) );
+		pages.put( DesignCurve.class, loadPage( product, "curve" ) );
 		propertiesPages = Collections.unmodifiableMap( pages );
 	}
 
