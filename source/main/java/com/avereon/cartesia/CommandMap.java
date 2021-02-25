@@ -92,10 +92,12 @@ public class CommandMap {
 		add( product, "copy", Copy.class );
 		add( product, "extend", Trim.class );
 		//add( product, "mirror", MirrorTool.class );
+		add( product, "meet", Meet.class );
 		add( product, "move", Move.class );
 		//add( product, "rotate", RotateTool.class );
 		//add( product, "scale", ScaleTool.class );
 		//add( product, "stretch", StretchTool.class );
+		// Need to finish some trim interactions
 		add( product, "trim", Trim.class );
 		add( product, "trim-multiple", TrimExtendMultiple.class );
 

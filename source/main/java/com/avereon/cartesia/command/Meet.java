@@ -1,16 +1,12 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
-/**
- * Select a shape to extend/trim then select the shape to be the extend/trim edge.
- */
-public class Trim extends Command {
+public class Meet extends EditCommand {
 
 	private static final System.Logger log = Log.get();
 
@@ -21,7 +17,7 @@ public class Trim extends Command {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForShape( context, tool, "select-trim-shape" );
+			promptForShape( context, tool, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
@@ -29,7 +25,7 @@ public class Trim extends Command {
 			trimMouse = context.getScreenMouse();
 			trim = selectNearestShapeAtMouse( tool, trimMouse );
 			if( trim == DesignShape.NONE ) return INVALID;
-			promptForShape( context, tool, "select-trim-edge" );
+			promptForShape( context, tool, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
@@ -37,7 +33,7 @@ public class Trim extends Command {
 		DesignShape edge = findNearestShapeAtMouse( tool, edgeMouse );
 		if( edge == DesignShape.NONE ) return INVALID;
 
-		com.avereon.cartesia.math.Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
+		com.avereon.cartesia.math.Meet.meet( tool, trim, edge, trimMouse, edgeMouse );
 
 		return COMPLETE;
 	}
