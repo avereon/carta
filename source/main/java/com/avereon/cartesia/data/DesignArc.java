@@ -101,7 +101,7 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		setOrigin( transform.apply( getOrigin()) );
+		setOrigin( transform.apply( getOrigin() ) );
 	}
 
 	protected Map<String, Object> asMap() {

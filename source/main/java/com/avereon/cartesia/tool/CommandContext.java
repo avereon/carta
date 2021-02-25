@@ -379,17 +379,15 @@ public class CommandContext {
 			// NOTE Be judicious adding logic in this method.
 			// It is called for every step in a command
 
-			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A result of INCOMPLETE was passed to execute" );
+			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A prior result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
 
 			Object result = Command.INVALID;
 			try {
 				result = command.execute( context, tool, parameters );
-				command.incrementStep();
+				if( result != Command.INVALID ) command.incrementStep();
 			} finally {
-				if( result != Command.INCOMPLETE && tool != null && command.clearSelectionWhenComplete() ) {
-					tool.clearSelected();
-				}
+				if( result != Command.INCOMPLETE && tool != null && command.clearSelectionWhenComplete() ) tool.clearSelected();
 			}
 
 			return result;

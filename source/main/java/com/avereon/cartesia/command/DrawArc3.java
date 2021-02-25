@@ -18,20 +18,16 @@ public class DrawArc3 extends DrawCommand {
 
 	private Point3D mid;
 
-	private Point3D lastAnchor;
-
-	private double spin;
-
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		// Step 1
+		// Step 1 - Prompt for start
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}
 
-		// Step 2
+		// Step 2 - Get start, prompt for mid-point
 		if( parameters.length < 2 ) {
 			start = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( start );
@@ -39,7 +35,7 @@ public class DrawArc3 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		// Step 3
+		// Step 3 - Get mid point, prompt for end
 		if( parameters.length < 3 ) {
 			removePreview( tool, previewLine );
 

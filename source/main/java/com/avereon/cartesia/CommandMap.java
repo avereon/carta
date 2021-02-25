@@ -109,9 +109,9 @@ public class CommandMap {
 		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
 		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
-		//add( product, "draw-ellipse-5", DrawEllipse5.class ); // point-point-point-point-point
-		//add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // center-radius-radius-start-extent
-		//add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // endpoint-point-point-point-endpoint
+		//add( product, "draw-conic-5", DrawConic5.class ); // point-point-point-point-point
+		add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // center-radius-radius-start-extent
+		//add( product, "draw-conic-arc-5", DrawConicArc5.class ); // endpoint-point-point-point-endpoint
 		add( product, "draw-line-2", DrawLine2.class ); // endpoint-endpoint
 		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
 		add( product, "draw-marker", DrawMarker.class ); // point

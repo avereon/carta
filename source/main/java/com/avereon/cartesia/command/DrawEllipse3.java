@@ -14,10 +14,6 @@ public class DrawEllipse3 extends DrawCommand {
 
 	private DesignEllipse previewEllipse;
 
-	private Point3D start;
-
-	private Point3D mid;
-
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1
@@ -43,12 +39,13 @@ public class DrawEllipse3 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		// TODO Y-radius should be measured orthogonal to the X-radius
-
-		removePreview( tool, previewLine );
+		previewEllipse.setOrigin( asPoint( context, parameters[ 0 ] ) );
 		previewEllipse.setXRadius( asDouble( previewEllipse.getOrigin(), parameters[ 1 ] ) );
+		// TODO Y-radius should be measured orthogonal to the X-radius
 		previewEllipse.setYRadius( asDouble( previewEllipse.getOrigin(), parameters[ 2 ] ) );
 		previewEllipse.setRotate( CadGeometry.angle360( asPoint( context, parameters[ 1 ] ).subtract( previewEllipse.getOrigin() ) ) );
+
+		removePreview( tool, previewLine );
 		return commitPreview( tool );
 	}
 

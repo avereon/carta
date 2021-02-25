@@ -17,7 +17,9 @@ import javafx.scene.shape.Shape;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 public class Command {
 
@@ -38,7 +40,7 @@ public class Command {
 	}
 
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		return null;
+		return COMPLETE;
 	}
 
 	public void cancel( DesignTool tool ) throws Exception {
@@ -140,7 +142,10 @@ public class Command {
 	}
 
 	protected void addPreview( DesignTool tool, DesignShape... shapes ) {
-		List<DesignShape> shapeList = Arrays.asList( shapes );
+		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList()) );
+	}
+
+	private void addPreview(DesignTool tool, List<DesignShape> shapeList ) {
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> tool.getCurrentLayer().addShape( s ) );
@@ -148,10 +153,10 @@ public class Command {
 	}
 
 	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
-		removePreview( tool, Arrays.asList( shapes ) );
+		removePreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList()) );
 	}
 
-	protected void removePreview( DesignTool tool, List<DesignShape> shapeList ) {
+	private void removePreview( DesignTool tool, List<DesignShape> shapeList ) {
 		shapeList.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
 		shapeList.forEach( s -> s.setPreview( false ) );
 		preview.removeAll( shapeList );

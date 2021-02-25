@@ -3,8 +3,6 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadPoints;
-import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
@@ -16,44 +14,43 @@ public class DrawArc2 extends DrawCommand {
 
 	private DesignArc previewArc;
 
-	private Point3D lastAnchor;
+	private Point3D spinAnchor;
 
 	private double spin;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		// Step 1
+		// Step 1 - Prompt for origin
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine(context.getWorldMouse(),context.getWorldMouse() ) );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
 
-		// Step 2
+		// Step 2 - Get origin, prompt for start
 		if( parameters.length < 2 ) {
 			Point3D origin = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
-			previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
-			addPreview( tool, previewArc );
+			addPreview( tool, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;
 		}
 
-		// Step 3
+		// Step 3 - Get start, prompt for extent
 		if( parameters.length < 3 ) {
-			Point3D start = asPoint( context, parameters[ 1 ] );
-			lastAnchor = start;
-			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), start ) );
-			previewArc.setStart( CadGeometry.angle360( start.subtract( previewArc.getOrigin() ) ) );
+			Point3D point = asPoint( context, parameters[ 1 ] );
+			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
+			previewArc.setStart( CadGeometry.angle360( point.subtract( previewArc.getOrigin() ) ) );
 			previewArc.setExtent( 0.0 );
+			spinAnchor = point;
 			promptForPoint( context, tool, "extent" );
 			return INCOMPLETE;
 		}
 
 		previewArc.setExtent( getExtent( previewArc, asPoint( context, parameters[ 2 ] ), spin ) );
-		removePreview( tool, previewLine );
 
+		removePreview( tool, previewLine );
 		return commitPreview( tool );
 	}
 
@@ -62,52 +59,27 @@ public class DrawArc2 extends DrawCommand {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 				DesignTool tool = (DesignTool)event.getSource();
 				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-				spin = getSpin( previewArc, lastAnchor, point, spin );
+				spin = getExtentSpin( previewArc, spinAnchor, point, spin );
 
 				switch( getStep() ) {
 					case 1 -> {
+						// Arc origin
 						previewLine.setOrigin( point );
 						previewLine.setPoint( point );
 					}
 					case 2 -> {
+						// Arc radius and start
 						previewLine.setPoint( point );
-						previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
+						previewArc.setRadius( point.distance( previewArc.getOrigin() ) );
 					}
 					case 3 -> {
+						// Arc extent
 						previewLine.setPoint( point );
 						previewArc.setExtent( getExtent( previewArc, point, spin ) );
+						spinAnchor = point;
 					}
 				}
-				lastAnchor = point;
 		}
-	}
-
-	private double getExtent( DesignArc arc, Point3D point, double spin ) {
-		Point3D startPoint = CadGeometry.polarToCartesian360( new Point3D( arc.getRadius(), arc.getStart(), 0 ) );
-		double angle = -CadGeometry.angle360( startPoint, point.subtract( arc.getOrigin() ) );
-
-		if( angle < 0 && spin > 0 ) angle += 360;
-		if( angle > 0 && spin < 0 ) angle -= 360;
-
-		return angle;
-	}
-
-	private static double getSpin( DesignArc arc, Point3D lastPoint, Point3D newPoint, double priorSpin ) {
-		if( arc == null || lastPoint == null || newPoint == null ) return priorSpin;
-
-		// Use the arc information to create a transform to test the points
-		Point3D rotate = CadGeometry.polarToCartesian360( new Point3D( arc.getRadius(), arc.getStart() + 90, 0 ) );
-		CadTransform transform = CadTransform.localTransform( arc.getOrigin(), CadPoints.UNIT_Z, rotate );
-
-		Point3D lp = transform.apply( lastPoint );
-		Point3D np = transform.apply( newPoint );
-
-		if( lp.getX() > 0 & np.getX() > 0 ) {
-			if( np.getY() > 0 & lp.getY() < 0 ) return 1.0;
-			if( np.getY() < 0 & lp.getY() > 0 ) return -1.0;
-		}
-
-		return priorSpin;
 	}
 
 }
