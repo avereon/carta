@@ -47,7 +47,7 @@ public abstract class DrawCommand extends Command {
 	 * @param priorSpin The prior spin
 	 * @return 1.0 for CCW spin, -1.0 for CW spin or the prior spin
 	 */
-	protected static double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
+	protected double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
 		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
 
 		// Use the arc information to create a transform to test the points
