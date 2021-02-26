@@ -41,7 +41,7 @@ public class DrawEllipse3 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
 			previewEllipse.setXRadius( CadGeometry.distance( previewEllipse.getOrigin(), xPoint ) );
-			previewEllipse.setRotate( CadGeometry.angle360( xPoint.subtract( previewEllipse.getOrigin() ) ) );
+			previewEllipse.setRotate( deriveRotate( origin, xPoint ) );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
@@ -52,8 +52,8 @@ public class DrawEllipse3 extends DrawCommand {
 
 		previewEllipse.setOrigin( asPoint( context, parameters[ 0 ] ) );
 		previewEllipse.setXRadius( asDouble( previewEllipse.getOrigin(), parameters[ 1 ] ) );
-		previewEllipse.setYRadius( getYRadius( origin, xPoint, yPoint ) );
-		previewEllipse.setRotate( CadGeometry.angle360( xPoint.subtract( previewEllipse.getOrigin() ) ) );
+		previewEllipse.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
+		previewEllipse.setRotate( deriveRotate( origin, xPoint ) );
 
 		removePreview( tool, previewLine );
 		return commitPreview( tool );
@@ -72,12 +72,11 @@ public class DrawEllipse3 extends DrawCommand {
 				}
 				case 2 -> {
 					previewLine.setPoint( point );
-					previewEllipse.setXRadius( point.distance( previewEllipse.getOrigin() ) );
-					previewEllipse.setRotate( CadGeometry.angle360( point.subtract( previewEllipse.getOrigin() ) ) );
+					previewEllipse.setRotate( deriveRotate( origin, point ) );
 				}
 				case 3 -> {
 					previewLine.setPoint( point );
-					previewEllipse.setYRadius( getYRadius( origin, xPoint, point ) );
+					previewEllipse.setYRadius( deriveYRadius( origin, xPoint, point ) );
 				}
 			}
 		}

@@ -22,7 +22,7 @@ public class DrawArc2 extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1 - Prompt for origin
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine(context.getWorldMouse(),context.getWorldMouse() ) );
+			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
@@ -41,14 +41,15 @@ public class DrawArc2 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			Point3D point = asPoint( context, parameters[ 1 ] );
 			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
-			previewArc.setStart( CadGeometry.angle360( point.subtract( previewArc.getOrigin() ) ) );
+			previewArc.setStart( deriveStart( previewArc, point ) );
 			previewArc.setExtent( 0.0 );
 			spinAnchor = point;
 			promptForPoint( context, tool, "extent" );
 			return INCOMPLETE;
 		}
 
-		previewArc.setExtent( getExtent( previewArc, asPoint( context, parameters[ 2 ] ), spin ) );
+		// FIXME This implementation will not work in scripts
+		previewArc.setExtent( deriveExtent( previewArc, asPoint( context, parameters[ 2 ] ), spin ) );
 
 		removePreview( tool, previewLine );
 		return commitPreview( tool );
@@ -57,28 +58,29 @@ public class DrawArc2 extends DrawCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-				DesignTool tool = (DesignTool)event.getSource();
-				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-				spin = getExtentSpin( previewArc, spinAnchor, point, spin );
+			DesignTool tool = (DesignTool)event.getSource();
+			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			spin = getExtentSpin( previewArc, spinAnchor, point, spin );
 
-				switch( getStep() ) {
-					case 1 -> {
-						// Arc origin
-						previewLine.setOrigin( point );
-						previewLine.setPoint( point );
-					}
-					case 2 -> {
-						// Arc radius and start
-						previewLine.setPoint( point );
-						previewArc.setRadius( point.distance( previewArc.getOrigin() ) );
-					}
-					case 3 -> {
-						// Arc extent
-						previewLine.setPoint( point );
-						previewArc.setExtent( getExtent( previewArc, point, spin ) );
-						spinAnchor = point;
-					}
+			switch( getStep() ) {
+				case 1 -> {
+					// Arc origin
+					previewLine.setOrigin( point );
+					previewLine.setPoint( point );
 				}
+				case 2 -> {
+					// Arc radius and start
+					previewLine.setPoint( point );
+					previewArc.setRadius( point.distance( previewArc.getOrigin() ) );
+					previewArc.setStart( deriveStart( previewArc, point ) );
+				}
+				case 3 -> {
+					// Arc extent
+					previewLine.setPoint( point );
+					previewArc.setExtent( deriveExtent( previewArc, point, spin ) );
+					spinAnchor = point;
+				}
+			}
 		}
 	}
 

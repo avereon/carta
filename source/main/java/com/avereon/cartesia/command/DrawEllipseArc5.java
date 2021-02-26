@@ -47,7 +47,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
 			previewArc.setXRadius( CadGeometry.distance( previewArc.getOrigin(), xPoint ) );
-			previewArc.setRotate( CadGeometry.angle360( xPoint.subtract( previewArc.getOrigin() ) ) );
+			previewArc.setRotate( deriveRotate( origin, xPoint ) );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
@@ -55,7 +55,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 4 - Get the second radius, prompt for the start angle
 		if( parameters.length < 4 ) {
 			yPoint = asPoint( context, parameters[ 2 ] );
-			previewArc.setYRadius( CadGeometry.distance( previewArc.getOrigin(), yPoint ) );
+			previewArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
 			addPreview( tool, previewArc );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;
@@ -78,10 +78,10 @@ public class DrawEllipseArc5 extends DrawCommand {
 
 		previewArc.setOrigin( origin );
 		previewArc.setXRadius( asDouble( previewArc.getOrigin(), parameters[ 1 ] ) );
-		previewArc.setYRadius( getYRadius( origin, xPoint, yPoint ) );
-		previewArc.setRotate( CadGeometry.angle360( asPoint( context, parameters[ 1 ] ).subtract( previewArc.getOrigin() ) ) );
-		previewArc.setStart( getStart( previewArc, asPoint( context, parameters[ 3 ] ) ) );
-		previewArc.setExtent( getExtent( previewArc, asPoint( context, parameters[ 4 ] ), spin ) );
+		previewArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
+		previewArc.setRotate( deriveRotate( origin, xPoint ) );
+		previewArc.setStart( deriveStart( previewArc, asPoint( context, parameters[ 3 ] ) ) );
+		previewArc.setExtent( deriveExtent( previewArc, asPoint( context, parameters[ 4 ] ), spin ) );
 
 		removePreview( tool, previewLine );
 		return commitPreview( tool );
@@ -104,22 +104,22 @@ public class DrawEllipseArc5 extends DrawCommand {
 					// Arc X radius and rotate
 					previewLine.setPoint( point );
 					previewArc.setXRadius( point.distance( previewArc.getOrigin() ) );
-					previewArc.setRotate( CadGeometry.angle360( point.subtract( previewArc.getOrigin() ) ) );
+					previewArc.setRotate( deriveRotate( origin, point ) );
 				}
 				case 3 -> {
 					// Arc Y radius
 					previewLine.setPoint( point );
-					previewArc.setYRadius( getYRadius( origin, xPoint, point ) );
+					previewArc.setYRadius( deriveYRadius( origin, xPoint, point ) );
 				}
 				case 4 -> {
 					// Arc start
 					previewLine.setPoint( point );
-					previewArc.setStart( getStart( previewArc, point ) );
+					previewArc.setStart( deriveStart( previewArc, point ) );
 				}
 				case 5 -> {
 					// Arc extent
 					previewLine.setPoint( point );
-					previewArc.setExtent( getExtent( previewArc, point, spin ) );
+					previewArc.setExtent( deriveExtent( previewArc, point, spin ) );
 				}
 			}
 		}

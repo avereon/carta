@@ -9,11 +9,23 @@ import javafx.geometry.Point3D;
 
 public abstract class DrawCommand extends Command {
 
-	protected double getStart( DesignArc arc, Point3D point ) {
-		return -CadGeometry.angle360( point.subtract( arc.getOrigin() ) ) - arc.calcRotate();
+	protected double deriveRotate( Point3D origin, Point3D point ) {
+		return CadGeometry.angle360( point.subtract( origin ) );
 	}
 
-	protected double getExtent( DesignArc arc, Point3D point, double spin ) {
+	protected double deriveYRadius( Point3D origin, Point3D xPoint, Point3D yPoint ) {
+		// This is the origin y-point distance
+		//return origin.distance( yPoint );
+
+		// This is the y-point distance perpendicular to the origin x-point line
+		return CadGeometry.linePointDistance( origin, xPoint, yPoint );
+	}
+
+	protected double deriveStart( DesignArc arc, Point3D point ) {
+		return CadGeometry.angle360( point.subtract( arc.getOrigin() ) );
+	}
+
+	protected double deriveExtent( DesignArc arc, Point3D point, double spin ) {
 		Point3D startPoint = CadGeometry.polarToCartesian360( new Point3D( arc.getRadius(), arc.getStart(), 0 ) );
 		double angle = -CadGeometry.angle360( startPoint, point.subtract( arc.getOrigin() ) );
 
@@ -51,14 +63,6 @@ public abstract class DrawCommand extends Command {
 		}
 
 		return priorSpin;
-	}
-
-	protected double getYRadius( Point3D origin, Point3D xPoint, Point3D yPoint ) {
-		// This is the origin y-point distance
-		//return origin.distance( yPoint );
-
-		// This is the y-point distance perpendicular to the origin x-point line
-		return CadGeometry.linePointDistance( origin, xPoint, yPoint );
 	}
 
 }
