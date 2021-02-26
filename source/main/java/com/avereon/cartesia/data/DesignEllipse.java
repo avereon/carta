@@ -88,12 +88,12 @@ public class DesignEllipse extends DesignShape {
 		return (T)this;
 	}
 
-	public Double getRotate() {
-		return getValue( ROTATE );
-	}
-
 	public double calcRotate() {
 		return hasKey( ROTATE ) ? getRotate() : 0.0;
+	}
+
+	public Double getRotate() {
+		return getValue( ROTATE );
 	}
 
 	@SuppressWarnings( "unchecked" )

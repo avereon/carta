@@ -50,6 +50,19 @@ public class DrawCommandTest {
 	}
 
 	@Test
+	void testDeriveStartWithRotate() {
+		DesignArc arc = new DesignArc( new Point3D( 2, 1, 0 ), 1.0, 1.0, 45.0, 0.0, 0.0, DesignArc.Type.OPEN );
+		assertThat( command.deriveStart( arc, new Point3D( 3, 2, 0 ) ), near( 0.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 2, 2, 0 ) ), near( 45.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 1, 2, 0 ) ), near( 90.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 1, 1, 0 ) ), near( 135.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 1, 0, 0 ) ), near( 180.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 2, 0, 0 ) ), near( -135.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 3, 0, 0 ) ), near( -90.0 ) );
+		assertThat( command.deriveStart( arc, new Point3D( 3, 1, 0 ) ), near( -45.0 ) );
+	}
+
+	@Test
 	void testDeriveExtent() {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 1.0, 45.0, 0.0, DesignArc.Type.OPEN );
 		assertThat( command.deriveExtent( arc, new Point3D( 2, 3, 0 ), 1.0 ), near( 0.0 ) );

@@ -22,16 +22,22 @@ public abstract class DrawCommand extends Command {
 	}
 
 	protected double deriveStart( DesignArc arc, Point3D point ) {
-		return CadGeometry.angle360( point.subtract( arc.getOrigin() ) );
+		return deriveRotatedArcAngle( arc, point );
 	}
 
 	protected double deriveExtent( DesignArc arc, Point3D point, double spin ) {
-		Point3D startPoint = CadGeometry.polarToCartesian360( new Point3D( arc.getRadius(), arc.getStart(), 0 ) );
-		double angle = -CadGeometry.angle360( startPoint, point.subtract( arc.getOrigin() ) );
+		double angle = deriveRotatedArcAngle( arc, point ) - arc.getStart();
 
 		if( angle < 0 && spin > 0 ) angle += 360;
 		if( angle > 0 && spin < 0 ) angle -= 360;
 
+		return angle;
+	}
+
+	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {
+		double angle = CadGeometry.angle360( point.subtract( arc.getOrigin() ) ) - arc.calcRotate();
+		if( angle <= -180  ) angle += 360;
+		if( angle > 180  ) angle -= 360;
 		return angle;
 	}
 

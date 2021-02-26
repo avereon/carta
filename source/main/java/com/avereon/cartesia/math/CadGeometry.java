@@ -16,7 +16,6 @@ public class CadGeometry {
 	}
 
 	public static double angle360( Point3D a, Point3D b ) {
-		// FIXME Confused about the results of this method
 		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
 	}
 
@@ -124,7 +123,7 @@ public class CadGeometry {
 		double startAngle = CadGeometry.angle360( start.subtract( origin ) );
 		double spin = getSpin( start, mid, end );
 
-		// This will be the smaller angle with the sign in the correct direction
+		// This will be the smaller angle
 		double extent = CadGeometry.angle360( start.subtract( origin ), end.subtract( origin ) );
 		double angle = Math.abs( extent );
 		double sweep = Math.signum( extent );

@@ -46,7 +46,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 3 - Get the x-point and rotate angle, prompt for the y-radius
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
-			previewArc.setXRadius( CadGeometry.distance( previewArc.getOrigin(), xPoint ) );
+			previewArc.setXRadius( CadGeometry.distance( origin, xPoint ) );
 			previewArc.setRotate( deriveRotate( origin, xPoint ) );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
@@ -65,8 +65,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		if( parameters.length < 5 ) {
 			Point3D start = asPoint( context, parameters[ 3 ] );
 			spinAnchor = start;
-			//previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), start ) );
-			previewArc.setStart( CadGeometry.angle360( start.subtract( previewArc.getOrigin() ) ) );
+			previewArc.setStart( deriveStart( previewArc, start ) );
 			previewArc.setExtent( 0.0 );
 			promptForPoint( context, tool, "extent" );
 			return INCOMPLETE;
@@ -77,7 +76,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		Point3D yPoint = asPoint( context, parameters[ 2 ] );
 
 		previewArc.setOrigin( origin );
-		previewArc.setXRadius( asDouble( previewArc.getOrigin(), parameters[ 1 ] ) );
+		previewArc.setXRadius( asDouble( origin, xPoint ) );
 		previewArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
 		previewArc.setRotate( deriveRotate( origin, xPoint ) );
 		previewArc.setStart( deriveStart( previewArc, asPoint( context, parameters[ 3 ] ) ) );

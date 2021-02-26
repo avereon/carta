@@ -39,7 +39,7 @@ public class DesignArcView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		DesignArc designArc = getDesignArc();
 		Arc arc = new Arc( designArc.getOrigin().getX(), designArc.getOrigin().getY(), designArc.getXRadius(), designArc.getYRadius(), -designArc.getStart(), -designArc.getExtent() );
-		updateRotate( designArc );
+		updateRotate( designArc, arc );
 		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
 		arc.setStrokeWidth( designArc.calcDrawWidth() );
 		arc.setStroke( designArc.calcDrawPaint() );
@@ -78,7 +78,7 @@ public class DesignArcView extends DesignShapeView {
 			((Arc)getShape()).setRadiusY( designArc.getYRadius() );
 		} ) );
 		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
-			updateRotate( designArc );
+			updateRotate( designArc,(Arc)getShape() );
 		} ) );
 		getDesignShape().register( DesignArc.START, startHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setStartAngle( -designArc.getStart() );
@@ -99,11 +99,10 @@ public class DesignArcView extends DesignShapeView {
 		super.unregisterListeners();
 	}
 
-	private void updateRotate( DesignArc arc ) {
-		if( getShape() == null ) return;
-		getShape().getTransforms().remove( this.rotate );
-		this.rotate = new Rotate( arc.calcRotate(), arc.getOrigin().getX(), arc.getOrigin().getY() );
-		getShape().getTransforms().add( this.rotate );
+	private void updateRotate( DesignArc designArc, Arc arc ) {
+		arc.getTransforms().remove( this.rotate );
+		this.rotate = new Rotate( designArc.calcRotate(), designArc.getOrigin().getX(), designArc.getOrigin().getY() );
+		arc.getTransforms().add( this.rotate );
 	}
 
 }

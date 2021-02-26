@@ -92,9 +92,9 @@ public class DesignArcTest {
 		assertThat( map.get( DesignArc.ORIGIN ), is( new Point3D( 1, 2, 3 ) ) );
 		assertThat( map.get( DesignArc.X_RADIUS ), is( 4.0 ) );
 		assertThat( map.get( DesignArc.Y_RADIUS ), is( 5.0 ) );
-		assertThat( map.get( DesignArc.START ), is( 6.0 ) );
-		assertThat( map.get( DesignArc.EXTENT ), is( 7.0 ) );
-		assertThat( map.get( DesignArc.ROTATE ), is( 8.0 ) );
+		assertThat( map.get( DesignArc.ROTATE ), is( 6.0 ) );
+		assertThat( map.get( DesignArc.START ), is( 7.0 ) );
+		assertThat( map.get( DesignArc.EXTENT ), is( 8.0 ) );
 		assertThat( map.get( DesignArc.TYPE ), is( DesignArc.Type.CHORD ) );
 	}
 
