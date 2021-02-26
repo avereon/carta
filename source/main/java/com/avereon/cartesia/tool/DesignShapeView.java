@@ -61,7 +61,7 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	protected Shape getShape() {
-		return geometry.get( 0 );
+		return geometry == null || geometry.isEmpty() ? null : geometry.get( 0 );
 	}
 
 	protected List<Shape> generateGeometry() {

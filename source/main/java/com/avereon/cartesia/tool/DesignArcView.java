@@ -7,6 +7,7 @@ import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 
 import java.util.List;
 
@@ -24,6 +25,8 @@ public class DesignArcView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> extentHandler;
 
+	private Rotate rotate;
+
 	public DesignArcView( DesignPane pane, DesignArc arc ) {
 		super( pane, arc );
 	}
@@ -36,7 +39,7 @@ public class DesignArcView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		DesignArc designArc = getDesignArc();
 		Arc arc = new Arc( designArc.getOrigin().getX(), designArc.getOrigin().getY(), designArc.getXRadius(), designArc.getYRadius(), -designArc.getStart(), -designArc.getExtent() );
-		if( designArc.getRotate() != null ) arc.setRotate( designArc.getRotate() );
+		if( designArc.getRotate() != null ) updateRotate( designArc );
 		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
 		arc.setStrokeWidth( designArc.calcDrawWidth() );
 		arc.setStroke( designArc.calcDrawPaint() );
@@ -75,7 +78,7 @@ public class DesignArcView extends DesignShapeView {
 			((Arc)getShape()).setRadiusY( designArc.getYRadius() );
 		} ) );
 		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
-			getShape().setRotate( designArc.getRotate() );
+			updateRotate( designArc );
 		} ) );
 		getDesignShape().register( DesignArc.START, startHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setStartAngle( -designArc.getStart() );
@@ -94,6 +97,13 @@ public class DesignArcView extends DesignShapeView {
 		getDesignShape().unregister( DesignEllipse.X_RADIUS, yRadiusHandler );
 		getDesignShape().unregister( DesignEllipse.ORIGIN, originHandler );
 		super.unregisterListeners();
+	}
+
+	private void updateRotate( DesignArc arc ) {
+		if( getShape() == null || arc.getRotate() == null ) return;
+		getShape().getTransforms().remove( this.rotate );
+		this.rotate = new Rotate( arc.getRotate(), arc.getOrigin().getX(), arc.getOrigin().getY() );
+		getShape().getTransforms().add( this.rotate );
 	}
 
 }
