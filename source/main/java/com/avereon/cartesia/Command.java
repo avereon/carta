@@ -142,10 +142,10 @@ public class Command {
 	}
 
 	protected void addPreview( DesignTool tool, DesignShape... shapes ) {
-		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList()) );
+		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
-	private void addPreview(DesignTool tool, List<DesignShape> shapeList ) {
+	private void addPreview( DesignTool tool, List<DesignShape> shapeList ) {
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> tool.getCurrentLayer().addShape( s ) );
@@ -153,7 +153,7 @@ public class Command {
 	}
 
 	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
-		removePreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList()) );
+		removePreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	private void removePreview( DesignTool tool, List<DesignShape> shapeList ) {
@@ -163,7 +163,7 @@ public class Command {
 	}
 
 	protected Object commitPreview( DesignTool tool ) {
-		List<DesignShape> shapes = new ArrayList<>(preview);
+		List<DesignShape> shapes = new ArrayList<>( preview );
 
 		// Clear preview enables capturing undo changes again
 		resetPreview( tool );

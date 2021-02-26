@@ -10,10 +10,7 @@ import javafx.geometry.Point3D;
 public abstract class DrawCommand extends Command {
 
 	protected double getStart( DesignArc arc, Point3D point ) {
-		double rotate = arc.getRotate() == null ? 0.0 : arc.getRotate();
-		double angle = -CadGeometry.angle360( point.subtract( arc.getOrigin() ) ) - rotate;
-
-		return angle;
+		return -CadGeometry.angle360( point.subtract( arc.getOrigin() ) ) - arc.calcRotate();
 	}
 
 	protected double getExtent( DesignArc arc, Point3D point, double spin ) {
@@ -54,6 +51,14 @@ public abstract class DrawCommand extends Command {
 		}
 
 		return priorSpin;
+	}
+
+	protected double getYRadius( Point3D origin, Point3D xPoint, Point3D yPoint ) {
+		// This is the origin y-point distance
+		//return origin.distance( yPoint );
+
+		// This is the y-point distance perpendicular to the origin x-point line
+		return CadGeometry.linePointDistance( origin, xPoint, yPoint );
 	}
 
 }

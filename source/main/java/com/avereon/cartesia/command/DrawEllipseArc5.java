@@ -14,6 +14,12 @@ public class DrawEllipseArc5 extends DrawCommand {
 
 	private DesignArc previewArc;
 
+	private Point3D origin;
+
+	private Point3D xPoint;
+
+	private Point3D yPoint;
+
 	private Point3D spinAnchor;
 
 	private double spin;
@@ -27,9 +33,9 @@ public class DrawEllipseArc5 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		// Step 2 - Get the origin, prompt for the first radius
+		// Step 2 - Get the origin, prompt for the x-radius
 		if( parameters.length < 2 ) {
-			Point3D origin = asPoint( context, parameters[ 0 ] );
+			origin = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
 			addPreview( tool, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
@@ -37,19 +43,19 @@ public class DrawEllipseArc5 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		// Step 3 - Get the first radius and rotate angle, prompt for the second radius
+		// Step 3 - Get the x-point and rotate angle, prompt for the y-radius
 		if( parameters.length < 3 ) {
-			Point3D point = asPoint( context, parameters[ 1 ] );
-			previewArc.setXRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
-			previewArc.setRotate( CadGeometry.angle360( point.subtract( previewArc.getOrigin() ) ) );
+			xPoint = asPoint( context, parameters[ 1 ] );
+			previewArc.setXRadius( CadGeometry.distance( previewArc.getOrigin(), xPoint ) );
+			previewArc.setRotate( CadGeometry.angle360( xPoint.subtract( previewArc.getOrigin() ) ) );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
 
 		// Step 4 - Get the second radius, prompt for the start angle
 		if( parameters.length < 4 ) {
-			Point3D point = asPoint( context, parameters[ 2 ] );
-			previewArc.setYRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
+			yPoint = asPoint( context, parameters[ 2 ] );
+			previewArc.setYRadius( CadGeometry.distance( previewArc.getOrigin(), yPoint ) );
 			addPreview( tool, previewArc );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;
@@ -66,10 +72,13 @@ public class DrawEllipseArc5 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		previewArc.setOrigin( asPoint( context, parameters[ 0 ] ) );
+		origin = asPoint( context, parameters[ 0 ] );
+		xPoint = asPoint( context, parameters[ 1 ] );
+		Point3D yPoint = asPoint( context, parameters[ 2 ] );
+
+		previewArc.setOrigin( origin );
 		previewArc.setXRadius( asDouble( previewArc.getOrigin(), parameters[ 1 ] ) );
-		// TODO Y-radius should be measured orthogonal to the X-radius
-		previewArc.setYRadius( asDouble( previewArc.getOrigin(), parameters[ 2 ] ) );
+		previewArc.setYRadius( getYRadius( origin, xPoint, yPoint ) );
 		previewArc.setRotate( CadGeometry.angle360( asPoint( context, parameters[ 1 ] ).subtract( previewArc.getOrigin() ) ) );
 		previewArc.setStart( getStart( previewArc, asPoint( context, parameters[ 3 ] ) ) );
 		previewArc.setExtent( getExtent( previewArc, asPoint( context, parameters[ 4 ] ), spin ) );
@@ -100,7 +109,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 				case 3 -> {
 					// Arc Y radius
 					previewLine.setPoint( point );
-					previewArc.setYRadius( point.distance( previewArc.getOrigin() ) );
+					previewArc.setYRadius( getYRadius( origin, xPoint, point ) );
 				}
 				case 4 -> {
 					// Arc start

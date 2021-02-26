@@ -116,6 +116,7 @@ public class DesignArcTest {
 		assertThat( arc.getYRadius(), is( 4.0 ) );
 		assertThat( arc.getStart(), is( 180.0 ) );
 		assertThat( arc.getExtent(), is( 17.0 ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
 		assertNull( arc.getRotate() );
 		assertNull( arc.getType() );
 	}
@@ -137,6 +138,7 @@ public class DesignArcTest {
 		assertNull( arc.getRadius() );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 5.0 ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
 		assertNull( arc.getRotate() );
 		assertThat( arc.getStart(), is( 6.0 ) );
 		assertThat( arc.getExtent(), is( 7.0 ) );
@@ -162,6 +164,7 @@ public class DesignArcTest {
 		assertNull( arc.getRadius() );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 5.0 ) );
+		assertThat( arc.calcRotate(), is( 6.0 ) );
 		assertThat( arc.getRotate(), is( 6.0 ) );
 		assertThat( arc.getStart(), is( 7.0 ) );
 		assertThat( arc.getExtent(), is( 8.0 ) );

@@ -32,6 +32,10 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Geometry.midpoint( CadPoints.asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
 	}
 
+	public static double linePointDistance( Point3D a, Point3D b, Point3D c ) {
+		return Geometry.pointLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ) );
+	}
+
 	public static double lineLineDistance( Point3D a, Point3D b, Point3D c, Point3D d ) {
 		return Geometry.lineLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ), CadPoints.asPoint( d ) );
 	}

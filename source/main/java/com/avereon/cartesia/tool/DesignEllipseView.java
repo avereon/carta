@@ -33,7 +33,7 @@ public class DesignEllipseView extends DesignShapeView {
 
 		Shape shape = new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
 
-		if( ellipse.getRotate() != null ) shape.setRotate( ellipse.getRotate() );
+		shape.setRotate( ellipse.calcRotate() );
 		shape.setStrokeWidth( ellipse.calcDrawWidth() );
 		shape.setStroke( ellipse.calcDrawPaint() );
 		shape.setFill( ellipse.calcFillPaint() );
@@ -70,7 +70,7 @@ public class DesignEllipseView extends DesignShapeView {
 			((Ellipse)getShape()).setRadiusY( designEllipse.getYRadius() );
 		} ) );
 		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
-			getShape().setRotate( designEllipse.getRotate() );
+			getShape().setRotate( designEllipse.calcRotate() );
 		} ) );
 	}
 

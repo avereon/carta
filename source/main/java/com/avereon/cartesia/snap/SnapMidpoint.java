@@ -33,7 +33,7 @@ public class SnapMidpoint implements Snap {
 			return CadGeometry.midpoint( line.getOrigin(), line.getPoint() );
 		} else if( shape instanceof DesignArc ) {
 			DesignArc arc = (DesignArc)shape;
-			return CadGeometry.midpoint( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.getRotate(), arc.getStart(), arc.getExtent() );
+			return CadGeometry.midpoint( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.calcRotate(), arc.getStart(), arc.getExtent() );
 		}
 
 		return CadPoints.NONE;

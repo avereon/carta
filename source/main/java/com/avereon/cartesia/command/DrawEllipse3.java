@@ -14,36 +14,46 @@ public class DrawEllipse3 extends DrawCommand {
 
 	private DesignEllipse previewEllipse;
 
+	private Point3D origin;
+
+	private Point3D xPoint;
+
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		// Step 1
+		// Step 1 - Prompt for the origin
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
 
-		// Step 2
+		// Step 2 - Get center, prompt for x-radius
 		if( parameters.length < 2 ) {
-			addPreview( tool, previewEllipse = new DesignEllipse( asPoint( context, parameters[ 0 ] ), 0.0 ) );
+			origin = asPoint( context, parameters[ 0 ] );
+			previewLine.setOrigin( origin );
+			previewLine.setPoint( origin );
+			addPreview( tool, previewEllipse = new DesignEllipse( origin, 0.0 ) );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
 
-		// Step 3
+		// Step 3 - Get x-point, prompt for y-radius
 		if( parameters.length < 3 ) {
-			Point3D point = asPoint( context, parameters[ 1 ] );
-			previewEllipse.setXRadius( CadGeometry.distance( previewEllipse.getOrigin(), point ) );
-			previewEllipse.setRotate( CadGeometry.angle360( point.subtract( previewEllipse.getOrigin() ) ) );
+			xPoint = asPoint( context, parameters[ 1 ] );
+			previewEllipse.setXRadius( CadGeometry.distance( previewEllipse.getOrigin(), xPoint ) );
+			previewEllipse.setRotate( CadGeometry.angle360( xPoint.subtract( previewEllipse.getOrigin() ) ) );
 			promptForNumber( context, tool, "radius" );
 			return INCOMPLETE;
 		}
+
+		origin = asPoint( context, parameters[ 0 ] );
+		xPoint = asPoint( context, parameters[ 1 ] );
+		Point3D yPoint = asPoint( context, parameters[ 2 ] );
 
 		previewEllipse.setOrigin( asPoint( context, parameters[ 0 ] ) );
 		previewEllipse.setXRadius( asDouble( previewEllipse.getOrigin(), parameters[ 1 ] ) );
-		// TODO Y-radius should be measured orthogonal to the X-radius
-		previewEllipse.setYRadius( asDouble( previewEllipse.getOrigin(), parameters[ 2 ] ) );
-		previewEllipse.setRotate( CadGeometry.angle360( asPoint( context, parameters[ 1 ] ).subtract( previewEllipse.getOrigin() ) ) );
+		previewEllipse.setYRadius( getYRadius( origin, xPoint, yPoint ) );
+		previewEllipse.setRotate( CadGeometry.angle360( xPoint.subtract( previewEllipse.getOrigin() ) ) );
 
 		removePreview( tool, previewLine );
 		return commitPreview( tool );
@@ -67,7 +77,7 @@ public class DrawEllipse3 extends DrawCommand {
 				}
 				case 3 -> {
 					previewLine.setPoint( point );
-					previewEllipse.setYRadius( point.distance( previewEllipse.getOrigin() ) );
+					previewEllipse.setYRadius( getYRadius( origin, xPoint, point ) );
 				}
 			}
 		}

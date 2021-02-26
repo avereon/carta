@@ -92,6 +92,10 @@ public class DesignEllipse extends DesignShape {
 		return getValue( ROTATE );
 	}
 
+	public double calcRotate() {
+		return hasKey( ROTATE ) ? getRotate() : 0.0;
+	}
+
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setRotate( Double value ) {
 		setValue( ROTATE, value );

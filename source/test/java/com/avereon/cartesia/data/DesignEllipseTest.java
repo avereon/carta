@@ -103,6 +103,7 @@ public class DesignEllipseTest {
 		assertThat( arc.getRadius(), is( 4.0 ) );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 4.0 ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
 		assertNull( arc.getRotate() );
 	}
 
@@ -121,6 +122,7 @@ public class DesignEllipseTest {
 		assertNull( arc.getRadius() );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 5.0 ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
 		assertNull( arc.getRotate() );
 	}
 
@@ -140,6 +142,7 @@ public class DesignEllipseTest {
 		assertNull( arc.getRadius() );
 		assertThat( arc.getXRadius(), is( 6.0 ) );
 		assertThat( arc.getYRadius(), is( 7.0 ) );
+		assertThat( arc.calcRotate(), is( 8.0 ) );
 		assertThat( arc.getRotate(), is( 8.0 ) );
 	}
 
