@@ -64,9 +64,9 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 5 - Get the start angle, prompt for the extent angle
 		if( parameters.length < 5 ) {
 			Point3D start = asPoint( context, parameters[ 3 ] );
-			spinAnchor = start;
 			previewArc.setStart( deriveStart( previewArc, start ) );
 			previewArc.setExtent( 0.0 );
+			spinAnchor = start;
 			promptForPoint( context, tool, "extent" );
 			return INCOMPLETE;
 		}
