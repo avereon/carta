@@ -79,6 +79,7 @@
 					<argLine>
 						--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED
+						--add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED
