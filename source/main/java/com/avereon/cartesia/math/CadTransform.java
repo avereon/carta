@@ -85,39 +85,39 @@ public class CadTransform {
 	}
 
 	public static CadTransform scale( double scaleX, double scaleY, double scaleZ ) {
-		return new CadTransform(Transform.scale( scaleX, scaleY, scaleZ ));
+		return new CadTransform( Transform.scale( scaleX, scaleY, scaleZ ) );
 	}
 
 	public static CadTransform scale( Point3D origin, double scaleX, double scaleY, double scaleZ ) {
-		return new CadTransform(Transform.scale( CadPoints.asPoint( origin ), scaleX, scaleY, scaleZ ));
+		return new CadTransform( Transform.scale( CadPoints.asPoint( origin ), scaleX, scaleY, scaleZ ) );
 	}
 
 	public static CadTransform translation( Point3D offset ) {
-		return new CadTransform(Transform.translation( CadPoints.asPoint( offset ) ));
+		return new CadTransform( Transform.translation( CadPoints.asPoint( offset ) ) );
 	}
 
 	public static CadTransform translation( double deltaX, double deltaY, double deltaZ ) {
-		return new CadTransform(Transform.translation( deltaX, deltaY, deltaZ ));
+		return new CadTransform( Transform.translation( deltaX, deltaY, deltaZ ) );
 	}
 
 	public static CadTransform rotation( Point3D axis, double angle ) {
-		return new CadTransform(Transform.rotation( CadPoints.asPoint( axis ), angle ));
+		return new CadTransform( Transform.rotation( CadPoints.asPoint( axis ), Math.toRadians( angle ) ) );
 	}
 
 	public static CadTransform rotation( Point3D origin, Point3D axis, double angle ) {
-		return new CadTransform( Transform.rotation( CadPoints.asPoint( origin ), CadPoints.asPoint( axis ), angle ) );
+		return new CadTransform( Transform.rotation( CadPoints.asPoint( origin ), CadPoints.asPoint( axis ), Math.toRadians( angle ) ) );
 	}
 
 	public static CadTransform xrotation( double angle ) {
-		return new CadTransform( Transform.xrotation( angle ) );
+		return new CadTransform( Transform.xrotation( Math.toRadians( angle ) ) );
 	}
 
 	public static CadTransform yrotation( double angle ) {
-		return new CadTransform( Transform.yrotation( angle ) );
+		return new CadTransform( Transform.yrotation( Math.toRadians( angle ) ) );
 	}
 
 	public static CadTransform zrotation( double angle ) {
-		return new CadTransform( Transform.zrotation( angle ) );
+		return new CadTransform( Transform.zrotation( Math.toRadians( angle ) ) );
 	}
 
 	public static CadTransform mirror( Point3D origin, Point3D normal, Point3D rotate ) {

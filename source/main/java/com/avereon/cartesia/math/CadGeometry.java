@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.curve.math.Geometry;
+import com.avereon.curve.math.Vector;
 import javafx.geometry.Point3D;
 
 import java.util.Arrays;
@@ -17,6 +18,10 @@ public class CadGeometry {
 
 	public static double angle360( Point3D a, Point3D b ) {
 		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
+	}
+
+	public static Point3D rotate360( Point3D point, double angle ) {
+		return CadPoints.toFxPoint( Vector.rotate( CadPoints.asPoint( point ), Math.toRadians( angle ) ) );
 	}
 
 	public static double distance( Point3D a, Point3D b ) {

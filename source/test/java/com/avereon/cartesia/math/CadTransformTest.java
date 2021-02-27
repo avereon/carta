@@ -1,6 +1,5 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -110,7 +109,7 @@ public class CadTransformTest {
 
 	@Test
 	void testRotation() {
-		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), Math.PI );
+		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), 180 );
 		assertMatrixValues( transform, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1 );
 		assertThat( CadGeometry.distance( new Point3D( 0, 1, 0 ), transform.apply( new Point3D( 1, 0, 0 ) ) ), closeTo( 0.0, 1e-15 ) );
 
@@ -120,7 +119,7 @@ public class CadTransformTest {
 
 	@Test
 	void testRotationWithZeroAxis() {
-		CadTransform transform = CadTransform.rotation( Point3D.ZERO, Math.PI );
+		CadTransform transform = CadTransform.rotation( Point3D.ZERO, 180 );
 		assertThat( transform.apply( CadPoints.UNIT_X ), is( CadPoints.UNIT_X ) );
 	}
 
@@ -132,27 +131,27 @@ public class CadTransformTest {
 
 	@Test
 	void testRotationWithOrigin() {
-		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), CadPoints.UNIT_Z, Constants.QUARTER_CIRCLE );
+		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), CadPoints.UNIT_Z, 90 );
 		assertThat( transform.apply( new Point3D( 2, 2, 0 ) ), near( new Point3D( 0, 2, 0 ), 1e-15 ) );
 	}
 
 	@Test
 	void testXrotation() {
-		CadTransform transform = CadTransform.xrotation( Math.PI / 2 );
+		CadTransform transform = CadTransform.xrotation( 90 );
 		assertMatrixValues( transform, 1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1 );
 		assertThat( CadGeometry.distance( new Point3D( 0, 0, 1 ), transform.apply( new Point3D( 0, 1, 0 ) ) ), closeTo( 0.0, 1e-16 ) );
 	}
 
 	@Test
 	void testYrotation() {
-		CadTransform transform = CadTransform.yrotation( Math.PI / 2 );
+		CadTransform transform = CadTransform.yrotation( 90 );
 		assertMatrixValues( transform, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, 0, 0, 0, 0, 1 );
 		assertThat( CadGeometry.distance( new Point3D( 0, 0, -1 ), transform.apply( new Point3D( 1, 0, 0 ) ) ), closeTo( 0.0, 1e-16 ) );
 	}
 
 	@Test
 	void testZrotation() {
-		CadTransform transform = CadTransform.zrotation( Math.PI / 2 );
+		CadTransform transform = CadTransform.zrotation( 90 );
 		assertMatrixValues( transform, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 );
 		assertThat( CadGeometry.distance( new Point3D( -1, 0, 0 ), transform.apply( new Point3D( 0, 1, 0 ) ) ), closeTo( 0.0, 1e-16 ) );
 	}
@@ -224,7 +223,7 @@ public class CadTransformTest {
 
 	@Test
 	void testInverseRotation() {
-		CadTransform transform = CadTransform.rotation( new Point3D( 0, 0, 1 ), Math.PI / 2 );
+		CadTransform transform = CadTransform.rotation( new Point3D( 0, 0, 1 ), 90 );
 		transform = transform.inverse();
 		assertThat( transform.apply( new Point3D( 1, 0, 0 ) ), near( new Point3D( 0, -1, 0 ), 1E-16 ) );
 	}

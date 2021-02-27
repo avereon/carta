@@ -5,7 +5,6 @@ import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
-import com.avereon.curve.math.Vector;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
@@ -115,11 +114,32 @@ public class DesignEllipse extends DesignShape {
 		return CadGeometry.areSamePoint( new Point3D( local.getX(), local.getY(), 0 ), new Point3D( test.getX(), test.getY(), 0 ) );
 	}
 
+	public CadTransform getLocalTransform() {
+		CadTransform transform = getOrientation().getTargetToLocalTransform();
+		double rx = getXRadius();
+		double ry = getYRadius();
+
+		if( rx >= ry ) {
+			transform = CadTransform.scale( 1, rx / ry, 0 ).combine( transform );
+		} else {
+			transform = CadTransform.scale( ry / rx, 1, 0 ).combine( transform );
+		}
+
+		return transform;
+	}
+
+	public CadTransform getWorldTransform() {
+		double e = getXRadius() / getYRadius();
+
+		return CadTransform
+			.identity()
+			.combine( CadTransform.zrotation( -calcRotate() ) )
+			.combine( CadTransform.translation( getOrigin().multiply( -1 ) ) )
+			.combine( CadTransform.scale( 1, e, 1 ) );
+	}
+
 	public CadOrientation getOrientation() {
-		Double rotate = getRotate();
-		double rotateValue = rotate == null ? 0 : rotate;
-		Point3D rotateVector = CadPoints.toFxPoint( Vector.rotate( CadPoints.asPoint( CadPoints.UNIT_Y ), rotateValue ) );
-		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, CadPoints.UNIT_Y );
+		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, calcRotate() ) );
 	}
 
 	@Override
@@ -138,7 +158,7 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		setOrigin( transform.apply( getOrigin()) );
+		setOrigin( transform.apply( getOrigin() ) );
 	}
 
 	protected Map<String, Object> asMap() {

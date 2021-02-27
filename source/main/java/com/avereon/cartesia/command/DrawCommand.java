@@ -3,7 +3,6 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import javafx.geometry.Point3D;
 
@@ -31,13 +30,16 @@ public abstract class DrawCommand extends Command {
 		if( angle < 0 && spin > 0 ) angle += 360;
 		if( angle > 0 && spin < 0 ) angle -= 360;
 
-		return angle;
+		return angle % 360;
 	}
 
 	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {
-		double angle = CadGeometry.angle360( point.subtract( arc.getOrigin() ) ) - arc.calcRotate();
-		if( angle <= -180  ) angle += 360;
-		if( angle > 180  ) angle -= 360;
+		CadTransform t = arc.getLocalTransform();
+
+		double angle = CadGeometry.angle360( t.apply( point ) );
+		if( angle <= -180 ) angle += 360;
+		if( angle > 180 ) angle -= 360;
+
 		return angle;
 	}
 
@@ -56,9 +58,8 @@ public abstract class DrawCommand extends Command {
 	protected double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
 		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
 
-		// Use the arc information to create a transform to test the points
-		Point3D transformRotate = CadGeometry.polarToCartesian360( new Point3D( arc.getRadius(), arc.getStart() + 90, 0 ) );
-		CadTransform transform = CadTransform.localTransform( arc.getOrigin(), CadPoints.UNIT_Z, transformRotate );
+		// Use the arc local transform to test the points
+		CadTransform transform = arc.getLocalTransform();
 
 		Point3D lp = transform.apply( lastPoint );
 		Point3D np = transform.apply( nextPoint );

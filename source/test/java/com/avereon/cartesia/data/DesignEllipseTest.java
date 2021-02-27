@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.avereon.cartesia.match.Near.near;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
@@ -154,6 +155,27 @@ public class DesignEllipseTest {
 		assertThat( arc.distanceTo( new Point3D( 5, 0, 0 ) ), is( 1.0 ) );
 
 		// TODO Test ellipses
+	}
+
+	@Test
+	void testLocalTransform() {
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), 2.0, 1.0 );
+		assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ), near( new Point3D( 1, 2, 0 ) ) );
+
+		ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), 2.0, 4.0 );
+		assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ), near( new Point3D( 2, 1, 0 ) ) );
+	}
+
+	@Test
+	void testLocalTransformWithRotationScaleAndTranslate() {
+		double root2 = Math.sqrt( 2 );
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( -3.0, 3.0, 0 ), 2.0, 1.0, 45.0 );
+		assertThat( ellipse.getLocalTransform().apply( ellipse.getOrigin() ), near( new Point3D( 0, 0, 0 ) ) );
+		assertThat( ellipse.getLocalTransform().apply( new Point3D( -1, -1, 0 ) ), near( new Point3D( -1 * root2, -6 * root2, 0 ) ) );
+
+		ellipse = new DesignEllipse( new Point3D( -3.0, -3.0, 0 ), 2.0, 4.0, 270.0 );
+		assertThat( ellipse.getLocalTransform().apply( ellipse.getOrigin() ), near( new Point3D( 0, 0, 0 ) ) );
+		assertThat( ellipse.getLocalTransform().apply( new Point3D( -1, -1, 0 ) ), near( new Point3D( -4, 2, 0 ) ) );
 	}
 
 }
