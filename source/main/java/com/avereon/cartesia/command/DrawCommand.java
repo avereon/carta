@@ -33,16 +33,6 @@ public abstract class DrawCommand extends Command {
 		return angle % 360;
 	}
 
-	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {
-		CadTransform t = arc.getLocalTransform();
-
-		double angle = CadGeometry.angle360( t.apply( point ) );
-		if( angle <= -180 ) angle += 360;
-		if( angle > 180 ) angle -= 360;
-
-		return angle;
-	}
-
 	/**
 	 * Get the spin from the arc origin, through the last point to the next point.
 	 * This will return 1.0 for a left-hand(CCW) spin or -1.0 for right-hand(CW)
@@ -58,8 +48,13 @@ public abstract class DrawCommand extends Command {
 	protected double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
 		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
 
-		// Use the arc local transform to test the points
-		CadTransform transform = arc.getLocalTransform();
+		// This special transform takes into account the start angle
+		double angle = arc.calcRotate() + arc.getStart();
+		double e = arc.getXRadius() / arc.getYRadius();
+		CadTransform transform = CadTransform
+			.translation( arc.getOrigin().multiply( -1 ) )
+			.combine( CadTransform.zrotation( -angle ) )
+			.combine( CadTransform.scale( 1, e, 1 ) );
 
 		Point3D lp = transform.apply( lastPoint );
 		Point3D np = transform.apply( nextPoint );
@@ -70,6 +65,16 @@ public abstract class DrawCommand extends Command {
 		}
 
 		return priorSpin;
+	}
+
+	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {
+		CadTransform t = arc.getLocalTransform();
+
+		double angle = CadGeometry.angle360( t.apply( point ) );
+		if( angle <= -180 ) angle += 360;
+		if( angle > 180 ) angle -= 360;
+
+		return angle;
 	}
 
 }

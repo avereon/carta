@@ -109,33 +109,12 @@ public class DesignEllipse extends DesignShape {
 	 */
 	public boolean isCoincident( Point3D point ) {
 		Point3D local = getOrientation().getTargetToLocalTransform().apply( point );
-		//Point3D test = getConstructionPoint( getXRadius(), getYRadius(), Math.atan2( local.y, local.x ) );
 		Point3D test = CadPoints.toFxPoint( Geometry.polarToCartesian( new double[]{ getXRadius(), getYRadius(), Math.atan2( local.getY(), local.getX() ) } ) );
 		return CadGeometry.areSamePoint( new Point3D( local.getX(), local.getY(), 0 ), new Point3D( test.getX(), test.getY(), 0 ) );
 	}
 
 	public CadTransform getLocalTransform() {
-		CadTransform transform = getOrientation().getTargetToLocalTransform();
-		double rx = getXRadius();
-		double ry = getYRadius();
-
-		if( rx >= ry ) {
-			transform = CadTransform.scale( 1, rx / ry, 0 ).combine( transform );
-		} else {
-			transform = CadTransform.scale( ry / rx, 1, 0 ).combine( transform );
-		}
-
-		return transform;
-	}
-
-	public CadTransform getWorldTransform() {
-		double e = getXRadius() / getYRadius();
-
-		return CadTransform
-			.identity()
-			.combine( CadTransform.zrotation( -calcRotate() ) )
-			.combine( CadTransform.translation( getOrigin().multiply( -1 ) ) )
-			.combine( CadTransform.scale( 1, e, 1 ) );
+		return CadTransform.scale( 1, getXRadius() / getYRadius(), 0 ).combine( getOrientation().getTargetToLocalTransform() );
 	}
 
 	public CadOrientation getOrientation() {

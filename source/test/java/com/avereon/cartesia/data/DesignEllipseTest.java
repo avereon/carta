@@ -163,7 +163,7 @@ public class DesignEllipseTest {
 		assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ), near( new Point3D( 1, 2, 0 ) ) );
 
 		ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), 2.0, 4.0 );
-		assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ), near( new Point3D( 2, 1, 0 ) ) );
+		assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ), near( new Point3D( 1, 0.5, 0 ) ) );
 	}
 
 	@Test
@@ -175,7 +175,7 @@ public class DesignEllipseTest {
 
 		ellipse = new DesignEllipse( new Point3D( -3.0, -3.0, 0 ), 2.0, 4.0, 270.0 );
 		assertThat( ellipse.getLocalTransform().apply( ellipse.getOrigin() ), near( new Point3D( 0, 0, 0 ) ) );
-		assertThat( ellipse.getLocalTransform().apply( new Point3D( -1, -1, 0 ) ), near( new Point3D( -4, 2, 0 ) ) );
+		assertThat( ellipse.getLocalTransform().apply( new Point3D( -1, -1, 0 ) ), near( new Point3D( -2, 1, 0 ) ) );
 	}
 
 }
