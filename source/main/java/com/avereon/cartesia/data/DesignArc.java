@@ -1,7 +1,6 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadPoints;
-import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
@@ -97,11 +96,6 @@ public class DesignArc extends DesignEllipse {
 	@Override
 	public DesignArc clone() {
 		return new DesignArc().copyFrom( this );
-	}
-
-	@Override
-	public void apply( CadTransform transform ) {
-		setOrigin( transform.apply( getOrigin() ) );
 	}
 
 	protected Map<String, Object> asMap() {

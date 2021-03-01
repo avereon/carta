@@ -19,6 +19,7 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Transform;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -123,18 +124,18 @@ public class DesignShapeView extends DesignDrawableView {
 
 	void updateRotate( DesignEllipse ellipse, Shape shape ) {
 		shape.getTransforms().remove( this.rotate );
-		this.rotate = new Rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() );
+		this.rotate = Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() );
 		shape.getTransforms().add( this.rotate );
 	}
 
 	Point3D getArcPoint( Arc arc, double angle ) {
 		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
-		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), -getRotate(), angle );
+		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), getRotate(), angle );
 	}
 
 	Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
 		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
-		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), -getRotate(), angle );
+		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), getRotate(), angle );
 	}
 
 	private double getRotate() {

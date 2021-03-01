@@ -67,6 +67,7 @@ public class DesignArcView extends DesignShapeView {
 		getDesignShape().register( DesignEllipse.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setCenterX( designArc.getOrigin().getX() );
 			((Arc)getShape()).setCenterY( designArc.getOrigin().getY() );
+			updateRotate(designArc, getShape() );
 		} ) );
 		getDesignShape().register( DesignEllipse.X_RADIUS, xRadiusHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setRadiusX( designArc.getXRadius() );
@@ -75,7 +76,7 @@ public class DesignArcView extends DesignShapeView {
 			((Arc)getShape()).setRadiusY( designArc.getYRadius() );
 		} ) );
 		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
-			updateRotate( designArc,(Arc)getShape() );
+			updateRotate( designArc, getShape() );
 		} ) );
 		getDesignShape().register( DesignArc.START, startHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setStartAngle( -designArc.getStart() );
