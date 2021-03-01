@@ -92,7 +92,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			spin = getExtentSpin( previewArc, spinAnchor, point, spin );
-			System.out.println( "spin=" + spin );
+			//System.out.println( "spin=" + spin );
 
 			switch( getStep() ) {
 				case 1 -> {
@@ -120,6 +120,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 					// Arc extent
 					previewLine.setPoint( point );
 					previewArc.setExtent( deriveExtent( previewArc, point, spin ) );
+					spinAnchor = point;
 				}
 			}
 		}

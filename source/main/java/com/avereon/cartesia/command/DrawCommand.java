@@ -3,6 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import javafx.geometry.Point3D;
 
@@ -49,22 +50,36 @@ public abstract class DrawCommand extends Command {
 		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
 
 		// This special transform takes into account the start angle
+
+		// NOTE Rotate does not have eccentricity applied
+		// NOTE Start does have eccentricity applied
+		// FIXME They cannot "just" be added here
 		double angle = arc.calcRotate() + arc.getStart();
 		double e = arc.getXRadius() / arc.getYRadius();
 		CadTransform transform = CadTransform
-			.translation( arc.getOrigin().multiply( -1 ) )
-			.combine( CadTransform.zrotation( -angle ) )
-			.combine( CadTransform.scale( 1, e, 1 ) );
+			.identity()
+			//.combine( CadTransform.scale( 1, e, 1 ) )
+			.combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -angle ) )
+			.combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
 
 		Point3D lp = transform.apply( lastPoint );
 		Point3D np = transform.apply( nextPoint );
 
+		double spin = priorSpin;
 		if( lp.getX() > 0 & np.getX() > 0 ) {
-			if( np.getY() > 0 & (lp.getY() < 0 || priorSpin == 0) ) return 1.0;
-			if( np.getY() < 0 & (lp.getY() > 0 || priorSpin == 0) ) return -1.0;
+			if( np.getY() > 0 & (lp.getY() <= 0 || priorSpin == 0) ) {
+				//System.out.println( " angle=" + angle + " e=" + e + " lp=" + lp + " np=" + np + " priorSpin=" + priorSpin );
+				spin = 1.0;
+			}
+			if( np.getY() < 0 & (lp.getY() >= 0 || priorSpin == 0) ) {
+				//System.out.println( " angle=" + angle + " e=" + e + " lp=" + lp + " np=" + np + " priorSpin=" + priorSpin );
+				spin = -1.0;
+			}
 		}
 
-		return priorSpin;
+		System.out.println( " angle=" + angle + " e=" + e + " priorSpin=" + priorSpin + " spin=" + spin );
+
+		return spin;
 	}
 
 	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {

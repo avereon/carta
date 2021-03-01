@@ -113,23 +113,23 @@ public class DrawCommandTest {
 
 	@Test
 	void testGetExtentSpinWithRotatedArc() {
-		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), 1.0, 1.0, 45.0, 90.0, 0.0, DesignArc.Type.OPEN );
+		DesignArc arc = new DesignArc( new Point3D( 5, 3, 0 ), 1.0, 0.5, 90.0, 45.0, 0.0, DesignArc.Type.OPEN );
 
 		// Initial
-		assertThat( command.getExtentSpin( arc, new Point3D( -1, 1, 0 ), new Point3D( -1, 0, 0 ), 0.0 ), near( 1.0 ) );
-		assertThat( command.getExtentSpin( arc, new Point3D( -1, 1, 0 ), new Point3D( 0, 1, 0 ), 0.0 ), near( -1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4, 4, 0 ), new Point3D( 4, 3, 0 ), 0.0 ), near( 1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4, 4, 0 ), new Point3D( 5, 4, 0 ), 0.0 ), near( -1.0 ) );
 
 		// Maintain CCW
-		assertThat( command.getExtentSpin( arc, new Point3D( -1, 0.5, 0 ), new Point3D( -1, 0, 0 ), 1.0 ), near( 1.0 ) );
-		assertThat( command.getExtentSpin( arc, new Point3D( -0.5, 1, 0 ), new Point3D( 0, 1, 0 ), 1.0 ), near( 1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4, 3.5, 0 ), new Point3D( 4, 3, 0 ), 1.0 ), near( 1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4.5, 4, 0 ), new Point3D( 5, 4, 0 ), 1.0 ), near( 1.0 ) );
 
 		// Maintain CW
-		assertThat( command.getExtentSpin( arc, new Point3D( -1, 0, 0 ), new Point3D( -1, 0.5, 0 ), -1.0 ), near( -1.0 ) );
-		assertThat( command.getExtentSpin( arc, new Point3D( 0, 1, 0 ), new Point3D( -0.5, 1, 0 ), -1.0 ), near( -1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4, 3, 0 ), new Point3D( 4, 3.5, 0 ), -1.0 ), near( -1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 5, 4, 0 ), new Point3D( 4.5, 4, 0 ), -1.0 ), near( -1.0 ) );
 
 		// Switch
-		assertThat( command.getExtentSpin( arc, new Point3D( -1, 0.5, 0 ), new Point3D( -0.5, 1, 0 ), 1.0 ), near( -1.0 ) );
-		assertThat( command.getExtentSpin( arc, new Point3D( -0.5, 1, 0 ), new Point3D( -1, 0.5, 0 ), -1.0 ), near( 1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4, 3.5, 0 ), new Point3D( 4.5, 4, 0 ), 1.0 ), near( -1.0 ) );
+		assertThat( command.getExtentSpin( arc, new Point3D( 4.5, 4, 0 ), new Point3D( 4, 3.5, 0 ), -1.0 ), near( 1.0 ) );
 	}
 
 }
