@@ -60,17 +60,9 @@ public abstract class DrawCommand extends Command {
 
 		double spin = priorSpin;
 		if( lp.getX() > 0 & np.getX() > 0 ) {
-			if( np.getY() > 0 & (lp.getY() <= 0 || priorSpin == 0) ) {
-				//System.out.println( " angle=" + angle + " e=" + e + " lp=" + lp + " np=" + np + " priorSpin=" + priorSpin );
-				spin = 1.0;
-			}
-			if( np.getY() < 0 & (lp.getY() >= 0 || priorSpin == 0) ) {
-				//System.out.println( " angle=" + angle + " e=" + e + " lp=" + lp + " np=" + np + " priorSpin=" + priorSpin );
-				spin = -1.0;
-			}
+			if( np.getY() > 0 & (lp.getY() <= 0 || priorSpin == 0) ) spin = 1.0;
+			if( np.getY() < 0 & (lp.getY() >= 0 || priorSpin == 0) ) spin = -1.0;
 		}
-
-		//System.out.println( " angle=" + arc.getRotate() + " e=" + e + " priorSpin=" + priorSpin + " spin=" + spin );
 
 		return spin;
 	}

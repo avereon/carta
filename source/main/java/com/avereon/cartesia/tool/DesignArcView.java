@@ -7,7 +7,6 @@ import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Rotate;
 
 import java.util.List;
 
@@ -24,8 +23,6 @@ public class DesignArcView extends DesignShapeView {
 	private EventHandler<NodeEvent> startHandler;
 
 	private EventHandler<NodeEvent> extentHandler;
-
-	private Rotate rotate;
 
 	public DesignArcView( DesignPane pane, DesignArc arc ) {
 		super( pane, arc );
@@ -55,8 +52,8 @@ public class DesignArcView extends DesignShapeView {
 
 		//ConstructionPoint origin = cp( pane, arc, arc.centerXProperty(), arc.centerYProperty() );
 		ConstructionPoint a = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getY() );
-		ConstructionPoint b = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY() );
 		ConstructionPoint c = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY() );
+		ConstructionPoint b = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY() );
 
 		setConstructionPoints( arc, List.of( a, b, c ) );
 
@@ -97,12 +94,6 @@ public class DesignArcView extends DesignShapeView {
 		getDesignShape().unregister( DesignEllipse.X_RADIUS, yRadiusHandler );
 		getDesignShape().unregister( DesignEllipse.ORIGIN, originHandler );
 		super.unregisterListeners();
-	}
-
-	private void updateRotate( DesignArc designArc, Arc arc ) {
-		arc.getTransforms().remove( this.rotate );
-		this.rotate = new Rotate( designArc.calcRotate(), designArc.getOrigin().getX(), designArc.getOrigin().getY() );
-		arc.getTransforms().add( this.rotate );
 	}
 
 }

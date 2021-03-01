@@ -1,6 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignDrawable;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.data.NodeEvent;
@@ -17,6 +18,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Rotate;
 
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -46,6 +48,8 @@ public class DesignShapeView extends DesignDrawableView {
 	private EventHandler<NodeEvent> fillPaintHandler;
 
 	private EventHandler<NodeEvent> selectedHandler;
+
+	private Rotate rotate;
 
 	public DesignShapeView( DesignPane pane, DesignShape designShape ) {
 		super( pane, designShape );
@@ -115,6 +119,26 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
 		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
 		getDesignShape().unregister( NodeEvent.PARENT_CHANGED, parentChangedHandler );
+	}
+
+	void updateRotate( DesignEllipse ellipse, Shape shape ) {
+		shape.getTransforms().remove( this.rotate );
+		this.rotate = new Rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() );
+		shape.getTransforms().add( this.rotate );
+	}
+
+	Point3D getArcPoint( Arc arc, double angle ) {
+		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
+		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), -getRotate(), angle );
+	}
+
+	Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
+		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
+		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), -getRotate(), angle );
+	}
+
+	private double getRotate() {
+		return rotate == null ? 0.0 : rotate.getAngle();
 	}
 
 	private void generate() {
@@ -190,14 +214,6 @@ public class DesignShapeView extends DesignDrawableView {
 	static List<ConstructionPoint> setConstructionPoints( Shape shape, List<ConstructionPoint> cps ) {
 		shape.getProperties().put( CONSTRUCTION_POINTS, cps );
 		return cps;
-	}
-
-	static Point3D getArcPoint( Arc arc, double angle ) {
-		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), arc.getRotate(), angle );
-	}
-
-	static Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
-		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), ellipse.getRotate(), angle );
 	}
 
 }
