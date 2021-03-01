@@ -49,18 +49,11 @@ public abstract class DrawCommand extends Command {
 	protected double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
 		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
 
-		// This special transform takes into account the start angle
-
 		// NOTE Rotate does not have eccentricity applied
 		// NOTE Start does have eccentricity applied
-		// FIXME They cannot "just" be added here
-		double angle = arc.calcRotate() + arc.getStart();
+		// This special transform takes into account the rotation and start angle
 		double e = arc.getXRadius() / arc.getYRadius();
-		CadTransform transform = CadTransform
-			.identity()
-			//.combine( CadTransform.scale( 1, e, 1 ) )
-			.combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -angle ) )
-			.combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
+		CadTransform transform = CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.getStart() ).combine( CadTransform.scale( 1, e, 1 ) ).combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.calcRotate() ) ).combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
 
 		Point3D lp = transform.apply( lastPoint );
 		Point3D np = transform.apply( nextPoint );
@@ -77,7 +70,7 @@ public abstract class DrawCommand extends Command {
 			}
 		}
 
-		System.out.println( " angle=" + angle + " e=" + e + " priorSpin=" + priorSpin + " spin=" + spin );
+		//System.out.println( " angle=" + arc.getRotate() + " e=" + e + " priorSpin=" + priorSpin + " spin=" + spin );
 
 		return spin;
 	}
