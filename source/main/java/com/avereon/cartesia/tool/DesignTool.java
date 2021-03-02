@@ -632,8 +632,10 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( DesignWorkplane.GRID_VISIBLE, e -> settings.set( DesignWorkplane.GRID_VISIBLE, e.getNewValue() ) );
 		workplane.register( DesignWorkplane.GRID_SNAP, e -> settings.set( DesignWorkplane.GRID_SNAP, e.getNewValue() ) );
 
-		workplane.register( DesignWorkplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
-		workplane.register( DesignWorkplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
+		// FIXME This causes an infinite loop
+		// Not even sure if these are needed
+		//workplane.register( DesignWorkplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
+		//workplane.register( DesignWorkplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
 
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
 		Fx.run( this::rebuildGrid );
@@ -651,12 +653,12 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void rebuildGrid() {
 		// FIXME This implementation is quite slow
-//		try {
-//			CoordinateSystem system = CoordinateSystem.ORTHO;
-//			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
-//		} catch( Exception exception ) {
-//			log.log( Log.ERROR, "Error creating grid", exception );
-//		}
+		try {
+			CoordinateSystem system = CoordinateSystem.ORTHO;
+			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
+		} catch( Exception exception ) {
+			log.log( Log.ERROR, "Error creating grid", exception );
+		}
 	}
 
 	private void doSetCurrentLayerById( String id ) {

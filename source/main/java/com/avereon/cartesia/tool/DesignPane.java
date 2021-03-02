@@ -455,8 +455,8 @@ public class DesignPane extends StackPane {
 	void setGrid( List<Shape> grid ) {
 		Fx.run( () -> {
 			this.grid.getChildren().clear();
-			this.grid.getChildren().addAll( grid );
 			grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
+			this.grid.getChildren().addAll( grid );
 		} );
 	}
 
