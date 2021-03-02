@@ -176,6 +176,8 @@ public class DesignPane extends StackPane {
 	 * @param point The world point to move to the center of the view
 	 */
 	public final void setViewPoint( Point3D point ) {
+		// FIXME If the view is rotated this has some odd behavior
+		// Maybe need to align it with the rotation
 		viewPointProperty().set( point );
 	}
 
@@ -360,9 +362,8 @@ public class DesignPane extends StackPane {
 	}
 
 	List<Shape> screenPointSelect( Point3D point, DesignValue tolerance ) {
-		double pixels = valueToPixels( tolerance );
-		Point2D aperture = new Point2D( getTranslateX() + pixels, getTranslateY() - pixels );
-		return worldPointSelect( parentToLocal( point ), parentToLocal( aperture ) );
+		double size = valueToWorld( tolerance );
+		return worldPointSelect( parentToLocal( point ), new Point2D( size, size ) );
 	}
 
 	List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
@@ -492,9 +493,17 @@ public class DesignPane extends StackPane {
 		return v.getUnit().to( v.getValue(), DesignUnit.INCH ) * getDpi();
 	}
 
+	private double valueToWorld( DesignValue v ) {
+		return valueToPixels( v ) / getInternalScale();
+	}
+
+	private double getInternalScale() {
+		return this.dpu * getZoom();
+	}
+
 	private void rescale( boolean recalculateDpu ) {
 		if( recalculateDpu ) this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
-		double scale = this.dpu * getZoom();
+		double scale = getInternalScale();
 		setScaleX( scale );
 		setScaleY( -scale );
 		reference.setScaleX( 1 / scale );
