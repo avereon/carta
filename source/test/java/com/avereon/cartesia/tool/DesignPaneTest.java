@@ -202,16 +202,16 @@ public class DesignPaneTest implements TestTimeouts {
 
 		double x = viewAnchor.getX() + (dragAnchor.getX() - mouse.getX());
 		double y = viewAnchor.getY() - (dragAnchor.getY() - mouse.getY());
-		assertThat( pane.getViewPoint(), is( new Point3D( x, y, 0 ) ) );
+		assertThat( pane.getViewPoint(), near( new Point3D( x, y, 0 ) ) );
 	}
 
 	@Test
 	void testRotate() {
 		pane.setViewRotate( 0.0 );
-		assertThat( pane.getViewRotate(), is( 0.0 ) );
+		assertThat( pane.getViewRotate(), near( 0.0 ) );
 
 		pane.setViewRotate( 45.0 );
-		assertThat( pane.getViewRotate(), is( 45.0 ) );
+		assertThat( pane.getViewRotate(), near( 45.0 ) );
 	}
 
 	@Test
