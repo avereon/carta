@@ -275,7 +275,6 @@ public class DesignPane extends StackPane {
 		// Design listeners
 		design.register( Design.UNIT, e -> rescale( true ) );
 		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
-		design.register( NodeEvent.VALUE_CHANGED, this::doValueChangedAction );
 		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
 
 		return this;
@@ -508,12 +507,6 @@ public class DesignPane extends StackPane {
 		if( value == null ) return;
 		Consumer<Object> c = designActions.get( event.getEventType() ).get( value.getClass() );
 		if( c != null ) c.accept( value );
-	}
-
-	private void doValueChangedAction( NodeEvent event ) {
-		//		com.avereon.data.Node node = event.getNode();
-		//		Consumer<Object> c = designActions.get( event.getEventType() ).get( node.getClass() );
-		//		if( c != null ) c.accept( node );
 	}
 
 	private void doChildRemovedAction( NodeEvent event ) {

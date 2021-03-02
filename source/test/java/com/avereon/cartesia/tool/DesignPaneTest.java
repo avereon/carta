@@ -208,10 +208,10 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testRotate() {
 		pane.setViewRotate( 0.0 );
-		assertThat( pane.getRotate(), is( 0.0 ) );
+		assertThat( pane.getViewRotate(), is( 0.0 ) );
 
 		pane.setViewRotate( 45.0 );
-		assertThat( pane.getRotate(), is( 45.0 ) );
+		assertThat( pane.getViewRotate(), is( 45.0 ) );
 	}
 
 	@Test
