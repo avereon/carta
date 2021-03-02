@@ -25,6 +25,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
+import javafx.scene.transform.Transform;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,6 +61,8 @@ public class DesignPane extends StackPane {
 
 	static final Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
 
+	static final double DEFAULT_ROTATE = 0;
+
 	static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
 
 	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
@@ -88,11 +91,15 @@ public class DesignPane extends StackPane {
 
 	private ObjectProperty<Point3D> viewPointProperty;
 
+	private DoubleProperty viewRotateProperty;
+
 	private ObjectProperty<Paint> selectDrawPaint;
 
 	private ObjectProperty<Paint> selectFillPaint;
 
 	private double dpu;
+
+	private Transform rotate;
 
 	public DesignPane() {
 		select = new Pane();
@@ -111,6 +118,7 @@ public class DesignPane extends StackPane {
 		// Internal listeners
 		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
 		viewPointProperty().addListener( ( p, o, n ) -> recenter() );
+		viewRotateProperty().addListener( ( p, o, n ) -> rotate() );
 		zoomProperty().addListener( ( p, o, n ) -> rescale( false ) );
 		parentProperty().addListener( ( p, o, n ) -> recenter() );
 
@@ -174,6 +182,19 @@ public class DesignPane extends StackPane {
 	public ObjectProperty<Point3D> viewPointProperty() {
 		if( viewPointProperty == null ) viewPointProperty = new SimpleObjectProperty<>( DEFAULT_PAN );
 		return viewPointProperty;
+	}
+
+	public final double getViewRotate() {
+		return viewRotateProperty == null ? DEFAULT_ROTATE : viewRotateProperty.get();
+	}
+
+	public final void setViewRotate( double rotate ) {
+		viewRotateProperty().set( rotate );
+	}
+
+	public DoubleProperty viewRotateProperty() {
+		if( viewRotateProperty == null ) viewRotateProperty = new SimpleDoubleProperty( DEFAULT_ROTATE );
+		return viewRotateProperty;
 	}
 
 	public final double getZoom() {
@@ -278,6 +299,12 @@ public class DesignPane extends StackPane {
 		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
 		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
 		//validateGrid();
+	}
+
+	void rotate() {
+		Point3D viewPoint = getViewPoint();
+		getTransforms().remove( rotate );
+		getTransforms().add( rotate = Transform.rotate( getViewRotate(), viewPoint.getX(), viewPoint.getY() ) );
 	}
 
 	/**

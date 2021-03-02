@@ -51,9 +51,11 @@ public abstract class DesignTool extends GuidedTool {
 
 	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
 
-	private static final String SETTINGS_ZOOM = "zoom";
+	private static final String SETTINGS_VIEW_ZOOM = "view-zoom";
 
-	private static final String SETTINGS_PAN = "pan";
+	private static final String SETTINGS_VIEW_POINT = "view-point";
+
+	private static final String SETTINGS_VIEW_ROTATE = "view-rotate";
 
 	private static final String CURRENT_LAYER = "layer";
 
@@ -147,12 +149,20 @@ public abstract class DesignTool extends GuidedTool {
 		return getDesignContext().getCommandPrompt();
 	}
 
-	public Point3D getPan() {
+	public Point3D getViewPoint() {
 		return designPane == null ? Point3D.ZERO : designPane.getViewPoint();
 	}
 
-	public void setPan( Point3D point ) {
+	public void setViewPoint( Point3D point ) {
 		if( designPane != null ) designPane.setViewPoint( point );
+	}
+
+	public double getViewRotate() {
+		return designPane == null ? 0.0 : designPane.getViewRotate();
+	}
+
+	public void setViewRotate( double angle ) {
+		if( designPane != null ) designPane.setViewRotate( angle );
 	}
 
 	public double getZoom() {
@@ -226,10 +236,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	public List<Shape> getVisibleShapes() {
 		return designPane.getVisibleShapes();
-	}
-
-	public Point3D getViewPoint() {
-		return designPane.getViewPoint();
 	}
 
 	/**
@@ -348,8 +354,9 @@ public abstract class DesignTool extends GuidedTool {
 		double selectApertureRadius = Double.parseDouble( getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
 		DesignUnit selectApertureUnit = DesignUnit.valueOf( getSettings().get( SELECT_APERTURE_UNIT, DesignUnit.MILLIMETER.name() ).toUpperCase() );
 		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
-		setPan( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_PAN, "0,0,0" ) ) );
-		setZoom( Double.parseDouble( getSettings().get( SETTINGS_ZOOM, "1.0" ) ) );
+		setViewPoint( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
+		setViewRotate( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
+		setZoom( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
 		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
 		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 
@@ -367,16 +374,22 @@ public abstract class DesignTool extends GuidedTool {
 			validateGrid();
 		} );
 
-		// Add pan property listener
+		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
-			getSettings().set( SETTINGS_PAN, n.getX() + "," + n.getY() + "," + n.getZ() );
+			getSettings().set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
 			validateGrid();
 		} );
 
-		// Add zoom property listener
+		// Add view rotate property listener
+		designPane.viewRotateProperty().addListener( (p,o,n) -> {
+			getSettings().set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
+			validateGrid();
+		});
+
+		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
-			getSettings().set( SETTINGS_ZOOM, n.doubleValue() );
+			getSettings().set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
 			validateGrid();
 		} );
 
@@ -637,12 +650,13 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void rebuildGrid() {
-		try {
-			CoordinateSystem system = CoordinateSystem.ORTHO;
-			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
-		} catch( Exception exception ) {
-			log.log( Log.ERROR, "Error creating grid", exception );
-		}
+		// FIXME This implementation is quite slow
+//		try {
+//			CoordinateSystem system = CoordinateSystem.ORTHO;
+//			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
+//		} catch( Exception exception ) {
+//			log.log( Log.ERROR, "Error creating grid", exception );
+//		}
 	}
 
 	private void doSetCurrentLayerById( String id ) {

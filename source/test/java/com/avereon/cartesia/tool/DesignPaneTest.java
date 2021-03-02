@@ -206,6 +206,15 @@ public class DesignPaneTest implements TestTimeouts {
 	}
 
 	@Test
+	void testRotate() {
+		pane.setViewRotate( 0.0 );
+		assertThat( pane.getRotate(), is( 0.0 ) );
+
+		pane.setViewRotate( 45.0 );
+		assertThat( pane.getRotate(), is( 45.0 ) );
+	}
+
+	@Test
 	void checkZoomFactor() {
 		assertThat( 1 * DesignPane.ZOOM_IN_FACTOR, is( 1.189207115002721 ) );
 	}
