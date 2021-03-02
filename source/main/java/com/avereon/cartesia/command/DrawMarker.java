@@ -24,7 +24,7 @@ public class DrawMarker extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		preview.setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+		preview.setOrigin( asPoint( context.getAnchor(), parameters[ 0 ] ) );
 		return commitPreview( tool );
 	}
 

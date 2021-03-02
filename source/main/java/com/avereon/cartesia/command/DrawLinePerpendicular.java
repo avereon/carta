@@ -28,7 +28,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			reference = selectNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+			reference = selectNearestShapeAtPoint( tool, asPoint( context.getAnchor(), parameters[ 0 ] ) );
 			if( reference == DesignShape.NONE ) return INVALID;
 
 			addPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -43,9 +43,9 @@ public class DrawLinePerpendicular extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		DesignShape shape = findNearestShapeAtPoint( tool, asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
-		Point3D origin = asPoint( tool, parameters[ 1 ], context.getAnchor() );
-		Point3D point = getPerpendicular( shape, origin, asPoint( tool, parameters[ 2 ], context.getAnchor() ) );
+		DesignShape shape = findNearestShapeAtPoint( tool, asPoint( context.getAnchor(), parameters[ 0 ] ) );
+		Point3D origin = asPoint( context.getAnchor(), parameters[ 1 ] );
+		Point3D point = getPerpendicular( shape, origin, asPoint( context.getAnchor(), parameters[ 2 ] ) );
 		preview.setPoint( point );
 		return commitPreview( tool );
 	}

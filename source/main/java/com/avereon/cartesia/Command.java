@@ -98,7 +98,7 @@ public class Command {
 		return CadShapes.parsePoint( String.valueOf( value ), context.getAnchor() );
 	}
 
-	protected Point3D asPoint( DesignTool tool, Object value, Point3D anchor ) throws Exception {
+	protected Point3D asPoint( Point3D anchor, Object value ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
 		return CadShapes.parsePoint( String.valueOf( value ), anchor );
 	}

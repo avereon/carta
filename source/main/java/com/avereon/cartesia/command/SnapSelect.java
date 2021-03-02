@@ -23,7 +23,7 @@ public class SnapSelect extends SnapCommand {
 			return INCOMPLETE;
 		}
 
-		Point3D point = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+		Point3D point = asPoint( context.getAnchor(), parameters[ 1 ] );
 		Point3D snapPoint = snap.snap( tool, point );
 		return snapPoint != CadPoints.NONE ? snapPoint : INVALID;
 	}

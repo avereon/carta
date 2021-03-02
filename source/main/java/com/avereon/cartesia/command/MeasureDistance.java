@@ -29,14 +29,14 @@ public class MeasureDistance extends MeasureCommand {
 		}
 
 		if( parameters.length < 2 ) {
-			preview.setOrigin( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+			preview.setOrigin( asPoint( context.getAnchor(), parameters[ 0 ] ) );
 			promptForPoint( context, tool, "end-point" );
 			return INCOMPLETE;
 		}
 
 		try {
-			Point3D p1 = asPoint( tool, parameters[ 0 ], context.getAnchor() );
-			Point3D p2 = asPoint( tool, parameters[ 1 ], context.getAnchor() );
+			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );
+			Point3D p2 = asPoint( context.getAnchor(), parameters[ 1 ] );
 			double distance = p1.distance( p2 );
 
 			String title = context.getProduct().rb().text( BundleKey.NOTICE, "measurement" );

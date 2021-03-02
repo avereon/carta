@@ -20,7 +20,7 @@ public class CameraViewPoint extends CameraCommand {
 		}
 
 		try {
-			tool.setViewPoint( asPoint( tool, parameters[ 0 ], context.getAnchor() ) );
+			tool.setViewPoint( asPoint( context.getAnchor(), parameters[ 0 ] ) );
 		} catch( ParseException exception ) {
 			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
 			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-move-to-viewpoint", exception );
