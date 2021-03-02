@@ -632,30 +632,30 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( DesignWorkplane.GRID_VISIBLE, e -> settings.set( DesignWorkplane.GRID_VISIBLE, e.getNewValue() ) );
 		workplane.register( DesignWorkplane.GRID_SNAP, e -> settings.set( DesignWorkplane.GRID_SNAP, e.getNewValue() ) );
 
-		// FIXME This causes an infinite loop
+		// FIXME These can cause an infinite loops
 		// Not even sure if these are needed
 		//workplane.register( DesignWorkplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
 		//workplane.register( DesignWorkplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
 
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
-		Fx.run( this::rebuildGrid );
+		rebuildGrid();
 	}
 
 	private void validateGrid() {
 		Fx.run( () -> {
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
 			DesignWorkplane workplane = getDesignContext().getWorkplane();
+			// TODO What if the bounds are significantly smaller thant the workplane?
+			// TODO What if the bounds are so large that the grid is effectively filled in?
 			if( workplane.getBounds().contains( bounds ) ) return;
 			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
-			rebuildGrid();
 		} );
+		rebuildGrid();
 	}
 
 	private void rebuildGrid() {
-		// FIXME This implementation is quite slow
 		try {
-			CoordinateSystem system = CoordinateSystem.ORTHO;
-			designPane.setGrid( system.getGridLines( getDesignContext().getWorkplane() ) );
+			designPane.setGrid( getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() ) );
 		} catch( Exception exception ) {
 			log.log( Log.ERROR, "Error creating grid", exception );
 		}
