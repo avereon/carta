@@ -25,7 +25,7 @@ public class MockCartesiaMod implements ProgramProduct {
 
 	@Override
 	public ProductBundle rb() {
-		return new ProductBundle( this );
+		return new ProductBundle( getProgram(), this );
 	}
 
 	@Override
