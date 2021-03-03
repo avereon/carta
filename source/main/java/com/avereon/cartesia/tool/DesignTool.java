@@ -405,6 +405,7 @@ public abstract class DesignTool extends GuidedTool {
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
+		// FIXME This can cause NPEs when not in an active workspace
 		if( isActive() ) activate();
 		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.recenter();
