@@ -8,7 +8,6 @@ import com.avereon.xenon.tool.settings.SettingEditor;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.color.Paints;
 import javafx.event.ActionEvent;
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -16,7 +15,6 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Popup;
 import javafx.util.Callback;
 
 import java.util.List;
@@ -28,23 +26,18 @@ public class PaintSettingEditor extends SettingEditor {
 
 	private final Label label;
 
-	private final Button button;
+	//private final ComboBox<String> comboBox;
 
-	private final ComboBox<String> comboBox;
+//	private final ColorPicker colorPicker;
 
-	private final ColorPicker colorPicker;
-
-	//private final PaintPicker paintPicker;
+	private final PaintPicker paintPicker;
 
 	private List<Node> nodes;
 
 	public PaintSettingEditor( ProgramProduct product, String bundleKey, SettingData setting ) {
 		super( product, bundleKey, setting );
 		label = new Label();
-		button = new Button();
-		comboBox = new ComboBox<>();
-		colorPicker = new ColorPicker();
-		//paintPicker = new PaintPicker();
+		paintPicker = new PaintPicker( product );
 	}
 
 	@Override
@@ -55,47 +48,22 @@ public class PaintSettingEditor extends SettingEditor {
 		label.setText( product.rb().text( getBundleKey(), rbKey ) );
 		label.setMinWidth( Region.USE_PREF_SIZE );
 
-		button.setText( value );
-		button.setMaxWidth( Double.MAX_VALUE );
-		HBox.setHgrow( button, Priority.ALWAYS );
+		paintPicker.setId( rbKey );
+		paintPicker.setMaxWidth( Double.MAX_VALUE );
+		paintPicker.setText( value );
+		HBox.setHgrow( paintPicker, Priority.ALWAYS );
 
-		comboBox.getItems().addAll( "None", "Solid", "Linear", "Radial" );
-		comboBox.setMaxWidth( Double.MAX_VALUE );
-		HBox.setHgrow( comboBox, Priority.SOMETIMES );
-
-		colorPicker.setId( rbKey );
-		colorPicker.setMaxWidth( Double.MAX_VALUE );
-		HBox.setHgrow( colorPicker, Priority.ALWAYS );
-
-		PaintEntry custom = new PaintEntry( "custom", "Custom", "#ff0000ff" );
-		PaintEntry layer = new PaintEntry( "layer", "Layer", "#00ff00ff" );
-		PaintEntry none = new PaintEntry( "none", "None", "#0000ffff" );
-
-		//paintPicker.setId( rbKey );
-		//paintPicker.setMaxWidth( Double.MAX_VALUE );
-		//paintPicker.getItems().setAll( none, layer, custom );
-		//paintPicker.setCellFactory( new PaintEntryCellFactory() );
-		//paintPicker.setButtonCell( new PaintEntryButtonCell() );
-		//paintPicker.setValue( layer );
-
-		nodes = List.of( label, button );
-//		nodes = List.of( label, comboBox, colorPicker );
+		nodes = List.of( label, paintPicker );
 
 		// Add the event handlers
-		colorPicker.setOnAction( this::doPickerValueChanged );
+		//paintPicker.setOnAction( this::doPickerValueChanged );
 
 		// Set component state
 		setDisable( setting.isDisable() );
 		setVisible( setting.isVisible() );
 
-		HBox box = new HBox( button );
-//		HBox box = new HBox( comboBox, colorPicker );
-		GridPane.setHgrow( box, Priority.ALWAYS );
-
 		// Add the components
-		pane.addRow( row, label, box );
-
-		button.setOnAction( e -> doShowPaintDialog() );
+		pane.addRow( row, label, new HBox( paintPicker ) );
 	}
 
 	@Override
@@ -112,63 +80,11 @@ public class PaintSettingEditor extends SettingEditor {
 		} catch( Exception exception ) {
 			paint = DEFAULT_PAINT;
 		}
-		if( event.getEventType() == SettingsEvent.CHANGED && getKey().equals( event.getKey() ) ) button.setText( Paints.toString( paint ) );
-	}
-
-	private void doShowPaintDialog() {
-//		Dialog<String> dialog = new Dialog<>();
-//		dialog.initOwner( button.getScene().getWindow() );
-//		dialog.getDialogPane().setContent( new PaintPickerPane( getProduct() ) );
-//		dialog.getDialogPane().getButtonTypes().addAll( ButtonType.OK, ButtonType.CANCEL );
-//		dialog.show();
-
-		DialogPane pane = new DialogPane();
-		pane.setContent( new PaintPickerPane( getProduct() ) );
-		pane.getButtonTypes().addAll( ButtonType.OK, ButtonType.CANCEL );
-
-		Point2D anchor = button.localToScreen( new Point2D( 0, button.getHeight() ) );
-
-		// ...or maybe a popup
-		Popup popup = new Popup();
-		popup.ownerNodeProperty();
-		popup.getContent().add( pane );
-		popup.show( button, anchor.getX(), anchor.getY() );
+		if( event.getEventType() == SettingsEvent.CHANGED && getKey().equals( event.getKey() ) ) paintPicker.setText( Paints.toString( paint ) );
 	}
 
 	private void doPickerValueChanged( ActionEvent event ) {
 		//setting.getSettings().set( setting.getKey(), Paints.parse( paintPicker.getValue() ) );
-	}
-
-	private static class PaintEntry {
-
-		private final String key;
-
-		private final String label;
-
-		private String paint;
-
-		public PaintEntry( String key, String label, String paint ) {
-			this.key = key;
-			this.label = label;
-			this.paint = paint;
-		}
-
-		public String getKey() {
-			return key;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public String getPaint() {
-			return paint;
-		}
-
-		public void setPaint( String paint ) {
-			this.paint = paint;
-		}
-
 	}
 
 	private static class PaintEntryButtonCell extends ListCell<PaintEntry> {

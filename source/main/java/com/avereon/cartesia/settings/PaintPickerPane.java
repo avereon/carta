@@ -3,7 +3,6 @@ package com.avereon.cartesia.settings;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.product.Product;
 import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -14,7 +13,7 @@ public class PaintPickerPane extends BorderPane {
 
 	private static final String DEFAULT_PAINT_STRING = "";
 
-	private StringProperty paintString;
+	private final ComboBox<String> mode;
 
 	private ObservableList<String> customOptions;
 
@@ -35,31 +34,28 @@ public class PaintPickerPane extends BorderPane {
 		// Opacity can be a slider on the right or the bottom
 		// Below that the OK and Cancel buttons
 
-		ComboBox<String> mode = new ComboBox<>();
-		mode.getItems().addAll( solid,linear,radial );
+		PaintEntry custom = new PaintEntry( "custom", "Custom", "#ff0000ff" );
+		PaintEntry layer = new PaintEntry( "layer", "Layer", "#00ff00ff" );
+		PaintEntry none = new PaintEntry( "none", "None", "#0000ffff" );
 
-		setTop( new HBox(mode) );
+		mode = new ComboBox<>();
+		mode.getItems().addAll( solid, linear, radial );
+
+		setTop( new HBox( mode ) );
 
 		getCustomOptions().addListener( (ListChangeListener<String>)( e ) -> {
 			//
 		} );
 	}
 
+	@Override
+	public void requestFocus() {
+		mode.requestFocus();
+	}
+
 	public ObservableList<String> getCustomOptions() {
 		if( customOptions == null ) customOptions = new SimpleListProperty<>();
 		return customOptions;
-	}
-
-	public String getPaintString() {
-		return paintString == null ? DEFAULT_PAINT_STRING : paintString.get();
-	}
-
-	public StringProperty paintStringProperty() {
-		return paintString;
-	}
-
-	public void setPaintString( String paintString ) {
-		this.paintString.set( paintString );
 	}
 
 }

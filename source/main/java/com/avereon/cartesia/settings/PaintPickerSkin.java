@@ -25,7 +25,7 @@ public class PaintPickerSkin extends ComboBoxPopupControl<String> {
 
 	private Node popupContent;
 
-	public PaintPickerSkin( PaintPicker control ) {
+	public PaintPickerSkin( PaintPickerCombo control ) {
 		super( control );
 
 		paintPreview = new StackPane();
@@ -96,8 +96,8 @@ public class PaintPickerSkin extends ComboBoxPopupControl<String> {
 		}
 	}
 
-	private PaintPicker getControl() {
-		return (PaintPicker)getNode();
+	private PaintPickerCombo getControl() {
+		return (PaintPickerCombo)getNode();
 	}
 
 //	/**
@@ -118,8 +118,8 @@ public class PaintPickerSkin extends ComboBoxPopupControl<String> {
 //	}
 
 	private void updatePaint() {
-		final PaintPicker paintPicker = (PaintPicker)getSkinnable();
-		String paintCode = paintPicker.getValue();
+		final PaintPickerCombo paintPickerCombo = (PaintPickerCombo)getSkinnable();
+		String paintCode = paintPickerCombo.getValue();
 
 		if( "layer".equals( paintCode )) paintCode = Paints.toString( Color.MAGENTA );
 		if( "none".equals( paintCode )) paintCode = Paints.toString( Color.RED );

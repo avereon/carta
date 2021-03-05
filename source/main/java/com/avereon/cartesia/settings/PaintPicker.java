@@ -1,75 +1,87 @@
 package com.avereon.cartesia.settings;
 
-import com.avereon.util.Log;
-import com.avereon.zerra.color.Paints;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.ComboBoxBase;
-import javafx.scene.control.Skin;
-import javafx.scene.paint.Color;
+import com.avereon.product.Product;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
+import javafx.scene.paint.Paint;
+import javafx.stage.Popup;
 
-/**
- * Because ComboBoxBase requires a skin, which in turn requires a behavior,
- * which is in a restricted package, it is not possible to create a custom combo-box
- * control.
- */
-public class PaintPicker extends ComboBoxBase<String> {
+public class PaintPicker extends Button {
 
-	private static final System.Logger log = Log.get();
+	private final PaintPickerPane paintPicker;
 
-	private static final String DEFAULT_STYLE_CLASS = "color-picker";
+	private final Popup popup;
 
-	private final ObservableList<String> customPaints = FXCollections.observableArrayList();
+	// TODO Can this handle custom options like 'layer'?
+	private ObjectProperty<Paint> paint;
 
-	public PaintPicker() {
-		this( Paints.toString( Color.BLACK ) );
+	public PaintPicker( Product product ) {
+		paintPicker = new PaintPickerPane( product );
+
+		DialogPane pane = new DialogPane() {
+			protected Node createButton( ButtonType buttonType) {
+				return doCreateButton( buttonType );
+			}
+		};
+		pane.setContent( paintPicker );
+		pane.getButtonTypes().addAll( ButtonType.OK, ButtonType.CANCEL );
+
+		popup = new Popup();
+		popup.setAutoHide( true );
+		popup.setHideOnEscape( true );
+		popup.getContent().add( pane );
+
+		setOnAction( e -> doTogglePaintDialog() );
 	}
 
-	public PaintPicker( String paint ) {
-		getStyleClass().add( DEFAULT_STYLE_CLASS );
-		setValue( paint );
+	public Paint getPaint() {
+		return paint == null ? null : paint.get();
 	}
 
-	@Override
-	public void show() {
-		log.log( Log.INFO, "PaintPicker.show()" );
-		super.show();
+	public ObjectProperty<Paint> paintProperty() {
+		if( paint == null ) paint = new SimpleObjectProperty<>();
+		return paint;
 	}
 
-	@Override
-	public void hide() {
-		log.log( Log.INFO, "PaintPicker.hide()" );
-		super.hide();
+	public void setPaint( Paint paint ) {
+		paintProperty().set( paint );
 	}
 
-	@Override
-	public void arm() {
-		log.log( Log.INFO, "PaintPicker.arm()" );
-		super.arm();
+	private Node doCreateButton( ButtonType buttonType) {
+		final Button button = new Button(buttonType.getText());
+		final ButtonBar.ButtonData buttonData = buttonType.getButtonData();
+		ButtonBar.setButtonData(button, buttonData);
+		button.setDefaultButton(buttonData.isDefaultButton());
+		button.setCancelButton(buttonData.isCancelButton());
+		button.addEventHandler( ActionEvent.ACTION, ae -> {
+			if (ae.isConsumed()) return;
+			setResultAndClose(buttonType);
+		});
+
+		return button;
 	}
 
-	@Override
-	public void disarm() {
-		log.log( Log.INFO, "PaintPicker.disarm()" );
-		super.disarm();
+	private void doTogglePaintDialog() {
+		if( !popup.isShowing() ) {
+			Point2D anchor = localToScreen( new Point2D( 0, getHeight() ) );
+			popup.show( this, anchor.getX(), anchor.getY() );
+			paintPicker.requestFocus();
+		} else {
+			popup.hide();
+		}
 	}
 
-	//	public final ObservableList<String> getCustomPaints() {
-//		return customPaints;
-//	}
-//
-//	public final void setCustomPaints( List<String> paints ) {
-//		customPaints.setAll( paints );
-//	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected Skin<?> createDefaultSkin() {
-		PaintPickerSkin skin = new PaintPickerSkin(this);
-		setOnMouseClicked( e -> skin.showOrHide() );
-		return skin;
+	private void setResultAndClose(ButtonType type ) {
+		// Get value from PaintPickerPane
+		if( type == ButtonType.APPLY ) setPaint( null );
+		popup.hide();
 	}
 
 }
