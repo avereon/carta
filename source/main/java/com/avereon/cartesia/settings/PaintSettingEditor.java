@@ -1,5 +1,6 @@
 package com.avereon.cartesia.settings;
 
+import com.avereon.product.Rb;
 import com.avereon.settings.SettingsEvent;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.UiFactory;
@@ -7,9 +8,12 @@ import com.avereon.xenon.tool.settings.SettingData;
 import com.avereon.xenon.tool.settings.SettingEditor;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.color.Paints;
-import javafx.event.ActionEvent;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -26,10 +30,6 @@ public class PaintSettingEditor extends SettingEditor {
 
 	private final Label label;
 
-	//private final ComboBox<String> comboBox;
-
-//	private final ColorPicker colorPicker;
-
 	private final PaintPicker paintPicker;
 
 	private List<Node> nodes;
@@ -37,7 +37,7 @@ public class PaintSettingEditor extends SettingEditor {
 	public PaintSettingEditor( ProgramProduct product, String bundleKey, SettingData setting ) {
 		super( product, bundleKey, setting );
 		label = new Label();
-		paintPicker = new PaintPicker( product );
+		paintPicker = new PaintPicker();
 	}
 
 	@Override
@@ -45,18 +45,25 @@ public class PaintSettingEditor extends SettingEditor {
 		String rbKey = setting.getBundleKey();
 		String value = setting.getSettings().get( getKey(), Paints.toString( DEFAULT_PAINT ) );
 
-		label.setText( product.rb().text( getBundleKey(), rbKey ) );
+		label.setText( Rb.text( getBundleKey(), rbKey ) );
 		label.setMinWidth( Region.USE_PREF_SIZE );
 
 		paintPicker.setId( rbKey );
 		paintPicker.setMaxWidth( Double.MAX_VALUE );
-		paintPicker.setText( value );
+		paintPicker.setPaintAsString( value );
+		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
+			case "none" -> PaintMode.NONE;
+			case "solid" -> PaintMode.SOLID;
+			case "linear" -> PaintMode.LINEAR;
+			case "radial" -> PaintMode.RADIAL;
+			default -> new PaintMode( o.getKey(), o.getName(), o.getOptionValue() );
+		} ).collect( Collectors.toList() ) );
 		HBox.setHgrow( paintPicker, Priority.ALWAYS );
 
 		nodes = List.of( label, paintPicker );
 
 		// Add the event handlers
-		//paintPicker.setOnAction( this::doPickerValueChanged );
+		paintPicker.paintAsStringProperty().addListener( this::doPickerValueChanged );
 
 		// Set component state
 		setDisable( setting.isDisable() );
@@ -83,41 +90,41 @@ public class PaintSettingEditor extends SettingEditor {
 		if( event.getEventType() == SettingsEvent.CHANGED && getKey().equals( event.getKey() ) ) paintPicker.setText( Paints.toString( paint ) );
 	}
 
-	private void doPickerValueChanged( ActionEvent event ) {
-		//setting.getSettings().set( setting.getKey(), Paints.parse( paintPicker.getValue() ) );
+	private void doPickerValueChanged( ObservableValue<? extends String> property, String oldValue, String newValue ) {
+		setting.getSettings().set( setting.getKey(), newValue );
 	}
 
-	private static class PaintEntryButtonCell extends ListCell<PaintEntry> {
+	private static class PaintEntryButtonCell extends ListCell<PaintMode> {
 
 		@Override
-		protected void updateItem( PaintEntry item, boolean empty ) {
+		protected void updateItem( PaintMode item, boolean empty ) {
 			super.updateItem( item, empty );
 			if( item == null ) {
 				setGraphic( null );
 				setText( null );
 			} else {
-				System.err.println( "paint=" + item.getPaint() );
-				setText( item.getPaint() );
+				System.err.println( "paint=" + item.getValue() );
+				setText( item.getValue() );
 			}
 		}
 
 	}
 
-	private static class PaintEntryCellFactory implements Callback<ListView<PaintEntry>, ListCell<PaintEntry>> {
+	private static class PaintEntryCellFactory implements Callback<ListView<PaintMode>, ListCell<PaintMode>> {
 
 		@Override
-		public ListCell<PaintEntry> call( ListView<PaintEntry> param ) {
-			final ListCell<PaintEntry> cell = new ListCell<>() {
+		public ListCell<PaintMode> call( ListView<PaintMode> param ) {
+			final ListCell<PaintMode> cell = new ListCell<>() {
 
 				@Override
-				public void updateItem( PaintEntry item, boolean empty ) {
+				public void updateItem( PaintMode item, boolean empty ) {
 					super.updateItem( item, empty );
 
 					if( item != null ) {
 						if( "custom".equals( item.getKey() ) ) {
 							setGraphic( new PaintPalette( item ) );
 						} else {
-							setGraphic( new Label( item.getLabel(), new Circle( 8, Paints.parse( item.getPaint() ) ) ) );
+							setGraphic( new Label( item.getLabel(), new Circle( 8, Paints.parse( item.getValue() ) ) ) );
 						}
 					} else {
 						setGraphic( null );
@@ -133,11 +140,11 @@ public class PaintSettingEditor extends SettingEditor {
 
 	private static class PaintPalette extends VBox {
 
-		private final PaintEntry entry;
+		private final PaintMode entry;
 
 		private List<Color> bases;
 
-		public PaintPalette( PaintEntry entry ) {
+		public PaintPalette( PaintMode entry ) {
 			this.entry = entry;
 
 			setSpacing( UiFactory.PAD );
@@ -167,7 +174,7 @@ public class PaintSettingEditor extends SettingEditor {
 
 			// This needs to be moved to xenon for the properties tool to pick it up
 			button.getStyleClass().setAll( "paint-picker-swatch" );
-			button.onActionProperty().set( e -> entry.setPaint( Paints.toString( paint ) ) );
+			button.onActionProperty().set( e -> entry.setValue( Paints.toString( paint ) ) );
 
 			return button;
 		}

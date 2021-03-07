@@ -139,8 +139,8 @@ public abstract class DesignDrawable extends DesignNode {
 		return getValue( FILL_PAINT, MODE_LAYER );
 	}
 
-	public DesignDrawable setFillPaint( String color ) {
-		setValue( FILL_PAINT, color );
+	public DesignDrawable setFillPaint( String paint ) {
+		setValue( FILL_PAINT, paint );
 		return this;
 	}
 

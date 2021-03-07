@@ -1,50 +1,41 @@
 package com.avereon.cartesia.settings;
 
-import com.avereon.cartesia.BundleKey;
-import com.avereon.product.Product;
-import javafx.beans.property.SimpleListProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
-public class PaintPickerPane extends BorderPane {
+import java.util.Objects;
+
+public class PaintPickerPane extends VBox {
 
 	private static final String DEFAULT_PAINT_STRING = "";
 
-	private final ComboBox<String> mode;
+	private final ComboBox<PaintMode> mode;
 
-	private ObservableList<String> customOptions;
+	private ObservableList<PaintMode> options;
 
-	private ObservableList<String> standardOptions;
+	private StringProperty paint;
 
-	public PaintPickerPane( Product product ) {
-		// Custom options
-		//String none = product.rb().textOr( BundleKey.LABEL, "none", "None" );
-
-		// Standard options
-		String solid = product.rb().textOr( BundleKey.LABEL, "solid", "Solid Color" );
-		String linear = product.rb().textOr( BundleKey.LABEL, "linear-gradient", "Linear Gradient" );
-		String radial = product.rb().textOr( BundleKey.LABEL, "radial-gradient", "Radial Gradient" );
-
+	public PaintPickerPane() {
 		// How about a combo for the mode: none, solid, linear[] and radial()
 		// To the right of the combo a component to define gradient stops
 		// Below that, the tabs for palette, RGB, HSB an WEB
 		// Opacity can be a slider on the right or the bottom
 		// Below that the OK and Cancel buttons
 
-		PaintEntry custom = new PaintEntry( "custom", "Custom", "#ff0000ff" );
-		PaintEntry layer = new PaintEntry( "layer", "Layer", "#00ff00ff" );
-		PaintEntry none = new PaintEntry( "none", "None", "#0000ffff" );
-
 		mode = new ComboBox<>();
-		mode.getItems().addAll( solid, linear, radial );
+		mode.setMaxWidth( Double.MAX_VALUE );
 
-		setTop( new HBox( mode ) );
+		getChildren().add( mode );
 
-		getCustomOptions().addListener( (ListChangeListener<String>)( e ) -> {
-			//
+		getOptions().addListener( (ListChangeListener<PaintMode>)( e ) -> {
+			mode.getItems().clear();
+			mode.getItems().addAll( options );
+			updateMode();
 		} );
 	}
 
@@ -53,9 +44,37 @@ public class PaintPickerPane extends BorderPane {
 		mode.requestFocus();
 	}
 
-	public ObservableList<String> getCustomOptions() {
-		if( customOptions == null ) customOptions = new SimpleListProperty<>();
-		return customOptions;
+	public ObservableList<PaintMode> getOptions() {
+		if( options == null ) options = FXCollections.observableArrayList();
+		return options;
+	}
+
+	public String getPaint() {
+		return paint == null ? null : paint.get();
+	}
+
+	public StringProperty paintProperty() {
+		if( paint == null ) paint = new SimpleStringProperty();
+		return paint;
+	}
+
+	public void setPaint( String paint ) {
+		paintProperty().set( paint );
+		updateMode();
+	}
+
+	private void updateMode() {
+		if( getPaint() == null ) {
+			mode.getSelectionModel().select( PaintMode.NONE );
+		} else if( getPaint().startsWith( "#" ) ) {
+			mode.getSelectionModel().select( PaintMode.SOLID );
+		} else if( getPaint().startsWith( "[" ) ) {
+			mode.getSelectionModel().select( PaintMode.LINEAR );
+		} else if( getPaint().startsWith( "(" ) ) {
+			mode.getSelectionModel().select( PaintMode.RADIAL );
+		} else {
+			mode.getItems().stream().filter( m -> Objects.equals( getPaint(), m.getKey() ) ).findAny().ifPresent( m -> mode.getSelectionModel().select( m ) );
+		}
 	}
 
 }

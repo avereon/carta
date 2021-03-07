@@ -1,8 +1,8 @@
 package com.avereon.cartesia.settings;
 
-import com.avereon.product.Product;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import com.avereon.zerra.color.Paints;
+import javafx.beans.property.StringProperty;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -15,22 +15,23 @@ import javafx.stage.Popup;
 
 public class PaintPicker extends Button {
 
-	private final PaintPickerPane paintPicker;
+	private final PaintSwatch swatch;
+
+	private final PaintPickerPane pickerPane;
 
 	private final Popup popup;
 
-	// TODO Can this handle custom options like 'layer'?
-	private ObjectProperty<Paint> paint;
+	public PaintPicker() {
+		getStyleClass().add( "paint-picker" );
 
-	public PaintPicker( Product product ) {
-		paintPicker = new PaintPickerPane( product );
+		setGraphic( swatch = new PaintSwatch() );
 
 		DialogPane pane = new DialogPane() {
 			protected Node createButton( ButtonType buttonType) {
 				return doCreateButton( buttonType );
 			}
 		};
-		pane.setContent( paintPicker );
+		pane.setContent( pickerPane = new PaintPickerPane() );
 		pane.getButtonTypes().addAll( ButtonType.OK, ButtonType.CANCEL );
 
 		popup = new Popup();
@@ -41,17 +42,44 @@ public class PaintPicker extends Button {
 		setOnAction( e -> doTogglePaintDialog() );
 	}
 
+	/**
+	 * Convenience method to get the paint.
+	 * @return the paint
+	 */
 	public Paint getPaint() {
-		return paint == null ? null : paint.get();
+		return calcPaint();
 	}
 
-	public ObjectProperty<Paint> paintProperty() {
-		if( paint == null ) paint = new SimpleObjectProperty<>();
-		return paint;
-	}
-
+	/**
+	 * Convenience method to set the paint.
+	 * @param paint the paint
+	 */
 	public void setPaint( Paint paint ) {
-		paintProperty().set( paint );
+		setPaintAsString( Paints.toString( paint ) );
+	}
+
+	public String getPaintAsString() {
+		return pickerPane.getPaint();
+	}
+
+	public StringProperty paintAsStringProperty() {
+		return pickerPane.paintProperty();
+	}
+
+	public void setPaintAsString( String paint ) {
+		pickerPane.setPaint( paint );
+		swatch.setPaint( calcPaint() );
+		setText( paint );
+	}
+
+	public ObservableList<PaintMode> getOptions() {
+		return pickerPane.getOptions();
+	}
+
+	private Paint calcPaint() {
+		// TODO Use the paint converters to convert from string to paint
+		String paint = pickerPane.getPaint();
+		return paint == null ? null : Paints.parse( paint );
 	}
 
 	private Node doCreateButton( ButtonType buttonType) {
@@ -60,8 +88,8 @@ public class PaintPicker extends Button {
 		ButtonBar.setButtonData(button, buttonData);
 		button.setDefaultButton(buttonData.isDefaultButton());
 		button.setCancelButton(buttonData.isCancelButton());
-		button.addEventHandler( ActionEvent.ACTION, ae -> {
-			if (ae.isConsumed()) return;
+		button.addEventHandler( ActionEvent.ACTION, e -> {
+			if ( e.isConsumed()) return;
 			setResultAndClose(buttonType);
 		});
 
@@ -72,7 +100,7 @@ public class PaintPicker extends Button {
 		if( !popup.isShowing() ) {
 			Point2D anchor = localToScreen( new Point2D( 0, getHeight() ) );
 			popup.show( this, anchor.getX(), anchor.getY() );
-			paintPicker.requestFocus();
+			pickerPane.requestFocus();
 		} else {
 			popup.hide();
 		}

@@ -19,11 +19,6 @@ public class MockCartesiaMod implements ProgramProduct {
 	}
 
 	@Override
-	public ClassLoader getClassLoader() {
-		return getClass().getClassLoader();
-	}
-
-	@Override
 	public ProductBundle rb() {
 		return new ProductBundle( getProgram(), this );
 	}
