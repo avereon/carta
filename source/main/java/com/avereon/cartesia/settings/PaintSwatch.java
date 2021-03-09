@@ -54,8 +54,8 @@ public class PaintSwatch extends Pane {
 		background.getChildren().addAll( a, b, c, d );
 		background.layoutXProperty().bind( Bindings.createDoubleBinding( () -> getInsets().getLeft(), insetsProperty() ) );
 		background.layoutYProperty().bind( Bindings.createDoubleBinding( () -> getInsets().getTop(), insetsProperty() ) );
-		background.prefWidthProperty().bind( Bindings.createDoubleBinding( () -> getWidth() - getInsets().getLeft() - getInsets().getRight(), insetsProperty() ) );
-		background.prefHeightProperty().bind( Bindings.createDoubleBinding( () -> getHeight() - getInsets().getTop() - getInsets().getBottom(), insetsProperty() ) );
+		background.prefWidthProperty().bind( Bindings.createDoubleBinding( () -> getWidth() - getInsets().getLeft() - getInsets().getRight(), widthProperty(), insetsProperty() ) );
+		background.prefHeightProperty().bind( Bindings.createDoubleBinding( () -> getHeight() - getInsets().getTop() - getInsets().getBottom(), heightProperty(), insetsProperty() ) );
 
 		// The no paint swatch
 		Line down = new Line();
@@ -69,18 +69,19 @@ public class PaintSwatch extends Pane {
 		noPaintSwatch.setStyle( "-fx-stroke: inherit" );
 		noPaintSwatch.layoutXProperty().bind( Bindings.createDoubleBinding( () -> getInsets().getLeft(), insetsProperty() ) );
 		noPaintSwatch.layoutYProperty().bind( Bindings.createDoubleBinding( () -> getInsets().getTop(), insetsProperty() ) );
-		noPaintSwatch.prefWidthProperty().bind( Bindings.createDoubleBinding( () -> getWidth() - getInsets().getLeft() - getInsets().getRight(), insetsProperty() ) );
-		noPaintSwatch.prefHeightProperty().bind( Bindings.createDoubleBinding( () -> getHeight() - getInsets().getTop() - getInsets().getBottom(), insetsProperty() ) );
+		noPaintSwatch.prefWidthProperty().bind( Bindings.createDoubleBinding( () -> getWidth() - getInsets().getLeft() - getInsets().getRight(), widthProperty(), insetsProperty() ) );
+		noPaintSwatch.prefHeightProperty().bind( Bindings.createDoubleBinding( () -> getHeight() - getInsets().getTop() - getInsets().getBottom(), heightProperty(), insetsProperty() ) );
 		noPaintSwatch.getChildren().addAll( up, down );
 
 		// The paint swatch
 		swatch.layoutXProperty().bind( Bindings.createDoubleBinding( () -> getInsets().getLeft(), insetsProperty() ) );
 		swatch.layoutYProperty().bind( Bindings.createDoubleBinding( () -> getInsets().getTop(), insetsProperty() ) );
-		swatch.widthProperty().bind( Bindings.createDoubleBinding( () -> getWidth() - getInsets().getLeft() - getInsets().getRight(), insetsProperty() ) );
-		swatch.heightProperty().bind( Bindings.createDoubleBinding( () -> getHeight() - getInsets().getTop() - getInsets().getBottom(), insetsProperty() ) );
+		swatch.widthProperty().bind( Bindings.createDoubleBinding( () -> getWidth() - getInsets().getLeft() - getInsets().getRight(), widthProperty(), insetsProperty() ) );
+		swatch.heightProperty().bind( Bindings.createDoubleBinding( () -> getHeight() - getInsets().getTop() - getInsets().getBottom(), heightProperty(), insetsProperty() ) );
 		swatch.setStroke( null );
 
 		getChildren().addAll( background, noPaintSwatch, swatch );
+		resize( 100,100 );
 
 		setPaint( paint );
 	}
@@ -101,10 +102,11 @@ public class PaintSwatch extends Pane {
 
 	private void updateSwatch() {
 		Paint paint = getPaint();
+		swatch.setFill( paint );
+
 		background.setVisible( paint != null );
 		noPaintSwatch.setVisible( paint == null );
 		swatch.setVisible( paint != null );
-		swatch.setFill( paint );
 	}
 
 }
