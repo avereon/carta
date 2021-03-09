@@ -2,6 +2,7 @@ package com.avereon.cartesia.settings;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -20,6 +21,8 @@ public class PaintPickerPane extends VBox {
 
 	private StringProperty paint;
 
+	private String prior;
+
 	public PaintPickerPane() {
 		// How about a combo for the mode: none, solid, linear[] and radial()
 		// To the right of the combo a component to define gradient stops
@@ -37,6 +40,17 @@ public class PaintPickerPane extends VBox {
 			mode.getItems().addAll( options );
 			updateMode();
 		} );
+
+		// Add the change handlers
+		mode.valueProperty().addListener( this::doModeChanged );
+	}
+
+	private void doModeChanged( ObservableValue<? extends PaintMode> observable, PaintMode oldValue, PaintMode newValue ) {
+		if( newValue == PaintMode.NONE ) {
+			doSetPaint( null );
+		} else {
+			doSetPaint( prior );
+		}
 	}
 
 	@Override
@@ -59,8 +73,13 @@ public class PaintPickerPane extends VBox {
 	}
 
 	public void setPaint( String paint ) {
-		paintProperty().set( paint );
+		doSetPaint( paint );
+		this.prior = paint;
 		updateMode();
+	}
+
+	private void doSetPaint( String paint ) {
+		paintProperty().set( paint );
 	}
 
 	private void updateMode() {

@@ -37,9 +37,9 @@ public class DesignDrawableTest {
 
 	@Test
 	void testGetValueMode() {
-		assertThat( drawable.getValueMode( null ), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.getValueMode( DesignDrawable.MODE_LAYER ), is( DesignDrawable.MODE_LAYER ) );
+		assertThat( drawable.getValueMode( null ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getValueMode( "" ), is( DesignDrawable.MODE_CUSTOM ) );
+		assertThat( drawable.getValueMode( DesignDrawable.MODE_LAYER ), is( DesignDrawable.MODE_LAYER ) );
 	}
 
 	@Test

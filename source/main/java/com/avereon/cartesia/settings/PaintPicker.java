@@ -21,6 +21,10 @@ public class PaintPicker extends Button {
 
 	private final Popup popup;
 
+	private boolean priorNotSet = true;
+
+	private String prior;
+
 	public PaintPicker() {
 		getStyleClass().add( "paint-picker" );
 
@@ -40,36 +44,46 @@ public class PaintPicker extends Button {
 		popup.getContent().add( pane );
 
 		setOnAction( e -> doTogglePaintDialog() );
+
+//		pickerPane.paintProperty().addListener( (p,o,n) -> {
+//			swatch.setPaint( Paints.parse( n ) );
+//			setText( n == null ? "None" : n );
+//		} );
 	}
 
-	/**
-	 * Convenience method to get the paint.
-	 * @return the paint
-	 */
-	public Paint getPaint() {
-		return calcPaint();
-	}
+//	/**
+//	 * Convenience method to get the paint.
+//	 * @return the paint
+//	 */
+//	public Paint getPaint() {
+//		return calcPaint();
+//	}
+//
+//	/**
+//	 * Convenience method to set the paint.
+//	 * @param paint the paint
+//	 */
+//	public void setPaint( Paint paint ) {
+//		setPaintAsString( Paints.toString( paint ) );
+//	}
 
-	/**
-	 * Convenience method to set the paint.
-	 * @param paint the paint
-	 */
-	public void setPaint( Paint paint ) {
-		setPaintAsString( Paints.toString( paint ) );
-	}
-
-	public String getPaintAsString() {
-		return pickerPane.getPaint();
-	}
+//	public String getPaintAsString() {
+//		return pickerPane.getPaint();
+//	}
 
 	public StringProperty paintAsStringProperty() {
 		return pickerPane.paintProperty();
 	}
 
 	public void setPaintAsString( String paint ) {
+		System.out.println( "MVS paint=" + paint );
 		pickerPane.setPaint( paint );
 		swatch.setPaint( calcPaint() );
-		setText( paint );
+		setText( paint == null ? "None" : paint.trim() );
+		if( priorNotSet ) {
+			prior = paint;
+			priorNotSet = false;
+		}
 	}
 
 	public ObservableList<PaintMode> getOptions() {
@@ -77,7 +91,7 @@ public class PaintPicker extends Button {
 	}
 
 	private Paint calcPaint() {
-		// TODO Use the paint converters to convert from string to paint
+		// TODO Use the paint modes to convert from string to paint
 		String paint = pickerPane.getPaint();
 		return paint == null ? null : Paints.parse( paint );
 	}
@@ -108,7 +122,8 @@ public class PaintPicker extends Button {
 
 	private void setResultAndClose(ButtonType type ) {
 		// Get value from PaintPickerPane
-		if( type == ButtonType.APPLY ) setPaint( null );
+		//if( type == ButtonType.APPLY ) setPaintAsString( prior );
+		if( type == ButtonType.CANCEL ) setPaintAsString( prior );
 		popup.hide();
 	}
 

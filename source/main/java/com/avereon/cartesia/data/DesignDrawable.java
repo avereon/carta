@@ -12,6 +12,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public abstract class DesignDrawable extends DesignNode {
@@ -70,6 +71,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public Paint calcDrawPaint() {
 		String paint = getDrawPaint();
+		if( paint == null ) return null;
 		if( isCustomValue( paint ) ) return Paints.parse( paint );
 		return ((DesignLayer)getParent()).calcDrawPaint();
 	}
@@ -163,8 +165,8 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	String getValueMode( String value ) {
-		if( value == null ) return MODE_LAYER;
-		if( nonCustomModes.contains( value ) ) return value;
+		if( Objects.equals( value, MODE_LAYER ) ) return MODE_LAYER;
+		if( value != null && nonCustomModes.contains( value ) ) return value;
 		return MODE_CUSTOM;
 	}
 
@@ -193,15 +195,15 @@ public abstract class DesignDrawable extends DesignNode {
 		super.updateFrom( map );
 
 		// Old keys
-		if( map.containsKey( "draw-color" ) ) setDrawPaint( (String)map.get( "draw-color" ) );
-		if( map.containsKey( "fill-color" ) ) setFillPaint( (String)map.get( "fill-color" ) );
+		setDrawPaint( map.containsKey( "draw-color" ) ? (String)map.get( "draw-color" ) : null );
+		setFillPaint( map.containsKey( "fill-color" ) ? (String)map.get( "fill-color" ) : null );
 
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
+		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
-		if( map.containsKey( DRAW_PAINT ) ) setDrawPaint( (String)map.get( DRAW_PAINT ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
-		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( (String)map.get( DRAW_PATTERN ) );
-		if( map.containsKey( FILL_PAINT ) ) setFillPaint( (String)map.get( FILL_PAINT ) );
+		setDrawPattern( map.containsKey( DRAW_PATTERN ) ? (String)map.get( DRAW_PATTERN ) : null );
+		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );
 		return this;
 	}
 

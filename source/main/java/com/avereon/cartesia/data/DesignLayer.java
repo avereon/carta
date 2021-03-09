@@ -183,7 +183,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public String getDrawPaint() {
-		return getValue( DRAW_PAINT, DEFAULT_DRAW_PAINT );
+		return getValue( DRAW_PAINT );
 	}
 
 	@Override
@@ -223,7 +223,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public String getFillPaint() {
-		return getValue( FILL_PAINT, DEFAULT_FILL_PAINT );
+		return getValue( FILL_PAINT );
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package com.avereon.cartesia.settings;
 
 import com.avereon.product.Rb;
 import com.avereon.settings.SettingsEvent;
+import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.UiFactory;
 import com.avereon.xenon.tool.settings.SettingData;
@@ -28,6 +29,8 @@ public class PaintSettingEditor extends SettingEditor {
 
 	private static final Paint DEFAULT_PAINT = Color.BLACK;
 
+	private static final System.Logger log = Log.get();
+
 	private final Label label;
 
 	private final PaintPicker paintPicker;
@@ -43,13 +46,12 @@ public class PaintSettingEditor extends SettingEditor {
 	@Override
 	public void addComponents( GridPane pane, int row ) {
 		String rbKey = setting.getBundleKey();
-		String value = setting.getSettings().get( getKey(), Paints.toString( DEFAULT_PAINT ) );
+		String value = setting.getSettings().get( getKey() );
 
 		label.setText( Rb.text( getBundleKey(), rbKey ) );
 		label.setMinWidth( Region.USE_PREF_SIZE );
 
 		paintPicker.setId( rbKey );
-		paintPicker.setMaxWidth( Double.MAX_VALUE );
 		paintPicker.setPaintAsString( value );
 		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
 			case "none" -> PaintMode.NONE;
@@ -58,6 +60,7 @@ public class PaintSettingEditor extends SettingEditor {
 			case "radial" -> PaintMode.RADIAL;
 			default -> new PaintMode( o.getKey(), o.getName(), o.getOptionValue() );
 		} ).collect( Collectors.toList() ) );
+		paintPicker.setMaxWidth( Double.MAX_VALUE );
 		HBox.setHgrow( paintPicker, Priority.ALWAYS );
 
 		nodes = List.of( label, paintPicker );
@@ -80,14 +83,11 @@ public class PaintSettingEditor extends SettingEditor {
 
 	@Override
 	protected void doSettingValueChanged( SettingsEvent event ) {
+		if( event.getEventType() != SettingsEvent.CHANGED || !getKey().equals( event.getKey() ) ) return;
+
 		Object value = event.getNewValue();
-		Paint paint;
-		try {
-			paint = Paints.parse( String.valueOf( value ) );
-		} catch( Exception exception ) {
-			paint = DEFAULT_PAINT;
-		}
-		if( event.getEventType() == SettingsEvent.CHANGED && getKey().equals( event.getKey() ) ) paintPicker.setText( Paints.toString( paint ) );
+		String paint = value == null ? null : String.valueOf( value );
+		paintPicker.setPaintAsString( paint );
 	}
 
 	private void doPickerValueChanged( ObservableValue<? extends String> property, String oldValue, String newValue ) {
