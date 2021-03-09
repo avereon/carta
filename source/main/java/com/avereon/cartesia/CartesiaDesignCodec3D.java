@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.product.Product;
+import com.avereon.product.Rb;
 
 public class CartesiaDesignCodec3D extends CartesiaDesignCodec {
 
@@ -19,7 +20,7 @@ public class CartesiaDesignCodec3D extends CartesiaDesignCodec {
 
 	@Override
 	public String getName() {
-		return getProduct().rb().text( "asset", "codec-cartesia3d-name" );
+		return Rb.text( "asset", "codec-cartesia3d-name" );
 	}
 
 }

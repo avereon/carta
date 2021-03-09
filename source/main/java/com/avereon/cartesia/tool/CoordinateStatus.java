@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.javafx.Fx;
@@ -31,10 +32,10 @@ public class CoordinateStatus extends HBox {
 	public CoordinateStatus( ProgramProduct product ) {
 		setPrecision( 4 );
 
-		String xPrompt = product.rb().textOr( "prompt", "x", "X:" );
-		String yPrompt = product.rb().textOr( "prompt", "y", "Y:" );
-		String zPrompt = product.rb().textOr( "prompt", "z", "Z:" );
-		String zoomPrompt = product.rb().textOr( "prompt", "zoom", "ZM:" );
+		String xPrompt = Rb.textOr(  "prompt", "x", "X:" );
+		String yPrompt = Rb.textOr(  "prompt", "y", "Y:" );
+		String zPrompt = Rb.textOr(  "prompt", "z", "Z:" );
+		String zoomPrompt = Rb.textOr(  "prompt", "zoom", "ZM:" );
 
 		xCoord = new Label( "0.0" );
 		yCoord = new Label( "0.0" );

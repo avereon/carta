@@ -190,7 +190,7 @@ public class CommandMap {
 
 	private static void add( ProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
 		ActionLibrary library = product.getProgram().getActionLibrary();
-		library.register( product.rb(), action );
+		library.register( product, action );
 		ActionProxy proxy = library.getAction( action );
 
 		String name = proxy.getName();

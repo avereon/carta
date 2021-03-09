@@ -4,6 +4,7 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignCurve;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -51,8 +52,8 @@ public class DrawCurve4 extends DrawCommand {
 			preview.setPoint( asPoint( context, parameters[ 3 ] ) );
 			return commitPreview( tool );
 		} catch( ParseException exception ) {
-			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
-			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-create-curve", exception );
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-curve", exception );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

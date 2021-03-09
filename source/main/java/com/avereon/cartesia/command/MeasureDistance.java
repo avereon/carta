@@ -4,6 +4,7 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zerra.javafx.Fx;
@@ -39,8 +40,8 @@ public class MeasureDistance extends MeasureCommand {
 			Point3D p2 = asPoint( context.getAnchor(), parameters[ 1 ] );
 			double distance = p1.distance( p2 );
 
-			String title = context.getProduct().rb().text( BundleKey.NOTICE, "measurement" );
-			String message = context.getProduct().rb().text( BundleKey.NOTICE, "distance", distance );
+			String title = Rb.text( BundleKey.NOTICE, "measurement" );
+			String message = Rb.text( BundleKey.NOTICE, "distance", distance );
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -56,8 +57,8 @@ public class MeasureDistance extends MeasureCommand {
 			log.log( Log.DEBUG, "Measured distance=" + distance );
 			return distance;
 		} catch( ParseException exception ) {
-			String title = tool.getProduct().rb().text( BundleKey.NOTICE, "command-error" );
-			String message = tool.getProduct().rb().text( BundleKey.NOTICE, "unable-to-measure-distance", exception.getMessage() );
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-measure-distance", exception.getMessage() );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

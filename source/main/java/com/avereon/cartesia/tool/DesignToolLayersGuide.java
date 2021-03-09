@@ -4,6 +4,7 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
@@ -36,7 +37,7 @@ public class DesignToolLayersGuide extends Guide {
 		this.layerNodes = new ConcurrentHashMap<>();
 		this.nodeLayers = new ConcurrentHashMap<>();
 		setIcon( "layers" );
-		setTitle( product.rb().textOr( BundleKey.LABEL, "layers", "Layers" ) );
+		setTitle( Rb.textOr( BundleKey.LABEL, "layers", "Layers" ) );
 		setDragAndDropEnabled( true );
 	}
 

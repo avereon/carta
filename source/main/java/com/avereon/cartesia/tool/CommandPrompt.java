@@ -1,6 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.error.UnknownCommand;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
@@ -40,12 +41,8 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		command.textProperty().addListener( ( p, o, n ) -> this.textChanged( n ) );
 	}
 
-	private ProgramProduct getProduct() {
-		return product;
-	}
-
 	public void setPrompt( String prompt ) {
-		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : getProduct().rb().text( "prompt", "command" );
+		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
 		Platform.runLater( () -> this.prompt.setText( effectivePrompt ) );
 	}
 

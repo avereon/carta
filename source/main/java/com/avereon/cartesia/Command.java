@@ -7,6 +7,7 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
@@ -181,7 +182,7 @@ public class Command {
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String key, CommandContext.Input mode ) {
-		String text = tool.getProduct().rb().text( BundleKey.PROMPT, key );
+		String text = Rb.text( BundleKey.PROMPT, key );
 		context.submit( tool, new Prompt( text, mode ) );
 	}
 
