@@ -10,26 +10,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class PaintPickerPane extends VBox {
 
-	private static final String DEFAULT_PAINT_STRING = "";
-
 	private final ComboBox<PaintMode> mode;
 
 	private ObservableList<PaintMode> options;
+
+	private final TextField paintField;
 
 	private StringProperty paint;
 
@@ -50,30 +46,30 @@ public class PaintPickerPane extends VBox {
 		// The paint stop editor
 		//RangeSlider paintStopEditor = new RangeSlider();
 
+		// The color palette
+		PaintPalette palette = new PaintPalette();
+
 		// The color selection tabs
 		// Apparently tab pane does not do well in a popup
 		TabPane colorTabs = new TabPane();
 		colorTabs.getTabs().add( new Tab( "Palette", new Label( "DONT JITTER" ) ) );
 
+		// The paint text field for manual entry
+		paintField = new TextField();
+
 		// Add the children
-		getChildren().addAll( mode, new PaintPalette( new PaintMode( "", "", "#ff0000" ) ) );
+		getChildren().addAll( mode, palette, paintField );
 
 		getOptions().addListener( (ListChangeListener<PaintMode>)( e ) -> {
 			mode.getItems().clear();
 			mode.getItems().addAll( options );
-			updateMode();
 		} );
 
-		// Add the change handlers
+		// The mode change handler
 		mode.valueProperty().addListener( this::doModeChanged );
-	}
 
-	private void doModeChanged( ObservableValue<? extends PaintMode> observable, PaintMode oldValue, PaintMode newValue ) {
-		if( newValue == PaintMode.NONE ) {
-			doSetPaint( null );
-		} else {
-			doSetPaint( prior );
-		}
+		// The text field change handler
+		paintField.textProperty().addListener( ( p, o, n ) -> doSetPaint( n ) );
 	}
 
 	@Override
@@ -97,41 +93,37 @@ public class PaintPickerPane extends VBox {
 
 	public void setPaint( String paint ) {
 		doSetPaint( paint );
-		this.prior = paint;
-		updateMode();
+		updateMode( paint );
+		paintField.setText( paint );
 	}
 
 	private void doSetPaint( String paint ) {
 		paintProperty().set( paint );
 	}
 
-	private void updateMode() {
-		if( getPaint() == null ) {
-			mode.getSelectionModel().select( PaintMode.NONE );
-		} else if( getPaint().startsWith( "#" ) ) {
-			mode.getSelectionModel().select( PaintMode.SOLID );
-		} else if( getPaint().startsWith( "[" ) ) {
-			mode.getSelectionModel().select( PaintMode.LINEAR );
-		} else if( getPaint().startsWith( "(" ) ) {
-			mode.getSelectionModel().select( PaintMode.RADIAL );
-		} else {
-			mode.getItems().stream().filter( m -> Objects.equals( getPaint(), m.getKey() ) ).findAny().ifPresent( m -> mode.getSelectionModel().select( m ) );
+	private void doModeChanged( ObservableValue<? extends PaintMode> p, PaintMode o, PaintMode n ) {
+		if( n == PaintMode.NONE ) {
+			prior = getPaint();
+			doSetPaint( null );
+		} else if( prior != null ) {
+			doSetPaint( prior );
 		}
+	}
+
+	private void updateMode( String paint ) {
+		mode.getSelectionModel().select( PaintMode.getPaintMode( paint ) );
 	}
 
 	private class PaintPalette extends VBox {
 
-		private final PaintMode entry;
-
-		private final List<Color> bases;
-
-		public PaintPalette( PaintMode entry ) {
-			this.entry = entry;
-
+		public PaintPalette() {
 			setSpacing( UiFactory.PAD );
-			bases = List.of( Color.GRAY, Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.BLUE, Color.PURPLE );
 
-			for( double factor = 0.75; factor > 0.0; factor -= 0.25 ) {
+			// Black, Red, Green Yellow, Blue, Magenta, Cyan, White
+			// X, R, G, RG, B, RB, GB, RGB
+			List<Color> bases = List.of( Color.GRAY, Color.RED, Color.GREEN, Color.YELLOW, Color.BLUE, Color.MAGENTA, Color.CYAN );
+
+			for( double factor = 1.0; factor > 0.0; factor -= 0.25 ) {
 				final double shadeFactor = factor;
 				HBox shades = new HBox( UiFactory.PAD );
 				shades.getChildren().addAll( bases.stream().map( base -> getSwatch( Colors.getShade( base, shadeFactor ) ) ).collect( Collectors.toList() ) );
@@ -142,7 +134,7 @@ public class PaintPickerPane extends VBox {
 			hue.getChildren().addAll( bases.stream().map( this::getSwatch ).collect( Collectors.toList() ) );
 			getChildren().add( hue );
 
-			for( double factor = 0.25; factor < 1.0; factor += 0.25 ) {
+			for( double factor = 0.25; factor <= 1.0; factor += 0.25 ) {
 				final double tintFactor = factor;
 				HBox tints = new HBox( UiFactory.PAD );
 				tints.getChildren().addAll( bases.stream().map( base -> getSwatch( Colors.getTint( base, tintFactor ) ) ).collect( Collectors.toList() ) );

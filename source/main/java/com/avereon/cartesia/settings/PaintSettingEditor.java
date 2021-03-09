@@ -35,6 +35,13 @@ public class PaintSettingEditor extends SettingEditor {
 		super( product, bundleKey, setting );
 		label = new Label();
 		paintPicker = new PaintPicker();
+		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
+			case "none" -> PaintMode.NONE;
+			case "solid" -> PaintMode.SOLID;
+			case "linear" -> PaintMode.LINEAR;
+			case "radial" -> PaintMode.RADIAL;
+			default -> new PaintMode( o.getKey(), o.getName() );
+		} ).collect( Collectors.toList() ) );
 	}
 
 	@Override
@@ -47,13 +54,6 @@ public class PaintSettingEditor extends SettingEditor {
 
 		paintPicker.setId( rbKey );
 		paintPicker.setPaintAsString( value );
-		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
-			case "none" -> PaintMode.NONE;
-			case "solid" -> PaintMode.SOLID;
-			case "linear" -> PaintMode.LINEAR;
-			case "radial" -> PaintMode.RADIAL;
-			default -> new PaintMode( o.getKey(), o.getName(), o.getOptionValue() );
-		} ).collect( Collectors.toList() ) );
 		paintPicker.setMaxWidth( Double.MAX_VALUE );
 		HBox.setHgrow( paintPicker, Priority.ALWAYS );
 

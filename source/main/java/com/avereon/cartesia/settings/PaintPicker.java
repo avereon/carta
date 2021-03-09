@@ -31,7 +31,8 @@ public class PaintPicker extends Button {
 		setGraphic( swatch = new PaintSwatch() );
 
 		DialogPane pane = new DialogPane() {
-			protected Node createButton( ButtonType buttonType) {
+
+			protected Node createButton( ButtonType buttonType ) {
 				return doCreateButton( buttonType );
 			}
 		};
@@ -45,45 +46,49 @@ public class PaintPicker extends Button {
 
 		setOnAction( e -> doTogglePaintDialog() );
 
-//		pickerPane.paintProperty().addListener( (p,o,n) -> {
-//			swatch.setPaint( Paints.parse( n ) );
-//			setText( n == null ? "None" : n );
-//		} );
+		doUpdateText( null );
+		pickerPane.paintProperty().addListener( ( p, o, n ) -> {
+			swatch.setPaint( Paints.parseWithNullOnException( n ) );
+			doUpdateText( n );
+		} );
 	}
 
-//	/**
-//	 * Convenience method to get the paint.
-//	 * @return the paint
-//	 */
-//	public Paint getPaint() {
-//		return calcPaint();
-//	}
-//
-//	/**
-//	 * Convenience method to set the paint.
-//	 * @param paint the paint
-//	 */
-//	public void setPaint( Paint paint ) {
-//		setPaintAsString( Paints.toString( paint ) );
-//	}
+	//	/**
+	//	 * Convenience method to get the paint.
+	//	 * @return the paint
+	//	 */
+	//	public Paint getPaint() {
+	//		return calcPaint();
+	//	}
+	//
+	//	/**
+	//	 * Convenience method to set the paint.
+	//	 * @param paint the paint
+	//	 */
+	//	public void setPaint( Paint paint ) {
+	//		setPaintAsString( Paints.toString( paint ) );
+	//	}
 
-//	public String getPaintAsString() {
-//		return pickerPane.getPaint();
-//	}
+	public String getPaintAsString() {
+		return pickerPane.getPaint();
+	}
 
 	public StringProperty paintAsStringProperty() {
 		return pickerPane.paintProperty();
 	}
 
 	public void setPaintAsString( String paint ) {
-		System.out.println( "MVS paint=" + paint );
 		pickerPane.setPaint( paint );
-		swatch.setPaint( calcPaint() );
-		setText( paint == null ? "None" : paint.trim() );
-		if( priorNotSet ) {
-			prior = paint;
-			priorNotSet = false;
-		}
+		//swatch.setPaint( calcPaint() );
+		//doUpdateText(paint);
+//		if( priorNotSet ) {
+//			prior = paint;
+//			priorNotSet = false;
+//		}
+	}
+
+	public void setPrior( String paint ) {
+		this.prior = paint;
 	}
 
 	public ObservableList<PaintMode> getOptions() {
@@ -93,25 +98,30 @@ public class PaintPicker extends Button {
 	private Paint calcPaint() {
 		// TODO Use the paint modes to convert from string to paint
 		String paint = pickerPane.getPaint();
-		return paint == null ? null : Paints.parse( paint );
+		return paint == null ? null : Paints.parseWithNullOnException( paint );
 	}
 
-	private Node doCreateButton( ButtonType buttonType) {
-		final Button button = new Button(buttonType.getText());
+	private Node doCreateButton( ButtonType buttonType ) {
+		final Button button = new Button( buttonType.getText() );
 		final ButtonBar.ButtonData buttonData = buttonType.getButtonData();
-		ButtonBar.setButtonData(button, buttonData);
-		button.setDefaultButton(buttonData.isDefaultButton());
-		button.setCancelButton(buttonData.isCancelButton());
+		ButtonBar.setButtonData( button, buttonData );
+		button.setDefaultButton( buttonData.isDefaultButton() );
+		button.setCancelButton( buttonData.isCancelButton() );
 		button.addEventHandler( ActionEvent.ACTION, e -> {
-			if ( e.isConsumed()) return;
-			setResultAndClose(buttonType);
-		});
+			if( e.isConsumed() ) return;
+			setResultAndClose( buttonType );
+		} );
 
 		return button;
 	}
 
+	private void doUpdateText( String paint ) {
+		setText( paint == null ? "None" : paint.trim() );
+	}
+
 	private void doTogglePaintDialog() {
 		if( !popup.isShowing() ) {
+			setPrior( getPaintAsString() );
 			Point2D anchor = localToScreen( new Point2D( 0, getHeight() ) );
 			popup.show( this, anchor.getX(), anchor.getY() );
 			pickerPane.requestFocus();
@@ -120,8 +130,7 @@ public class PaintPicker extends Button {
 		}
 	}
 
-	private void setResultAndClose(ButtonType type ) {
-		// Get value from PaintPickerPane
+	private void setResultAndClose( ButtonType type ) {
 		//if( type == ButtonType.APPLY ) setPaintAsString( prior );
 		if( type == ButtonType.CANCEL ) setPaintAsString( prior );
 		popup.hide();

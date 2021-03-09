@@ -188,7 +188,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public Paint calcDrawPaint() {
-		return Paints.parse( getDrawPaint() );
+		return Paints.parseWithNullOnException( getDrawPaint() );
 	}
 
 	@Override
@@ -228,7 +228,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public Paint calcFillPaint() {
-		return Paints.parse( getFillPaint() );
+		return Paints.parseWithNullOnException( getFillPaint() );
 	}
 
 	@Override

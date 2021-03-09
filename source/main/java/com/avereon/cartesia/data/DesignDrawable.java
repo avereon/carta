@@ -72,7 +72,7 @@ public abstract class DesignDrawable extends DesignNode {
 	public Paint calcDrawPaint() {
 		String paint = getDrawPaint();
 		if( paint == null ) return null;
-		if( isCustomValue( paint ) ) return Paints.parse( paint );
+		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
 		return ((DesignLayer)getParent()).calcDrawPaint();
 	}
 
@@ -133,7 +133,7 @@ public abstract class DesignDrawable extends DesignNode {
 	public Paint calcFillPaint() {
 		String paint = getFillPaint();
 		if( paint == null ) return null;
-		if( isCustomValue( paint ) ) return Paints.parse( paint );
+		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
 		return getParentLayer().calcFillPaint();
 	}
 

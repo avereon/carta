@@ -2,12 +2,16 @@ package com.avereon.cartesia.settings;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.product.Rb;
+import com.avereon.util.TextUtil;
 
 class PaintMode {
 
 	public static final PaintMode NONE;
+
 	public static final PaintMode SOLID;
+
 	public static final PaintMode LINEAR;
+
 	public static final PaintMode RADIAL;
 
 	private final String key;
@@ -17,16 +21,20 @@ class PaintMode {
 	private String value;
 
 	static {
-		NONE = new PaintMode( "none", Rb.text( BundleKey.LABEL, "none" ), null );
-		SOLID = new PaintMode( "solid", Rb.text( BundleKey.LABEL, "solid" ), null );
-		LINEAR = new PaintMode( "linear", Rb.text( BundleKey.LABEL, "linear" ), null );
-		RADIAL = new PaintMode( "radial", Rb.text( BundleKey.LABEL, "radial" ), null );
+		NONE = new PaintMode( "none", Rb.text( BundleKey.LABEL, "none" ) );
+		SOLID = new PaintMode( "solid", Rb.text( BundleKey.LABEL, "solid" ) );
+		LINEAR = new PaintMode( "linear", Rb.text( BundleKey.LABEL, "linear" ) );
+		RADIAL = new PaintMode( "radial", Rb.text( BundleKey.LABEL, "radial" ) );
+	}
+
+	public PaintMode( String key, String label ) {
+		this( key, label, null );
 	}
 
 	public PaintMode( String key, String label, String value ) {
 		this.key = key;
 		this.label = label;
-		this.value = value;
+		//this.value = value;
 
 		//		String none = product.rb().textOr( BundleKey.LABEL, "none", "None" );
 		//		String solid = product.rb().textOr( BundleKey.LABEL, "solid", "Solid Color" );
@@ -42,17 +50,28 @@ class PaintMode {
 		return label;
 	}
 
-	public String getValue() {
-		return value;
+	public static PaintMode getPaintMode( String paint ) {
+		if( TextUtil.isEmpty( paint ) ) return PaintMode.NONE;
+
+		return switch( paint.charAt( 0 ) ) {
+			case '#' -> PaintMode.SOLID;
+			case '[' -> PaintMode.LINEAR;
+			case '(' -> PaintMode.RADIAL;
+			default -> throw new IllegalStateException( "Unexpected value: " + paint );
+		};
 	}
 
-	public void setValue( String value ) {
-		this.value = value;
-	}
+	//	public String getValue() {
+	//		return value;
+	//	}
+	//
+	//	public void setValue( String value ) {
+	//		this.value = value;
+	//	}
 
 	@Override
 	public String toString() {
-		return label;
+		return getLabel();
 	}
 
 }
