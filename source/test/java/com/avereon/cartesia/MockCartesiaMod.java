@@ -1,6 +1,5 @@
 package com.avereon.cartesia;
 
-import com.avereon.product.ProductBundle;
 import com.avereon.product.ProductCard;
 import com.avereon.settings.MapSettings;
 import com.avereon.settings.Settings;
@@ -16,11 +15,6 @@ public class MockCartesiaMod implements ProgramProduct {
 	@Override
 	public ProductCard getCard() {
 		return new ProductCard();
-	}
-
-	@Override
-	public ProductBundle rb() {
-		return new ProductBundle( getProgram(), this );
 	}
 
 	@Override
