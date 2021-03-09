@@ -18,6 +18,7 @@ import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -381,10 +382,10 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 
 		// Add view rotate property listener
-		designPane.viewRotateProperty().addListener( (p,o,n) -> {
+		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
 			validateGrid();
-		});
+		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
@@ -655,11 +656,16 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void rebuildGrid() {
-		try {
-			designPane.setGrid( getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() ) );
-		} catch( Exception exception ) {
-			log.log( Log.ERROR, "Error creating grid", exception );
-		}
+		// FIXME This takes too much work
+		// NOTE Maybe the grid can be removed during pan operations???
+
+		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
+			try {
+				designPane.setGrid( getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() ) );
+			} catch( Exception exception ) {
+				log.log( Log.ERROR, "Error creating grid", exception );
+			}
+		} ) );
 	}
 
 	private void doSetCurrentLayerById( String id ) {
