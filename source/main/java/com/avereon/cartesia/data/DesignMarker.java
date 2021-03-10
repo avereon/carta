@@ -11,6 +11,9 @@ import java.util.Map;
 
 public class DesignMarker extends DesignShape {
 
+	public static final String MARKER = "marker";
+
+	@Deprecated
 	public static final String POINT = "point";
 
 	public static final String SIZE = "size";
@@ -91,7 +94,7 @@ public class DesignMarker extends DesignShape {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.put( SHAPE, POINT );
+		map.put( SHAPE, MARKER );
 		map.putAll( asMap( SIZE, TYPE ) );
 		return map;
 	}

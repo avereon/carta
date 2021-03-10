@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.*;
+import com.avereon.util.MapUtil;
 import com.avereon.xenon.asset.Asset;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -78,6 +80,14 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		// Check the result
 		Map<String, Object> expected = MAPPER.readValue( MAPPER.writeValueAsBytes( design.asDeepMap() ), new TypeReference<>() {} );
 		expected.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
+
+		// Any shape property that has the value "layer" is removed
+		MapUtil.flatten( expected, "layers", "shapes" ).map( o -> (Map<String, ?>)o ).filter( shapes -> !shapes.isEmpty() ).flatMap( shapes -> shapes.values().parallelStream() ).map( o -> (Map<String, ?>)o ).forEach( shape -> {
+			for( String key : new HashSet<>( shape.keySet() ) ) {
+				shape.computeIfPresent( key, ( k, v ) -> "layer".equals( v ) ? null : v );
+			}
+		} );
+
 		Map<String, Object> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
 		assertThat( actual, is( expected ) );
 	}

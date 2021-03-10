@@ -36,7 +36,7 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_DRAW_PATTERN = "0";
 
-	static final String DEFAULT_FILL_PAINT = "#00000080";
+	static final String DEFAULT_FILL_PAINT = null;
 
 	//private static final NodeComparator<DesignLayer> comparator;
 

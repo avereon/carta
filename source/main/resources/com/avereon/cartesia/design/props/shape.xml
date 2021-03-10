@@ -10,7 +10,7 @@
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="draw-paint-custom" key="draw-paint" editor="color">
+			<setting id="draw-paint-custom" key="draw-paint" editor="paint">
 				<dependency key="draw-paint-mode" value="custom"/>
 			</setting>
 
@@ -46,7 +46,7 @@
 				<option key="custom"/>
 				<option key="none"/>
 			</setting>
-			<setting id="fill-paint-custom" key="fill-paint" editor="color">
+			<setting id="fill-paint-custom" key="fill-paint" editor="paint">
 				<dependency key="fill-paint-mode" value="custom"/>
 			</setting>
 

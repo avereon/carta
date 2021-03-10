@@ -45,14 +45,20 @@ public abstract class DesignDrawable extends DesignNode {
 
 	static final String MODE_CUSTOM = "custom";
 
-	static final String MODE_LAYER = "layer";
+	public static final String MODE_LAYER = "layer";
 
 	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER );
 
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
-		addModifyingKeys( DRAW_WIDTH, DRAW_PAINT, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
+		addModifyingKeys( DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
+
+		setDrawPaint( MODE_LAYER );
+		setDrawWidth( MODE_LAYER );
+		setDrawCap( MODE_LAYER );
+		setDrawPattern( MODE_LAYER );
+		setFillPaint( MODE_LAYER );
 	}
 
 	public DesignLayer getParentLayer() {
@@ -77,7 +83,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawPaint() {
-		return getValue( DRAW_PAINT, MODE_LAYER );
+		return getValue( DRAW_PAINT );
 	}
 
 	public DesignDrawable setDrawPaint( String paint ) {
@@ -138,7 +144,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getFillPaint() {
-		return getValue( FILL_PAINT, MODE_LAYER );
+		return getValue( FILL_PAINT );
 	}
 
 	public DesignDrawable setFillPaint( String paint ) {
@@ -193,11 +199,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-
-		// Old keys
-		setDrawPaint( map.containsKey( "draw-color" ) ? (String)map.get( "draw-color" ) : null );
-		setFillPaint( map.containsKey( "fill-color" ) ? (String)map.get( "fill-color" ) : null );
-
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
