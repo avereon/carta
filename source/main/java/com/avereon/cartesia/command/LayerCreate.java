@@ -13,11 +13,6 @@ public class LayerCreate extends LayerCommand {
 	private static final System.Logger log = Log.get();
 
 	@Override
-	public boolean isInputCommand() {
-		return true;
-	}
-
-	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		if( parameters.length < 1 ) {
 			promptForText( context, tool, "layer-name" );

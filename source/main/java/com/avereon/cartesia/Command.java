@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignShapeView;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
@@ -62,11 +62,6 @@ public class Command {
 
 	public CommandContext.Input getInputMode() {
 		return CommandContext.Input.NONE;
-	}
-
-	@Deprecated
-	public boolean isInputCommand() {
-		return false;
 	}
 
 	public boolean clearSelectionWhenComplete() {

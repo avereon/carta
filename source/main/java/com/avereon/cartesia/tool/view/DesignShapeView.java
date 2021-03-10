@@ -1,9 +1,11 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.tool.ConstructionPoint;
+import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
@@ -90,12 +92,12 @@ public class DesignShapeView extends DesignDrawableView {
 		shape.setFill( getDesignShape().calcFillPaint() );
 	}
 
-	void addShapeGeometry() {
+	public void addShapeGeometry() {
 		getPane().addShapeGeometry( this );
 		registerListeners();
 	}
 
-	void removeShapeGeometry() {
+	public void removeShapeGeometry() {
 		unregisterListeners();
 		getPane().removeShapeGeometry( this );
 	}

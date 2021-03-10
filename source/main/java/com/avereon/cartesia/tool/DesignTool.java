@@ -8,6 +8,7 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;

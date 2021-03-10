@@ -1,6 +1,7 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignNode;
+import com.avereon.cartesia.tool.DesignPane;
 
 public class DesignNodeView {
 

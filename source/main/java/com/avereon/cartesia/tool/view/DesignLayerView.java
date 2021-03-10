@@ -1,6 +1,8 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.tool.DesignPane;
+import com.avereon.cartesia.tool.DesignPaneLayer;
 
 public class DesignLayerView extends DesignDrawableView {
 
@@ -11,34 +13,34 @@ public class DesignLayerView extends DesignDrawableView {
 	}
 
 	// Special handing of the root layer pane
-	DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPaneLayer layer ) {
+	public DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPaneLayer layer ) {
 		super( pane, designLayer );
 		this.layer = layer;
 		DesignShapeView.setDesignData( layer, designLayer );
 	}
 
-	protected DesignLayer getDesignLayer() {
+	public  DesignLayer getDesignLayer() {
 		return (DesignLayer)getDesignNode();
 	}
 
-	protected DesignPaneLayer getLayer() {
+	public DesignPaneLayer getLayer() {
 		return layer;
 	}
 
-	boolean isVisible() {
+	public boolean isVisible() {
 		return this.layer.isVisible();
 	}
 
-	void setVisible( boolean visible ) {
+	public void setVisible( boolean visible ) {
 		this.layer.setVisible( visible );
 	}
 
-	void addLayerGeometry() {
+	public void addLayerGeometry() {
 		getPane().addLayerGeometry( this );
 		registerListeners();
 	}
 
-	void removeLayerGeometry() {
+	public void removeLayerGeometry() {
 		unregisterListeners();
 		getPane().removeLayerGeometry( this );
 	}

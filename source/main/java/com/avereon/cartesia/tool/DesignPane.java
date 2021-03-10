@@ -3,6 +3,8 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.tool.view.DesignLayerView;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
@@ -393,7 +395,7 @@ public class DesignPane extends StackPane {
 		return doSelectByShape( box, contains );
 	}
 
-	void addLayerGeometry( DesignLayerView view ) {
+	public void addLayerGeometry( DesignLayerView view ) {
 		Fx.run( () -> {
 			//System.err.println( "Layer geometry added for " + view.getDesignLayer() );
 
@@ -409,7 +411,7 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
-	void removeLayerGeometry( DesignLayerView view ) {
+	public void removeLayerGeometry( DesignLayerView view ) {
 		Fx.run( () -> {
 			DesignPaneLayer layer = view.getLayer();
 			//System.err.println( "Removing layer=" + System.identityHashCode( layer ) + " child count=" + layer.getChildren().size() );
@@ -420,7 +422,7 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
-	void addShapeGeometry( DesignShapeView view ) {
+	public void addShapeGeometry( DesignShapeView view ) {
 		DesignPaneLayer layer = getShapeLayer( view.getDesignShape() );
 		Group group = view.getGroup();
 		//List<Shape> shapes = new ArrayList<>( view.getGeometry() );
@@ -435,7 +437,7 @@ public class DesignPane extends StackPane {
 		} );
 	}
 
-	void removeShapeGeometry( DesignShapeView view ) {
+	public void removeShapeGeometry( DesignShapeView view ) {
 		Group group = view.getGroup();
 		DesignPaneLayer layer = (DesignPaneLayer)group.getParent();
 		//		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();

@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadPoints;
-import com.avereon.cartesia.tool.DesignShapeView;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
