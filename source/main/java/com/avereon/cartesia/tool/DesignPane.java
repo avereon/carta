@@ -8,7 +8,6 @@ import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
-import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -455,7 +454,6 @@ public class DesignPane extends StackPane {
 	void setGrid( List<Shape> grid ) {
 		Fx.run( () -> {
 			this.grid.getChildren().clear();
-			grid.forEach( s -> s.strokeWidthProperty().bind( Bindings.divide( 1, scaleXProperty() ) ) );
 			this.grid.getChildren().addAll( grid );
 		} );
 	}

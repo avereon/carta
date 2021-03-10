@@ -59,38 +59,45 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		majorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsX ) );
 		majorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsY ) );
 
+		double strokeWidthX = 0.1 * minorIntervalX;
+		double strokeWidthY = 0.1 * minorIntervalY;
+
 		for( double value : minorOffsetsX ) {
 			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
 			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
+			shape.setStrokeWidth( strokeWidthX );
 			grid.add( shape );
 		}
 		for( double value : minorOffsetsY ) {
 			Line shape = new Line( boundaryX1, value, boundaryX2, value );
 			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
+			shape.setStrokeWidth( strokeWidthY );
 			grid.add( shape );
 		}
 		for( double value : majorOffsetsX ) {
 			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
 			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
+			shape.setStrokeWidth( strokeWidthX );
 			grid.add( shape );
 		}
 		for( double value : majorOffsetsY ) {
 			Line shape = new Line( boundaryX1, value, boundaryX2, value );
 			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
+			shape.setStrokeWidth( strokeWidthY );
 			grid.add( shape );
 		}
 		for( double value : axisOffsetsX ) {
 			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
 			shape.setStroke( DesignWorkplane.DEFAULT_AXIS_COLOR );
+			shape.setStrokeWidth( strokeWidthX );
 			grid.add( shape );
 		}
 		for( double value : axisOffsetsY ) {
 			Line shape = new Line( boundaryX1, value, boundaryX2, value );
 			shape.setStroke( DesignWorkplane.DEFAULT_AXIS_COLOR );
+			shape.setStrokeWidth( strokeWidthY );
 			grid.add( shape );
 		}
-
-		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );
 
 		return grid;
 	}
