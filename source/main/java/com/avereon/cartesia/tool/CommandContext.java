@@ -144,8 +144,8 @@ public class CommandContext {
 	}
 
 	void handle( KeyEvent event ) {
-		doProcessKeyEvent( event );
 		event.consume();
+		doProcessKeyEvent( event );
 	}
 
 	void handle( MouseEvent event ) {
@@ -238,9 +238,9 @@ public class CommandContext {
 	}
 
 	private void doEventCommand( InputEvent event ) {
+		event.consume();
 		CommandMetadata mapping = CommandMap.get( event );
 		if( mapping != null ) doCommand( event, mapping.getType(), mapping.getParameters() );
-		event.consume();
 	}
 
 	private void doCommand( String input ) {
