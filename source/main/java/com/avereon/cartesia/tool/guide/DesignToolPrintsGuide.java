@@ -1,7 +1,8 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.guide;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignNode;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.xenon.Program;

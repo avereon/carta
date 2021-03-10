@@ -8,6 +8,9 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
+import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
+import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
+import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
@@ -718,11 +721,11 @@ public abstract class DesignTool extends GuidedTool {
 		selectedShapes.clear();
 	}
 
-	static DesignLayer getDesignData( DesignPaneLayer l ) {
+	public static DesignLayer getDesignData( DesignPaneLayer l ) {
 		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
 
-	static DesignShape getDesignData( Shape s ) {
+	public static DesignShape getDesignData( Shape s ) {
 		return DesignShapeView.getDesignData( s );
 	}
 

@@ -1,7 +1,11 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.guide;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.tool.DesignLayerEvent;
+import com.avereon.cartesia.tool.DesignPane;
+import com.avereon.cartesia.tool.DesignPaneLayer;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -71,7 +75,7 @@ public class DesignToolLayersGuide extends Guide {
 		return product.getProgram();
 	}
 
-	void link( DesignPane pane ) {
+	public void link( DesignPane pane ) {
 		// If the guide is linked before the design pane is loaded then these event
 		// handlers will populate the guide as the layers are created in the design
 		// pane.
