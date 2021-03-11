@@ -20,6 +20,10 @@ public class CadGeometry {
 		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
 	}
 
+	public static double normalizeAngle360( double angle ) {
+		return Math.toDegrees( Math.toRadians( angle ) );
+	}
+
 	public static Point3D rotate360( Point3D point, double angle ) {
 		return CadPoints.toFxPoint( Vector.rotate( CadPoints.asPoint( point ), Math.toRadians( angle ) ) );
 	}
@@ -48,8 +52,20 @@ public class CadGeometry {
 		return Geometry.lineLineAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ), CadPoints.asPoint( d ) );
 	}
 
+	public static Point3D ellipsePoint360( DesignEllipse ellipse, double angle ) {
+		return ellipsePoint360( ellipse.getOrigin(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.calcRotate(), angle );
+	}
+
 	public static Point3D ellipsePoint360( Point3D o, double xRadius, double yRadius, double rotate, double angle ) {
 		return CadPoints.toFxPoint( Geometry.ellipsePoint( CadPoints.asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), Math.toRadians( angle ) ) );
+	}
+
+	public static double ellipseAngle360( DesignEllipse ellipse, Point3D point ) {
+		return ellipseAngle360( ellipse.getOrigin(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.calcRotate(), point );
+	}
+
+	public static double ellipseAngle360( Point3D o, double xRadius, double yRadius, double rotate, Point3D point ) {
+	return Math.toDegrees( Geometry.ellipseAngle( CadPoints.asPoint(o), xRadius, yRadius, Math.toRadians( rotate ), CadPoints.asPoint( point )) );
 	}
 
 	public static double getSpin( Point3D a, Point3D b, Point3D c ) {

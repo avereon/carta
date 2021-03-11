@@ -1,10 +1,9 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.data.DesignCurve;
-import com.avereon.cartesia.data.DesignEllipse;
-import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
@@ -20,10 +19,10 @@ public class Trim {
 
 		if( trim instanceof DesignLine ) {
 			update( tool, (DesignLine)trim, trimPoint, edgePoint, intersections );
-		} else if( trim instanceof DesignEllipse ) {
-			//			arcToLine( tool, (DesignEllipse)trim, (DesignLine)edge, trimPoint, edgePoint );
+		} else if( trim instanceof DesignArc ) {
+			update( tool, (DesignArc)trim, trimPoint, edgePoint, intersections );
 		} else if( trim instanceof DesignCurve ) {
-			//			curveToLine( tool, (DesignCurve)trim, (DesignLine)edge, trimPoint, edgePoint );
+			update( tool, (DesignCurve)trim, trimPoint, edgePoint, intersections );
 		}
 	}
 
@@ -44,12 +43,39 @@ public class Trim {
 		}
 	}
 
-	public static void updateEllipse( DesignTool tool, DesignEllipse ellipse, Point3D trimPoint, Point3D point ) {
-		// TODO Trim.arcToLine()
+	private static void update( DesignTool tool, DesignArc arc, Point3D trimPoint, Point3D edgePoint, Collection<Point3D> xns ) {
+		updateArc( tool, arc, trimPoint, CadPoints.getNearestOnScreen( tool, edgePoint, xns ) );
+	}
+
+	public static void updateArc( DesignTool tool, DesignArc arc, Point3D trimPoint, Point3D point ) {
+		// Determine the start point
+		Point3D startPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() );
+		// Determine the extent point
+		Point3D extentPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() + arc.getExtent() );
+		// Determine if we are moving the start point or the extent point
+		Point3D n = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
+		double theta = CadGeometry.ellipseAngle360( arc, point );
+
+		try( Txn ignore = Txn.create() ) {
+			if( n == startPoint ) {
+				double delta = arc.getStart() - theta;
+				arc.setStart( theta );
+				arc.setExtent( arc.getExtent() + delta );
+			} else {
+				double extent = theta - arc.getStart();
+				arc.setExtent( extent % 360 );
+			}
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Unable to trim arc" );
+		}
+	}
+
+	private static void update( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D edgePoint, Collection<Point3D> xns ) {
+		updateCurve( tool, curve, trimPoint, CadPoints.getNearestOnScreen( tool, edgePoint, xns ) );
 	}
 
 	public static void updateCurve( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D point ) {
-		// TODO Trim.curveToLine()
+		// TODO Trim.curveToPoint???
 	}
 
 }

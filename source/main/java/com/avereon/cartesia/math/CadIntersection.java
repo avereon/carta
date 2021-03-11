@@ -91,7 +91,7 @@ public class CadIntersection {
 		if( !coplanar ) {
 			// Use the line-plane intersection method.
 			CadOrientation orientation = ellipse.getOrientation();
-			List<Point3D> points = linePlaneIntersection( line, orientation.getOrigin(), orientation.getNormal() );
+			List<Point3D> points = intersectLinePlane( line, orientation.getOrigin(), orientation.getNormal() );
 			return points.stream().findFirst().stream().filter( ellipse::isCoincident ).collect( Collectors.toList() );
 		}
 
@@ -120,22 +120,22 @@ public class CadIntersection {
 		return List.of();
 	}
 
-	public static List<Point3D> intersectEllipseLine( DesignEllipse a, DesignLine b ) {
-		// TODO CadIntersections.intersectEllipseLine()
-		return List.of();
-	}
+//	public static List<Point3D> intersectEllipseLine( DesignEllipse a, DesignLine b ) {
+//		// TODO CadIntersections.intersectEllipseLine()
+//		return List.of();
+//	}
+//
+//	public static List<Point3D> intersectCurveLine( DesignCurve a, DesignLine b ) {
+//		// TODO CadIntersections.intersectCurveLine()
+//		return List.of();
+//	}
+//
+//	public static List<Point3D> intersectEllipseEllipse( DesignEllipse a, DesignEllipse b ) {
+//		// TODO CadIntersections.intersectEllipseEllipse()
+//		return List.of();
+//	}
 
-	public static List<Point3D> intersectCurveLine( DesignCurve a, DesignLine b ) {
-		// TODO CadIntersections.intersectCurveLine()
-		return List.of();
-	}
-
-	public static List<Point3D> intersectEllipseEllipse( DesignEllipse a, DesignEllipse b ) {
-		// TODO CadIntersections.intersectEllipseEllipse()
-		return List.of();
-	}
-
-	public static List<Point3D> linePlaneIntersection( DesignLine line, Point3D planeOrigin, Point3D planeNormal ) {
+	public static List<Point3D> intersectLinePlane( DesignLine line, Point3D planeOrigin, Point3D planeNormal ) {
 		Intersection3D intersection = Intersection3D.intersectionLinePlane( CadPoints.asPoint( line.getOrigin() ), CadPoints.asPoint( line.getPoint() ), CadPoints.asPoint( planeOrigin ), CadPoints.asPoint( planeNormal ) );
 		return CadPoints.toFxPoints( intersection.getPoints() );
 	}
