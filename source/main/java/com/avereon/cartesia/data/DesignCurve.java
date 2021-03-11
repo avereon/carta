@@ -4,6 +4,9 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
+import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
 import java.util.Map;
@@ -15,6 +18,8 @@ public class DesignCurve extends DesignLine {
 	public static final String ORIGIN_CONTROL = "origin-control";
 
 	public static final String POINT_CONTROL = "point-control";
+
+	private static final System.Logger log = Log.get();
 
 	public DesignCurve() {
 		this( null, null, null, null );
@@ -75,10 +80,28 @@ public class DesignCurve extends DesignLine {
 		return map;
 	}
 
+	@Override
 	public DesignCurve updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setOriginControl( ParseUtil.parsePoint3D( (String)map.get( ORIGIN_CONTROL ) ) );
 		setPointControl( ParseUtil.parsePoint3D( (String)map.get( POINT_CONTROL ) ) );
+		return this;
+	}
+
+	@Override
+	public DesignShape updateFrom( DesignShape shape ) {
+		if( !(shape instanceof DesignCurve) ) return this;
+		DesignCurve curve = (DesignCurve)shape;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setOrigin( curve.getOrigin() );
+			this.setOriginControl( curve.getOriginControl() );
+			this.setPointControl( curve.getPointControl() );
+			this.setPoint( curve.getPoint() );
+		} catch( TxnException exception ) {
+			log.log( Log.WARN, "Unable to update curve" );
+		}
+
 		return this;
 	}
 

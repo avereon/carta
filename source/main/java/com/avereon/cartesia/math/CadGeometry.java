@@ -1,6 +1,7 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignCurve;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.curve.math.Geometry;
@@ -40,8 +41,28 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Geometry.midpoint( CadPoints.asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
 	}
 
-	public static double linePointDistance( Point3D a, Point3D b, Point3D c ) {
-		return Geometry.pointLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ) );
+	/**
+	 * Get the distance between a point and a line.
+	 *
+	 * @param p The point
+	 * @param a The first point on the line
+	 * @param b The other point on the line
+	 * @return The distance between the point and the line
+	 */
+	public static double pointLineDistance( Point3D p, Point3D a, Point3D b ) {
+		return Geometry.pointLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( p ) );
+	}
+
+	/**
+	 * Get the distance between a line and a point.
+	 *
+	 * @param a The first point on the line
+	 * @param b The other point on the line
+	 * @param p The point
+	 * @return The distance between the line and the point
+	 */
+	public static double linePointDistance( Point3D a, Point3D b, Point3D p ) {
+		return Geometry.pointLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( p ) );
 	}
 
 	public static double lineLineDistance( Point3D a, Point3D b, Point3D c, Point3D d ) {
@@ -65,7 +86,15 @@ public class CadGeometry {
 	}
 
 	public static double ellipseAngle360( Point3D o, double xRadius, double yRadius, double rotate, Point3D point ) {
-	return Math.toDegrees( Geometry.ellipseAngle( CadPoints.asPoint(o), xRadius, yRadius, Math.toRadians( rotate ), CadPoints.asPoint( point )) );
+		return Math.toDegrees( Geometry.ellipseAngle( CadPoints.asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), CadPoints.asPoint( point ) ) );
+	}
+
+	public static double getCurveParametricValue( DesignCurve curve, Point3D point ) {
+		return Double.NaN;
+	}
+
+	public static List<DesignCurve> curveSubdivide( DesignCurve curve, double t ) {
+		return List.of();
 	}
 
 	public static double getSpin( Point3D a, Point3D b, Point3D c ) {

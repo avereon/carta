@@ -81,6 +81,10 @@ public abstract class DesignShape extends DesignDrawable {
 		return this;
 	}
 
+	public DesignShape updateFrom( DesignShape shape ) {
+		return this;
+	}
+
 	@Override
 	public <T extends Node> Comparator<T> getComparator() {
 		return new NodeComparator<>( ORDER );
