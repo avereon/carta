@@ -118,4 +118,9 @@ public class DesignCurve extends DesignShape {
 		return this;
 	}
 
+	@Override
+	public String toString() {
+		return super.toString( ORIGIN, ORIGIN_CONTROL, POINT_CONTROL, POINT );
+	}
+
 }

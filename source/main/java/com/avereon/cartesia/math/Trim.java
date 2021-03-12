@@ -12,7 +12,6 @@ import javafx.geometry.Point3D;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class Trim {
 
@@ -20,8 +19,8 @@ public class Trim {
 
 	//   | L | A | C | P |
 	// L | X | X | X |   |
-	// A | X |   |   |   |
-	// C |   |   |   |   | // Can only trim
+	// A | X | - | - |   |
+	// C | X | - | - |   | // Can only trim
 	// P |   |   |   |   |
 
 	public static void trim( DesignTool tool, DesignShape trim, DesignShape edge, Point3D trimPoint, Point3D edgePoint ) {
@@ -85,42 +84,16 @@ public class Trim {
 	}
 
 	public static void updateCurve( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D point ) {
-		// Curves can only be trimmed, not extended
+		if( point == null ) return;
+
 		List<DesignCurve> curves = CadGeometry.curveSubdivide( curve, CadGeometry.getCurveParametricValue( curve, point ) );
+		if( curves.size() < 1 ) return;
 
 		// Now we have the two curves, we need to determine which one to use
+		double da = CadGeometry.distance(  tool.worldToScreen( curve.getOrigin() ), trimPoint );
+		double dd = CadGeometry.distance( tool.worldToScreen( curve.getPoint() ), trimPoint );
 
-		Point3D as = tool.worldToScreen( curve.getOrigin() );
-		Point3D bs = tool.worldToScreen( curve.getOriginControl() );
-		Point3D cs = tool.worldToScreen( curve.getPointControl() );
-		Point3D ds = tool.worldToScreen( curve.getPoint() );
-
-		double ab = CadGeometry.linePointDistance( as, bs, trimPoint );
-		double cd = CadGeometry.linePointDistance( cs, ds, trimPoint );
-
-		int index;
-		if( ab < cd ) {
-			if( curves.get( 0 ).getOrigin().equals( curve.getOrigin() ) || curves.get( 0 ).getPoint().equals( curve.getOrigin() ) ) {
-				index = 1;
-			} else {
-				index = 0;
-			}
-		} else if( cd < ab ) {
-			if( curves.get( 0 ).getOrigin().equals( curve.getPoint() ) || curves.get( 0 ).getPoint().equals( curve.getPoint() ) ) {
-				index = 1;
-			} else {
-				index = 0;
-			}
-		} else {
-			Point3D nearestEnd = CadPoints.getNearestOnScreen( tool, trimPoint, Set.of( curve.getOrigin(), curve.getPoint() ) );
-			if( curves.get( 0 ).getOrigin().equals( nearestEnd ) || curves.get( 0 ).getPoint().equals( nearestEnd ) ) {
-				index = 1;
-			} else {
-				index = 0;
-			}
-		}
-
-		curve.updateFrom( curves.get( index ) );
+		curve.updateFrom( curves.get( dd < da ? 0 : 1 ) );
 	}
 
 }

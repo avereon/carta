@@ -11,14 +11,17 @@ import javafx.geometry.Point3D;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.avereon.cartesia.math.CadPoints.asPoint;
+import static com.avereon.cartesia.math.CadPoints.toFxPoint;
+
 public class CadGeometry {
 
 	public static double angle360( Point3D a ) {
-		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ) ) );
+		return Math.toDegrees( Geometry.getAngle( asPoint( a ) ) );
 	}
 
 	public static double angle360( Point3D a, Point3D b ) {
-		return Math.toDegrees( Geometry.getAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
+		return Math.toDegrees( Geometry.getAngle( asPoint( a ), asPoint( b ) ) );
 	}
 
 	public static double normalizeAngle360( double angle ) {
@@ -26,19 +29,19 @@ public class CadGeometry {
 	}
 
 	public static Point3D rotate360( Point3D point, double angle ) {
-		return CadPoints.toFxPoint( Vector.rotate( CadPoints.asPoint( point ), Math.toRadians( angle ) ) );
+		return CadPoints.toFxPoint( Vector.rotate( asPoint( point ), Math.toRadians( angle ) ) );
 	}
 
 	public static double distance( Point3D a, Point3D b ) {
-		return Geometry.distance( CadPoints.asPoint( a ), CadPoints.asPoint( b ) );
+		return Geometry.distance( asPoint( a ), asPoint( b ) );
 	}
 
 	public static Point3D midpoint( Point3D a, Point3D b ) {
-		return CadPoints.toFxPoint( Geometry.midpoint( CadPoints.asPoint( a ), CadPoints.asPoint( b ) ) );
+		return CadPoints.toFxPoint( Geometry.midpoint( asPoint( a ), asPoint( b ) ) );
 	}
 
 	public static Point3D midpoint( Point3D origin, double xRadius, double yRadius, double rotate, double start, double extent ) {
-		return CadPoints.toFxPoint( Geometry.midpoint( CadPoints.asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
+		return CadPoints.toFxPoint( Geometry.midpoint( asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
 	}
 
 	/**
@@ -50,7 +53,7 @@ public class CadGeometry {
 	 * @return The distance between the point and the line
 	 */
 	public static double pointLineDistance( Point3D p, Point3D a, Point3D b ) {
-		return Geometry.pointLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( p ) );
+		return Geometry.pointLineDistance( asPoint( a ), asPoint( b ), asPoint( p ) );
 	}
 
 	/**
@@ -62,15 +65,15 @@ public class CadGeometry {
 	 * @return The distance between the line and the point
 	 */
 	public static double linePointDistance( Point3D a, Point3D b, Point3D p ) {
-		return Geometry.pointLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( p ) );
+		return Geometry.pointLineDistance( asPoint( a ), asPoint( b ), asPoint( p ) );
 	}
 
 	public static double lineLineDistance( Point3D a, Point3D b, Point3D c, Point3D d ) {
-		return Geometry.lineLineDistance( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ), CadPoints.asPoint( d ) );
+		return Geometry.lineLineDistance( asPoint( a ), asPoint( b ), asPoint( c ), asPoint( d ) );
 	}
 
 	public static double lineLineAngle( Point3D a, Point3D b, Point3D c, Point3D d ) {
-		return Geometry.lineLineAngle( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ), CadPoints.asPoint( d ) );
+		return Geometry.lineLineAngle( asPoint( a ), asPoint( b ), asPoint( c ), asPoint( d ) );
 	}
 
 	public static Point3D ellipsePoint360( DesignEllipse ellipse, double angle ) {
@@ -78,7 +81,7 @@ public class CadGeometry {
 	}
 
 	public static Point3D ellipsePoint360( Point3D o, double xRadius, double yRadius, double rotate, double angle ) {
-		return CadPoints.toFxPoint( Geometry.ellipsePoint( CadPoints.asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), Math.toRadians( angle ) ) );
+		return CadPoints.toFxPoint( Geometry.ellipsePoint( asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), Math.toRadians( angle ) ) );
 	}
 
 	public static double ellipseAngle360( DesignEllipse ellipse, Point3D point ) {
@@ -86,52 +89,60 @@ public class CadGeometry {
 	}
 
 	public static double ellipseAngle360( Point3D o, double xRadius, double yRadius, double rotate, Point3D point ) {
-		return Math.toDegrees( Geometry.ellipseAngle( CadPoints.asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), CadPoints.asPoint( point ) ) );
+		return Math.toDegrees( Geometry.ellipseAngle( asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), asPoint( point ) ) );
 	}
 
 	public static double getCurveParametricValue( DesignCurve curve, Point3D point ) {
-		return Double.NaN;
+		return Geometry.curveParametricValue( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), asPoint( point ) );
 	}
 
 	public static List<DesignCurve> curveSubdivide( DesignCurve curve, double t ) {
-		return List.of();
+		double[][][] curves = Geometry.curveSubdivide( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), t );
+		if( curves.length < 2 ) return List.of();
+
+		double[][] v0 = curves[ 0 ];
+		double[][] v1 = curves[ 1 ];
+		DesignCurve c0 = new DesignCurve( toFxPoint( v0[ 0 ] ), toFxPoint( v0[ 1 ] ), toFxPoint( v0[ 2 ] ), toFxPoint( v0[ 3 ] ) );
+		DesignCurve c1 = new DesignCurve( toFxPoint( v1[ 0 ] ), toFxPoint( v1[ 1 ] ), toFxPoint( v1[ 2 ] ), toFxPoint( v1[ 3 ] ) );
+
+		return List.of( c0, c1 );
 	}
 
 	public static double getSpin( Point3D a, Point3D b, Point3D c ) {
-		return Geometry.getSpin( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ) );
+		return Geometry.getSpin( asPoint( a ), asPoint( b ), asPoint( c ) );
 	}
 
 	public static Point3D getNormal( Point3D a, Point3D b, Point3D c ) {
-		return CadPoints.toFxPoint( Geometry.getNormal( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ) ) );
+		return CadPoints.toFxPoint( Geometry.getNormal( asPoint( a ), asPoint( b ), asPoint( c ) ) );
 	}
 
 	public static boolean areSamePoint( Point3D a, Point3D b ) {
-		return Geometry.areSamePoint( CadPoints.asPoint( a ), CadPoints.asPoint( b ) );
+		return Geometry.areSamePoint( asPoint( a ), asPoint( b ) );
 	}
 
 	public static boolean areCollinear( Point3D a, Point3D b, Point3D c ) {
-		return Geometry.areCollinear( CadPoints.asPoint( a ), CadPoints.asPoint( b ), CadPoints.asPoint( c ) );
+		return Geometry.areCollinear( asPoint( a ), asPoint( b ), asPoint( c ) );
 	}
 
 	public static boolean areCoplanar( CadOrientation orientation, Point3D... points ) {
 		double[][] ps = Arrays.stream( points ).map( CadPoints::asPoint ).toArray( double[][]::new );
-		return Geometry.areCoplanar( CadPoints.asPoint( orientation.getOrigin() ), CadPoints.asPoint( orientation.getNormal() ), ps );
+		return Geometry.areCoplanar( asPoint( orientation.getOrigin() ), asPoint( orientation.getNormal() ), ps );
 	}
 
 	public static Point3D polarToCartesian( Point3D polar ) {
-		return CadPoints.toFxPoint( Geometry.polarToCartesian( CadPoints.asPoint( polar ) ) );
+		return CadPoints.toFxPoint( Geometry.polarToCartesian( asPoint( polar ) ) );
 	}
 
 	public static Point3D polarToCartesian360( Point3D polar ) {
-		return CadPoints.toFxPoint( Geometry.polarDegreesToCartesian( CadPoints.asPoint( polar ) ) );
+		return CadPoints.toFxPoint( Geometry.polarDegreesToCartesian( asPoint( polar ) ) );
 	}
 
 	public static Point3D cartesianToPolar( Point3D point ) {
-		return CadPoints.toFxPoint( Geometry.cartesianToPolar( CadPoints.asPoint( point ) ) );
+		return CadPoints.toFxPoint( Geometry.cartesianToPolar( asPoint( point ) ) );
 	}
 
 	public static Point3D cartesianToPolar360( Point3D point ) {
-		return CadPoints.toFxPoint( Geometry.cartesianToPolarDegrees( CadPoints.asPoint( point ) ) );
+		return CadPoints.toFxPoint( Geometry.cartesianToPolarDegrees( asPoint( point ) ) );
 	}
 
 	public static DesignEllipse circleFromThreePoints( Point3D start, Point3D mid, Point3D end ) {
