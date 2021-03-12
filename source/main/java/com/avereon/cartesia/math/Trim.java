@@ -19,8 +19,8 @@ public class Trim {
 
 	//   | L | A | C | P |
 	// L | X | X | X |   |
-	// A | X | - | - |   |
-	// C | X | - | - |   | // Can only trim
+	// A | X |   |   |   |
+	// C | X |   |   |   | // Can only trim
 	// P |   |   |   |   |
 
 	public static void trim( DesignTool tool, DesignShape trim, DesignShape edge, Point3D trimPoint, Point3D edgePoint ) {

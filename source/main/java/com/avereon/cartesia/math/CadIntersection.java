@@ -21,9 +21,9 @@ public class CadIntersection {
 
 	//   | L | A | C | P |
 	// L | X | X | X |   |
-	// A | - |   |   |   |
-	// C | - | - |   |   | // Can only trim
-	// P | - | - | - |   |
+	// A |---|   |   |   |
+	// C |---|---|   |   | // Can only trim
+	// P |---|---|---|   |
 
 	public static List<Point3D> getIntersections( DesignShape a, DesignShape b ) {
 		if( a instanceof DesignLine ) {
@@ -120,8 +120,7 @@ public class CadIntersection {
 		// Transform the line points according to the eccentricity of the ellipse
 		Point3D p1 = targetToLocal.apply( line.getOrigin() );
 		Point3D p2 = targetToLocal.apply( line.getPoint() );
-		// FIXME Should this go to Intersection2D
-		List<Point3D> points = intersectLineCircle( new DesignLine( p1, p2 ), ellipse );
+		List<Point3D> points = toFxPoints( Intersection2D.intersectLineCircle( asPoint( p1 ), asPoint( p2 ), ellipse.getRadius() ).getPoints() );
 
 		// Transform the intersection points back to the world
 		return points.stream().map( localToTarget::apply ).collect( Collectors.toList() );
@@ -150,10 +149,6 @@ public class CadIntersection {
 	public static List<Point3D> intersectLinePlane( DesignLine line, Point3D planeOrigin, Point3D planeNormal ) {
 		Intersection3D intersection = Intersection3D.intersectionLinePlane( asPoint( line.getOrigin() ), asPoint( line.getPoint() ), asPoint( planeOrigin ), asPoint( planeNormal ) );
 		return toFxPoints( intersection.getPoints() );
-	}
-
-	private static List<Point3D> intersectLineCircle( DesignLine a, DesignEllipse b ) {
-		return toFxPoints( Intersection2D.intersectLineCircle( asPoint( a.getOrigin() ), asPoint( a.getPoint() ), b.getRadius() ).getPoints() );
 	}
 
 }
