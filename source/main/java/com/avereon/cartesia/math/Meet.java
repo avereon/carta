@@ -11,6 +11,12 @@ import javafx.geometry.Point3D;
 import java.util.Collection;
 import java.util.List;
 
+//   | L | A | C | P |
+// L | ✓ | ✓ |   |   |
+// A | - |   |   |   |
+// C | - | - |   |   |
+// P | - | - | - |   |
+
 public class Meet {
 
 	private static final System.Logger log = Log.get();

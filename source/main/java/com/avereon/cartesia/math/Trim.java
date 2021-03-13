@@ -13,15 +13,15 @@ import javafx.geometry.Point3D;
 import java.util.Collection;
 import java.util.List;
 
+//   | L | A | C | P |
+// L | ✓ | ✓ | ✓ |   |
+// A | ✓ | ✓ |   |   |
+// C | ✓ |   |   |   |
+// P |   |   |   |   |
+
 public class Trim {
 
 	private static final System.Logger log = Log.get();
-
-	//   | L | A | C | P |
-	// L | X | X | X |   |
-	// A | X | - | - |   |
-	// C | X | - | - |   | // Can only trim
-	// P |   |   |   |   |
 
 	public static void trim( DesignTool tool, DesignShape trim, DesignShape edge, Point3D trimPoint, Point3D edgePoint ) {
 		List<Point3D> intersections = CadIntersection.getIntersections( trim, edge );

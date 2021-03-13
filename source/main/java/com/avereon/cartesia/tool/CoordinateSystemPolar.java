@@ -82,7 +82,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 
 		// Check for conflicts
 		minorOffsetsR.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsR ) );
-		majorOffsetsR.removeIf( value -> value < Constants.DISTANCE_TOLERANCE );
+		majorOffsetsR.removeIf( value -> value < Constants.RESOLUTION_LENGTH );
 		minorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsA ) );
 		majorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsA ) );
 
