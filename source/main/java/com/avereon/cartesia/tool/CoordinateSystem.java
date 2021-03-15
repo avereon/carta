@@ -25,7 +25,7 @@ public interface CoordinateSystem {
 
 	static boolean isNearAny( Double value, Collection<Double> values ) {
 		for( Double check : values ) {
-			if( Math.abs( check - value ) <= Constants.DISTANCE_TOLERANCE ) return true;
+			if( Math.abs( check - value ) <= Constants.RESOLUTION_LENGTH ) return true;
 		}
 		return false;
 	}
