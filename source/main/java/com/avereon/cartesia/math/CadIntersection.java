@@ -129,7 +129,7 @@ public class CadIntersection {
 	}
 
 	public static List<Point3D> intersectLineCurve( DesignLine a, DesignCurve b ) {
-		Intersection2D xn = Intersection2D.intersectLineCurve( asPoint( a.getOrigin() ),
+		Intersection2D xn = Intersection2D.intersectLineBezier3( asPoint( a.getOrigin() ),
 			asPoint( a.getPoint() ),
 			asPoint( b.getOrigin() ),
 			asPoint( b.getOriginControl() ),
@@ -147,15 +147,14 @@ public class CadIntersection {
 		boolean coplanar = CadGeometry.areCoplanar( a.getOrientation(), b.getOrigin() );
 
 		if( !coplanar ) {
-//			// Use the plane-plane intersection method
-//			CadOrientation orientationB = a.getOrientation();
-//			CadOrientation orientationB = b.getOrientation();
-//			double[][] line = intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(),orientationB.getOrigin(), orientationB.getNormal() );
-//			return line;
+			//			// Use the plane-plane intersection method
+			//			CadOrientation orientationB = a.getOrientation();
+			//			CadOrientation orientationB = b.getOrientation();
+			//			double[][] line = intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(),orientationB.getOrigin(), orientationB.getNormal() );
+			//			return line;
 		}
 
-		Intersection2D xn = Intersection2D.intersectEllipseEllipse(
-			asPoint( a.getOrigin() ),
+		Intersection2D xn = Intersection2D.intersectEllipseEllipse( asPoint( a.getOrigin() ),
 			a.getXRadius(),
 			a.getYRadius(),
 			Math.toRadians( a.calcRotate() ),
