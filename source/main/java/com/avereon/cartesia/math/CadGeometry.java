@@ -177,7 +177,7 @@ public class CadGeometry {
 		Point3D d = c.add( v );
 
 		List<Point3D> xns = CadIntersection.intersectLineLine( new DesignLine( a, b ), new DesignLine( c, d ) );
-		if( xns.isEmpty() ) return null;
+		if( xns.isEmpty() ) xns = List.of( end );
 
 		Point3D origin = xns.get( 0 );
 		double radius = origin.distance( mid );

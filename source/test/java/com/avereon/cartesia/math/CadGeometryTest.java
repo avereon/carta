@@ -5,9 +5,8 @@ import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.match.Near.near;
-import static org.hamcrest.Matchers.*;
-
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 public class CadGeometryTest {
 
@@ -41,7 +40,6 @@ public class CadGeometryTest {
 		assertThat( arc.getRadius(), is( 1.0 ) );
 		assertThat( arc.getStart(), is( 90.0 ) );
 		assertThat( arc.getExtent(), is( -180.0 ) );
-
 	}
 
 	@Test
@@ -101,7 +99,6 @@ public class CadGeometryTest {
 		assertThat( arc.getRadius(), is( 5.0 ) );
 		assertThat( arc.getStart(), is( 180 - a ) );
 		assertThat( arc.getExtent(), near( c ) );
-
 	}
 
 	@Test
@@ -128,6 +125,16 @@ public class CadGeometryTest {
 		assertThat( arc.getRadius(), near( 1.25 ) );
 		assertThat( arc.getStart(), near( CadGeometry.cartesianToPolar360( new Point3D( -1, -0.75, 0 ) ).getY() ) );
 		assertThat( arc.getExtent(), near( extent ) );
+	}
+
+	@Test
+	void testArcFromThreePointsWithSameMidAndEndPoints() {
+		DesignArc arc;
+		arc = CadGeometry.arcFromThreePoints( new Point3D( -1, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 0, 1, 0 ) );
+		assertThat( arc.getOrigin(), is( new Point3D( 0, 1, 0 ) ) );
+		assertThat( arc.getRadius(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( -135.0 ) );
+		assertThat( arc.getExtent(), is( 135.0 ) );
 	}
 
 }

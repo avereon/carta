@@ -168,13 +168,30 @@ public class CadIntersection {
 	}
 
 	public static List<Point3D> intersectEllipseCurve( DesignEllipse a, DesignCurve b ) {
-		// TODO CadIntersections.intersectEllipseCurve()
-		return List.of();
+		Intersection2D xn = Intersection2D.intersectEllipseBezier3( asPoint( a.getOrigin() ),
+			a.getXRadius(),
+			a.getYRadius(),
+			Math.toRadians( a.calcRotate() ),
+			asPoint( b.getOrigin() ),
+			asPoint( b.getOriginControl() ),
+			asPoint( b.getPointControl() ),
+			asPoint( b.getPoint() )
+		);
+		return toFxPoints( xn.getPoints() );
 	}
 
 	public static List<Point3D> intersectCurveCurve( DesignCurve a, DesignCurve b ) {
-		// TODO CadIntersections.intersectCurveCurve()
-		return List.of();
+		Intersection2D xn = Intersection2D.intersectBezier3Bezier3(
+			asPoint( a.getOrigin() ),
+			asPoint( a.getOriginControl() ),
+			asPoint( a.getPointControl() ),
+			asPoint( a.getPoint() ),
+			asPoint( b.getOrigin() ),
+			asPoint( b.getOriginControl() ),
+			asPoint( b.getPointControl() ),
+			asPoint( b.getPoint() )
+		);
+		return toFxPoints( xn.getPoints() );
 	}
 
 	public static List<Point3D> intersectLinePlane( DesignLine line, Point3D planeOrigin, Point3D planeNormal ) {
