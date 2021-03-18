@@ -44,28 +44,24 @@ public class CadTransform {
 		this.transform = transform;
 	}
 
-	public boolean isNegate() {
-		return transform.isNegate();
-	}
-
-	public void setNegate( boolean negate ) {
-		transform.setNegate( negate );
+	public boolean isMirror() {
+		return transform.isMirror();
 	}
 
 	public Point3D apply( Point3D vector ) {
-		return CadPoints.toFxPoint( transform.times( CadPoints.asPoint( vector ) ) );
+		return CadPoints.toFxPoint( transform.apply( CadPoints.asPoint( vector ) ) );
 	}
 
 	public Point3D applyDirection( Point3D vector ) {
-		return CadPoints.toFxPoint( transform.timesDirection( CadPoints.asPoint( vector ) ) );
+		return CadPoints.toFxPoint( transform.applyDirection( CadPoints.asPoint( vector ) ) );
 	}
 
 	public Point3D applyXY( Point3D vector ) {
-		return CadPoints.toFxPoint( transform.timesXY( CadPoints.asPoint( vector ) ) );
+		return CadPoints.toFxPoint( transform.applyXY( CadPoints.asPoint( vector ) ) );
 	}
 
 	public double applyZ( Point3D vector ) {
-		return transform.timesZ( CadPoints.asPoint( vector ) );
+		return transform.applyZ( CadPoints.asPoint( vector ) );
 	}
 
 	public CadTransform combine( CadTransform transform ) {
