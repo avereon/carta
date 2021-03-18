@@ -134,7 +134,7 @@ public class CadGeometryTest {
 		assertThat( arc.getOrigin(), is( new Point3D( 0, 1, 0 ) ) );
 		assertThat( arc.getRadius(), is( 0.0 ) );
 		assertThat( arc.getStart(), is( -135.0 ) );
-		assertThat( arc.getExtent(), is( 135.0 ) );
+		assertThat( arc.getExtent(), is( -135.0 ) );
 	}
 
 }
