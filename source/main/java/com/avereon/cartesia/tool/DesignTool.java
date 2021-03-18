@@ -427,6 +427,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@Override
+	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
+		showPropertiesPage( getCurrentLayer() );
+	}
+
+	@Override
 	protected void activate() throws ToolException {
 		super.activate();
 		if( isReady() ) {
