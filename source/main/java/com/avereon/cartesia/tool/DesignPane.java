@@ -614,14 +614,14 @@ public class DesignPane extends StackPane {
 
 	private boolean isContained( Shape selector, Shape shape ) {
 		// This first test is an optimization to determine if the the accurate test needs to be used
-		if( !selector.getLayoutBounds().intersects( shape.getLayoutBounds() ) ) return false;
+		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is contained
 		return ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
 	}
 
 	private boolean isIntersecting( Shape selector, Shape shape ) {
 		// This first test is an optimization to determine if the the accurate test needs to be used
-		if( !selector.getLayoutBounds().intersects( shape.getLayoutBounds() ) ) return false;
+		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is intersecting
 		return !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
 	}
