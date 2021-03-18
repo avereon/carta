@@ -34,8 +34,7 @@ public class DesignEllipseView extends DesignShapeView {
 		DesignEllipse ellipse = getDesignEllipse();
 
 		Shape shape = new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
-
-		shape.setRotate( ellipse.calcRotate() );
+		updateRotate( ellipse, shape );
 		shape.setStrokeWidth( ellipse.calcDrawWidth() );
 		shape.setStroke( ellipse.calcDrawPaint() );
 		shape.setFill( ellipse.calcFillPaint() );
@@ -64,6 +63,8 @@ public class DesignEllipseView extends DesignShapeView {
 		getDesignShape().register( DesignEllipse.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((Ellipse)getShape()).setCenterX( designEllipse.getOrigin().getX() );
 			((Ellipse)getShape()).setCenterY( designEllipse.getOrigin().getY() );
+			// Needed for move to work correctly
+			updateRotate( designEllipse, getShape() );
 		} ) );
 		getDesignShape().register( DesignEllipse.X_RADIUS, xRadiusHandler = e -> Fx.run( () -> {
 			((Ellipse)getShape()).setRadiusX( designEllipse.getXRadius() );
@@ -72,7 +73,7 @@ public class DesignEllipseView extends DesignShapeView {
 			((Ellipse)getShape()).setRadiusY( designEllipse.getYRadius() );
 		} ) );
 		getDesignShape().register( DesignEllipse.ROTATE, rotateHandler = e -> Fx.run( () -> {
-			getShape().setRotate( designEllipse.calcRotate() );
+			updateRotate( designEllipse, getShape() );
 		} ) );
 	}
 
