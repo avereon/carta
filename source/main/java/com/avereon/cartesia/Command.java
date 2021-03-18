@@ -144,8 +144,10 @@ public class Command {
 	private void addPreview( DesignTool tool, List<DesignShape> shapeList ) {
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
-		shapeList.forEach( s -> tool.getCurrentLayer().addShape( s ) );
-		shapeList.forEach( s -> s.setPreview( true ) );
+		shapeList.forEach( s -> {
+			s.setPreview( true );
+			tool.getCurrentLayer().addShape( s );
+		} );
 	}
 
 	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
@@ -153,23 +155,26 @@ public class Command {
 	}
 
 	private void removePreview( DesignTool tool, List<DesignShape> shapeList ) {
-		shapeList.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
-		shapeList.forEach( s -> s.setPreview( false ) );
+		shapeList.forEach( s -> {
+			tool.getCurrentLayer().removeShape( s );
+			s.setPreview( false );
+		} );
 		preview.removeAll( shapeList );
 	}
 
+	@Deprecated
 	protected Object commitPreview( DesignTool tool ) {
 		List<DesignShape> shapes = new ArrayList<>( preview );
 
 		// Clear preview enables capturing undo changes again
-		resetPreview( tool );
+		clearPreview( tool );
 
 		// Add the shapes to the layer like normal
 		shapes.forEach( s -> tool.getCurrentLayer().addShape( s ) );
 		return COMPLETE;
 	}
 
-	protected void resetPreview( DesignTool tool ) {
+	protected void clearPreview( DesignTool tool ) {
 		// The shapes have to be removed before capturing undo changes again
 		removePreview( tool, preview );
 		tool.getAsset().setCaptureUndoChanges( true );

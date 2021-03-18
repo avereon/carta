@@ -16,17 +16,14 @@ public class Move extends EditCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
-		// TODO Implement Move.execute()
-
 		// Ask for an anchor point
-		// Step 1
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
 
-		// Make a shadow copy of the selected components to show them as a preview
+		// TODO Make a shadow copy of the selected components to show them as a preview
 
 		// Ask for a target point
 		if( parameters.length < 2 ) {
@@ -37,7 +34,7 @@ public class Move extends EditCommand {
 		}
 
 		// Clear the preview
-		resetPreview( tool );
+		clearPreview( tool );
 
 		// Move the selected shapes
 		moveShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );

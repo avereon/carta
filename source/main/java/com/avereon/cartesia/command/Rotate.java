@@ -6,28 +6,39 @@ import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class Copy extends EditCommand{
+public class Rotate extends EditCommand {
+
 	private DesignLine previewLine;
 
-	private Point3D anchor;
+	private Point3D center;
+
+	private Point3D start;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
-		// Ask for an anchor point
+		// Ask for a center point
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "anchor" );
+			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
 
-		// TODO Make a shadow copy of the selected components to show as a preview
+		// TODO Make a shadow copy of the selected components to show them as a preview
+
+		// Ask for a start point
+		if( parameters.length < 2 ) {
+			center = asPoint( context, parameters[ 0 ] );
+			previewLine.setPoint( center ).setOrigin( center );
+			promptForPoint( context, tool, "start" );
+			return INCOMPLETE;
+		}
 
 		// Ask for a target point
-		if( parameters.length < 2 ) {
-			anchor = asPoint( context, parameters[ 0 ] );
-			previewLine.setPoint( anchor ).setOrigin( anchor );
+		if( parameters.length < 3 ) {
+			start = asPoint( context, parameters[ 0 ] );
+			previewLine.setPoint( start ).setOrigin( center );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
@@ -35,8 +46,8 @@ public class Copy extends EditCommand{
 		// Clear the preview
 		clearPreview( tool );
 
-		// Copy the selected shapes
-		copyShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+		// Move the selected shapes
+		//rotateShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 
 		return COMPLETE;
 	}
@@ -52,6 +63,7 @@ public class Copy extends EditCommand{
 					previewLine.setPoint( point );
 				}
 				case 2 -> previewLine.setPoint( point );
+				case 3 -> previewLine.setPoint( point );
 			}
 		}
 	}
