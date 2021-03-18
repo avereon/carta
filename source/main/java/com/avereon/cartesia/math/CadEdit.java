@@ -70,15 +70,12 @@ public class CadEdit {
 	protected static void updateCurve( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D point ) {
 		if( point == null ) return;
 
-		// FIXME This does not give an accurate result
 		double t = CadGeometry.getCurveParametricValue( curve, point );
-		System.out.println( "t="+t);
-
 		List<DesignCurve> curves = CadGeometry.curveSubdivide( curve, t );
 		if( curves.size() < 1 ) return;
 
 		// Now we have the two curves, we need to determine which one to use
-		double da = CadGeometry.distance(  tool.worldToScreen( curve.getOrigin() ), trimPoint );
+		double da = CadGeometry.distance( tool.worldToScreen( curve.getOrigin() ), trimPoint );
 		double dd = CadGeometry.distance( tool.worldToScreen( curve.getPoint() ), trimPoint );
 
 		curve.updateFrom( curves.get( dd < da ? 0 : 1 ) );

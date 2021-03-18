@@ -184,14 +184,13 @@ public class CadGeometry {
 		double startAngle = CadGeometry.angle360( start.subtract( origin ) );
 		double spin = getSpin( start, mid, end );
 
-		// This will be the smaller angle
 		double extent = CadGeometry.angle360( start.subtract( origin ), end.subtract( origin ) );
 		double angle = Math.abs( extent );
 		double sweep = Math.signum( extent );
 
 		// If spin and sweep are in the same direction but the angle is small...add to the angle
-		if( spin > 0 && sweep > 0 && angle < 180 ) extent = sweep * (360 - angle);
-		if( spin < 0 && sweep < 0 && angle < 180 ) extent = sweep * (360 - angle);
+		if( spin > 0 && sweep < 0 && angle < 180 ) extent = sweep * (360 - angle);
+		if( spin < 0 && sweep > 0 && angle < 180 ) extent = sweep * (360 - angle);
 
 		// If spin and sweep are not in the same direction invert the extent
 		if( spin != sweep ) extent *= -1;
