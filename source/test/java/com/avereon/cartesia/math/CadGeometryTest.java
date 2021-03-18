@@ -130,11 +130,11 @@ public class CadGeometryTest {
 	@Test
 	void testArcFromThreePointsWithSameMidAndEndPoints() {
 		DesignArc arc;
-		arc = CadGeometry.arcFromThreePoints( new Point3D( -1, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 0, 1, 0 ) );
-		assertThat( arc.getOrigin(), is( new Point3D( 0, 1, 0 ) ) );
-		assertThat( arc.getRadius(), is( 0.0 ) );
-		assertThat( arc.getStart(), is( -135.0 ) );
-		assertThat( arc.getExtent(), is( -135.0 ) );
+		arc = CadGeometry.arcFromThreePoints( new Point3D( -1, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 1, 0, 0 ) );
+		assertThat( arc.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
+		assertThat( arc.getRadius(), is( 1.0 ) );
+		assertThat( arc.getStart(), is( 180.0 ) );
+		assertThat( arc.getExtent(), is( -180.0 ) );
 	}
 
 }
