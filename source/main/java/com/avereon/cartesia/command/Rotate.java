@@ -12,7 +12,7 @@ public class Rotate extends EditCommand {
 
 	private Point3D center;
 
-	private Point3D start;
+	private Point3D anchor;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
@@ -31,14 +31,14 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 2 ) {
 			center = asPoint( context, parameters[ 0 ] );
 			previewLine.setPoint( center ).setOrigin( center );
-			promptForPoint( context, tool, "start" );
+			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
-			start = asPoint( context, parameters[ 0 ] );
-			previewLine.setPoint( start ).setOrigin( center );
+			anchor = asPoint( context, parameters[ 0 ] );
+			previewLine.setPoint( anchor ).setOrigin( center );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
@@ -47,7 +47,7 @@ public class Rotate extends EditCommand {
 		clearPreview( tool );
 
 		// Move the selected shapes
-		//rotateShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+		rotateShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 
 		return COMPLETE;
 	}

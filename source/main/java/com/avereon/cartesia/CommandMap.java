@@ -97,6 +97,7 @@ public class CommandMap {
 		// TODO Need to finish some meet interactions
 		add( product, "meet", Meet.class );
 		add( product, "move", Move.class );
+		//add( product, "radial-copy", RadialCopy.class );
 		add( product, "rotate", Rotate.class );
 		//add( product, "scale", Scale.class );
 		//add( product, "stretch", Stretch.class );

@@ -24,10 +24,21 @@ public abstract class EditCommand extends Command {
 		}
 	}
 
-	protected void copyShapes( List<DesignShape> shapes, Point3D anchor, Point3D target ) throws CommandException {
+	protected void copyShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) throws CommandException {
 		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getParentLayer ) );
 		Set<DesignShape> clones =  cloneLayers.keySet();
 		moveShapes( clones, anchor, target );
+		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
+	}
+
+	protected void rotateShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
+		// TODO Implement EditCommand.rotateShapes()
+	}
+
+	protected void radialCopyShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
+		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getParentLayer ) );
+		Set<DesignShape> clones =  cloneLayers.keySet();
+		rotateShapes( clones, center, anchor, target );
 		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
 	}
 
