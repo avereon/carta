@@ -193,40 +193,12 @@ public class CommandContext {
 		this.anchor = anchor;
 	}
 
-	public String calcDrawWidth() throws Exception {
-		// FIXME Not sure I can get the layer or design width from here without some context
-		String width = "0.05";
-		//if( width == null ) width = getPenContext().getDrawWidth();
-		//if( width == null ) width = getCurrentLayer().getDrawWidth();
-		//if( width == null ) width = getDesign().getDrawWidth();
-		return width;
-	}
-
-	void setDrawWidth( String width ) {
-		// TODO Set the command context draw width
-	}
-
-	public String calcDrawPaint() {
-		// FIXME Not sure I can get the layer or design color from here without some context
-		return "#ff0000ff";
-	}
-
-	void setDrawPaint( String paint ) {
-		// TODO Set the command context draw paint
-	}
-
-	public String calcFillPaint() {
-		// FIXME Not sure I can get the layer or design color from here without some context
-		return "#ff0000ff";
-	}
-
-	void setFillPaint( String paint ) {
-		// TODO Set the command context fill paint
-	}
-
 	private void reset() {
-		if( Fx.isFxThread() ) getCommandPrompt().clear();
 		setInputMode( CommandContext.Input.NONE );
+		Fx.run( () -> {
+			getLastActiveDesignTool().clearSelected();
+			getCommandPrompt().clear();
+		});
 	}
 
 	public Input getInputMode() {
