@@ -110,7 +110,7 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().register( DesignShape.DRAW_CAP, drawCapHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_PATTERN, drawPatternHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( this::updateShapeValues ) );
-		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() ) ) );
+		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() != null && (Boolean)e.getNewValue() ) ) );
 	}
 
 	@Override

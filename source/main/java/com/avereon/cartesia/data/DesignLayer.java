@@ -50,9 +50,11 @@ public class DesignLayer extends DesignDrawable {
 
 		setDrawPaint( DEFAULT_DRAW_PAINT );
 		setDrawWidth( DEFAULT_DRAW_WIDTH );
-		setDrawPattern( DEFAULT_DRAW_PATTERN);
+		setDrawPattern( DEFAULT_DRAW_PATTERN );
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
+
+		setSetModifyFilter( SHAPES, n -> n.getValue( DesignShape.PREVIEW ) == null );
 	}
 
 	/**

@@ -53,7 +53,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public DesignShape setSelected( boolean selected ) {
-		setValue( SELECTED, selected );
+		setValue( SELECTED, selected ? true : null );
 		return this;
 	}
 
