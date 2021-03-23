@@ -5,8 +5,8 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
@@ -15,10 +15,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -141,7 +138,7 @@ public class Command {
 		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
-	private void addPreview( DesignTool tool, List<DesignShape> shapeList ) {
+	private void addPreview( DesignTool tool, Collection<DesignShape> shapeList ) {
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> {
@@ -154,7 +151,7 @@ public class Command {
 		removePreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
-	private void removePreview( DesignTool tool, List<DesignShape> shapeList ) {
+	private void removePreview( DesignTool tool, Collection<DesignShape> shapeList ) {
 		shapeList.forEach( s -> {
 			tool.getCurrentLayer().removeShape( s );
 			s.setPreview( false );
