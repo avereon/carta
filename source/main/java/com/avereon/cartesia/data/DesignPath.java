@@ -17,4 +17,9 @@ public class DesignPath extends DesignShape {
 		return Double.NaN;
 	}
 
+	@Override
+	public DesignPath cloneShape() {
+		return new DesignPath().copyFrom( this );
+	}
+
 }

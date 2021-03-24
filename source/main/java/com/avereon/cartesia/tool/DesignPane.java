@@ -280,7 +280,7 @@ public class DesignPane extends StackPane {
 	}
 
 	DesignPaneLayer getShapeLayer( DesignShape shape ) {
-		return layerMap.get( shape.getParentLayer() ).getLayer();
+		return layerMap.get( shape.getLayer() ).getLayer();
 	}
 
 	Pane getReferenceLayer() {
@@ -399,7 +399,7 @@ public class DesignPane extends StackPane {
 		Fx.run( () -> {
 			//System.err.println( "Layer geometry added for " + view.getDesignLayer() );
 
-			DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getParentLayer() ).getLayer();
+			DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
 			DesignPaneLayer layer = view.getLayer();
 			parent.getChildren().add( layer );
 			doReorderLayer( parent );

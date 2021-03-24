@@ -73,7 +73,7 @@ public class DesignCurve extends DesignShape {
 	}
 
 	@Override
-	public DesignCurve clone() {
+	public DesignCurve cloneShape() {
 		return new DesignCurve().copyFrom( this );
 	}
 

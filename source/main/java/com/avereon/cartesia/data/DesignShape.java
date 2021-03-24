@@ -62,6 +62,12 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public DesignShape clone() {
+		DesignShape shape = cloneShape();
+		this.getLayer().addShape( shape );
+		return shape;
+	}
+
+	protected DesignShape cloneShape() {
 		throw new UnsupportedOperationException();
 	}
 

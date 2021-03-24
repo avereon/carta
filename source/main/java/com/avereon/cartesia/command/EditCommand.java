@@ -29,7 +29,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void copyShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) throws CommandException {
-		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getParentLayer ) );
+		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getLayer ) );
 		Set<DesignShape> clones = cloneLayers.keySet();
 		moveShapes( clones, anchor, target );
 		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );

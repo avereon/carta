@@ -58,12 +58,12 @@ public class DesignToolLayersGuide extends Guide {
 
 		log.log( Log.DEBUG, "Move layer " + sourceLayer + " to " + targetLayer + " " + drop );
 
-		sourceLayer.getParentLayer().removeLayer( sourceLayer );
+		sourceLayer.getLayer().removeLayer( sourceLayer );
 
 		if( drop == Drop.CHILD ) {
 			targetLayer.addLayer( sourceLayer );
 		} else {
-			targetLayer.getParentLayer().addLayerBeforeOrAfter( sourceLayer, targetLayer, drop == Drop.BELOW );
+			targetLayer.getLayer().addLayerBeforeOrAfter( sourceLayer, targetLayer, drop == Drop.BELOW );
 		}
 	}
 
@@ -90,7 +90,7 @@ public class DesignToolLayersGuide extends Guide {
 	}
 
 	private void addLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
-		GuideNode parentGuideNode = layerNodes.get( designLayer.getParentLayer() );
+		GuideNode parentGuideNode = layerNodes.get( designLayer.getLayer() );
 		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer", designLayer.getOrder() );
 
 		addNode( parentGuideNode, layerGuideNode );

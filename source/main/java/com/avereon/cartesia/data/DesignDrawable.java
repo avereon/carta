@@ -61,7 +61,7 @@ public abstract class DesignDrawable extends DesignNode {
 		setFillPaint( MODE_LAYER );
 	}
 
-	public DesignLayer getParentLayer() {
+	public DesignLayer getLayer() {
 		return getParent();
 	}
 
@@ -140,7 +140,7 @@ public abstract class DesignDrawable extends DesignNode {
 		String paint = getFillPaint();
 		if( paint == null ) return null;
 		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
-		return getParentLayer().calcFillPaint();
+		return getLayer().calcFillPaint();
 	}
 
 	public String getFillPaint() {
@@ -156,7 +156,7 @@ public abstract class DesignDrawable extends DesignNode {
 	@SuppressWarnings( "unchecked" )
 	public <T> T getValue( String key ) {
 		return switch( key ) {
-			case VIRTUAL_LAYER -> (T)getParentLayer().getId();
+			case VIRTUAL_LAYER -> (T)getLayer().getId();
 			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
 			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
 			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
@@ -212,7 +212,7 @@ public abstract class DesignDrawable extends DesignNode {
 		String newLayerId = String.valueOf( newValue );
 		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
 
-		DesignLayer oldLayer = getParentLayer();
+		DesignLayer oldLayer = getLayer();
 		try {
 			Txn.create();
 			DesignLayer newLayer = getDesign().findLayerById( newLayerId );

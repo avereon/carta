@@ -29,7 +29,7 @@ public class LayerCreate extends LayerCommand {
 	 * @param yy The new layer
 	 */
 	DesignLayer addLayer( DesignLayer currentLayer, DesignLayer yy ) {
-		return currentLayer.getParentLayer().addLayer( yy );
+		return currentLayer.getLayer().addLayer( yy );
 	}
 
 }

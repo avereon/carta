@@ -134,6 +134,10 @@ public class Command {
 		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
 	}
 
+	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes ) {
+		return shapes.stream().map( DesignShape::clone ).collect( Collectors.toList() );
+	}
+
 	protected void addPreview( DesignTool tool, DesignShape... shapes ) {
 		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}

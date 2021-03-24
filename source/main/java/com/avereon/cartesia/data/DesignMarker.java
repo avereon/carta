@@ -83,7 +83,7 @@ public class DesignMarker extends DesignShape {
 	}
 
 	@Override
-	public DesignMarker clone() {
+	public DesignMarker cloneShape() {
 		return new DesignMarker().copyFrom( this );
 	}
 

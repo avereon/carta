@@ -222,7 +222,7 @@ public abstract class DesignTool extends GuidedTool {
 			// Show the specified layer and parent layers
 			while( !layer.isRootLayer() ) {
 				designPane.setLayerVisible( layer, visible );
-				layer = layer.getParentLayer();
+				layer = layer.getLayer();
 			}
 		}
 	}
@@ -598,7 +598,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void clearSelected() {
-		selectedShapes().clear();
+		getSelectedShapes().clear();
 	}
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
@@ -722,7 +722,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
-		runTask( () -> shapes.forEach( s -> s.getParentLayer().removeShape( s ) ) );
+		runTask( () -> shapes.forEach( s -> s.getLayer().removeShape( s ) ) );
 		selectedShapes.clear();
 	}
 

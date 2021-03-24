@@ -9,7 +9,7 @@ public class LayerDelete extends LayerCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
 		DesignLayer layer = tool.getCurrentLayer();
-		layer.getParentLayer().removeLayer( layer );
+		layer.getLayer().removeLayer( layer );
 		return COMPLETE;
 	}
 

@@ -84,10 +84,10 @@ public class DesignLayer extends DesignDrawable {
 	public String getFullName() {
 		if( isRootLayer() ) {
 			return "/";
-		} else if( getParentLayer().isRootLayer() ) {
+		} else if( getLayer().isRootLayer() ) {
 			return getName();
 		}
-		return getParentLayer().getFullName() + "/" + getName();
+		return getLayer().getFullName() + "/" + getName();
 	}
 
 	public DesignUnit getDesignUnit() {
@@ -243,7 +243,7 @@ public class DesignLayer extends DesignDrawable {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
-		map.put( SHAPES, getShapes().stream().collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
+		map.put( SHAPES, getShapes().stream().filter( s -> !s.isPreview() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
 		return map;
 	}
 

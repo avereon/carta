@@ -45,7 +45,7 @@ public class DesignLine extends DesignShape {
 	}
 
 	@Override
-	public DesignLine clone() {
+	public DesignLine cloneShape() {
 		return new DesignLine().copyFrom( this );
 	}
 

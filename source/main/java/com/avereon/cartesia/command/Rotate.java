@@ -1,14 +1,11 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
-
-import java.util.stream.Collectors;
 
 public class Rotate extends EditCommand {
 
@@ -31,9 +28,6 @@ public class Rotate extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		// TODO Make a shadow copy of the selected components to show them as a preview
-		addPreview( tool, tool.getSelectedShapes().stream().map( DesignShape::clone ).collect( Collectors.toSet() ) );
-
 		// Ask for a start point
 		if( parameters.length < 2 ) {
 			center = asPoint( context, parameters[ 0 ] );
@@ -44,6 +38,9 @@ public class Rotate extends EditCommand {
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
+			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
+			tool.clearSelected();
+			// TODO Clear selected at this point
 			anchor = asPoint( context, parameters[ 1 ] );
 			previewLine.setPoint( anchor ).setOrigin( center );
 			promptForPoint( context, tool, "target" );

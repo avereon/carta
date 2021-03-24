@@ -163,7 +163,7 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private void doSetSelected( boolean selected ) {
-		if( ((DesignDrawable)getDesignNode()).getParentLayer() == null ) return;
+		if( ((DesignDrawable)getDesignNode()).getLayer() == null ) return;
 
 		Paint fillPaint = getDesignShape().calcFillPaint();
 		Paint selectedFillPaint = fillPaint == null ? null : getPane().getSelectFillPaint();
