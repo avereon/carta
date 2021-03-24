@@ -57,6 +57,21 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
+	@Override
+	public boolean isModifiedBySelf() {
+		return super.isModifiedBySelf();
+	}
+
+	@Override
+	public boolean isModifiedByValue() {
+		return super.isModifiedByValue();
+	}
+
+	@Override
+	public boolean isModifiedByChild() {
+		return super.isModifiedByChild();
+	}
+
 	public synchronized DesignContext getDesignContext( ProgramProduct product ) {
 		if( context == null ) context = new DesignContext( product, this );
 		return context;

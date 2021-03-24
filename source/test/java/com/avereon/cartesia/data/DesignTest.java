@@ -5,7 +5,8 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.contains;
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class DesignTest {
@@ -53,13 +54,16 @@ public class DesignTest {
 		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
 		assertThat( design.isModified(), is( false ) );
 
-		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
+		DesignLayer layer = new DesignLayer().setName( "test-layer" );
 		design.getRootLayer().addLayer( layer );
 		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( true ) );
 
 		design.getRootLayer().removeLayer( layer );
 		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
+		assertThat( design.isModifiedBySelf(), is( false ) );
+		assertThat( design.isModifiedByValue(), is( false ) );
+		assertThat( design.isModifiedByChild(), is( false ) );
 		assertThat( design.isModified(), is( false ) );
 	}
 
