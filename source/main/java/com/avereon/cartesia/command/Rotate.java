@@ -9,7 +9,7 @@ import javafx.scene.input.MouseEvent;
 
 public class Rotate extends EditCommand {
 
-	private DesignLine previewLine;
+	private DesignLine referenceLine;
 
 	private Point3D center;
 
@@ -23,7 +23,7 @@ public class Rotate extends EditCommand {
 
 		// Ask for a center point
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
@@ -31,7 +31,7 @@ public class Rotate extends EditCommand {
 		// Ask for a start point
 		if( parameters.length < 2 ) {
 			center = asPoint( context, parameters[ 0 ] );
-			previewLine.setPoint( center ).setOrigin( center );
+			referenceLine.setPoint( center ).setOrigin( center );
 			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
@@ -39,19 +39,21 @@ public class Rotate extends EditCommand {
 		// Ask for a target point
 		if( parameters.length < 3 ) {
 			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
-			tool.clearSelected();
-			// TODO Clear selected at this point
 			anchor = asPoint( context, parameters[ 1 ] );
-			previewLine.setPoint( anchor ).setOrigin( center );
+			referenceLine.setPoint( anchor ).setOrigin( center );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
 
-		// Clear the preview
 		clearPreview( tool );
+		clearReference( tool );
 
 		// Move the selected shapes
+		setCaptureUndoChanges( tool, true );
 		rotateShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+		setCaptureUndoChanges( tool, false );
+
+		tool.clearSelected();
 
 		return COMPLETE;
 	}
@@ -62,13 +64,10 @@ public class Rotate extends EditCommand {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> {
-					previewLine.setOrigin( point );
-					previewLine.setPoint( point );
-				}
-				case 2 -> previewLine.setPoint( point );
+				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
+				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
-					previewLine.setPoint( point );
+					referenceLine.setPoint( point );
 					rotateShapes( getPreview(), center, -angle );
 					angle = CadGeometry.pointAngle360( anchor, center, point );
 					rotateShapes( getPreview(), center, angle );

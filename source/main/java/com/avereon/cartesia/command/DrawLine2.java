@@ -29,8 +29,13 @@ public class DrawLine2 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		preview.setPoint( asPoint( context, parameters[ 1 ] ) );
-		return commitPreview( tool );
+		clearPreview( tool );
+
+		setCaptureUndoChanges( tool, true );
+		tool.getCurrentLayer().addShape( new DesignLine( asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) ) );
+		setCaptureUndoChanges( tool, false );
+
+		return COMPLETE;
 	}
 
 	@Override
@@ -39,10 +44,7 @@ public class DrawLine2 extends DrawCommand {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> {
-					preview.setOrigin( point );
-					preview.setPoint( point );
-				}
+				case 1 -> preview.setPoint( point ).setOrigin( point );
 				case 2 -> preview.setPoint( point );
 			}
 		}

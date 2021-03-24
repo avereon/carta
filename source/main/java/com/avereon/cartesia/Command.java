@@ -15,7 +15,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
@@ -29,11 +31,14 @@ public class Command {
 
 	private static final System.Logger log = Log.get();
 
+	private final List<DesignShape> reference;
+
 	private final List<DesignShape> preview;
 
 	private int step;
 
 	protected Command() {
+		this.reference = new CopyOnWriteArrayList<>();
 		this.preview = new CopyOnWriteArrayList<>();
 	}
 
@@ -138,8 +143,55 @@ public class Command {
 		return shapes.stream().map( DesignShape::clone ).collect( Collectors.toList() );
 	}
 
+	protected void setCaptureUndoChanges( DesignTool tool, boolean enabled ) {
+		tool.getAsset().setCaptureUndoChanges( true );
+	}
+
+	protected Collection<DesignShape> getReference() {
+		return this.reference;
+	}
+
+	protected void addReference( DesignTool tool, DesignShape... shapes ) {
+		addReference( tool, List.of( shapes ) );
+	}
+
+	protected void addReference( DesignTool tool, Collection<DesignShape> shapeList ) {
+		this.reference.addAll( shapeList );
+		tool.getAsset().setCaptureUndoChanges( false );
+		shapeList.forEach( s -> {
+			s.setPreview( true );
+			// FIXME This is the right idea, but it's not working
+			// TODO Should there be a reference layer?
+			tool.getCurrentLayer().addShape( s );
+		} );
+	}
+
+	protected void removeReference( DesignTool tool, DesignShape... shapes ) {
+		removeReference( tool, List.of( shapes ) );
+	}
+
+	protected void removeReference( DesignTool tool, Collection<DesignShape> shapeList ) {
+		shapeList.forEach( s -> {
+			// FIXME This is the right idea, but it's not working
+			s.getLayer().removeShape( s );
+			s.setPreview( false );
+		} );
+		reference.removeAll( shapeList );
+	}
+
+	protected void clearReference( DesignTool tool ) {
+		// The shapes have to be removed before capturing undo changes again
+		removeReference( tool, reference );
+		//tool.getAsset().setCaptureUndoChanges( true );
+		preview.clear();
+	}
+
+	protected Collection<DesignShape> getPreview() {
+		return this.preview;
+	}
+
 	protected void addPreview( DesignTool tool, DesignShape... shapes ) {
-		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+		addPreview( tool, List.of( shapes ) );
 	}
 
 	protected void addPreview( DesignTool tool, Collection<DesignShape> shapeList ) {
@@ -147,24 +199,32 @@ public class Command {
 		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> {
 			s.setPreview( true );
-			tool.getCurrentLayer().addShape( s );
+			if( s.getLayer() == null ) {
+				tool.getCurrentLayer().addShape( s );
+			} else {
+				s.getLayer().addShape( s );
+			}
 		} );
-	}
-
-	protected Collection<DesignShape> getPreview() {
-		return this.preview;
 	}
 
 	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
-		removePreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+		removePreview( tool, List.of( shapes ) );
 	}
 
-	private void removePreview( DesignTool tool, Collection<DesignShape> shapeList ) {
+	protected void removePreview( DesignTool tool, Collection<DesignShape> shapeList ) {
 		shapeList.forEach( s -> {
-			tool.getCurrentLayer().removeShape( s );
+			// FIXME This is the right idea, but it's not working
+			s.getLayer().removeShape( s );
 			s.setPreview( false );
 		} );
 		preview.removeAll( shapeList );
+	}
+
+	protected void clearPreview( DesignTool tool ) {
+		// The shapes have to be removed before capturing undo changes again
+		removePreview( tool, preview );
+		//tool.getAsset().setCaptureUndoChanges( true );
+		preview.clear();
 	}
 
 	@Deprecated
@@ -177,13 +237,6 @@ public class Command {
 		// Add the shapes to the layer like normal
 		shapes.forEach( s -> tool.getCurrentLayer().addShape( s ) );
 		return COMPLETE;
-	}
-
-	protected void clearPreview( DesignTool tool ) {
-		// The shapes have to be removed before capturing undo changes again
-		removePreview( tool, preview );
-		tool.getAsset().setCaptureUndoChanges( true );
-		preview.clear();
 	}
 
 	private void promptForValue( CommandContext context, DesignTool tool, String key, CommandContext.Input mode ) {

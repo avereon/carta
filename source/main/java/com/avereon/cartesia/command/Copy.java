@@ -6,8 +6,9 @@ import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class Copy extends EditCommand{
-	private DesignLine previewLine;
+public class Copy extends EditCommand {
+
+	private DesignLine referenceLine;
 
 	private Point3D anchor;
 
@@ -17,7 +18,7 @@ public class Copy extends EditCommand{
 
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
@@ -26,17 +27,21 @@ public class Copy extends EditCommand{
 
 		// Ask for a target point
 		if( parameters.length < 2 ) {
+			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
+			tool.clearSelected();
 			anchor = asPoint( context, parameters[ 0 ] );
-			previewLine.setPoint( anchor ).setOrigin( anchor );
+			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
 
-		// Clear the preview
 		clearPreview( tool );
+		clearReference( tool );
 
 		// Copy the selected shapes
+		setCaptureUndoChanges( tool, true );
 		copyShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+		setCaptureUndoChanges( tool, false );
 
 		return COMPLETE;
 	}
@@ -47,11 +52,12 @@ public class Copy extends EditCommand{
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> {
-					previewLine.setOrigin( point );
-					previewLine.setPoint( point );
+				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
+				case 2 -> {
+					//moveShapes( getPreview(), point, anchor );
+					referenceLine.setPoint( point );
+					//moveShapes( getPreview(), anchor, point );
 				}
-				case 2 -> previewLine.setPoint( point );
 			}
 		}
 	}

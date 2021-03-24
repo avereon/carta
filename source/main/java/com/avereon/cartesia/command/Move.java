@@ -8,7 +8,7 @@ import javafx.scene.input.MouseEvent;
 
 public class Move extends EditCommand {
 
-	private DesignLine previewLine;
+	private DesignLine referenceLine;
 
 	private Point3D anchor;
 
@@ -18,7 +18,7 @@ public class Move extends EditCommand {
 
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
@@ -28,16 +28,18 @@ public class Move extends EditCommand {
 		// Ask for a target point
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
-			previewLine.setPoint( anchor ).setOrigin( anchor );
+			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
 
-		// Clear the preview
 		clearPreview( tool );
+		clearReference( tool );
 
 		// Move the selected shapes
+		setCaptureUndoChanges( tool, true );
 		moveShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+		setCaptureUndoChanges( tool, false );
 
 		return COMPLETE;
 	}
@@ -48,11 +50,8 @@ public class Move extends EditCommand {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> {
-					previewLine.setOrigin( point );
-					previewLine.setPoint( point );
-				}
-				case 2 -> previewLine.setPoint( point );
+				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
+				case 2 -> referenceLine.setPoint( point );
 			}
 		}
 	}

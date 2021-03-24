@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.Command;
-import com.avereon.cartesia.CommandException;
 import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -10,6 +9,7 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
 import java.util.Collection;
@@ -19,16 +19,18 @@ import java.util.stream.Collectors;
 
 public abstract class EditCommand extends Command {
 
-	protected void moveShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) throws CommandException {
+	private static final System.Logger log = Log.get();
+
+	protected void moveShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
 		CadTransform transform = CadTransform.translation( target.subtract( anchor ) );
 		try( Txn ignore = Txn.create() ) {
 			shapes.forEach( s -> s.apply( transform ) );
 		} catch( TxnException exception ) {
-			throw new CommandException( "Error moving shapes", exception );
+			log.log( Log.ERROR, "Error moving shapes", exception );
 		}
 	}
 
-	protected void copyShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) throws CommandException {
+	protected void copyShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
 		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getLayer ) );
 		Set<DesignShape> clones = cloneLayers.keySet();
 		moveShapes( clones, anchor, target );
@@ -41,14 +43,18 @@ public abstract class EditCommand extends Command {
 
 	protected void rotateShapes( Collection<DesignShape> shapes, Point3D center, double angle ) {
 		CadTransform transform = CadTransform.rotation( center, CadPoints.UNIT_Z, angle );
-		shapes.forEach( s -> s.apply( transform ) );
+		try( Txn ignore = Txn.create() ) {
+			shapes.forEach( s -> s.apply( transform ) );
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error rotating shapes", exception );
+		}
 	}
 
 	protected void radialCopyShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
-//		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getParentLayer ) );
-//		Set<DesignShape> clones = cloneLayers.keySet();
-//		rotateShapes( clones, center, anchor, target );
-//		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
+		//		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getParentLayer ) );
+		//		Set<DesignShape> clones = cloneLayers.keySet();
+		//		rotateShapes( clones, center, anchor, target );
+		//		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
 	}
 
 }
