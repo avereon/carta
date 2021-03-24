@@ -1,10 +1,14 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.util.stream.Collectors;
 
 public class Rotate extends EditCommand {
 
@@ -13,6 +17,8 @@ public class Rotate extends EditCommand {
 	private Point3D center;
 
 	private Point3D anchor;
+
+	private double angle;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
@@ -26,6 +32,7 @@ public class Rotate extends EditCommand {
 		}
 
 		// TODO Make a shadow copy of the selected components to show them as a preview
+		addPreview( tool, tool.getSelectedShapes().stream().map( DesignShape::clone ).collect( Collectors.toSet() ) );
 
 		// Ask for a start point
 		if( parameters.length < 2 ) {
@@ -37,7 +44,7 @@ public class Rotate extends EditCommand {
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
-			anchor = asPoint( context, parameters[ 0 ] );
+			anchor = asPoint( context, parameters[ 1 ] );
 			previewLine.setPoint( anchor ).setOrigin( center );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
@@ -63,7 +70,12 @@ public class Rotate extends EditCommand {
 					previewLine.setPoint( point );
 				}
 				case 2 -> previewLine.setPoint( point );
-				case 3 -> previewLine.setPoint( point );
+				case 3 -> {
+					previewLine.setPoint( point );
+					rotateShapes( getPreview(), center, -angle );
+					angle = CadGeometry.pointAngle360( anchor, center, point );
+					rotateShapes( getPreview(), center, angle );
+				}
 			}
 		}
 	}

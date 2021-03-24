@@ -24,6 +24,10 @@ public class CadGeometry {
 		return Math.toDegrees( Geometry.getAngle( asPoint( a ), asPoint( b ) ) );
 	}
 
+	public static double pointAngle360( Point3D a, Point3D b, Point3D c ) {
+		return Math.toDegrees( Geometry.pointAngle( asPoint( a ), asPoint( b ), asPoint( c ) ) );
+	}
+
 	public static double normalizeAngle360( double angle ) {
 		return Math.toDegrees( Math.toRadians( angle ) );
 	}

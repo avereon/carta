@@ -138,13 +138,17 @@ public class Command {
 		addPreview( tool, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
-	private void addPreview( DesignTool tool, Collection<DesignShape> shapeList ) {
+	protected void addPreview( DesignTool tool, Collection<DesignShape> shapeList ) {
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> {
 			s.setPreview( true );
 			tool.getCurrentLayer().addShape( s );
 		} );
+	}
+
+	protected Collection<DesignShape> getPreview() {
+		return this.preview;
 	}
 
 	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
