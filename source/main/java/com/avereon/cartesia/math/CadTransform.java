@@ -161,4 +161,8 @@ public class CadTransform {
 		return transform.getMatrixArray();
 	}
 
+	Transform getTransform() {
+		return transform;
+	}
+
 }

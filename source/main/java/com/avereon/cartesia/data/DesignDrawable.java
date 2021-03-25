@@ -79,7 +79,9 @@ public abstract class DesignDrawable extends DesignNode {
 		String paint = getDrawPaint();
 		if( paint == null ) return null;
 		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
-		return ((DesignLayer)getParent()).calcDrawPaint();
+
+		DesignLayer layer = getLayer();
+		return layer == null ? Paints.parseWithNullOnException( DesignLayer.DEFAULT_DRAW_PAINT ) : layer.calcDrawPaint();
 	}
 
 	public String getDrawPaint() {
@@ -94,7 +96,9 @@ public abstract class DesignDrawable extends DesignNode {
 	public double calcDrawWidth() {
 		String width = getDrawWidth();
 		if( isCustomValue( width ) ) return CadMath.evalNoException( width );
-		return ((DesignLayer)getParent()).calcDrawWidth();
+
+		DesignLayer layer = getLayer();
+		return layer == null ? Double.parseDouble( DesignLayer.DEFAULT_DRAW_WIDTH ) : layer.calcDrawWidth();
 	}
 
 	public String getDrawWidth() {
@@ -109,7 +113,9 @@ public abstract class DesignDrawable extends DesignNode {
 	public String calcDrawPattern() {
 		String pattern = getDrawPattern();
 		if( isCustomValue( pattern ) ) return pattern;
-		return ((DesignLayer)getParent()).calcDrawPattern();
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_PATTERN : layer.calcDrawPattern();
 	}
 
 	public String getDrawPattern() {
@@ -124,7 +130,9 @@ public abstract class DesignDrawable extends DesignNode {
 	public StrokeLineCap calcDrawCap() {
 		String cap = getDrawCap();
 		if( isCustomValue( cap ) ) return StrokeLineCap.valueOf( cap.toUpperCase() );
-		return ((DesignLayer)getParent()).calcDrawCap();
+
+		DesignLayer layer = getLayer();
+		return layer == null ? StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) : layer.calcDrawCap();
 	}
 
 	public String getDrawCap() {
@@ -140,7 +148,9 @@ public abstract class DesignDrawable extends DesignNode {
 		String paint = getFillPaint();
 		if( paint == null ) return null;
 		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
-		return getLayer().calcFillPaint();
+
+		DesignLayer layer = getLayer();
+		return layer == null ? Paints.parseWithNullOnException( DesignLayer.DEFAULT_FILL_PAINT ) : layer.calcFillPaint();
 	}
 
 	public String getFillPaint() {

@@ -1,7 +1,10 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.ArcType;
@@ -96,6 +99,17 @@ public class DesignArc extends DesignEllipse {
 	@Override
 	public DesignArc clone() {
 		return new DesignArc().copyFrom( this );
+	}
+
+	@Override
+	public void apply( CadTransform transform ) {
+		try( Txn ignored = Txn.create() ) {
+			super.apply( transform );
+			// Start should not be affected by a transform
+			if( transform.isMirror() ) setExtent( -getExtent() );
+		} catch( TxnException exception ) {
+			log.log( Log.WARN, "Unable to apply transform" );
+		}
 	}
 
 	protected Map<String, Object> asMap() {

@@ -1,7 +1,6 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.curve.math.Orientation;
-import com.avereon.curve.math.Transform;
 import javafx.geometry.Point3D;
 
 public class CadOrientation {
@@ -26,6 +25,11 @@ public class CadOrientation {
 
 	private CadOrientation( Orientation orientation ) {
 		this.orientation = orientation;
+	}
+
+	@SuppressWarnings( "MethodDoesntCallSuperMethod" )
+	public CadOrientation clone() {
+		return new CadOrientation( getOrigin(), getNormal(), getRotate() );
 	}
 
 	public Point3D getOrigin() {
@@ -76,16 +80,19 @@ public class CadOrientation {
 		orientation.setRotationAngles( xrotation, yrotation, zrotation );
 	}
 
-	public void transform( Transform transform ) {
-		orientation.transform( transform );
+	public CadOrientation transform( CadTransform transform ) {
+		orientation.transform( transform.getTransform() );
+		return this;
 	}
 
-	public void transformOrigin( Transform transform ) {
-		orientation.transformOrigin( transform );
+	public CadOrientation transformOrigin( CadTransform transform ) {
+		orientation.transformOrigin( transform.getTransform() );
+		return this;
 	}
 
-	public void transformAxes( Transform transform ) {
-		orientation.transformAxes( transform );
+	public CadOrientation transformAxes( CadTransform transform ) {
+		orientation.transformAxes( transform.getTransform() );
+		return this;
 	}
 
 	public CadTransform getLocalToTargetTransform() {

@@ -51,9 +51,18 @@ public class Rotate extends EditCommand {
 
 		// Move the selected shapes
 		setCaptureUndoChanges( tool, true );
-		// Start an undo multi-change
-		rotateShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
-		// Done with undo multi-change
+
+		try {
+			center = asPoint( context, parameters[ 0 ] );
+			anchor = asPoint( context, parameters[ 1 ] );
+			Point3D point = asPoint( context, parameters[ 2 ] );
+
+			// Start an undo multi-change
+			rotateShapes( tool.getSelectedShapes(), center, anchor, point );
+			// Done with undo multi-change
+		} catch( Exception exception ) {
+			// Cancel multi-change
+		}
 
 		tool.clearSelected();
 
@@ -69,10 +78,10 @@ public class Rotate extends EditCommand {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
+					double oldAngle = angle;
 					referenceLine.setPoint( point );
-					rotateShapes( getPreview(), center, -angle );
 					angle = CadGeometry.pointAngle360( anchor, center, point );
-					rotateShapes( getPreview(), center, angle );
+					rotateShapes( getPreview(), center, angle - oldAngle );
 				}
 			}
 		}

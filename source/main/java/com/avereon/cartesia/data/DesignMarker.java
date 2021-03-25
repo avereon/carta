@@ -4,6 +4,9 @@ import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
+import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 
@@ -23,6 +26,8 @@ public class DesignMarker extends DesignShape {
 	public static final double DEFAULT_SIZE = 1.0;
 
 	private static final double ZERO_DRAW_WIDTH = 0.0;
+
+	private static final System.Logger log = Log.get();
 
 	public DesignMarker() {
 		this( null );
@@ -89,7 +94,11 @@ public class DesignMarker extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		setOrigin( transform.apply( getOrigin()) );
+		try( Txn ignored = Txn.create() ) {
+			setOrigin( transform.apply( getOrigin() ) );
+		} catch( TxnException exception ) {
+			log.log( Log.WARN, "Unable to apply transform" );
+		}
 	}
 
 	protected Map<String, Object> asMap() {

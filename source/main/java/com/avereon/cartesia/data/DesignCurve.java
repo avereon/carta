@@ -79,10 +79,14 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		setOrigin( transform.apply( getOrigin() ) );
-		setOriginControl( transform.apply( getOriginControl() ) );
-		setPointControl( transform.apply( getPointControl() ) );
-		setPoint( transform.apply( getPoint() ) );
+		try( Txn ignored = Txn.create() ) {
+			setOrigin( transform.apply( getOrigin() ) );
+			setOriginControl( transform.apply( getOriginControl() ) );
+			setPointControl( transform.apply( getPointControl() ) );
+			setPoint( transform.apply( getPoint() ) );
+		} catch( TxnException exception ) {
+			log.log( Log.WARN, "Unable to apply transform" );
+		}
 	}
 
 	protected Map<String, Object> asMap() {
