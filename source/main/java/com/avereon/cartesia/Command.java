@@ -50,7 +50,7 @@ public class Command {
 
 	public void cancel( DesignTool tool ) throws Exception {
 		if( tool != null ) {
-			reset( tool );
+			clearReferenceAndPreview( tool );
 			tool.getDesign().clearSelected();
 			tool.setCursor( Cursor.DEFAULT );
 		}
@@ -228,7 +228,7 @@ public class Command {
 		preview.clear();
 	}
 
-	protected void reset( DesignTool tool ) {
+	protected void clearReferenceAndPreview( DesignTool tool ) {
 		clearReference( tool );
 		clearPreview( tool );
 	}

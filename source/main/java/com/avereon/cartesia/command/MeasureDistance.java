@@ -35,6 +35,8 @@ public class MeasureDistance extends MeasureCommand {
 			return INCOMPLETE;
 		}
 
+		clearReferenceAndPreview( tool );
+
 		try {
 			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );
 			Point3D p2 = asPoint( context.getAnchor(), parameters[ 1 ] );
@@ -51,8 +53,6 @@ public class MeasureDistance extends MeasureCommand {
 				clipboard.setContent( content );
 			} ) );
 			context.getProduct().getProgram().getNoticeManager().addNotice( notice );
-
-			clearPreview( tool );
 
 			log.log( Log.DEBUG, "Measured distance=" + distance );
 			return distance;

@@ -20,6 +20,8 @@ public class DrawCurve4 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1
 		if( parameters.length < 1 ) {
 			addPreview( tool, preview = new DesignCurve( context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse() ) );
@@ -48,13 +50,19 @@ public class DrawCurve4 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
+		clearReferenceAndPreview( tool );
+		setCaptureUndoChanges( tool, true );
+
 		try {
-			preview.setPoint( asPoint( context, parameters[ 3 ] ) );
-			return commitPreview( tool );
+			Point3D a = asPoint( context, parameters[ 0 ] );
+			Point3D b = asPoint( context, parameters[ 1 ] );
+			Point3D c = asPoint( context, parameters[ 2 ] );
+			Point3D d = asPoint( context, parameters[ 3 ] );
+			tool.getCurrentLayer().addShape( new DesignCurve( a, b, c, d ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-curve", exception );
-			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

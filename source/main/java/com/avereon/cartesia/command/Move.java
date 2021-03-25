@@ -16,6 +16,8 @@ public class Move extends EditCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
+		setCaptureUndoChanges( tool, false );
+
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
 			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -33,12 +35,13 @@ public class Move extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		reset( tool );
+		clearReferenceAndPreview( tool );
 
 		// Move the selected shapes
 		setCaptureUndoChanges( tool, true );
+		// Start an undo multi-change
 		moveShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
-		setCaptureUndoChanges( tool, false );
+		// Done with undo multi-change
 
 		return COMPLETE;
 	}

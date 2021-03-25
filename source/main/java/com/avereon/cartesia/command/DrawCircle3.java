@@ -1,13 +1,18 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class DrawCircle3 extends DrawCommand {
 
@@ -21,6 +26,8 @@ public class DrawCircle3 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -47,13 +54,21 @@ public class DrawCircle3 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		DesignEllipse ellipse = CadGeometry.circleFromThreePoints( start, mid, asPoint( context, parameters[ 2 ] ) );
-		if( ellipse != null ) {
-			previewEllipse.setOrigin( ellipse.getOrigin() );
-			previewEllipse.setRadius( ellipse.getRadius() );
+		clearReferenceAndPreview( tool );
+		setCaptureUndoChanges( tool, true );
+
+		try {
+			start = asPoint( context, parameters[ 0 ] );
+			mid = asPoint( context, parameters[ 1 ] );
+			Point3D end = asPoint( context, parameters[ 2 ] );
+			tool.getCurrentLayer().addShape( CadGeometry.circleFromThreePoints( start, mid, end ) );
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return commitPreview( tool );
+		return COMPLETE;
 	}
 
 	@Override

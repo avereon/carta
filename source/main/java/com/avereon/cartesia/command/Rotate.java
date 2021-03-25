@@ -21,6 +21,8 @@ public class Rotate extends EditCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
+		setCaptureUndoChanges( tool, false );
+
 		// Ask for a center point
 		if( parameters.length < 1 ) {
 			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -45,12 +47,13 @@ public class Rotate extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		reset( tool );
+		clearReferenceAndPreview( tool );
 
 		// Move the selected shapes
 		setCaptureUndoChanges( tool, true );
+		// Start an undo multi-change
 		rotateShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
-		setCaptureUndoChanges( tool, false );
+		// Done with undo multi-change
 
 		tool.clearSelected();
 

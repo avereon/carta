@@ -1,12 +1,17 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class DrawArc3 extends DrawCommand {
 
@@ -20,6 +25,8 @@ public class DrawArc3 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1 - Prompt for start
 		if( parameters.length < 1 ) {
 			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -46,11 +53,19 @@ public class DrawArc3 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		reset( tool );
-
+		clearReferenceAndPreview( tool );
 		setCaptureUndoChanges( tool, true );
-		tool.getCurrentLayer().addShape( CadGeometry.arcFromThreePoints( start, mid, asPoint( context, parameters[ 2 ] ) ) );
-		setCaptureUndoChanges( tool, false );
+
+		try {
+			start = asPoint( context, parameters[ 0 ] );
+			mid = asPoint( context, parameters[ 1 ] );
+			Point3D end = asPoint( context, parameters[ 2 ] );
+			tool.getCurrentLayer().addShape( CadGeometry.arcFromThreePoints( start, mid, end ) );
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
 
 		return COMPLETE;
 	}
@@ -69,12 +84,10 @@ public class DrawArc3 extends DrawCommand {
 				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
 					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
-					if( next != null ) {
-						previewArc.setOrigin( next.getOrigin() );
-						previewArc.setRadius( next.getRadius() );
-						previewArc.setStart( next.getStart() );
-						previewArc.setExtent( next.getExtent() );
-					}
+					previewArc.setOrigin( next.getOrigin() );
+					previewArc.setRadius( next.getRadius() );
+					previewArc.setStart( next.getStart() );
+					previewArc.setExtent( next.getExtent() );
 				}
 			}
 		}

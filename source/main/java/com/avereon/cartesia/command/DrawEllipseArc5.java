@@ -1,12 +1,17 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class DrawEllipseArc5 extends DrawCommand {
 
@@ -26,6 +31,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1 - Prompt for the origin
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -71,19 +78,35 @@ public class DrawEllipseArc5 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		origin = asPoint( context, parameters[ 0 ] );
-		xPoint = asPoint( context, parameters[ 1 ] );
-		Point3D yPoint = asPoint( context, parameters[ 2 ] );
+		clearReferenceAndPreview( tool );
+		setCaptureUndoChanges( tool, true );
 
-		previewArc.setOrigin( origin );
-		previewArc.setXRadius( asDouble( origin, xPoint ) );
-		previewArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
-		previewArc.setRotate( deriveRotate( origin, xPoint ) );
-		previewArc.setStart( deriveStart( previewArc, asPoint( context, parameters[ 3 ] ) ) );
-		previewArc.setExtent( deriveExtent( previewArc, asPoint( context, parameters[ 4 ] ), spin ) );
+		try {
+			origin = asPoint( context, parameters[ 0 ] );
+			xPoint = asPoint( context, parameters[ 1 ] );
+			Point3D yPoint = asPoint( context, parameters[ 2 ] );
+			Point3D startPoint = asPoint( context, parameters[ 3 ] );
+			Point3D extentPoint = asPoint( context, parameters[ 4 ] );
+			if( parameters.length > 5 ) spin = asDouble( parameters[5] );
 
-		removePreview( tool, previewLine );
-		return commitPreview( tool );
+			double xRadius = asDouble( origin, xPoint );
+			double yRadius = deriveYRadius( origin, xPoint, yPoint );
+			double rotate = deriveRotate( origin, xPoint );
+
+			DesignArc arc = new DesignArc( origin, xRadius, yRadius, rotate, 0.0, 360.0, DesignArc.Type.OPEN );
+			// FIXME This implementation depends on state in arc
+			double start = deriveStart( arc, asPoint( context, startPoint ) );
+			// FIXME This implementation depends on state in arc
+			double extent = deriveExtent( arc, asPoint( context, extentPoint ), spin );
+
+			tool.getCurrentLayer().addShape( new DesignArc( origin, xRadius, yRadius, rotate, start, extent, DesignArc.Type.OPEN ) );
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
+
+		return COMPLETE;
 	}
 
 	@Override

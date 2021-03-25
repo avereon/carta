@@ -43,7 +43,7 @@ public class CameraMove extends CameraCommand {
 			tool.setViewPoint( tool.getViewPoint().subtract( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-point", exception );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-marker", exception );
 			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

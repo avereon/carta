@@ -37,7 +37,9 @@ public class Trim extends Command {
 		DesignShape edge = findNearestShapeAtMouse( tool, edgeMouse );
 		if( edge == DesignShape.NONE ) return INVALID;
 
+		// Start an undo multi-change
 		com.avereon.cartesia.math.Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
+		// Done with undo multi-change
 
 		return COMPLETE;
 	}

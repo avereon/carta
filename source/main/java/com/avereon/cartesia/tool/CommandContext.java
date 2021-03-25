@@ -131,6 +131,11 @@ public class CommandContext {
 		return commandStack.size() > 1;
 	}
 
+	public boolean isInteractive() {
+		// TODO Turn of when running a script
+		return true;
+	}
+
 	public boolean isSingleSelectMode( MouseEvent event ) {
 		return commandStack.size() == 1 && event.isStillSincePress();
 	}

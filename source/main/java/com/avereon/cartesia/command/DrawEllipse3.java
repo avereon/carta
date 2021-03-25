@@ -1,12 +1,17 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class DrawEllipse3 extends DrawCommand {
 
@@ -20,6 +25,8 @@ public class DrawEllipse3 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1 - Prompt for the origin
 		if( parameters.length < 1 ) {
 			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -46,17 +53,24 @@ public class DrawEllipse3 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		origin = asPoint( context, parameters[ 0 ] );
-		xPoint = asPoint( context, parameters[ 1 ] );
-		Point3D yPoint = asPoint( context, parameters[ 2 ] );
+		clearReferenceAndPreview( tool );
+		setCaptureUndoChanges( tool, true );
 
-		previewEllipse.setOrigin( asPoint( context, parameters[ 0 ] ) );
-		previewEllipse.setXRadius( asDouble( previewEllipse.getOrigin(), parameters[ 1 ] ) );
-		previewEllipse.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
-		previewEllipse.setRotate( deriveRotate( origin, xPoint ) );
+		try {
+			origin = asPoint( context, parameters[ 0 ] );
+			xPoint = asPoint( context, parameters[ 1 ] );
+			Point3D yPoint = asPoint( context, parameters[ 2 ] );
+			double xRadius = asDouble( origin, xPoint );
+			double yRadius = deriveYRadius( origin, xPoint, yPoint );
+			double rotate = deriveRotate( origin, xPoint );
+			tool.getCurrentLayer().addShape( new DesignEllipse(origin, xRadius, yRadius, rotate) );
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
 
-		removePreview( tool, previewLine );
-		return commitPreview( tool );
+		return COMPLETE;
 	}
 
 	@Override

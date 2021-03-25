@@ -1,14 +1,19 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class DrawLinePerpendicular extends DrawCommand {
 
@@ -20,6 +25,8 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1
 		if( parameters.length < 1 ) {
 			promptForShape( context, tool, "reference-shape-perpendicular" );
@@ -43,11 +50,23 @@ public class DrawLinePerpendicular extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		DesignShape shape = findNearestShapeAtPoint( tool, asPoint( context.getAnchor(), parameters[ 0 ] ) );
-		Point3D origin = asPoint( context.getAnchor(), parameters[ 1 ] );
-		Point3D point = getPerpendicular( shape, origin, asPoint( context.getAnchor(), parameters[ 2 ] ) );
-		preview.setPoint( point );
-		return commitPreview( tool );
+		clearReferenceAndPreview( tool );
+		setCaptureUndoChanges( tool, true );
+
+		try {
+			DesignShape shape = findNearestShapeAtPoint( tool, asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			Point3D origin = asPoint( context.getAnchor(), parameters[ 1 ] );
+			Point3D point = getPerpendicular( shape, origin, asPoint( context.getAnchor(), parameters[ 2 ] ) );
+			// Start an undo multi-change
+			tool.getCurrentLayer().addShape( new DesignLine( origin, point ) );
+			// Done with undo multi-change
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
+
+		return COMPLETE;
 	}
 
 	@Override

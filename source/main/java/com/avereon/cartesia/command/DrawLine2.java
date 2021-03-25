@@ -1,11 +1,16 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
 import com.avereon.util.Log;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class DrawLine2 extends DrawCommand {
 
@@ -15,6 +20,8 @@ public class DrawLine2 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( tool, false );
+
 		// Step 1
 		if( parameters.length < 1 ) {
 			addPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -29,11 +36,21 @@ public class DrawLine2 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		clearPreview( tool );
-
+		clearReferenceAndPreview( tool );
 		setCaptureUndoChanges( tool, true );
-		tool.getCurrentLayer().addShape( new DesignLine( asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) ) );
-		setCaptureUndoChanges( tool, false );
+
+		try {
+			Point3D origin = asPoint( context, parameters[ 0 ] );
+			Point3D point = asPoint( context, parameters[ 1 ] );
+
+			// Start an undo multi-change
+			tool.getCurrentLayer().addShape( new DesignLine( origin, point ) );
+			// Done with undo multi-change
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
 
 		return COMPLETE;
 	}
