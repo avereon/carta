@@ -35,8 +35,7 @@ public class Copy extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		clearPreview( tool );
-		clearReference( tool );
+		reset( tool );
 
 		// Copy the selected shapes
 		setCaptureUndoChanges( tool, true );

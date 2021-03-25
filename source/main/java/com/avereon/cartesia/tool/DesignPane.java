@@ -63,8 +63,10 @@ public class DesignPane extends StackPane {
 
 	static final double DEFAULT_ROTATE = 0;
 
-	static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
+	// FIXME This should probably be moved to the design settings
+	public static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
 
+	// FIXME This should probably be moved to the design settings
 	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
 	private final Pane select;

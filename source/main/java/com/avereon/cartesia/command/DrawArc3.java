@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 public class DrawArc3 extends DrawCommand {
 
-	private DesignLine previewLine;
+	private DesignLine referenceLine;
 
 	private DesignArc previewArc;
 
@@ -22,7 +22,7 @@ public class DrawArc3 extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1 - Prompt for start
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "start-point" );
 			return INCOMPLETE;
 		}
@@ -30,14 +30,14 @@ public class DrawArc3 extends DrawCommand {
 		// Step 2 - Get start, prompt for mid-point
 		if( parameters.length < 2 ) {
 			start = asPoint( context, parameters[ 0 ] );
-			previewLine.setOrigin( start );
+			referenceLine.setOrigin( start );
 			promptForPoint( context, tool, "mid-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3 - Get mid point, prompt for end
 		if( parameters.length < 3 ) {
-			removePreview( tool, previewLine );
+			removeReference( tool, referenceLine );
 
 			mid = asPoint( context, parameters[ 1 ] );
 			addPreview( tool, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
@@ -46,15 +46,13 @@ public class DrawArc3 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, asPoint( context, parameters[ 2 ] ) );
-		if( arc != null ) {
-			previewArc.setOrigin( arc.getOrigin() );
-			previewArc.setRadius( arc.getRadius() );
-			previewArc.setStart( arc.getStart() );
-			previewArc.setExtent( arc.getExtent() );
-		}
+		reset( tool );
 
-		return commitPreview( tool );
+		setCaptureUndoChanges( tool, true );
+		tool.getCurrentLayer().addShape( CadGeometry.arcFromThreePoints( start, mid, asPoint( context, parameters[ 2 ] ) ) );
+		setCaptureUndoChanges( tool, false );
+
+		return COMPLETE;
 	}
 
 	@Override
@@ -65,10 +63,10 @@ public class DrawArc3 extends DrawCommand {
 
 			switch( getStep() ) {
 				case 1 -> {
-					previewLine.setOrigin( point );
-					previewLine.setPoint( point );
+					referenceLine.setOrigin( point );
+					referenceLine.setPoint( point );
 				}
-				case 2 -> previewLine.setPoint( point );
+				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
 					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
 					if( next != null ) {

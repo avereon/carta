@@ -5,10 +5,12 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
+import com.avereon.zerra.color.Paints;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
@@ -48,7 +50,7 @@ public class Command {
 
 	public void cancel( DesignTool tool ) throws Exception {
 		if( tool != null ) {
-			preview.forEach( s -> tool.getCurrentLayer().removeShape( s ) );
+			reset( tool );
 			tool.getDesign().clearSelected();
 			tool.setCursor( Cursor.DEFAULT );
 		}
@@ -158,8 +160,10 @@ public class Command {
 	protected void addReference( DesignTool tool, Collection<DesignShape> shapeList ) {
 		this.reference.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
+		String referencePaint = Paints.toString( DesignPane.DEFAULT_SELECT_DRAW_PAINT );
 		shapeList.forEach( s -> {
 			s.setPreview( true );
+			s.setDrawPaint( referencePaint );
 			// FIXME This is the right idea, but it's not working
 			// TODO Should there be a reference layer?
 			tool.getCurrentLayer().addShape( s );
@@ -183,7 +187,7 @@ public class Command {
 		// The shapes have to be removed before capturing undo changes again
 		removeReference( tool, reference );
 		//tool.getAsset().setCaptureUndoChanges( true );
-		preview.clear();
+		reference.clear();
 	}
 
 	protected Collection<DesignShape> getPreview() {
@@ -225,6 +229,11 @@ public class Command {
 		removePreview( tool, preview );
 		//tool.getAsset().setCaptureUndoChanges( true );
 		preview.clear();
+	}
+
+	protected void reset( DesignTool tool ) {
+		clearReference( tool );
+		clearPreview( tool );
 	}
 
 	@Deprecated

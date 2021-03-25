@@ -33,8 +33,7 @@ public class Move extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		clearPreview( tool );
-		clearReference( tool );
+		reset( tool );
 
 		// Move the selected shapes
 		setCaptureUndoChanges( tool, true );

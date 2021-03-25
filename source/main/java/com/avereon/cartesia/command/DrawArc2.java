@@ -10,7 +10,7 @@ import javafx.scene.input.MouseEvent;
 
 public class DrawArc2 extends DrawCommand {
 
-	private DesignLine previewLine;
+	private DesignLine referenceLine;
 
 	private DesignArc previewArc;
 
@@ -22,7 +22,7 @@ public class DrawArc2 extends DrawCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		// Step 1 - Prompt for origin
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, tool, "center" );
 			return INCOMPLETE;
 		}
@@ -30,8 +30,8 @@ public class DrawArc2 extends DrawCommand {
 		// Step 2 - Get origin, prompt for start
 		if( parameters.length < 2 ) {
 			Point3D origin = asPoint( context, parameters[ 0 ] );
-			previewLine.setOrigin( origin );
-			previewLine.setPoint( origin );
+			referenceLine.setOrigin( origin );
+			referenceLine.setPoint( origin );
 			addPreview( tool, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
 			promptForPoint( context, tool, "start" );
 			return INCOMPLETE;
@@ -48,11 +48,30 @@ public class DrawArc2 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		// FIXME This implementation will not work in scripts
-		previewArc.setExtent( deriveExtent( previewArc, asPoint( context, parameters[ 2 ] ), spin ) );
+		if( parameters.length > 3 ) {
+			spin = asDouble( parameters[ 3 ] );
+		}
 
-		removePreview( tool, previewLine );
-		return commitPreview( tool );
+		reset( tool );
+
+		Point3D origin = asPoint( context, parameters[ 0 ] );
+		Point3D startPoint = asPoint( context, parameters[ 1 ] );
+		Point3D extentPoint = asPoint( context, parameters[ 2 ] );
+		double radius = CadGeometry.distance( origin, startPoint );
+		DesignArc arc = new DesignArc( origin, radius, 0.0, 360.0, DesignArc.Type.OPEN );
+
+		// FIXME This implementation depends on state in the arc
+		double start = deriveStart( arc, startPoint );
+		arc.setStart( start );
+		// FIXME This implementation depends on state in the arc
+		double extent = deriveExtent( arc, extentPoint, spin );
+		arc.setExtent( extent );
+
+		setCaptureUndoChanges( tool, true );
+		tool.getCurrentLayer().addShape( arc );
+		setCaptureUndoChanges( tool, false );
+
+		return COMPLETE;
 	}
 
 	@Override
@@ -65,18 +84,18 @@ public class DrawArc2 extends DrawCommand {
 			switch( getStep() ) {
 				case 1 -> {
 					// Arc origin
-					previewLine.setOrigin( point );
-					previewLine.setPoint( point );
+					referenceLine.setOrigin( point );
+					referenceLine.setPoint( point );
 				}
 				case 2 -> {
 					// Arc radius and start
-					previewLine.setPoint( point );
+					referenceLine.setPoint( point );
 					previewArc.setRadius( point.distance( previewArc.getOrigin() ) );
 					previewArc.setStart( deriveStart( previewArc, point ) );
 				}
 				case 3 -> {
 					// Arc extent
-					previewLine.setPoint( point );
+					referenceLine.setPoint( point );
 					previewArc.setExtent( deriveExtent( previewArc, point, spin ) );
 					spinAnchor = point;
 				}
