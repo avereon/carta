@@ -54,7 +54,7 @@ public class DesignLayer extends DesignDrawable {
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
-		setSetModifyFilter( SHAPES, n -> n.getValue( DesignShape.PREVIEW ) == null );
+		setSetModifyFilter( SHAPES, n -> n.getValue( DesignShape.REFERENCE ) == null );
 	}
 
 	/**
@@ -243,7 +243,7 @@ public class DesignLayer extends DesignDrawable {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
-		map.put( SHAPES, getShapes().stream().filter( s -> !s.isPreview() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
+		map.put( SHAPES, getShapes().stream().filter( s -> !s.isReference() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
 		return map;
 	}
 

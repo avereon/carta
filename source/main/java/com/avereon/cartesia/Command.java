@@ -162,10 +162,9 @@ public class Command {
 		tool.getAsset().setCaptureUndoChanges( false );
 		String referencePaint = Paints.toString( DesignPane.DEFAULT_SELECT_DRAW_PAINT );
 		shapeList.forEach( s -> {
-			s.setPreview( true );
+			s.setReference( true );
 			s.setDrawPaint( referencePaint );
-			// FIXME This is the right idea, but it's not working
-			// TODO Should there be a reference layer?
+			// TODO Should there be a specific reference layer?
 			tool.getCurrentLayer().addShape( s );
 		} );
 	}
@@ -176,9 +175,8 @@ public class Command {
 
 	protected void removeReference( DesignTool tool, Collection<DesignShape> shapeList ) {
 		shapeList.forEach( s -> {
-			// FIXME This is the right idea, but it's not working
 			s.getLayer().removeShape( s );
-			s.setPreview( false );
+			s.setReference( false );
 		} );
 		reference.removeAll( shapeList );
 	}
@@ -202,7 +200,7 @@ public class Command {
 		this.preview.addAll( shapeList );
 		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> {
-			s.setPreview( true );
+			s.setReference( true );
 			if( s.getLayer() == null ) {
 				tool.getCurrentLayer().addShape( s );
 			} else {
@@ -217,9 +215,8 @@ public class Command {
 
 	protected void removePreview( DesignTool tool, Collection<DesignShape> shapeList ) {
 		shapeList.forEach( s -> {
-			// FIXME This is the right idea, but it's not working
 			s.getLayer().removeShape( s );
-			s.setPreview( false );
+			s.setReference( false );
 		} );
 		preview.removeAll( shapeList );
 	}

@@ -32,7 +32,7 @@ public class SnapNearest implements Snap {
 		Collection<Shape> forms = tool.getVisibleShapes();
 		for( Shape shape : forms ) {
 			DesignShape data = DesignShapeView.getDesignData( shape );
-			if( data == null || data.isPreview() ) continue;
+			if( data == null || data.isReference() ) continue;
 			List<ConstructionPoint> cps = DesignShapeView.getConstructionPoints( shape );
 			for( ConstructionPoint cp : cps ) {
 				distance = mouse.distance( tool.worldToScreen( cp.getLayoutX(), cp.getLayoutY(), 0 ) );

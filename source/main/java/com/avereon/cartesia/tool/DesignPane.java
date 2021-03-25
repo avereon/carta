@@ -594,7 +594,7 @@ public class DesignPane extends StackPane {
 			if( contains ) selectStream = shapes.stream().filter( s -> isContained( selector, s ) );
 
 			// This list is in design order
-			List<Shape> selected = selectStream.filter( s -> !DesignShapeView.getDesignData( s ).isPreview() ).collect( Collectors.toList() );
+			List<Shape> selected = selectStream.filter( s -> !DesignShapeView.getDesignData( s ).isReference() ).collect( Collectors.toList() );
 			Collections.reverse( selected );
 			return selected;
 		} finally {

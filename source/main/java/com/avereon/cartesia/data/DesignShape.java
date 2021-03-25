@@ -19,7 +19,7 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String SELECTED = "selected";
 
-	public static final String PREVIEW = "preview";
+	public static final String REFERENCE = "reference";
 
 	public DesignShape() {
 		this( null );
@@ -39,12 +39,12 @@ public abstract class DesignShape extends DesignDrawable {
 		return (T)this;
 	}
 
-	public boolean isPreview() {
-		return getValue( PREVIEW, false );
+	public boolean isReference() {
+		return getValue( REFERENCE, false );
 	}
 
-	public DesignShape setPreview( boolean preview ) {
-		setValue( PREVIEW, preview ? true : null );
+	public DesignShape setReference( boolean preview ) {
+		setValue( REFERENCE, preview ? true : null );
 		return this;
 	}
 
