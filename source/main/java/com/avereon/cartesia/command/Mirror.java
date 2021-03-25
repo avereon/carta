@@ -55,15 +55,15 @@ public class Mirror extends EditCommand {
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> {
-					if( lastPoint == null ) lastPoint = anchor;
 					referenceLine.setPoint( point );
-					// FIXME How to mirror relative to the prior mirror is a problem
-					mirrorShapes( getPreview(), lastPoint, point );
+
+					if( lastPoint == null ) lastPoint = anchor;
+					//flipShapes( getPreview(), anchor, lastPoint );
+					flipShapes( getPreview(), anchor, point );
 					lastPoint = point;
 				}
 			}
 		}
 	}
-
 
 }

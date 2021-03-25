@@ -166,7 +166,7 @@ public abstract class DesignDrawable extends DesignNode {
 	@SuppressWarnings( "unchecked" )
 	public <T> T getValue( String key ) {
 		return switch( key ) {
-			case VIRTUAL_LAYER -> (T)getLayer().getId();
+			case VIRTUAL_LAYER -> getLayer() == null ? null : (T)getLayer().getId();
 			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
 			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
 			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));

@@ -146,7 +146,7 @@ public class Command {
 	}
 
 	protected void setCaptureUndoChanges( DesignTool tool, boolean enabled ) {
-		tool.getAsset().setCaptureUndoChanges( true );
+		tool.getAsset().setCaptureUndoChanges( enabled );
 	}
 
 	protected Collection<DesignShape> getReference() {
@@ -159,7 +159,6 @@ public class Command {
 
 	protected void addReference( DesignTool tool, Collection<DesignShape> shapeList ) {
 		this.reference.addAll( shapeList );
-		tool.getAsset().setCaptureUndoChanges( false );
 		String referencePaint = Paints.toString( DesignPane.DEFAULT_SELECT_DRAW_PAINT );
 		shapeList.forEach( s -> {
 			s.setReference( true );
@@ -184,7 +183,6 @@ public class Command {
 	protected void clearReference( DesignTool tool ) {
 		// The shapes have to be removed before capturing undo changes again
 		removeReference( tool, reference );
-		//tool.getAsset().setCaptureUndoChanges( true );
 		reference.clear();
 	}
 
@@ -198,7 +196,6 @@ public class Command {
 
 	protected void addPreview( DesignTool tool, Collection<DesignShape> shapeList ) {
 		this.preview.addAll( shapeList );
-		tool.getAsset().setCaptureUndoChanges( false );
 		shapeList.forEach( s -> {
 			s.setReference( true );
 			if( s.getLayer() == null ) {
@@ -224,7 +221,6 @@ public class Command {
 	protected void clearPreview( DesignTool tool ) {
 		// The shapes have to be removed before capturing undo changes again
 		removePreview( tool, preview );
-		//tool.getAsset().setCaptureUndoChanges( true );
 		preview.clear();
 	}
 
