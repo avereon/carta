@@ -1,18 +1,21 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class Copy extends EditCommand {
+public class RadialCopy extends EditCommand {
 
 	private DesignLine referenceLine;
 
+	private Point3D center;
+
 	private Point3D anchor;
 
-	private Point3D lastPoint;
+	private double angle;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
@@ -20,18 +23,25 @@ public class Copy extends EditCommand {
 
 		setCaptureUndoChanges( tool, false );
 
-		// Ask for an anchor point
+		// Ask for a center point
 		if( parameters.length < 1 ) {
 			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, tool, "center" );
+			return INCOMPLETE;
+		}
+
+		// Ask for a start point
+		if( parameters.length < 2 ) {
+			center = asPoint( context, parameters[ 0 ] );
+			referenceLine.setPoint( center ).setOrigin( center );
 			promptForPoint( context, tool, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
-		if( parameters.length < 2 ) {
-			tool.clearSelected();
-			anchor = asPoint( context, parameters[ 0 ] );
-			referenceLine.setPoint( anchor ).setOrigin( anchor );
+		if( parameters.length < 3 ) {
+			anchor = asPoint( context, parameters[ 1 ] );
+			referenceLine.setPoint( anchor ).setOrigin( center );
 			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
@@ -41,11 +51,17 @@ public class Copy extends EditCommand {
 
 		clearReferenceAndPreview( tool );
 
-		// Copy the selected shapes
-		setCaptureUndoChanges( tool, true );
-		// Start an undo multi-change
-		copyShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
-		// Done with undo multi-change
+		try {
+			center = asPoint( context, parameters[ 0 ] );
+			anchor = asPoint( context, parameters[ 1 ] );
+			Point3D point = asPoint( context, parameters[ 2 ] );
+
+			// Start an undo multi-change
+			radialCopyShapes( tool.getSelectedShapes(), center, anchor, point );
+			// Done with undo multi-change
+		} catch( Exception exception ) {
+			// Cancel multi-change
+		}
 
 		return COMPLETE;
 	}
@@ -57,11 +73,12 @@ public class Copy extends EditCommand {
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
-				case 2 -> {
-					if( lastPoint == null ) lastPoint = anchor;
+				case 2 -> referenceLine.setPoint( point );
+				case 3 -> {
+					double oldAngle = angle;
 					referenceLine.setPoint( point );
-					moveShapes( getPreview(), lastPoint, point );
-					lastPoint = point;
+					angle = CadGeometry.pointAngle360( anchor, center, point );
+					rotateShapes( getPreview(), center, angle - oldAngle );
 				}
 			}
 		}

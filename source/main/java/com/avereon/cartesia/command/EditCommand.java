@@ -51,10 +51,26 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void radialCopyShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
-		//		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getParentLayer ) );
-		//		Set<DesignShape> clones = cloneLayers.keySet();
-		//		rotateShapes( clones, center, anchor, target );
-		//		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
+		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getLayer ) );
+		Set<DesignShape> clones = cloneLayers.keySet();
+		rotateShapes( clones, center, anchor, target );
+		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
+	}
+
+	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
+		CadTransform transform = CadTransform.mirror( origin, point );
+		try( Txn ignore = Txn.create() ) {
+			shapes.forEach( s -> s.apply( transform ) );
+		} catch( TxnException exception ) {
+			log.log( Log.ERROR, "Error moving shapes", exception );
+		}
+	}
+
+	protected void mirrorShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
+		Map<DesignShape, DesignLayer> cloneLayers = shapes.stream().collect( Collectors.toMap( DesignShape::clone, DesignDrawable::getLayer ) );
+		Set<DesignShape> clones = cloneLayers.keySet();
+		flipShapes( clones, anchor, target );
+		clones.forEach( c -> cloneLayers.get( c ).addShape( c ) );
 	}
 
 }

@@ -12,6 +12,8 @@ public class Move extends EditCommand {
 
 	private Point3D anchor;
 
+	private Point3D lastPoint;
+
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
@@ -25,12 +27,11 @@ public class Move extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		// TODO Make a shadow copy of the selected components to show them as a preview
-
 		// Ask for a target point
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
+			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
@@ -53,7 +54,12 @@ public class Move extends EditCommand {
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
-				case 2 -> referenceLine.setPoint( point );
+				case 2 -> {
+					if( lastPoint == null ) lastPoint = anchor;
+					referenceLine.setPoint( point );
+					moveShapes( getPreview(), lastPoint, point );
+					lastPoint = point;
+				}
 			}
 		}
 	}

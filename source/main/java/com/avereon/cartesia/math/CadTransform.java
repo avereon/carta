@@ -1,6 +1,7 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.curve.math.Transform;
+import com.avereon.curve.math.Vector;
 import javafx.geometry.Point3D;
 
 import java.nio.DoubleBuffer;
@@ -116,8 +117,12 @@ public class CadTransform {
 		return new CadTransform( Transform.zrotation( Math.toRadians( angle ) ) );
 	}
 
-	public static CadTransform mirror( Point3D origin, Point3D normal, Point3D rotate ) {
-		return new CadTransform( Transform.mirror( CadPoints.asPoint( origin ), CadPoints.asPoint( normal ), CadPoints.asPoint( rotate ) ) );
+	public static CadTransform mirror( Point3D origin, Point3D point ) {
+		return new CadTransform( Transform.mirror( CadPoints.asPoint( origin ), CadPoints.asPoint( point ), Vector.UNIT_Z ) );
+	}
+
+	public static CadTransform mirror( Point3D origin, Point3D point, Point3D normal ) {
+		return new CadTransform( Transform.mirror( CadPoints.asPoint( origin ), CadPoints.asPoint( point ), CadPoints.asPoint( normal ) ) );
 	}
 
 	public static CadTransform localTransform( Point3D origin, Point3D normal, Point3D rotate ) {

@@ -40,9 +40,9 @@ public class Rotate extends EditCommand {
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
-			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( center );
+			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, tool, "target" );
 			return INCOMPLETE;
 		}
@@ -63,8 +63,6 @@ public class Rotate extends EditCommand {
 		} catch( Exception exception ) {
 			// Cancel multi-change
 		}
-
-		tool.clearSelected();
 
 		return COMPLETE;
 	}

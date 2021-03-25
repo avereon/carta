@@ -93,17 +93,17 @@ public class CommandMap {
 		// Modify commands
 		add( product, "copy", Copy.class );
 		add( product, "extend", Trim.class );
-		//add( product, "mirror", MirrorTool.class );
-		// TODO Need to finish some meet interactions
+		add( product, "mirror", Mirror.class );
 		add( product, "meet", Meet.class );
 		add( product, "move", Move.class );
-		//add( product, "radial-copy", RadialCopy.class );
+		add( product, "radial-copy", RadialCopy.class );
+		//add( product, "multi-copy", Copy.class );
+		//add( product, "multi-radial-copy", RadialCopy.class );
+		//add( product, "multi-trim", TrimExtendMultiple.class );
 		add( product, "rotate", Rotate.class );
 		//add( product, "scale", Scale.class );
 		//add( product, "stretch", Stretch.class );
-		// TODO Need to finish some trim interactions
 		add( product, "trim", Trim.class );
-		//add( product, "trim-multiple", TrimExtendMultiple.class );
 
 		// Shape commands
 		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent

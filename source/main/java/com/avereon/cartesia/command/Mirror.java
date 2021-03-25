@@ -6,7 +6,7 @@ import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class Copy extends EditCommand {
+public class Mirror extends EditCommand {
 
 	private DesignLine referenceLine;
 
@@ -29,7 +29,6 @@ public class Copy extends EditCommand {
 
 		// Ask for a target point
 		if( parameters.length < 2 ) {
-			tool.clearSelected();
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
@@ -37,14 +36,12 @@ public class Copy extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		// TODO As for a count
-
 		clearReferenceAndPreview( tool );
 
-		// Copy the selected shapes
+		// Move the selected shapes
 		setCaptureUndoChanges( tool, true );
 		// Start an undo multi-change
-		copyShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+		mirrorShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 		// Done with undo multi-change
 
 		return COMPLETE;
@@ -60,11 +57,13 @@ public class Copy extends EditCommand {
 				case 2 -> {
 					if( lastPoint == null ) lastPoint = anchor;
 					referenceLine.setPoint( point );
-					moveShapes( getPreview(), lastPoint, point );
+					// FIXME How to mirror relative to the prior mirror is a problem
+					mirrorShapes( getPreview(), lastPoint, point );
 					lastPoint = point;
 				}
 			}
 		}
 	}
+
 
 }
