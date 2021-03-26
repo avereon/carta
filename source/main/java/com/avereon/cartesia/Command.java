@@ -144,10 +144,15 @@ public class Command {
 		return cloneShapes( shapes, false );
 	}
 
-	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
+	protected List<DesignShape> cloneReferenceShapes( Collection<DesignShape> shapes ) {
+		return cloneShapes( shapes, true );
+	}
+
+	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone();
 			clone.setReference( reference );
+			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
 			if( s.getLayer() != null ) s.getLayer().addShape( clone );
 			return clone;
 		} ).collect( Collectors.toList() );

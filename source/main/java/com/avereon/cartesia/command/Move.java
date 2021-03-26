@@ -1,10 +1,15 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class Move extends EditCommand {
 
@@ -31,18 +36,23 @@ public class Move extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneShapes( context.getTool().getSelectedShapes(), true ) );
+			addPreview( context, cloneReferenceShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
 
 		clearReferenceAndPreview( context );
-
-		// Move the selected shapes
 		setCaptureUndoChanges( context, true );
-		// Start an undo multi-change
-		moveShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
-		// Done with undo multi-change
+
+		try {
+			// Start an undo multi-change
+			moveShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+			// Done with undo multi-change
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
 
 		return COMPLETE;
 	}

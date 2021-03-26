@@ -48,7 +48,20 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
+		if( CadGeometry.areSamePoint( origin, point ) ) return;
 		transformShapes( shapes, CadTransform.mirror( origin, point ) );
+	}
+
+	protected void reflipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D lastPoint, Point3D point ) {
+		// This works
+		flipShapes( shapes, origin, lastPoint );
+		flipShapes( shapes, origin, point );
+
+//		// Oddly, this does not...what is the difference?
+//		if( CadGeometry.areSamePoint( origin, lastPoint ) ) return;
+//		transformShapes( shapes, CadTransform.mirror( origin, lastPoint ) );
+//		if( CadGeometry.areSamePoint( origin, point ) ) return;
+//		transformShapes( shapes, CadTransform.mirror( origin, point ) );
 	}
 
 	private void transformShapes( Collection<DesignShape> shapes, CadTransform transform ) {

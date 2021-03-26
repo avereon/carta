@@ -1,11 +1,16 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+
+import java.text.ParseException;
 
 public class Rotate extends EditCommand {
 
@@ -42,26 +47,22 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 3 ) {
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( center );
-			addPreview( context, cloneShapes( tool.getSelectedShapes(), true ) );
+			addPreview( context, cloneReferenceShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
 
 		clearReferenceAndPreview( context );
-
-		// Move the selected shapes
 		setCaptureUndoChanges( context, true );
 
 		try {
-			center = asPoint( context, parameters[ 0 ] );
-			anchor = asPoint( context, parameters[ 1 ] );
-			Point3D point = asPoint( context, parameters[ 2 ] );
-
 			// Start an undo multi-change
-			rotateShapes( getExecuteShapes( tool ), center, anchor, point );
+			rotateShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 			// Done with undo multi-change
-		} catch( Exception exception ) {
-			// Cancel multi-change
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;
