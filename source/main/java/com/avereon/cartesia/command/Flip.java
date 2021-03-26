@@ -1,21 +1,18 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
-public class Rotate extends EditCommand {
+public class Flip extends EditCommand {
 
 	private DesignLine referenceLine;
 
-	private Point3D center;
-
 	private Point3D anchor;
 
-	private double angle;
+	private Point3D lastPoint;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
@@ -23,25 +20,17 @@ public class Rotate extends EditCommand {
 
 		setCaptureUndoChanges( context, false );
 
-		// Ask for a center point
+		// Ask for an anchor point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "center" );
-			return INCOMPLETE;
-		}
-
-		// Ask for a start point
-		if( parameters.length < 2 ) {
-			center = asPoint( context, parameters[ 0 ] );
-			referenceLine.setPoint( center ).setOrigin( center );
 			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
-		if( parameters.length < 3 ) {
-			anchor = asPoint( context, parameters[ 1 ] );
-			referenceLine.setPoint( anchor ).setOrigin( center );
+		if( parameters.length < 2 ) {
+			anchor = asPoint( context, parameters[ 0 ] );
+			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			addPreview( context, cloneShapes( tool.getSelectedShapes(), true ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
@@ -51,18 +40,9 @@ public class Rotate extends EditCommand {
 
 		// Move the selected shapes
 		setCaptureUndoChanges( context, true );
-
-		try {
-			center = asPoint( context, parameters[ 0 ] );
-			anchor = asPoint( context, parameters[ 1 ] );
-			Point3D point = asPoint( context, parameters[ 2 ] );
-
-			// Start an undo multi-change
-			rotateShapes( getExecuteShapes( tool ), center, anchor, point );
-			// Done with undo multi-change
-		} catch( Exception exception ) {
-			// Cancel multi-change
-		}
+		// Start an undo multi-change
+		flipShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+		// Done with undo multi-change
 
 		return COMPLETE;
 	}
@@ -74,12 +54,13 @@ public class Rotate extends EditCommand {
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
-				case 2 -> referenceLine.setPoint( point );
-				case 3 -> {
-					double oldAngle = angle;
+				case 2 -> {
 					referenceLine.setPoint( point );
-					angle = CadGeometry.pointAngle360( anchor, center, point );
-					rotateShapes( getPreview(), center, angle - oldAngle );
+
+					if( lastPoint == null ) lastPoint = anchor;
+					flipShapes( getPreview(), anchor, lastPoint );
+					flipShapes( getPreview(), anchor, point );
+					lastPoint = point;
 				}
 			}
 		}

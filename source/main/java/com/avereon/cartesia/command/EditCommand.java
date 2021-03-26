@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
@@ -15,6 +16,16 @@ import java.util.Collection;
 public abstract class EditCommand extends Command {
 
 	private static final System.Logger log = Log.get();
+
+	private boolean copy;
+
+	protected void setCloneShapeOnExecute() {
+		this.copy = true;
+	}
+
+	protected Collection<DesignShape> getExecuteShapes( DesignTool tool ) {
+		return copy ? cloneShapes( tool.getSelectedShapes() ) : tool.getSelectedShapes();
+	}
 
 	protected void moveShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
 		transformShapes( shapes, CadTransform.translation( target.subtract( anchor ) ) );
@@ -38,10 +49,6 @@ public abstract class EditCommand extends Command {
 
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
 		transformShapes( shapes, CadTransform.mirror( origin, point ) );
-	}
-
-	protected void mirrorShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
-		flipShapes( shapes, anchor, target );
 	}
 
 	private void transformShapes( Collection<DesignShape> shapes, CadTransform transform ) {

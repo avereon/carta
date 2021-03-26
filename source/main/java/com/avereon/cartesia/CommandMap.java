@@ -93,6 +93,7 @@ public class CommandMap {
 		// Modify commands
 		add( product, "copy", Copy.class );
 		add( product, "extend", Trim.class );
+		add( product, "flip", Flip.class );
 		add( product, "mirror", Mirror.class );
 		add( product, "meet", Meet.class );
 		add( product, "move", Move.class );

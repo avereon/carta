@@ -140,15 +140,15 @@ public class Command {
 		return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 	}
 
+	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes ) {
+		return cloneShapes( shapes, false );
+	}
+
 	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone();
 			clone.setReference( reference );
-			if( s.getLayer() == null ) {
-				//context.getTool().getCurrentLayer().addShape( clone );
-			} else {
-				s.getLayer().addShape( clone );
-			}
+			if( s.getLayer() != null ) s.getLayer().addShape( clone );
 			return clone;
 		} ).collect( Collectors.toList() );
 	}
@@ -162,17 +162,16 @@ public class Command {
 	}
 
 	protected void addReference( CommandContext context, DesignShape... shapes ) {
-		// TODO Should there be a specific reference layer?
-		addReference( context, List.of( shapes ).stream().peek( s -> {
-			s.setReference( true );
-		} ).collect( Collectors.toList() ) );
+		addReference( context, List.of( shapes ) );
 	}
 
 	protected void addReference( CommandContext context, Collection<DesignShape> shapes ) {
-		this.reference.addAll( cloneShapes( shapes, true ) );
+		this.reference.addAll( shapes );
 		String referencePaint = Paints.toString( DesignPane.DEFAULT_SELECT_DRAW_PAINT );
 		this.reference.forEach( s -> {
+			s.setReference( true );
 			s.setDrawPaint( referencePaint );
+			// TODO Should there be a specific reference layer?
 			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
 		} );
 	}
@@ -182,9 +181,7 @@ public class Command {
 	}
 
 	protected void removeReference( CommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.forEach( s -> {
-			s.getLayer().removeShape( s );
-		} );
+		shapeList.forEach( s -> s.getLayer().removeShape( s ) );
 		reference.removeAll( shapeList );
 	}
 
@@ -199,14 +196,15 @@ public class Command {
 	}
 
 	protected void addPreview( CommandContext context, DesignShape... shapes ) {
-		addPreview( context, List.of( shapes ).stream().peek( s -> {
-			s.setReference( true );
-			//tool.getCurrentLayer().addShape( s );
-		} ).collect( Collectors.toList() ) );
+		addPreview( context, List.of( shapes ) );
 	}
 
 	protected void addPreview( CommandContext context, Collection<DesignShape> shapes ) {
-		this.preview.addAll( cloneShapes( shapes, true ) );
+		this.preview.addAll( shapes );
+		this.preview.forEach( s -> {
+			s.setReference( true );
+			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
+		} );
 	}
 
 	protected void removePreview( CommandContext context, DesignShape... shapes ) {
@@ -214,9 +212,7 @@ public class Command {
 	}
 
 	protected void removePreview( CommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.forEach( s -> {
-			s.getLayer().removeShape( s );
-		} );
+		shapeList.forEach( s -> s.getLayer().removeShape( s ) );
 		preview.removeAll( shapeList );
 	}
 

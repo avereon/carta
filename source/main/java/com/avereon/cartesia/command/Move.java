@@ -31,7 +31,7 @@ public class Move extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, context.getTool().getSelectedShapes() );
+			addPreview( context, cloneShapes( context.getTool().getSelectedShapes(), true ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
@@ -41,7 +41,7 @@ public class Move extends EditCommand {
 		// Move the selected shapes
 		setCaptureUndoChanges( context, true );
 		// Start an undo multi-change
-		moveShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+		moveShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 		// Done with undo multi-change
 
 		return COMPLETE;
@@ -55,8 +55,9 @@ public class Move extends EditCommand {
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> {
+					referenceLine.setPoint( point ).setOrigin( anchor );
+
 					if( lastPoint == null ) lastPoint = anchor;
-					referenceLine.setPoint( point );
 					moveShapes( getPreview(), lastPoint, point );
 					lastPoint = point;
 				}
