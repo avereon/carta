@@ -65,6 +65,7 @@ public class CommandMap {
 		// Measure commands
 		add( product, "measure-angle", MeasureAngle.class );
 		add( product, "measure-distance", MeasureDistance.class );
+		add( product, "measure-point", MeasurePoint.class );
 
 		// Draw setting commands
 		// In GCAD these were initially managed with simple commands. Later on you could tell the
