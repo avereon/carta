@@ -18,12 +18,12 @@ public class Mirror extends EditCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
-			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "anchor" );
+			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
@@ -31,15 +31,16 @@ public class Mirror extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
-			promptForPoint( context, tool, "target" );
+			addPreview( context, context.getTool().getSelectedShapes() );
+			flipShapes( getPreview(), anchor, anchor );
+			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
+		clearReferenceAndPreview( context );
 
 		// Move the selected shapes
-		setCaptureUndoChanges( tool, true );
+		setCaptureUndoChanges( context, true );
 		// Start an undo multi-change
 		mirrorShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 		// Done with undo multi-change

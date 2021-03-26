@@ -25,12 +25,12 @@ public class DrawEllipse3 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for the origin
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "center" );
+			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "center" );
 			return INCOMPLETE;
 		}
 
@@ -39,8 +39,8 @@ public class DrawEllipse3 extends DrawCommand {
 			origin = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
-			addPreview( tool, previewEllipse = new DesignEllipse( origin, 0.0 ) );
-			promptForNumber( context, tool, "radius" );
+			addPreview( context, previewEllipse = new DesignEllipse( origin, 0.0 ) );
+			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
 
@@ -49,12 +49,12 @@ public class DrawEllipse3 extends DrawCommand {
 			xPoint = asPoint( context, parameters[ 1 ] );
 			previewEllipse.setXRadius( CadGeometry.distance( previewEllipse.getOrigin(), xPoint ) );
 			previewEllipse.setRotate( deriveRotate( origin, xPoint ) );
-			promptForNumber( context, tool, "radius" );
+			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			origin = asPoint( context, parameters[ 0 ] );

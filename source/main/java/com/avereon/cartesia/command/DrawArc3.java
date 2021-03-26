@@ -25,12 +25,12 @@ public class DrawArc3 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for start
 		if( parameters.length < 1 ) {
-			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "start-point" );
+			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
@@ -38,23 +38,23 @@ public class DrawArc3 extends DrawCommand {
 		if( parameters.length < 2 ) {
 			start = asPoint( context, parameters[ 0 ] );
 			referenceLine.setOrigin( start );
-			promptForPoint( context, tool, "mid-point" );
+			promptForPoint( context, "mid-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3 - Get mid point, prompt for end
 		if( parameters.length < 3 ) {
-			removeReference( tool, referenceLine );
+			removeReference( context, referenceLine );
 
 			mid = asPoint( context, parameters[ 1 ] );
-			addPreview( tool, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
+			addPreview( context, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
 
-			promptForPoint( context, tool, "end-point" );
+			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			start = asPoint( context, parameters[ 0 ] );

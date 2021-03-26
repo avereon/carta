@@ -20,38 +20,38 @@ public class DrawCurve4 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1
 		if( parameters.length < 1 ) {
-			addPreview( tool, preview = new DesignCurve( context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "start-point" );
+			addPreview( context, preview = new DesignCurve( context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
 			preview.setOrigin( asPoint( context, parameters[ 0 ] ) );
-			promptForPoint( context, tool, "control-point" );
+			promptForPoint( context, "control-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
 		if( parameters.length < 3 ) {
 			preview.setOriginControl( asPoint( context, parameters[ 1 ] ) );
-			promptForPoint( context, tool, "control-point" );
+			promptForPoint( context, "control-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 4
 		if( parameters.length < 4 ) {
 			preview.setPointControl( asPoint( context, parameters[ 2 ] ) );
-			promptForPoint( context, tool, "end-point" );
+			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			Point3D a = asPoint( context, parameters[ 0 ] );

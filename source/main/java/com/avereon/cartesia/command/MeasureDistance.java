@@ -24,18 +24,18 @@ public class MeasureDistance extends MeasureCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			addPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "start-point" );
+			addPreview( context, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {
 			preview.setOrigin( asPoint( context.getAnchor(), parameters[ 0 ] ) );
-			promptForPoint( context, tool, "end-point" );
+			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
+		clearReferenceAndPreview( context );
 
 		try {
 			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );

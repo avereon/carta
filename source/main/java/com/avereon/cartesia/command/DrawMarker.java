@@ -20,19 +20,19 @@ public class DrawMarker extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		if( parameters.length < 1 ) {
 			// Need to start with the point at ZERO until it is added
 			// This is a bit of a fluke with how markers are generated
-			addPreview( tool, preview = new DesignMarker( Point3D.ZERO ) );
+			addPreview( context, preview = new DesignMarker( Point3D.ZERO ) );
 			preview.setOrigin( context.getWorldMouse() );
-			promptForPoint( context, tool, "select-point" );
+			promptForPoint( context, "select-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			tool.getCurrentLayer().addShape( new DesignMarker( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );

@@ -17,20 +17,20 @@ public class Meet extends EditCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForShape( context, tool, "select-meet-shape" );
+			promptForShape( context, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {
 			trimMouse = context.getScreenMouse();
-			trim = selectNearestShapeAtMouse( tool, trimMouse );
+			trim = selectNearestShapeAtMouse( context, trimMouse );
 			if( trim == DesignShape.NONE ) return INVALID;
-			promptForShape( context, tool, "select-meet-shape" );
+			promptForShape( context, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
 		Point3D edgeMouse = context.getScreenMouse();
-		DesignShape edge = findNearestShapeAtMouse( tool, edgeMouse );
+		DesignShape edge = findNearestShapeAtMouse( context, edgeMouse );
 		if( edge == DesignShape.NONE ) return INVALID;
 
 		// Start an undo multi-change

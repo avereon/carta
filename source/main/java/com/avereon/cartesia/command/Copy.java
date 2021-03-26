@@ -18,12 +18,12 @@ public class Copy extends EditCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
-			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "anchor" );
+			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
@@ -32,17 +32,17 @@ public class Copy extends EditCommand {
 			tool.clearSelected();
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
-			promptForPoint( context, tool, "target" );
+			addPreview( context, tool.getSelectedShapes() );
+			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
 
 		// TODO As for a count
 
-		clearReferenceAndPreview( tool );
+		clearReferenceAndPreview( context );
 
 		// Copy the selected shapes
-		setCaptureUndoChanges( tool, true );
+		setCaptureUndoChanges( context, true );
 		// Start an undo multi-change
 		copyShapes( tool.getSelectedShapes(), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 		// Done with undo multi-change

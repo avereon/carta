@@ -22,7 +22,7 @@ public class CameraMove extends CameraCommand {
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			promptForPoint( context, tool, "pan-point" );
+			promptForPoint( context, "pan-point" );
 			return INCOMPLETE;
 		}
 
@@ -33,18 +33,18 @@ public class CameraMove extends CameraCommand {
 			}
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 				eventKey = CommandEventKey.of( event );
-				viewAnchor = tool.getViewPoint();
+				viewAnchor = context.getTool().getViewPoint();
 				dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 				return INCOMPLETE;
 			}
 		}
 
 		try {
-			tool.setViewPoint( tool.getViewPoint().subtract( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );
+			context.getTool().setViewPoint( context.getTool().getViewPoint().subtract( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-marker", exception );
-			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

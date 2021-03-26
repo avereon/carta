@@ -31,12 +31,12 @@ public class DrawEllipseArc5 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for the origin
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "center" );
+			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "center" );
 			return INCOMPLETE;
 		}
 
@@ -45,8 +45,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 			origin = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
-			addPreview( tool, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
-			promptForNumber( context, tool, "radius" );
+			addPreview( context, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
+			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
 
@@ -55,7 +55,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 			xPoint = asPoint( context, parameters[ 1 ] );
 			previewArc.setXRadius( CadGeometry.distance( origin, xPoint ) );
 			previewArc.setRotate( deriveRotate( origin, xPoint ) );
-			promptForNumber( context, tool, "radius" );
+			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
 
@@ -63,8 +63,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 		if( parameters.length < 4 ) {
 			yPoint = asPoint( context, parameters[ 2 ] );
 			previewArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
-			addPreview( tool, previewArc );
-			promptForPoint( context, tool, "start" );
+			addPreview( context, previewArc );
+			promptForPoint( context, "start" );
 			return INCOMPLETE;
 		}
 
@@ -74,12 +74,12 @@ public class DrawEllipseArc5 extends DrawCommand {
 			previewArc.setStart( deriveStart( previewArc, start ) );
 			previewArc.setExtent( 0.0 );
 			spinAnchor = start;
-			promptForPoint( context, tool, "extent" );
+			promptForPoint( context, "extent" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			origin = asPoint( context, parameters[ 0 ] );

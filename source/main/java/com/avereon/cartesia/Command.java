@@ -17,7 +17,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -48,11 +47,11 @@ public class Command {
 		return COMPLETE;
 	}
 
-	public void cancel( DesignTool tool ) throws Exception {
-		if( tool != null ) {
-			clearReferenceAndPreview( tool );
-			tool.getDesign().clearSelected();
-			tool.setCursor( Cursor.DEFAULT );
+	public void cancel( CommandContext context ) throws Exception {
+		if( context.getTool() != null ) {
+			clearReferenceAndPreview( context );
+			context.getTool().getDesign().clearSelected();
+			context.getTool().setCursor( Cursor.DEFAULT );
 		}
 	}
 
@@ -103,86 +102,95 @@ public class Command {
 		return CadShapes.parsePoint( String.valueOf( value ), anchor );
 	}
 
-	protected void promptForNumber( CommandContext context, DesignTool tool, String key ) {
-		tool.setCursor( null );
-		promptForValue( context, tool, key, CommandContext.Input.NUMBER );
+	protected void promptForNumber( CommandContext context, String key ) {
+		context.getTool().setCursor( null );
+		promptForValue( context, key, CommandContext.Input.NUMBER );
 	}
 
-	protected void promptForPoint( CommandContext context, DesignTool tool, String key ) {
-		tool.setCursor( tool.getReticle() );
-		promptForValue( context, tool, key, CommandContext.Input.POINT );
+	protected void promptForPoint( CommandContext context, String key ) {
+		context.getTool().setCursor( context.getTool().getReticle() );
+		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 
-	protected void promptForShape( CommandContext context, DesignTool tool, String key ) {
-		tool.setCursor( Cursor.HAND );
-		promptForValue( context, tool, key, CommandContext.Input.NONE );
+	protected void promptForShape( CommandContext context, String key ) {
+		context.getTool().setCursor( Cursor.HAND );
+		promptForValue( context, key, CommandContext.Input.NONE );
 	}
 
-	protected void promptForText( CommandContext context, DesignTool tool, String key ) {
-		tool.setCursor( Cursor.TEXT );
-		promptForValue( context, tool, key, CommandContext.Input.TEXT );
+	protected void promptForText( CommandContext context, String key ) {
+		context.getTool().setCursor( Cursor.TEXT );
+		promptForValue( context, key, CommandContext.Input.TEXT );
 	}
 
-	protected DesignShape findNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
-		List<Shape> shapes = tool.screenPointFindAndWait( mouse );
+	protected DesignShape findNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
+		List<Shape> shapes = context.getTool().screenPointFindAndWait( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
 	}
 
-	protected DesignShape findNearestShapeAtPoint( DesignTool tool, Point3D point ) {
-		return findNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
+	protected DesignShape findNearestShapeAtPoint( CommandContext context, Point3D point ) {
+		return findNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 	}
 
-	protected DesignShape selectNearestShapeAtMouse( DesignTool tool, Point3D mouse ) {
-		List<Shape> shapes = tool.screenPointSelectAndWait( mouse );
+	protected DesignShape selectNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
+		List<Shape> shapes = context.getTool().screenPointSelectAndWait( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
 	}
 
-	protected DesignShape selectNearestShapeAtPoint( DesignTool tool, Point3D point ) {
-		return selectNearestShapeAtMouse( tool, tool.worldToScreen( point ) );
+	protected DesignShape selectNearestShapeAtPoint( CommandContext context, Point3D point ) {
+		return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 	}
 
-	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes ) {
-		return shapes.stream().map( DesignShape::clone ).collect( Collectors.toList() );
+	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
+		return shapes.stream().map( s -> {
+			DesignShape clone = s.clone();
+			clone.setReference( reference );
+			if( s.getLayer() == null ) {
+				//context.getTool().getCurrentLayer().addShape( clone );
+			} else {
+				s.getLayer().addShape( clone );
+			}
+			return clone;
+		} ).collect( Collectors.toList() );
 	}
 
-	protected void setCaptureUndoChanges( DesignTool tool, boolean enabled ) {
-		tool.getAsset().setCaptureUndoChanges( enabled );
+	protected void setCaptureUndoChanges( CommandContext context, boolean enabled ) {
+		context.getTool().getAsset().setCaptureUndoChanges( enabled );
 	}
 
 	protected Collection<DesignShape> getReference() {
 		return this.reference;
 	}
 
-	protected void addReference( DesignTool tool, DesignShape... shapes ) {
-		addReference( tool, List.of( shapes ) );
+	protected void addReference( CommandContext context, DesignShape... shapes ) {
+		// TODO Should there be a specific reference layer?
+		addReference( context, List.of( shapes ).stream().peek( s -> {
+			s.setReference( true );
+		} ).collect( Collectors.toList() ) );
 	}
 
-	protected void addReference( DesignTool tool, Collection<DesignShape> shapeList ) {
-		this.reference.addAll( shapeList );
+	protected void addReference( CommandContext context, Collection<DesignShape> shapes ) {
+		this.reference.addAll( cloneShapes( shapes, true ) );
 		String referencePaint = Paints.toString( DesignPane.DEFAULT_SELECT_DRAW_PAINT );
-		shapeList.forEach( s -> {
-			s.setReference( true );
+		this.reference.forEach( s -> {
 			s.setDrawPaint( referencePaint );
-			// TODO Should there be a specific reference layer?
-			tool.getCurrentLayer().addShape( s );
+			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
 		} );
 	}
 
-	protected void removeReference( DesignTool tool, DesignShape... shapes ) {
-		removeReference( tool, List.of( shapes ) );
+	protected void removeReference( CommandContext context, DesignShape... shapes ) {
+		removeReference( context, List.of( shapes ) );
 	}
 
-	protected void removeReference( DesignTool tool, Collection<DesignShape> shapeList ) {
+	protected void removeReference( CommandContext context, Collection<DesignShape> shapeList ) {
 		shapeList.forEach( s -> {
 			s.getLayer().removeShape( s );
-			s.setReference( false );
 		} );
 		reference.removeAll( shapeList );
 	}
 
-	protected void clearReference( DesignTool tool ) {
+	protected void clearReference( CommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
-		removeReference( tool, reference );
+		removeReference( context, reference );
 		reference.clear();
 	}
 
@@ -190,60 +198,42 @@ public class Command {
 		return this.preview;
 	}
 
-	protected void addPreview( DesignTool tool, DesignShape... shapes ) {
-		addPreview( tool, List.of( shapes ) );
-	}
-
-	protected void addPreview( DesignTool tool, Collection<DesignShape> shapeList ) {
-		this.preview.addAll( shapeList );
-		shapeList.forEach( s -> {
+	protected void addPreview( CommandContext context, DesignShape... shapes ) {
+		addPreview( context, List.of( shapes ).stream().peek( s -> {
 			s.setReference( true );
-			if( s.getLayer() == null ) {
-				tool.getCurrentLayer().addShape( s );
-			} else {
-				s.getLayer().addShape( s );
-			}
-		} );
+			//tool.getCurrentLayer().addShape( s );
+		} ).collect( Collectors.toList() ) );
 	}
 
-	protected void removePreview( DesignTool tool, DesignShape... shapes ) {
-		removePreview( tool, List.of( shapes ) );
+	protected void addPreview( CommandContext context, Collection<DesignShape> shapes ) {
+		this.preview.addAll( cloneShapes( shapes, true ) );
 	}
 
-	protected void removePreview( DesignTool tool, Collection<DesignShape> shapeList ) {
+	protected void removePreview( CommandContext context, DesignShape... shapes ) {
+		removePreview( context, List.of( shapes ) );
+	}
+
+	protected void removePreview( CommandContext context, Collection<DesignShape> shapeList ) {
 		shapeList.forEach( s -> {
 			s.getLayer().removeShape( s );
-			s.setReference( false );
 		} );
 		preview.removeAll( shapeList );
 	}
 
-	protected void clearPreview( DesignTool tool ) {
+	protected void clearPreview( CommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
-		removePreview( tool, preview );
+		removePreview( context, preview );
 		preview.clear();
 	}
 
-	protected void clearReferenceAndPreview( DesignTool tool ) {
-		clearReference( tool );
-		clearPreview( tool );
+	protected void clearReferenceAndPreview( CommandContext context ) {
+		clearReference( context );
+		clearPreview( context );
 	}
 
-	@Deprecated
-	protected Object commitPreview( DesignTool tool ) {
-		List<DesignShape> shapes = new ArrayList<>( preview );
-
-		// Clear preview enables capturing undo changes again
-		clearPreview( tool );
-
-		// Add the shapes to the layer like normal
-		shapes.forEach( s -> tool.getCurrentLayer().addShape( s ) );
-		return COMPLETE;
-	}
-
-	private void promptForValue( CommandContext context, DesignTool tool, String key, CommandContext.Input mode ) {
+	private void promptForValue( CommandContext context, String key, CommandContext.Input mode ) {
 		String text = Rb.text( BundleKey.PROMPT, key );
-		context.submit( tool, new Prompt( text, mode ) );
+		context.submit( context.getTool(), new Prompt( text, mode ) );
 	}
 
 }

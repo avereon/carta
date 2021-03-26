@@ -25,12 +25,12 @@ public class DrawArc2 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for origin
 		if( parameters.length < 1 ) {
-			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "center" );
+			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "center" );
 			return INCOMPLETE;
 		}
 
@@ -39,8 +39,8 @@ public class DrawArc2 extends DrawCommand {
 			Point3D origin = asPoint( context, parameters[ 0 ] );
 			referenceLine.setOrigin( origin );
 			referenceLine.setPoint( origin );
-			addPreview( tool, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
-			promptForPoint( context, tool, "start" );
+			addPreview( context, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
+			promptForPoint( context, "start" );
 			return INCOMPLETE;
 		}
 
@@ -51,7 +51,7 @@ public class DrawArc2 extends DrawCommand {
 			previewArc.setStart( deriveStart( previewArc, point ) );
 			previewArc.setExtent( 0.0 );
 			spinAnchor = point;
-			promptForPoint( context, tool, "extent" );
+			promptForPoint( context, "extent" );
 			return INCOMPLETE;
 		}
 
@@ -59,8 +59,8 @@ public class DrawArc2 extends DrawCommand {
 			spin = asDouble( parameters[ 3 ] );
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			Point3D origin = asPoint( context, parameters[ 0 ] );

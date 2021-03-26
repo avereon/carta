@@ -10,6 +10,7 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
+import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point2D;
@@ -51,11 +52,17 @@ public class CommandContext {
 
 	private Point3D anchor;
 
+	private DesignTool tool;
+
 	public CommandContext( ProgramProduct product ) {
 		this.product = product;
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorShortcut = TextUtil.EMPTY;
 		this.inputMode = CommandContext.Input.NONE;
+	}
+
+	public final Program getProgram() {
+		return product.getProgram();
 	}
 
 	public final ProgramProduct getProduct() {
@@ -172,6 +179,14 @@ public class CommandContext {
 
 	void setLastActiveDesignTool( DesignTool tool ) {
 		lastActiveDesignTool = tool;
+	}
+
+	public DesignTool getTool() {
+		return tool;
+	}
+
+	void setTool( DesignTool tool ) {
+		this.tool = tool;
 	}
 
 	public Point3D getScreenMouse() {
@@ -361,6 +376,7 @@ public class CommandContext {
 
 			Object result = Command.INVALID;
 			try {
+				context.setTool( tool );
 				result = command.execute( context, tool, parameters );
 				if( result != Command.INVALID ) command.incrementStep();
 			} finally {
@@ -372,7 +388,7 @@ public class CommandContext {
 
 		public void cancel() {
 			try {
-				command.cancel( tool );
+				command.cancel( context );
 			} catch( Exception exception ) {
 				log.log( Log.ERROR, exception );
 			}

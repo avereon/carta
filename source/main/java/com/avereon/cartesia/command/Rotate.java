@@ -21,12 +21,12 @@ public class Rotate extends EditCommand {
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Ask for a center point
 		if( parameters.length < 1 ) {
-			addReference( tool, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "center" );
+			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "center" );
 			return INCOMPLETE;
 		}
 
@@ -34,7 +34,7 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 2 ) {
 			center = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( center ).setOrigin( center );
-			promptForPoint( context, tool, "anchor" );
+			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
@@ -42,15 +42,15 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 3 ) {
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( center );
-			addPreview( tool, cloneShapes( tool.getSelectedShapes() ) );
-			promptForPoint( context, tool, "target" );
+			addPreview( context, tool.getSelectedShapes() );
+			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
+		clearReferenceAndPreview( context );
 
 		// Move the selected shapes
-		setCaptureUndoChanges( tool, true );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			center = asPoint( context, parameters[ 0 ] );

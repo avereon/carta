@@ -25,36 +25,36 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1
 		if( parameters.length < 1 ) {
-			promptForShape( context, tool, "reference-shape-perpendicular" );
+			promptForShape( context, "reference-shape-perpendicular" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			reference = selectNearestShapeAtPoint( tool, asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			reference = selectNearestShapeAtPoint( context, asPoint( context.getAnchor(), parameters[ 0 ] ) );
 			if( reference == DesignShape.NONE ) return INVALID;
 
-			addPreview( tool, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "start-point" );
+			addPreview( context, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
 		if( parameters.length < 3 ) {
 			preview.setOrigin( asPoint( context, parameters[ 1 ] ) );
-			promptForPoint( context, tool, "end-point" );
+			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
-			DesignShape shape = findNearestShapeAtPoint( tool, asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			DesignShape shape = findNearestShapeAtPoint( context, asPoint( context.getAnchor(), parameters[ 0 ] ) );
 			Point3D origin = asPoint( context.getAnchor(), parameters[ 1 ] );
 			Point3D point = getPerpendicular( shape, origin, asPoint( context.getAnchor(), parameters[ 2 ] ) );
 			// Start an undo multi-change

@@ -23,27 +23,27 @@ public class DrawCircle2 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "center" );
+			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "center" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( parameters.length < 2 ) {
 			Point3D origin = asPoint( context, parameters[ 0 ] );
-			addPreview( tool, previewEllipse = new DesignEllipse( origin, 0.0 ) );
+			addPreview( context, previewEllipse = new DesignEllipse( origin, 0.0 ) );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
-			promptForNumber( context, tool, "radius" );
+			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			Point3D origin = asPoint( context, parameters[ 0 ] );

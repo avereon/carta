@@ -19,12 +19,12 @@ public class SnapSelect extends SnapCommand {
 
 		if( parameters.length < 2 ) {
 			snap = (Snap)parameters[ 0 ];
-			promptForShape( context, tool, "select-snap-shape" );
+			promptForShape( context, "select-snap-shape" );
 			return INCOMPLETE;
 		}
 
 		Point3D point = asPoint( context.getAnchor(), parameters[ 1 ] );
-		Point3D snapPoint = snap.snap( tool, point );
+		Point3D snapPoint = snap.snap( context.getTool(), point );
 		return snapPoint != CadPoints.NONE ? snapPoint : INVALID;
 	}
 

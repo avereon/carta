@@ -21,7 +21,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void copyShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
-		moveShapes( cloneShapes( shapes ), anchor, target );
+		moveShapes( shapes, anchor, target );
 	}
 
 	protected void rotateShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
@@ -33,7 +33,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void radialCopyShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
-		rotateShapes( cloneShapes( shapes ), center, anchor, target );
+		rotateShapes( shapes, center, anchor, target );
 	}
 
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
@@ -41,7 +41,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void mirrorShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
-		flipShapes( cloneShapes( shapes ), anchor, target );
+		flipShapes( shapes, anchor, target );
 	}
 
 	private void transformShapes( Collection<DesignShape> shapes, CadTransform transform ) {

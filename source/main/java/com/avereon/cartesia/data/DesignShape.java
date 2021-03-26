@@ -61,10 +61,10 @@ public abstract class DesignShape extends DesignDrawable {
 		return Double.NaN;
 	}
 
+	@SuppressWarnings( "MethodDoesntCallSuperMethod" )
 	public DesignShape clone() {
-		DesignShape shape = cloneShape();
-		if( getLayer() != null ) getLayer().addShape( shape );
-		return shape;
+		// NOTE Immediately adding the cloned shape to the layer will trigger the modified flag
+		return cloneShape();
 	}
 
 	protected DesignShape cloneShape() {

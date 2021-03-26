@@ -26,12 +26,12 @@ public class DrawCircle3 extends DrawCommand {
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( tool, false );
+		setCaptureUndoChanges( context, false );
 
 		// Step 1
 		if( parameters.length < 1 ) {
-			addPreview( tool, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, tool, "start-point" );
+			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
@@ -39,23 +39,23 @@ public class DrawCircle3 extends DrawCommand {
 		if( parameters.length < 2 ) {
 			start = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( start );
-			promptForPoint( context, tool, "mid-point" );
+			promptForPoint( context, "mid-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
 		if( parameters.length < 3 ) {
-			removePreview( tool, previewLine );
+			removePreview( context, previewLine );
 
 			mid = asPoint( context, parameters[ 1 ] );
-			addPreview( tool, previewEllipse = CadGeometry.circleFromThreePoints( start, mid, mid ) );
+			addPreview( context, previewEllipse = CadGeometry.circleFromThreePoints( start, mid, mid ) );
 
-			promptForPoint( context, tool, "end-point" );
+			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( tool );
-		setCaptureUndoChanges( tool, true );
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
 
 		try {
 			start = asPoint( context, parameters[ 0 ] );
