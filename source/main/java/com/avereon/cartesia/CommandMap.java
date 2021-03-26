@@ -63,7 +63,7 @@ public class CommandMap {
 		add( product, "grid-toggle", GridToggle.class );
 
 		// Measure commands
-		//add( product, "measure-angle", MeasureAngle.class );
+		add( product, "measure-angle", MeasureAngle.class );
 		add( product, "measure-distance", MeasureDistance.class );
 
 		// Draw setting commands

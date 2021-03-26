@@ -19,18 +19,18 @@ public class MeasureDistance extends MeasureCommand {
 
 	private static final System.Logger log = Log.get();
 
-	private DesignLine preview;
+	private DesignLine referenceLine;
 
 	@Override
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
-			addPreview( context, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
 		if( parameters.length < 2 ) {
-			preview.setOrigin( asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			referenceLine.setOrigin( asPoint( context.getAnchor(), parameters[ 0 ] ) );
 			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
@@ -68,15 +68,15 @@ public class MeasureDistance extends MeasureCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			if( preview != null ) {
+			if( referenceLine != null ) {
 				DesignTool tool = (DesignTool)event.getSource();
 				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 				switch( getStep() ) {
 					case 1 -> {
-						preview.setOrigin( point );
-						preview.setPoint( point );
+						referenceLine.setOrigin( point );
+						referenceLine.setPoint( point );
 					}
-					case 2 -> preview.setPoint( point );
+					case 2 -> referenceLine.setPoint( point );
 				}
 			}
 		}

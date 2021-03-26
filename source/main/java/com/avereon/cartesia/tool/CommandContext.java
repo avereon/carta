@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.command.Select;

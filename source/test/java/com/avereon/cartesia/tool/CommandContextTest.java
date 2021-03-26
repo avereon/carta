@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.Command;
+import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.MockCartesiaMod;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;

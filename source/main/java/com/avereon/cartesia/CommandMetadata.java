@@ -1,5 +1,7 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.command.Command;
+
 import java.util.Comparator;
 import java.util.Objects;
 

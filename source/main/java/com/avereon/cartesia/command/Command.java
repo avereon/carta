@@ -1,9 +1,9 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.command.Prompt;
+import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.math.CadMath;
-import com.avereon.cartesia.math.CadShapes;
+import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.cartesia.tool.DesignTool;
@@ -232,9 +232,65 @@ public class Command {
 		clearPreview( context );
 	}
 
+	protected double deriveStart( DesignArc arc, Point3D point ) {
+		return deriveRotatedArcAngle( arc, point );
+	}
+
+	protected double deriveExtent( DesignArc arc, Point3D point, double spin ) {
+		double angle = deriveRotatedArcAngle( arc, point ) - arc.getStart();
+
+		if( angle < 0 && spin > 0 ) angle += 360;
+		if( angle > 0 && spin < 0 ) angle -= 360;
+
+		return angle % 360;
+	}
+
+	/**
+	 * Get the spin from the arc origin, through the last point to the next point.
+	 * This will return 1.0 for a left-hand(CCW) spin or -1.0 for right-hand(CW)
+	 * spin. If the spin cannot be determined or the points are collinear the
+	 * prior spin is returned
+	 *
+	 * @param arc The arc to use
+	 * @param lastPoint The last point
+	 * @param nextPoint The next point
+	 * @param priorSpin The prior spin
+	 * @return 1.0 for CCW spin, -1.0 for CW spin or the prior spin
+	 */
+	protected double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
+		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
+
+		// NOTE Rotate does not have eccentricity applied
+		// NOTE Start does have eccentricity applied
+		// This special transform takes into account the rotation and start angle
+		double e = arc.getXRadius() / arc.getYRadius();
+		CadTransform transform = CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.getStart() ).combine( CadTransform.scale( 1, e, 1 ) ).combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.calcRotate() ) ).combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
+
+		Point3D lp = transform.apply( lastPoint );
+		Point3D np = transform.apply( nextPoint );
+
+		double spin = priorSpin;
+		if( lp.getX() > 0 & np.getX() > 0 ) {
+			if( np.getY() > 0 & (lp.getY() <= 0 || priorSpin == 0) ) spin = 1.0;
+			if( np.getY() < 0 & (lp.getY() >= 0 || priorSpin == 0) ) spin = -1.0;
+		}
+
+		return spin;
+	}
+
 	private void promptForValue( CommandContext context, String key, CommandContext.Input mode ) {
 		String text = Rb.text( BundleKey.PROMPT, key );
 		context.submit( context.getTool(), new Prompt( text, mode ) );
+	}
+
+	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {
+		CadTransform t = arc.getLocalTransform();
+
+		double angle = CadGeometry.angle360( t.apply( point ) );
+		if( angle <= -180 ) angle += 360;
+		if( angle > 180 ) angle -= 360;
+
+		return angle;
 	}
 
 }

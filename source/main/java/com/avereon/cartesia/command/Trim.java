@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.Command;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
