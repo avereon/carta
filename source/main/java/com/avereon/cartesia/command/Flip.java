@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -67,12 +68,14 @@ public class Flip extends EditCommand {
 				case 2 -> {
 					referenceLine.setPoint( point );
 
-					if( lastPoint == null ) {
-						flipShapes( getPreview(), anchor, point );
-					} else {
-						reflipShapes( getPreview(), anchor, lastPoint, point );
+					if( !CadGeometry.areSamePoint( anchor, point ) ) {
+						if( lastPoint != null ) {
+							reflipShapes( getPreview(), anchor, lastPoint, point );
+						} else {
+							flipShapes( getPreview(), anchor, point );
+						}
+						lastPoint = point;
 					}
-					lastPoint = point;
 				}
 			}
 		}

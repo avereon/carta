@@ -139,7 +139,7 @@ public class CommandContext {
 	}
 
 	public boolean isInteractive() {
-		// TODO Turn of when running a script
+		// TODO Turn off when running a script
 		return true;
 	}
 

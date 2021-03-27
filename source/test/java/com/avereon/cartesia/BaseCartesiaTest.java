@@ -4,11 +4,15 @@ import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseCartesiaTest {
 
-	protected CartesiaMod mod;
+	private CartesiaMod mod;
 
 	@BeforeEach
 	void setup() {
 		mod = new CartesiaMod();
+	}
+
+	public CartesiaMod getMod() {
+		return mod;
 	}
 
 }

@@ -34,10 +34,10 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	@BeforeEach
 	void setup() {
 		super.setup();
-		codec = new CartesiaDesignCodec2D( mod );
+		codec = new CartesiaDesignCodec2D( getMod() );
 
 		Path path = Paths.get( "target", "design.tmp" );
-		asset = new Asset( path.toUri(), new Design2dAssetType( mod ) );
+		asset = new Asset( path.toUri(), new Design2dAssetType( getMod() ) );
 		asset.setModel( new Design2D() );
 	}
 
