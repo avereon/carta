@@ -176,7 +176,7 @@ public class Command {
 		this.reference.forEach( s -> {
 			s.setReference( true );
 			s.setDrawPaint( referencePaint );
-			// TODO Should there be a specific reference layer?
+			// FIXME Should there be a specific reference layer? UX says yes!
 			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
 		} );
 	}
@@ -186,7 +186,7 @@ public class Command {
 	}
 
 	protected void removeReference( CommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.forEach( s -> s.getLayer().removeShape( s ) );
+		shapeList.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		reference.removeAll( shapeList );
 	}
 
@@ -217,7 +217,7 @@ public class Command {
 	}
 
 	protected void removePreview( CommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.forEach( s -> s.getLayer().removeShape( s ) );
+		shapeList.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		preview.removeAll( shapeList );
 	}
 
@@ -264,7 +264,11 @@ public class Command {
 		// NOTE Start does have eccentricity applied
 		// This special transform takes into account the rotation and start angle
 		double e = arc.getXRadius() / arc.getYRadius();
-		CadTransform transform = CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.getStart() ).combine( CadTransform.scale( 1, e, 1 ) ).combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.calcRotate() ) ).combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
+		CadTransform transform = CadTransform
+			.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.getStart() )
+			.combine( CadTransform.scale( 1, e, 1 ) )
+			.combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.calcRotate() ) )
+			.combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
 
 		Point3D lp = transform.apply( lastPoint );
 		Point3D np = transform.apply( nextPoint );
