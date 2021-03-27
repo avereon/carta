@@ -200,7 +200,7 @@ public class CadIntersection {
 	}
 
 	private static List<Point3D> intersectLineCircle( DesignLine a, DesignEllipse b ) {
-		return toFxPoints( Intersection2D.intersectLineCircle( asPoint( a.getOrigin() ), asPoint( a.getPoint() ), b.getRadius() ).getPoints() );
+		return toFxPoints( Intersection2D.intersectLineCircle( asPoint( a.getOrigin() ), asPoint( a.getPoint() ), b.getXRadius() ).getPoints() );
 	}
 
 }
