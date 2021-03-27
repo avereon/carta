@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.xenon.ProgramProduct;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseCartesiaTest {
@@ -9,6 +10,10 @@ public abstract class BaseCartesiaTest {
 	@BeforeEach
 	void setup() {
 		mod = new CartesiaMod();
+	}
+
+	public ProgramProduct getProduct() {
+		return getMod();
 	}
 
 	public CartesiaMod getMod() {
