@@ -71,7 +71,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 5 - Get the start angle, prompt for the extent angle
 		if( parameters.length < 5 ) {
 			Point3D start = asPoint( context, parameters[ 3 ] );
-			referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), start ) );
+			referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), start ) );
 			referenceArc.setExtent( 0.0 );
 			spinAnchor = start;
 			promptForPoint( context, "extent" );
@@ -110,7 +110,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-			spin = getExtentSpin( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), referenceArc.getStart(), spinAnchor, point, spin );
+			spin = getExtentSpin( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), referenceArc.getStart(), spinAnchor, point, spin );
 
 			switch( getStep() ) {
 				case 1 -> {
@@ -132,12 +132,12 @@ public class DrawEllipseArc5 extends DrawCommand {
 				case 4 -> {
 					// Arc start
 					previewLine.setPoint( point );
-					referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), point ) );
+					referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), point ) );
 				}
 				case 5 -> {
 					// Arc extent
 					previewLine.setPoint( point );
-					referenceArc.setExtent( deriveExtent( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), referenceArc.getStart(), point, spin ) );
+					referenceArc.setExtent( deriveExtent( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), referenceArc.getStart(), point, spin ) );
 					spinAnchor = point;
 				}
 			}
