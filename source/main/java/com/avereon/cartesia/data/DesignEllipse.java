@@ -114,11 +114,19 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	public CadTransform getLocalTransform() {
-		return CadTransform.scale( 1, getXRadius() / getYRadius(), 0 ).combine( getOrientation().getTargetToLocalTransform() );
+		return calcLocalTransform( getOrigin(), getXRadius(), getYRadius(), calcRotate() );
+	}
+
+	public static CadTransform calcLocalTransform( Point3D center, double xRadius, double yRadius, double rotate ) {
+		return CadTransform.scale( 1, xRadius / yRadius, 0 ).combine( calcOrientation( center, rotate ).getTargetToLocalTransform() );
 	}
 
 	public CadOrientation getOrientation() {
-		return new CadOrientation( getOrigin(), CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, calcRotate() ) );
+		return calcOrientation( getOrigin(), calcRotate() );
+	}
+
+	public static CadOrientation calcOrientation( Point3D center, double rotate ) {
+		return new CadOrientation( center, CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, rotate ) );
 	}
 
 	@Override

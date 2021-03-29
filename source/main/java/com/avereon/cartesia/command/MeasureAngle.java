@@ -54,7 +54,7 @@ public class MeasureAngle extends MeasureCommand {
 		if( parameters.length < 3 ) {
 			Point3D point = asPoint( context, parameters[ 1 ] );
 			referenceArc.setRadius( CadGeometry.distance( referenceArc.getOrigin(), point ) );
-			referenceArc.setStart( deriveStart( referenceArc, point ) );
+			referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), point ) );
 			referenceArc.setExtent( 0.0 );
 			spinAnchor = point;
 			promptForPoint( context, "extent" );
@@ -73,14 +73,8 @@ public class MeasureAngle extends MeasureCommand {
 			Point3D startPoint = asPoint( context, parameters[ 1 ] );
 			Point3D extentPoint = asPoint( context, parameters[ 2 ] );
 			double radius = CadGeometry.distance( origin, startPoint );
-			DesignArc arc = new DesignArc( origin, radius, 0.0, 360.0, DesignArc.Type.OPEN );
-
-			// FIXME This implementation depends on state in arc
-			double start = deriveStart( arc, startPoint );
-			arc.setStart( start );
-			// FIXME This implementation depends on state in arc
-			double extent = deriveExtent( arc, extentPoint, spin );
-			arc.setExtent( extent );
+			double start = deriveStart( origin, radius, radius, 0.0, startPoint );
+			double extent = deriveExtent( origin, radius, radius, 0.0, start, extentPoint, spin );
 
 			String title = Rb.text( BundleKey.NOTICE, "measurement" );
 			String message = Rb.text( BundleKey.NOTICE, "angle", extent );
@@ -88,7 +82,7 @@ public class MeasureAngle extends MeasureCommand {
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
 				ClipboardContent content = new ClipboardContent();
-				// TODO Run the distance value through the design value formatter
+				// TODO Run the angle value through the design value formatter
 				content.putString( String.valueOf( extent ) );
 				clipboard.setContent( content );
 			} ) );
@@ -110,7 +104,7 @@ public class MeasureAngle extends MeasureCommand {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-			spin = getExtentSpin( referenceArc, spinAnchor, point, spin );
+			spin = getExtentSpin( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), referenceArc.getStart(), spinAnchor, point, spin );
 
 			switch( getStep() ) {
 				case 1 -> {
@@ -122,12 +116,12 @@ public class MeasureAngle extends MeasureCommand {
 					// Arc radius and start
 					referenceLine.setPoint( point );
 					referenceArc.setRadius( point.distance( referenceArc.getOrigin() ) );
-					referenceArc.setStart( deriveStart( referenceArc, point ) );
+					referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), point ) );
 				}
 				case 3 -> {
 					// Arc extent
 					referenceLine.setPoint( point );
-					referenceArc.setExtent( deriveExtent( referenceArc, point, spin ) );
+					referenceArc.setExtent( deriveExtent( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), referenceArc.getStart(), point, spin ) );
 					spinAnchor = point;
 				}
 			}

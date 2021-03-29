@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.CommandContext;
@@ -232,12 +232,34 @@ public class Command {
 		clearPreview( context );
 	}
 
-	protected double deriveStart( DesignArc arc, Point3D point ) {
-		return deriveRotatedArcAngle( arc, point );
+	/**
+	 * Derive a start angle for an ellipse arc.
+	 *
+	 * @param center The arc center
+	 * @param xRadius The arc xRadius
+	 * @param yRadius The arc yRadius
+	 * @param rotate The arc rotate angle
+	 * @param point The point from which to derive the start angle
+	 * @return The start angle
+	 */
+	protected double deriveStart( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
+		return deriveRotatedArcAngle( center, xRadius, yRadius, rotate, point );
 	}
 
-	protected double deriveExtent( DesignArc arc, Point3D point, double spin ) {
-		double angle = deriveRotatedArcAngle( arc, point ) - arc.getStart();
+	/**
+	 * Derive an extent angle for an ellipse arc.
+	 *
+	 * @param center The arc center
+	 * @param xRadius The arc xRadius
+	 * @param yRadius The arc yRadius
+	 * @param rotate The arc rotate angle
+	 * @param start The arc start angle
+	 * @param point The point from which to derive the extent angle
+	 * @param spin The movement spin direction
+	 * @return The extent angle
+	 */
+	protected double deriveExtent( Point3D center, double xRadius, double yRadius, double rotate, double start, Point3D point, double spin ) {
+		double angle = deriveRotatedArcAngle( center, xRadius, yRadius, rotate, point ) - start;
 
 		if( angle < 0 && spin > 0 ) angle += 360;
 		if( angle > 0 && spin < 0 ) angle -= 360;
@@ -251,24 +273,28 @@ public class Command {
 	 * spin. If the spin cannot be determined or the points are collinear the
 	 * prior spin is returned
 	 *
-	 * @param arc The arc to use
+	 * @param center The arc center
+	 * @param xRadius The arc xRadius
+	 * @param yRadius The arc yRadius
+	 * @param rotate The arc rotate angle
+	 * @param start The arc start angle
 	 * @param lastPoint The last point
 	 * @param nextPoint The next point
 	 * @param priorSpin The prior spin
 	 * @return 1.0 for CCW spin, -1.0 for CW spin or the prior spin
 	 */
-	protected double getExtentSpin( DesignArc arc, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
-		if( arc == null || lastPoint == null || nextPoint == null ) return priorSpin;
+	protected double getExtentSpin( Point3D center, double xRadius, double yRadius, double rotate, double start, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
+		if( lastPoint == null || nextPoint == null ) return priorSpin;
 
 		// NOTE Rotate does not have eccentricity applied
 		// NOTE Start does have eccentricity applied
 		// This special transform takes into account the rotation and start angle
-		double e = arc.getXRadius() / arc.getYRadius();
+		double e = xRadius / yRadius;
 		CadTransform transform = CadTransform
-			.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.getStart() )
+			.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -start )
 			.combine( CadTransform.scale( 1, e, 1 ) )
-			.combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -arc.calcRotate() ) )
-			.combine( CadTransform.translation( arc.getOrigin().multiply( -1 ) ) );
+			.combine( CadTransform.rotation( Point3D.ZERO, CadPoints.UNIT_Z, -rotate ) )
+			.combine( CadTransform.translation( center.multiply( -1 ) ) );
 
 		Point3D lp = transform.apply( lastPoint );
 		Point3D np = transform.apply( nextPoint );
@@ -287,8 +313,8 @@ public class Command {
 		context.submit( context.getTool(), new Prompt( text, mode ) );
 	}
 
-	private double deriveRotatedArcAngle( DesignArc arc, Point3D point ) {
-		CadTransform t = arc.getLocalTransform();
+	private double deriveRotatedArcAngle( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
+		CadTransform t = DesignEllipse.calcLocalTransform( center, xRadius, yRadius, rotate );
 
 		double angle = CadGeometry.angle360( t.apply( point ) );
 		if( angle <= -180 ) angle += 360;

@@ -17,7 +17,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 
 	private DesignLine previewLine;
 
-	private DesignArc previewArc;
+	private DesignArc referenceArc;
 
 	private Point3D origin;
 
@@ -45,7 +45,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 			origin = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
-			addPreview( context, previewArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
+			addPreview( context, referenceArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
 			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
@@ -53,8 +53,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 3 - Get the x-point and rotate angle, prompt for the y-radius
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
-			previewArc.setXRadius( CadGeometry.distance( origin, xPoint ) );
-			previewArc.setRotate( deriveRotate( origin, xPoint ) );
+			referenceArc.setXRadius( CadGeometry.distance( origin, xPoint ) );
+			referenceArc.setRotate( deriveRotate( origin, xPoint ) );
 			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
@@ -62,8 +62,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 4 - Get the second radius, prompt for the start angle
 		if( parameters.length < 4 ) {
 			yPoint = asPoint( context, parameters[ 2 ] );
-			previewArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
-			addPreview( context, previewArc );
+			referenceArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
+			addPreview( context, referenceArc );
 			promptForPoint( context, "start" );
 			return INCOMPLETE;
 		}
@@ -71,8 +71,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 5 - Get the start angle, prompt for the extent angle
 		if( parameters.length < 5 ) {
 			Point3D start = asPoint( context, parameters[ 3 ] );
-			previewArc.setStart( deriveStart( previewArc, start ) );
-			previewArc.setExtent( 0.0 );
+			referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), start ) );
+			referenceArc.setExtent( 0.0 );
 			spinAnchor = start;
 			promptForPoint( context, "extent" );
 			return INCOMPLETE;
@@ -92,12 +92,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 			double xRadius = asDouble( origin, xPoint );
 			double yRadius = deriveYRadius( origin, xPoint, yPoint );
 			double rotate = deriveRotate( origin, xPoint );
-
-			DesignArc arc = new DesignArc( origin, xRadius, yRadius, rotate, 0.0, 360.0, DesignArc.Type.OPEN );
-			// FIXME This implementation depends on state in arc
-			double start = deriveStart( arc, asPoint( context, startPoint ) );
-			// FIXME This implementation depends on state in arc
-			double extent = deriveExtent( arc, asPoint( context, extentPoint ), spin );
+			double start = deriveStart( origin, xRadius, yRadius, rotate, asPoint( context, startPoint ) );
+			double extent = deriveExtent( origin, xRadius, yRadius, rotate, start, asPoint( context, extentPoint ), spin );
 
 			tool.getCurrentLayer().addShape( new DesignArc( origin, xRadius, yRadius, rotate, start, extent, DesignArc.Type.OPEN ) );
 		} catch( ParseException exception ) {
@@ -114,7 +110,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-			spin = getExtentSpin( previewArc, spinAnchor, point, spin );
+			spin = getExtentSpin( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), referenceArc.getStart(), spinAnchor, point, spin );
 
 			switch( getStep() ) {
 				case 1 -> {
@@ -125,23 +121,23 @@ public class DrawEllipseArc5 extends DrawCommand {
 				case 2 -> {
 					// Arc X radius and rotate
 					previewLine.setPoint( point );
-					previewArc.setXRadius( point.distance( previewArc.getOrigin() ) );
-					previewArc.setRotate( deriveRotate( origin, point ) );
+					referenceArc.setXRadius( point.distance( referenceArc.getOrigin() ) );
+					referenceArc.setRotate( deriveRotate( origin, point ) );
 				}
 				case 3 -> {
 					// Arc Y radius
 					previewLine.setPoint( point );
-					previewArc.setYRadius( deriveYRadius( origin, xPoint, point ) );
+					referenceArc.setYRadius( deriveYRadius( origin, xPoint, point ) );
 				}
 				case 4 -> {
 					// Arc start
 					previewLine.setPoint( point );
-					previewArc.setStart( deriveStart( previewArc, point ) );
+					referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), point ) );
 				}
 				case 5 -> {
 					// Arc extent
 					previewLine.setPoint( point );
-					previewArc.setExtent( deriveExtent( previewArc, point, spin ) );
+					referenceArc.setExtent( deriveExtent( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.getRotate(), referenceArc.getStart(), point, spin ) );
 					spinAnchor = point;
 				}
 			}
