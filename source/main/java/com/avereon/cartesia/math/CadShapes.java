@@ -6,19 +6,22 @@ import com.avereon.curve.math.Geometry;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class CadShapes {
 
 	private static final System.Logger log = Log.get();
 
-//	public static Point3D polarToCartesian( Point3D point ) {
-//		return toFxPoint( Geometry.polarToCartesian( asPoint( point ) ) );
-//	}
-//
-//	public static Point3D cartesianToPolar( Point3D point ) {
-//		return toFxPoint( Geometry.cartesianToPolar( asPoint( point ) ) );
-//	}
+	//	public static Point3D polarToCartesian( Point3D point ) {
+	//		return toFxPoint( Geometry.polarToCartesian( asPoint( point ) ) );
+	//	}
+	//
+	//	public static Point3D cartesianToPolar( Point3D point ) {
+	//		return toFxPoint( Geometry.cartesianToPolar( asPoint( point ) ) );
+	//	}
 
 	public static Point3D polarDegreesToCartesian( Point3D point ) {
 		return CadPoints.toFxPoint( Geometry.polarDegreesToCartesian( CadPoints.asPoint( point ) ) );
@@ -26,6 +29,10 @@ public class CadShapes {
 
 	public static Point3D cartesianToPolarDegrees( Point3D point ) {
 		return CadPoints.toFxPoint( Geometry.cartesianToPolarDegrees( CadPoints.asPoint( point ) ) );
+	}
+
+	public static String toString( Point3D point ) {
+		return point.getX() + "," + point.getY() + "," + point.getZ();
 	}
 
 	public static Point3D parsePoint( String input ) {
@@ -95,7 +102,7 @@ public class CadShapes {
 
 		List<DesignShape> sortedShapes = new ArrayList<>( shapes );
 		sortedShapes.sort( new DesignShapeDistanceComparator( point ) );
-		return sortedShapes.get(0);
+		return sortedShapes.get( 0 );
 	}
 
 }

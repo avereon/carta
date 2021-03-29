@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -35,18 +36,18 @@ public class MeasurePoint extends MeasureCommand{
 			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );
 
 			String title = Rb.text( BundleKey.NOTICE, "measurement" );
-			String message = Rb.text( BundleKey.NOTICE, "point", String.valueOf( p1 ) );
+			String message = Rb.text( BundleKey.NOTICE, "point", CadShapes.toString( p1 ) );
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
 				ClipboardContent content = new ClipboardContent();
 				// TODO Run the point value through the design value formatter
-				content.putString( String.valueOf( p1 ) );
+				content.putString( CadShapes.toString( p1 ) );
 				clipboard.setContent( content );
 			} ) );
 			context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
-			log.log( Log.DEBUG, "Measured point=" + p1 );
+			log.log( Log.DEBUG, "Measured point=" + CadShapes.toString( p1 ) );
 			return p1;
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
