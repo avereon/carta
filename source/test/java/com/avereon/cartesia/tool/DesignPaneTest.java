@@ -42,7 +42,7 @@ public class DesignPaneTest implements TestTimeouts {
 		JavaFxStarter.startAndWait( FX_STARTUP_TIMEOUT );
 
 		design = new Design2D();
-		pane = new DesignPane().loadDesign( design );
+		pane = new DesignPane().setDesign( design );
 
 		StackPane parent = new StackPane();
 		parent.resize( PARENT_WIDTH, PARENT_HEIGHT );

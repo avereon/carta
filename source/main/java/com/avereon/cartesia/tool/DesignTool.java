@@ -321,7 +321,7 @@ public abstract class DesignTool extends GuidedTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = request.getAsset().getModel();
-		designPane.loadDesign( design );
+		designPane.setDesign( design );
 		designPane.setDpi( Screen.getPrimary().getDpi() );
 		layersGuide.link( designPane );
 		//viewsGuide.init( design );
@@ -443,10 +443,15 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@Override
+	protected void deactivate() throws ToolException {
+		super.deactivate();
+		if( isReady() ) unregisterStatusBarItems();
+	}
+
+	@Override
 	protected void conceal() throws ToolException {
 		super.conceal();
-		unregisterActions();
-		if( isReady() && isLastTool() ) unregisterStatusBarItems();
+		if( isReady() ) unregisterActions();
 	}
 
 	private DesignPane getDesignPane() {

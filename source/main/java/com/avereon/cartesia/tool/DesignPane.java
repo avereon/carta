@@ -263,7 +263,7 @@ public class DesignPane extends StackPane {
 		} ) );
 	}
 
-	DesignPane loadDesign( Design design ) {
+	DesignPane setDesign( Design design ) {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
