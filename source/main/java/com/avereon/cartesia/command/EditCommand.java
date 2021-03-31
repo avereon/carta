@@ -46,6 +46,14 @@ public abstract class EditCommand extends Command {
 		rotateShapes( shapes, center, anchor, target );
 	}
 
+	protected void scaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
+		transformShapes( shapes, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ) );
+	}
+
+	protected void rescaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D lastPoint, Point3D target ) {
+		transformShapes( shapes, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ).combine( CadTransform.scale( center, 1/(lastPoint.distance( center ) / anchor.distance( center ) )) ) );
+	}
+
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
 		if( CadGeometry.areSamePoint( origin, point ) ) return;
 		transformShapes( shapes, CadTransform.mirror( origin, point ) );
