@@ -42,31 +42,6 @@ public class CommandMap {
 		// y - layer
 		// z - zoom
 
-		// Basic command
-		add( product, "select", Select.class );
-
-		// View commands
-		add( product, "camera-move", CameraMove.class );
-		//add( product, "camera-spin", CameraSpinCommand.class );
-		add( product, "camera-view-point", CameraViewPoint.class );
-		add( product, "camera-view-rotate-left", CameraViewRotateLeft.class );
-		add( product, "camera-view-rotate-right", CameraViewRotateRight.class );
-		//add( product, "camera-walk", CameraWalkCommand.class );
-		add( product, "camera-zoom", CameraZoom.class );
-		//add( product, "camera-zoom-all", CameraZoomAllCommand.class );
-		add( product, "camera-zoom-in", CameraZoomIn.class );
-		add( product, "camera-zoom-out", CameraZoomOut.class );
-		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
-
-		// Grid commands
-		// gg - grid toggle
-		add( product, "grid-toggle", GridToggle.class );
-
-		// Measure commands
-		add( product, "measure-angle", MeasureAngle.class );
-		add( product, "measure-distance", MeasureDistance.class );
-		add( product, "measure-point", MeasurePoint.class );
-
 		// Draw setting commands
 		// In GCAD these were initially managed with simple commands. Later on you could tell the
 		// pattern changed to use grouped settings. There are multiple options here:
@@ -90,6 +65,32 @@ public class CommandMap {
 		// shape draw width
 		// shape draw paint
 		// shape fill paint
+
+		// Basic command
+		add( product, "select", Select.class );
+
+		// View commands
+		add( product, "camera-move", CameraMove.class );
+		//add( product, "camera-spin", CameraSpinCommand.class );
+		add( product, "camera-view-point", CameraViewPoint.class );
+		//add( product, "camera-view-previous", CameraViewPrevious.class );
+		add( product, "camera-view-rotate-left", CameraViewRotateLeft.class );
+		add( product, "camera-view-rotate-right", CameraViewRotateRight.class );
+		//add( product, "camera-walk", CameraWalkCommand.class );
+		add( product, "camera-zoom", CameraZoom.class );
+		add( product, "camera-zoom-all", CameraZoomAll.class );
+		add( product, "camera-zoom-in", CameraZoomIn.class );
+		add( product, "camera-zoom-out", CameraZoomOut.class );
+		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
+
+		// Grid commands
+		// gg - grid toggle
+		add( product, "grid-toggle", GridToggle.class );
+
+		// Measure commands
+		add( product, "measure-angle", MeasureAngle.class );
+		add( product, "measure-distance", MeasureDistance.class );
+		add( product, "measure-point", MeasurePoint.class );
 
 		// Modify commands
 		add( product, "copy", Copy.class );

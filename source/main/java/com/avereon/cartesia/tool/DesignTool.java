@@ -35,6 +35,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
@@ -290,6 +291,13 @@ public abstract class DesignTool extends GuidedTool {
 
 	public Point3D worldToScreen( Point3D point ) {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( point );
+	}
+
+	public Bounds worldToScreen( Bounds bounds ) {
+		// NOTE Flip the Y coordinate because we are converting from world to screen coordinates
+		Point3D a = worldToScreen( bounds.getMinX(), bounds.getMaxY(), bounds.getMinZ() );
+		Point3D b = worldToScreen( bounds.getMaxX(), bounds.getMinY(), bounds.getMaxZ() );
+		return new BoundingBox( a.getX(), a.getY(), a.getZ(), b.getX() - a.getX(), b.getY() - a.getY(), b.getZ() - a.getZ() );
 	}
 
 	public boolean isGridVisible() {
