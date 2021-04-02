@@ -118,7 +118,7 @@ public class DesignPane extends StackPane {
 		visibleLayers = FXCollections.observableSet();
 
 		// Internal listeners
-		dpiProperty().addListener( ( p, o, n ) -> recalcDpu() );
+		dpiProperty().addListener( ( p, o, n ) -> updateView() );
 		viewPointProperty().addListener( ( p, o, n ) -> updateView() );
 		viewRotateProperty().addListener( ( p, o, n ) -> updateView() );
 		zoomProperty().addListener( ( p, o, n ) -> updateView() );
@@ -522,10 +522,10 @@ public class DesignPane extends StackPane {
 	}
 
 	void updateView() {
+		recalcDpu();
 		recenter();
 		rescale();
 		rotate();
-		requestLayout();
 	}
 
 	private void doChildAddedAction( NodeEvent event ) {
