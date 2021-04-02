@@ -355,16 +355,19 @@ public abstract class DesignTool extends GuidedTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = request.getAsset().getModel();
-		designPane.setDesign( design );
-		designPane.setDpi( Screen.getPrimary().getDpi() );
 		layersGuide.link( designPane );
 		//viewsGuide.init( design );
 		//printsGuide.init( design );
 
+		Fx.run( () -> {
+			designPane.setDesign( design );
+			designPane.setDpi( Screen.getPrimary().getDpi() );
+		} );
+
 		// Keep the design pane centered when resizing
 		// These should be added before updating the pan and zoom
-		widthProperty().addListener( ( p, o, n ) -> designPane.updateView() );
-		heightProperty().addListener( ( p, o, n ) -> designPane.updateView() );
+		widthProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
+		heightProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
 
 		// NOTE What listeners should be registered before configuring things???
 		// There are two ways of handing the initialization of properties that change
@@ -376,15 +379,14 @@ public abstract class DesignTool extends GuidedTool {
 		//    Another downside to this approach is that several listeners might call
 		//    the same logic (possibly expensive logic) causing an unnecessary
 		//    delay.
-		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_VISIBLE, e -> {
-			// This one is particularly interesting because the design pane is not
-			// technically the authoritative source of the grid visible property, and
-			// it's not the design pane that sets up the listener, the design tool
-			// does. That makes this one unique...for now.
-			// I guess in the FX world this would be a bind, but that isn't available
-			// yet with data nodes.
-			designPane.setGridVisible( e.getNewValue() );
-		} );
+
+		// This one is particularly interesting because the design pane is not
+		// technically the authoritative source of the grid visible property, and
+		// it's not the design pane that sets up the listener, the design tool
+		// does. That makes this one unique...for now.
+		// I guess in the FX world this would be a bind, but that isn't available
+		// yet with data nodes.
+		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_VISIBLE, e -> Fx.run( () -> designPane.setGridVisible( e.getNewValue() ) ) );
 
 		// Workplane settings
 		configureWorkplane();
@@ -709,7 +711,8 @@ public abstract class DesignTool extends GuidedTool {
 
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
 			try {
-				designPane.setGrid( getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() ) );
+				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
+				Fx.run( () -> designPane.setGrid( grid ) );
 			} catch( Exception exception ) {
 				log.log( Log.ERROR, "Error creating grid", exception );
 			}

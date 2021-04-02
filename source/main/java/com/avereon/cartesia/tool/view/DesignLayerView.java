@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.view;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.cartesia.tool.DesignPaneLayer;
+import com.avereon.zerra.javafx.Fx;
 
 public class DesignLayerView extends DesignDrawableView {
 
@@ -36,13 +37,13 @@ public class DesignLayerView extends DesignDrawableView {
 	}
 
 	public void addLayerGeometry() {
-		getPane().addLayerGeometry( this );
+		Fx.run( () -> getPane().addLayerGeometry( this ) );
 		registerListeners();
 	}
 
 	public void removeLayerGeometry() {
 		unregisterListeners();
-		getPane().removeLayerGeometry( this );
+		Fx.run( () -> getPane().removeLayerGeometry( this ) );
 	}
 
 	@Override

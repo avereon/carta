@@ -93,13 +93,15 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	public void addShapeGeometry() {
-		getPane().addShapeGeometry( this );
+		Fx.run( () -> getPane().addShapeGeometry( this ) );
+		group.visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).visibleProperty() );
 		registerListeners();
 	}
 
 	public void removeShapeGeometry() {
 		unregisterListeners();
-		getPane().removeShapeGeometry( this );
+		getGroup().visibleProperty().unbind();
+		Fx.run( () -> getPane().removeShapeGeometry( this ) );
 	}
 
 	@Override
@@ -163,7 +165,6 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	private void doSetSelected( boolean selected ) {
-		log.log( Log.WARN, "Shape selected=" + getDesignNode() );
 		if( ((DesignDrawable)getDesignNode()).getLayer() == null ) return;
 
 		Paint fillPaint = getDesignShape().calcFillPaint();

@@ -291,7 +291,7 @@ public class DesignPane extends StackPane {
 		return this;
 	}
 
-	DesignPaneLayer getShapeLayer( DesignShape shape ) {
+	public DesignPaneLayer getShapeLayer( DesignShape shape ) {
 		return layerMap.get( shape.getLayer() ).getLayer();
 	}
 
@@ -394,72 +394,40 @@ public class DesignPane extends StackPane {
 	}
 
 	public void addLayerGeometry( DesignLayerView view ) {
-		Fx.run( () -> {
-			//System.err.println( "Layer geometry added for " + view.getDesignLayer() );
-
-			DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
-			DesignPaneLayer layer = view.getLayer();
-			parent.getChildren().add( layer );
-			doReorderLayer( parent );
-			layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
-			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
-
-			//System.err.println( "Parent child count=" + parent.getChildren().size() );
-			//System.err.println( "Adding layer=" + System.identityHashCode( layer ) + " child count=" + layer.getChildren().size() );
-		} );
+		DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
+		DesignPaneLayer layer = view.getLayer();
+		parent.getChildren().add( layer );
+		doReorderLayer( parent );
+		layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
+		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
 	}
 
 	public void removeLayerGeometry( DesignLayerView view ) {
-		Fx.run( () -> {
-			DesignPaneLayer layer = view.getLayer();
-			//System.err.println( "Removing layer=" + System.identityHashCode( layer ) + " child count=" + layer.getChildren().size() );
-
-			((DesignPaneLayer)layer.getParent()).getChildren().remove( layer );
-			layer.showingProperty().unbind();
-			fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
-		} );
+		DesignPaneLayer layer = view.getLayer();
+		((DesignPaneLayer)layer.getParent()).getChildren().remove( layer );
+		layer.showingProperty().unbind();
+		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 	}
 
 	public void addShapeGeometry( DesignShapeView view ) {
 		DesignPaneLayer layer = getShapeLayer( view.getDesignShape() );
 		Group group = view.getGroup();
-		//List<Shape> shapes = new ArrayList<>( view.getGeometry() );
-		//List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
-
-		group.visibleProperty().bind( layer.visibleProperty() );
-		//shapes.forEach( s -> s.visibleProperty().bind( layer.visibleProperty() ) );
-
-		Fx.run( () -> {
-			layer.getChildren().add( group );
-			//getReferenceLayer().getChildren().addAll( cps );
-		} );
+		layer.getChildren().add( group );
 	}
 
 	public void removeShapeGeometry( DesignShapeView view ) {
 		Group group = view.getGroup();
 		DesignPaneLayer layer = (DesignPaneLayer)group.getParent();
-		//		Layer layer = (Layer)view.getGeometry().get( 0 ).getParent();
-		//		List<Shape> shapes = new ArrayList<>( view.getGeometry() );
-		//		List<ConstructionPoint> cps = new ArrayList<>( view.getConstructionPoints() );
-
-		group.visibleProperty().unbind();
-		//		shapes.forEach( s -> s.visibleProperty().unbind() );
-
-		Fx.run( () -> {
-			//getReferenceLayer().getChildren().removeAll( cps );
-			layer.getChildren().remove( group );
-		} );
+		layer.getChildren().remove( group );
 	}
 
 	void setGrid( List<Shape> grid ) {
-		Fx.run( () -> {
-			this.grid.getChildren().clear();
-			this.grid.getChildren().addAll( grid );
-		} );
+		this.grid.getChildren().clear();
+		this.grid.getChildren().addAll( grid );
 	}
 
 	void setGridVisible( boolean visible ) {
-		Fx.run( () -> this.grid.setVisible( visible ) );
+		this.grid.setVisible( visible );
 	}
 
 	private void addOriginReferencePoint() {
@@ -574,7 +542,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doReorderLayer( DesignPaneLayer pane ) {
-		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) ) );
+		pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) );
 	}
 
 	private void doAddShape( DesignShape shape ) {
