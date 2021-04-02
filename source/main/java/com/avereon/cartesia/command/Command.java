@@ -43,7 +43,12 @@ public class Command {
 		this.preview = new CopyOnWriteArrayList<>();
 	}
 
+	@Deprecated
 	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+		return execute( context, parameters );
+	}
+
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		return COMPLETE;
 	}
 
@@ -146,16 +151,6 @@ public class Command {
 
 	protected List<DesignShape> cloneReferenceShapes( Collection<DesignShape> shapes ) {
 		return cloneShapes( shapes, true );
-	}
-
-	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
-		return shapes.stream().map( s -> {
-			DesignShape clone = s.clone();
-			clone.setReference( reference );
-			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
-			if( s.getLayer() != null ) s.getLayer().addShape( clone );
-			return clone;
-		} ).collect( Collectors.toList() );
 	}
 
 	protected void setCaptureUndoChanges( CommandContext context, boolean enabled ) {
@@ -321,6 +316,16 @@ public class Command {
 		if( angle > 180 ) angle -= 360;
 
 		return angle;
+	}
+
+	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
+		return shapes.stream().map( s -> {
+			DesignShape clone = s.clone();
+			clone.setReference( reference );
+			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
+			if( s.getLayer() != null ) s.getLayer().addShape( clone );
+			return clone;
+		} ).collect( Collectors.toList() );
 	}
 
 }

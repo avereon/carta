@@ -118,11 +118,11 @@ public class DesignPane extends StackPane {
 		visibleLayers = FXCollections.observableSet();
 
 		// Internal listeners
-		dpiProperty().addListener( ( p, o, n ) -> rescale( true ) );
-		viewPointProperty().addListener( ( p, o, n ) -> recenter() );
-		viewRotateProperty().addListener( ( p, o, n ) -> rotate() );
-		zoomProperty().addListener( ( p, o, n ) -> rescale( false ) );
-		parentProperty().addListener( ( p, o, n ) -> recenter() );
+		dpiProperty().addListener( ( p, o, n ) -> recalcDpu() );
+		viewPointProperty().addListener( ( p, o, n ) -> updateView() );
+		viewRotateProperty().addListener( ( p, o, n ) -> updateView() );
+		zoomProperty().addListener( ( p, o, n ) -> updateView() );
+		parentProperty().addListener( ( p, o, n ) -> updateView() );
 
 		// The design action map
 		designActions = new HashMap<>();
@@ -217,6 +217,16 @@ public class DesignPane extends StackPane {
 		return zoomProperty;
 	}
 
+	public void setView( Point3D center, double zoom ) {
+		setView( center, zoom, getViewRotate() );
+	}
+
+	public void setView( Point3D center, double zoom, double rotate ) {
+		setViewPoint( center );
+		setViewRotate( rotate );
+		setZoom( zoom );
+	}
+
 	public Paint getSelectDrawPaint() {
 		return selectDrawPaint == null ? DEFAULT_SELECT_DRAW_PAINT : selectDrawPaint.get();
 	}
@@ -271,10 +281,10 @@ public class DesignPane extends StackPane {
 
 		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
 
-		rescale( true );
+		updateView();
 
 		// Design listeners
-		design.register( Design.UNIT, e -> rescale( true ) );
+		design.register( Design.UNIT, e -> updateView() );
 		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
 		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
 
@@ -293,20 +303,6 @@ public class DesignPane extends StackPane {
 		return layerMap.get( layer );
 	}
 
-	void recenter() {
-		Parent parent = getParent();
-		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
-		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
-		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
-		//validateGrid();
-	}
-
-	void rotate() {
-		Point3D viewPoint = getViewPoint();
-		getTransforms().remove( rotate );
-		getTransforms().add( rotate = Transform.rotate( getViewRotate(), viewPoint.getX(), viewPoint.getY() ) );
-	}
-
 	/**
 	 * Pan the viewpoint by an offset in world coordinates.
 	 *
@@ -322,8 +318,8 @@ public class DesignPane extends StackPane {
 	 *
 	 * @param viewAnchor The view point location before being dragged (world)
 	 * @param dragAnchor The point where the mouse was pressed (screen)
-	 * @param mouseX     The mouse event X coordinate (screen)
-	 * @param mouseY     The mouse event Y coordinate (screen)
+	 * @param mouseX The mouse event X coordinate (screen)
+	 * @param mouseY The mouse event Y coordinate (screen)
 	 */
 	void mousePan( Point3D viewAnchor, Point3D dragAnchor, double mouseX, double mouseY ) {
 		Point3D anchor = localToParent( viewAnchor );
@@ -334,9 +330,9 @@ public class DesignPane extends StackPane {
 	/**
 	 * Change the zoom by the zoom factor. The zoom is centered on the provided x, y, z coordinates. The coordinates are world coordinates. The current zoom is multiplied by the zoom factor.
 	 *
-	 * @param x      The world x coordinate of the zoom
-	 * @param y      The world y coordinate of the zoom
-	 * @param z      The world z coordinate of the zoom
+	 * @param x The world x coordinate of the zoom
+	 * @param y The world y coordinate of the zoom
+	 * @param z The world z coordinate of the zoom
 	 * @param factor The zoom factor
 	 */
 	@Deprecated
@@ -382,8 +378,8 @@ public class DesignPane extends StackPane {
 	/**
 	 * Find the nodes contained by, or intersecting, the window specified by points a and b.
 	 *
-	 * @param a        One corner of the window
-	 * @param b        The other corner of the window
+	 * @param a One corner of the window
+	 * @param b The other corner of the window
 	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
 	 * @return The set of selected nodes
 	 */
@@ -497,14 +493,38 @@ public class DesignPane extends StackPane {
 		return this.dpu * getZoom();
 	}
 
-	private void rescale( boolean recalculateDpu ) {
-		if( recalculateDpu ) this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
+	void recalcDpu() {
+		this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
+	}
+
+	private void recenter() {
+		Parent parent = getParent();
+		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
+		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
+		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );
+		//validateGrid();
+	}
+
+	private void rotate() {
+		Point3D viewPoint = getViewPoint();
+		getTransforms().remove( rotate );
+		getTransforms().add( rotate = Transform.rotate( getViewRotate(), viewPoint.getX(), viewPoint.getY() ) );
+	}
+
+	private void rescale() {
 		double scale = getInternalScale();
 		setScaleX( scale );
 		setScaleY( -scale );
 		reference.setScaleX( 1 / scale );
 		reference.setScaleY( 1 / scale );
 		//validateGrid();
+	}
+
+	void updateView() {
+		recenter();
+		rescale();
+		rotate();
+		requestLayout();
 	}
 
 	private void doChildAddedAction( NodeEvent event ) {
@@ -611,7 +631,15 @@ public class DesignPane extends StackPane {
 	}
 
 	List<Shape> getVisibleShapes() {
-		return getLayers( layers ).stream().filter( Node::isVisible ).flatMap( l -> l.getChildren().stream() ).filter( n -> n instanceof Group ).flatMap( g -> ((Group)g).getChildren().stream() ).filter( n -> n instanceof Shape ).map( n -> (Shape)n ).collect( Collectors.toList() );
+		return getLayers( layers )
+			.stream()
+			.filter( Node::isVisible )
+			.flatMap( l -> l.getChildren().stream() )
+			.filter( n -> n instanceof Group )
+			.flatMap( g -> ((Group)g).getChildren().stream() )
+			.filter( n -> n instanceof Shape )
+			.map( n -> (Shape)n )
+			.collect( Collectors.toList() );
 	}
 
 	private boolean isContained( Shape selector, Shape shape ) {

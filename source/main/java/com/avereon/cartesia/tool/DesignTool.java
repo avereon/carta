@@ -183,6 +183,32 @@ public abstract class DesignTool extends GuidedTool {
 		return reticle;
 	}
 
+	public void setView( Point3D center, double zoom ) {
+		if( designPane != null ) designPane.setView( center, zoom );
+	}
+
+	public void setView( Point3D center, double zoom, double rotate ) {
+		if( designPane != null ) designPane.setView( center, zoom, rotate );
+	}
+
+	/**
+	 * Set the camera viewport using a world-based rectangular viewport. The
+	 * appropriate zoom and center will be calculated.
+	 *
+	 * @param viewport The world viewport
+	 */
+	public void setViewport( Bounds viewport ) {
+		Point3D worldCenter = new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() );
+		Bounds screenBounds = worldToScreen( viewport );
+
+		Bounds toolBounds = getLayoutBounds();
+		double xZoom = toolBounds.getWidth() / screenBounds.getWidth();
+		double yZoom = toolBounds.getHeight() / screenBounds.getHeight();
+		double zoom = Math.min( xZoom, yZoom ) * getZoom();
+
+		Fx.run( () -> setView( worldCenter, zoom ) );
+	}
+
 	public void setSelectTolerance( DesignValue tolerance ) {
 		selectTolerance.set( tolerance );
 	}
@@ -337,8 +363,8 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Keep the design pane centered when resizing
 		// These should be added before updating the pan and zoom
-		widthProperty().addListener( ( p, o, n ) -> designPane.recenter() );
-		heightProperty().addListener( ( p, o, n ) -> designPane.recenter() );
+		widthProperty().addListener( ( p, o, n ) -> designPane.updateView() );
+		heightProperty().addListener( ( p, o, n ) -> designPane.updateView() );
 
 		// NOTE What listeners should be registered before configuring things???
 		// There are two ways of handing the initialization of properties that change
@@ -421,7 +447,7 @@ public abstract class DesignTool extends GuidedTool {
 		// FIXME This can cause NPEs when not in an active workspace
 		if( isActive() ) activate();
 		getCoordinateStatus().updateZoom( getZoom() );
-		designPane.recenter();
+		designPane.updateView();
 		validateGrid();
 	}
 
@@ -736,7 +762,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
 		runTask( () -> shapes.forEach( s -> s.getLayer().removeShape( s ) ) );
-		selectedShapes.clear();
+		// Intentionally commented out here: selectedShapes.clear();
 	}
 
 	public static DesignLayer getDesignData( DesignPaneLayer l ) {
