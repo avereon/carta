@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 
 /**
@@ -13,13 +12,13 @@ public class LayerCreate extends LayerCommand {
 	private static final System.Logger log = Log.get();
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForText( context, "layer-name" );
 			return INCOMPLETE;
 		}
 
-		return addLayer( tool.getCurrentLayer(), new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) ) );
+		return addLayer( context.getTool().getCurrentLayer(), new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) ) );
 	}
 
 	/**

@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignPane;
-import com.avereon.cartesia.tool.DesignTool;
 
 /**
  * Zoom in to the design. This has the effect of making the design larger or
@@ -15,7 +14,7 @@ import com.avereon.cartesia.tool.DesignTool;
 public class CameraZoomIn extends CameraZoom {
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) {
 		zoomByFactor( context.getTool(), context.getTool().getViewPoint(), DesignPane.ZOOM_IN_FACTOR );
 		return COMPLETE;
 	}

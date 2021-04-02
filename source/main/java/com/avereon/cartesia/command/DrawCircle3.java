@@ -25,7 +25,7 @@ public class DrawCircle3 extends DrawCommand {
 	private Point3D mid;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1
@@ -61,11 +61,11 @@ public class DrawCircle3 extends DrawCommand {
 			start = asPoint( context, parameters[ 0 ] );
 			mid = asPoint( context, parameters[ 1 ] );
 			Point3D end = asPoint( context, parameters[ 2 ] );
-			tool.getCurrentLayer().addShape( CadGeometry.circleFromThreePoints( start, mid, end ) );
+			context.getTool().getCurrentLayer().addShape( CadGeometry.circleFromThreePoints( start, mid, end ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;
@@ -85,10 +85,8 @@ public class DrawCircle3 extends DrawCommand {
 				case 2 -> previewLine.setPoint( point );
 				case 3 -> {
 					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
-					if( next != null ) {
-						previewEllipse.setOrigin( next.getOrigin() );
-						previewEllipse.setRadius( next.getRadius() );
-					}
+					previewEllipse.setOrigin( next.getOrigin() );
+					previewEllipse.setRadius( next.getRadius() );
 				}
 			}
 		}

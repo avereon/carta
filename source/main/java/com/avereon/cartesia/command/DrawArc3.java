@@ -24,7 +24,7 @@ public class DrawArc3 extends DrawCommand {
 	private Point3D mid;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for start
@@ -60,11 +60,11 @@ public class DrawArc3 extends DrawCommand {
 			start = asPoint( context, parameters[ 0 ] );
 			mid = asPoint( context, parameters[ 1 ] );
 			Point3D end = asPoint( context, parameters[ 2 ] );
-			tool.getCurrentLayer().addShape( CadGeometry.arcFromThreePoints( start, mid, end ) );
+			context.getTool().getCurrentLayer().addShape( CadGeometry.arcFromThreePoints( start, mid, end ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

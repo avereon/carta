@@ -24,7 +24,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 	private DesignLine preview;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1
@@ -58,12 +58,12 @@ public class DrawLinePerpendicular extends DrawCommand {
 			Point3D origin = asPoint( context.getAnchor(), parameters[ 1 ] );
 			Point3D point = getPerpendicular( shape, origin, asPoint( context.getAnchor(), parameters[ 2 ] ) );
 			// Start an undo multi-change
-			tool.getCurrentLayer().addShape( new DesignLine( origin, point ) );
+			context.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

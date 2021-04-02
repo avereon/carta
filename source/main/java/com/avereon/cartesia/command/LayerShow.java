@@ -1,13 +1,12 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
 
 public class LayerShow extends LayerCommand {
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-		tool.setLayerVisible( tool.getCurrentLayer(), true );
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		context.getTool().setLayerVisible( context.getTool().getCurrentLayer(), true );
 		return COMPLETE;
 	}
 

@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
 
 public class Value extends Command {
 
@@ -13,7 +12,7 @@ public class Value extends Command {
 	}
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) {
 		return parameters[0];
 	}
 

@@ -23,7 +23,7 @@ public class MeasurePoint extends MeasureCommand{
 	private DesignLine referenceLine;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "start-point" );
@@ -45,14 +45,14 @@ public class MeasurePoint extends MeasureCommand{
 				content.putString( CadShapes.toString( p1 ) );
 				clipboard.setContent( content );
 			} ) );
-			context.getProduct().getProgram().getNoticeManager().addNotice( notice );
+			if( context.isInteractive() ) context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
 			log.log( Log.DEBUG, "Measured point=" + CadShapes.toString( p1 ) );
 			return p1;
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-measure-distance", exception.getMessage() );
-			tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

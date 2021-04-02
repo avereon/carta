@@ -1,13 +1,11 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
 
 public class GridToggle extends Command {
-
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
-		tool.setGridVisible( !tool.isGridVisible() );
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		context.getTool().setGridVisible( !context.getTool().isGridVisible() );
 		return COMPLETE;
 	}
 

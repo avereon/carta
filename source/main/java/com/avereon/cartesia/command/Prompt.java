@@ -25,7 +25,9 @@ public class Prompt extends Command {
 	}
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		DesignTool tool = context.getTool();
+
 		if( tool == null ) return COMPLETE;
 
 		if( parameters.length == 0 ) {

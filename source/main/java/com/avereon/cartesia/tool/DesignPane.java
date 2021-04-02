@@ -499,6 +499,7 @@ public class DesignPane extends StackPane {
 
 	private void recenter() {
 		Parent parent = getParent();
+		if( parent == null ) return;
 		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
 		setTranslateX( parent.getLayoutBounds().getCenterX() - center.getX() );
 		setTranslateY( parent.getLayoutBounds().getCenterY() - center.getY() );

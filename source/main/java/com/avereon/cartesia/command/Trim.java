@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
@@ -18,7 +17,7 @@ public class Trim extends Command {
 	private Point3D trimMouse;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForShape( context, "select-trim-shape" );
 			return INCOMPLETE;
@@ -37,7 +36,7 @@ public class Trim extends Command {
 		if( edge == DesignShape.NONE ) return INVALID;
 
 		// Start an undo multi-change
-		com.avereon.cartesia.math.Trim.trim( tool, trim, edge, trimMouse, edgeMouse );
+		com.avereon.cartesia.math.Trim.trim( context.getTool(), trim, edge, trimMouse, edgeMouse );
 		// Done with undo multi-change
 
 		return COMPLETE;

@@ -20,7 +20,7 @@ public class CameraMove extends CameraCommand {
 	private Point3D dragAnchor;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForPoint( context, "pan-point" );
 			return INCOMPLETE;

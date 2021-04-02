@@ -19,7 +19,7 @@ public class DrawLine2 extends DrawCommand {
 	private DesignLine preview;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1
@@ -44,12 +44,12 @@ public class DrawLine2 extends DrawCommand {
 			Point3D point = asPoint( context, parameters[ 1 ] );
 
 			// Start an undo multi-change
-			tool.getCurrentLayer().addShape( new DesignLine( origin, point ) );
+			context.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

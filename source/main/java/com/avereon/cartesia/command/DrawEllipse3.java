@@ -24,7 +24,7 @@ public class DrawEllipse3 extends DrawCommand {
 	private Point3D xPoint;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for the origin
@@ -63,11 +63,11 @@ public class DrawEllipse3 extends DrawCommand {
 			double xRadius = asDouble( origin, xPoint );
 			double yRadius = deriveYRadius( origin, xPoint, yPoint );
 			double rotate = deriveRotate( origin, xPoint );
-			tool.getCurrentLayer().addShape( new DesignEllipse(origin, xRadius, yRadius, rotate) );
+			context.getTool().getCurrentLayer().addShape( new DesignEllipse(origin, xRadius, yRadius, rotate) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

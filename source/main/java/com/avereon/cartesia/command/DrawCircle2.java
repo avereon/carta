@@ -22,7 +22,7 @@ public class DrawCircle2 extends DrawCommand {
 	private DesignLine previewLine;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1
@@ -48,11 +48,11 @@ public class DrawCircle2 extends DrawCommand {
 		try {
 			Point3D origin = asPoint( context, parameters[ 0 ] );
 			double radius = asDouble( previewEllipse.getOrigin(), parameters[ 1 ] );
-			tool.getCurrentLayer().addShape( new DesignEllipse( origin, radius ) );
+			context.getTool().getCurrentLayer().addShape( new DesignEllipse( origin, radius ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

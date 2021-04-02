@@ -377,7 +377,7 @@ public class CommandContext {
 			Object result = Command.INVALID;
 			try {
 				context.setTool( tool );
-				result = command.execute( context, tool, parameters );
+				result = command.execute( context, parameters );
 				if( result != Command.INVALID ) command.incrementStep();
 			} finally {
 				if( result != Command.INCOMPLETE && tool != null && command.clearSelectionWhenComplete() ) tool.clearSelected();

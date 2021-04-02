@@ -9,10 +9,11 @@ import javafx.scene.input.MouseEvent;
 public class SnapAuto extends SnapCommand {
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		Snap snap = (Snap)parameters[ 0 ];
 		if( snap == null ) return null;
 
+		DesignTool tool = context.getTool();
 		Point3D point = context.getWorldMouse();
 		MouseEvent event = (MouseEvent)parameters[ 1 ];
 		if( event != null ) point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );

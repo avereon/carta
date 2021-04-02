@@ -23,7 +23,9 @@ public class Scale extends EditCommand {
 	private Point3D lastPoint;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		DesignTool tool = context.getTool();
+
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
 		setCaptureUndoChanges( context, false );

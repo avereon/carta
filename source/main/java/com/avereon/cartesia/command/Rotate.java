@@ -23,7 +23,8 @@ public class Rotate extends EditCommand {
 	private double angle;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		DesignTool tool = context.getTool();
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
 		setCaptureUndoChanges( context, false );

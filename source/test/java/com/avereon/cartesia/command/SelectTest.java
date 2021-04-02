@@ -31,16 +31,16 @@ public class SelectTest extends BaseCartesiaTest {
 	}
 
 	@Test
-	void testExecuteNoArgs() {
-		command.execute( context, tool );
+	void testExecuteNoArgs() throws Exception {
+		command.execute( context );
 	}
 
 	@Test
-	void testExecute() {
+	void testExecute() throws Exception {
 		Object result;
-		result = command.execute( context, tool, createEvent( MouseEvent.MOUSE_PRESSED ) );
+		result = command.execute( context, createEvent( MouseEvent.MOUSE_PRESSED ) );
 		assertThat( result, is( Command.INCOMPLETE ) );
-		result = command.execute( context, tool, createEvent( MouseEvent.MOUSE_RELEASED ) );
+		result = command.execute( context, createEvent( MouseEvent.MOUSE_RELEASED ) );
 		assertThat( result, is( Command.COMPLETE ) );
 	}
 

@@ -6,7 +6,6 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignPane;
-import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
@@ -43,16 +42,11 @@ public class Command {
 		this.preview = new CopyOnWriteArrayList<>();
 	}
 
-	@Deprecated
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		return execute( context, parameters );
-	}
-
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		return COMPLETE;
 	}
 
-	public void cancel( CommandContext context ) throws Exception {
+	public void cancel( CommandContext context ) {
 		if( context.getTool() != null ) {
 			clearReferenceAndPreview( context );
 			context.getTool().getDesign().clearSelected();

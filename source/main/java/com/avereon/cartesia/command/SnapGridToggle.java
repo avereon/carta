@@ -11,7 +11,8 @@ public class SnapGridToggle extends Command {
 	}
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		DesignTool tool = context.getTool();
 		tool.setGridSnapEnabled( !tool.isGridSnapEnabled() );
 		return COMPLETE;
 	}

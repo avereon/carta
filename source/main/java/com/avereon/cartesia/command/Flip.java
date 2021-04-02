@@ -21,8 +21,8 @@ public class Flip extends EditCommand {
 	private Point3D lastPoint;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
-		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
 
 		setCaptureUndoChanges( context, false );
 
@@ -37,7 +37,7 @@ public class Flip extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneReferenceShapes( tool.getSelectedShapes() ) );
+			addPreview( context, cloneReferenceShapes( context.getTool().getSelectedShapes() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
@@ -47,12 +47,12 @@ public class Flip extends EditCommand {
 
 		try {
 			// Start an undo multi-change
-			flipShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+			flipShapes( getExecuteShapes( context.getTool() ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;

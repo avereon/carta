@@ -18,15 +18,15 @@ public class Select extends Command {
 	}
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) return COMPLETE;
 
 		if( parameters[ 0 ] instanceof MouseEvent ) {
 			MouseEvent event = (MouseEvent)parameters[ 0 ];
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				return mousePressed( context, tool, event );
+				return mousePressed( context, event );
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
-				return mouseReleased( context, tool, event );
+				return mouseReleased( context, event );
 			}
 		}
 
@@ -34,14 +34,15 @@ public class Select extends Command {
 		return COMPLETE;
 	}
 
-	private Object mousePressed( CommandContext context, DesignTool tool, MouseEvent event ) {
+	private Object mousePressed( CommandContext context, MouseEvent event ) {
 		eventKey = CommandEventKey.of( event );
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 		return INCOMPLETE;
 	}
 
-	private Object mouseReleased( CommandContext context, DesignTool tool, MouseEvent event ) {
-		if( context.isPenMode() ) {
+		private Object mouseReleased( CommandContext context, MouseEvent event ) {
+			DesignTool tool = context.getTool();
+			if( context.isPenMode() ) {
 			return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 		} else if( context.isSingleSelectMode( event ) ) {
 			tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );

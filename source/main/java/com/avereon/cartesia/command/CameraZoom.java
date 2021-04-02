@@ -16,7 +16,7 @@ import java.text.ParseException;
 public class CameraZoom extends CameraCommand {
 
 	@Override
-	public Object execute( CommandContext context, @Deprecated DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		// This command requires one value as the zoom value
 		if( parameters.length < 1 ) {
 			promptForNumber( context, "zoom" );

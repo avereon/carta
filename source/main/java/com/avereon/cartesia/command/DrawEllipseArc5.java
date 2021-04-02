@@ -30,7 +30,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 	private double spin;
 
 	@Override
-	public Object execute( CommandContext context, DesignTool tool, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1 - Prompt for the origin
@@ -95,11 +95,11 @@ public class DrawEllipseArc5 extends DrawCommand {
 			double start = deriveStart( origin, xRadius, yRadius, rotate, asPoint( context, startPoint ) );
 			double extent = deriveExtent( origin, xRadius, yRadius, rotate, start, asPoint( context, extentPoint ), spin );
 
-			tool.getCurrentLayer().addShape( new DesignArc( origin, xRadius, yRadius, rotate, start, extent, DesignArc.Type.OPEN ) );
+			context.getTool().getCurrentLayer().addShape( new DesignArc( origin, xRadius, yRadius, rotate, start, extent, DesignArc.Type.OPEN ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return COMPLETE;
