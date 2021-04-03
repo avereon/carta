@@ -430,6 +430,13 @@ public class DesignPane extends StackPane {
 		this.grid.setVisible( visible );
 	}
 
+	void updateView() {
+		doUpdateDpu();
+		doRecenter();
+		doRescale();
+		doRotate();
+	}
+
 	private void addOriginReferencePoint() {
 		reference.getChildren().add( new ConstructionPoint( DesignMarkers.Type.REFERENCE ) );
 	}
@@ -461,11 +468,11 @@ public class DesignPane extends StackPane {
 		return this.dpu * getZoom();
 	}
 
-	void recalcDpu() {
+	private void doUpdateDpu() {
 		this.dpu = DesignUnit.INCH.from( getDpi(), getDesignUnit() );
 	}
 
-	private void recenter() {
+	private void doRecenter() {
 		Parent parent = getParent();
 		if( parent == null ) return;
 		Point3D center = localToParent( getViewPoint() ).subtract( getTranslateX(), getTranslateY(), 0 );
@@ -474,26 +481,19 @@ public class DesignPane extends StackPane {
 		//validateGrid();
 	}
 
-	private void rotate() {
+	private void doRotate() {
 		Point3D viewPoint = getViewPoint();
 		getTransforms().remove( rotate );
 		getTransforms().add( rotate = Transform.rotate( getViewRotate(), viewPoint.getX(), viewPoint.getY() ) );
 	}
 
-	private void rescale() {
+	private void doRescale() {
 		double scale = getInternalScale();
 		setScaleX( scale );
 		setScaleY( -scale );
 		reference.setScaleX( 1 / scale );
 		reference.setScaleY( 1 / scale );
 		//validateGrid();
-	}
-
-	void updateView() {
-		recalcDpu();
-		recenter();
-		rescale();
-		rotate();
 	}
 
 	private void doChildAddedAction( NodeEvent event ) {
