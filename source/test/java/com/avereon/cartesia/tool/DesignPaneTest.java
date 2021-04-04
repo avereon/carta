@@ -222,7 +222,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testZoomIn() {
 		Point3D point = pane.parentToLocal( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, 0 );
-		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_IN_FACTOR );
+		pane.zoom( point, DesignPane.ZOOM_IN_FACTOR );
 		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
 		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
 		assertThat( pane.getScaleX(), near( SCALE * DesignPane.ZOOM_IN_FACTOR ) );
@@ -232,7 +232,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testZoomOut() {
 		Point3D point = pane.parentToLocal( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, 0 );
-		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_OUT_FACTOR );
+		pane.zoom( point, DesignPane.ZOOM_OUT_FACTOR );
 		assertThat( pane.getTranslateX(), is( PARENT_HALF_WIDTH ) );
 		assertThat( pane.getTranslateY(), is( PARENT_HALF_HEIGHT ) );
 		assertThat( pane.getScaleX(), near( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR ) );
@@ -248,7 +248,7 @@ public class DesignPaneTest implements TestTimeouts {
 		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 
 		Point3D point = pane.parentToLocal( ex, ey, 0 );
-		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_IN_FACTOR );
+		pane.zoom( point, DesignPane.ZOOM_IN_FACTOR );
 
 		double newScale = SCALE * DesignPane.ZOOM_IN_FACTOR;
 		double offset = newScale - SCALE;
@@ -270,7 +270,7 @@ public class DesignPaneTest implements TestTimeouts {
 		assertThat( pane.localToParent( worldX, worldY, 0 ), is( new Point3D( ex, ey, 0 ) ) );
 
 		Point3D point = pane.parentToLocal( ex, ey, 0 );
-		pane.zoom( point.getX(), point.getY(), point.getZ(), DesignPane.ZOOM_OUT_FACTOR );
+		pane.zoom( point, DesignPane.ZOOM_OUT_FACTOR );
 
 		double newScale = SCALE * DesignPane.ZOOM_OUT_FACTOR;
 		double offset = newScale - SCALE;

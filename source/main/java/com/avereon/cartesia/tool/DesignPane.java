@@ -328,19 +328,6 @@ public class DesignPane extends StackPane {
 	}
 
 	/**
-	 * Change the zoom by the zoom factor. The zoom is centered on the provided x, y, z coordinates. The coordinates are world coordinates. The current zoom is multiplied by the zoom factor.
-	 *
-	 * @param x The world x coordinate of the zoom
-	 * @param y The world y coordinate of the zoom
-	 * @param z The world z coordinate of the zoom
-	 * @param factor The zoom factor
-	 */
-	@Deprecated
-	void zoom( double x, double y, double z, double factor ) {
-		zoom( new Point3D( x, y, z ), factor );
-	}
-
-	/**
 	 * Change the zoom by the zoom factor. The zoom is centered on the provided anchor point in world coordinates. The current zoom is multiplied by the zoom factor.
 	 *
 	 * @param anchor The anchor point in world coordinates
@@ -432,9 +419,9 @@ public class DesignPane extends StackPane {
 
 	void updateView() {
 		doUpdateDpu();
-		doRecenter();
-		doRescale();
 		doRotate();
+		doRescale();
+		doRecenter();
 	}
 
 	private void addOriginReferencePoint() {
