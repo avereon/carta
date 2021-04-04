@@ -10,6 +10,7 @@ import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.zerra.color.Paints;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.KeyEvent;
@@ -101,12 +102,23 @@ public class Command {
 		return CadShapes.parsePoint( String.valueOf( value ), anchor );
 	}
 
+	protected Bounds asBounds( CommandContext context, Object value ) {
+		if( value instanceof Bounds ) return (Bounds)value;
+		//return CadShapes.parseBounds( String.valueOf( value ), anchor );
+		return null;
+	}
+
 	protected void promptForNumber( CommandContext context, String key ) {
 		context.getTool().setCursor( null );
 		promptForValue( context, key, CommandContext.Input.NUMBER );
 	}
 
 	protected void promptForPoint( CommandContext context, String key ) {
+		context.getTool().setCursor( context.getTool().getReticle() );
+		promptForValue( context, key, CommandContext.Input.POINT );
+	}
+
+	protected void promptForWindow( CommandContext context, String key ) {
 		context.getTool().setCursor( context.getTool().getReticle() );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}

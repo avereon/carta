@@ -49,7 +49,7 @@ public class Scale extends EditCommand {
 		if( parameters.length < 3 ) {
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneReferenceShapes( tool.getSelectedShapes() ) );
+			addPreview( context, cloneReferenceShapes( tool.getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}

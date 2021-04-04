@@ -143,12 +143,8 @@ public class CommandContext {
 		return true;
 	}
 
-	public boolean isSingleSelectMode( MouseEvent event ) {
-		return commandStack.size() == 1 && event.isStillSincePress();
-	}
-
-	public boolean isWindowSelectMode( MouseEvent event ) {
-		return commandStack.size() == 1 && !event.isStillSincePress();
+	public boolean isSelectMode() {
+		return commandStack.size() == 1;
 	}
 
 	public boolean isAutoCommandEnabled() {

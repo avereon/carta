@@ -270,6 +270,10 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane.getVisibleShapes();
 	}
 
+	public List<Shape> getSelectedShapes() {
+		return new ArrayList<>( selectedShapes );
+	}
+
 	/**
 	 * Change the zoom value by a factor.
 	 *
@@ -323,6 +327,21 @@ public abstract class DesignTool extends GuidedTool {
 		// NOTE Flip the Y coordinate because we are converting from world to screen coordinates
 		Point3D a = worldToScreen( bounds.getMinX(), bounds.getMaxY(), bounds.getMinZ() );
 		Point3D b = worldToScreen( bounds.getMaxX(), bounds.getMinY(), bounds.getMaxZ() );
+		return new BoundingBox( a.getX(), a.getY(), a.getZ(), b.getX() - a.getX(), b.getY() - a.getY(), b.getZ() - a.getZ() );
+	}
+
+	public Point3D screenToWorld( double x, double y, double z ) {
+		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
+	}
+
+	public Point3D screenToWorld( Point3D point ) {
+		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( point );
+	}
+
+	public Bounds screenToWorld( Bounds bounds ) {
+		// NOTE Flip the Y coordinate because we are converting from screen to world coordinates
+		Point3D a = screenToWorld( bounds.getMinX(), bounds.getMaxY(), bounds.getMinZ() );
+		Point3D b = screenToWorld( bounds.getMaxX(), bounds.getMinY(), bounds.getMaxZ() );
 		return new BoundingBox( a.getX(), a.getY(), a.getZ(), b.getX() - a.getX(), b.getY() - a.getY(), b.getZ() - a.getZ() );
 	}
 
@@ -639,7 +658,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void clearSelected() {
-		getSelectedShapes().clear();
+		getSelectedGeometry().clear();
 	}
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
@@ -650,7 +669,7 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
-	public List<DesignShape> getSelectedShapes() {
+	public List<DesignShape> getSelectedGeometry() {
 		return selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 

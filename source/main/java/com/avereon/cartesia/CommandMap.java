@@ -81,7 +81,8 @@ public class CommandMap {
 		add( product, "camera-zoom-all", CameraZoomAll.class );
 		add( product, "camera-zoom-in", CameraZoomIn.class );
 		add( product, "camera-zoom-out", CameraZoomOut.class );
-		//add( product, "camera-zoom-window", ZoomWindowCommand.class );
+		add( product, "camera-zoom-selected", CameraZoomSelected.class );
+		add( product, "camera-zoom-window", CameraZoomWindow.class );
 
 		// Grid commands
 		// gg - grid toggle

@@ -37,7 +37,7 @@ public class Flip extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneReferenceShapes( context.getTool().getSelectedShapes() ) );
+			addPreview( context, cloneReferenceShapes( context.getTool().getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}

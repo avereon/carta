@@ -3,6 +3,8 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.CommandEventKey;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
@@ -21,6 +23,7 @@ public class Select extends Command {
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) return COMPLETE;
 
+		// For this command the incoming parameter is the mouse event that triggered it
 		if( parameters[ 0 ] instanceof MouseEvent ) {
 			MouseEvent event = (MouseEvent)parameters[ 0 ];
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
@@ -30,7 +33,6 @@ public class Select extends Command {
 			}
 		}
 
-		// For this command the incoming parameter is the mouse event that triggered it
 		return COMPLETE;
 	}
 
@@ -40,18 +42,33 @@ public class Select extends Command {
 		return INCOMPLETE;
 	}
 
-		private Object mouseReleased( CommandContext context, MouseEvent event ) {
-			DesignTool tool = context.getTool();
-			if( context.isPenMode() ) {
-			return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
-		} else if( context.isSingleSelectMode( event ) ) {
-			tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );
-			return COMPLETE;
-		} else if( context.isWindowSelectMode( event ) ) {
-			tool.mouseWindowSelect( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectByContains( event ) );
-			return COMPLETE;
+	private Object mouseReleased( CommandContext context, MouseEvent event ) {
+		DesignTool tool = context.getTool();
+		Point3D point = new Point3D( event.getX(), event.getY(), event.getZ() );
+		if( context.isSelectMode() ) {
+			if( event.isStillSincePress() ) {
+				tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );
+				return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			} else {
+				tool.mouseWindowSelect( dragAnchor, point, isSelectByContains( event ) );
+				return createBounds( dragAnchor, point );
+			}
+		} else if( context.isPenMode() ) {
+			if( event.isStillSincePress() ) {
+				return tool.mouseToWorkplane( point );
+			} else {
+				return createBounds( dragAnchor, point );
+			}
 		}
 		return COMPLETE;
+	}
+
+	private Bounds createBounds( Point3D a, Point3D b ) {
+		double x = Math.min( a.getX(), b.getX() );
+		double y = Math.min( a.getY(), b.getY() );
+		double w = Math.abs( a.getX() - b.getX() );
+		double h = Math.abs( a.getY() - b.getY() );
+		return new BoundingBox( x, y, w, h );
 	}
 
 	@Override

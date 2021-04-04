@@ -23,7 +23,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected Collection<DesignShape> getExecuteShapes( DesignTool tool ) {
-		return copy ? cloneShapes( tool.getSelectedShapes() ) : tool.getSelectedShapes();
+		return copy ? cloneShapes( tool.getSelectedGeometry() ) : tool.getSelectedGeometry();
 	}
 
 	protected void moveShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
