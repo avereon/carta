@@ -11,7 +11,6 @@ import com.avereon.event.EventHandler;
 import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
-import javafx.beans.binding.DoubleBinding;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -35,6 +34,8 @@ public class DesignShapeView extends DesignDrawableView {
 	private static final String CONSTRUCTION_POINTS = "construction-points";
 
 	private Group group;
+
+	private Group cpGroup;
 
 	private List<Shape> geometry;
 
@@ -67,6 +68,10 @@ public class DesignShapeView extends DesignDrawableView {
 		return group;
 	}
 
+	public Group getCpGroup() {
+		return cpGroup;
+	}
+
 	protected Shape getShape() {
 		return geometry == null || geometry.isEmpty() ? null : geometry.get( 0 );
 	}
@@ -94,12 +99,14 @@ public class DesignShapeView extends DesignDrawableView {
 
 	public void addShapeGeometry() {
 		Fx.run( () -> getPane().addShapeGeometry( this ) );
-		group.visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).visibleProperty() );
+		getGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).visibleProperty() );
+		getCpGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).visibleProperty() );
 		registerListeners();
 	}
 
 	public void removeShapeGeometry() {
 		unregisterListeners();
+		getCpGroup().visibleProperty().unbind();
 		getGroup().visibleProperty().unbind();
 		Fx.run( () -> getPane().removeShapeGeometry( this ) );
 	}
@@ -134,15 +141,15 @@ public class DesignShapeView extends DesignDrawableView {
 
 	Point3D getArcPoint( Arc arc, double angle ) {
 		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
-		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), getRotate(), angle );
+		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), calcRotate(), angle );
 	}
 
 	Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
 		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
-		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), getRotate(), angle );
+		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), calcRotate(), angle );
 	}
 
-	private double getRotate() {
+	private double calcRotate() {
 		return rotate == null ? 0.0 : rotate.getAngle();
 	}
 
@@ -151,12 +158,12 @@ public class DesignShapeView extends DesignDrawableView {
 		geometry.forEach( this::configureShape );
 		List<ConstructionPoint> cps = generateConstructionPoints( getPane(), geometry );
 
-		Group cpGroup = new Group();
-		cpGroup.getChildren().addAll( cps );
-
 		group = new Group();
 		group.getChildren().addAll( geometry );
-		group.getChildren().addAll( cpGroup );
+
+		cpGroup = new Group();
+		cpGroup.getChildren().addAll( cps );
+
 		setDesignData( group, getDesignShape() );
 	}
 
@@ -201,14 +208,17 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xProperty, Callable<Double> xAction, ObservableValue<Number> yProperty, Callable<Double> yAction ) {
-		DoubleBinding xBinding = Bindings.createDoubleBinding( xAction, xProperty );
-		DoubleBinding yBinding = Bindings.createDoubleBinding( yAction, yProperty );
-		return cp( pane, shape, xBinding, yBinding );
+		return cp( pane, shape, Bindings.createDoubleBinding( xAction, xProperty ), Bindings.createDoubleBinding( yAction, yProperty ) );
 	}
 
 	static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
-		ConstructionPoint cp = new ConstructionPoint();
+		ConstructionPoint cp = cp( pane, xBinding, yBinding );
 		cp.visibleProperty().bind( shape.visibleProperty() );
+		return cp;
+	}
+
+	public static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
+		ConstructionPoint cp = new ConstructionPoint();
 		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
 		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );
 		cp.layoutXProperty().bind( xBinding );

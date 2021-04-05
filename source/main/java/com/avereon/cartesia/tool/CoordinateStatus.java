@@ -74,6 +74,7 @@ public class CoordinateStatus extends HBox {
 	}
 
 	public void updatePosition( Point3D position ) {
+		if( position == null ) return;
 		Fx.run( () -> {
 			if( isFraction ) {
 				xCoord.setText( "0 0/0" );

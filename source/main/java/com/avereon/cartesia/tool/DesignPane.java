@@ -10,6 +10,7 @@ import com.avereon.event.EventType;
 import com.avereon.util.Log;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -292,7 +293,8 @@ public class DesignPane extends StackPane {
 	}
 
 	public DesignPaneLayer getShapeLayer( DesignShape shape ) {
-		return layerMap.get( shape.getLayer() ).getLayer();
+		DesignLayer layer = shape.getLayer();
+		return layer == null ? new DesignPaneLayer() : layerMap.get( shape.getLayer() ).getLayer();
 	}
 
 	Pane getReferenceLayer() {
@@ -397,15 +399,13 @@ public class DesignPane extends StackPane {
 	}
 
 	public void addShapeGeometry( DesignShapeView view ) {
-		DesignPaneLayer layer = getShapeLayer( view.getDesignShape() );
-		Group group = view.getGroup();
-		layer.getChildren().add( group );
+		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
+		reference.getChildren().add( view.getCpGroup() );
 	}
 
 	public void removeShapeGeometry( DesignShapeView view ) {
-		Group group = view.getGroup();
-		DesignPaneLayer layer = (DesignPaneLayer)group.getParent();
-		layer.getChildren().remove( group );
+		reference.getChildren().remove( view.getCpGroup() );
+		getShapeLayer( view.getDesignShape() ).getChildren().remove( view.getGroup() );
 	}
 
 	void setGrid( List<Shape> grid ) {
@@ -425,7 +425,8 @@ public class DesignPane extends StackPane {
 	}
 
 	private void addOriginReferencePoint() {
-		reference.getChildren().add( new ConstructionPoint( DesignMarkers.Type.REFERENCE ) );
+		ConstructionPoint cp = DesignShapeView.cp( this, Bindings.createDoubleBinding( () -> 0.0 ), Bindings.createDoubleBinding( () -> 0.0 ) );
+		reference.getChildren().add( cp.setType( DesignMarkers.Type.REFERENCE ) );
 	}
 
 	private List<DesignPaneLayer> getLayers( DesignPaneLayer root ) {
@@ -478,8 +479,8 @@ public class DesignPane extends StackPane {
 		double scale = getInternalScale();
 		setScaleX( scale );
 		setScaleY( -scale );
-		reference.setScaleX( 1 / scale );
-		reference.setScaleY( 1 / scale );
+		//reference.setScaleX( 1 / scale );
+		//reference.setScaleY( 1 / scale );
 		//validateGrid();
 	}
 

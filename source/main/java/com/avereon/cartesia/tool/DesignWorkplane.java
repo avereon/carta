@@ -373,6 +373,7 @@ public class DesignWorkplane extends Node {
 	}
 
 	public DesignWorkplane setBounds( Bounds bounds ) {
+		if( bounds == null ) return this;
 		setBoundaryX1( bounds.getMinX() );
 		setBoundaryY1( bounds.getMinY() );
 		setBoundaryX2( bounds.getMaxX() );

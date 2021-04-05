@@ -38,13 +38,14 @@ public class ConstructionPoint extends Region {
 		return new Point3D( getLayoutX(), getLayoutY(), 0 );
 	}
 
+	public ConstructionPoint setType( DesignMarkers.Type type ) {
+		getChildren().addAll( getShapes( type ) );
+		return this;
+	}
+
 	private DoubleProperty sizeProperty() {
 		if( size == null ) size = new SimpleDoubleProperty();
 		return size;
-	}
-
-	private void setType( DesignMarkers.Type type ) {
-		getChildren().addAll( getShapes( type ) );
 	}
 
 	private double getRadius() {

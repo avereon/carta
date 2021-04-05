@@ -18,6 +18,9 @@ public class CameraZoomWindow extends CameraCommand {
 			return INCOMPLETE;
 		}
 
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
+
 		context.getTool().setViewport( context.getTool().screenToWorld( asBounds( context, parameters[ 0 ] ) ) );
 
 		return COMPLETE;
