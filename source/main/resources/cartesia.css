@@ -4,5 +4,6 @@
 }
 
 .design-tool .construction-point > * {
-	-fx-stroke: #808080;
+	-fx-stroke: #808080ff;
+	-fx-fill: #80808080;
 }

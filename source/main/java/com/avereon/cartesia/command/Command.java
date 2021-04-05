@@ -10,6 +10,8 @@ import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.zerra.color.Paints;
+import com.avereon.zerra.javafx.FxUtil;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
@@ -307,6 +309,20 @@ public class Command {
 		}
 
 		return spin;
+	}
+
+	protected Bounds getShapeBounds( Collection<Shape> shapes ) {
+		if( shapes.isEmpty() ) return new BoundingBox( 0,0,0,0 );
+
+		Bounds shapeBounds = null;
+		for( Shape s : shapes ) {
+			shapeBounds = FxUtil.merge( shapeBounds, s.getBoundsInLocal() );
+		}
+
+		// WORKAROUND for JDK-8145499: https://bugs.openjdk.java.net/browse/JDK-8145499
+		shapeBounds = new BoundingBox( shapeBounds.getMinX() + 0.5, shapeBounds.getMinY() + 0.5, shapeBounds.getWidth() - 1, shapeBounds.getHeight() - 1 );
+
+		return shapeBounds;
 	}
 
 	private void promptForValue( CommandContext context, String key, CommandContext.Input mode ) {

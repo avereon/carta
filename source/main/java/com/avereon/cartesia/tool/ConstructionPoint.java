@@ -12,12 +12,12 @@ import java.util.Set;
 
 public class ConstructionPoint extends Region {
 
-	public static final double DEFAULT_SIZE = 8;
+	public static final double DEFAULT_SIZE = 4;
 
 	private DoubleProperty size;
 
 	public ConstructionPoint() {
-		this( DesignMarkers.Type.X );
+		this( DesignMarkers.Type.CIRCLE );
 	}
 
 	ConstructionPoint( DesignMarkers.Type type ) {

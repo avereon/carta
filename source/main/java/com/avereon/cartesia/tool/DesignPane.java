@@ -223,9 +223,9 @@ public class DesignPane extends StackPane {
 	}
 
 	public void setView( Point3D center, double zoom, double rotate ) {
-		setViewPoint( center );
 		setViewRotate( rotate );
 		setZoom( zoom );
+		setViewPoint( center );
 	}
 
 	public Paint getSelectDrawPaint() {
@@ -588,9 +588,8 @@ public class DesignPane extends StackPane {
 	}
 
 	List<Shape> getVisibleShapes() {
-		return getLayers( layers )
+		return getVisibleLayers()
 			.stream()
-			.filter( Node::isVisible )
 			.flatMap( l -> l.getChildren().stream() )
 			.filter( n -> n instanceof Group )
 			.flatMap( g -> ((Group)g).getChildren().stream() )
