@@ -60,8 +60,8 @@ public class DesignArcTest {
 		assertThat( map.get( DesignArc.SHAPE ), is( DesignArc.ARC ) );
 		assertThat( map.get( DesignArc.ORIGIN ), is( new Point3D( 1, 2, 3 ) ) );
 		assertThat( map.get( DesignArc.RADIUS ), is( 4.0 ) );
-		assertThat( map.get( DesignArc.X_RADIUS ), is( 4.0 ) );
-		assertThat( map.get( DesignArc.Y_RADIUS ), is( 4.0 ) );
+		assertNull( map.get( DesignArc.X_RADIUS ) );
+		assertNull( map.get( DesignArc.Y_RADIUS ) );
 		assertThat( map.get( DesignArc.START ), is( 0.0 ) );
 		assertThat( map.get( DesignArc.EXTENT ), is( 90.0 ) );
 		assertNull( map.get( DesignArc.ROTATE ) );
@@ -135,7 +135,7 @@ public class DesignArcTest {
 		arc.updateFrom( map );
 
 		assertThat( arc.getOrigin(), is( Point3D.ZERO ) );
-		assertNull( arc.getRadius() );
+		assertThat( arc.getRadius(), is( 4.0 ) );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 5.0 ) );
 		assertThat( arc.calcRotate(), is( 0.0 ) );
@@ -161,7 +161,7 @@ public class DesignArcTest {
 		arc.updateFrom( map );
 
 		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 3 ) ) );
-		assertNull( arc.getRadius() );
+		assertThat( arc.getRadius(), is( 4.0 ) );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 5.0 ) );
 		assertThat( arc.calcRotate(), is( 6.0 ) );

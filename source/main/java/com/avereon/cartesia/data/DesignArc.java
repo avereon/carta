@@ -129,7 +129,7 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public String toString() {
-		return super.toString( ORIGIN, RADIUS, X_RADIUS, Y_RADIUS, ROTATE, START, EXTENT, TYPE );
+		return super.toString( ORIGIN, X_RADIUS, Y_RADIUS, ROTATE, START, EXTENT, TYPE );
 	}
 
 }

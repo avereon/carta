@@ -120,6 +120,10 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Geometry.getNormal( asPoint( a ), asPoint( b ), asPoint( c ) ) );
 	}
 
+	public static boolean areSameSize( double a, double b ) {
+		return Geometry.areSameSize( a, b );
+	}
+
 	public static boolean areSamePoint( Point3D a, Point3D b ) {
 		return Geometry.areSamePoint( asPoint( a ), asPoint( b ) );
 	}

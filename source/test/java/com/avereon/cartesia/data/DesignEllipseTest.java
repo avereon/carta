@@ -61,8 +61,8 @@ public class DesignEllipseTest {
 		assertThat( map.get( DesignEllipse.SHAPE ), is( DesignEllipse.CIRCLE ) );
 		assertThat( map.get( DesignEllipse.ORIGIN ), is( new Point3D( 1, 2, 3 ) ) );
 		assertThat( map.get( DesignEllipse.RADIUS ), is( 4.0 ) );
-		assertThat( map.get( DesignEllipse.X_RADIUS ), is( 4.0 ) );
-		assertThat( map.get( DesignEllipse.Y_RADIUS ), is( 4.0 ) );
+		assertNull( map.get( DesignEllipse.X_RADIUS ) );
+		assertNull( map.get( DesignEllipse.Y_RADIUS ) );
 		assertNull( map.get( DesignEllipse.ROTATE ) );
 	}
 
@@ -120,7 +120,7 @@ public class DesignEllipseTest {
 		arc.updateFrom( map );
 
 		assertThat( arc.getOrigin(), is( Point3D.ZERO ) );
-		assertNull( arc.getRadius() );
+		assertThat( arc.getRadius(), is( 4.0 ) );
 		assertThat( arc.getXRadius(), is( 4.0 ) );
 		assertThat( arc.getYRadius(), is( 5.0 ) );
 		assertThat( arc.calcRotate(), is( 0.0 ) );
@@ -140,7 +140,7 @@ public class DesignEllipseTest {
 		arc.updateFrom( map );
 
 		assertThat( arc.getOrigin(), is( Point3D.ZERO ) );
-		assertNull( arc.getRadius() );
+		assertThat( arc.getRadius(), is( 6.0 ) );
 		assertThat( arc.getXRadius(), is( 6.0 ) );
 		assertThat( arc.getYRadius(), is( 7.0 ) );
 		assertThat( arc.calcRotate(), is( 8.0 ) );
