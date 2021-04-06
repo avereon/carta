@@ -783,7 +783,10 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
-		runTask( () -> shapes.forEach( s -> s.getLayer().removeShape( s ) ) );
+		runTask( () -> shapes.forEach( s -> {
+			DesignLayer layer = s.getLayer();
+			if( layer != null ) layer.removeShape( s );
+		} ) );
 		// Intentionally commented out here: selectedShapes.clear();
 	}
 

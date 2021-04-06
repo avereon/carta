@@ -1,8 +1,8 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
+import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Select;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.error.UnknownCommand;
@@ -95,7 +95,28 @@ public class CommandContext {
 			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point2D screen = tool.localToScreen( mouse );
-			MouseEvent mouseEvent = new MouseEvent( tool, null, MouseEvent.MOUSE_RELEASED, mouse.getX(), mouse.getY(), screen.getX(), screen.getY(), MouseButton.PRIMARY, 1, event.isShiftDown(), event.isControlDown(), event.isAltDown(), event.isMetaDown(), true, false, false, true, false, true, null );
+			MouseEvent mouseEvent = new MouseEvent(
+				tool,
+				null,
+				MouseEvent.MOUSE_RELEASED,
+				mouse.getX(),
+				mouse.getY(),
+				screen.getX(),
+				screen.getY(),
+				MouseButton.PRIMARY,
+				1,
+				event.isShiftDown(),
+				event.isControlDown(),
+				event.isAltDown(),
+				event.isMetaDown(),
+				true,
+				false,
+				false,
+				true,
+				false,
+				true,
+				null
+			);
 			doCommand( new Select(), mouseEvent );
 		} else {
 			text( input, true );
@@ -214,7 +235,7 @@ public class CommandContext {
 		Fx.run( () -> {
 			getLastActiveDesignTool().clearSelected();
 			getCommandPrompt().clear();
-		});
+		} );
 	}
 
 	public Input getInputMode() {
@@ -376,10 +397,18 @@ public class CommandContext {
 				result = command.execute( context, parameters );
 				if( result != Command.INVALID ) command.incrementStep();
 			} finally {
-				if( result != Command.INCOMPLETE && tool != null && command.clearSelectionWhenComplete() ) tool.clearSelected();
+				if( result != Command.INCOMPLETE ) doComplete();
 			}
 
 			return result;
+		}
+
+		private void doComplete() {
+			if( tool != null ) {
+				// FIXME Merged changes not working quite right
+				//tool.getAsset().getUndoManager().preventMerge();
+				if( command.clearSelectionWhenComplete() ) tool.clearSelected();
+			}
 		}
 
 		public void cancel() {
