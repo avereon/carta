@@ -1,35 +1,32 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.MockCartesiaMod;
+import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.error.UnknownCommand;
+import com.avereon.product.Rb;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.zarra.test.FxPlatformTestCase;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CommandContextTest {
+public class CommandContextTest extends FxPlatformTestCase {
 
 	private ProgramProduct product;
 
 	private CommandContext context;
 
 	@BeforeEach
-	public void setup() {
-		this.product = new MockCartesiaMod();
+	public void setup() throws Exception {
+		super.setup();
+		Rb.init( this.product = new MockCartesiaMod() );
 		this.context = new CommandContext( product );
-
-		assertNotNull( product );
-		assertNotNull( context );
-
-		System.err.println( "Product and context initialized!" );
 	}
 
 	@Test
@@ -45,7 +42,7 @@ public class CommandContextTest {
 			context.submit( null, command );
 			assertThat( command.getValues().length, is( 0 ) );
 		} catch( NullPointerException exception ) {
-			exception.printStackTrace(System.err);
+			exception.printStackTrace( System.err );
 		}
 	}
 

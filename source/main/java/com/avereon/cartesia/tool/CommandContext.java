@@ -286,7 +286,7 @@ public class CommandContext {
 		checkForCommonProblems( tool, command, parameters );
 
 		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
-		if( Fx.isRunning() ) getCommandPrompt().clear();
+		getCommandPrompt().clear();
 
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
