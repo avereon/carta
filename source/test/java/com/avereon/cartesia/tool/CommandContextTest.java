@@ -23,9 +23,9 @@ public class CommandContextTest extends FxPlatformTestCase {
 	private CommandContext context;
 
 	@BeforeEach
-	public void setup() throws Exception {
-		super.setup();
-		Rb.init( this.product = new MockCartesiaMod() );
+	public void setup() {
+		ProgramProduct product = new MockCartesiaMod();
+		Rb.init( product );
 		this.context = new CommandContext( product );
 	}
 
