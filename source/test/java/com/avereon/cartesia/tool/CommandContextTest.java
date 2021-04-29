@@ -40,10 +40,13 @@ public class CommandContextTest {
 
 	@Test
 	void testCommand() {
-		TestCommand command = new TestCommand();
-		assertNotNull( context );
-		new CommandContext( product ).submit( null, command );
-		assertThat( command.getValues().length, is( 0 ) );
+		try {
+			TestCommand command = new TestCommand();
+			context.submit( null, command );
+			assertThat( command.getValues().length, is( 0 ) );
+		} catch( NullPointerException exception ) {
+			exception.printStackTrace(System.err);
+		}
 	}
 
 	@Test
