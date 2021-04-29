@@ -22,7 +22,7 @@ public class CommandContextTest {
 	private CommandContext context;
 
 	@BeforeEach
-	public void setup() throws Exception {
+	public void setup() {
 		this.product = new MockCartesiaMod();
 		this.context = new CommandContext( product );
 
