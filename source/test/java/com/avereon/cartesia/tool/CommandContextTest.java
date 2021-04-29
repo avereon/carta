@@ -18,8 +18,6 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 public class CommandContextTest extends FxPlatformTestCase {
 
-	private ProgramProduct product;
-
 	private CommandContext context;
 
 	@BeforeEach
