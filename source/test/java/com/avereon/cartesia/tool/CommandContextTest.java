@@ -28,6 +28,8 @@ public class CommandContextTest {
 
 		assertNotNull( product );
 		assertNotNull( context );
+
+		System.err.println( "Product and context initialized!" );
 	}
 
 	@Test
