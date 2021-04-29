@@ -41,7 +41,8 @@ public class CommandContextTest {
 	@Test
 	void testCommand() {
 		TestCommand command = new TestCommand();
-		context.submit( null, command );
+		assertNotNull( context );
+		new CommandContext( product ).submit( null, command );
 		assertThat( command.getValues().length, is( 0 ) );
 	}
 
