@@ -7,7 +7,6 @@ import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.product.Rb;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.zarra.test.FxPlatformTestCase;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CommandContextTest extends FxPlatformTestCase {
+public class CommandContextTest {
 
 	private CommandContext context;
 
