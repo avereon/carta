@@ -1,9 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
@@ -783,11 +780,15 @@ public abstract class DesignTool extends GuidedTool {
 		getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
 	}
 
+	@Deprecated
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
-		runTask( () -> shapes.forEach( s -> {
-			DesignLayer layer = s.getLayer();
-			if( layer != null ) layer.removeShape( s );
-		} ) );
+		// NEXT Should this push a Delete command to the command context?
+//		getProgram().getActionLibrary().getAction( "delete" );
+//		getCommandContext().command( "XX" );
+//		runTask( () -> shapes.forEach( s -> {
+//			DesignLayer layer = s.getLayer();
+//			if( layer != null ) layer.removeShape( s );
+//		} ) );
 		// Intentionally commented out here: selectedShapes.clear();
 	}
 
@@ -838,7 +839,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			doDeleteShapes( selectedShapes().stream().map( DesignTool::getDesignData ).collect( Collectors.toSet() ) );
+			getCommandContext().command( CommandMap.getActionCommand( "delete" ).getCommand() );
 		}
 
 	}

@@ -6,7 +6,6 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.transaction.Txn;
-import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 
@@ -51,7 +50,10 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void rescaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D lastPoint, Point3D target ) {
-		transformShapes( shapes, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ).combine( CadTransform.scale( center, 1/(lastPoint.distance( center ) / anchor.distance( center ) )) ) );
+		transformShapes(
+			shapes,
+			CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ).combine( CadTransform.scale( center, 1 / (lastPoint.distance( center ) / anchor.distance( center )) ) )
+		);
 	}
 
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
@@ -63,12 +65,12 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, CadTransform.mirror( origin, point ).combine( CadTransform.mirror( origin, lastPoint ) ) );
 	}
 
+	protected void deleteShapes( Collection<DesignShape> shapes ) {
+		Txn.run( () -> shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) ) );
+	}
+
 	private void transformShapes( Collection<DesignShape> shapes, CadTransform transform ) {
-		try( Txn ignore = Txn.create() ) {
-			shapes.forEach( s -> s.apply( transform ) );
-		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error transforming shapes", exception );
-		}
+		Txn.run( () -> shapes.forEach( s -> s.apply( transform ) ) );
 	}
 
 }

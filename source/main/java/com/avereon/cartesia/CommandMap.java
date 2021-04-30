@@ -95,6 +95,7 @@ public class CommandMap {
 
 		// Modify commands
 		add( product, "copy", Copy.class );
+		add( product, "delete", Delete.class );
 		add( product, "extend", Trim.class );
 		add( product, "flip", Flip.class );
 		add( product, "mirror", Mirror.class );
@@ -182,7 +183,7 @@ public class CommandMap {
 		return getActionCommand( eventActions.getOrDefault( CommandEventKey.of( event ), TextUtil.EMPTY ) );
 	}
 
-	private static CommandMetadata getActionCommand( String action ) {
+	public static CommandMetadata getActionCommand( String action ) {
 		if( TextUtil.isEmpty( action ) ) return null;
 		CommandMetadata mapping = actionCommands.get( action );
 		if( mapping == null ) log.log( Log.WARN, "No command for action: " + action );
