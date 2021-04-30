@@ -70,6 +70,8 @@ public class DesignPane extends StackPane {
 	// FIXME This should probably be moved to the design settings
 	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
+	private static final DesignPaneLayer NO_LAYER = new DesignPaneLayer();
+
 	private final Pane select;
 
 	private final Pane reference;
@@ -293,8 +295,16 @@ public class DesignPane extends StackPane {
 	}
 
 	public DesignPaneLayer getShapeLayer( DesignShape shape ) {
-		DesignLayer layer = shape.getLayer();
-		return layer == null ? new DesignPaneLayer() : layerMap.get( shape.getLayer() ).getLayer();
+		DesignLayer designLayer = shape.getLayer();
+		if( designLayer == null ) log.log( Log.WARN, "Shape missing design layer, shape=" + shape );
+
+		DesignLayerView view = designLayer == null ? null : layerMap.get( designLayer );
+		if( view == null ) log.log( Log.WARN, "Shape missing design view, shape=" + shape );
+
+		DesignPaneLayer layer = view == null ? null : view.getLayer();
+		if( layer == null ) log.log( Log.WARN, "Shape missing layer: shape=" + shape );
+
+		return layer == null ? NO_LAYER : layer;
 	}
 
 	Pane getReferenceLayer() {
@@ -404,8 +414,8 @@ public class DesignPane extends StackPane {
 	}
 
 	public void removeShapeGeometry( DesignShapeView view ) {
-		reference.getChildren().remove( view.getCpGroup() );
-		getShapeLayer( view.getDesignShape() ).getChildren().remove( view.getGroup() );
+		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
+		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
 	}
 
 	void setGrid( List<Shape> grid ) {

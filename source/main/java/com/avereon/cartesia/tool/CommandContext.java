@@ -302,10 +302,11 @@ public class CommandContext {
 	}
 
 	private void logCommandStack() {
-		if( log.isLoggable( Log.DEBUG ) ) {
+		System.Logger.Level level = Log.TRACE;
+		if( log.isLoggable( level ) ) {
 			List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
 			Collections.reverse( invertedCommandStack );
-			if( commandStack.size() != 0 ) log.log( Log.DEBUG, "commands=" + invertedCommandStack );
+			if( commandStack.size() != 0 ) log.log( level, "commands=" + invertedCommandStack );
 		}
 	}
 
