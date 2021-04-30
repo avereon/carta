@@ -374,14 +374,15 @@ public abstract class DesignTool extends GuidedTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = request.getAsset().getModel();
-		layersGuide.link( designPane );
-		//viewsGuide.init( design );
-		//printsGuide.init( design );
 
 		Fx.run( () -> {
 			designPane.setDesign( design );
 			designPane.setDpi( Screen.getPrimary().getDpi() );
 		} );
+
+		layersGuide.link( designPane );
+		//viewsGuide.init( design );
+		//printsGuide.init( design );
 
 		// Keep the design pane centered when resizing
 		// These should be added before updating the pan and zoom

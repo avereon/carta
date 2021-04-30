@@ -19,11 +19,7 @@ public class Design2dAssetType extends AssetType {
 
 	@Override
 	public boolean assetNew( Program program, Asset asset ) throws AssetException {
-		// There might already be a model from assetNew()
-		Design2D design = asset.getModel();
-
-		// If there is not already a model, create one
-		if( design == null ) asset.setModel( design = new Design2D() );
+		Design2D design = initModel( asset );
 
 		// If there is not a default layer, create one
 		if( design.getRootLayer().getLayers().size() == 0 ) {
@@ -37,8 +33,20 @@ public class Design2dAssetType extends AssetType {
 
 	@Override
 	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
+		Design2D design = initModel( asset );
+
 		asset.setCaptureUndoChanges( true );
 		return true;
+	}
+
+	private Design2D initModel( Asset asset ) {
+		// There might already be a model from assetNew()
+		Design2D design = asset.getModel();
+
+		// If there is not already a model, create one
+		if( design == null ) asset.setModel( design = new Design2D() );
+
+		return design;
 	}
 
 }
