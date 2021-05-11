@@ -102,6 +102,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 		map.put( CODEC_VERSION_KEY, CODEC_VERSION );
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
+		//System.err.println( JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( map ) );
 	}
 
 	@SuppressWarnings( "unchecked" )
