@@ -59,7 +59,7 @@ public class Scale extends EditCommand {
 
 		try {
 			// Start an undo multi-change
-			scaleShapes( getExecuteShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			scaleShapes( getCommandShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );

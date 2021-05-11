@@ -47,7 +47,7 @@ public class Flip extends EditCommand {
 
 		try {
 			// Start an undo multi-change
-			flipShapes( getExecuteShapes( context.getTool() ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+			flipShapes( getCommandShapes( context.getTool() ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );

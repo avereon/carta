@@ -98,31 +98,31 @@ public abstract class CartesiaDesignCodec extends Codec {
 	public void save( Asset asset, OutputStream output ) throws IOException {
 		Map<String, Object> map = ((Design)asset.getModel()).asDeepMap();
 
-		mapLayers( map );
+		remapLayers( map );
 
 		map.put( CODEC_VERSION_KEY, CODEC_VERSION );
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void mapLayers( Map<String, Object> map ) {
+	private void remapLayers( Map<String, Object> map ) {
 		Map<String, Object> layers = (Map<String, Object>)map.get( "layers" );
 		layers.values().parallelStream().map( o -> (Map<String, Object>)o ).forEach( m -> {
-			mapLayer( m );
-			mapLayers( m );
+			remapLayer( m );
+			remapLayers( m );
 		} );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void mapLayer( Map<String, Object> map ) {
+	private void remapLayer( Map<String, Object> map ) {
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
 		geometry.values().forEach( g -> {
 			// Value mapping
-			mapValues( g, DesignDrawable.DRAW_PAINT, savePaintMapping );
-			mapValues( g, DesignDrawable.DRAW_WIDTH, saveLayerToNullMapping );
-			mapValues( g, DesignDrawable.DRAW_CAP, saveLayerToNullMapping );
-			mapValues( g, DesignDrawable.DRAW_PATTERN, saveLayerToNullMapping );
-			mapValues( g, DesignDrawable.FILL_PAINT, savePaintMapping );
+			remapValue( g, DesignDrawable.DRAW_PAINT, savePaintMapping );
+			remapValue( g, DesignDrawable.DRAW_WIDTH, saveLayerToNullMapping );
+			remapValue( g, DesignDrawable.DRAW_CAP, saveLayerToNullMapping );
+			remapValue( g, DesignDrawable.DRAW_PATTERN, saveLayerToNullMapping );
+			remapValue( g, DesignDrawable.FILL_PAINT, savePaintMapping );
 		} );
 	}
 
@@ -139,11 +139,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 			moveKey( g, "fill-color", DesignDrawable.FILL_PAINT );
 
 			// Value mapping
-			mapValues( g, DesignDrawable.DRAW_PAINT, loadPaintMapping );
-			mapValues( g, DesignDrawable.DRAW_WIDTH, loadNullToLayerMapping );
-			mapValues( g, DesignDrawable.DRAW_CAP, loadNullToLayerMapping );
-			mapValues( g, DesignDrawable.DRAW_PATTERN, loadNullToLayerMapping );
-			mapValues( g, DesignDrawable.FILL_PAINT, loadPaintMapping );
+			remapValue( g, DesignDrawable.DRAW_PAINT, loadPaintMapping );
+			remapValue( g, DesignDrawable.DRAW_WIDTH, loadNullToLayerMapping );
+			remapValue( g, DesignDrawable.DRAW_CAP, loadNullToLayerMapping );
+			remapValue( g, DesignDrawable.DRAW_PATTERN, loadNullToLayerMapping );
+			remapValue( g, DesignDrawable.FILL_PAINT, loadPaintMapping );
 
 			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
 			DesignShape shape = switch( type ) {
@@ -187,7 +187,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		map.remove( oldKey );
 	}
 
-	private void mapValues( Map<String, Object> map, String key, Map<?, ?> values ) {
+	private void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {
 		Object currentValue = map.get( key );
 		if( currentValue == null ) currentValue = "null";
 

@@ -21,7 +21,7 @@ public abstract class EditCommand extends Command {
 		this.copy = true;
 	}
 
-	protected Collection<DesignShape> getExecuteShapes( DesignTool tool ) {
+	protected Collection<DesignShape> getCommandShapes( DesignTool tool ) {
 		return copy ? cloneShapes( tool.getSelectedGeometry() ) : tool.getSelectedGeometry();
 	}
 
