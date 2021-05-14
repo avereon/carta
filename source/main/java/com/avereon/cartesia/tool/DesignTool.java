@@ -428,9 +428,7 @@ public abstract class DesignTool extends GuidedTool {
 		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
-		layoutBoundsProperty().addListener( ( p, o, n ) -> {
-			validateGrid();
-		} );
+		layoutBoundsProperty().addListener( ( p, o, n ) -> validateGrid() );
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
@@ -452,7 +450,7 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 
 		// Add visible layers listener
-		designPane.visibleLayersProperty().addListener( this::doUpdateVisibleLayers );
+		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
 
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
@@ -470,7 +468,7 @@ public abstract class DesignTool extends GuidedTool {
 		validateGrid();
 	}
 
-	private void doUpdateVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
+	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
 		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
 	}
 
