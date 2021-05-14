@@ -51,9 +51,7 @@ public class DesignEllipseView extends DesignShapeView {
 		ConstructionPoint c = cp( pane, ellipse, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 180 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 180 ).getY() );
 		ConstructionPoint d = cp( pane, ellipse, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, -90 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, -90 ).getY() );
 
-		setConstructionPoints( ellipse, List.of( origin, a, b, c, d ) );
-
-		return getConstructionPoints( ellipse );
+		return setConstructionPoints( ellipse, List.of( origin, a, b, c, d ) );
 	}
 
 	@Override

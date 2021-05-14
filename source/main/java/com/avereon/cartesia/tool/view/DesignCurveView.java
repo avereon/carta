@@ -48,9 +48,7 @@ public class DesignCurveView extends DesignShapeView {
 		ConstructionPoint c = cp( pane, curve, curve.controlX2Property(), curve.controlY2Property() );
 		ConstructionPoint d = cp( pane, curve, curve.endXProperty(), curve.endYProperty() );
 
-		setConstructionPoints( curve, List.of( a, b, c, d ) );
-
-		return getConstructionPoints( curve );
+		return setConstructionPoints( curve, List.of( a, b, c, d ) );
 	}
 
 	@Override

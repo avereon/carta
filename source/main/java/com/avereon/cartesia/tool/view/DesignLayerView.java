@@ -49,12 +49,10 @@ public class DesignLayerView extends DesignDrawableView {
 	@Override
 	void registerListeners() {
 		super.registerListeners();
-		//getDesignLayer().register( DesignLayer.VISIBLE, layerVisibleHandler = e -> Fx.run( () -> getLayer().setVisible( e.getNewValue() ) ) );
 	}
 
 	@Override
 	void unregisterListeners() {
-		//getDesignLayer().unregister( DesignLayer.VISIBLE, layerVisibleHandler );
 		super.unregisterListeners();
 	}
 

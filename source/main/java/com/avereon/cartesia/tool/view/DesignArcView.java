@@ -70,9 +70,7 @@ public class DesignArcView extends DesignShapeView {
 			() -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY()
 		);
 
-		setConstructionPoints( arc, List.of( a, b, c ) );
-
-		return getConstructionPoints( arc );
+		return setConstructionPoints( arc, List.of( a, b, c ) );
 	}
 
 	@Override

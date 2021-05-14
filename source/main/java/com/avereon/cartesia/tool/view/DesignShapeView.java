@@ -99,8 +99,8 @@ public class DesignShapeView extends DesignDrawableView {
 
 	public void addShapeGeometry() {
 		Fx.run( () -> getPane().addShapeGeometry( this ) );
-		getGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).visibleProperty() );
-		getCpGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).visibleProperty() );
+		getGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).showingProperty() );
+		getCpGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).showingProperty() );
 		registerListeners();
 	}
 
@@ -159,9 +159,11 @@ public class DesignShapeView extends DesignDrawableView {
 		List<ConstructionPoint> cps = generateConstructionPoints( getPane(), geometry );
 
 		group = new Group();
+		group.setVisible( false );
 		group.getChildren().addAll( geometry );
 
 		cpGroup = new Group();
+		cpGroup.setVisible( false );
 		cpGroup.getChildren().addAll( cps );
 
 		setDesignData( group, getDesignShape() );
@@ -211,13 +213,7 @@ public class DesignShapeView extends DesignDrawableView {
 		return cp( pane, shape, Bindings.createDoubleBinding( xAction, xProperty ), Bindings.createDoubleBinding( yAction, yProperty ) );
 	}
 
-	static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
-		ConstructionPoint cp = cp( pane, xBinding, yBinding );
-		cp.visibleProperty().bind( shape.visibleProperty() );
-		return cp;
-	}
-
-	public static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
+	public static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
 		ConstructionPoint cp = new ConstructionPoint();
 		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
 		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );
