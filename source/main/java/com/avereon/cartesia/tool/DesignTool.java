@@ -372,14 +372,15 @@ public abstract class DesignTool extends GuidedTool {
 
 		Design design = request.getAsset().getModel();
 
+		// Link the guides before loading the design
+		layersGuide.link( designPane );
+		//viewsGuide.init( design );
+		//printsGuide.init( design );
+
 		Fx.run( () -> {
 			designPane.setDesign( design );
 			designPane.setDpi( Screen.getPrimary().getDpi() );
 		} );
-
-		layersGuide.link( designPane );
-		//viewsGuide.init( design );
-		//printsGuide.init( design );
 
 		// Keep the design pane centered when resizing
 		// These should be added before updating the pan and zoom
@@ -781,12 +782,12 @@ public abstract class DesignTool extends GuidedTool {
 	@Deprecated
 	private void doDeleteShapes( Collection<DesignShape> shapes ) {
 		// NEXT Should this push a Delete command to the command context?
-//		getProgram().getActionLibrary().getAction( "delete" );
-//		getCommandContext().command( "XX" );
-//		runTask( () -> shapes.forEach( s -> {
-//			DesignLayer layer = s.getLayer();
-//			if( layer != null ) layer.removeShape( s );
-//		} ) );
+		//		getProgram().getActionLibrary().getAction( "delete" );
+		//		getCommandContext().command( "XX" );
+		//		runTask( () -> shapes.forEach( s -> {
+		//			DesignLayer layer = s.getLayer();
+		//			if( layer != null ) layer.removeShape( s );
+		//		} ) );
 		// Intentionally commented out here: selectedShapes.clear();
 	}
 

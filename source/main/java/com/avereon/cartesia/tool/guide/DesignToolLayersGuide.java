@@ -92,6 +92,7 @@ public class DesignToolLayersGuide extends Guide {
 	private void addLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
 		GuideNode parentGuideNode = layerNodes.get( designLayer.getLayer() );
 		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer", designLayer.getOrder() );
+		layerGuideNode.setIcon( layer.isShowing() ? "layer" : "layer-hidden" );
 
 		addNode( parentGuideNode, layerGuideNode );
 		layerNodes.put( designLayer, layerGuideNode );
