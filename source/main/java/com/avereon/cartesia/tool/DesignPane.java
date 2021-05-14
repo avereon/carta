@@ -266,8 +266,8 @@ public class DesignPane extends StackPane {
 	}
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-		Fx.run( () -> Optional.ofNullable( layerMap.get( layer ) ).ifPresent( v -> {
-			v.setVisible( visible );
+		Fx.run( () -> Optional.ofNullable( layerMap.get( layer ) ).ifPresent( yy -> {
+			yy.setVisible( visible );
 			if( visible ) {
 				visibleLayers.add( layer );
 			} else {

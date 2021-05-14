@@ -12,7 +12,8 @@ public class DesignPaneLayer extends Pane {
 	private final BooleanProperty showing;
 
 	public DesignPaneLayer() {
-		showing = new SimpleBooleanProperty( isVisible() );
+		showing = new SimpleBooleanProperty( true );
+		setVisible( false );
 	}
 
 	public boolean isShowing() {

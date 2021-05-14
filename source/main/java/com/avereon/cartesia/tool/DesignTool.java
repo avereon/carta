@@ -239,15 +239,15 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-		if( !visible ) {
-			// Only hide the specified layer
-			designPane.setLayerVisible( layer, visible );
-		} else {
+		if( visible ) {
 			// Show the specified layer and parent layers
 			while( !layer.isRootLayer() ) {
 				designPane.setLayerVisible( layer, visible );
 				layer = layer.getLayer();
 			}
+		} else {
+			// Only hide the specified layer
+			designPane.setLayerVisible( layer, visible );
 		}
 	}
 
