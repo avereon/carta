@@ -32,6 +32,7 @@ public class CadMathTest {
 
 	@Test
 	void testEvalNoException() {
+		assertThat( CadMath.evalNoException( "" ), is( 0.0 ) );
 		assertThat( CadMath.evalNoException( "1/8" ), is( 0.125 ) );
 		assertThat( CadMath.evalNoException( "sin(pi)" ), is( java.lang.Math.sin( java.lang.Math.PI ) ) );
 	}

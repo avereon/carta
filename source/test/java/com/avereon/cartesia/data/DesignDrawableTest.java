@@ -7,6 +7,8 @@ import javafx.scene.shape.StrokeLineCap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 
@@ -30,7 +32,7 @@ public class DesignDrawableTest {
 		assertThat( drawable.getDrawCap(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 		assertThat( drawable.getDrawPattern(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 		assertThat( drawable.getFillPaint(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
@@ -56,7 +58,7 @@ public class DesignDrawableTest {
 		assertThat( layer.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
 		assertThat( layer.calcDrawWidth(), is( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 		assertThat( layer.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
-		assertThat( layer.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( layer.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 		assertThat( layer.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
 
@@ -123,6 +125,15 @@ public class DesignDrawableTest {
 
 	@Test
 	void testSetDrawCapWhenDrawCapModeIsLayer() {
+		assertThat( drawable.getDrawCap(), is( DesignLayer.MODE_LAYER ) );
+		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
+
+		// Change the layer cap to ensure that the layer cap value is used
+		layer.setDrawCap( StrokeLineCap.SQUARE.name().toLowerCase() );
+		assertThat( drawable.getValueMode( drawable.getDrawCap() ), is( DesignDrawable.MODE_LAYER ) );
+		assertThat( drawable.getDrawCap(), is( DesignLayer.MODE_LAYER ) );
+		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.SQUARE ) );
+
 		drawable.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );
 		assertThat( drawable.getValueMode( drawable.getDrawCap() ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getDrawCap(), is( StrokeLineCap.ROUND.name().toLowerCase() ) );
@@ -134,22 +145,31 @@ public class DesignDrawableTest {
 		// Change mode to custom to copy current calcDrawPattern value
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
-		// Check that the cap value is a copy of the layer cap value
+		// Check that the layer values are a copy of the layer pattern values
 		assertThat( drawable.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawPattern( "1/8,1/4" );
 		assertThat( drawable.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.calcDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 	}
 
 	@Test
 	void testSetDrawPatternWhenDrawPatternModeIsLayer() {
-		drawable.setDrawPattern( "0.5,0.5" );
+		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_LAYER ) );
+		assertThat( drawable.getDrawPattern(), is( DesignLayer.MODE_LAYER ) );
+		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
+
+		layer.setDrawPattern( "0.5,1/4" );
+		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_LAYER ) );
+		assertThat( drawable.getDrawPattern(), is( DesignLayer.MODE_LAYER ) );
+		assertThat( drawable.calcDrawPattern(), is( List.of( 0.5, 0.25 ) ) );
+
+		drawable.setDrawPattern( "1/8, 0.5" );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
-		assertThat( drawable.getDrawPattern(), is( "0.5,0.5" ) );
-		assertThat( drawable.calcDrawPattern(), is( "0.5,0.5" ) );
+		assertThat( drawable.getDrawPattern(), is( "1/8, 0.5" ) );
+		assertThat( drawable.calcDrawPattern(), is( List.of( 0.125, 0.5 ) ) );
 	}
 
 	@Test

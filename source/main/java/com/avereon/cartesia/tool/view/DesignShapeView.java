@@ -93,6 +93,8 @@ public class DesignShapeView extends DesignDrawableView {
 	protected void configureShape( Shape shape ) {
 		shape.setStrokeWidth( getDesignShape().calcDrawWidth() );
 		shape.setStroke( getDesignShape().calcDrawPaint() );
+		shape.getStrokeDashArray().setAll( getDesignShape().calcDrawPattern() );
+		shape.setStrokeDashOffset( 0.0 );
 		shape.setStrokeLineCap( getDesignShape().calcDrawCap() );
 		shape.setFill( getDesignShape().calcFillPaint() );
 	}

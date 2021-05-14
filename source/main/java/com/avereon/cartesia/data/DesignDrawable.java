@@ -11,9 +11,7 @@ import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public abstract class DesignDrawable extends DesignNode {
 
@@ -110,12 +108,12 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public String calcDrawPattern() {
+	public List<Double> calcDrawPattern() {
 		String pattern = getDrawPattern();
-		if( isCustomValue( pattern ) ) return pattern;
+		if( isCustomValue( pattern ) ) return CadMath.evalExpressions( getDrawPattern() );
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_DRAW_PATTERN : layer.calcDrawPattern();
+		return layer == null ? CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) : layer.calcDrawPattern();
 	}
 
 	public String getDrawPattern() {
@@ -284,7 +282,7 @@ public abstract class DesignDrawable extends DesignNode {
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try {
 			Txn.create();
-			setDrawPattern( isCustom ? calcDrawPattern() : null );
+			setDrawPattern( isCustom ? TextUtil.toString( calcDrawPattern(), ", " ) : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {

@@ -11,6 +11,7 @@
 				<option key="solid"/>
 			</setting>
 			<setting key="draw-width" editor="textline" type="math-expression"/>
+			<setting key="draw-pattern" editor="textline"/>
 			<setting key="draw-cap" editor="combobox">
 				<option key="square"/>
 				<option key="round"/>

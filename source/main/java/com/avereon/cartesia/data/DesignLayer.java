@@ -32,9 +32,9 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_DRAW_WIDTH = "0.05";
 
-	static final String DEFAULT_DRAW_CAP = StrokeLineCap.SQUARE.name().toLowerCase();
+	static final String DEFAULT_DRAW_CAP = StrokeLineCap.BUTT.name().toLowerCase();
 
-	static final String DEFAULT_DRAW_PATTERN = "0";
+	static final String DEFAULT_DRAW_PATTERN = "";
 
 	static final String DEFAULT_FILL_PAINT = null;
 
@@ -209,8 +209,8 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	@Override
-	public String calcDrawPattern() {
-		return getDrawPattern();
+	public List<Double> calcDrawPattern() {
+		return CadMath.evalExpressions( getDrawPattern() );
 	}
 
 	@Override
