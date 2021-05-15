@@ -207,11 +207,16 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
+
+		// Fix bad data
+		String drawPattern = (String)map.get( DRAW_PATTERN );
+		if( "0".equals( drawPattern ) ) drawPattern = "";
+
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
-		setDrawPattern( map.containsKey( DRAW_PATTERN ) ? (String)map.get( DRAW_PATTERN ) : null );
+		setDrawPattern( drawPattern );
 		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );
 		return this;
 	}
