@@ -210,7 +210,8 @@ public abstract class DesignDrawable extends DesignNode {
 
 		// Fix bad data
 		String drawPattern = (String)map.get( DRAW_PATTERN );
-		if( "0".equals( drawPattern ) ) drawPattern = "";
+		if( "0".equals( drawPattern ) ) drawPattern = null;
+		if( "".equals( drawPattern ) ) drawPattern = null;
 
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
