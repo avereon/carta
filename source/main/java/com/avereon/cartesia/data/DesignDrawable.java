@@ -110,18 +110,19 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public List<Double> calcDrawPattern() {
 		String pattern = getDrawPattern();
-		if( isCustomValue( pattern ) ) return CadMath.evalExpressions( getDrawPattern() );
+		if( isCustomValue( pattern ) ) return CadMath.evalExpressions( pattern );
 
 		DesignLayer layer = getLayer();
 		return layer == null ? CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) : layer.calcDrawPattern();
 	}
 
 	public String getDrawPattern() {
-		return getValue( DRAW_PATTERN, MODE_LAYER );
+		// Do not default to layer for this property
+		return getValue( DRAW_PATTERN );
 	}
 
 	public DesignDrawable setDrawPattern( String pattern ) {
-		setValue( DRAW_PATTERN, pattern );
+		setValue( DRAW_PATTERN, TextUtil.isEmpty( pattern ) ? null : pattern );
 		return this;
 	}
 
@@ -152,6 +153,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getFillPaint() {
+		// Do not default to layer for this property
 		return getValue( FILL_PAINT );
 	}
 
@@ -179,7 +181,6 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	String getValueMode( String value ) {
-		if( Objects.equals( value, MODE_LAYER ) ) return MODE_LAYER;
 		if( value != null && nonCustomModes.contains( value ) ) return value;
 		return MODE_CUSTOM;
 	}
@@ -217,7 +218,7 @@ public abstract class DesignDrawable extends DesignNode {
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
-		setDrawPattern( drawPattern );
+		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( drawPattern );
 		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );
 		return this;
 	}
