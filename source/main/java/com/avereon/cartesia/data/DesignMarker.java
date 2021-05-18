@@ -16,9 +16,6 @@ public class DesignMarker extends DesignShape {
 
 	public static final String MARKER = "marker";
 
-	@Deprecated
-	public static final String POINT = "point";
-
 	public static final String SIZE = "size";
 
 	public static final String TYPE = "type";
