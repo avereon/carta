@@ -63,10 +63,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Point3D.class, new Point3DSerializer() ) );
 		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Color.class, new ColorSerializer() ) );
 
-		savePaintMapping = Map.of( DesignDrawable.MODE_LAYER, "null" );
-		loadPaintMapping = Map.of( "none", "null" );
-		saveLayerToNullMapping = Map.of( DesignDrawable.MODE_LAYER, "null" );
-		loadNullToLayerMapping = Map.of( "null", DesignDrawable.MODE_LAYER );
+		savePaintMapping = Map.of( DesignDrawable.MODE_LAYER, "null", "null", "none" );
+		loadPaintMapping = Map.of( "none", "null", "null", DesignDrawable.MODE_LAYER );
+		saveLayerToNullMapping = Map.of( DesignDrawable.MODE_LAYER, "null", "null", "none" );
+		loadNullToLayerMapping = Map.of( "none", "null", "null", DesignDrawable.MODE_LAYER );
 	}
 
 	public CartesiaDesignCodec( Product product ) {
@@ -118,7 +118,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
 	public void save( Asset asset, OutputStream output ) throws IOException {
 		Map<String, Object> map = mapDesign( asset.getModel() );
 		map.put( CODEC_VERSION_KEY, CODEC_VERSION );
