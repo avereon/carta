@@ -189,20 +189,17 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	/**
-	 * Set the camera viewport using a world-based rectangular viewport. The
+	 * Set the camera viewport using a screen-based rectangular viewport. The
 	 * appropriate zoom and center will be calculated.
 	 *
-	 * @param viewport The world viewport
+	 * @param viewport The screen viewport
 	 */
 	public void setViewport( Bounds viewport ) {
-		// FIXME Using a world rectangle converted to screen bounds is not a good way to do this
-		// The problem comes in when the view is rotated because the world rectangle becomes a diamond
-		Point3D worldCenter = new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() );
-		Bounds screenBounds = worldToScreen( viewport );
+		Point3D worldCenter = screenToWorld( new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() ) );
 
 		Bounds toolBounds = getLayoutBounds();
-		double xZoom = Math.abs( toolBounds.getWidth() / screenBounds.getWidth() );
-		double yZoom = Math.abs( toolBounds.getHeight() / screenBounds.getHeight() );
+		double xZoom = Math.abs( toolBounds.getWidth() / viewport.getWidth() );
+		double yZoom = Math.abs( toolBounds.getHeight() / viewport.getHeight() );
 		double zoom = Math.min( xZoom, yZoom ) * getZoom();
 
 		setView( worldCenter, zoom );

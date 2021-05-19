@@ -14,7 +14,7 @@ public abstract class CameraCommand extends Command {
 
 	protected Object zoomShapes( CommandContext context, List<Shape> shapes ) {
 		if( shapes.isEmpty() ) return COMPLETE;
-		context.getTool().setViewport( getShapeBounds( shapes ) );
+		context.getTool().setViewport( getParentShapeBounds( shapes, context.getTool() ) );
 		return COMPLETE;
 	}
 

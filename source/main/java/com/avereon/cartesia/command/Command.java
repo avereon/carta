@@ -15,6 +15,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
+import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
@@ -22,6 +23,7 @@ import javafx.scene.shape.Shape;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Command {
@@ -311,12 +313,20 @@ public class Command {
 		return spin;
 	}
 
-	protected Bounds getShapeBounds( Collection<Shape> shapes ) {
+	protected Bounds getLocalShapeBounds( Collection<Shape> shapes ) {
+		return getShapeBounds( shapes, Node::getBoundsInLocal );
+	}
+
+	protected Bounds getParentShapeBounds( Collection<Shape> shapes, Node target ) {
+		return getShapeBounds( shapes, s -> FxUtil.localToParent( s,target ) );
+	}
+
+	private Bounds getShapeBounds( Collection<Shape> shapes, Function<Shape,Bounds> operator ) {
 		if( shapes.isEmpty() ) return new BoundingBox( 0,0,0,0 );
 
 		Bounds shapeBounds = null;
 		for( Shape s : shapes ) {
-			shapeBounds = FxUtil.merge( shapeBounds, s.getBoundsInLocal() );
+			shapeBounds = FxUtil.merge( shapeBounds, operator.apply(s) );
 		}
 
 		// WORKAROUND for JDK-8145499: https://bugs.openjdk.java.net/browse/JDK-8145499

@@ -21,7 +21,7 @@ public class CameraZoomWindow extends CameraCommand {
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
 
-		context.getTool().setViewport( context.getTool().screenToWorld( asBounds( context, parameters[ 0 ] ) ) );
+		context.getTool().setViewport( asBounds( context, parameters[ 0 ] ) );
 
 		return COMPLETE;
 	}
