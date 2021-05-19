@@ -165,7 +165,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewRotate( double angle ) {
-		if( designPane != null ) designPane.setViewRotate( angle );
+		if( designPane != null ) Fx.run( () -> designPane.setViewRotate( angle ) );
 	}
 
 	public double getZoom() {
@@ -181,11 +181,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setView( Point3D center, double zoom ) {
-		if( designPane != null ) designPane.setView( center, zoom );
+		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom ) );
 	}
 
 	public void setView( Point3D center, double zoom, double rotate ) {
-		if( designPane != null ) designPane.setView( center, zoom, rotate );
+		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom, rotate ) );
 	}
 
 	/**
@@ -195,15 +195,17 @@ public abstract class DesignTool extends GuidedTool {
 	 * @param viewport The world viewport
 	 */
 	public void setViewport( Bounds viewport ) {
+		// FIXME Using a world rectangle converted to screen bounds is not a good way to do this
+		// The problem comes in when the view is rotated because the world rectangle becomes a diamond
 		Point3D worldCenter = new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() );
 		Bounds screenBounds = worldToScreen( viewport );
 
 		Bounds toolBounds = getLayoutBounds();
-		double xZoom = toolBounds.getWidth() / screenBounds.getWidth();
-		double yZoom = toolBounds.getHeight() / screenBounds.getHeight();
+		double xZoom = Math.abs( toolBounds.getWidth() / screenBounds.getWidth() );
+		double yZoom = Math.abs( toolBounds.getHeight() / screenBounds.getHeight() );
 		double zoom = Math.min( xZoom, yZoom ) * getZoom();
 
-		Fx.run( () -> setView( worldCenter, zoom ) );
+		setView( worldCenter, zoom );
 	}
 
 	public void setSelectTolerance( DesignValue tolerance ) {
