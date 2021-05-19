@@ -29,6 +29,17 @@
 				<dependency key="draw-pattern-mode" value="custom"/>
 			</setting>
 
+			<setting id="draw-cap" key="draw-cap-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-cap-custom" key="draw-cap" editor="combobox">
+				<dependency key="draw-cap-mode" value="custom"/>
+				<option key="square"/>
+				<option key="round"/>
+				<option key="butt"/>
+			</setting>
+
 			<setting id="fill-paint" key="fill-paint-mode" editor="combobox">
 				<option key="layer"/>
 				<option key="custom"/>
