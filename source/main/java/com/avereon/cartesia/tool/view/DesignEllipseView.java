@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;

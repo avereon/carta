@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignPane;
+import com.avereon.cartesia.tool.view.DesignPane;
 
 /**
  * Zoom in to the design. This has the effect of making the design larger or

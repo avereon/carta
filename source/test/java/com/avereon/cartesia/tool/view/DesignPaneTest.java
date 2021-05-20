@@ -1,4 +1,4 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.TestTimeouts;
@@ -6,6 +6,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.tool.DesignPaneLayer;
 import com.avereon.zerra.javafx.Fx;
 import com.avereon.zerra.javafx.JavaFxStarter;
 import javafx.geometry.Point3D;

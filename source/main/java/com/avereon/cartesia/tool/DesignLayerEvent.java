@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.tool.view.DesignPane;
 import javafx.event.Event;
 import javafx.event.EventType;
 

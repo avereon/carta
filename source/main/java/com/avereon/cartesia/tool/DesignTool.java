@@ -8,6 +8,7 @@ import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
 import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
 import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
+import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
@@ -29,6 +30,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -75,7 +77,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final String GRID_VISIBLE = "grid-visible";
 
-	private static final String GRID_SNAP = "grid-snap";
+	private static final String GRID_SNAP_ENABLED = "grid-snap";
 
 	private static final String REFERENCE_LAYER_VISIBLE = "";
 
@@ -114,6 +116,10 @@ public abstract class DesignTool extends GuidedTool {
 	private ReticleCursor reticle;
 
 	private BooleanProperty gridSnapEnabled;
+
+	private ChangeListener<Boolean> gridVisibleToggleHandler;
+
+	private ChangeListener<Boolean> snapGridToggleHandler;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -447,7 +453,10 @@ public abstract class DesignTool extends GuidedTool {
 		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 
 		// Restore the grid visible flag
-		setGridVisible( Boolean.parseBoolean( getSettings().get( GRID_VISIBLE, Boolean.TRUE.toString() ) ) );
+		setGridVisible( Boolean.parseBoolean( getSettings().get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
+
+		// Restore the grid snap enabled flag
+		setGridSnapEnabled( Boolean.parseBoolean( getSettings().get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
 
 		// Restore the reference layer visibility
 		setReferenceLayerVisible( Boolean.parseBoolean( getSettings().get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
@@ -487,6 +496,9 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Add grid visible property listener
 		gridVisible().addListener( ( p, o, n ) -> getSettings().set( GRID_VISIBLE, String.valueOf( n ) ) );
+
+		// Add grid visible property listener
+		gridSnapEnabled().addListener( ( p, o, n ) -> getSettings().set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
 
 		// Add reference points visible property listener
 		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
@@ -566,15 +578,17 @@ public abstract class DesignTool extends GuidedTool {
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
 
-		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
-		gridSnapEnabled().addListener( (p,o,n) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
-		gridVisible().addListener( ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
+		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
+		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
+		gridSnapEnabled().addListener( snapGridToggleHandler=(p,o,n) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 	}
 
 	private void unregisterActions() {
-		pullCommandAction( "snap-grid-toggle" );
+		gridVisible().removeListener( gridVisibleToggleHandler );
 		pullCommandAction( "grid-toggle" );
+		gridSnapEnabled().removeListener( snapGridToggleHandler );
+		pullCommandAction( "snap-grid-toggle" );
 
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );

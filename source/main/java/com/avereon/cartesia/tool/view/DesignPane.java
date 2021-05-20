@@ -1,10 +1,12 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.tool.view.DesignLayerView;
-import com.avereon.cartesia.tool.view.DesignShapeView;
+import com.avereon.cartesia.tool.ConstructionPoint;
+import com.avereon.cartesia.tool.DesignGeometry;
+import com.avereon.cartesia.tool.DesignLayerEvent;
+import com.avereon.cartesia.tool.DesignPaneLayer;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;
@@ -53,13 +55,13 @@ public class DesignPane extends StackPane {
 
 	public static final double ZOOM_OUT_FACTOR = 1.0 / ZOOM_IN_FACTOR;
 
-	static final double DEFAULT_ZOOM = 1;
+	public static final double DEFAULT_ZOOM = 1;
 
-	static final double DEFAULT_DPI = 96;
+	public static final double DEFAULT_DPI = 96;
 
-	static final Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
+	public static final Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
 
-	static final double DEFAULT_ROTATE = 0;
+	public static final double DEFAULT_ROTATE = 0;
 
 	// FIXME This should probably be moved to the design settings
 	public static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
@@ -273,7 +275,7 @@ public class DesignPane extends StackPane {
 		} ) );
 	}
 
-	DesignPane setDesign( Design design ) {
+	public DesignPane setDesign( Design design ) {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
@@ -342,7 +344,7 @@ public class DesignPane extends StackPane {
 	 * @param mouseX The mouse event X coordinate (screen)
 	 * @param mouseY The mouse event Y coordinate (screen)
 	 */
-	void mousePan( Point3D viewAnchor, Point3D dragAnchor, double mouseX, double mouseY ) {
+	public void mousePan( Point3D viewAnchor, Point3D dragAnchor, double mouseX, double mouseY ) {
 		Point3D anchor = localToParent( viewAnchor );
 		Point3D delta = new Point3D( dragAnchor.getX() - mouseX, dragAnchor.getY() - mouseY, 0 );
 		setViewPoint( parentToLocal( anchor.add( delta ) ) );
@@ -354,7 +356,7 @@ public class DesignPane extends StackPane {
 	 * @param anchor The anchor point in world coordinates
 	 * @param factor The zoom factor
 	 */
-	void zoom( Point3D anchor, double factor ) {
+	public void zoom( Point3D anchor, double factor ) {
 		Point3D offset = getViewPoint().subtract( anchor );
 
 		// The zoom has to be set before the viewpoint
@@ -362,24 +364,24 @@ public class DesignPane extends StackPane {
 		setViewPoint( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
-	List<Shape> screenPointSelect( Point3D point, DesignValue tolerance ) {
+	public List<Shape> screenPointSelect( Point3D point, DesignValue tolerance ) {
 		double size = valueToWorld( tolerance );
 		return worldPointSelect( parentToLocal( point ), new Point2D( size, size ) );
 	}
 
-	List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
+	public List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
 		return windowSelect( parentToLocal( a ), parentToLocal( b ), contains );
 	}
 
-	List<Shape> worldPointSelect( Point3D anchor, DesignValue v ) {
+	public List<Shape> worldPointSelect( Point3D anchor, DesignValue v ) {
 		return worldPointSelect( anchor, v.getValue() );
 	}
 
-	List<Shape> worldPointSelect( Point3D anchor, double radius ) {
+	public List<Shape> worldPointSelect( Point3D anchor, double radius ) {
 		return worldPointSelect( anchor, new Point2D( radius, radius ) );
 	}
 
-	List<Shape> worldPointSelect( Point3D anchor, Point2D aperture ) {
+	public List<Shape> worldPointSelect( Point3D anchor, Point2D aperture ) {
 		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), aperture.getX(), aperture.getY() ), false );
 	}
 
@@ -391,7 +393,7 @@ public class DesignPane extends StackPane {
 	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
 	 * @return The set of selected nodes
 	 */
-	List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
+	public List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
@@ -427,24 +429,24 @@ public class DesignPane extends StackPane {
 		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
 	}
 
-	void setGrid( List<Shape> grid ) {
+	public void setGrid( List<Shape> grid ) {
 		this.grid.getChildren().clear();
 		this.grid.getChildren().addAll( grid );
 	}
 
-	boolean isGridVisible() {
+	public boolean isGridVisible() {
 		return this.grid.isVisible();
 	}
 
-	void setGridVisible( boolean visible ) {
+	public void setGridVisible( boolean visible ) {
 		this.grid.setVisible( visible );
 	}
 
-	BooleanProperty gridVisible() {
+	public BooleanProperty gridVisible() {
 		return this.grid.visibleProperty();
 	}
 
-	void updateView() {
+	public void updateView() {
 		doUpdateDpu();
 		doRotate();
 		doRescale();
@@ -606,15 +608,15 @@ public class DesignPane extends StackPane {
 		}
 	}
 
-	List<DesignPaneLayer> getLayers() {
+	public List<DesignPaneLayer> getLayers() {
 		return getLayers( layers );
 	}
 
-	List<DesignPaneLayer> getVisibleLayers() {
+	public List<DesignPaneLayer> getVisibleLayers() {
 		return getLayers( layers ).stream().filter( Node::isVisible ).collect( Collectors.toList() );
 	}
 
-	List<Shape> getVisibleShapes() {
+	public List<Shape> getVisibleShapes() {
 		return getVisibleLayers()
 			.stream()
 			.flatMap( l -> l.getChildren().stream() )

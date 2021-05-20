@@ -5,7 +5,6 @@ import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignPane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.util.Log;

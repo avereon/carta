@@ -2,7 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignPane;
+import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
