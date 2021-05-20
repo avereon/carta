@@ -403,6 +403,14 @@ public class DesignPane extends StackPane {
 		return doSelectByShape( box, contains );
 	}
 
+	public List<DesignPaneLayer> getLayers() {
+		return getLayers( layers );
+	}
+
+	public List<DesignPaneLayer> getVisibleLayers() {
+		return getLayers( layers ).stream().filter( Node::isVisible ).collect( Collectors.toList() );
+	}
+
 	public void addLayerGeometry( DesignLayerView view ) {
 		DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
 		DesignPaneLayer layer = view.getLayer();
@@ -417,6 +425,17 @@ public class DesignPane extends StackPane {
 		((DesignPaneLayer)layer.getParent()).getChildren().remove( layer );
 		layer.showingProperty().unbind();
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
+	}
+
+	public List<Shape> getVisibleShapes() {
+		return getVisibleLayers()
+			.stream()
+			.flatMap( l -> l.getChildren().stream() )
+			.filter( n -> n instanceof Group )
+			.flatMap( g -> ((Group)g).getChildren().stream() )
+			.filter( n -> n instanceof Shape )
+			.map( n -> (Shape)n )
+			.collect( Collectors.toList() );
 	}
 
 	public void addShapeGeometry( DesignShapeView view ) {
@@ -606,25 +625,6 @@ public class DesignPane extends StackPane {
 		} finally {
 			select.getChildren().remove( selector );
 		}
-	}
-
-	public List<DesignPaneLayer> getLayers() {
-		return getLayers( layers );
-	}
-
-	public List<DesignPaneLayer> getVisibleLayers() {
-		return getLayers( layers ).stream().filter( Node::isVisible ).collect( Collectors.toList() );
-	}
-
-	public List<Shape> getVisibleShapes() {
-		return getVisibleLayers()
-			.stream()
-			.flatMap( l -> l.getChildren().stream() )
-			.filter( n -> n instanceof Group )
-			.flatMap( g -> ((Group)g).getChildren().stream() )
-			.filter( n -> n instanceof Shape )
-			.map( n -> (Shape)n )
-			.collect( Collectors.toList() );
 	}
 
 	private boolean isContained( Shape selector, Shape shape ) {
