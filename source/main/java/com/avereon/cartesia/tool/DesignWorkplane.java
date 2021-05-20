@@ -58,8 +58,6 @@ public class DesignWorkplane extends Node {
 
 	public static final String SNAP_GRID_Z = "snap-grid-z";
 
-	public static final String GRID_VISIBLE = "grid-visible";
-
 	public static final String GRID_SNAP = "grid-snap";
 
 	private double majorGridX;
@@ -171,7 +169,6 @@ public class DesignWorkplane extends Node {
 		setSnapGridY( snapGridY );
 		setSnapGridZ( snapGridZ );
 
-		setGridVisible( DEFAULT_GRID_VISIBLE );
 		setGridSnapEnabled( DEFAULT_GRID_SNAP_ENABLED );
 	}
 
@@ -343,15 +340,6 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
 		this.snapGridZ = CadMath.evalNoException( snapGridZ );
 		setValue( SNAP_GRID_Z, snapGridZ );
-		return this;
-	}
-
-	public boolean isGridVisible() {
-		return getValue( GRID_VISIBLE );
-	}
-
-	public DesignWorkplane setGridVisible( boolean visible ) {
-		setValue( GRID_VISIBLE, visible );
 		return this;
 	}
 

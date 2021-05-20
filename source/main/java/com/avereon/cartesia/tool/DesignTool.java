@@ -25,10 +25,9 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -43,7 +42,10 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -65,6 +67,8 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String CURRENT_LAYER = "layer";
 
 	private static final String VISIBLE_LAYERS = "visible-layers";
+
+	private static final String GRID_VISIBLE = "grid-visible";
 
 	private static final String REFERENCE_LAYER_VISIBLE = "";
 
@@ -354,11 +358,17 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public boolean isGridVisible() {
-		return getDesignContext().getWorkplane().isGridVisible();
+		//return getDesignContext().getWorkplane().isGridVisible();
+		return getDesignPane().isGridVisible();
 	}
 
 	public void setGridVisible( boolean visible ) {
-		getDesignContext().getWorkplane().setGridVisible( visible );
+		//getDesignContext().getWorkplane().setGridVisible( visible );
+		getDesignPane().setGridVisible( visible );
+	}
+
+	public BooleanProperty gridVisible() {
+		return getDesignPane().gridVisible();
 	}
 
 	public boolean isGridSnapEnabled() {
@@ -409,14 +419,6 @@ public abstract class DesignTool extends GuidedTool {
 		//    the same logic (possibly expensive logic) causing an unnecessary
 		//    delay.
 
-		// This one is particularly interesting because the design pane is not
-		// technically the authoritative source of the grid visible property, and
-		// it's not the design pane that sets up the listener, the design tool
-		// does. That makes this one unique...for now.
-		// I guess in the FX world this would be a bind, but that isn't available
-		// yet with data nodes.
-		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_VISIBLE, e -> Fx.run( () -> designPane.setGridVisible( e.getNewValue() ) ) );
-
 		// Workplane settings
 		configureWorkplane();
 
@@ -433,6 +435,9 @@ public abstract class DesignTool extends GuidedTool {
 		// Restore the list of visible layers
 		Set<String> visibleLayerIds = getSettings().get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
 		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+
+		// Restore the grid visible flag
+		setGridVisible( Boolean.parseBoolean( getSettings().get( GRID_VISIBLE, Boolean.TRUE.toString() ) ) );
 
 		// Restore the reference layer visibility
 		setReferenceLayerVisible( Boolean.parseBoolean( getSettings().get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
@@ -470,8 +475,11 @@ public abstract class DesignTool extends GuidedTool {
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
 
-		// Add reference point layer visible property listener
-		designPane.referenceLayerVisibleProperty().addListener( (ChangeListener)this::doStoreReferenceLayerVisible );
+		// Add grid visible property listener
+		designPane.gridVisible().addListener( ( p, o, n ) -> getSettings().set( GRID_VISIBLE, String.valueOf( n ) ) );
+
+		// Add reference points visible property listener
+		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -488,10 +496,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
 		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
-	}
-
-	private void doStoreReferenceLayerVisible( ObservableValue<Boolean> observable, Object oldValue, Object newValue ) {
-		getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( newValue ) );
 	}
 
 	@Override
@@ -558,9 +562,7 @@ public abstract class DesignTool extends GuidedTool {
 			snapGridToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
 		} );
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
-		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_VISIBLE, e -> {
-			gridVisibleToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
-		} );
+		gridVisible().addListener( (p,o,n) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
 	}
 
 	private void unregisterActions() {
@@ -705,7 +707,6 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
-		setGridVisible( getAsset().getSettings().get( DesignWorkplane.GRID_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_VISIBLE ) );
 		setGridSnapEnabled( getAsset().getSettings().get( DesignWorkplane.GRID_SNAP, Boolean.class, DesignWorkplane.DEFAULT_GRID_SNAP_ENABLED ) );
 
 		workplane.register( DesignWorkplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
@@ -718,13 +719,7 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( DesignWorkplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.GRID_VISIBLE, e -> settings.set( DesignWorkplane.GRID_VISIBLE, e.getNewValue() ) );
 		workplane.register( DesignWorkplane.GRID_SNAP, e -> settings.set( DesignWorkplane.GRID_SNAP, e.getNewValue() ) );
-
-		// FIXME These can cause an infinite loops
-		// Not even sure if these are needed
-		//workplane.register( DesignWorkplane.GRID_VISIBLE, e -> this.setGridVisible( e.getNewValue() ) );
-		//workplane.register( DesignWorkplane.GRID_SNAP, e -> this.setGridSnapEnabled( e.getNewValue() ) );
 
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
 		rebuildGrid();
@@ -798,18 +793,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void hidePropertiesPage() {
 		getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
-	}
-
-	@Deprecated
-	private void doDeleteShapes( Collection<DesignShape> shapes ) {
-		// NEXT Should this push a Delete command to the command context?
-		//		getProgram().getActionLibrary().getAction( "delete" );
-		//		getCommandContext().command( "XX" );
-		//		runTask( () -> shapes.forEach( s -> {
-		//			DesignLayer layer = s.getLayer();
-		//			if( layer != null ) layer.removeShape( s );
-		//		} ) );
-		// Intentionally commented out here: selectedShapes.clear();
 	}
 
 	public static DesignLayer getDesignData( DesignPaneLayer l ) {

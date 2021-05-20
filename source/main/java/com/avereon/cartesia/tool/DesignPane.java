@@ -316,7 +316,7 @@ public class DesignPane extends StackPane {
 		getReferenceLayer().setVisible( visible );
 	}
 
-	public BooleanProperty referenceLayerVisibleProperty() {
+	public BooleanProperty referenceLayerVisible() {
 		return getReferenceLayer().visibleProperty();
 	}
 
@@ -432,8 +432,16 @@ public class DesignPane extends StackPane {
 		this.grid.getChildren().addAll( grid );
 	}
 
+	boolean isGridVisible() {
+		return this.grid.isVisible();
+	}
+
 	void setGridVisible( boolean visible ) {
 		this.grid.setVisible( visible );
+	}
+
+	BooleanProperty gridVisible() {
+		return this.grid.visibleProperty();
 	}
 
 	void updateView() {
