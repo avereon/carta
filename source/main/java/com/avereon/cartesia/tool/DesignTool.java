@@ -27,6 +27,7 @@ import com.avereon.xenon.workpane.ToolException;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -58,6 +59,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
 
+	public static final boolean DEFAULT_GRID_VISIBLE = true;
+
+	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
+
 	private static final String SETTINGS_VIEW_ZOOM = "view-zoom";
 
 	private static final String SETTINGS_VIEW_POINT = "view-point";
@@ -69,6 +74,8 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
 	private static final String GRID_VISIBLE = "grid-visible";
+
+	private static final String GRID_SNAP = "grid-snap";
 
 	private static final String REFERENCE_LAYER_VISIBLE = "";
 
@@ -105,6 +112,8 @@ public abstract class DesignTool extends GuidedTool {
 	private final RedoAction redoAction;
 
 	private ReticleCursor reticle;
+
+	private BooleanProperty gridSnapEnabled;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -322,9 +331,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public Point3D mouseToWorkplane( double x, double y, double z ) {
 		Point3D worldPoint = mouseToWorld( x, y, z );
-		DesignWorkplane workplane = getDesignContext().getWorkplane();
-		boolean gridSnapEnabled = workplane.isGridSnapEnabled();
-		return gridSnapEnabled ? gridSnap.snap( this, worldPoint ) : worldPoint;
+		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
 
 	public Point3D worldToScreen( double x, double y, double z ) {
@@ -358,12 +365,10 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public boolean isGridVisible() {
-		//return getDesignContext().getWorkplane().isGridVisible();
 		return getDesignPane().isGridVisible();
 	}
 
 	public void setGridVisible( boolean visible ) {
-		//getDesignContext().getWorkplane().setGridVisible( visible );
 		getDesignPane().setGridVisible( visible );
 	}
 
@@ -372,11 +377,16 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public boolean isGridSnapEnabled() {
-		return getDesignContext().getWorkplane().isGridSnapEnabled();
+		return gridSnapEnabled == null ? DEFAULT_GRID_SNAP_ENABLED : gridSnapEnabled().get();
 	}
 
 	public void setGridSnapEnabled( boolean enabled ) {
-		getDesignContext().getWorkplane().setGridSnapEnabled( enabled );
+		gridSnapEnabled().set( enabled );
+	}
+
+	public BooleanProperty gridSnapEnabled() {
+		if( gridSnapEnabled == null ) gridSnapEnabled = new SimpleBooleanProperty( DEFAULT_GRID_SNAP_ENABLED );
+		return gridSnapEnabled;
 	}
 
 	@Override
@@ -476,7 +486,7 @@ public abstract class DesignTool extends GuidedTool {
 		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
 
 		// Add grid visible property listener
-		designPane.gridVisible().addListener( ( p, o, n ) -> getSettings().set( GRID_VISIBLE, String.valueOf( n ) ) );
+		gridVisible().addListener( ( p, o, n ) -> getSettings().set( GRID_VISIBLE, String.valueOf( n ) ) );
 
 		// Add reference points visible property listener
 		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
@@ -556,13 +566,10 @@ public abstract class DesignTool extends GuidedTool {
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
 
-		// FIXME Is there a more concise way of doing this? There will be others
 		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
-		getDesignContext().getWorkplane().register( DesignWorkplane.GRID_SNAP, e -> {
-			snapGridToggleAction.setState( e.getNewValue() ? "enabled" : "disabled" );
-		} );
+		gridSnapEnabled().addListener( (p,o,n) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
-		gridVisible().addListener( (p,o,n) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
+		gridVisible().addListener( ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
 	}
 
 	private void unregisterActions() {
@@ -707,7 +714,6 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
 		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
-		setGridSnapEnabled( getAsset().getSettings().get( DesignWorkplane.GRID_SNAP, Boolean.class, DesignWorkplane.DEFAULT_GRID_SNAP_ENABLED ) );
 
 		workplane.register( DesignWorkplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
@@ -719,7 +725,6 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( DesignWorkplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.GRID_SNAP, e -> settings.set( DesignWorkplane.GRID_SNAP, e.getNewValue() ) );
 
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
 		rebuildGrid();

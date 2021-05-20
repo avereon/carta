@@ -20,10 +20,6 @@ public class DesignWorkplane extends Node {
 
 	public static final String DEFAULT_SNAP_GRID_SIZE = "0.1";
 
-	public static final boolean DEFAULT_GRID_VISIBLE = true;
-
-	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
-
 	public static final Color DEFAULT_AXIS_COLOR = Color.web( "#80a0d060" );
 
 	public static final Color DEFAULT_MAJOR_GRID_COLOR = Color.web( "#80a0d020" );
@@ -57,8 +53,6 @@ public class DesignWorkplane extends Node {
 	public static final String SNAP_GRID_Y = "snap-grid-y";
 
 	public static final String SNAP_GRID_Z = "snap-grid-z";
-
-	public static final String GRID_SNAP = "grid-snap";
 
 	private double majorGridX;
 
@@ -168,8 +162,6 @@ public class DesignWorkplane extends Node {
 		setSnapGridX( snapGridX );
 		setSnapGridY( snapGridY );
 		setSnapGridZ( snapGridZ );
-
-		setGridSnapEnabled( DEFAULT_GRID_SNAP_ENABLED );
 	}
 
 	public String getOrigin() {
@@ -340,15 +332,6 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
 		this.snapGridZ = CadMath.evalNoException( snapGridZ );
 		setValue( SNAP_GRID_Z, snapGridZ );
-		return this;
-	}
-
-	public boolean isGridSnapEnabled() {
-		return getValue( GRID_SNAP );
-	}
-
-	public DesignWorkplane setGridSnapEnabled( boolean enabled ) {
-		setValue( GRID_SNAP, enabled );
 		return this;
 	}
 
