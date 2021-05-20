@@ -11,10 +11,7 @@ import com.avereon.util.Log;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.geometry.Point2D;
@@ -309,6 +306,18 @@ public class DesignPane extends StackPane {
 
 	Pane getReferenceLayer() {
 		return reference;
+	}
+
+	public boolean isReferenceLayerVisible() {
+		return getReferenceLayer().isVisible();
+	}
+
+	public void setReferenceLayerVisible( boolean visible ) {
+		getReferenceLayer().setVisible( visible );
+	}
+
+	public BooleanProperty referenceLayerVisibleProperty() {
+		return getReferenceLayer().visibleProperty();
 	}
 
 	DesignLayerView getDesignLayerView( DesignLayer layer ) {

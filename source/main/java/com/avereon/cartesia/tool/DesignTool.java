@@ -27,6 +27,8 @@ import com.avereon.xenon.workpane.ToolException;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -63,6 +65,8 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String CURRENT_LAYER = "layer";
 
 	private static final String VISIBLE_LAYERS = "visible-layers";
+
+	private static final String REFERENCE_LAYER_VISIBLE = "";
 
 	private static final System.Logger log = Log.get();
 
@@ -270,6 +274,14 @@ public abstract class DesignTool extends GuidedTool {
 		return new ArrayList<>( selectedShapes );
 	}
 
+	public boolean isReferenceLayerVisible() {
+		return designPane.isReferenceLayerVisible();
+	}
+
+	public void setReferenceLayerVisible( boolean visible ) {
+		Fx.run( () -> designPane.setReferenceLayerVisible( visible ) );
+	}
+
 	/**
 	 * Change the zoom value by a factor.
 	 *
@@ -422,6 +434,9 @@ public abstract class DesignTool extends GuidedTool {
 		Set<String> visibleLayerIds = getSettings().get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
 		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 
+		// Restore the reference layer visibility
+		setReferenceLayerVisible( Boolean.parseBoolean( getSettings().get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
+
 		// Settings listeners
 		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
@@ -455,6 +470,9 @@ public abstract class DesignTool extends GuidedTool {
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
 
+		// Add reference point layer visible property listener
+		designPane.referenceLayerVisibleProperty().addListener( (ChangeListener)this::doStoreReferenceLayerVisible );
+
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -470,6 +488,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
 		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+	}
+
+	private void doStoreReferenceLayerVisible( ObservableValue<Boolean> observable, Object oldValue, Object newValue ) {
+		getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( newValue ) );
 	}
 
 	@Override

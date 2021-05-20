@@ -66,7 +66,7 @@ public class CommandMap {
 		// shape draw paint
 		// shape fill paint
 
-		// Basic command
+		// Basic commands
 		add( product, "select", Select.class );
 
 		// View commands
@@ -87,6 +87,21 @@ public class CommandMap {
 		// Grid commands
 		// gg - grid toggle
 		add( product, "grid-toggle", GridToggle.class );
+
+		// Draw commands
+		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
+		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
+		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
+		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
+		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
+		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
+		//add( product, "draw-conic-5", DrawConic5.class ); // point-point-point-point-point
+		add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // center-radius-radius-start-extent
+		//add( product, "draw-conic-arc-5", DrawConicArc5.class ); // endpoint-point-point-point-endpoint
+		add( product, "draw-line-2", DrawLine2.class ); // endpoint-endpoint
+		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
+		add( product, "draw-marker", DrawMarker.class ); // point
+		add( product, "draw-path", Path.class );
 
 		// Measure commands
 		add( product, "measure-angle", MeasureAngle.class );
@@ -110,21 +125,6 @@ public class CommandMap {
 		//add( product, "stretch", Stretch.class );
 		add( product, "trim", Trim.class );
 
-		// Shape commands
-		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
-		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
-		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
-		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
-		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
-		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
-		//add( product, "draw-conic-5", DrawConic5.class ); // point-point-point-point-point
-		add( product, "draw-ellipse-arc-5", DrawEllipseArc5.class ); // center-radius-radius-start-extent
-		//add( product, "draw-conic-arc-5", DrawConicArc5.class ); // endpoint-point-point-point-endpoint
-		add( product, "draw-line-2", DrawLine2.class ); // endpoint-endpoint
-		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
-		add( product, "draw-marker", DrawMarker.class ); // point
-		add( product, "draw-path", Path.class );
-
 		// Layer commands
 		add( product, "layer-create", LayerCreate.class );
 		add( product, "layer-show", LayerShow.class );
@@ -132,6 +132,8 @@ public class CommandMap {
 		add( product, "layer-sublayer", LayerSubLayer.class );
 		add( product, "layer-delete", LayerDelete.class );
 		add( product, "layer-toggle", LayerToggle.class );
+
+		add( product, "reference-toggle", ReferencePointsToggle.class );
 
 		// Snap commands
 		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
