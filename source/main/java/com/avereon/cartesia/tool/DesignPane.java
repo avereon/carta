@@ -436,7 +436,7 @@ public class DesignPane extends StackPane {
 
 	private void addOriginReferencePoint() {
 		ConstructionPoint cp = DesignShapeView.cp( this, null, Bindings.createDoubleBinding( () -> 0.0 ), Bindings.createDoubleBinding( () -> 0.0 ) );
-		reference.getChildren().add( cp.setType( DesignMarkers.Type.REFERENCE ) );
+		reference.getChildren().add( cp.setType( DesignMarker.Type.REFERENCE ) );
 	}
 
 	private List<DesignPaneLayer> getLayers( DesignPaneLayer root ) {

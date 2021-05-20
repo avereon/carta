@@ -20,12 +20,12 @@ public class PointTypeOptionProvider implements SettingOptionProvider {
 	static {
 		PointTypeOptionProvider.keys = List.of(
 			NULL_VALUE_OPTION_KEY,
-			DesignMarkers.Type.CROSS.name().toLowerCase(),
-			DesignMarkers.Type.X.name().toLowerCase(),
-			DesignMarkers.Type.REFERENCE.name().toLowerCase(),
-			DesignMarkers.Type.CIRCLE.name().toLowerCase(),
-			DesignMarkers.Type.DIAMOND.name().toLowerCase(),
-			DesignMarkers.Type.SQUARE.name().toLowerCase()
+			DesignMarker.Type.CROSS.name().toLowerCase(),
+			DesignMarker.Type.X.name().toLowerCase(),
+			DesignMarker.Type.REFERENCE.name().toLowerCase(),
+			DesignMarker.Type.CIRCLE.name().toLowerCase(),
+			DesignMarker.Type.DIAMOND.name().toLowerCase(),
+			DesignMarker.Type.SQUARE.name().toLowerCase()
 		);
 	}
 

@@ -14,6 +14,27 @@ import java.util.Map;
 
 public class DesignMarker extends DesignShape {
 
+	public enum Type {
+
+		CIRCLE( true ),
+		CROSS( false ),
+		DIAMOND( true ),
+		REFERENCE( false ),
+		SQUARE( true ),
+		X( false );
+
+		private final boolean closed;
+
+		Type( boolean closed ) {
+			this.closed = closed;
+		}
+
+		public boolean isClosed() {
+			return closed;
+		}
+
+	}
+
 	public static final String MARKER = "marker";
 
 	public static final String SIZE = "size";
@@ -50,7 +71,7 @@ public class DesignMarker extends DesignShape {
 		return this;
 	}
 
-	public DesignMarkers.Type calcType() {
+	public Type calcType() {
 		return DesignMarkers.parseType( getType() );
 	}
 

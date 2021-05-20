@@ -5,30 +5,9 @@ import javafx.scene.shape.*;
 
 public class DesignMarkers {
 
-	public enum Type {
+	private static final DesignMarker.Type DEFAULT_TYPE = DesignMarker.Type.CROSS;
 
-		CIRCLE( true ),
-		CROSS( false ),
-		DIAMOND( true ),
-		REFERENCE( false ),
-		SQUARE( true ),
-		X( false );
-
-		private final boolean closed;
-
-		Type( boolean closed ) {
-			this.closed = closed;
-		}
-
-		public boolean isClosed() {
-			return closed;
-		}
-
-	}
-
-	private static final Type DEFAULT_TYPE = Type.CROSS;
-
-	public static Path createPoint( Type type, double x, double y, double r ) {
+	public static Path createPoint( DesignMarker.Type type, double x, double y, double r ) {
 		return switch( type ) {
 			case CROSS -> createCrossPoint( x, y, r );
 			case REFERENCE -> createReference( x, y, r );
@@ -39,9 +18,9 @@ public class DesignMarkers {
 		};
 	}
 
-	public static Type parseType( String type ) {
+	public static DesignMarker.Type parseType( String type ) {
 		try {
-			return Type.valueOf( type.toUpperCase() );
+			return DesignMarker.Type.valueOf( type.toUpperCase() );
 		} catch( NullPointerException | IllegalArgumentException exception ) {
 			return DEFAULT_TYPE;
 		}
