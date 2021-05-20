@@ -1,4 +1,4 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;

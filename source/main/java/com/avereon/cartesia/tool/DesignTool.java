@@ -9,6 +9,7 @@ import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
 import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
 import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
 import com.avereon.cartesia.tool.view.DesignPane;
+import com.avereon.cartesia.tool.view.DesignPaneLayer;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;

@@ -5,8 +5,6 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignGeometry;
-import com.avereon.cartesia.tool.DesignLayerEvent;
-import com.avereon.cartesia.tool.DesignPaneLayer;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.util.Log;

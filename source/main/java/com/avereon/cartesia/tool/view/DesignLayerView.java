@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.DesignPaneLayer;
 import com.avereon.zerra.javafx.Fx;
 
 public class DesignLayerView extends DesignDrawableView {

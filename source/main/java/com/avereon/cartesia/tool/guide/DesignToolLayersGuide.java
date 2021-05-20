@@ -2,9 +2,9 @@ package com.avereon.cartesia.tool.guide;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.DesignLayerEvent;
+import com.avereon.cartesia.tool.view.DesignLayerEvent;
 import com.avereon.cartesia.tool.view.DesignPane;
-import com.avereon.cartesia.tool.DesignPaneLayer;
+import com.avereon.cartesia.tool.view.DesignPaneLayer;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
