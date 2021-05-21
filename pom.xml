@@ -85,6 +85,7 @@
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED
 						--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED
+						--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED
 					</argLine>
 				</configuration>
 			</plugin>
