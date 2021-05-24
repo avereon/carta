@@ -582,11 +582,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
-		pushToolActions( "grid-toggle", "snap-grid-toggle" );
-
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
+
+		pushTools( "grid-toggle snap-grid-toggle" );
 
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
@@ -600,11 +600,11 @@ public abstract class DesignTool extends GuidedTool {
 		gridSnapEnabled().removeListener( snapGridToggleHandler );
 		pullCommandAction( "snap-grid-toggle" );
 
+		pullTools();
+
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
-
-		pullToolActions();
 	}
 
 	private Action pushCommandAction( String key, String initialActionState ) {
