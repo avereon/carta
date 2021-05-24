@@ -20,6 +20,19 @@ public class CartesiaMod extends Mod {
 		super.startup();
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
 		registerIcon( "draw", new PencilIcon() );
+		registerIcon( "arc-2", new Arc2Icon() );
+		registerIcon( "arc-3", new Arc3Icon() );
+		registerIcon( "circle-2", new Circle2Icon() );
+		registerIcon( "circle-3", new Circle3Icon() );
+		registerIcon( "curve-3", new PencilIcon() );
+		registerIcon( "curve-4", new PencilIcon() );
+		registerIcon( "ellipse-3", new PencilIcon() );
+		registerIcon( "ellipse-arc-5", new PencilIcon() );
+		registerIcon( "line-2", new Line2Icon() );
+		registerIcon( "line-perpendicular", new LinePerpendicularIcon() );
+		registerIcon( "marker", new PencilIcon() );
+		registerIcon( "path", new PencilIcon() );
+
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
@@ -28,9 +41,29 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 
+		registerAction( this, "draw" );
+		//		registerAction( this, "marker" );
+		//		registerAction( this, "line" );
+		//		registerAction( this, "circle" );
+		//		registerAction( this, "arc" );
+		//		registerAction( this, "ellipse" );
+		//		registerAction( this, "ellipse-arc" );
+		//		registerAction( this, "curve" );
+		registerAction( this, "draw-arc-2" );
+		registerAction( this, "draw-arc-3" );
+		registerAction( this, "draw-circle-2" );
+		registerAction( this, "draw-circle-3" );
+		//registerAction( this, "draw-curve-3" );
+		registerAction( this, "draw-curve-4" );
+		registerAction( this, "draw-ellipse-3" );
+		registerAction( this, "draw-ellipse-arc-5" );
+		registerAction( this, "draw-line-2" );
+		registerAction( this, "draw-line-perpendicular" );
+		registerAction( this, "draw-marker" );
+		registerAction( this, "draw-path" );
+
 		registerAction( this, "snap-grid-toggle" );
 		registerAction( this, "grid-toggle" );
-		registerAction( this, "draw" );
 
 		// Register Design2D
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
