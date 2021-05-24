@@ -7,7 +7,7 @@ public class LayerIcon extends SvgIcon {
 
 	protected static final double C = 16;
 
-	protected static final double R = 12;
+	protected static final double R = 14;
 
 	protected static final double Q = R - Math.sqrt( 8 );
 

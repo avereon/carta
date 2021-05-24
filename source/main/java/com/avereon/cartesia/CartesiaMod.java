@@ -19,6 +19,7 @@ public class CartesiaMod extends Mod {
 	public void startup() throws Exception {
 		super.startup();
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
+		registerIcon( "draw", new PencilIcon() );
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
@@ -29,6 +30,7 @@ public class CartesiaMod extends Mod {
 
 		registerAction( this, "snap-grid-toggle" );
 		registerAction( this, "grid-toggle" );
+		registerAction( this, "draw" );
 
 		// Register Design2D
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
@@ -68,6 +70,7 @@ public class CartesiaMod extends Mod {
 		unregisterTool( design2dAssetType, Design2dEditor.class );
 		unregisterAssetType( design2dAssetType );
 
+		unregisterAction( "draw" );
 		unregisterAction( "grid-toggle" );
 		unregisterAction( "snap-grid-toggle" );
 

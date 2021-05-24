@@ -586,7 +586,7 @@ public abstract class DesignTool extends GuidedTool {
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
 
-		pushTools( "grid-toggle snap-grid-toggle" );
+		pushTools( "grid-toggle snap-grid-toggle draw[]" );
 
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
