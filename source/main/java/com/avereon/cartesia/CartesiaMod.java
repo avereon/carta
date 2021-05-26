@@ -24,14 +24,14 @@ public class CartesiaMod extends Mod {
 		registerIcon( "arc-3", new Arc3Icon() );
 		registerIcon( "circle-2", new Circle2Icon() );
 		registerIcon( "circle-3", new Circle3Icon() );
-		registerIcon( "curve-3", new PencilIcon() );
-		registerIcon( "curve-4", new PencilIcon() );
+		registerIcon( "curve-3", new Curve3Icon() );
+		registerIcon( "curve-4", new Curve4Icon() );
 		registerIcon( "ellipse-3", new Ellipse3Icon() );
 		registerIcon( "ellipse-arc-5", new EllipseArc5Icon() );
 		registerIcon( "line-2", new Line2Icon() );
 		registerIcon( "line-perpendicular", new LinePerpendicularIcon() );
-		registerIcon( "marker", new PencilIcon() );
-		registerIcon( "path", new PencilIcon() );
+		registerIcon( "marker", new MarkerIcon() );
+		registerIcon( "path", new PathIcon() );
 
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
