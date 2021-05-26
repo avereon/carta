@@ -511,8 +511,6 @@ public abstract class DesignTool extends GuidedTool {
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
-		// FIXME This can cause NPEs when not in an active workspace
-		if( isActive() ) activate();
 		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.updateView();
 		validateGrid();
@@ -535,8 +533,11 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void activate() throws ToolException {
 		super.activate();
+
+		// FIXME This check for readiness is a symptom of a race condition with loading the asset
 		if( isReady() ) {
 			getDesignContext().getCommandContext().setLastActiveDesignTool( this );
+			// Needs the design context
 			registerStatusBarItems();
 			updateCommandCapture();
 			registerActions();
