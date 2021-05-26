@@ -26,8 +26,8 @@ public class CartesiaMod extends Mod {
 		registerIcon( "circle-3", new Circle3Icon() );
 		registerIcon( "curve-3", new PencilIcon() );
 		registerIcon( "curve-4", new PencilIcon() );
-		registerIcon( "ellipse-3", new PencilIcon() );
-		registerIcon( "ellipse-arc-5", new PencilIcon() );
+		registerIcon( "ellipse-3", new Ellipse3Icon() );
+		registerIcon( "ellipse-arc-5", new EllipseArc5Icon() );
 		registerIcon( "line-2", new Line2Icon() );
 		registerIcon( "line-perpendicular", new LinePerpendicularIcon() );
 		registerIcon( "marker", new PencilIcon() );
