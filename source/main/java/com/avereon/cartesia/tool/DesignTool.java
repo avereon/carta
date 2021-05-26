@@ -586,6 +586,19 @@ public abstract class DesignTool extends GuidedTool {
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
 
+		pushCommandAction( "draw-arc-2" );
+		pushCommandAction( "draw-arc-3" );
+		pushCommandAction( "draw-circle-2" );
+		pushCommandAction( "draw-circle-3" );
+		//pushCommandAction( "draw-curve-3" );
+		pushCommandAction( "draw-curve-4" );
+		pushCommandAction( "draw-ellipse-3" );
+		pushCommandAction( "draw-ellipse-arc-5" );
+		pushCommandAction( "draw-line-2" );
+		pushCommandAction( "draw-line-perpendicular" );
+		pushCommandAction( "draw-marker" );
+		pushCommandAction( "draw-path" );
+
 		pushTools( "grid-toggle snap-grid-toggle draw[draw-line-2 draw-line-perpendicular | draw-circle-2 draw-circle-3 | draw-arc-2 draw-arc-3 | draw-ellipse-3 draw-ellipse-arc-5 | draw-curve-4 | draw-marker | draw-path]" );
 
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
@@ -600,6 +613,19 @@ public abstract class DesignTool extends GuidedTool {
 		gridSnapEnabled().removeListener( snapGridToggleHandler );
 		pullCommandAction( "snap-grid-toggle" );
 
+		pullCommandAction( "draw-path" );
+		pullCommandAction( "draw-marker" );
+		pullCommandAction( "draw-line-perpendicular" );
+		pullCommandAction( "draw-line-2" );
+		pullCommandAction( "draw-ellipse-arc-5" );
+		pullCommandAction( "draw-ellipse-2" );
+		pullCommandAction( "draw-curve-4" );
+		pullCommandAction( "draw-curve-3" );
+		pullCommandAction( "draw-circle-3" );
+		pullCommandAction( "draw-circle-2" );
+		pullCommandAction( "draw-arc-3" );
+		pullCommandAction( "draw-arc-2" );
+
 		pullTools();
 
 		pullAction( "delete", deleteAction );
@@ -607,10 +633,14 @@ public abstract class DesignTool extends GuidedTool {
 		pullAction( "redo", redoAction );
 	}
 
+	private Action pushCommandAction( String key ) {
+		return pushCommandAction( key, null );
+	}
+
 	private Action pushCommandAction( String key, String initialActionState ) {
 		ActionProxy proxy = getProgram().getActionLibrary().getAction( key );
 		Action action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), proxy.getCommand() ) );
-		action.setState( initialActionState );
+		if( initialActionState != null ) action.setState( initialActionState );
 		pushAction( key, action );
 		return action;
 	}
