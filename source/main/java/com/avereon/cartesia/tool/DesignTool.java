@@ -600,12 +600,26 @@ public abstract class DesignTool extends GuidedTool {
 		pushCommandAction( "draw-marker" );
 		pushCommandAction( "draw-path" );
 
-		pushTools( "grid-toggle snap-grid-toggle draw[draw-line-2 draw-line-perpendicular | draw-circle-2 draw-circle-3 | draw-arc-2 draw-arc-3 | draw-ellipse-3 draw-ellipse-arc-5 | draw-curve-4 | draw-marker | draw-path]" );
+		String viewActions = "grid-toggle snap-grid-toggle";
+		String drawMarkerActions = "marker[draw-marker]";
+		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
+		String drawCircleActions = "circle[draw-circle-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
+		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
+		String drawCurveActions = "curve[draw-curve-4 draw-path]";
+
+		StringBuilder actions = new StringBuilder( viewActions );
+		actions.append( " " ).append( drawMarkerActions );
+		actions.append( " " ).append( drawLineActions );
+		actions.append( " " ).append( drawCircleActions );
+		actions.append( " " ).append( drawEllipseActions );
+		actions.append( " " ).append( drawCurveActions );
+
+		pushTools( actions.toString() );
 
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
 		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
-		gridSnapEnabled().addListener( snapGridToggleHandler=(p,o,n) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
+		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 	}
 
 	private void unregisterActions() {

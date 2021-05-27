@@ -42,13 +42,13 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 
 		registerAction( this, "draw" );
-		//		registerAction( this, "marker" );
-		//		registerAction( this, "line" );
-		//		registerAction( this, "circle" );
+				registerAction( this, "marker" );
+				registerAction( this, "line" );
+				registerAction( this, "circle" );
 		//		registerAction( this, "arc" );
-		//		registerAction( this, "ellipse" );
+				registerAction( this, "ellipse" );
 		//		registerAction( this, "ellipse-arc" );
-		//		registerAction( this, "curve" );
+				registerAction( this, "curve" );
 		registerAction( this, "draw-arc-2" );
 		registerAction( this, "draw-arc-3" );
 		registerAction( this, "draw-circle-2" );
@@ -103,6 +103,11 @@ public class CartesiaMod extends Mod {
 		unregisterTool( design2dAssetType, Design2dEditor.class );
 		unregisterAssetType( design2dAssetType );
 
+		unregisterAction( "curve" );
+		unregisterAction( "ellipse" );
+		unregisterAction( "circle" );
+		unregisterAction( "line" );
+		unregisterAction( "marker" );
 		unregisterAction( "draw" );
 		unregisterAction( "grid-toggle" );
 		unregisterAction( "snap-grid-toggle" );
