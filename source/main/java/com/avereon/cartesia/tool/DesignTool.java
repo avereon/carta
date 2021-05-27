@@ -534,14 +534,11 @@ public abstract class DesignTool extends GuidedTool {
 	protected void activate() throws ToolException {
 		super.activate();
 
-		// FIXME This check for readiness is a symptom of a race condition with loading the asset
-		if( isReady() ) {
-			getDesignContext().getCommandContext().setLastActiveDesignTool( this );
-			// Needs the design context
-			registerStatusBarItems();
-			updateCommandCapture();
-			registerActions();
-		}
+		getDesignContext().getCommandContext().setLastActiveDesignTool( this );
+		registerStatusBarItems();
+		updateCommandCapture();
+		registerActions();
+
 		requestFocus();
 	}
 
@@ -623,9 +620,9 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void unregisterActions() {
-		gridVisible().removeListener( gridVisibleToggleHandler );
+		if( gridVisibleToggleHandler != null ) gridVisible().removeListener( gridVisibleToggleHandler );
 		pullCommandAction( "grid-toggle" );
-		gridSnapEnabled().removeListener( snapGridToggleHandler );
+		if( snapGridToggleHandler != null ) gridSnapEnabled().removeListener( snapGridToggleHandler );
 		pullCommandAction( "snap-grid-toggle" );
 
 		pullCommandAction( "draw-path" );
@@ -633,9 +630,9 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-line-perpendicular" );
 		pullCommandAction( "draw-line-2" );
 		pullCommandAction( "draw-ellipse-arc-5" );
-		pullCommandAction( "draw-ellipse-2" );
+		pullCommandAction( "draw-ellipse-3" );
 		pullCommandAction( "draw-curve-4" );
-		pullCommandAction( "draw-curve-3" );
+		//pullCommandAction( "draw-curve-3" );
 		pullCommandAction( "draw-circle-3" );
 		pullCommandAction( "draw-circle-2" );
 		pullCommandAction( "draw-arc-3" );
