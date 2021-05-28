@@ -1,8 +1,11 @@
 # Cartesia
 2D/3D Computer Aided Design
 
-##Introduction
-Cartesia is a computer aided design product.
+## Introduction
+Cartesia is a computer aided design mod for [Xenon](https://www.avereon.com/product/xenon).
+Designed with simplicity and user experience in mind, Cartesia offers a large 
+set of simple commands to construct your design. Cartesia provides common 
+geometry, snaps, modifiers and transforms as well as unlimited layers.
 
 ## Features
 Cartesia provides the following features:
