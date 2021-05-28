@@ -551,6 +551,8 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void conceal() throws ToolException {
 		super.conceal();
+		pullMenus();
+		pullTools();
 		if( isReady() ) unregisterActions();
 	}
 
@@ -604,14 +606,22 @@ public abstract class DesignTool extends GuidedTool {
 		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
 		String drawCurveActions = "curve[draw-curve-4 draw-path]";
 
-		StringBuilder actions = new StringBuilder( viewActions );
-		actions.append( " " ).append( drawMarkerActions );
-		actions.append( " " ).append( drawLineActions );
-		actions.append( " " ).append( drawCircleActions );
-		actions.append( " " ).append( drawEllipseActions );
-		actions.append( " " ).append( drawCurveActions );
+		StringBuilder menus = new StringBuilder(viewActions);
+		menus.append( " " ).append( drawMarkerActions );
+		menus.append( " " ).append( drawLineActions );
+		menus.append( " " ).append( drawCircleActions );
+		menus.append( " " ).append( drawEllipseActions );
+		menus.append( " " ).append( drawCurveActions );
 
-		pushTools( actions.toString() );
+		StringBuilder tools = new StringBuilder( viewActions );
+		tools.append( " " ).append( drawMarkerActions );
+		tools.append( " " ).append( drawLineActions );
+		tools.append( " " ).append( drawCircleActions );
+		tools.append( " " ).append( drawEllipseActions );
+		tools.append( " " ).append( drawCurveActions );
+
+		pushMenus( menus.toString() );
+		pushTools( tools.toString() );
 
 		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );

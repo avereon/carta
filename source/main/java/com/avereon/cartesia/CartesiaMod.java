@@ -6,6 +6,7 @@ import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
+import com.avereon.zerra.image.BrokenIcon;
 
 public class CartesiaMod extends Mod {
 
@@ -19,6 +20,7 @@ public class CartesiaMod extends Mod {
 	public void startup() throws Exception {
 		super.startup();
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
+		registerIcon( "tool", new BrokenIcon() );
 		registerIcon( "draw", new PencilIcon() );
 		registerIcon( "arc-2", new Arc2Icon() );
 		registerIcon( "arc-3", new Arc3Icon() );
@@ -32,7 +34,6 @@ public class CartesiaMod extends Mod {
 		registerIcon( "line-perpendicular", new LinePerpendicularIcon() );
 		registerIcon( "marker", new MarkerIcon() );
 		registerIcon( "path", new PathIcon() );
-
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
@@ -41,14 +42,15 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 
+		registerAction( this, "tool" );
 		registerAction( this, "draw" );
-				registerAction( this, "marker" );
-				registerAction( this, "line" );
-				registerAction( this, "circle" );
-		//		registerAction( this, "arc" );
-				registerAction( this, "ellipse" );
-		//		registerAction( this, "ellipse-arc" );
-				registerAction( this, "curve" );
+		registerAction( this, "marker" );
+		registerAction( this, "line" );
+		registerAction( this, "circle" );
+		//registerAction( this, "arc" );
+		registerAction( this, "ellipse" );
+		//registerAction( this, "ellipse-arc" );
+		registerAction( this, "curve" );
 		registerAction( this, "draw-arc-2" );
 		registerAction( this, "draw-arc-3" );
 		registerAction( this, "draw-circle-2" );
@@ -103,14 +105,27 @@ public class CartesiaMod extends Mod {
 		unregisterTool( design2dAssetType, Design2dEditor.class );
 		unregisterAssetType( design2dAssetType );
 
+		unregisterAction( "grid-toggle" );
+		unregisterAction( "snap-grid-toggle" );
+
+		unregisterAction( "draw-path" );
+		unregisterAction( "draw-marker" );
+		unregisterAction( "draw-line-perpendicular" );
+		unregisterAction( "draw-line-2" );
+		unregisterAction( "draw-ellipse-arc-5" );
+		unregisterAction( "draw-ellipse-3" );
+		unregisterAction( "draw-curve-4" );
+		unregisterAction( "draw-circle-3" );
+		unregisterAction( "draw-circle-2" );
+		unregisterAction( "draw-arc-3" );
+		unregisterAction( "draw-arc-2" );
 		unregisterAction( "curve" );
 		unregisterAction( "ellipse" );
 		unregisterAction( "circle" );
 		unregisterAction( "line" );
 		unregisterAction( "marker" );
 		unregisterAction( "draw" );
-		unregisterAction( "grid-toggle" );
-		unregisterAction( "snap-grid-toggle" );
+		unregisterAction( "tool" );
 
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
@@ -119,6 +134,20 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "layer-hidden", new LayerHiddenIcon() );
 		unregisterIcon( "layers", new LayersIcon() );
 		unregisterIcon( "layer", new LayerVisibleIcon() );
+		unregisterIcon( "path", new PathIcon() );
+		unregisterIcon( "marker", new MarkerIcon() );
+		unregisterIcon( "line-perpendicular", new LinePerpendicularIcon() );
+		unregisterIcon( "line-2", new Line2Icon() );
+		unregisterIcon( "ellipse-arc-5", new EllipseArc5Icon() );
+		unregisterIcon( "ellipse-3", new Ellipse3Icon() );
+		unregisterIcon( "curve-4", new Curve4Icon() );
+		unregisterIcon( "curve-3", new Curve3Icon() );
+		unregisterIcon( "circle-3", new Circle3Icon() );
+		unregisterIcon( "circle-2", new Circle2Icon() );
+		unregisterIcon( "arc-3", new Arc3Icon() );
+		unregisterIcon( "arc-2", new Arc2Icon() );
+		unregisterIcon( "draw", new PencilIcon() );
+		unregisterIcon( "tool", new BrokenIcon() );
 		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
 		super.shutdown();
 	}
