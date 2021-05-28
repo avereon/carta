@@ -2,6 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
@@ -210,7 +211,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public List<Double> calcDrawPattern() {
-		return CadMath.evalExpressions( getDrawPattern() );
+		return CadShapes.parseDashPattern( getDrawPattern() );
 	}
 
 	@Override

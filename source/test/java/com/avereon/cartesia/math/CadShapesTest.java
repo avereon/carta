@@ -5,6 +5,7 @@ import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static com.avereon.cartesia.match.Near.near;
@@ -98,6 +99,14 @@ public class CadShapesTest {
 		assertThat( CadShapes.parsePoint( " > pi , 1 " ), near( new Point3D( -1, 0, 0 ) ) );
 		assertThat( CadShapes.parsePoint( " @ 1 , 2 ", anchor ), is( new Point3D( 2, 3, 0 ) ) );
 		assertThat( CadShapes.parsePoint( " @ < 1 , rad ( 180 + 45 ) ", anchor ), near( new Point3D( 1 - java.lang.Math.cos( Constants.PI_OVER_4 ), 1 - java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) ) );
+	}
+
+	@Test
+	void testParseDashPattern() {
+		assertThat( CadShapes.parseDashPattern( "" ), is( List.of() ) );
+		assertThat( CadShapes.parseDashPattern( "0" ), is( List.of() ) );
+		assertThat( CadShapes.parseDashPattern( "0, 0" ), is( List.of() ) );
+		assertThat( CadShapes.parseDashPattern( "1, 0" ), is( List.of( 1.0, 0.0 ) ) );
 	}
 
 	@Test

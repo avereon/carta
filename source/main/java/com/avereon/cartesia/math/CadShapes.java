@@ -96,6 +96,13 @@ public class CadShapes {
 		}
 	}
 
+	public static List<Double> parseDashPattern( String pattern ) {
+		List<Double> values = CadMath.evalExpressions( pattern );
+		double sum = values.stream().reduce( Double::sum ).orElse(0.0);
+		if( sum == 0.0 ) return List.of();
+		return values;
+	}
+
 	public static DesignShape findNearestShapeToPoint( Collection<DesignShape> shapes, Point3D point ) {
 		if( shapes.isEmpty() ) return DesignShape.NONE;
 		if( shapes.size() == 1 ) return shapes.iterator().next();

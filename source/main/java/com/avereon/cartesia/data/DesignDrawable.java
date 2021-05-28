@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
@@ -11,7 +12,9 @@ import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class DesignDrawable extends DesignNode {
 
@@ -110,10 +113,10 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public List<Double> calcDrawPattern() {
 		String pattern = getDrawPattern();
-		if( isCustomValue( pattern ) ) return CadMath.evalExpressions( pattern );
+		if( isCustomValue( pattern ) ) return CadShapes.parseDashPattern( pattern );
 
 		DesignLayer layer = getLayer();
-		return layer == null ? CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) : layer.calcDrawPattern();
+		return layer == null ? CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) : layer.calcDrawPattern();
 	}
 
 	public String getDrawPattern() {

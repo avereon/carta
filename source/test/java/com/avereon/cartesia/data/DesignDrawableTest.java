@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
@@ -32,7 +33,7 @@ public class DesignDrawableTest {
 		assertThat( drawable.getDrawCap(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
 		assertThat( drawable.getDrawPattern(), is( DesignDrawable.MODE_LAYER ) );
-		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( drawable.calcDrawPattern(), is( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 		assertThat( drawable.getFillPaint(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
@@ -58,7 +59,7 @@ public class DesignDrawableTest {
 		assertThat( layer.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
 		assertThat( layer.calcDrawWidth(), is( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) ) );
 		assertThat( layer.calcDrawCap(), is( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) ) );
-		assertThat( layer.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( layer.calcDrawPattern(), is( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 		assertThat( layer.calcFillPaint(), is( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) ) );
 	}
 
@@ -147,19 +148,19 @@ public class DesignDrawableTest {
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_CUSTOM ) );
 		// Check that the layer values are a copy of the layer pattern values
 		assertThat( drawable.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( drawable.calcDrawPattern(), is( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 
 		// Change the layer cap to ensure that cap values are still the custom value
 		layer.setDrawPattern( "1/8,1/4" );
 		assertThat( drawable.getDrawPattern(), is( DesignLayer.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( drawable.calcDrawPattern(), is( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 	}
 
 	@Test
 	void testSetDrawPatternWhenDrawPatternModeIsLayer() {
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.getDrawPattern(), is( DesignLayer.MODE_LAYER ) );
-		assertThat( drawable.calcDrawPattern(), is( CadMath.evalExpressions( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
+		assertThat( drawable.calcDrawPattern(), is( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) ) );
 
 		layer.setDrawPattern( "0.5,1/4" );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ), is( DesignDrawable.MODE_LAYER ) );
