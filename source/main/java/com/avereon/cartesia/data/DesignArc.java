@@ -1,5 +1,7 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
@@ -98,14 +100,28 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public DesignArc clone() {
+		log.log( Log.WARN, "this.fill=" + getFillPaint() );
 		return new DesignArc().copyFrom( this );
 	}
 
 	@Override
 	public void apply( CadTransform transform ) {
+		CadTransform original = getOrientation().getLocalToTargetTransform();
+		CadOrientation newPose = getOrientation().clone().transform( transform );
+		CadTransform combined = newPose.getTargetToLocalTransform().combine( transform.combine( original ) );
+
+		Point3D origin = transform.apply( getOrigin() );
+		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
+		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
+		double rotate = CadGeometry.angle360( newPose.getRotate() ) - 90;
+		//double start = getStart();
+
 		try( Txn ignored = Txn.create() ) {
-			super.apply( transform );
-			// Start should not be affected by a transform
+			setOrigin( origin );
+			setXRadius( xRadius );
+			setYRadius( yRadius );
+			//setStart( getStart() + rotate );
+			setRotate( rotate );
 			if( transform.isMirror() ) setExtent( -getExtent() );
 		} catch( TxnException exception ) {
 			log.log( Log.WARN, "Unable to apply transform" );

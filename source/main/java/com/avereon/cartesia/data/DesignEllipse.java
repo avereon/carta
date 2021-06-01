@@ -145,15 +145,14 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		CadOrientation pose = getOrientation().clone();
-		CadTransform original = pose.getLocalToTargetTransform();
-		pose.transform( transform );
-		CadTransform combined = pose.getTargetToLocalTransform().combine( transform.combine( original ) );
+		CadTransform original = getOrientation().getLocalToTargetTransform();
+		CadOrientation newPose = getOrientation().clone().transform( transform );
+		CadTransform combined = newPose.getTargetToLocalTransform().combine( transform.combine( original ) );
 
 		Point3D origin = transform.apply( getOrigin() );
 		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
 		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
-		double rotate = CadGeometry.angle360( pose.getRotate() ) - 90;
+		double rotate = CadGeometry.angle360( newPose.getRotate() ) - 90;
 
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( origin );
