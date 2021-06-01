@@ -858,7 +858,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void showPropertiesPage( DesignDrawable drawable ) {
-		showPropertiesPage( new NodeSettings( drawable ), drawable.getClass() );
+		if( drawable != null ) showPropertiesPage( new NodeSettings( drawable ), drawable.getClass() );
 	}
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
