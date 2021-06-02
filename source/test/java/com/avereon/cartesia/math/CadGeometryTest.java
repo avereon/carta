@@ -137,4 +137,15 @@ public class CadGeometryTest {
 		assertThat( arc.getExtent(), is( -180.0 ) );
 	}
 
+	@Test
+	void testNormalizeAngle360() {
+		assertThat( CadGeometry.normalizeAngle360( 0 ), is( 0.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( 180 ), is( 180.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( -180 ), is( -180.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( 315 ), is( -45.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( -315 ), is( 45.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( 675 ), is( -45.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( -675 ), is( 45.0 ) );
+	}
+
 }

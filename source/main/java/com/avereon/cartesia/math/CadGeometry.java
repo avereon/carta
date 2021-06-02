@@ -29,7 +29,13 @@ public class CadGeometry {
 	}
 
 	public static double normalizeAngle360( double angle ) {
-		return Math.toDegrees( Math.toRadians( angle ) );
+		double degrees = Math.toDegrees( Math.toRadians( angle ) );
+
+		degrees %= 360;
+		if( degrees < -180 ) degrees += 360;
+		if( degrees > 180 ) degrees -= 360;
+
+		return degrees;
 	}
 
 	public static Point3D rotate360( Point3D point, double angle ) {

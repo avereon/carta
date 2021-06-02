@@ -100,7 +100,6 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public DesignArc clone() {
-		log.log( Log.WARN, "this.fill=" + getFillPaint() );
 		return new DesignArc().copyFrom( this );
 	}
 
@@ -114,13 +113,15 @@ public class DesignArc extends DesignEllipse {
 		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
 		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
 		double rotate = CadGeometry.angle360( newPose.getRotate() ) - 90;
-		//double start = getStart();
+
+		Point3D startPoint = transform.apply( getOrigin().add( CadGeometry.polarToCartesian360( new Point3D( 1, getStart(), 0 ) ) ) );
+		double start = CadGeometry.cartesianToPolar360( startPoint.subtract( origin ) ).getY();
 
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( origin );
 			setXRadius( xRadius );
 			setYRadius( yRadius );
-			//setStart( getStart() + rotate );
+			setStart( start );
 			setRotate( rotate );
 			if( transform.isMirror() ) setExtent( -getExtent() );
 		} catch( TxnException exception ) {

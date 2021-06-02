@@ -1,6 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.match.Near;
 import com.avereon.cartesia.math.CadTransform;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
@@ -10,7 +9,6 @@ import java.util.Map;
 
 import static com.avereon.cartesia.match.Near.near;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.closeTo;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -190,19 +188,39 @@ public class DesignArcTest {
 	@Test
 	void testApplyWithMirrorTransform() {
 		DesignArc arc = new DesignArc( new Point3D( 0, 2, 0 ), 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
-		//CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
-		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
+		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
+
 		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
+		assertThat( arc.getExtent(), near( -90.0 ) );
+		assertThat( arc.getStart(), near( 45.0 ) );
+		assertThat( arc.getRotate(), near( 0.0 ));
 
+		// Mirror it back
+		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
+		assertThat( arc.getExtent(), near( 90.0 ) );
+		assertThat( arc.getStart(), near( 135.0 ) );
+		assertThat( arc.getRotate(), near( 0.0 ));
+	}
+
+	@Test
+	void testApplyWithAngledMirrorTransform() {
+		DesignArc arc = new DesignArc( new Point3D( 0, 2, 0 ), 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
+		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
+
+		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 2, 0, 0 ) ) );
-		assertThat( arc.getExtent(), is( -90.0 ) );
-
-		// Either 45 and -90 or -45 and 0
-		assertThat( arc.getStart(), is( 45.0 ) );
+		assertThat( arc.getExtent(), near( -90.0 ) );
+		assertThat( arc.getStart(), near( -45.0 ) );
 		assertThat( arc.getRotate(), near( -90.0 ));
 
-//		assertThat( arc.getStart(), is( -45.0 ) );
-//		assertThat( arc.getRotate(), near( 0.0 ));
+		// Mirror it back
+		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
+		assertThat( arc.getExtent(), near( 90.0 ) );
+		assertThat( arc.getStart(), near( 135.0 ) );
+		assertThat( arc.getRotate(), near( 0.0 ));
 	}
 
 }
