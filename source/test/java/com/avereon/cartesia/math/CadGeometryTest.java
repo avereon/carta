@@ -138,14 +138,25 @@ public class CadGeometryTest {
 	}
 
 	@Test
+	void testNormalizeAngle180() {
+		assertThat( CadGeometry.normalizeAngle180( 0 ), is( 0.0 ) );
+		assertThat( CadGeometry.normalizeAngle180( 180 ), is( 180.0 ) );
+		assertThat( CadGeometry.normalizeAngle180( -180 ), is( -180.0 ) );
+		assertThat( CadGeometry.normalizeAngle180( 315 ), is( -45.0 ) );
+		assertThat( CadGeometry.normalizeAngle180( -315 ), is( 45.0 ) );
+		assertThat( CadGeometry.normalizeAngle180( 675 ), is( -45.0 ) );
+		assertThat( CadGeometry.normalizeAngle180( -675 ), is( 45.0 ) );
+	}
+
+	@Test
 	void testNormalizeAngle360() {
 		assertThat( CadGeometry.normalizeAngle360( 0 ), is( 0.0 ) );
 		assertThat( CadGeometry.normalizeAngle360( 180 ), is( 180.0 ) );
 		assertThat( CadGeometry.normalizeAngle360( -180 ), is( -180.0 ) );
-		assertThat( CadGeometry.normalizeAngle360( 315 ), is( -45.0 ) );
-		assertThat( CadGeometry.normalizeAngle360( -315 ), is( 45.0 ) );
-		assertThat( CadGeometry.normalizeAngle360( 675 ), is( -45.0 ) );
-		assertThat( CadGeometry.normalizeAngle360( -675 ), is( 45.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( 315 ), is( 315.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( -315 ), is( -315.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( 675 ), is( 315.0 ) );
+		assertThat( CadGeometry.normalizeAngle360( -675 ), is( -315.0 ) );
 	}
 
 }

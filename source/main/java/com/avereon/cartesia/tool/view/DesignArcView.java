@@ -42,7 +42,6 @@ public class DesignArcView extends DesignShapeView {
 		arc.setStrokeWidth( designArc.calcDrawWidth() );
 		arc.setStroke( designArc.calcDrawPaint() );
 		arc.setFill( designArc.calcFillPaint() );
-		arc.setFill( null );
 		return List.of( arc );
 	}
 
@@ -79,7 +78,7 @@ public class DesignArcView extends DesignShapeView {
 		getDesignShape().register( DesignEllipse.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((Arc)getShape()).setCenterX( designArc.getOrigin().getX() );
 			((Arc)getShape()).setCenterY( designArc.getOrigin().getY() );
-			// Needed for move to work correctly
+			// Needed for transforms to work correctly
 			updateRotate( designArc, getShape() );
 		} ) );
 		getDesignShape().register( DesignEllipse.X_RADIUS, xRadiusHandler = e -> Fx.run( () -> {

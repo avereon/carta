@@ -60,7 +60,7 @@ public class DesignEllipseView extends DesignShapeView {
 		getDesignShape().register( DesignEllipse.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((Ellipse)getShape()).setCenterX( designEllipse.getOrigin().getX() );
 			((Ellipse)getShape()).setCenterY( designEllipse.getOrigin().getY() );
-			// Needed for move to work correctly
+			// Needed for transforms to work correctly
 			updateRotate( designEllipse, getShape() );
 		} ) );
 		getDesignShape().register( DesignEllipse.X_RADIUS, xRadiusHandler = e -> Fx.run( () -> {
