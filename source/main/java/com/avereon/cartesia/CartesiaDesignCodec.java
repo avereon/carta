@@ -97,7 +97,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
-		Design2D design = asset.setModel( new Design2D() );
+		Design2D design = new Design2D();
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 
@@ -113,6 +113,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 		// Load views
 		views.values().forEach( v -> design.addView( new DesignView().updateFrom( v ) ) );
+
+		// Set the design after all the data is loaded. Otherwise, events will be
+		// fired while loading causing undesired side effects like populating the
+		// undo buffer with undo events for the data structure.
+		asset.setModel( design );
 	}
 
 	@Override
