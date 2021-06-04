@@ -199,7 +199,8 @@ public class DesignArcTest {
 		// Mirror it back
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 225.0 ) );
+		// This ends up as 255 normalized to -135
+		assertThat( arc.getStart(), near( -135.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
 		assertThat( arc.getRotate(), near( 0.0 ));
 	}
@@ -211,8 +212,8 @@ public class DesignArcTest {
 
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 135.0 ) );
-		assertThat( arc.getExtent(), near( 90.0 ) );
+		assertThat( arc.getStart(), near( 45.0 ) );
+		assertThat( arc.getExtent(), near( -90.0 ) );
 		assertThat( arc.getRotate(), near( 0.0 ));
 
 		// Mirror it back
@@ -230,54 +231,56 @@ public class DesignArcTest {
 
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 2, 0, 0 ) ) );
+		// The sum of the start and the rotate should be -135
+		assertThat( arc.getStart(), near( -45.0 ) );
+		assertThat( arc.getExtent(), near( 90.0 ) );
+		assertThat( arc.getRotate(), near( -90.0 ));
+
+		// Mirror it back
+		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( -135.0 ) );
+		assertThat( arc.getExtent(), near( -90.0 ) );
+		assertThat( arc.getRotate(), near( 0.0 ));
+	}
+
+	@Test
+	void testApplyWithEllipseArcAndMirrorTransform() {
+		DesignArc arc = new DesignArc( new Point3D( 0, 2, 0 ), 3.0, 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
+		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
+
+		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
+		assertThat( arc.getStart(), near( 45.0 ) );
+		assertThat( arc.getExtent(), near( -90.0 ) );
+		assertThat( arc.getRotate(), near( 0.0 ));
+
+		// Mirror it back
+		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
+		assertThat( arc.getStart(), near( 135.0 ) );
+		assertThat( arc.getExtent(), near( 90.0 ) );
+		assertThat( arc.getRotate(), near( 0.0 ));
+	}
+
+	@Test
+	void testApplyWithEllipseArcAndAngledMirrorTransform() {
+		DesignArc arc = new DesignArc( new Point3D( 0, 2, 0 ), 3.0, 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
+		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
+
+		arc.apply( transform );
+		assertThat( arc.getOrigin(), near( new Point3D( 2, 0, 0 ) ) );
+		// The sum of the start and the rotate should be -135
+		assertThat( arc.getStart(), near( 45.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
 		assertThat( arc.getRotate(), near( -90.0 ));
 
 		// Mirror it back
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getStart(), near( -135.0 ) );
+		assertThat( arc.getStart(), near( 135.0 ) );
+		assertThat( arc.getExtent(), near( 90.0 ) );
 		assertThat( arc.getRotate(), near( 0.0 ));
 	}
-
-//	@Test
-//	void testApplyWithEllipseArcAndMirrorTransform() {
-//		DesignArc arc = new DesignArc( new Point3D( 0, 2, 0 ), 3.0, 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
-//		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
-//
-//		arc.apply( transform );
-//		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
-//		assertThat( arc.getExtent(), near( 90.0 ) );
-//		assertThat( arc.getStart(), near( 135.0 ) );
-//		assertThat( arc.getRotate(), near( 0.0 ));
-//
-//		// Mirror it back
-//		arc.apply( transform );
-//		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-//		assertThat( arc.getExtent(), near( 90.0 ) );
-//		assertThat( arc.getStart(), near( 135.0 ) );
-//		assertThat( arc.getRotate(), near( 0.0 ));
-//	}
-//
-//	@Test
-//	void testApplyWithEllipseArcAndAngledMirrorTransform() {
-//		DesignArc arc = new DesignArc( new Point3D( 0, 2, 0 ), 3.0, 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
-//		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
-//
-//		arc.apply( transform );
-//		assertThat( arc.getOrigin(), near( new Point3D( 2, 0, 0 ) ) );
-//		assertThat( arc.getExtent(), near( 90.0 ) );
-//		assertThat( arc.getStart(), near( 135.0 ) );
-//		assertThat( arc.getRotate(), near( -90.0 ));
-//
-//		// Mirror it back
-//		arc.apply( transform );
-//		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-//		assertThat( arc.getExtent(), near( 90.0 ) );
-//		assertThat( arc.getStart(), near( 135.0 ) );
-//		assertThat( arc.getRotate(), near( 0.0 ));
-//	}
 
 }

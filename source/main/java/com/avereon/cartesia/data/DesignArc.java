@@ -1,7 +1,12 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.ArcType;
@@ -98,35 +103,35 @@ public class DesignArc extends DesignEllipse {
 		return new DesignArc().copyFrom( this );
 	}
 
-//	@Override
-//	public void apply( CadTransform transform ) {
-//		CadTransform original = getOrientation().getLocalToTargetTransform();
-//		CadOrientation newPose = getOrientation().clone().transform( transform );
-//		CadTransform combined = newPose.getTargetToLocalTransform().combine( transform.combine( original ) );
-//
-//		Point3D origin = transform.apply( getOrigin() );
-//		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
-//		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
-//		double rotate = CadGeometry.angle360( newPose.getRotate() ) - 90;
-//		//		if( transform.isMirror() ) rotate = -rotate;
-//
-//		Point3D startPoint = transform.apply( getOrigin().add( CadGeometry.polarToCartesian360( new Point3D( 1, getStart(), 0 ) ) ) );
-//		double start = CadGeometry.cartesianToPolar360( startPoint.subtract( transform.apply( getOrigin() ) ) ).getY();
-//		double newStart = CadGeometry.normalizeAngle360( start - rotate );
-//		System.out.println( "start=" + start + " rotate=" + rotate + " newStart=" + newStart );
-//
-//		try( Txn ignored = Txn.create() ) {
-//			//						super.apply( transform );
-//			setOrigin( origin );
-//			setXRadius( xRadius );
-//			setYRadius( yRadius );
-//			setStart( newStart );
-//			setRotate( rotate );
-//			if( transform.isMirror() ) setExtent( -getExtent() );
-//		} catch( TxnException exception ) {
-//			log.log( Log.WARN, "Unable to apply transform" );
-//		}
-//	}
+	@Override
+	public void apply( CadTransform transform ) {
+		//CadTransform original = getOrientation().getLocalToTargetTransform();
+		CadOrientation newPose = getOrientation().clone().transform( transform );
+		//CadTransform combined = newPose.getTargetToLocalTransform().combine( transform.combine( original ) );
+
+		//		Point3D origin = transform.apply( getOrigin() );
+		//		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
+		//		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
+		double rotate = CadGeometry.angle360( newPose.getRotate() ) - 90;
+		double extent = getExtent();
+		if( transform.isMirror() ) extent = -extent;
+
+
+
+		double oldStart = getStart() + calcRotate();
+		Point3D startPoint = transform.apply( getOrigin().add( CadGeometry.polarToCartesian360( new Point3D( 1, oldStart, 0 ) ) ) );
+		double newStart = CadGeometry.cartesianToPolar360( startPoint.subtract( transform.apply( getOrigin() ) ) ).getY();
+		double rotatedStart = CadGeometry.normalizeAngle360( newStart - rotate );
+		System.out.println( "oldStart=" + oldStart + " rotate=" + rotate + " newStart=" + newStart + " rotatedStart=" + rotatedStart );
+
+		try( Txn ignored = Txn.create() ) {
+			super.apply( transform );
+			setStart( rotatedStart );
+			setExtent( extent );
+		} catch( TxnException exception ) {
+			log.log( Log.WARN, "Unable to apply transform" );
+		}
+	}
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
