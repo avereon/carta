@@ -69,6 +69,8 @@ public class DesignPane extends StackPane {
 
 	private static final DesignPaneLayer NO_LAYER = new DesignPaneLayer();
 
+	private static final Comparator<Node> LAYER_SORTER = new LayerSorter();
+
 	private final Pane select;
 
 	private final Pane reference;
@@ -576,7 +578,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doReorderLayer( DesignPaneLayer pane ) {
-		pane.getChildren().setAll( pane.getChildren().sorted( new LayerSorter() ) );
+		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( LAYER_SORTER ) ) );
 	}
 
 	private void doAddShape( DesignShape shape ) {
