@@ -42,19 +42,30 @@ public class CadEdit {
 	}
 
 	protected static void updateArc( DesignTool tool, DesignArc arc, Point3D trimPoint, Point3D point ) {
-		if( point == null ) return;
-
 		// Determine the start point
 		Point3D startPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() );
 		// Determine the extent point
 		Point3D extentPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() + arc.getExtent() );
 		// Determine if we are moving the start point or the extent point
 		Point3D n = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
-		double theta = CadGeometry.ellipseAngle360( arc, point );
+
+		updateArc( arc, point, n );
+	}
+
+	protected static void updateArc( DesignArc arc, Point3D trimPoint, Point3D arcPoint ) {
+		if( trimPoint == null ) return;
+
+		// Determine the start point
+		Point3D startPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() );
+		// Determine the extent point
+		//Point3D extentPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() + arc.getExtent() );
+		// Determine if we are moving the start point or the extent point
+		//Point3D n = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
+		double theta = CadGeometry.ellipseAngle360( arc, trimPoint );
 
 		// FIXME Move to DesignEllipse.updateFrom
 		try( Txn ignore = Txn.create() ) {
-			if( n == startPoint ) {
+			if( CadGeometry.areSamePoint( arcPoint, startPoint ) ) {
 				double delta = arc.getStart() - theta;
 				arc.setStart( theta );
 				arc.setExtent( arc.getExtent() + delta );

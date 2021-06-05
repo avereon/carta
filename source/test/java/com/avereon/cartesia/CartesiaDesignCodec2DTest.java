@@ -53,7 +53,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		codec = new CartesiaDesignCodec2D( getMod() );
 
 		Path path = Paths.get( "target", "design.tmp" );
-		asset = new Asset( path.toUri(), new Design2dAssetType( getMod() ) );
+		asset = new Asset( new Design2dAssetType( getMod() ), path.toUri() );
 		asset.setModel( new Design2D() );
 	}
 

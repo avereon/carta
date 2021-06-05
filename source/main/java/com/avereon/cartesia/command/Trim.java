@@ -18,6 +18,8 @@ public class Trim extends Command {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+		setCaptureUndoChanges( context, false );
+
 		if( parameters.length < 1 ) {
 			promptForShape( context, "select-trim-shape" );
 			return INCOMPLETE;
@@ -35,9 +37,10 @@ public class Trim extends Command {
 		DesignShape edge = findNearestShapeAtMouse( context, edgeMouse );
 		if( edge == DesignShape.NONE ) return INVALID;
 
-		// Start an undo multi-change
+		clearReferenceAndPreview( context );
+		setCaptureUndoChanges( context, true );
+
 		com.avereon.cartesia.math.Trim.trim( context.getTool(), trim, edge, trimMouse, edgeMouse );
-		// Done with undo multi-change
 
 		return COMPLETE;
 	}
