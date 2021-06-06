@@ -70,8 +70,10 @@ public class CadEdit {
 				arc.setStart( theta );
 				arc.setExtent( arc.getExtent() + delta );
 			} else {
-				double extent = theta - arc.getStart();
-				arc.setExtent( extent % 360 );
+				double extent = (theta - arc.getStart()) % 360;
+				if( extent < -180 ) extent += 360;
+				if( extent > 180 ) extent -= 360;
+				arc.setExtent( extent );
 			}
 		} catch( TxnException exception ) {
 			log.log( Log.ERROR, "Unable to trim arc" );

@@ -34,4 +34,24 @@ public class CadEditTest extends BaseCartesiaTest {
 		assertThat( arc.getExtent(), is( 180 - 2 * ALPHA ) );
 	}
 
+	@Test
+	void testUpdateBacksideArcCW() {
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, -90 - ALPHA, -180 + ALPHA, DesignArc.Type.OPEN );
+		CadEdit.updateArc( arc, new Point3D( -2, 6, 0 ), new Point3D( 1, -3, 0 ) );
+		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( -90 - ALPHA ) );
+		assertThat( arc.getExtent(), is( -180 + 2 * ALPHA ) );
+	}
+
+	@Test
+	void testUpdateBacksideArcCCW() {
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 90 + ALPHA, 180 - ALPHA, DesignArc.Type.OPEN );
+		CadEdit.updateArc( arc, new Point3D( -2, -2, 0 ), new Point3D( 1, -3, 0 ) );
+		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( 90 + ALPHA ) );
+		assertThat( arc.getExtent(), is( 180 - 2 * ALPHA ) );
+	}
+
 }
