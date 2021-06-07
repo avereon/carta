@@ -6,6 +6,7 @@ import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.binding.Bindings;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Shape;
 
@@ -50,22 +51,42 @@ public class DesignArcView extends DesignShapeView {
 		// Points should be at the origin, each endpoint and the midpoint
 		Arc arc = (Arc)shapes.get( 0 );
 
-		ConstructionPoint a = cp( pane, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getY() );
-		ConstructionPoint c = cp(
-			pane,
-			arc.centerXProperty(),
-			() -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(),
-			arc.centerYProperty(),
-			() -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY()
+		ConstructionPoint a = cp( pane,
+			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerXProperty(), arc.radiusXProperty(), arc.getTransforms(), arc.startAngleProperty() ),
+			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() ).getY(), arc.centerYProperty(), arc.radiusYProperty(), arc.getTransforms(), arc.startAngleProperty() )
 		);
-		ConstructionPoint b = cp(
-			pane,
-			arc.centerXProperty(),
-			() -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(),
-			arc.centerYProperty(),
-			() -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY()
+		ConstructionPoint c = cp( pane,
+			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(),
+				arc.centerXProperty(),
+				arc.radiusXProperty(),
+				arc.getTransforms(),
+				arc.startAngleProperty(),
+				arc.lengthProperty()
+			),
+			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY(),
+				arc.centerYProperty(),
+				arc.radiusYProperty(),
+				arc.getTransforms(),
+				arc.startAngleProperty(),
+				arc.lengthProperty()
+			)
 		);
-
+		ConstructionPoint b = cp( pane,
+			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(),
+				arc.centerXProperty(),
+				arc.radiusXProperty(),
+				arc.getTransforms(),
+				arc.startAngleProperty(),
+				arc.lengthProperty()
+			),
+			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getY(),
+				arc.centerYProperty(),
+				arc.radiusYProperty(),
+				arc.getTransforms(),
+				arc.startAngleProperty(),
+				arc.lengthProperty()
+			)
+		);
 		return setConstructionPoints( arc, List.of( a, b, c ) );
 	}
 
