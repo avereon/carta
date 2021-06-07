@@ -12,6 +12,8 @@ import java.util.List;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DesignDrawableTest {
 
@@ -26,6 +28,7 @@ public class DesignDrawableTest {
 		layer.addDrawable( drawable );
 
 		// Check the default values
+		assertThat( drawable.getOrder(), is( 0 ) );
 		assertThat( drawable.getDrawPaint(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
 		assertThat( drawable.getDrawWidth(), is( DesignDrawable.MODE_LAYER ) );
@@ -194,6 +197,22 @@ public class DesignDrawableTest {
 		assertThat( drawable.getValueMode( drawable.getFillPaint() ), is( DesignDrawable.MODE_CUSTOM ) );
 		assertThat( drawable.getFillPaint(), is( Paints.toString( Color.RED ) ) );
 		assertThat( drawable.calcFillPaint(), is( Color.RED ) );
+	}
+
+	@Test
+	void testReorderLayerModifiesParent() {
+		DesignLayer a = new DesignLayer();
+		DesignLayer b = new DesignLayer();
+		DesignLayer c = new DesignLayer();
+		layer.addLayer( a );
+		layer.addLayer( b );
+		layer.addLayer( c );
+		layer.setModified( false );
+		assertFalse( layer.isModified() );
+
+		layer.removeLayer( c );
+		layer.addLayerBeforeOrAfter( c, b, false );
+		assertTrue( layer.isModified() );
 	}
 
 }
