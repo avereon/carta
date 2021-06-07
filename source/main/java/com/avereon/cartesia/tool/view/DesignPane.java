@@ -408,7 +408,7 @@ public class DesignPane extends StackPane {
 	}
 
 	public List<DesignPaneLayer> getVisibleLayers() {
-		return getLayers( layers ).stream().filter( Node::isVisible ).collect( Collectors.toList() );
+		return getLayers( layers ).stream().filter( DesignPaneLayer::isShowing ).collect( Collectors.toList() );
 	}
 
 	public void addLayerGeometry( DesignLayerView view ) {
