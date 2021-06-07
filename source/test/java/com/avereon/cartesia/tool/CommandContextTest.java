@@ -99,7 +99,7 @@ public class CommandContextTest {
 		TestCommand command = new TestCommand( 1 );
 		context.submit( null, command );
 		context.setInputMode( CommandContext.Input.NUMBER );
-		context.text( "4,3,2", true );
+		context.processText( "4,3,2", true );
 		assertThat( command.getValues()[ 0 ], is( 4.0 ) );
 	}
 
@@ -108,7 +108,7 @@ public class CommandContextTest {
 		TestCommand command = new TestCommand( 1 );
 		context.submit( null, command );
 		context.setInputMode( CommandContext.Input.POINT );
-		context.text( "4,3,2", true );
+		context.processText( "4,3,2", true );
 		assertThat( command.getValues()[ 0 ], is( new Point3D( 4, 3, 2 ) ) );
 	}
 
@@ -118,7 +118,7 @@ public class CommandContextTest {
 		context.submit( null, command );
 		context.setAnchor( new Point3D( 1, 1, 1 ) );
 		context.setInputMode( CommandContext.Input.POINT );
-		context.text( "@4,3,2", true );
+		context.processText( "@4,3,2", true );
 		assertThat( command.getValues()[ 0 ], is( new Point3D( 5, 4, 3 ) ) );
 	}
 
@@ -127,7 +127,7 @@ public class CommandContextTest {
 		TestCommand command = new TestCommand( 1 );
 		context.submit( null, command );
 		context.setInputMode( CommandContext.Input.TEXT );
-		context.text( "test", true );
+		context.processText( "test", true );
 		assertThat( command.getValues()[ 0 ], is( "test" ) );
 	}
 
@@ -137,7 +137,7 @@ public class CommandContextTest {
 		context.submit( null, command );
 		context.setInputMode( CommandContext.Input.NONE );
 		try {
-			context.text( "unknown", true );
+			context.processText( "unknown", true );
 			fail();
 		} catch( UnknownCommand exception ) {
 			assertThat( exception.getMessage(), is( "unknown" ) );

@@ -52,7 +52,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private void textChanged( String text ) {
 		try {
-			context.text( text );
+			context.processText( text );
 		} catch( UnknownCommand exception ) {
 			log.log( Log.WARN, exception );
 		}

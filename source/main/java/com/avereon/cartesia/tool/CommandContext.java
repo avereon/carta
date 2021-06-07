@@ -119,7 +119,7 @@ public class CommandContext {
 			);
 			doCommand( new Select(), mouseEvent );
 		} else {
-			text( input, true );
+			processText( input, true );
 		}
 		reset();
 	}
@@ -131,11 +131,11 @@ public class CommandContext {
 		}
 	}
 
-	void text( String input ) {
-		text( input, false );
+	void processText( String input ) {
+		processText( input, false );
 	}
 
-	void text( String input, boolean force ) {
+	void processText( String input, boolean force ) {
 		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
 		if( force ) {
 			if( getInputMode() == CommandContext.Input.NUMBER ) {
