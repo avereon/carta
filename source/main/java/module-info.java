@@ -11,6 +11,7 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
 
+	exports com.avereon.cartesia.command;
 	exports com.avereon.cartesia.data;
 	exports com.avereon.cartesia.math;
 	exports com.avereon.cartesia.snap;

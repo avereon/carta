@@ -556,6 +556,11 @@ public abstract class DesignTool extends GuidedTool {
 		if( isReady() ) unregisterActions();
 	}
 
+	void showCommandPrompt() {
+		Fx.run( this::registerStatusBarItems );
+		Fx.run( () -> getCommandPrompt().requestFocus() );
+	}
+
 	private DesignPane getDesignPane() {
 		return designPane;
 	}

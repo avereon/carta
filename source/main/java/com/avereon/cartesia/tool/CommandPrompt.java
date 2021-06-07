@@ -6,7 +6,6 @@ import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.javafx.Fx;
-import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -43,7 +42,8 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	public void setPrompt( String prompt ) {
 		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
-		Platform.runLater( () -> this.prompt.setText( effectivePrompt ) );
+		Fx.run( () -> this.prompt.setText( effectivePrompt ) );
+		Fx.run( () -> context.getTool().showCommandPrompt() );
 	}
 
 	public String getText() {
@@ -70,6 +70,10 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 	public void clear() {
 		Fx.run( () -> command.setText( TextUtil.EMPTY ) );
 		setPrompt( TextUtil.EMPTY );
+	}
+
+	public void requestFocus() {
+		Fx.run( command::requestFocus );
 	}
 
 }
