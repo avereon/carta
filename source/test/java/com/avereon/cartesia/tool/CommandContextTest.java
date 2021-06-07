@@ -1,5 +1,8 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.BaseCartesiaTest;
+import com.avereon.cartesia.CommandMap;
+import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.MockCartesiaMod;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
@@ -13,9 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CommandContextTest {
+public class CommandContextTest extends BaseCartesiaTest {
 
 	private CommandContext context;
 
@@ -142,6 +146,21 @@ public class CommandContextTest {
 		} catch( UnknownCommand exception ) {
 			assertThat( exception.getMessage(), is( "unknown" ) );
 		}
+	}
+
+	@Test
+	void testAutoCommand() {
+		CommandMap.add( "test", TestCommand.class, "Test Command", "test", null );
+		CommandMetadata metadata = context.processText( "test", false );
+		assertThat( metadata.getType(), is( TestCommand.class ) );
+	}
+
+	@Test
+	void testNoAutoCommandWithTextInput() {
+		context.setInputMode( CommandContext.Input.TEXT );
+		CommandMap.add( "test", TestCommand.class, "Test Command", "test", null );
+		CommandMetadata metadata = context.processText( "test", false );
+		assertNull( metadata );
 	}
 
 	private static class TestCommand extends Command {

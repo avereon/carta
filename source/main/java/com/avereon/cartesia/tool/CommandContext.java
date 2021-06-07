@@ -119,23 +119,23 @@ public class CommandContext {
 			);
 			doCommand( new Select(), mouseEvent );
 		} else {
-			processText( input, true );
+			doCommand( processText( input, true ) );
 		}
 		reset();
 	}
 
 	public void repeat() {
 		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
-			doCommand( getPriorShortcut() );
+			mapCommand( getPriorShortcut() );
 			reset();
 		}
 	}
 
 	void processText( String input ) {
-		processText( input, false );
+		doCommand( processText( input, false ) );
 	}
 
-	void processText( String input, boolean force ) {
+	CommandMetadata processText( String input, boolean force ) {
 		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
 		if( force ) {
 			if( getInputMode() == CommandContext.Input.NUMBER ) {
@@ -145,15 +145,16 @@ public class CommandContext {
 			} else if( isTextInput ) {
 				doCommand( new Value(), input );
 			} else {
-				doCommand( input );
+				return mapCommand( input );
 			}
 		} else if( !isTextInput && isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
-			doCommand( input );
+			return mapCommand( input );
 		}
+		return null;
 	}
 
 	public void command( String input ) {
-		doCommand( input );
+		mapCommand( input );
 	}
 
 	public boolean isPenMode() {
@@ -253,16 +254,21 @@ public class CommandContext {
 		if( mapping != null ) doCommand( event, mapping.getType(), mapping.getParameters() );
 	}
 
-	private void doCommand( String input ) {
-		if( TextUtil.isEmpty( input ) ) return;
+	private CommandMetadata mapCommand( String input ) {
+		if( TextUtil.isEmpty( input ) ) return null;
 
 		CommandMetadata mapping = CommandMap.get( input );
 		if( mapping != null ) {
 			priorShortcut = input;
-			doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
 		} else {
 			throw new UnknownCommand( input );
 		}
+		return mapping;
+	}
+
+	private void doCommand( CommandMetadata mapping ) {
+		if( mapping == null ) return;
+		doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
 	}
 
 	private void doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
@@ -333,7 +339,7 @@ public class CommandContext {
 		return result;
 	}
 
-	private Command getCurrentCommand() {
+	Command getCurrentCommand() {
 		CommandExecuteRequest request = commandStack.peek();
 		return request == null ? null : request.getCommand();
 	}

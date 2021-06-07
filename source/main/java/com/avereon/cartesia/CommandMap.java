@@ -206,6 +206,10 @@ public class CommandMap {
 		if( proxy.getCommand() != null ) command = proxy.getCommand().toLowerCase();
 		String shortcut = proxy.getShortcut();
 
+		add( action, type, name, command, shortcut, parameters );
+	}
+
+	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
 		if( command != null && commandActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
 			log.log( Log.ERROR, "Shortcut already used: shortcut={0} existing={1} conflict={2}", command, existing.getAction(), action );
@@ -213,7 +217,6 @@ public class CommandMap {
 			if( command != null ) commandActions.put( command, action );
 			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );
 		}
-
 	}
 
 }
