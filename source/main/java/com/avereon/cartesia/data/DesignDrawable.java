@@ -53,7 +53,7 @@ public abstract class DesignDrawable extends DesignNode {
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
-		addModifyingKeys( DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
+		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 
 		setDrawPaint( MODE_LAYER );
 		setDrawWidth( MODE_LAYER );
