@@ -31,7 +31,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		getStyleClass().add( "cartesia-command" );
 		setLeft( prompt = new Label() );
 		setCenter( command = new TextField() );
-		setPrompt( null );
+		setPrompt( TextUtil.EMPTY );
 
 		// FIXME I have two slightly competing handlers here
 		// one listening to just keys
@@ -43,7 +43,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 	public void setPrompt( String prompt ) {
 		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
 		Fx.run( () -> this.prompt.setText( effectivePrompt ) );
-		Fx.run( () -> context.getTool().showCommandPrompt() );
+		if( context.getTool() != null ) Fx.run( () -> context.getTool().showCommandPrompt() );
 	}
 
 	public String getText() {

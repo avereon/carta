@@ -135,18 +135,19 @@ public class CommandContext {
 		text( input, false );
 	}
 
-	void text( String input, boolean hard ) {
-		if( hard ) {
+	void text( String input, boolean force ) {
+		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
+		if( force ) {
 			if( getInputMode() == CommandContext.Input.NUMBER ) {
 				doCommand( new Value(), CadShapes.parsePoint( input ).getX() );
 			} else if( getInputMode() == CommandContext.Input.POINT ) {
 				doCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
-			} else if( getInputMode() == CommandContext.Input.TEXT ) {
+			} else if( isTextInput ) {
 				doCommand( new Value(), input );
 			} else {
 				doCommand( input );
 			}
-		} else if( isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
+		} else if( !isTextInput && isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
 			doCommand( input );
 		}
 	}
