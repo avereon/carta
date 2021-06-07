@@ -210,11 +210,11 @@ public class DesignShapeView extends DesignDrawableView {
 		return (List<ConstructionPoint>)shape.getProperties().getOrDefault( CONSTRUCTION_POINTS, List.of() );
 	}
 
-	static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xProperty, Callable<Double> xAction, ObservableValue<Number> yProperty, Callable<Double> yAction ) {
-		return cp( pane, shape, Bindings.createDoubleBinding( xAction, xProperty ), Bindings.createDoubleBinding( yAction, yProperty ) );
+	static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xProperty, Callable<Double> xAction, ObservableValue<Number> yProperty, Callable<Double> yAction ) {
+		return cp( pane, Bindings.createDoubleBinding( xAction, xProperty ), Bindings.createDoubleBinding( yAction, yProperty ) );
 	}
 
-	public static ConstructionPoint cp( DesignPane pane, Shape shape, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
+	public static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
 		ConstructionPoint cp = new ConstructionPoint();
 		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
 		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );

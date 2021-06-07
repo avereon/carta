@@ -44,11 +44,11 @@ public class DesignEllipseView extends DesignShapeView {
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Ellipse ellipse = (Ellipse)shapes.get( 0 );
 
-		ConstructionPoint origin = cp( pane, ellipse, ellipse.centerXProperty(), ellipse.centerYProperty() );
-		ConstructionPoint a = cp( pane, ellipse, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 0 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 0 ).getY() );
-		ConstructionPoint b = cp( pane, ellipse, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 90 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 90 ).getY() );
-		ConstructionPoint c = cp( pane, ellipse, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 180 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 180 ).getY() );
-		ConstructionPoint d = cp( pane, ellipse, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, -90 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, -90 ).getY() );
+		ConstructionPoint origin = cp( pane, ellipse.centerXProperty(), ellipse.centerYProperty() );
+		ConstructionPoint a = cp( pane, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 0 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 0 ).getY() );
+		ConstructionPoint b = cp( pane, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 90 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 90 ).getY() );
+		ConstructionPoint c = cp( pane, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, 180 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, 180 ).getY() );
+		ConstructionPoint d = cp( pane, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, -90 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, -90 ).getY() );
 
 		return setConstructionPoints( ellipse, List.of( origin, a, b, c, d ) );
 	}

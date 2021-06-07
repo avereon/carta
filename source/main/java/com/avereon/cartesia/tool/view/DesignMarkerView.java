@@ -41,7 +41,7 @@ public class DesignMarkerView extends DesignShapeView {
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Path path = (Path)shapes.get( 0 );
 		MoveTo origin = ((MoveTo)path.getElements().get( 0 ));
-		ConstructionPoint o = cp( pane, path, origin.xProperty(), origin.yProperty() );
+		ConstructionPoint o = cp( pane, origin.xProperty(), origin.yProperty() );
 		return setConstructionPoints( path, List.of( o ) );
 	}
 

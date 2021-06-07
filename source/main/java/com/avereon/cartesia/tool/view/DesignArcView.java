@@ -50,10 +50,9 @@ public class DesignArcView extends DesignShapeView {
 		// Points should be at the origin, each endpoint and the midpoint
 		Arc arc = (Arc)shapes.get( 0 );
 
-		ConstructionPoint a = cp( pane, arc, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getY() );
+		ConstructionPoint a = cp( pane, arc.centerXProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerYProperty(), () -> getArcPoint( arc, arc.getStartAngle() ).getY() );
 		ConstructionPoint c = cp(
 			pane,
-			arc,
 			arc.centerXProperty(),
 			() -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(),
 			arc.centerYProperty(),
@@ -61,7 +60,6 @@ public class DesignArcView extends DesignShapeView {
 		);
 		ConstructionPoint b = cp(
 			pane,
-			arc,
 			arc.centerXProperty(),
 			() -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(),
 			arc.centerYProperty(),

@@ -35,8 +35,8 @@ public class DesignLineView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Line line = (Line)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, line, line.startXProperty(), line.startYProperty() );
-		ConstructionPoint p = cp( pane, line, line.endXProperty(), line.endYProperty() );
+		ConstructionPoint o = cp( pane, line.startXProperty(), line.startYProperty() );
+		ConstructionPoint p = cp( pane, line.endXProperty(), line.endYProperty() );
 		return setConstructionPoints( line, List.of( o, p ) );
 	}
 

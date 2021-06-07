@@ -32,7 +32,16 @@ public class DesignCurveView extends DesignShapeView {
 	@Override
 	protected List<Shape> generateGeometry() {
 		DesignCurve curve = getDesignCurve();
-		Shape shape = new CubicCurve( curve.getOrigin().getX(), curve.getOrigin().getY(), curve.getOriginControl().getX(), curve.getOriginControl().getY(), curve.getPointControl().getX(), curve.getPointControl().getY(), curve.getPoint().getX(), curve.getPoint().getY() );
+		Shape shape = new CubicCurve(
+			curve.getOrigin().getX(),
+			curve.getOrigin().getY(),
+			curve.getOriginControl().getX(),
+			curve.getOriginControl().getY(),
+			curve.getPointControl().getX(),
+			curve.getPointControl().getY(),
+			curve.getPoint().getX(),
+			curve.getPoint().getY()
+		);
 		shape.setStrokeWidth( curve.calcDrawWidth() );
 		shape.setStroke( curve.calcDrawPaint() );
 		shape.setFill( curve.calcFillPaint() );
@@ -42,10 +51,10 @@ public class DesignCurveView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		CubicCurve curve = (CubicCurve)shapes.get( 0 );
-		ConstructionPoint a = cp( pane, curve, curve.startXProperty(), curve.startYProperty() );
-		ConstructionPoint b = cp( pane, curve, curve.controlX1Property(), curve.controlY1Property() );
-		ConstructionPoint c = cp( pane, curve, curve.controlX2Property(), curve.controlY2Property() );
-		ConstructionPoint d = cp( pane, curve, curve.endXProperty(), curve.endYProperty() );
+		ConstructionPoint a = cp( pane, curve.startXProperty(), curve.startYProperty() );
+		ConstructionPoint b = cp( pane, curve.controlX1Property(), curve.controlY1Property() );
+		ConstructionPoint c = cp( pane, curve.controlX2Property(), curve.controlY2Property() );
+		ConstructionPoint d = cp( pane, curve.endXProperty(), curve.endYProperty() );
 
 		return setConstructionPoints( curve, List.of( a, b, c, d ) );
 	}
