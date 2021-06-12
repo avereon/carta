@@ -40,7 +40,7 @@ public class CommandContext {
 
 	private CommandPrompt commandPrompt;
 
-	private String priorShortcut;
+	private String priorCommand;
 
 	private DesignTool lastActiveDesignTool;
 
@@ -57,7 +57,7 @@ public class CommandContext {
 	public CommandContext( ProgramProduct product ) {
 		this.product = product;
 		this.commandStack = new LinkedBlockingDeque<>();
-		this.priorShortcut = TextUtil.EMPTY;
+		this.priorCommand = TextUtil.EMPTY;
 		this.inputMode = CommandContext.Input.NONE;
 	}
 
@@ -70,7 +70,7 @@ public class CommandContext {
 	}
 
 	public CommandPrompt getCommandPrompt() {
-		if( commandPrompt == null ) this.commandPrompt = new CommandPrompt( getProduct(), this );
+		if( commandPrompt == null ) this.commandPrompt = new CommandPrompt( this );
 		return commandPrompt;
 	}
 
@@ -126,7 +126,7 @@ public class CommandContext {
 
 	public void repeat() {
 		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
-			mapCommand( getPriorShortcut() );
+			doCommand( mapCommand( getPriorCommand() ) );
 			reset();
 		}
 	}
@@ -175,6 +175,7 @@ public class CommandContext {
 	}
 
 	void handle( KeyEvent event ) {
+		// FIXME Event consume breaks delete action
 		event.consume();
 		doProcessKeyEvent( event );
 	}
@@ -258,16 +259,14 @@ public class CommandContext {
 		if( TextUtil.isEmpty( input ) ) return null;
 
 		CommandMetadata mapping = CommandMap.get( input );
-		if( mapping != null ) {
-			priorShortcut = input;
-		} else {
-			throw new UnknownCommand( input );
-		}
+		if( mapping == null ) throw new UnknownCommand( input );
+
 		return mapping;
 	}
 
 	private void doCommand( CommandMetadata mapping ) {
 		if( mapping == null ) return;
+		priorCommand = mapping.getCommand();
 		doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
 	}
 
@@ -294,6 +293,8 @@ public class CommandContext {
 
 		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
+
+		// TODO Is parameter data leaking to the next command stack???
 
 		synchronized( commandStack ) {
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
@@ -359,8 +360,8 @@ public class CommandContext {
 		}
 	}
 
-	private String getPriorShortcut() {
-		return priorShortcut;
+	private String getPriorCommand() {
+		return priorCommand;
 	}
 
 	private static class CommandExecuteRequest {

@@ -417,12 +417,13 @@ public abstract class DesignTool extends GuidedTool {
 		//printsGuide.init( design );
 
 		Fx.run( () -> {
-			designPane.setDesign( design );
 			designPane.setDpi( Screen.getPrimary().getDpi() );
+			designPane.setDesign( design );
 		} );
 
 		// Keep the design pane centered when resizing
 		// These should be added before updating the pan and zoom
+		// FIXME These may be moved to the designPane itself
 		widthProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
 		heightProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
 
@@ -558,7 +559,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	void showCommandPrompt() {
 		Fx.run( this::registerStatusBarItems );
-		Fx.run( () -> getCommandPrompt().requestFocus() );
+		Fx.run( this::requestFocus );
 	}
 
 	private DesignPane getDesignPane() {

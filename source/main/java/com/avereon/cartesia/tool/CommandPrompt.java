@@ -4,7 +4,6 @@ import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.product.Rb;
 import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.javafx.Fx;
 import javafx.event.EventHandler;
 import javafx.scene.control.Label;
@@ -16,16 +15,13 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private static final System.Logger log = Log.get();
 
-	private final ProgramProduct product;
-
 	private final CommandContext context;
 
 	private final Label prompt;
 
 	private final TextField command;
 
-	public CommandPrompt( ProgramProduct product, CommandContext context ) {
-		this.product = product;
+	public CommandPrompt(  CommandContext context ) {
 		this.context = context;
 
 		getStyleClass().add( "cartesia-command" );
@@ -73,7 +69,8 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 	}
 
 	public void requestFocus() {
-		Fx.run( command::requestFocus );
+		// Intentionally do nothing
+		// The design tool should request focus instead
 	}
 
 }
