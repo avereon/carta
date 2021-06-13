@@ -41,6 +41,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -558,8 +559,8 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerStatusBarItems() {
-		getWorkspace().getStatusBar().addLeftItems( getCommandPrompt() );
-		getWorkspace().getStatusBar().addRightItems( getCoordinateStatus() );
+		getWorkspace().getStatusBar().setLeftToolItems( getCommandPrompt() );
+		getWorkspace().getStatusBar().setRightToolItems( getCoordinateStatus() );
 	}
 
 	private void unregisterStatusBarItems() {
@@ -569,13 +570,15 @@ public abstract class DesignTool extends GuidedTool {
 
 	@SuppressWarnings( "unchecked" )
 	private void updateCommandCapture() {
+		Node workpane = getWorkpane();
+
 		// If there is already a command capture handler then remove it (because it may belong to a different design)
-		EventHandler<KeyEvent> handler = (EventHandler<KeyEvent>)getScene().getProperties().get( "design-tool-command-capture" );
-		if( handler != null ) getScene().removeEventHandler( KeyEvent.ANY, handler );
+		EventHandler<KeyEvent> handler = (EventHandler<KeyEvent>)workpane.getProperties().get( "design-tool-command-capture" );
+		if( handler != null ) workpane.removeEventHandler( KeyEvent.ANY, handler );
 
 		// Add this design command capture handler
-		getScene().getProperties().put( "design-tool-command-capture", getCommandPrompt() );
-		getScene().addEventHandler( KeyEvent.ANY, getCommandPrompt() );
+		workpane.getProperties().put( "design-tool-command-capture", getCommandPrompt() );
+		workpane.addEventHandler( KeyEvent.ANY, getCommandPrompt() );
 	}
 
 	private CommandPrompt getCommandPrompt() {

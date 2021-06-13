@@ -29,10 +29,10 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		setCenter( command = new TextField() );
 		setPrompt( TextUtil.EMPTY );
 
-		// FIXME I have two slightly competing handlers here
-		// one listening to just keys
-		// the other listening to the text
-		command.addEventHandler( KeyEvent.ANY, context::doProcessKeyEvent );
+		// This listener handles key pressed events for some special cases
+		command.addEventHandler( KeyEvent.KEY_PRESSED, context::doProcessKeyPress );
+
+		// This listener handles processing the text in the command prompt
 		command.textProperty().addListener( ( p, o, n ) -> this.textChanged( n ) );
 	}
 
@@ -46,14 +46,6 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		return command.getText().trim();
 	}
 
-	private void textChanged( String text ) {
-		try {
-			context.processText( text );
-		} catch( UnknownCommand exception ) {
-			log.log( Log.WARN, exception );
-		}
-	}
-
 	@Override
 	public void handle( KeyEvent event ) {
 		try {
@@ -63,14 +55,23 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		}
 	}
 
+	@Override
+	public void requestFocus() {
+		// Intentionally do nothing
+		// The design tool should request focus instead
+	}
+
 	public void clear() {
 		Fx.run( () -> command.setText( TextUtil.EMPTY ) );
 		setPrompt( TextUtil.EMPTY );
 	}
 
-	public void requestFocus() {
-		// Intentionally do nothing
-		// The design tool should request focus instead
+	private void textChanged( String text ) {
+		try {
+			context.processText( text );
+		} catch( UnknownCommand exception ) {
+			log.log( Log.WARN, exception );
+		}
 	}
 
 }

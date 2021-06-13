@@ -353,7 +353,7 @@ public class CommandContext {
 		return request == null ? null : request.getCommand();
 	}
 
-	void doProcessKeyEvent( KeyEvent event ) {
+	void doProcessKeyPress( KeyEvent event ) {
 		// On each key event the situation needs to be evaluated...
 		// If ESC was pressed, then the whole command stack should be cancelled
 		// If ENTER was pressed, then an attempt to process the text should be forced
