@@ -172,11 +172,6 @@ public abstract class DesignTool extends GuidedTool {
 		return getDesignContext().getCommandContext();
 	}
 
-	@Deprecated
-	public CommandPrompt getCommandPrompt() {
-		return getDesignContext().getCommandPrompt();
-	}
-
 	public Point3D getViewPoint() {
 		return designPane == null ? Point3D.ZERO : designPane.getViewPoint();
 	}
@@ -517,10 +512,6 @@ public abstract class DesignTool extends GuidedTool {
 		validateGrid();
 	}
 
-	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
-		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
-	}
-
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
 		newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
@@ -585,6 +576,10 @@ public abstract class DesignTool extends GuidedTool {
 		// Add this design command capture handler
 		getScene().getProperties().put( "design-tool-command-capture", getCommandPrompt() );
 		getScene().addEventHandler( KeyEvent.ANY, getCommandPrompt() );
+	}
+
+	private CommandPrompt getCommandPrompt() {
+		return getDesignContext().getCommandPrompt();
 	}
 
 	private void registerActions() {
@@ -684,6 +679,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	private CoordinateStatus getCoordinateStatus() {
 		return getDesignContext().getCoordinateStatus();
+	}
+
+	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
+		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
 	}
 
 	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {

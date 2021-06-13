@@ -83,13 +83,19 @@ public class CommandContext {
 		submit( tool, command, parameters );
 	}
 
-	public void cancel() {
+	public void cancel( KeyEvent event ) {
+		event.consume();
+		cancel();
+	}
+
+	private void cancel() {
 		commandStack.forEach( CommandExecuteRequest::cancel );
 		commandStack.clear();
 		reset();
 	}
 
 	public void enter( KeyEvent event ) {
+		event.consume();
 		String input = getCommandPrompt().getText();
 		if( input.isEmpty() ) {
 			DesignTool tool = getLastActiveDesignTool();
@@ -124,7 +130,8 @@ public class CommandContext {
 		reset();
 	}
 
-	public void repeat() {
+	public void repeat( KeyEvent event ) {
+		event.consume();
 		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
 			doCommand( mapCommand( getPriorCommand() ) );
 			reset();
@@ -175,9 +182,8 @@ public class CommandContext {
 	}
 
 	void handle( KeyEvent event ) {
-		// FIXME Event consume breaks delete action
-		event.consume();
-		doProcessKeyEvent( event );
+		// These just get forwarded to the command prompt
+		getCommandPrompt().handle( event );
 	}
 
 	void handle( MouseEvent event ) {
@@ -250,9 +256,11 @@ public class CommandContext {
 	}
 
 	private void doEventCommand( InputEvent event ) {
-		event.consume();
-		CommandMetadata mapping = CommandMap.get( event );
-		if( mapping != null ) doCommand( event, mapping.getType(), mapping.getParameters() );
+		CommandMetadata metadata = CommandMap.get( event );
+		if( metadata != null ) {
+			doCommand( event, metadata.getType(), metadata.getParameters() );
+			event.consume();
+		}
 	}
 
 	private CommandMetadata mapCommand( String input ) {
@@ -345,7 +353,7 @@ public class CommandContext {
 		return request == null ? null : request.getCommand();
 	}
 
-	private void doProcessKeyEvent( KeyEvent event ) {
+	void doProcessKeyEvent( KeyEvent event ) {
 		// On each key event the situation needs to be evaluated...
 		// If ESC was pressed, then the whole command stack should be cancelled
 		// If ENTER was pressed, then an attempt to process the text should be forced
@@ -353,9 +361,9 @@ public class CommandContext {
 
 		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
 			switch( event.getCode() ) {
-				case ESCAPE -> cancel();
+				case ESCAPE -> cancel( event );
 				case ENTER -> enter( event );
-				case SPACE -> repeat();
+				case SPACE -> repeat( event );
 			}
 		}
 	}
@@ -413,11 +421,7 @@ public class CommandContext {
 		}
 
 		private void doComplete() {
-			if( tool != null ) {
-				// FIXME Merged changes not working quite right
-				//tool.getAsset().getUndoManager().preventMerge();
-				if( command.clearSelectionWhenComplete() ) tool.clearSelected();
-			}
+			if( tool != null && command.clearSelectionWhenComplete() ) tool.clearSelected();
 		}
 
 		public void cancel() {

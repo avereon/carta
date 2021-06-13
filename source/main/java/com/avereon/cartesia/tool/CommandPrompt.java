@@ -21,7 +21,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private final TextField command;
 
-	public CommandPrompt(  CommandContext context ) {
+	public CommandPrompt( CommandContext context ) {
 		this.context = context;
 
 		getStyleClass().add( "cartesia-command" );
@@ -32,7 +32,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		// FIXME I have two slightly competing handlers here
 		// one listening to just keys
 		// the other listening to the text
-		command.addEventHandler( KeyEvent.ANY, context::handle );
+		command.addEventHandler( KeyEvent.ANY, context::doProcessKeyEvent );
 		command.textProperty().addListener( ( p, o, n ) -> this.textChanged( n ) );
 	}
 
