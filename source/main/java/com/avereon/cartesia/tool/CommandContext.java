@@ -161,7 +161,7 @@ public class CommandContext {
 	}
 
 	public void command( String input ) {
-		mapCommand( input );
+		doCommand( mapCommand( input ) );
 	}
 
 	public boolean isPenMode() {
