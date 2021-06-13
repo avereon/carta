@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandMap {
 
+	public static final CommandMetadata NO_ACTION = new CommandMetadata( "", "", "", "", Noop.class );
+
 	private static final System.Logger log = Log.get();
 
 	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
@@ -186,9 +188,12 @@ public class CommandMap {
 	}
 
 	public static CommandMetadata getActionCommand( String action ) {
-		if( TextUtil.isEmpty( action ) ) return null;
+		if( TextUtil.isEmpty( action ) ) return NO_ACTION;
 		CommandMetadata mapping = actionCommands.get( action );
-		if( mapping == null ) log.log( Log.WARN, "No command for action: " + action );
+		if( mapping == null ) {
+			log.log( Log.WARN, "No command for action: " + action );
+			mapping = NO_ACTION;
+		}
 		return mapping;
 	}
 
@@ -218,5 +223,7 @@ public class CommandMap {
 			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );
 		}
 	}
+
+	public static final class Noop extends Command {}
 
 }
