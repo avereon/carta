@@ -24,7 +24,8 @@ public class SelectTest extends BaseCartesiaTest {
 	private Select command;
 
 	@BeforeEach
-	void setup() {
+	protected void setup() throws Exception {
+		super.setup();
 		context = new CommandContext( getProduct() );
 		//tool = new DesignTool( getProduct(), asset ) {};
 		command = new Select();

@@ -48,7 +48,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	}
 
 	@BeforeEach
-	void setup() {
+	protected void setup() throws Exception {
 		super.setup();
 		codec = new CartesiaDesignCodec2D( getMod() );
 

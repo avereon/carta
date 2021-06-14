@@ -3,13 +3,11 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.BaseCartesiaTest;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
-import com.avereon.cartesia.MockCartesiaMod;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.error.UnknownCommand;
-import com.avereon.product.Rb;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.asset.Asset;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,11 +21,13 @@ public class CommandContextTest extends BaseCartesiaTest {
 
 	private CommandContext context;
 
+	private DesignTool tool;
+
 	@BeforeEach
-	public void setup() {
-		ProgramProduct product = new MockCartesiaMod();
-		Rb.init( product );
-		this.context = new CommandContext( product );
+	protected void setup() throws Exception {
+		super.setup();
+		this.context = new CommandContext( getProduct() );
+		this.tool = new Design2dEditor( getProduct(), Asset.NONE );
 	}
 
 	@Test
@@ -40,7 +40,7 @@ public class CommandContextTest extends BaseCartesiaTest {
 	void testCommand() {
 		try {
 			TestCommand command = new TestCommand();
-			context.submit( null, command );
+			context.submit( tool, command );
 			assertThat( command.getValues().length, is( 0 ) );
 		} catch( NullPointerException exception ) {
 			exception.printStackTrace( System.err );
@@ -57,7 +57,7 @@ public class CommandContextTest extends BaseCartesiaTest {
 	@Test
 	void testCommandWithTwoParameters() {
 		TestCommand command = new TestCommand();
-		context.submit( null, command, "0", "1" );
+		context.submit( tool, command, "0", "1" );
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 		assertThat( command.getValues()[ 1 ], is( "1" ) );
 	}
