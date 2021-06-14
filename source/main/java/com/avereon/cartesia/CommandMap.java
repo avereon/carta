@@ -176,7 +176,7 @@ public class CommandMap {
 	}
 
 	public static boolean hasCommand( String shortcut ) {
-		return get( shortcut ) != null;
+		return get( shortcut ) != NO_ACTION;
 	}
 
 	public static CommandMetadata get( String shortcut ) {

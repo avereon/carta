@@ -29,17 +29,18 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		setCenter( command = new TextField() );
 		setPrompt( TextUtil.EMPTY );
 
-		// This listener handles key pressed events for some special cases
-		command.addEventHandler( KeyEvent.KEY_PRESSED, context::doProcessKeyPress );
-
 		// This listener handles processing the text in the command prompt
 		command.textProperty().addListener( ( p, o, n ) -> this.textChanged( n ) );
+
+		// This listener handles key pressed events for some special cases
+		command.addEventHandler( KeyEvent.KEY_PRESSED, context::doProcessKeyPress );
 	}
 
 	public void setPrompt( String prompt ) {
 		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
+		final DesignTool tool = context.getTool();
+		if( tool != null ) Fx.run( tool::showCommandPrompt );
 		Fx.run( () -> this.prompt.setText( effectivePrompt ) );
-		if( context.getTool() != null ) Fx.run( () -> context.getTool().showCommandPrompt() );
 	}
 
 	public String getText() {
@@ -48,7 +49,10 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	@Override
 	public void handle( KeyEvent event ) {
+		// This method is part of a delicate balance between an event handler on the
+		// workpane, this method and the command text field.
 		try {
+			// Do not consume the event here, it needs to be passed along
 			command.fireEvent( event );
 		} catch( UnknownCommand exception ) {
 			log.log( Log.WARN, exception );

@@ -26,6 +26,7 @@ import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
+import com.avereon.xenon.workpane.Workpane;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -41,7 +42,6 @@ import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
@@ -527,7 +527,7 @@ public abstract class DesignTool extends GuidedTool {
 	protected void activate() throws ToolException {
 		super.activate();
 
-		getDesignContext().getCommandContext().setLastActiveDesignTool( this );
+		getCommandContext().setLastActiveDesignTool( this );
 		registerStatusBarItems();
 		updateCommandCapture();
 		registerActions();
@@ -559,30 +559,26 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerStatusBarItems() {
-		getWorkspace().getStatusBar().setLeftToolItems( getCommandPrompt() );
+		getWorkspace().getStatusBar().setLeftToolItems( getDesignContext().getCommandPrompt() );
 		getWorkspace().getStatusBar().setRightToolItems( getCoordinateStatus() );
 	}
 
 	private void unregisterStatusBarItems() {
 		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
-		getWorkspace().getStatusBar().removeLeftItems( getCommandPrompt() );
+		getWorkspace().getStatusBar().removeLeftItems( getDesignContext().getCommandPrompt() );
 	}
 
 	@SuppressWarnings( "unchecked" )
 	private void updateCommandCapture() {
-		Node workpane = getWorkpane();
+		Workpane workpane = getWorkpane();
 
 		// If there is already a command capture handler then remove it (because it may belong to a different design)
 		EventHandler<KeyEvent> handler = (EventHandler<KeyEvent>)workpane.getProperties().get( "design-tool-command-capture" );
 		if( handler != null ) workpane.removeEventHandler( KeyEvent.ANY, handler );
 
 		// Add this design command capture handler
-		workpane.getProperties().put( "design-tool-command-capture", getCommandPrompt() );
-		workpane.addEventHandler( KeyEvent.ANY, getCommandPrompt() );
-	}
-
-	private CommandPrompt getCommandPrompt() {
-		return getDesignContext().getCommandPrompt();
+		workpane.getProperties().put( "design-tool-command-capture", getDesignContext().getCommandPrompt() );
+		workpane.addEventHandler( KeyEvent.ANY, getDesignContext().getCommandPrompt() );
 	}
 
 	private void registerActions() {

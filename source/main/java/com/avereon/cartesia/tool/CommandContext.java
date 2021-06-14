@@ -139,7 +139,7 @@ public class CommandContext {
 	}
 
 	void processText( String input ) {
-		doCommand( processText( input, false ) );
+		processText( input, false );
 	}
 
 	CommandMetadata processText( String input, boolean force ) {
@@ -155,9 +155,9 @@ public class CommandContext {
 				return mapCommand( input );
 			}
 		} else if( !isTextInput && isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
-			return mapCommand( input );
+			doCommand( mapCommand( input ) );
 		}
-		return null;
+		return CommandMap.NO_ACTION;
 	}
 
 	public void command( String input ) {
@@ -204,7 +204,8 @@ public class CommandContext {
 	}
 
 	void setLastActiveDesignTool( DesignTool tool ) {
-		lastActiveDesignTool = tool;
+		log.log( Log.WARN, "Command context=" + System.identityHashCode( this ) );
+		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
 
 	public DesignTool getTool() {
@@ -212,7 +213,7 @@ public class CommandContext {
 	}
 
 	void setTool( DesignTool tool ) {
-		this.tool = tool;
+		this.tool = Objects.requireNonNull( tool );
 	}
 
 	public Point3D getScreenMouse() {
@@ -257,7 +258,7 @@ public class CommandContext {
 
 	private void doEventCommand( InputEvent event ) {
 		CommandMetadata metadata = CommandMap.get( event );
-		if( metadata != null ) {
+		if( metadata != CommandMap.NO_ACTION ) {
 			doCommand( event, metadata.getType(), metadata.getParameters() );
 			event.consume();
 		}
@@ -272,10 +273,10 @@ public class CommandContext {
 		return mapping;
 	}
 
-	private void doCommand( CommandMetadata mapping ) {
-		if( mapping == null ) return;
-		priorCommand = mapping.getCommand();
-		doCommand( getLastActiveDesignTool(), mapping.getType(), mapping.getParameters() );
+	private void doCommand( CommandMetadata metadata ) {
+		if( metadata == CommandMap.NO_ACTION ) return;
+		priorCommand = metadata.getCommand();
+		doCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
 	}
 
 	private void doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
@@ -305,6 +306,7 @@ public class CommandContext {
 		// TODO Is parameter data leaking to the next command stack???
 
 		synchronized( commandStack ) {
+			log.log( Log.WARN, "Command context=" + System.identityHashCode( this ) );
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
 			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
 			getProduct().task( "process-commands", this::doProcessCommands );
@@ -383,9 +385,9 @@ public class CommandContext {
 		private Object[] parameters;
 
 		public CommandExecuteRequest( CommandContext context, DesignTool tool, Command command, Object... parameters ) {
-			this.context = context;
-			this.tool = tool;
-			this.command = command;
+			this.context = Objects.requireNonNull( context );
+			this.tool = Objects.requireNonNull( tool );
+			this.command = Objects.requireNonNull( command );
 			this.parameters = parameters;
 		}
 
@@ -402,8 +404,7 @@ public class CommandContext {
 		}
 
 		public Object executeCommandStep( Object priorResult ) throws Exception {
-			// NOTE Be judicious adding logic in this method.
-			// It is called for every step in a command
+			// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
 			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A prior result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
@@ -421,7 +422,7 @@ public class CommandContext {
 		}
 
 		private void doComplete() {
-			if( tool != null && command.clearSelectionWhenComplete() ) tool.clearSelected();
+			if( command.clearSelectionWhenComplete() ) tool.clearSelected();
 		}
 
 		public void cancel() {
@@ -434,7 +435,7 @@ public class CommandContext {
 
 		@Override
 		public String toString() {
-			return command.toString() + ":" + command.getStep();
+			return command + ":" + command.getStep();
 		}
 	}
 
