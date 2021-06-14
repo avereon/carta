@@ -42,6 +42,8 @@ public class Command {
 
 	private int step;
 
+	private boolean executed;
+
 	protected Command() {
 		this.reference = new CopyOnWriteArrayList<>();
 		this.preview = new CopyOnWriteArrayList<>();
@@ -65,6 +67,18 @@ public class Command {
 
 	public void incrementStep() {
 		step++;
+	}
+
+	public synchronized void waitFor() throws InterruptedException {
+		while( !executed ) {
+			wait( 100 );
+		}
+		this.executed = false;
+	}
+
+	public synchronized void setExecuted() {
+		this.executed = true;
+		notifyAll();
 	}
 
 	public CommandContext.Input getInputMode() {

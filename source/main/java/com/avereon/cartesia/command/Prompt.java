@@ -28,7 +28,7 @@ public class Prompt extends Command {
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		DesignTool tool = context.getTool();
 
-		if( tool == null ) return COMPLETE;
+		if( tool == null ) return INVALID;
 
 		if( parameters.length == 0 ) {
 			tool.getDesignContext().getCommandPrompt().setPrompt( prompt );

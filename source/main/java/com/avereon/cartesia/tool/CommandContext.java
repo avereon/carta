@@ -74,13 +74,13 @@ public class CommandContext {
 		return commandPrompt;
 	}
 
-	public void submit( DesignTool tool, Command command, Object... parameters ) {
-		doCommand( tool, command, parameters );
+	public Command submit( DesignTool tool, Command command, Object... parameters ) {
+		return doCommand( tool, command, parameters );
 	}
 
-	public void resubmit( DesignTool tool, Command command, Object... parameters ) {
+	public Command resubmit( DesignTool tool, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
-		submit( tool, command, parameters );
+		return submit( tool, command, parameters );
 	}
 
 	public void cancel( KeyEvent event ) {
@@ -138,26 +138,23 @@ public class CommandContext {
 		}
 	}
 
-	void processText( String input ) {
-		processText( input, false );
+	Command processText( String input ) {
+		return processText( input, false );
 	}
 
-	CommandMetadata processText( String input, boolean force ) {
+	Command processText( String input, boolean force ) {
 		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
 		if( force ) {
-			if( getInputMode() == CommandContext.Input.NUMBER ) {
-				doCommand( new Value(), CadShapes.parsePoint( input ).getX() );
-			} else if( getInputMode() == CommandContext.Input.POINT ) {
-				doCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
-			} else if( isTextInput ) {
-				doCommand( new Value(), input );
-			} else {
-				return mapCommand( input );
-			}
+			return switch( getInputMode() ) {
+				case NUMBER -> doCommand( new Value(), CadShapes.parsePoint( input ).getX() );
+				case POINT -> doCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
+				case TEXT -> doCommand( new Value(), input );
+				default -> doCommand( mapCommand( input ) );
+			};
 		} else if( !isTextInput && isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
-			doCommand( mapCommand( input ) );
+			return doCommand( mapCommand( input ) );
 		}
-		return CommandMap.NO_ACTION;
+		return null;
 	}
 
 	public void command( String input ) {
@@ -204,7 +201,6 @@ public class CommandContext {
 	}
 
 	void setLastActiveDesignTool( DesignTool tool ) {
-		log.log( Log.WARN, "Command context=" + System.identityHashCode( this ) );
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
 
@@ -268,36 +264,37 @@ public class CommandContext {
 		if( TextUtil.isEmpty( input ) ) return null;
 
 		CommandMetadata mapping = CommandMap.get( input );
-		if( mapping == null ) throw new UnknownCommand( input );
+		if( mapping == CommandMap.NO_ACTION ) throw new UnknownCommand( input );
 
 		return mapping;
 	}
 
-	private void doCommand( CommandMetadata metadata ) {
-		if( metadata == CommandMap.NO_ACTION ) return;
+	private Command doCommand( CommandMetadata metadata ) {
+		if( metadata == CommandMap.NO_ACTION ) return null;
 		priorCommand = metadata.getCommand();
-		doCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
+		return doCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
 	}
 
-	private void doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
 		DesignTool tool = (DesignTool)event.getSource();
-		doCommand( tool, commandClass, ArrayUtil.concat( parameters, event ) );
+		return doCommand( tool, commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
-	private void doCommand( Command command, Object... parameters ) {
-		doCommand( getLastActiveDesignTool(), command, parameters );
+	private Command doCommand( Command command, Object... parameters ) {
+		return doCommand( getLastActiveDesignTool(), command, parameters );
 	}
 
-	private void doCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command doCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
-			doCommand( tool, commandClass.getConstructor().newInstance(), parameters );
+			return doCommand( tool, commandClass.getConstructor().newInstance(), parameters );
 		} catch( Exception exception ) {
 			log.log( Log.ERROR, exception );
 		}
+		return null;
 	}
 
-	private void doCommand( DesignTool tool, Command command, Object... parameters ) {
+	private Command doCommand( DesignTool tool, Command command, Object... parameters ) {
 		checkForCommonProblems( tool, command, parameters );
 
 		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
@@ -306,11 +303,12 @@ public class CommandContext {
 		// TODO Is parameter data leaking to the next command stack???
 
 		synchronized( commandStack ) {
-			log.log( Log.WARN, "Command context=" + System.identityHashCode( this ) );
 			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
 			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
+
+		return command;
 	}
 
 	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters ) {
@@ -416,6 +414,7 @@ public class CommandContext {
 				if( result != Command.INVALID ) command.incrementStep();
 			} finally {
 				if( result != Command.INCOMPLETE ) doComplete();
+				command.setExecuted();
 			}
 
 			return result;

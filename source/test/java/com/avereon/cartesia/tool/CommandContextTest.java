@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BaseCartesiaTest;
 import com.avereon.cartesia.CommandMap;
-import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
@@ -13,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -28,6 +28,8 @@ public class CommandContextTest extends BaseCartesiaTest {
 		super.setup();
 		this.context = new CommandContext( getProduct() );
 		this.tool = new Design2dEditor( getProduct(), Asset.NONE );
+
+		context.setLastActiveDesignTool( tool );
 	}
 
 	@Test
@@ -37,108 +39,122 @@ public class CommandContextTest extends BaseCartesiaTest {
 	}
 
 	@Test
-	void testCommand() {
-		try {
-			TestCommand command = new TestCommand();
-			context.submit( tool, command );
-			assertThat( command.getValues().length, is( 0 ) );
-		} catch( NullPointerException exception ) {
-			exception.printStackTrace( System.err );
-		}
+	void testCommand() throws Exception {
+		TestCommand command = new TestCommand();
+		context.submit( tool, command );
+		command.waitFor();
+		assertThat( command.getValues().length, is( 0 ) );
 	}
 
 	@Test
-	void testCommandWithOneParameter() {
+	void testCommandWithOneParameter() throws Exception {
 		TestCommand command = new TestCommand();
-		context.submit( null, command, "0" );
+		context.submit( tool, command, "0" );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 	}
 
 	@Test
-	void testCommandWithTwoParameters() {
+	void testCommandWithTwoParameters() throws Exception {
 		TestCommand command = new TestCommand();
 		context.submit( tool, command, "0", "1" );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 		assertThat( command.getValues()[ 1 ], is( "1" ) );
 	}
 
 	@Test
-	void testCommandThatNeedsOneValue() {
+	void testCommandThatNeedsOneValue() throws Exception {
 		TestCommand command = new TestCommand( 1 );
-		context.submit( null, command );
-		context.submit( null, new Value(), "hello" );
+		context.submit( tool, command );
+		command.waitFor();
+		context.submit( tool, new Value(), "hello" );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( "hello" ) );
 	}
 
 	@Test
-	void testCommandThatNeedsTwoValues() {
+	void testCommandThatNeedsTwoValues() throws Exception {
 		TestCommand command = new TestCommand( 2 );
-		context.submit( null, command );
-		context.submit( null, new Value(), "0" );
-		context.submit( null, new Value(), "1" );
+		context.submit( tool, command );
+		command.waitFor();
+		context.submit( tool, new Value(), "0" );
+		command.waitFor();
+		context.submit( tool, new Value(), "1" );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( "0" ) );
 		assertThat( command.getValues()[ 1 ], is( "1" ) );
 	}
 
 	@Test
-	void testInputMode() {
+	void testInputMode() throws Exception {
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 
 		TestCommand command = new TestCommand( 0 );
-		context.submit( null, command );
-		context.submit( null, new Prompt( "", CommandContext.Input.NONE ) );
+		context.submit( tool, command );
+		command.waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
-		context.submit( null, new Prompt( "", CommandContext.Input.NUMBER ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor();
 		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
-		context.submit( null, new Prompt( "", CommandContext.Input.POINT ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor();
 		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
-		context.submit( null, new Prompt( "", CommandContext.Input.TEXT ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor();
 		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
-		context.submit( null, new Prompt( "", CommandContext.Input.NONE ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 	}
 
 	@Test
-	void testNumberInput() {
+	void testNumberInput() throws Exception {
 		TestCommand command = new TestCommand( 1 );
-		context.submit( null, command );
+		context.submit( tool, command );
+		command.waitFor();
 		context.setInputMode( CommandContext.Input.NUMBER );
 		context.processText( "4,3,2", true );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( 4.0 ) );
 	}
 
 	@Test
-	void testPointInput() {
+	void testPointInput() throws Exception {
 		TestCommand command = new TestCommand( 1 );
-		context.submit( null, command );
+		context.submit( tool, command );
+		command.waitFor();
 		context.setInputMode( CommandContext.Input.POINT );
 		context.processText( "4,3,2", true );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( new Point3D( 4, 3, 2 ) ) );
 	}
 
 	@Test
-	void testRelativePointInput() {
+	void testRelativePointInput() throws Exception {
 		TestCommand command = new TestCommand( 1 );
-		context.submit( null, command );
+		context.submit( tool, command );
+		command.waitFor();
 		context.setAnchor( new Point3D( 1, 1, 1 ) );
 		context.setInputMode( CommandContext.Input.POINT );
 		context.processText( "@4,3,2", true );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( new Point3D( 5, 4, 3 ) ) );
 	}
 
 	@Test
-	void testTextInput() {
+	void testTextInput() throws Exception {
 		TestCommand command = new TestCommand( 1 );
-		context.submit( null, command );
+		context.submit( tool, command );
+		command.waitFor();
 		context.setInputMode( CommandContext.Input.TEXT );
 		context.processText( "test", true );
+		command.waitFor();
 		assertThat( command.getValues()[ 0 ], is( "test" ) );
 	}
 
 	@Test
-	void testUnknownInput() {
+	void testUnknownInput() throws Exception {
 		TestCommand command = new TestCommand( 1 );
-		context.submit( null, command );
+		context.submit( tool, command );
+		command.waitFor();
 		context.setInputMode( CommandContext.Input.NONE );
 		try {
 			context.processText( "unknown", true );
@@ -151,16 +167,16 @@ public class CommandContextTest extends BaseCartesiaTest {
 	@Test
 	void testAutoCommand() {
 		CommandMap.add( "test", TestCommand.class, "Test Command", "test", null );
-		CommandMetadata metadata = context.processText( "test", false );
-		assertThat( metadata.getType(), is( TestCommand.class ) );
+		Command command = context.processText( "test", false );
+		assertThat( command, instanceOf( TestCommand.class ) );
 	}
 
 	@Test
 	void testNoAutoCommandWithTextInput() {
 		context.setInputMode( CommandContext.Input.TEXT );
 		CommandMap.add( "test", TestCommand.class, "Test Command", "test", null );
-		CommandMetadata metadata = context.processText( "test", false );
-		assertNull( metadata );
+		Command command = context.processText( "test", false );
+		assertNull( command );
 	}
 
 	private static class TestCommand extends Command {
