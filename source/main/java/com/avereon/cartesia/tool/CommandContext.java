@@ -254,7 +254,7 @@ public class CommandContext {
 
 	private void doEventCommand( InputEvent event ) {
 		CommandMetadata metadata = CommandMap.get( event );
-		if( metadata != CommandMap.NO_ACTION ) {
+		if( metadata != CommandMap.NONE ) {
 			doCommand( event, metadata.getType(), metadata.getParameters() );
 			event.consume();
 		}
@@ -264,13 +264,13 @@ public class CommandContext {
 		if( TextUtil.isEmpty( input ) ) return null;
 
 		CommandMetadata mapping = CommandMap.get( input );
-		if( mapping == CommandMap.NO_ACTION ) throw new UnknownCommand( input );
+		if( mapping == CommandMap.NONE ) throw new UnknownCommand( input );
 
 		return mapping;
 	}
 
 	private Command doCommand( CommandMetadata metadata ) {
-		if( metadata == CommandMap.NO_ACTION ) return null;
+		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
 		return doCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
 	}

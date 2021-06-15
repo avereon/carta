@@ -12,7 +12,7 @@ public class Trim extends Command {
 
 	private static final System.Logger log = Log.get();
 
-	private DesignShape trim;
+	private DesignShape trimShape;
 
 	private Point3D trimMouse;
 
@@ -27,20 +27,20 @@ public class Trim extends Command {
 
 		if( parameters.length < 2 ) {
 			trimMouse = context.getScreenMouse();
-			trim = selectNearestShapeAtMouse( context, trimMouse );
-			if( trim == DesignShape.NONE ) return INVALID;
+			trimShape = selectNearestShapeAtMouse( context, trimMouse );
+			if( trimShape == DesignShape.NONE ) return INVALID;
 			promptForShape( context, "select-trim-edge" );
 			return INCOMPLETE;
 		}
 
 		Point3D edgeMouse = context.getScreenMouse();
-		DesignShape edge = findNearestShapeAtMouse( context, edgeMouse );
-		if( edge == DesignShape.NONE ) return INVALID;
+		DesignShape edgeShape = findNearestShapeAtMouse( context, edgeMouse );
+		if( edgeShape == DesignShape.NONE ) return INVALID;
 
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
 
-		com.avereon.cartesia.math.Trim.trim( context.getTool(), trim, edge, trimMouse, edgeMouse );
+		com.avereon.cartesia.math.Trim.trim( context.getTool(), trimShape, edgeShape, trimMouse, edgeMouse );
 
 		return COMPLETE;
 	}
