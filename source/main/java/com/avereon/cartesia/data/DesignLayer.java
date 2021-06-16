@@ -100,6 +100,10 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
+	/**
+	 * Deeply get all the descendent layers in this layer.
+	 * @return All descendent layers of this layer
+	 */
 	public List<DesignLayer> getAllLayers() {
 		List<DesignLayer> layers = new ArrayList<>();
 		getLayers().forEach( layer -> {
@@ -113,6 +117,10 @@ public class DesignLayer extends DesignDrawable {
 		return getAllLayers().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
 	}
 
+	/**
+	 * Get only the child layers of this layer, not any descendents.
+	 * @return The child layers of this layer
+	 */
 	public List<DesignLayer> getLayers() {
 		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER, DesignLayer.NAME ) );
 	}

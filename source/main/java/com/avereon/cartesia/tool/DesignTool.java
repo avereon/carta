@@ -302,8 +302,8 @@ public abstract class DesignTool extends GuidedTool {
 	/**
 	 * Change the zoom value by a factor.
 	 *
-	 * @param anchor
-	 * @param factor
+	 * @param anchor The zoom anchor
+	 * @param factor The zoom factor
 	 */
 	public void zoom( Point3D anchor, double factor ) {
 		Fx.run( () -> designPane.zoom( anchor, factor ) );
@@ -312,10 +312,10 @@ public abstract class DesignTool extends GuidedTool {
 	/**
 	 * Pan the view by mouse coordinates.
 	 *
-	 * @param viewAnchor
-	 * @param dragAnchor
-	 * @param x
-	 * @param y
+	 * @param viewAnchor The view point location before being dragged (world)
+	 * @param dragAnchor The drag anchor (screen)
+	 * @param x The new X coordinate (screen)
+	 * @param y The new Y coordinate (screen)
 	 */
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
 		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, x, y ) );
