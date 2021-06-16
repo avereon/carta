@@ -40,10 +40,6 @@ public class Trim extends Command {
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
 
-		// FIXME Why is the trime shape the same as the first time?
-		// And why does a clear work ... sometimes?
-		System.out.println( "trim=" + trimShape );
-
 		com.avereon.cartesia.math.Trim.trim( context.getTool(), trimShape, edgeShape, trimMouse, edgeMouse );
 
 		return COMPLETE;

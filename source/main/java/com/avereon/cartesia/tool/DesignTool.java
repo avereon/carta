@@ -709,7 +709,10 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
-		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selectedShapes()::add ) );
+		Fx.run( () -> {
+			selectedShapes.clear();
+			designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selectedShapes()::add );
+		} );
 		try {
 			Fx.waitForWithInterrupt( 1000 );
 		} catch( InterruptedException exception ) {
@@ -740,8 +743,7 @@ public abstract class DesignTool extends GuidedTool {
 	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
 		Fx.run( () -> {
 			selectedShapes().clear();
-			List<Shape> selection = designPane.screenWindowSelect( a, b, contains );
-			selectedShapes().addAll( selection );
+			selectedShapes().addAll( designPane.screenWindowSelect( a, b, contains ) );
 		} );
 	}
 
