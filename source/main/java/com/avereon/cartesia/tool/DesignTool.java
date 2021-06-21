@@ -701,7 +701,7 @@ public abstract class DesignTool extends GuidedTool {
 		final List<Shape> selection = new ArrayList<>();
 		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selection::add ) );
 		try {
-			Fx.waitForWithInterrupt( 1000 );
+			Fx.waitForWithExceptions( 1000 );
 		} catch( InterruptedException exception ) {
 			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
 		}
@@ -714,7 +714,7 @@ public abstract class DesignTool extends GuidedTool {
 			designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selectedShapes()::add );
 		} );
 		try {
-			Fx.waitForWithInterrupt( 1000 );
+			Fx.waitForWithExceptions( 1000 );
 		} catch( InterruptedException exception ) {
 			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
 		}
