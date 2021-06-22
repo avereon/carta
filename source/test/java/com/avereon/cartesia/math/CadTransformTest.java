@@ -1,5 +1,6 @@
 package com.avereon.cartesia.math;
 
+import com.avereon.cartesia.BaseCartesiaTest;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +10,7 @@ import static com.avereon.cartesia.match.Near.near;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-public class CadTransformTest {
+public class CadTransformTest extends BaseCartesiaTest {
 
 	@Test
 	void testConstructorWithArrays() {
