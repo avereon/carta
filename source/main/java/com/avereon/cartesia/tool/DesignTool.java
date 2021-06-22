@@ -53,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -702,7 +703,7 @@ public abstract class DesignTool extends GuidedTool {
 		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selection::add ) );
 		try {
 			Fx.waitForWithExceptions( 1000 );
-		} catch( InterruptedException exception ) {
+		} catch( InterruptedException | TimeoutException exception ) {
 			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
 		}
 		return selection;
@@ -715,7 +716,7 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 		try {
 			Fx.waitForWithExceptions( 1000 );
-		} catch( InterruptedException exception ) {
+		} catch( InterruptedException | TimeoutException exception ) {
 			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
 		}
 		return selectedShapes();
