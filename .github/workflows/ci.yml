@@ -83,12 +83,6 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v1
 
-  publish:
-    needs: build
-    name: Publish
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    steps:
       - name: Publish Arifacts
         run: |
           mvn ${{env.MAVEN_PARMS}} deploy -Dmaven.test.skip=true
