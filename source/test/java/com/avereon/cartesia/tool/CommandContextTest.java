@@ -26,8 +26,8 @@ public class CommandContextTest extends BaseCartesiaTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		this.context = new CommandContext( getProduct() );
-		this.tool = new Design2dEditor( getProduct(), Asset.NONE );
+		this.context = new CommandContext( getMod() );
+		this.tool = new Design2dEditor( getMod(), Asset.NONE );
 
 		context.setLastActiveDesignTool( tool );
 	}

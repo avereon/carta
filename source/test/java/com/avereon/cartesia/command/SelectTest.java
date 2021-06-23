@@ -26,7 +26,7 @@ public class SelectTest extends BaseCartesiaTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		context = new CommandContext( getProduct() );
+		context = new CommandContext( getMod() );
 		//tool = new DesignTool( getProduct(), asset ) {};
 		command = new Select();
 	}
