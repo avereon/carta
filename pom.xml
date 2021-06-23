@@ -34,6 +34,9 @@
 	</pluginRepositories>
 
 	<properties>
+		<curve.version>0.2-SNAPSHOT</curve.version>
+		<jep.version>2.24</jep.version>
+		<zarra.version>0.5-SNAPSHOT</zarra.version>
 		<images-folder>target/main/images</images-folder>
 	</properties>
 
@@ -42,19 +45,27 @@
 		<dependency>
 			<groupId>com.avereon</groupId>
 			<artifactId>curve</artifactId>
-			<version>0.2-SNAPSHOT</version>
+			<version>${curve.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>jep</groupId>
 			<artifactId>jep</artifactId>
-			<version>2.24</version>
+			<version>${jep.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.avereon</groupId>
+			<artifactId>xenon</artifactId>
+			<classifier>tests</classifier>
+			<version>${xenon.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.avereon</groupId>
 			<artifactId>zarra</artifactId>
-			<version>0.5-SNAPSHOT</version>
+			<version>${zarra.version}</version>
 			<scope>test</scope>
 		</dependency>
 
