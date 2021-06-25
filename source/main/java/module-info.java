@@ -7,10 +7,6 @@ module com.avereon.cartesia {
 	requires com.fasterxml.jackson.databind;
 	requires jep;
 
-	opens com.avereon.cartesia.bundles;
-	opens com.avereon.cartesia.design.props;
-	opens com.avereon.cartesia.settings;
-
 	exports com.avereon.cartesia.command;
 	exports com.avereon.cartesia.data;
 	exports com.avereon.cartesia.math;
@@ -20,6 +16,10 @@ module com.avereon.cartesia {
 	exports com.avereon.cartesia.cursor to com.avereon.zerra;
 	exports com.avereon.cartesia.icon to com.avereon.zerra;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
+
+	opens com.avereon.cartesia.bundles;
+	opens com.avereon.cartesia.design.props;
+	opens com.avereon.cartesia.settings;
 
 	provides com.avereon.xenon.Mod with CartesiaMod;
 }

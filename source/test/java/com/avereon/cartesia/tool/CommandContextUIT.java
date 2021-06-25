@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.BaseCartesiaTest;
+import com.avereon.cartesia.BaseCartesiaUIT;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
@@ -17,7 +17,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CommandContextTest extends BaseCartesiaTest {
+public class CommandContextUIT extends BaseCartesiaUIT {
 
 	private CommandContext context;
 
