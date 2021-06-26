@@ -52,8 +52,10 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		// This method is part of a delicate balance between an event handler on the
 		// workpane, this method and the command text field.
 		try {
-			// Do not consume the event here, it needs to be passed along
 			command.fireEvent( event );
+
+			// Consume the original event after firing the event to the command
+			event.consume();
 		} catch( UnknownCommand exception ) {
 			log.log( Log.WARN, exception );
 		}
