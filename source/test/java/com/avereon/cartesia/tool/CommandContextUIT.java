@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.BaseCartesiaUIT;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.xenon.asset.Asset;
@@ -163,19 +164,19 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 	void testInputMode() throws Exception {
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 
-//		MockCommand command = new MockCommand( 0 );
-//		context.submit( tool, command );
-//		command.waitFor();
-//		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
-//		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
-//		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor();
-//		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
-//		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor();
-//		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
-//		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor();
-//		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
-//		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
-//		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		MockCommand command = new MockCommand( 0 );
+		context.submit( tool, command );
+		command.waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 	}
 
 }

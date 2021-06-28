@@ -71,7 +71,7 @@ public class Command {
 
 	public synchronized void waitFor() throws InterruptedException {
 		while( !executed ) {
-			wait( 100 );
+			wait( 1000 );
 		}
 		this.executed = false;
 	}
