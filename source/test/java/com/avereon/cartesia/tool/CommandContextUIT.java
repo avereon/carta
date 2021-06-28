@@ -33,6 +33,25 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 	}
 
 	@Test
+	void testInputMode() throws Exception {
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+
+		MockCommand command = new MockCommand( 0 );
+		context.submit( tool, command );
+		command.waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
+		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+	}
+
+	@Test
 	void testFullCommand() {
 		String command = "ll 0,0 1,1";
 		// Executing this should give a line from 0,0 to 1,1
@@ -158,25 +177,6 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		CommandMap.add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = context.processText( "test", false );
 		assertNull( command );
-	}
-
-	@Test
-	void testInputMode() throws Exception {
-		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
-
-		MockCommand command = new MockCommand( 0 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
-		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor();
-		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor();
-		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor();
-		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
-		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 	}
 
 }
