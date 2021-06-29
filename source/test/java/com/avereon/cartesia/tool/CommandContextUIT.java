@@ -37,17 +37,17 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 
 		MockCommand command = new MockCommand( 0 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
+		context.submit( tool, command ).waitFor( TIMEOUT );
+
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( TIMEOUT );
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor( TIMEOUT );
 		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor( TIMEOUT );
 		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor( TIMEOUT );
 		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor();
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( TIMEOUT );
 		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
 	}
 

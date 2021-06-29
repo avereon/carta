@@ -70,8 +70,12 @@ public class Command {
 	}
 
 	public synchronized void waitFor() throws InterruptedException {
+		waitFor( 1000 );
+	}
+
+	public synchronized void waitFor( long length ) throws InterruptedException {
 		while( !executed ) {
-			wait( 1000 );
+			wait( length );
 		}
 		this.executed = false;
 	}
@@ -332,15 +336,15 @@ public class Command {
 	}
 
 	protected Bounds getParentShapeBounds( Collection<Shape> shapes, Node target ) {
-		return getShapeBounds( shapes, s -> FxUtil.localToParent( s,target ) );
+		return getShapeBounds( shapes, s -> FxUtil.localToParent( s, target ) );
 	}
 
-	private Bounds getShapeBounds( Collection<Shape> shapes, Function<Shape,Bounds> operator ) {
-		if( shapes.isEmpty() ) return new BoundingBox( 0,0,0,0 );
+	private Bounds getShapeBounds( Collection<Shape> shapes, Function<Shape, Bounds> operator ) {
+		if( shapes.isEmpty() ) return new BoundingBox( 0, 0, 0, 0 );
 
 		Bounds shapeBounds = null;
 		for( Shape s : shapes ) {
-			shapeBounds = FxUtil.merge( shapeBounds, operator.apply(s) );
+			shapeBounds = FxUtil.merge( shapeBounds, operator.apply( s ) );
 		}
 
 		// WORKAROUND for JDK-8145499: https://bugs.openjdk.java.net/browse/JDK-8145499
