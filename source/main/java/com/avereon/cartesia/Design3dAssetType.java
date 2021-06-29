@@ -12,8 +12,10 @@ import com.avereon.xenon.asset.AssetType;
 
 public class Design3dAssetType extends AssetType {
 
+	public static final String KEY = "design3d";
+
 	public Design3dAssetType( ProgramProduct product ) {
-		super( product, "design3d" );
+		super( product, KEY );
 		setDefaultCodec( new CartesiaDesignCodec3D( product ) );
 	}
 

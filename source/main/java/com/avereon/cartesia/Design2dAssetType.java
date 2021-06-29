@@ -12,8 +12,10 @@ import com.avereon.xenon.asset.AssetType;
 
 public class Design2dAssetType extends AssetType {
 
+	public static final String KEY = "design2d";
+
 	public Design2dAssetType( ProgramProduct product ) {
-		super( product, "design2d" );
+		super( product, KEY );
 		setDefaultCodec( new CartesiaDesignCodec2D( product ) );
 	}
 

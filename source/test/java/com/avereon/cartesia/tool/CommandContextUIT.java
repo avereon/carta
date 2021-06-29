@@ -2,9 +2,11 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BaseCartesiaUIT;
 import com.avereon.cartesia.CommandMap;
+import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
+import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.xenon.asset.Asset;
 import javafx.geometry.Point3D;
@@ -27,7 +29,10 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 	protected void setup() throws Exception {
 		super.setup();
 		this.context = new CommandContext( getMod() );
-		this.tool = new Design2dEditor( getMod(), Asset.NONE );
+
+		Asset asset = getProgram().getAssetManager().createAsset( new Design2dAssetType( getProgram() ) );
+		asset.setModel( new Design2D() );
+		this.tool = new Design2dEditor( getMod(), asset );
 
 		context.setLastActiveDesignTool( tool );
 	}

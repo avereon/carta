@@ -5,7 +5,7 @@ import com.avereon.product.Rb;
 
 public class CartesiaDesignCodec3D extends CartesiaDesignCodec {
 
-	static final String MEDIA_TYPE = "application/vnd.avereon.cartesia.design.3d";
+	public static final String MEDIA_TYPE = "application/vnd.avereon.cartesia.design.3d";
 
 	public CartesiaDesignCodec3D( Product product ) {
 		super( product );
