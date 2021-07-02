@@ -89,7 +89,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final Snap gridSnap = new SnapGrid();
 
-	private final Map<String, Action> commandActions;
+	private final Map<String, ProgramAction> commandActions;
 
 	private final DesignToolLayersGuide layersGuide;
 
@@ -624,9 +624,9 @@ public abstract class DesignTool extends GuidedTool {
 		pushMenus( menus.toString() );
 		pushTools( tools.toString() );
 
-		Action gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
+		ProgramAction gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
-		Action snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
+		ProgramAction snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
 		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 	}
 
@@ -656,13 +656,13 @@ public abstract class DesignTool extends GuidedTool {
 		pullAction( "redo", redoAction );
 	}
 
-	private Action pushCommandAction( String key ) {
+	private ProgramAction pushCommandAction( String key ) {
 		return pushCommandAction( key, null );
 	}
 
-	private Action pushCommandAction( String key, String initialActionState ) {
+	private ProgramAction pushCommandAction( String key, String initialActionState ) {
 		ActionProxy proxy = getProgram().getActionLibrary().getAction( key );
-		Action action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), proxy.getCommand() ) );
+		ProgramAction action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), proxy.getCommand() ) );
 		if( initialActionState != null ) action.setState( initialActionState );
 		pushAction( key, action );
 		return action;
@@ -921,7 +921,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private class DeleteAction extends Action {
+	private class DeleteAction extends ProgramAction {
 
 		protected DeleteAction( Program program ) {
 			super( program );
@@ -939,7 +939,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private class UndoAction extends Action {
+	private class UndoAction extends ProgramAction {
 
 		protected UndoAction( Program program ) {
 			super( program );
@@ -957,7 +957,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private class RedoAction extends Action {
+	private class RedoAction extends ProgramAction {
 
 		protected RedoAction( Program program ) {
 			super( program );
@@ -975,7 +975,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private class CommandAction extends Action {
+	private class CommandAction extends ProgramAction {
 
 		private final String shortcut;
 
