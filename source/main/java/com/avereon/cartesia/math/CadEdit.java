@@ -7,14 +7,13 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.List;
 
+@CustomLog
 public class CadEdit {
-
-	private static final System.Logger log = Log.get();
 
 	protected static void update( DesignTool tool, DesignShape shape, Point3D shapePoint, Point3D point ) {
 		if( shape instanceof DesignLine ) {
@@ -76,7 +75,7 @@ public class CadEdit {
 				arc.setExtent( extent );
 			}
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Unable to trim arc" );
+			log.atSevere().log( "Unable to trim arc" );
 		}
 	}
 

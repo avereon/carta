@@ -8,7 +8,6 @@ import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.zerra.color.Paints;
 import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.BoundingBox;
@@ -19,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
+import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
@@ -26,6 +26,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@CustomLog
 public class Command {
 
 	public static final Object INCOMPLETE = new Object();
@@ -33,8 +34,6 @@ public class Command {
 	public static final Object COMPLETE = new Object();
 
 	public static final Object INVALID = new Object();
-
-	private static final System.Logger log = Log.get();
 
 	private final List<DesignShape> reference;
 

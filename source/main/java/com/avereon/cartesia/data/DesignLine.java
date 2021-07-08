@@ -6,18 +6,17 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Map;
 
+@CustomLog
 public class DesignLine extends DesignShape {
 
 	public static final String LINE = "line";
 
 	public static final String POINT = "point";
-
-	private static final System.Logger log = Log.get();
 
 	public DesignLine() {
 		this( null, null );
@@ -57,7 +56,7 @@ public class DesignLine extends DesignShape {
 			setOrigin( transform.apply( getOrigin() ) );
 			setPoint( transform.apply( getPoint() ) );
 		} catch( TxnException exception ) {
-			log.log( Log.WARN, "Unable to apply transform" );
+			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 

@@ -4,21 +4,21 @@ import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.snap.SnapCenter;
 import com.avereon.cartesia.snap.SnapMidpoint;
 import com.avereon.cartesia.snap.SnapNearest;
-import com.avereon.util.Log;
+import com.avereon.log.LazyEval;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ActionLibrary;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.ProgramProduct;
 import javafx.scene.input.*;
+import lombok.CustomLog;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@CustomLog
 public class CommandMap {
 
 	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", Noop.class );
-
-	private static final System.Logger log = Log.get();
 
 	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
@@ -191,7 +191,7 @@ public class CommandMap {
 		if( TextUtil.isEmpty( action ) ) return NONE;
 		CommandMetadata mapping = actionCommands.get( action );
 		if( mapping == null ) {
-			log.log( Log.WARN, "No command for action: " + action );
+			log.atWarning().log( "No command for action: %s", action );
 			mapping = NONE;
 		}
 		return mapping;
@@ -217,7 +217,7 @@ public class CommandMap {
 	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
 		if( command != null && commandActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
-			log.log( Log.ERROR, "Shortcut already used: shortcut={0} existing={1} conflict={2}", command, existing.getAction(), action );
+			log.atSevere().log( "Shortcut already used: shortcut=%s existing=%s conflict=%s", command, LazyEval.of( existing::getAction ), action );
 		} else if( !actionCommands.containsKey( action ) ) {
 			if( command != null ) commandActions.put( command, action );
 			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );

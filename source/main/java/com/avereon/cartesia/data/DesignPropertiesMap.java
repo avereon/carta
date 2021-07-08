@@ -1,19 +1,18 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.BundleKey;
-import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
+import lombok.CustomLog;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@CustomLog
 public class DesignPropertiesMap {
-
-	private static final System.Logger log = Log.get();
 
 	private static final String propertiesPagePath = "/com/avereon/cartesia/design/props/";
 
@@ -41,7 +40,7 @@ public class DesignPropertiesMap {
 		try {
 			return loadSettingsPage( product, key );
 		} catch( IOException exception ) {
-			log.log( Log.ERROR, "Unable to load settings page for " + key, exception );
+			log.atError().withCause( exception).log( "Unable to load settings page for %s", key );
 		}
 		return null;
 	}

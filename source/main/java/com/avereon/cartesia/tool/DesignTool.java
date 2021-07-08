@@ -16,7 +16,6 @@ import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
-import com.avereon.util.Log;
 import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
@@ -47,6 +46,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
+import lombok.CustomLog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +57,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@CustomLog
 public abstract class DesignTool extends GuidedTool {
 
 	public static final String RETICLE = "reticle";
@@ -84,8 +85,6 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String GRID_SNAP_ENABLED = "grid-snap";
 
 	private static final String REFERENCE_LAYER_VISIBLE = "";
-
-	private static final System.Logger log = Log.get();
 
 	private static final Snap gridSnap = new SnapGrid();
 
@@ -607,7 +606,7 @@ public abstract class DesignTool extends GuidedTool {
 		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
 		String drawCurveActions = "curve[draw-curve-4 draw-path]";
 
-		StringBuilder menus = new StringBuilder(viewActions);
+		StringBuilder menus = new StringBuilder( viewActions );
 		menus.append( " " ).append( drawMarkerActions );
 		menus.append( " " ).append( drawLineActions );
 		menus.append( " " ).append( drawCircleActions );
@@ -704,9 +703,9 @@ public abstract class DesignTool extends GuidedTool {
 		try {
 			Fx.waitForWithExceptions( 1000 );
 		} catch( TimeoutException exception ) {
-			log.log( Log.WARN, "Timeout waiting for FX thread", exception );
+			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
 		} catch( InterruptedException exception ) {
-			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
+			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
 		}
 		return selection;
 	}
@@ -719,9 +718,9 @@ public abstract class DesignTool extends GuidedTool {
 		try {
 			Fx.waitForWithExceptions( 1000 );
 		} catch( TimeoutException exception ) {
-			log.log( Log.WARN, "Timeout waiting for FX thread", exception );
+			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
 		} catch( InterruptedException exception ) {
-			log.log( Log.WARN, "Interrupted waiting for FX thread", exception );
+			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
 		}
 		return selectedShapes();
 	}
@@ -838,7 +837,7 @@ public abstract class DesignTool extends GuidedTool {
 				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );
 			} catch( Exception exception ) {
-				log.log( Log.ERROR, "Error creating grid", exception );
+				log.atError().withCause(exception).log( "Error creating grid" );
 			}
 		} ) );
 	}
@@ -879,7 +878,7 @@ public abstract class DesignTool extends GuidedTool {
 			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
 			getWorkspace().getEventBus().dispatch( event );
 		} else {
-			log.log( Log.ERROR, "Unable to find properties page for " + type.getName() );
+			log.atError().log( "Unable to find properties page for %s", type.getName() );
 		}
 	}
 

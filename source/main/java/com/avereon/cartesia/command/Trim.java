@@ -2,15 +2,14 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 /**
  * Select a shape to extend/trim then select the shape to be the extend/trim edge.
  */
+@CustomLog
 public class Trim extends Command {
-
-	private static final System.Logger log = Log.get();
 
 	private DesignShape trimShape;
 

@@ -7,12 +7,13 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.ArcType;
+import lombok.CustomLog;
 
 import java.util.Map;
 
+@CustomLog
 public class DesignArc extends DesignEllipse {
 
 	public enum Type {
@@ -38,8 +39,6 @@ public class DesignArc extends DesignEllipse {
 	public static final String EXTENT = "extent";
 
 	public static final String TYPE = "type";
-
-	private static final System.Logger log = Log.get();
 
 	public DesignArc() {
 		this( null, null, null, null, null );
@@ -120,7 +119,7 @@ public class DesignArc extends DesignEllipse {
 			setStart( rotatedStart );
 			setExtent( extent );
 		} catch( TxnException exception ) {
-			log.log( Log.WARN, "Unable to apply transform" );
+			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 

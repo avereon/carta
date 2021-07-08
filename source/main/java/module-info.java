@@ -10,6 +10,7 @@ module com.avereon.cartesia {
 	requires com.avereon.xenon;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;
+	requires java.logging;
 	requires jep;
 
 	exports com.avereon.cartesia.command;

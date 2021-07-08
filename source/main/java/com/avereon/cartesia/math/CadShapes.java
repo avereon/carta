@@ -3,17 +3,16 @@ package com.avereon.cartesia.math;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignShapeDistanceComparator;
 import com.avereon.curve.math.Geometry;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
+@CustomLog
 public class CadShapes {
-
-	private static final System.Logger log = Log.get();
 
 	//	public static Point3D polarToCartesian( Point3D point ) {
 	//		return toFxPoint( Geometry.polarToCartesian( asPoint( point ) ) );
@@ -86,7 +85,7 @@ public class CadShapes {
 				if( anchor != null ) {
 					point = anchor.add( point );
 				} else {
-					log.log( Log.ERROR, "Missing anchor for relative point: {0}", input );
+					log.atSevere().log( "Missing anchor for relative point: %s", input );
 					return null;
 				}
 			}

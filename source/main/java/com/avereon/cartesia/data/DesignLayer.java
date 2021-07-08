@@ -6,18 +6,17 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
-import com.avereon.util.Log;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import lombok.CustomLog;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@CustomLog
 public class DesignLayer extends DesignDrawable {
-
-	private static final System.Logger log = Log.get();
 
 	public static final String NAME = "name";
 

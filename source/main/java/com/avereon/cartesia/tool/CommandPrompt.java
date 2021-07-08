@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.zerra.javafx.Fx;
 import javafx.event.EventHandler;
@@ -10,10 +9,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import lombok.CustomLog;
 
+@CustomLog
 public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> {
-
-	private static final System.Logger log = Log.get();
 
 	private final CommandContext context;
 
@@ -57,7 +56,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 			// Consume the original event after firing the event to the command
 			event.consume();
 		} catch( UnknownCommand exception ) {
-			log.log( Log.WARN, exception );
+			log.atWarn().withCause( exception );
 		}
 	}
 
@@ -76,7 +75,7 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 		try {
 			context.processText( text );
 		} catch( UnknownCommand exception ) {
-			log.log( Log.WARN, exception );
+			log.atError().withCause( exception );
 		}
 	}
 

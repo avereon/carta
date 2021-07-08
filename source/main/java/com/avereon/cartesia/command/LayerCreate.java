@@ -2,14 +2,13 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.util.Log;
+import lombok.CustomLog;
 
 /**
  * This command adds a layer as a peer to the current layer
  */
+@CustomLog
 public class LayerCreate extends LayerCommand {
-
-	private static final System.Logger log = Log.get();
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {

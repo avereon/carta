@@ -7,8 +7,8 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.curve.math.Intersection;
 import com.avereon.curve.math.Intersection2D;
 import com.avereon.curve.math.Intersection3D;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,9 +21,8 @@ import static com.avereon.cartesia.math.CadPoints.*;
 // C | - | - |   |   |
 // P | - | - | - |   |
 
+@CustomLog
 public class CadIntersection {
-
-	private static final System.Logger log = Log.get();
 
 	public static List<Point3D> getIntersections( DesignShape a, DesignShape b ) {
 		if( a instanceof DesignLine ) {
@@ -64,14 +63,14 @@ public class CadIntersection {
 		// Check for skew lines
 		double skewDistance = CadGeometry.lineLineDistance( p1, p2, p3, p4 );
 		if( skewDistance > CadConstants.RESOLUTION_LENGTH ) {
-			log.log( Log.WARN, "Lines are too far apart to intersect: " + skewDistance + " > separation limit(" + CadConstants.RESOLUTION_LENGTH + ")" );
+			log.atWarning().log( "Lines are too far apart to intersect: %s > separation limit(%w)", skewDistance, CadConstants.RESOLUTION_LENGTH );
 			return List.of();
 		}
 
 		// Check for parallel lines
 		double parallelAngle = CadGeometry.lineLineAngle( p1, p2, p3, p4 );
 		if( parallelAngle < CadConstants.RESOLUTION_ANGLE ) {
-			log.log( Log.WARN, "Lines are too parallel to intersect: " + parallelAngle + " < separation angle(" + CadConstants.RESOLUTION_ANGLE + ")" );
+			log.atWarning().log( "Lines are too parallel to intersect: %s < separation angle(%s)", parallelAngle, CadConstants.RESOLUTION_ANGLE );
 			return List.of();
 		}
 

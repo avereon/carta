@@ -5,20 +5,19 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import lombok.CustomLog;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+@CustomLog
 public abstract class DesignDrawable extends DesignNode {
-
-	private static final System.Logger log = Log.get();
 
 	public static final String ORDER = "order";
 
@@ -237,7 +236,7 @@ public abstract class DesignDrawable extends DesignNode {
 			newLayer.addDrawable( oldLayer.removeDrawable( this ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error changing layer", exception );
+			log.atError().withCause( exception ).log( "Error changing layer" );
 		}
 
 		return newValue;
@@ -253,7 +252,7 @@ public abstract class DesignDrawable extends DesignNode {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error changing draw paint", exception );
+			log.atError().withCause( exception ).log( "Error changing draw paint" );
 		}
 		return newValue;
 	}
@@ -268,7 +267,7 @@ public abstract class DesignDrawable extends DesignNode {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting draw width", exception );
+			log.atError().withCause( exception ).log( "Error setting draw width" );
 		}
 		return newValue;
 	}
@@ -281,7 +280,7 @@ public abstract class DesignDrawable extends DesignNode {
 			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting draw cap", exception );
+			log.atError().withCause( exception ).log(  "Error setting draw cap" );
 		}
 		return newValue;
 	}
@@ -296,7 +295,7 @@ public abstract class DesignDrawable extends DesignNode {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting draw patter", exception );
+			log.atError().withCause( exception ).log(  "Error setting draw patter" );
 		}
 		return newValue;
 	}
@@ -311,7 +310,7 @@ public abstract class DesignDrawable extends DesignNode {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
 			Txn.commit();
 		} catch( TxnException exception ) {
-			log.log( Log.ERROR, "Error setting draw width", exception );
+			log.atError().withCause( exception ).log( "Error setting draw width" );
 		}
 		return newValue;
 	}

@@ -7,12 +7,13 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Map;
 import java.util.Objects;
 
+@CustomLog
 public class DesignEllipse extends DesignShape {
 
 	public static final String CIRCLE = "circle";
@@ -27,8 +28,6 @@ public class DesignEllipse extends DesignShape {
 
 	// This is not to be used publicly
 	static final String RADIUS = "radius";
-
-	private static final System.Logger log = Log.get();
 
 	public DesignEllipse() {
 		this( null, null );
@@ -62,7 +61,7 @@ public class DesignEllipse extends DesignShape {
 			setValue( X_RADIUS, value );
 			setValue( Y_RADIUS, value );
 		} catch( TxnException e ) {
-			log.log( Log.ERROR, e );
+			log.atError().withCause( e );
 		}
 		return (T)this;
 	}
@@ -163,7 +162,7 @@ public class DesignEllipse extends DesignShape {
 			setYRadius( yRadius );
 			setRotate( rotate );
 		} catch( TxnException exception ) {
-			log.log( Log.WARN, "Unable to apply transform" );
+			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 

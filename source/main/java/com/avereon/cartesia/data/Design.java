@@ -3,12 +3,13 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
-import com.avereon.util.Log;
 import com.avereon.xenon.ProgramProduct;
+import lombok.CustomLog;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@CustomLog
 public abstract class Design extends IdNode {
 
 	public static final DesignUnit DEFAULT_DESIGN_UNIT = DesignUnit.CENTIMETER;
@@ -23,8 +24,6 @@ public abstract class Design extends IdNode {
 	public static final String CURRENT_LAYER = "current-layer";
 
 	public static final String VIEWS = "views";
-
-	private static final System.Logger log = Log.get();
 
 	private DesignContext context;
 

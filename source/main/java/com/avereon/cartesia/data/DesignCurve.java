@@ -6,11 +6,12 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Map;
 
+@CustomLog
 public class DesignCurve extends DesignShape {
 
 	public static final String CURVE = "curve";
@@ -20,8 +21,6 @@ public class DesignCurve extends DesignShape {
 	public static final String POINT_CONTROL = "point-control";
 
 	public static final String POINT = "point";
-
-	private static final System.Logger log = Log.get();
 
 	public DesignCurve() {
 		this( null, null, null, null );
@@ -85,7 +84,7 @@ public class DesignCurve extends DesignShape {
 			setPointControl( transform.apply( getPointControl() ) );
 			setPoint( transform.apply( getPoint() ) );
 		} catch( TxnException exception ) {
-			log.log( Log.WARN, "Unable to apply transform" );
+			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 
@@ -116,7 +115,7 @@ public class DesignCurve extends DesignShape {
 			this.setPointControl( curve.getPointControl() );
 			this.setPoint( curve.getPoint() );
 		} catch( TxnException exception ) {
-			log.log( Log.WARN, "Unable to update curve" );
+			log.atWarn().log( "Unable to update curve" );
 		}
 
 		return this;

@@ -6,14 +6,13 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.transaction.Txn;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Collection;
 
+@CustomLog
 public abstract class EditCommand extends Command {
-
-	private static final System.Logger log = Log.get();
 
 	private boolean copy;
 

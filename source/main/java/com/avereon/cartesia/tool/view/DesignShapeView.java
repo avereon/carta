@@ -7,7 +7,6 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
-import com.avereon.util.Log;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
@@ -20,13 +19,13 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
+import lombok.CustomLog;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 
+@CustomLog
 public class DesignShapeView extends DesignDrawableView {
-
-	private static final System.Logger log = Log.get();
 
 	private static final String DESIGN_DATA = "design-data";
 
@@ -192,7 +191,7 @@ public class DesignShapeView extends DesignDrawableView {
 
 	public static DesignDrawable getDesignData( Node node ) {
 		DesignDrawable data = (DesignDrawable)node.getProperties().get( DESIGN_DATA );
-		if( data == null ) log.log( Log.WARN, "Missing design data for " + node );
+		if( data == null ) log.atWarn().log( "Missing design data for %s", node );
 		return data;
 	}
 

@@ -8,16 +8,15 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
+@CustomLog
 public class DrawLinePerpendicular extends DrawCommand {
-
-	private static final System.Logger log = Log.get();
 
 	private DesignShape reference;
 

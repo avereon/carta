@@ -4,18 +4,17 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignNode;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
+import lombok.CustomLog;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@CustomLog
 public class DesignToolPrintsGuide extends Guide {
-
-	private static final System.Logger log = Log.get();
 
 	private final ProgramProduct product;
 

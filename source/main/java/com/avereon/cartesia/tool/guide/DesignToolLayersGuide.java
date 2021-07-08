@@ -2,26 +2,25 @@ package com.avereon.cartesia.tool.guide;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.view.DesignLayerEvent;
 import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignPaneLayer;
-import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import javafx.beans.value.ChangeListener;
+import lombok.CustomLog;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@CustomLog
 public class DesignToolLayersGuide extends Guide {
-
-	private static final System.Logger log = Log.get();
 
 	private final ProgramProduct product;
 
@@ -56,7 +55,7 @@ public class DesignToolLayersGuide extends Guide {
 		DesignLayer sourceLayer = nodeLayers.get( source );
 		DesignLayer targetLayer = nodeLayers.get( target );
 
-		log.log( Log.DEBUG, "Move layer " + sourceLayer + " to " + targetLayer + " " + drop );
+		log.atDebug().log( "Move layer %s to %s %s", sourceLayer, targetLayer, drop );
 
 		sourceLayer.getLayer().removeLayer( sourceLayer );
 

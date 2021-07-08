@@ -3,14 +3,13 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
+@CustomLog
 public class CameraViewPoint extends CameraCommand {
-
-	private static final System.Logger log = Log.get();
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {

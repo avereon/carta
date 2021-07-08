@@ -6,12 +6,13 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.util.Log;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
+import lombok.CustomLog;
 
 import java.util.Map;
 
+@CustomLog
 public class DesignMarker extends DesignShape {
 
 	public enum Type {
@@ -44,8 +45,6 @@ public class DesignMarker extends DesignShape {
 	public static final double DEFAULT_SIZE = 1.0;
 
 	private static final double ZERO_DRAW_WIDTH = 0.0;
-
-	private static final System.Logger log = Log.get();
 
 	public DesignMarker() {
 		this( null );
@@ -115,7 +114,7 @@ public class DesignMarker extends DesignShape {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
 		} catch( TxnException exception ) {
-			log.log( Log.WARN, "Unable to apply transform" );
+			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 

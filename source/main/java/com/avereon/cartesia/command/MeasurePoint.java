@@ -5,20 +5,20 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
-public class MeasurePoint extends MeasureCommand{
-
-	private static final System.Logger log = Log.get();
+@CustomLog
+public class MeasurePoint extends MeasureCommand {
 
 	private DesignLine referenceLine;
 
@@ -47,7 +47,7 @@ public class MeasurePoint extends MeasureCommand{
 			} ) );
 			if( context.isInteractive() ) context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
-			log.log( Log.DEBUG, "Measured point=" + CadShapes.toString( p1 ) );
+			log.atDebug().log( "Measured point=%s", LazyEval.of( () -> CadShapes.toString( p1 ) ) );
 			return p1;
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );

@@ -4,8 +4,8 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
+import com.avereon.log.LazyEval;
 import com.avereon.product.Product;
-import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
@@ -19,6 +19,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import lombok.CustomLog;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,9 +32,8 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@CustomLog
 public abstract class CartesiaDesignCodec extends Codec {
-
-	private static final System.Logger log = Log.get();
 
 	static final ObjectMapper JSON_MAPPER;
 
@@ -101,7 +101,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 
-		log.log( Log.DEBUG, "Design codec version: " + map.get( CODEC_VERSION_KEY ) );
+		log.atFine().log( "Design codec version: %s", LazyEval.of( () -> map.get( CODEC_VERSION_KEY ) ) );
 
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );

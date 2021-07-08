@@ -7,7 +7,6 @@ import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
-import com.avereon.util.Log;
 import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
@@ -25,6 +24,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 import javafx.scene.transform.Transform;
+import lombok.CustomLog;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,9 +32,8 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@CustomLog
 public class DesignPane extends StackPane {
-
-	private static final System.Logger log = Log.get();
 
 	/**
 	 * The default zoom magnification reached by applying zoom in or out the {@link #DEFAULT_ZOOM_STEPS} times.
@@ -295,13 +294,13 @@ public class DesignPane extends StackPane {
 
 	public DesignPaneLayer getShapeLayer( DesignShape shape ) {
 		DesignLayer designLayer = shape.getLayer();
-		if( designLayer == null ) log.log( Log.WARN, "Shape missing design layer, shape=" + shape );
+		if( designLayer == null ) log.atWarn().log( "Shape missing design layer, shape=%s", shape );
 
 		DesignLayerView view = designLayer == null ? null : layerMap.get( designLayer );
-		if( view == null ) log.log( Log.WARN, "Shape missing design view, shape=" + shape );
+		if( view == null ) log.atWarn().log( "Shape missing design view, shape=%s", shape );
 
 		DesignPaneLayer layer = view == null ? null : view.getLayer();
-		if( layer == null ) log.log( Log.WARN, "Shape missing layer: shape=" + shape );
+		if( layer == null ) log.atWarn().log( "Shape missing layer: shape=%s", shape );
 
 		return layer == null ? NO_LAYER : layer;
 	}

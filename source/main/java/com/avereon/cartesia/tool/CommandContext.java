@@ -7,8 +7,8 @@ import com.avereon.cartesia.command.Select;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.cartesia.math.CadShapes;
+import com.avereon.log.LazyEval;
 import com.avereon.util.ArrayUtil;
-import com.avereon.util.Log;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
@@ -16,11 +16,14 @@ import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
+import lombok.CustomLog;
 
 import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.logging.Level;
 
+@CustomLog
 public class CommandContext {
 
 	public enum Input {
@@ -30,9 +33,9 @@ public class CommandContext {
 		TEXT
 	}
 
-	private static final System.Logger log = Log.get();
-
 	private static final boolean DEFAULT_AUTO_COMMAND = true;
+
+	private static final Level COMMAND_STACK_LOG_LEVEL = Level.FINE;
 
 	private final ProgramProduct product;
 
@@ -289,7 +292,7 @@ public class CommandContext {
 		try {
 			return doCommand( tool, commandClass.getConstructor().newInstance(), parameters );
 		} catch( Exception exception ) {
-			log.log( Log.ERROR, exception );
+			log.atSevere().withCause( exception ).log();
 		}
 		return null;
 	}
@@ -303,7 +306,7 @@ public class CommandContext {
 		// TODO Is parameter data leaking to the next command stack???
 
 		synchronized( commandStack ) {
-			log.log( Log.TRACE, "Command submitted " + command.getClass().getSimpleName() );
+			log.atFine().log( "Command submitted ", LazyEval.of( () -> command.getClass().getSimpleName() ) );
 			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
@@ -313,16 +316,15 @@ public class CommandContext {
 
 	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters ) {
 		if( command instanceof Value && commandStack.isEmpty() ) {
-			log.log( Log.WARN, "There is not a command waiting for the value: " + Arrays.toString( parameters ) );
+			log.atWarning().log( "There is not a command waiting for the value: %s", LazyEval.of( () -> Arrays.toString( parameters ) ) );
 		}
 	}
 
 	private void logCommandStack() {
-		System.Logger.Level level = Log.TRACE;
-		if( log.isLoggable( level ) ) {
+		if( log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) {
 			List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
 			Collections.reverse( invertedCommandStack );
-			if( commandStack.size() != 0 ) log.log( level, "commands=" + invertedCommandStack );
+			if( commandStack.size() != 0 ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
 		}
 	}
 
@@ -404,7 +406,7 @@ public class CommandContext {
 		public Object executeCommandStep( Object priorResult ) throws Exception {
 			// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
-			if( priorResult == Command.INCOMPLETE ) log.log( Log.WARN, "A prior result of INCOMPLETE was passed to execute" );
+			if( priorResult == Command.INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
 			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
 
 			Object result = Command.INVALID;
@@ -428,7 +430,7 @@ public class CommandContext {
 			try {
 				command.cancel( context );
 			} catch( Exception exception ) {
-				log.log( Log.ERROR, exception );
+				log.atSevere().withCause( exception ).log();
 			}
 		}
 

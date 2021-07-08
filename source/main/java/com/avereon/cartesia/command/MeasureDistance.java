@@ -5,19 +5,18 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
-import com.avereon.util.Log;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
+@CustomLog
 public class MeasureDistance extends MeasureCommand {
-
-	private static final System.Logger log = Log.get();
 
 	private DesignLine referenceLine;
 
@@ -54,7 +53,7 @@ public class MeasureDistance extends MeasureCommand {
 			} ) );
 			if( context.isInteractive() ) context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
-			log.log( Log.DEBUG, "Measured distance=" + distance );
+			log.atDebug().log( "Measured distance=%s", distance );
 			return distance;
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
