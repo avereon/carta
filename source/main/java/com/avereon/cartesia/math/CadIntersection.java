@@ -63,7 +63,7 @@ public class CadIntersection {
 		// Check for skew lines
 		double skewDistance = CadGeometry.lineLineDistance( p1, p2, p3, p4 );
 		if( skewDistance > CadConstants.RESOLUTION_LENGTH ) {
-			log.atWarning().log( "Lines are too far apart to intersect: %s > separation limit(%w)", skewDistance, CadConstants.RESOLUTION_LENGTH );
+			log.atWarning().log( "Lines are too far apart to intersect: %s > separation limit(%s)", skewDistance, CadConstants.RESOLUTION_LENGTH );
 			return List.of();
 		}
 
