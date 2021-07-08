@@ -1,6 +1,11 @@
 import com.avereon.cartesia.CartesiaMod;
 
 module com.avereon.cartesia {
+
+	// Compile-time only
+	requires static lombok;
+
+	// Both compile-time and run-time
 	requires com.avereon.curve;
 	requires com.avereon.xenon;
 	requires com.fasterxml.jackson.core;
@@ -22,4 +27,5 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.settings;
 
 	provides com.avereon.xenon.Mod with CartesiaMod;
+
 }

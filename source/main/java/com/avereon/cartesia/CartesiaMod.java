@@ -4,10 +4,13 @@ import com.avereon.cartesia.data.DesignLayerOptionProvider;
 import com.avereon.cartesia.data.PointTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
+import com.avereon.log.LazyEval;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.zerra.image.BrokenIcon;
+import lombok.CustomLog;
 
+@CustomLog
 public class CartesiaMod extends Mod {
 
 	public static final String STYLESHEET = "cartesia.css";
@@ -18,6 +21,7 @@ public class CartesiaMod extends Mod {
 
 	@Override
 	public void startup() throws Exception {
+		log.atFine().log( "%s starting...", LazyEval.of( () -> getCard().getName() ) );
 		super.startup();
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
 		registerIcon( "tool", new BrokenIcon() );
@@ -90,10 +94,13 @@ public class CartesiaMod extends Mod {
 		registerSettingsPages();
 
 		CommandMap.load( this );
+		log.atInfo().log( "%s started.", LazyEval.of( () -> getCard().getName() ) );
 	}
 
 	@Override
 	public void shutdown() throws Exception {
+		log.atFine().log( "%s stopping...", LazyEval.of( () -> getCard().getName() ) );
+
 		// Unregister the settings pages
 		unregisterSettingsPages();
 
@@ -150,6 +157,8 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "tool", new BrokenIcon() );
 		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
 		super.shutdown();
+
+		log.atInfo().log( "%s stopped.", LazyEval.of( () -> getCard().getName() ) );
 	}
 
 }
