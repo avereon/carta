@@ -10,7 +10,7 @@ import java.util.Objects;
 
 public class CommandEventKey {
 
-	private EventType<?> type;
+	private final EventType<?> type;
 
 	private boolean isControl;
 

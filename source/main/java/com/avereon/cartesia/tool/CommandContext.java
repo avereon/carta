@@ -179,8 +179,10 @@ public class CommandContext {
 	}
 
 	void handle( KeyEvent event ) {
+		// NOTE This method has the same signature as doProcessKeyPress()
+
 		// These just get forwarded to the command prompt
-		getCommandPrompt().handle( event );
+		//getCommandPrompt().handle( event );
 	}
 
 	void handle( MouseEvent event ) {
@@ -253,6 +255,8 @@ public class CommandContext {
 	}
 
 	private void doEventCommand( InputEvent event ) {
+		// This method does not handle the key events, those are handled by the action infrastructure
+
 		CommandMetadata metadata = CommandMap.get( event );
 		if( metadata != CommandMap.NONE ) {
 			doCommand( event, metadata.getType(), metadata.getParameters() );

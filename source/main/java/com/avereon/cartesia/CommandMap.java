@@ -122,10 +122,12 @@ public class CommandMap {
 		//add( product, "multi-copy", Copy.class );
 		//add( product, "multi-radial-copy", RadialCopy.class );
 		//add( product, "multi-trim", TrimExtendMultiple.class );
+		add( product, "redo", Redo.class );
 		add( product, "rotate", Rotate.class );
 		add( product, "scale", Scale.class );
 		//add( product, "stretch", Stretch.class );
 		add( product, "trim", Trim.class );
+		add( product, "undo", Undo.class );
 
 		// Layer commands
 		add( product, "layer-create", LayerCreate.class );
@@ -169,8 +171,8 @@ public class CommandMap {
 		actionCommands.values().stream().sorted().forEach( k -> {
 			StringBuilder builder = new StringBuilder();
 			builder.append( k.getCommand() == null ? "  " : k.getCommand() ).append( " -> " ).append( k.getName() );
-			if( k.getShortcut() != null ) builder.append( " <" ).append( k.getShortcut() ).append( ">" );
 			builder.append( " [" ).append( k.getAction() ).append( "]" );
+			if( k.getShortcut() != null ) builder.append( " <" ).append( k.getShortcut() ).append( ">" );
 			System.out.println( builder );
 		} );
 	}

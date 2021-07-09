@@ -771,7 +771,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void clearSelected() {
-		getSelectedGeometry().clear();
+		getSelectedShapes().clear();
 	}
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
