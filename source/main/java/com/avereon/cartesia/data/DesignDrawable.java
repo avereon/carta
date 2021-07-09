@@ -230,11 +230,9 @@ public abstract class DesignDrawable extends DesignNode {
 		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
 
 		DesignLayer oldLayer = getLayer();
-		try {
-			Txn.create();
+		try( Txn ignored = Txn.create() ) {
 			DesignLayer newLayer = getDesign().findLayerById( newLayerId );
 			newLayer.addDrawable( oldLayer.removeDrawable( this ) );
-			Txn.commit();
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error changing layer" );
 		}
@@ -246,11 +244,9 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PAINT_MODE );
-		try {
-			Txn.create();
-			setDrawPaint( isCustom ? Paints.toString( calcDrawPaint() ) : null );
+		try( Txn ignored = Txn.create() ) {
+			setDrawPaint( isCustom ? Paints.toString( calcDrawPaint() ) : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_MODE, oldValue, newValue ) ) );
-			Txn.commit();
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error changing draw paint" );
 		}
@@ -261,11 +257,9 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_WIDTH_MODE );
-		try {
-			Txn.create();
-			setDrawWidth( isCustom ? String.valueOf( calcDrawWidth() ) : null );
+		try( Txn ignored = Txn.create() ) {
+			setDrawWidth( isCustom ? String.valueOf( calcDrawWidth() ) : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_MODE, oldValue, newValue ) ) );
-			Txn.commit();
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw width" );
 		}
@@ -280,7 +274,7 @@ public abstract class DesignDrawable extends DesignNode {
 			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log(  "Error setting draw cap" );
+			log.atError().withCause( exception ).log( "Error setting draw cap" );
 		}
 		return newValue;
 	}
@@ -289,13 +283,11 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
-		try {
-			Txn.create();
-			setDrawPattern( isCustom ? TextUtil.toString( calcDrawPattern(), ", " ) : null );
+		try( Txn ignored = Txn.create() ) {
+			setDrawPattern( isCustom ? TextUtil.toString( calcDrawPattern(), ", " ) : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
-			Txn.commit();
 		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log(  "Error setting draw patter" );
+			log.atError().withCause( exception ).log( "Error setting draw patter" );
 		}
 		return newValue;
 	}
@@ -304,11 +296,9 @@ public abstract class DesignDrawable extends DesignNode {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_MODE );
-		try {
-			Txn.create();
-			setFillPaint( isCustom ? Paints.toString( calcFillPaint() ) : null );
+		try( Txn ignored = Txn.create() ) {
+			setFillPaint( isCustom ? Paints.toString( calcFillPaint() ) : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
-			Txn.commit();
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw width" );
 		}

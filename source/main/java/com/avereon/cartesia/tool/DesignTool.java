@@ -875,8 +875,7 @@ public abstract class DesignTool extends GuidedTool {
 		SettingsPage page = designPropertiesMap.getSettingsPage( type );
 		if( page != null ) {
 			page.setSettings( settings );
-			PropertiesToolEvent event = new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page );
-			getWorkspace().getEventBus().dispatch( event );
+			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
 		} else {
 			log.atError().log( "Unable to find properties page for %s", type.getName() );
 		}
