@@ -128,7 +128,8 @@ public class CommandContext {
 			);
 			doCommand( new Select(), mouseEvent );
 		} else {
-			doCommand( processText( input, true ) );
+			// Process text calls doCommand
+			processText( input, true );
 		}
 		reset();
 	}
@@ -139,10 +140,6 @@ public class CommandContext {
 			doCommand( mapCommand( getPriorCommand() ) );
 			reset();
 		}
-	}
-
-	Command processText( String input ) {
-		return processText( input, false );
 	}
 
 	Command processText( String input, boolean force ) {
@@ -306,8 +303,10 @@ public class CommandContext {
 		// TODO Is parameter data leaking to the next command stack???
 
 		synchronized( commandStack ) {
-			log.atFine().log( "Command submitted ", LazyEval.of( () -> command.getClass().getSimpleName() ) );
-			commandStack.push( new CommandExecuteRequest( this, tool, command, parameters ) );
+			CommandExecuteRequest request = new CommandExecuteRequest( this, tool, command, parameters );
+			log.atDebug().log( "Command submitted %s", request );
+
+			commandStack.push( request );
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 
@@ -436,7 +435,7 @@ public class CommandContext {
 
 		@Override
 		public String toString() {
-			return command + ":" + command.getStep();
+			return command + "{step=" + command.getStep() + " parameters.length=" + parameters.length;
 		}
 	}
 

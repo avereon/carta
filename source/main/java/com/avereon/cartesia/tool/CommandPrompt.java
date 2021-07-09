@@ -73,7 +73,8 @@ public class CommandPrompt extends BorderPane implements EventHandler<KeyEvent> 
 
 	private void textChanged( String text ) {
 		try {
-			context.processText( text );
+			// Process text calls doCommand
+			context.processText( text, false );
 		} catch( UnknownCommand exception ) {
 			log.atError().withCause( exception );
 		}
