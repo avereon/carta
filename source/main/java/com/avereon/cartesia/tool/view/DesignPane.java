@@ -8,6 +8,7 @@ import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.zerra.color.Colors;
+import com.avereon.zerra.color.Paints;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
@@ -69,6 +70,8 @@ public class DesignPane extends StackPane {
 	private static final DesignPaneLayer NO_LAYER = new DesignPaneLayer();
 
 	private static final Comparator<Node> LAYER_SORTER = new LayerSorter();
+
+	private static final Paint BARELY_VISIBLE = Paints.parse( "#80808001" );
 
 	private final Pane select;
 
@@ -606,7 +609,6 @@ public class DesignPane extends StackPane {
 		// The shape must have a fill but no stroke. The selector color is not
 		// important since the selector shape is not shown, is just needs to be set.
 		selector.setFill( Color.RED );
-		selector.setStrokeWidth( 0.0 );
 		selector.setStroke( null );
 
 		// check for contains or intersecting
@@ -626,18 +628,32 @@ public class DesignPane extends StackPane {
 		}
 	}
 
-	private boolean isContained( Shape selector, Shape shape ) {
-		// This first test is an optimization to determine if the the accurate test needs to be used
-		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
-		// This is the slow but accurate test if the shape is contained
-		return ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
-	}
-
 	private boolean isIntersecting( Shape selector, Shape shape ) {
+		boolean invisibleShape = shape.getFill() == null && shape.getStroke() == null;
+		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+
 		// This first test is an optimization to determine if the the accurate test needs to be used
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is intersecting
-		return !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
+		boolean result = !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
+
+		if( invisibleShape ) shape.setStroke( null );
+
+		return result;
+	}
+
+	private boolean isContained( Shape selector, Shape shape ) {
+		boolean invisibleShape = shape.getFill() == null && shape.getStroke() == null;
+		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+
+		// This first test is an optimization to determine if the the accurate test needs to be used
+		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+		// This is the slow but accurate test if the shape is contained
+		boolean result = ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
+
+		if( invisibleShape ) shape.setStroke( null );
+
+		return result;
 	}
 
 	private static class LayerSorter implements Comparator<Node> {
