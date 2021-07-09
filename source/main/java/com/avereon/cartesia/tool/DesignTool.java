@@ -529,7 +529,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		getCommandContext().setLastActiveDesignTool( this );
 		registerStatusBarItems();
-		updateCommandCapture();
+		registerCommandCapture();
 		registerActions();
 
 		requestFocus();
@@ -538,15 +538,16 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void deactivate() throws ToolException {
 		super.deactivate();
-		if( isReady() ) unregisterStatusBarItems();
+		unregisterStatusBarItems();
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
 		super.conceal();
+		unregisterCommandCapture();
 		pullMenus();
 		pullTools();
-		if( isReady() ) unregisterActions();
+		unregisterActions();
 	}
 
 	void showCommandPrompt() {
@@ -569,16 +570,21 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void updateCommandCapture() {
-		Workpane workpane = getWorkpane();
-
+	private void registerCommandCapture() {
 		// If there is already a command capture handler then remove it (because it may belong to a different design)
-		EventHandler<KeyEvent> handler = (EventHandler<KeyEvent>)workpane.getProperties().get( "design-tool-command-capture" );
-		if( handler != null ) workpane.removeEventHandler( KeyEvent.ANY, handler );
+		unregisterCommandCapture();
 
 		// Add this design command capture handler
+		Workpane workpane = getWorkpane();
 		workpane.getProperties().put( "design-tool-command-capture", getDesignContext().getCommandPrompt() );
 		workpane.addEventHandler( KeyEvent.ANY, getDesignContext().getCommandPrompt() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private void unregisterCommandCapture() {
+		Workpane workpane = getWorkpane();
+		EventHandler<KeyEvent> handler = (EventHandler<KeyEvent>)workpane.getProperties().get( "design-tool-command-capture" );
+		if( handler != null ) workpane.removeEventHandler( KeyEvent.ANY, handler );
 	}
 
 	private void registerActions() {
@@ -647,8 +653,6 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-circle-2" );
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
-
-		pullTools();
 
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
