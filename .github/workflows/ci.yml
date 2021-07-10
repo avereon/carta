@@ -1,4 +1,4 @@
-name: Avereon Cartesia Continuous
+name: CI
 
 on:
   push:
