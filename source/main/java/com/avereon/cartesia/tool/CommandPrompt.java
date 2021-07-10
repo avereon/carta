@@ -61,12 +61,8 @@ public class CommandPrompt extends BorderPane {
 	}
 
 	private void handleKeyEvent( KeyEvent event ) {
-		// Forward the key events to the command context which will determine what to do
-		try {
-			context.handle( event );
-		} catch( UnknownCommand exception ) {
-			log.atError().withCause( exception );
-		}
+		// NOTE This method was originally implemented to capture the SPACE key event
+		// This is no longer desired behavior on the command line and therefore this code has been removed
 	}
 
 	private void handleTextChange( ObservableValue<? extends String> property, String oldValue, String newValue ) {
