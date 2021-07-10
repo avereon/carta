@@ -61,28 +61,17 @@ public class CommandPrompt extends BorderPane {
 	}
 
 	private void handleKeyEvent( KeyEvent event ) {
-		// FIXME This breaks the normal action handling
-		// Because this captures all key events and sends them to the command prompt
-		// text field which consumes some important events like delete, undo and
-		// redo. It, however, does not capture escape or enter which has been the
-		// cause of some confusion.
-
-		// This method is part of a delicate balance between an event handler on the
-		// workpane, this method and the command text field.
-
-		//		try {
-		//			command.fireEvent( event );
-		//
-		//			// Consume the original event after firing the event to the command
-		//			event.consume();
-		//		} catch( UnknownCommand exception ) {
-		//			log.atWarn().withCause( exception );
-		//		}
+		// Forward the key events to the command context which will determine what to do
+		try {
+			context.handle( event );
+		} catch( UnknownCommand exception ) {
+			log.atError().withCause( exception );
+		}
 	}
 
 	private void handleTextChange( ObservableValue<? extends String> property, String oldValue, String newValue ) {
+		// Forward the new text value to the command context which will determine what to do
 		try {
-			// Process text calls doCommand
 			context.processText( newValue, false );
 		} catch( UnknownCommand exception ) {
 			log.atError().withCause( exception );
