@@ -13,6 +13,7 @@ import com.avereon.util.TextUtil;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.javafx.Fx;
+import javafx.event.EventHandler;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
@@ -24,7 +25,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 
 @CustomLog
-public class CommandContext {
+public class CommandContext implements EventHandler<KeyEvent> {
 
 	public enum Input {
 		NONE,
@@ -178,11 +179,29 @@ public class CommandContext {
 		return getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 	}
 
-	void handle( KeyEvent event ) {
-		// NOTE This method has the same signature as doProcessKeyPress()
+	public void handle( KeyEvent event ) {
+		// This method handles key events from both the workpane and the command
+		// prompt. The command prompt consumes some key events that correspond to
+		// the text field, while the workpane will forward pretty much every event.
 
-		// These just get forwarded to the command prompt
-		//getCommandPrompt().handle( event );
+		// If the event comes from the workpane a copy should be sent to the command
+		// prompt so that the command prompt displays the typed keys.
+		if( event.getSource() == getTool().getWorkpane() ) getCommandPrompt().fireEvent( event );
+
+		// On each key event the situation needs to be evaluated...
+		// If ESC was pressed, then the whole command stack should be cancelled
+		// If ENTER was pressed, then an attempt to process the text should be forced
+		// If SPACE was pressed, then the last command should be repeated
+		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
+			switch( event.getCode() ) {
+				case ESCAPE -> cancel( event );
+				case ENTER -> enter( event );
+				case SPACE -> repeat( event );
+			}
+		}
+
+		// If the event is not consumed here, it will pass to the event handling of
+		// the scene which should trigger the appropriate program action.
 	}
 
 	void handle( MouseEvent event ) {
@@ -356,21 +375,6 @@ public class CommandContext {
 	Command getCurrentCommand() {
 		CommandExecuteRequest request = commandStack.peek();
 		return request == null ? null : request.getCommand();
-	}
-
-	void doProcessKeyPress( KeyEvent event ) {
-		// On each key event the situation needs to be evaluated...
-		// If ESC was pressed, then the whole command stack should be cancelled
-		// If ENTER was pressed, then an attempt to process the text should be forced
-		// If SPACE was pressed, then the last command should be repeated
-
-		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
-			switch( event.getCode() ) {
-				case ESCAPE -> cancel( event );
-				case ENTER -> enter( event );
-				case SPACE -> repeat( event );
-			}
-		}
 	}
 
 	private String getPriorCommand() {

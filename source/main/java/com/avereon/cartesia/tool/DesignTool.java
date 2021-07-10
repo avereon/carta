@@ -574,10 +574,11 @@ public abstract class DesignTool extends GuidedTool {
 		// If there is already a command capture handler then remove it (because it may belong to a different design)
 		unregisterCommandCapture();
 
-		// Add this design command capture handler
+		// Add the design command capture handler. This captures all key events that
+		// make it to the workpane and forwards them to the
 		Workpane workpane = getWorkpane();
-		workpane.getProperties().put( "design-tool-command-capture", getDesignContext().getCommandPrompt() );
-		workpane.addEventHandler( KeyEvent.ANY, getDesignContext().getCommandPrompt() );
+		workpane.getProperties().put( "design-tool-command-capture", getDesignContext().getCommandContext() );
+		workpane.addEventHandler( KeyEvent.ANY, getDesignContext().getCommandContext() );
 	}
 
 	@SuppressWarnings( "unchecked" )
