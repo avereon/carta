@@ -76,7 +76,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final String SETTINGS_VIEW_ROTATE = "view-rotate";
 
-	private static final String CURRENT_LAYER = "layer";
+	private static final String CURRENT_LAYER = "current-layer";
 
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
@@ -406,6 +406,7 @@ public abstract class DesignTool extends GuidedTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = request.getAsset().getModel();
+		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design
 		layersGuide.link( designPane );
@@ -437,15 +438,19 @@ public abstract class DesignTool extends GuidedTool {
 		// Workplane settings
 		configureWorkplane();
 
+		String defaultUnitId = DesignUnit.MILLIMETER.name();
+		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName();
+		String defaultLayerId = design.getAllLayers().get( 0 ).getId();
+
 		// Get tool settings
 		double selectApertureRadius = Double.parseDouble( getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
-		DesignUnit selectApertureUnit = DesignUnit.valueOf( getSettings().get( SELECT_APERTURE_UNIT, DesignUnit.MILLIMETER.name() ).toUpperCase() );
-		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( getSettings().get( SELECT_APERTURE_UNIT, defaultUnitId ) );
 		setViewPoint( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
 		setViewRotate( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
 		setZoom( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
-		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, ReticleCursor.DUPLEX.getClass().getSimpleName() ).toUpperCase() ) );
-		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, defaultReticleId ) ) );
+		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER, defaultLayerId ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
 
 		// Restore the list of visible layers
 		Set<String> visibleLayerIds = getSettings().get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
@@ -532,6 +537,7 @@ public abstract class DesignTool extends GuidedTool {
 		registerCommandCapture();
 		registerActions();
 
+		getCommandContext().setTool( this );
 		requestFocus();
 	}
 
@@ -577,8 +583,8 @@ public abstract class DesignTool extends GuidedTool {
 		// make it to the workpane and forwards them to the command context which
 		// will help determine what to do.
 		Workpane workpane = getWorkpane();
-		workpane.getProperties().put( "design-tool-command-capture", getDesignContext().getCommandContext() );
-		workpane.addEventHandler( KeyEvent.ANY, getDesignContext().getCommandContext() );
+		workpane.getProperties().put( "design-tool-command-capture", getCommandContext() );
+		workpane.addEventHandler( KeyEvent.ANY, getCommandContext() );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -842,7 +848,7 @@ public abstract class DesignTool extends GuidedTool {
 				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );
 			} catch( Exception exception ) {
-				log.atError().withCause(exception).log( "Error creating grid" );
+				log.atError().withCause( exception ).log( "Error creating grid" );
 			}
 		} ) );
 	}
