@@ -930,6 +930,27 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
+	private class CommandAction extends ProgramAction {
+
+		private final String shortcut;
+
+		protected CommandAction( Program program, String shortcut ) {
+			super( program );
+			this.shortcut = shortcut;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getCommandContext().command( shortcut );
+		}
+
+	}
+
 	private class DeleteAction extends ProgramAction {
 
 		protected DeleteAction( Program program ) {
@@ -982,26 +1003,6 @@ public abstract class DesignTool extends GuidedTool {
 			getAsset().getUndoManager().redo();
 		}
 
-	}
-
-	private class CommandAction extends ProgramAction {
-
-		private final String shortcut;
-
-		protected CommandAction( Program program, String shortcut ) {
-			super( program );
-			this.shortcut = shortcut;
-		}
-
-		@Override
-		public boolean isEnabled() {
-			return true;
-		}
-
-		@Override
-		public void handle( ActionEvent event ) {
-			getCommandContext().command( shortcut );
-		}
 
 	}
 
