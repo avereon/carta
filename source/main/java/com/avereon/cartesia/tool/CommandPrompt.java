@@ -58,6 +58,7 @@ public class CommandPrompt extends BorderPane {
 
 	void fireEvent( KeyEvent event ) {
 		command.fireEvent( event );
+		event.consume();
 	}
 
 	private void handleKeyEvent( KeyEvent event ) {

@@ -202,6 +202,11 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		// If the event is not consumed here, it will pass to the event handling of
 		// the scene which should trigger the appropriate program action.
+
+		// CATCH-22
+		// Not consuming the event causes a double event in some cases
+		// But consuming it in the case of the DELETE key breaks delete
+		//event.consume();
 	}
 
 	void handle( MouseEvent event ) {
