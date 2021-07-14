@@ -79,7 +79,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public Command submit( DesignTool tool, Command command, Object... parameters ) {
-		return doCommand( tool, command, parameters );
+		return pushCommand( tool, command, parameters );
 	}
 
 	public Command resubmit( DesignTool tool, Command command, Object... parameters ) {
@@ -127,7 +127,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 				true,
 				null
 			);
-			doCommand( new Select(), mouseEvent );
+			pushCommand( new Select(), mouseEvent );
 		} else {
 			// Process text calls doCommand
 			processText( input, true );
@@ -138,7 +138,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	public void repeat( KeyEvent event ) {
 		event.consume();
 		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
-			doCommand( mapCommand( getPriorCommand() ) );
+			pushCommand( mapCommand( getPriorCommand() ) );
 			reset();
 		}
 	}
@@ -146,20 +146,21 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	Command processText( String input, boolean force ) {
 		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
 		if( force ) {
+			log.atConfig().log( "input mode=%s", getInputMode() );
 			return switch( getInputMode() ) {
-				case NUMBER -> doCommand( new Value(), CadShapes.parsePoint( input ).getX() );
-				case POINT -> doCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
-				case TEXT -> doCommand( new Value(), input );
-				default -> doCommand( mapCommand( input ) );
+				case NUMBER -> pushCommand( new Value(), CadShapes.parsePoint( input ).getX() );
+				case POINT -> pushCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
+				case TEXT -> pushCommand( new Value(), input );
+				default -> pushCommand( mapCommand( input ) );
 			};
 		} else if( !isTextInput && isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
-			return doCommand( mapCommand( input ) );
+			return pushCommand( mapCommand( input ) );
 		}
 		return null;
 	}
 
 	public void command( String input ) {
-		doCommand( mapCommand( input ) );
+		pushCommand( mapCommand( input ) );
 	}
 
 	public boolean isPenMode() {
@@ -200,13 +201,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			}
 		}
 
-		// If the event is not consumed here, it will pass to the event handling of
-		// the scene which should trigger the appropriate program action.
-
-		// CATCH-22
-		// Not consuming the event causes a double event in some cases
-		// But consuming it in the case of the DELETE key breaks delete
-		//event.consume();
+		// If the event is not consumed here, it will bubble up to the event
+		// handling of the scene which should trigger the appropriate action.
 	}
 
 	void handle( MouseEvent event ) {
@@ -283,7 +279,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		CommandMetadata metadata = CommandMap.get( event );
 		if( metadata != CommandMap.NONE ) {
-			doCommand( event, metadata.getType(), metadata.getParameters() );
+			pushCommand( event, metadata.getType(), metadata.getParameters() );
 			event.consume();
 		}
 	}
@@ -297,32 +293,32 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return mapping;
 	}
 
-	private Command doCommand( CommandMetadata metadata ) {
+	private Command pushCommand( CommandMetadata metadata ) {
 		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
-		return doCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
+		return pushCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
 	}
 
-	private Command doCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command pushCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
 		DesignTool tool = (DesignTool)event.getSource();
-		return doCommand( tool, commandClass, ArrayUtil.concat( parameters, event ) );
+		return pushCommand( tool, commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
-	private Command doCommand( Command command, Object... parameters ) {
-		return doCommand( getLastActiveDesignTool(), command, parameters );
+	private Command pushCommand( Command command, Object... parameters ) {
+		return pushCommand( getLastActiveDesignTool(), command, parameters );
 	}
 
-	private Command doCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command pushCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
-			return doCommand( tool, commandClass.getConstructor().newInstance(), parameters );
+			return pushCommand( tool, commandClass.getConstructor().newInstance(), parameters );
 		} catch( Exception exception ) {
 			log.atSevere().withCause( exception ).log();
 		}
 		return null;
 	}
 
-	private Command doCommand( DesignTool tool, Command command, Object... parameters ) {
+	private Command pushCommand( DesignTool tool, Command command, Object... parameters ) {
 		checkForCommonProblems( tool, command, parameters );
 
 		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt

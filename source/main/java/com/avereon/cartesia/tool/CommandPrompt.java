@@ -51,19 +51,38 @@ public class CommandPrompt extends BorderPane {
 		// Intentionally do nothing, the design tool should request focus instead
 	}
 
+	/**
+	 * Clear the command prompt and text
+	 */
 	public void clear() {
 		Fx.run( () -> command.setText( TextUtil.EMPTY ) );
 		setPrompt( TextUtil.EMPTY );
 	}
 
+	/**
+	 * This method is for captured key events to be propagated to the command line
+	 * @param event The event to propagate
+	 */
 	void fireEvent( KeyEvent event ) {
 		command.fireEvent( event );
-		event.consume();
 	}
 
+	/**
+	 * Capture special keys, except for the SPACE key. Also consume the events
+	 * so thy are not propagated to the key capture logic in {@link DesignTool}.
+	 * @param event The key event
+	 */
 	private void handleKeyEvent( KeyEvent event ) {
-		// NOTE This method was originally implemented to capture the SPACE key event
-		// This is no longer desired behavior on the command line and therefore this code has been removed
+		// Capture special keys, except do not capture the SPACE key here
+		if( command.isFocused() && event.getEventType() == KeyEvent.KEY_PRESSED ) {
+			switch( event.getCode() ) {
+				case ESCAPE -> context.cancel( event );
+				case ENTER -> context.enter( event );
+			}
+		}
+
+		// Do not allow the event to bubble back up to the scene
+		event.consume();
 	}
 
 	private void handleTextChange( ObservableValue<? extends String> property, String oldValue, String newValue ) {
