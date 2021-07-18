@@ -20,6 +20,7 @@ import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.asset.type.PropertiesType;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
@@ -110,6 +111,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignPropertiesMap designPropertiesMap;
 
+	private final PropertiesAction propertiesAction;
+
 	private final DeleteAction deleteAction;
 
 	private final UndoAction undoAction;
@@ -142,6 +145,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 
+		this.propertiesAction = new PropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
@@ -420,7 +424,6 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Keep the design pane centered when resizing
 		// These should be added before updating the pan and zoom
-		// FIXME These may be moved to the designPane itself
 		widthProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
 		heightProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
 
@@ -595,6 +598,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
+		pushAction( "properties", propertiesAction );
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
@@ -661,6 +665,7 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
 
+		pullAction( "properties", propertiesAction );
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
@@ -951,6 +956,25 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
+	private static class PropertiesAction extends ProgramAction {
+
+		protected PropertiesAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getProgram().getAssetManager().openAsset( PropertiesType.URI );
+			// NEXT Set the asset properties page
+		}
+
+	}
+
 	private class DeleteAction extends ProgramAction {
 
 		protected DeleteAction( Program program ) {
@@ -1002,7 +1026,6 @@ public abstract class DesignTool extends GuidedTool {
 		public void handle( ActionEvent event ) {
 			getAsset().getUndoManager().redo();
 		}
-
 
 	}
 

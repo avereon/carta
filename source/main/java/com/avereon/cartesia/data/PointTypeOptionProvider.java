@@ -2,7 +2,6 @@ package com.avereon.cartesia.data;
 
 import com.avereon.product.Rb;
 import com.avereon.xenon.BundleKey;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
 
 import java.util.List;
@@ -10,12 +9,6 @@ import java.util.List;
 public class PointTypeOptionProvider implements SettingOptionProvider {
 
 	private static List<String> keys;
-
-	private final ProgramProduct product;
-
-	public PointTypeOptionProvider( ProgramProduct product ) {
-		this.product = product;
-	}
 
 	static {
 		PointTypeOptionProvider.keys = List.of(
@@ -31,7 +24,6 @@ public class PointTypeOptionProvider implements SettingOptionProvider {
 
 	@Override
 	public List<String> getKeys() {
-		System.out.println( "getKeys=" + keys );
 		return keys;
 	}
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="design">
+		<group id="design-title">
+			<setting key="name"/>
+			<setting key="description" editor="textarea"/>
+			<setting key="author"/>
+			<setting key="unit" editor="combobox" provider="design-units"/>
+			<!-- Precision -->
+		</group>
+	</page>
+
+</pages>
