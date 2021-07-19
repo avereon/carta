@@ -5,9 +5,12 @@ import com.avereon.cartesia.data.DesignUnitOptionProvider;
 import com.avereon.cartesia.data.PointTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
+import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.log.LazyEval;
+import com.avereon.product.Rb;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolRegistration;
+import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zerra.image.BrokenIcon;
 import lombok.CustomLog;
 
@@ -19,6 +22,8 @@ public class CartesiaMod extends Mod {
 	private Design2dAssetType design2dAssetType;
 
 	private Design3dAssetType design3dAssetType;
+
+	private ShapePropertiesAssetType shapePropertiesAssetType;
 
 	@Override
 	public void startup() throws Exception {
@@ -72,19 +77,25 @@ public class CartesiaMod extends Mod {
 		registerAction( this, "snap-grid-toggle" );
 		registerAction( this, "grid-toggle" );
 
-		// Register Design2D
+		// Register Design2D asset type and tools
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
 		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-		design2dEditorRegistration.setName( "Design 2D Editor" );
+		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, design2dEditorRegistration );
+		String path = "/" + getClass().getPackageName().replace( ".", "/" );
+		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml" ) );
 
-		// Register Design3D
+		// Register Design3D asset type and tools
 		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
 		//ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
-		//design3dEditorRegistration.setName( "Design 3D Editor" );
+		//design3dEditorRegistration.setName( Rb.text(BundleKey.LABEL, "design-3d-editor") );
 		//registerTool( design3dAssetType, design3dEditorRegistration );
 
-		// NEXT Register ShapeProperties asset type
+		// Register ShapeProperties asset type and tools
+		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
+		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
+		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
 
 		getProgram().getSettingsManager().putOptionProvider( "point-type-option-provider", new PointTypeOptionProvider() );
 		getProgram().getSettingsManager().putOptionProvider( "design-layer-layers", new DesignLayerOptionProvider( this, true ) );
@@ -107,6 +118,10 @@ public class CartesiaMod extends Mod {
 
 		// Unregister the settings pages
 		unregisterSettingsPages();
+
+		// Unregister ShapeProperties
+		unregisterTool( shapePropertiesAssetType, ShapePropertiesTool.class );
+		unregisterAssetType( shapePropertiesAssetType );
 
 		// Unregister Design3D
 		//unregisterTool( design3dAssetType, Design3dEditor.class );

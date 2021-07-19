@@ -20,7 +20,6 @@ import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.asset.type.PropertiesType;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
@@ -111,7 +110,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignPropertiesMap designPropertiesMap;
 
-	private final PropertiesAction propertiesAction;
+	private final DesignShapePropertiesAction designShapePropertiesAction;
 
 	private final DeleteAction deleteAction;
 
@@ -145,7 +144,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 
-		this.propertiesAction = new PropertiesAction( product.getProgram() );
+		this.designShapePropertiesAction = new DesignShapePropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
@@ -598,7 +597,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
-		pushAction( "properties", propertiesAction );
+		//pushAction( "properties", designShapePropertiesAction );
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
@@ -665,7 +664,7 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
 
-		pullAction( "properties", propertiesAction );
+		//pullAction( "properties", designShapePropertiesAction );
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
@@ -956,9 +955,9 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private static class PropertiesAction extends ProgramAction {
+	private static class DesignShapePropertiesAction extends ProgramAction {
 
-		protected PropertiesAction( Program program ) {
+		protected DesignShapePropertiesAction( Program program ) {
 			super( program );
 		}
 
@@ -969,7 +968,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getProgram().getAssetManager().openAsset( PropertiesType.URI );
+			//getProgram().getAssetManager().openAsset( PropertiesType.URI );
 			// NEXT Set the asset properties page
 		}
 
