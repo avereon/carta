@@ -2,7 +2,7 @@
 
 <pages version="1.0">
 
-	<page id="design">
+	<page id="asset">
 		<group id="design-title">
 			<setting key="name"/>
 			<setting key="description" editor="textarea"/>
