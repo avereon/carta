@@ -16,6 +16,10 @@ public abstract class Design extends IdNode {
 
 	public static final String NAME = "name";
 
+	public static final String AUTHOR = "author";
+
+	public static final String DESCRIPTION = "description";
+
 	public static final String UNIT = "unit";
 
 	public static final String ROOT_LAYER = "root-layer";
@@ -28,7 +32,7 @@ public abstract class Design extends IdNode {
 	private DesignContext context;
 
 	public Design() {
-		addModifyingKeys( NAME, UNIT, ROOT_LAYER );
+		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, ROOT_LAYER );
 
 		// Read-only values
 		setValue( ROOT_LAYER, new DesignLayer() );
@@ -44,6 +48,24 @@ public abstract class Design extends IdNode {
 
 	public Design setName( String name ) {
 		setValue( NAME, name );
+		return this;
+	}
+
+	public String getAuthor() {
+		return getValue( AUTHOR );
+	}
+
+	public Design setAuthor( String author ) {
+		setValue( AUTHOR, author );
+		return this;
+	}
+
+	public String getDescription() {
+		return getValue( DESCRIPTION );
+	}
+
+	public Design setDescription( String name ) {
+		setValue( DESCRIPTION, name );
 		return this;
 	}
 
@@ -130,7 +152,7 @@ public abstract class Design extends IdNode {
 	}
 
 	public Map<String, ?> asMap() {
-		return asMap( ID, NAME );
+		return asMap( ID, NAME, AUTHOR, DESCRIPTION, UNIT );
 	}
 
 	public Map<String, Object> asDeepMap() {
@@ -140,8 +162,11 @@ public abstract class Design extends IdNode {
 	}
 
 	public Design updateFrom( Map<String, Object> map ) {
-		map.computeIfPresent( DesignLayer.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
-		map.computeIfPresent( DesignLayer.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.AUTHOR, ( k, v ) -> setAuthor( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.DESCRIPTION, ( k, v ) -> setDescription( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.UNIT, ( k, v ) -> setDesignUnit( String.valueOf( v ) ) );
 		return this;
 	}
 

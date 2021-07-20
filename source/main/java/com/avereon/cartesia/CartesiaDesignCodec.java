@@ -100,13 +100,12 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Design2D design = asset.setModel( new Design2D() );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
+		design.updateFrom( map );
 
 		log.atFine().log( "Design codec version: %s", LazyEval.of( () -> map.get( CODEC_VERSION_KEY ) ) );
 
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
-
-		design.updateFrom( map );
 
 		// Load layers
 		layers.values().forEach( l -> loadLayer( design.getRootLayer(), l ) );
@@ -235,7 +234,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapDesign( Design design ) {
-		Map<String, Object> map = new HashMap<>( asMap( design, Design.ID, Design.NAME ) );
+		Map<String, Object> map = new HashMap<>( asMap( design, Design.ID, Design.NAME, Design.AUTHOR, Design.DESCRIPTION, Design.UNIT ) );
 		map.put( DesignLayer.LAYERS, design.getRootLayer().getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
 		return map;
 	}
