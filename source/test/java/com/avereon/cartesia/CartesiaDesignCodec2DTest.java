@@ -78,7 +78,6 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		// Load the design from a stream
 		byte[] buffer = MAPPER.writer().writeValueAsBytes( map );
 		codec.load( asset, new ByteArrayInputStream( buffer ) );
-		//System.out.println( codec.prettyPrint( buffer ) );
 
 		// Check the result
 		assertThat( ((Design)asset.getModel()).asDeepMap(), is( deepMap ) );
@@ -119,6 +118,9 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 
 	private Design createTestDesign( Design design ) {
 		design.setName( "Test Design" );
+		design.setAuthor( "Test Author" );
+		design.setDescription( "Test design for unit tests." );
+		design.setDesignUnit( DesignUnit.METER );
 		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (Empty layer)" );
 		design.getRootLayer().addLayer( layer0 );
 		DesignLayer layer1 = new DesignLayer().setName( "Layer 1" );

@@ -988,10 +988,7 @@ public abstract class DesignTool extends GuidedTool {
 			SettingsPage page = asset.getType().getSettingsPages().get( "asset" );
 
 			// Set the settings for the pages
-			Design design = getAsset().getModel();
-			// NEXT So...what do I want in the metadata?
-			// ...or should the metadata be stored at the root of the model?
-			page.setSettings( new NodeSettings( design ) );
+			page.setSettings( new NodeSettings( getAsset().getModel() ) );
 
 			// Switch to a task thread to get the tool
 			getProgram().getTaskManager().submit( Task.of( () -> {
