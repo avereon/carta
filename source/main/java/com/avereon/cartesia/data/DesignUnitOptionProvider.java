@@ -15,7 +15,7 @@ public class DesignUnitOptionProvider implements SettingOptionProvider {
 		DesignUnitOptionProvider.keys = List.of(
 			DesignUnit.MILLIMETER.name().toLowerCase(),
 			DesignUnit.CENTIMETER.name().toLowerCase(),
-			DesignUnit.DECIMETER.name().toLowerCase(),
+			//DesignUnit.DECIMETER.name().toLowerCase(),
 			DesignUnit.KILOMETER.name().toLowerCase(),
 			DesignUnit.METER.name().toLowerCase(),
 			DesignUnit.INCH.name().toLowerCase(),

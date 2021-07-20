@@ -84,7 +84,7 @@ public class CartesiaMod extends Mod {
 		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, design2dEditorRegistration );
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
-		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml" ) );
+		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", BundleKey.PROPS ) );
 
 		// Register Design3D asset type and tools
 		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );

@@ -3,10 +3,10 @@
 <pages version="1.0">
 
 	<page id="asset">
-		<group id="design-title">
+		<group id="design">
 			<setting key="name"/>
-			<setting key="description" editor="textarea"/>
 			<setting key="author"/>
+			<setting key="description" editor="textarea" rows="2"/>
 			<setting key="unit" editor="combobox" provider="design-units"/>
 			<!-- Precision -->
 		</group>
