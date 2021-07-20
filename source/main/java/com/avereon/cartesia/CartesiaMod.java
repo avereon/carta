@@ -9,6 +9,7 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Mod;
+import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zerra.image.BrokenIcon;
@@ -94,7 +95,8 @@ public class CartesiaMod extends Mod {
 		// Register ShapeProperties asset type and tools
 		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
 		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
-		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		shapePropertiesRegistration.setName( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );
 		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
 
 		getProgram().getSettingsManager().putOptionProvider( "point-type-option-provider", new PointTypeOptionProvider() );

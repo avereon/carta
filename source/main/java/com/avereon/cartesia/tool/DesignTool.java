@@ -17,7 +17,10 @@ import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
 import com.avereon.util.TypeReference;
-import com.avereon.xenon.*;
+import com.avereon.xenon.ActionProxy;
+import com.avereon.xenon.Program;
+import com.avereon.xenon.ProgramAction;
+import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.task.Task;
@@ -869,14 +872,16 @@ public abstract class DesignTool extends GuidedTool {
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 
-			if( c.getList().size() > 1 ) {
+			int size = c.getList().size();
+
+			if( size == 0 ) {
+				hidePropertiesPage();
+			} else if( size == 1 ) {
+				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
+			} else {
 				// Show a combined properties page
 				Set<DesignDrawable> designData = c.getList().parallelStream().map( DesignTool::getDesignData ).collect( Collectors.toSet() );
 				showPropertiesPage( new MultiNodeSettings( designData ), DesignShape.class );
-			} else if( c.getList().size() == 1 ) {
-				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
-			} else {
-				hidePropertiesPage();
 			}
 		}
 		deleteAction.updateEnabled();
@@ -890,14 +895,25 @@ public abstract class DesignTool extends GuidedTool {
 		SettingsPage page = designPropertiesMap.getSettingsPage( type );
 		if( page != null ) {
 			page.setSettings( settings );
-			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI ).get();
+
+					// Fire the event on the FX thread
+					Fx.run(() -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.SHOW, page ) ) );
+				} catch( Exception exception ) {
+					log.atWarn( exception ).log();
+				}
+			} ) );
 		} else {
 			log.atError().log( "Unable to find properties page for %s", type.getName() );
 		}
 	}
 
 	private void hidePropertiesPage() {
-		getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
+		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
 	public static DesignLayer getDesignData( DesignPaneLayer l ) {
