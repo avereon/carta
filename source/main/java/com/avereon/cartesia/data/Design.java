@@ -24,9 +24,6 @@ public abstract class Design extends IdNode {
 
 	public static final String ROOT_LAYER = "root-layer";
 
-	@Deprecated
-	public static final String CURRENT_LAYER = "current-layer";
-
 	public static final String VIEWS = "views";
 
 	private DesignContext context;
