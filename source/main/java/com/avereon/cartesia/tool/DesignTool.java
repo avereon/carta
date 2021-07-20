@@ -17,18 +17,17 @@ import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
 import com.avereon.util.TypeReference;
-import com.avereon.xenon.ActionProxy;
-import com.avereon.xenon.Program;
-import com.avereon.xenon.ProgramAction;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.asset.type.PropertiesType;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workpane.Workpane;
+import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -113,7 +112,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignPropertiesMap designPropertiesMap;
 
-	private final DesignShapePropertiesAction designShapePropertiesAction;
+	private final PropertiesAction propertiesAction;
 
 	private final DeleteAction deleteAction;
 
@@ -147,7 +146,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 
-		this.designShapePropertiesAction = new DesignShapePropertiesAction( product.getProgram() );
+		this.propertiesAction = new PropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
@@ -600,7 +599,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
-		//pushAction( "properties", designShapePropertiesAction );
+		pushAction( "properties", propertiesAction );
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
@@ -667,7 +666,7 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
 
-		//pullAction( "properties", designShapePropertiesAction );
+		pullAction( "properties", propertiesAction );
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
@@ -902,7 +901,7 @@ public abstract class DesignTool extends GuidedTool {
 					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI ).get();
 
 					// Fire the event on the FX thread
-					Fx.run(() -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.SHOW, page ) ) );
+					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.SHOW, page ) ) );
 				} catch( Exception exception ) {
 					log.atWarn( exception ).log();
 				}
@@ -971,9 +970,9 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private static class DesignShapePropertiesAction extends ProgramAction {
+	private class PropertiesAction extends ProgramAction {
 
-		protected DesignShapePropertiesAction( Program program ) {
+		protected PropertiesAction( Program program ) {
 			super( program );
 		}
 
@@ -984,8 +983,29 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			//getProgram().getAssetManager().openAsset( PropertiesType.URI );
-			// NEXT Set the asset properties page
+			// Get the settings pages for the asset type
+			Asset asset = getAsset();
+			SettingsPage page = asset.getType().getSettingsPages().get( "asset" );
+
+			// Set the settings for the pages
+			Design design = getAsset().getModel();
+			// NEXT So...what do I want in the metadata?
+			// ...or should the metadata be stored at the root of the model?
+			page.setSettings( new NodeSettings( design ) );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Show the properties tool
+					getProgram().getAssetManager().openAsset( PropertiesType.URI ).get();
+
+					// Fire the event on the FX thread
+					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
+					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, page ) ) );
+				} catch( Exception exception ) {
+					log.atError( exception ).log();
+				}
+			} ) );
 		}
 
 	}

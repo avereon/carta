@@ -286,7 +286,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testChangeDesignUnitCausesRescale() {
 		design.setDesignUnit( DesignUnit.MILLIMETER );
-		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.getDesignUnit() );
+		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.calcDesignUnit() );
 		assertThat( pane.getScaleX(), near( 1.0 * scale ) );
 		assertThat( pane.getScaleY(), near( -1.0 * scale ) );
 	}

@@ -33,7 +33,7 @@ public class DesignTest {
 	void testDesignUnitModifiesDesign() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getDesignUnit(), Matchers.is( DesignUnit.CENTIMETER ) );
+		assertThat( design.calcDesignUnit(), Matchers.is( DesignUnit.CENTIMETER ) );
 		assertThat( design.isModified(), is( false ) );
 
 		design.setDesignUnit( DesignUnit.MILLIMETER );

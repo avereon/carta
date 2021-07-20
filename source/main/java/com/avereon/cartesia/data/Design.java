@@ -47,11 +47,20 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	public DesignUnit getDesignUnit() {
+	public DesignUnit calcDesignUnit() {
+		return DesignUnit.valueOf( getDesignUnit().toUpperCase() );
+	}
+
+	public String getDesignUnit() {
 		return getValue( UNIT );
 	}
 
 	public Design setDesignUnit( DesignUnit unit ) {
+		setDesignUnit( unit.name().toLowerCase() );
+		return this;
+	}
+
+	public Design setDesignUnit( String unit ) {
 		setValue( UNIT, unit );
 		return this;
 	}

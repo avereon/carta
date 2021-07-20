@@ -491,7 +491,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private DesignUnit getDesignUnit() {
-		return design == null ? Design.DEFAULT_DESIGN_UNIT : design.getDesignUnit();
+		return design == null ? Design.DEFAULT_DESIGN_UNIT : design.calcDesignUnit();
 	}
 
 	private double valueToPixels( DesignValue v ) {
