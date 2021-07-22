@@ -44,8 +44,8 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	@Override
 	protected void ready( OpenAssetRequest request ) {
-		setTitle( Rb.text( BundleKey.TOOL, "properties-name" ) );
-		setGraphic( getProgram().getIconLibrary().getIcon( "properties" ) );
+		setTitle( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		setGraphic( getProgram().getIconLibrary().getIcon( "shape-properties" ) );
 	}
 
 	@Override
