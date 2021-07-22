@@ -19,6 +19,7 @@ import com.avereon.settings.Settings;
 import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.AssetSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.PropertiesType;
 import com.avereon.xenon.task.Task;
@@ -127,6 +128,8 @@ public abstract class DesignTool extends GuidedTool {
 	private ChangeListener<Boolean> gridVisibleToggleHandler;
 
 	private ChangeListener<Boolean> snapGridToggleHandler;
+
+	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -533,6 +536,16 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@Override
+	protected void allocate() throws ToolException {
+		super.allocate();
+
+		// Add asset switch listener to remove command prompt
+		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+			if( e.getOldAsset() == this.getAsset() ) unregisterStatusBarItems();
+		} );
+	}
+
+	@Override
 	protected void activate() throws ToolException {
 		super.activate();
 
@@ -547,18 +560,20 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@Override
-	protected void deactivate() throws ToolException {
-		unregisterStatusBarItems();
-		super.deactivate();
-	}
-
-	@Override
 	protected void conceal() throws ToolException {
 		unregisterCommandCapture();
 		unregisterActions();
 		pullMenus();
 		pullTools();
 		super.conceal();
+	}
+
+	@Override
+	protected void deallocate() throws ToolException {
+		// Remove asset switch listener to unregister status bar items
+		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+
+		super.deallocate();
 	}
 
 	void showCommandPrompt() {
@@ -571,13 +586,17 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerStatusBarItems() {
-		getWorkspace().getStatusBar().setLeftToolItems( getDesignContext().getCommandPrompt() );
-		getWorkspace().getStatusBar().setRightToolItems( getCoordinateStatus() );
+		Fx.run( () -> {
+			getWorkspace().getStatusBar().setLeftToolItems( getDesignContext().getCommandPrompt() );
+			getWorkspace().getStatusBar().setRightToolItems( getDesignContext().getCoordinateStatus() );
+		} );
 	}
 
 	private void unregisterStatusBarItems() {
-		getWorkspace().getStatusBar().removeLeftItems( getDesignContext().getCommandPrompt() );
-		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
+		Fx.run( () -> {
+			getWorkspace().getStatusBar().removeLeftToolItems( getDesignContext().getCommandPrompt() );
+			getWorkspace().getStatusBar().removeRightToolItems( getDesignContext().getCoordinateStatus() );
+		} );
 	}
 
 	private void registerCommandCapture() {
