@@ -328,7 +328,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		synchronized( commandStack ) {
 			CommandExecuteRequest request = new CommandExecuteRequest( this, tool, command, parameters );
-			log.atDebug().log( "Command submitted %s", request );
+			log.atTrace().log( "Command submitted %s", request );
 
 			commandStack.push( request );
 			getProduct().task( "process-commands", this::doProcessCommands );
@@ -414,8 +414,9 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		public Object executeCommandStep( Object priorResult ) throws Exception {
 			// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
+			if( priorResult == null ) log.atWarning().log( "A prior result of null was passed to execute" );
 			if( priorResult == Command.INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
-			if( priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
+			if( priorResult != null && priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
 
 			Object result = Command.INVALID;
 			try {

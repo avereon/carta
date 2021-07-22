@@ -13,7 +13,7 @@ public class SnapSelect extends SnapCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) return INVALID;
+		if( parameters.length < 1 ) return COMPLETE;
 
 		if( parameters.length < 2 ) {
 			snap = (Snap)parameters[ 0 ];
@@ -23,7 +23,7 @@ public class SnapSelect extends SnapCommand {
 
 		Point3D point = asPoint( context.getAnchor(), parameters[ 1 ] );
 		Point3D snapPoint = snap.snap( context.getTool(), point );
-		return snapPoint != CadPoints.NONE ? snapPoint : INVALID;
+		return snapPoint != CadPoints.NONE ? snapPoint : COMPLETE;
 	}
 
 	@Override

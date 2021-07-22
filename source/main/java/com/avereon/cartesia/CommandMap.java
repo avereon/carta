@@ -2,6 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.snap.SnapCenter;
+import com.avereon.cartesia.snap.SnapIntersection;
 import com.avereon.cartesia.snap.SnapMidpoint;
 import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.log.LazyEval;
@@ -144,11 +145,13 @@ public class CommandMap {
 		add( product, "snap-center", SnapSelect.class, new SnapCenter() );
 		add( product, "snap-midpoint", SnapSelect.class, new SnapMidpoint() );
 		add( product, "snap-nearest", SnapSelect.class, new SnapNearest() );
+		add( product, "snap-intersection", SnapSelect.class, new SnapIntersection() );
 
 		// Snap auto commands
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
 		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearest() );
+		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
 
 		// Event type actions
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );

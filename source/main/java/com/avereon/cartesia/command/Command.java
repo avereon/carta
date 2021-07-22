@@ -155,7 +155,7 @@ public class Command {
 	}
 
 	protected DesignShape findNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
-		List<Shape> shapes = context.getTool().screenPointFindAndWait( mouse );
+		List<Shape> shapes = context.getTool().screenPointFindOneAndWait( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
 	}
 

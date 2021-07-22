@@ -714,9 +714,22 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	public List<Shape> screenPointFindAndWait( Point3D mouse ) {
+	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
 		final List<Shape> selection = new ArrayList<>();
 		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selection::add ) );
+		try {
+			Fx.waitForWithExceptions( 1000 );
+		} catch( TimeoutException exception ) {
+			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
+		} catch( InterruptedException exception ) {
+			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
+		}
+		return selection;
+	}
+
+	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
+		final List<Shape> selection = new ArrayList<>();
+		Fx.run( () -> selection.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ) ) );
 		try {
 			Fx.waitForWithExceptions( 1000 );
 		} catch( TimeoutException exception ) {

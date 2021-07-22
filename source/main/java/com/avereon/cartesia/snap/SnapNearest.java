@@ -20,7 +20,7 @@ public class SnapNearest implements Snap {
 
 	@Override
 	public Point3D snap( DesignTool tool, Point3D point ) {
-		if( point == null ) return null;
+		if( point == null ) return CadPoints.NONE;
 
 		Point3D mouse = tool.worldToScreen( point );
 
