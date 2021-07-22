@@ -537,6 +537,7 @@ public abstract class DesignTool extends GuidedTool {
 		super.activate();
 
 		getCommandContext().setLastActiveDesignTool( this );
+
 		registerStatusBarItems();
 		registerCommandCapture();
 		registerActions();
@@ -547,17 +548,17 @@ public abstract class DesignTool extends GuidedTool {
 
 	@Override
 	protected void deactivate() throws ToolException {
-		super.deactivate();
 		unregisterStatusBarItems();
+		super.deactivate();
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
-		super.conceal();
 		unregisterCommandCapture();
+		unregisterActions();
 		pullMenus();
 		pullTools();
-		unregisterActions();
+		super.conceal();
 	}
 
 	void showCommandPrompt() {
@@ -575,12 +576,13 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void unregisterStatusBarItems() {
-		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
 		getWorkspace().getStatusBar().removeLeftItems( getDesignContext().getCommandPrompt() );
+		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
 	}
 
 	private void registerCommandCapture() {
-		// If there is already a command capture handler then remove it (because it may belong to a different design)
+		// If there is already a command capture handler then remove it
+		// (because it may belong to a different design)
 		unregisterCommandCapture();
 
 		// Add the design command capture handler. This captures all key events that
@@ -911,7 +913,8 @@ public abstract class DesignTool extends GuidedTool {
 			// Switch to a task thread to get the tool
 			getProgram().getTaskManager().submit( Task.of( () -> {
 				try {
-					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI ).get();
+					// Open the tool but don't make it the active tool
+					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
 
 					// Fire the event on the FX thread
 					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.SHOW, page ) ) );
