@@ -54,7 +54,7 @@ public class DesignLayer extends DesignDrawable {
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
-		setSetModifyFilter( SHAPES, n -> n.getValue( DesignShape.REFERENCE ) == null );
+		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
 	}
 
 	/**
