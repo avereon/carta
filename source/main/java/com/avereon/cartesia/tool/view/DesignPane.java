@@ -281,6 +281,7 @@ public class DesignPane extends StackPane {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
+		// Create the root layer view
 		layerMap.put( design.getRootLayer(), new DesignLayerView( this, design.getRootLayer(), layers ) );
 
 		design.getRootLayer().getAllLayers().forEach( this::doAddNode );

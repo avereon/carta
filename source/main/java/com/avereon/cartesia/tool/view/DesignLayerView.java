@@ -12,7 +12,7 @@ public class DesignLayerView extends DesignDrawableView {
 	}
 
 	// Special handing of the root layer pane
-	public DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPaneLayer layer ) {
+	DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPaneLayer layer ) {
 		super( pane, designLayer );
 		this.layer = layer;
 		layer.setVisible( true );

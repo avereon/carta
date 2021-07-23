@@ -146,7 +146,6 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	Command processText( String input, boolean force ) {
 		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
 		if( force ) {
-			log.atConfig().log( "input mode=%s", getInputMode() );
 			return switch( getInputMode() ) {
 				case NUMBER -> pushCommand( new Value(), CadShapes.parsePoint( input ).getX() );
 				case POINT -> pushCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
