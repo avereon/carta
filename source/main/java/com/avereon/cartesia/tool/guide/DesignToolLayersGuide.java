@@ -32,6 +32,8 @@ public class DesignToolLayersGuide extends Guide {
 
 	private ChangeListener<Boolean> showingHandler;
 
+	private EventHandler<NodeEvent> nameHandler;
+
 	private EventHandler<NodeEvent> orderHandler;
 
 	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
@@ -98,15 +100,18 @@ public class DesignToolLayersGuide extends Guide {
 		nodeLayers.put( layerGuideNode, designLayer );
 
 		showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
+		nameHandler = e -> layerGuideNode.setName( designLayer.getName() );
 		orderHandler = e -> layerGuideNode.setOrder( designLayer.getOrder() );
 
 		layer.showingProperty().addListener( showingHandler );
+		designLayer.register( DesignLayer.NAME, nameHandler );
 		designLayer.register( DesignLayer.ORDER, orderHandler );
 	}
 
 	private void removeLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
-		designLayer.unregister( DesignLayer.ORDER, orderHandler );
 		layer.visibleProperty().removeListener( showingHandler );
+		designLayer.unregister( DesignLayer.ORDER, orderHandler );
+		designLayer.unregister( DesignLayer.NAME, nameHandler );
 		removeNode( layerNodes.get( designLayer ) );
 		nodeLayers.remove( layerNodes.get( designLayer ) );
 		layerNodes.remove( designLayer );
