@@ -28,6 +28,7 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workpane.Workpane;
+import com.avereon.xenon.workspace.StatusBar;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
@@ -541,7 +542,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Add asset switch listener to remove command prompt
 		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-			if( e.getOldAsset() == this.getAsset() ) unregisterStatusBarItems();
+			if( e.getOldAsset() == this.getAsset() && isDisplayed() ) unregisterStatusBarItems();
 		} );
 	}
 
@@ -586,16 +587,18 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerStatusBarItems() {
+		final StatusBar bar = getWorkspace().getStatusBar();
 		Fx.run( () -> {
-			getWorkspace().getStatusBar().setLeftToolItems( getDesignContext().getCommandPrompt() );
-			getWorkspace().getStatusBar().setRightToolItems( getDesignContext().getCoordinateStatus() );
+			bar.setLeftToolItems( getDesignContext().getCommandPrompt() );
+			bar.setRightToolItems( getDesignContext().getCoordinateStatus() );
 		} );
 	}
 
 	private void unregisterStatusBarItems() {
+		final StatusBar bar = getWorkspace().getStatusBar();
 		Fx.run( () -> {
-			getWorkspace().getStatusBar().removeLeftToolItems( getDesignContext().getCommandPrompt() );
-			getWorkspace().getStatusBar().removeRightToolItems( getDesignContext().getCoordinateStatus() );
+			bar.removeLeftToolItems( getDesignContext().getCommandPrompt() );
+			bar.removeRightToolItems( getDesignContext().getCoordinateStatus() );
 		} );
 	}
 
