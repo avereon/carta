@@ -886,6 +886,8 @@ public abstract class DesignTool extends GuidedTool {
 		// FIXME This takes too much work
 		// NOTE Maybe the grid can be removed during pan operations???
 
+		if( !isGridVisible() ) return;
+
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
 			try {
 				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
