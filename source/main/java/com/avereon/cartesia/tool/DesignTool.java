@@ -913,7 +913,7 @@ public abstract class DesignTool extends GuidedTool {
 			int size = c.getList().size();
 
 			if( size == 0 ) {
-				hidePropertiesPage();
+				showPropertiesPage( getCurrentLayer() );
 			} else if( size == 1 ) {
 				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 			} else {
