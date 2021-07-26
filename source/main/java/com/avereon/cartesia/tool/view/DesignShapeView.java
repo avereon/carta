@@ -98,17 +98,18 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	public void addShapeGeometry() {
-		Fx.run( () -> getPane().addShapeGeometry( this ) );
+		getPane().addShapeGeometry( this );
 		getGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).showingProperty() );
 		getCpGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).showingProperty() );
 		registerListeners();
 	}
 
 	public void removeShapeGeometry() {
+		final DesignPane pane = getPane();
 		unregisterListeners();
 		getCpGroup().visibleProperty().unbind();
 		getGroup().visibleProperty().unbind();
-		Fx.run( () -> getPane().removeShapeGeometry( this ) );
+		pane.removeShapeGeometry( this );
 	}
 
 	@Override

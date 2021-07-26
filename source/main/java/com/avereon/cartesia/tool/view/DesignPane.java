@@ -151,10 +151,6 @@ public class DesignPane extends StackPane {
 		removeActions.put( DesignCurve.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 	}
 
-	DesignPaneLayer getLayerPane() {
-		return layers;
-	}
-
 	public Design getDesign() {
 		return design;
 	}
@@ -441,16 +437,6 @@ public class DesignPane extends StackPane {
 			.collect( Collectors.toList() );
 	}
 
-	public void addShapeGeometry( DesignShapeView view ) {
-		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
-		reference.getChildren().add( view.getCpGroup() );
-	}
-
-	public void removeShapeGeometry( DesignShapeView view ) {
-		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
-		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
-	}
-
 	public void setGrid( List<Shape> grid ) {
 		this.grid.getChildren().clear();
 		this.grid.getChildren().addAll( grid );
@@ -473,6 +459,20 @@ public class DesignPane extends StackPane {
 		doRotate();
 		doRescale();
 		doRecenter();
+	}
+
+	DesignPaneLayer getLayerPane() {
+		return layers;
+	}
+
+	void addShapeGeometry( DesignShapeView view ) {
+		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
+		reference.getChildren().add( view.getCpGroup() );
+	}
+
+	void removeShapeGeometry( DesignShapeView view ) {
+		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
+		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
 	}
 
 	private void addOriginReferencePoint() {
@@ -587,16 +587,16 @@ public class DesignPane extends StackPane {
 	private void doAddShape( DesignShape shape ) {
 		geometryMap.computeIfAbsent( shape, ( k ) -> {
 			DesignShapeView view = DesignGeometry.from( this, shape );
-			if( view != null ) view.addShapeGeometry();
+			if( view != null ) Fx.run( view::addShapeGeometry );
 			return view;
 		} );
 	}
 
 	private void doRemoveShape( DesignShape shape ) {
-		geometryMap.computeIfPresent( shape, ( k, v ) -> {
-			v.removeShapeGeometry();
+		Fx.run( () -> geometryMap.computeIfPresent( shape, ( k, view ) -> {
+			Fx.run( view::removeShapeGeometry );
 			return null;
-		} );
+		} ) );
 	}
 
 	/**
