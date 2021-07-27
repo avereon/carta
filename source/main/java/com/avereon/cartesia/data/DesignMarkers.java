@@ -8,14 +8,18 @@ public class DesignMarkers {
 	private static final DesignMarker.Type DEFAULT_TYPE = DesignMarker.Type.CROSS;
 
 	public static Path createPoint( DesignMarker.Type type, double x, double y, double r ) {
-		return switch( type ) {
-			case CROSS -> createCrossPoint( x, y, r );
-			case REFERENCE -> createReference( x, y, r );
-			case CIRCLE -> createCircle( x, y, r );
-			case DIAMOND -> createDiamond( x, y, r );
-			case SQUARE -> createSquare( x, y, r );
-			default -> createXPoint( x, y, r );
+		Path path = switch( type ) {
+			case CROSS -> createCrossPoint( 0, 0, r );
+			case REFERENCE -> createReference( 0, 0, r );
+			case CIRCLE -> createCircle( 0, 0, r );
+			case DIAMOND -> createDiamond( 0, 0, r );
+			case SQUARE -> createSquare( 0, 0, r );
+			default -> createXPoint( 0, 0, r );
 		};
+		path.setLayoutX( x );
+		path.setLayoutY( y );
+
+		return path;
 	}
 
 	public static DesignMarker.Type parseType( String type ) {
