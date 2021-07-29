@@ -80,6 +80,8 @@ public class CartesiaMod extends Mod {
 		registerAction( this, "snap-grid-toggle" );
 		registerAction( this, "grid-toggle" );
 
+		getProgram().getAssetManager().addScheme( new CartesiaScheme( getProgram() ) );
+
 		// Register Design2D asset type and tools
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
 		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );

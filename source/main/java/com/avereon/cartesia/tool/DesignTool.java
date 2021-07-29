@@ -841,8 +841,12 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void configureWorkplane() {
-		Settings settings = getAsset().getSettings();
+		// The workplane values are stored in the tool settings
+		// FIXME Where do we store default grid settings?
+		// However, a set of default workplane values may need to be pub in the
+		// asset settings because when a tool is closed, the settings are deleted.
 		DesignWorkplane workplane = getDesignContext().getWorkplane();
+		Settings settings = getAsset().getSettings();
 
 		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", DesignWorkplane.DEFAULT_ORIGIN ) );
 		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
@@ -882,6 +886,7 @@ public abstract class DesignTool extends GuidedTool {
 		rebuildGrid();
 	}
 
+	@Deprecated
 	private void rebuildGrid() {
 		// FIXME This takes too much work
 		// NOTE Maybe the grid can be removed during pan operations???

@@ -6,6 +6,7 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 
+@SuppressWarnings( "UnusedReturnValue" )
 public class DesignWorkplane extends Node {
 
 	public static final double DEFAULT_BOUNDARY_X = 10.0;
