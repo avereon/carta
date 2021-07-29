@@ -2,16 +2,19 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.data.Node;
+import com.avereon.transaction.Txn;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
+import lombok.CustomLog;
 
+@CustomLog
 @SuppressWarnings( "UnusedReturnValue" )
 public class DesignWorkplane extends Node {
 
-	public static final double DEFAULT_BOUNDARY_X = 10.0;
+	public static final double DEFAULT_BOUNDARY_X = 0.0;
 
-	public static final double DEFAULT_BOUNDARY_Y = 10.0;
+	public static final double DEFAULT_BOUNDARY_Y = 0.0;
 
 	public static final String DEFAULT_ORIGIN = "0,0,0";
 
@@ -37,11 +40,15 @@ public class DesignWorkplane extends Node {
 
 	public static final String BOUNDARY_Y2 = "boundary-y2";
 
+	public static final String MAJOR_GRID_VISIBLE = "major-grid-visible";
+
 	public static final String MAJOR_GRID_X = "major-grid-x";
 
 	public static final String MAJOR_GRID_Y = "major-grid-y";
 
 	public static final String MAJOR_GRID_Z = "major-grid-z";
+
+	public static final String MINOR_GRID_VISIBLE = "minor-grid-visible";
 
 	public static final String MINOR_GRID_X = "minor-grid-x";
 
@@ -73,50 +80,25 @@ public class DesignWorkplane extends Node {
 
 	private double snapGridZ;
 
+	private boolean majorGridShowing;
+
+	private boolean minorGridShowing;
+
 	public DesignWorkplane() {
-		this( -DEFAULT_BOUNDARY_X,
-			-DEFAULT_BOUNDARY_Y,
-			DEFAULT_BOUNDARY_X,
-			DEFAULT_BOUNDARY_Y,
-			DEFAULT_MAJOR_GRID_SIZE,
-			DEFAULT_MINOR_GRID_SIZE,
-			DEFAULT_SNAP_GRID_SIZE
-		);
+		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_MAJOR_GRID_SIZE, DEFAULT_MINOR_GRID_SIZE, DEFAULT_SNAP_GRID_SIZE );
 	}
 
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this( DEFAULT_ORIGIN,
-			boundaryX1,
-			boundaryY1,
-			boundaryX2,
-			boundaryY2,
-			majorGrid,
-			majorGrid,
-			majorGrid,
-			minorGrid,
-			minorGrid,
-			minorGrid,
-			snapGrid,
-			snapGrid,
-			snapGrid
-		);
+		this( DEFAULT_ORIGIN, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorGrid, majorGrid, majorGrid, minorGrid, minorGrid, minorGrid, snapGrid, snapGrid, snapGrid );
 	}
 
 	public DesignWorkplane(
-		double boundaryX1,
-		double boundaryY1,
-		double boundaryX2,
-		double boundaryY2,
-		String majorGridX,
-		String majorGridY,
-		String minorGridX,
-		String minorGridY,
-		String snapGridX,
-		String snapGridY
+		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGridX, String majorGridY, String minorGridX, String minorGridY, String snapGridX, String snapGridY
 	) {
-		this( DEFAULT_ORIGIN,
+		this(
+			DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -149,20 +131,22 @@ public class DesignWorkplane extends Node {
 		String snapGridY,
 		String snapGridZ
 	) {
-		setOrigin( origin );
-		setBoundaryX1( boundaryX1 );
-		setBoundaryY1( boundaryY1 );
-		setBoundaryX2( boundaryX2 );
-		setBoundaryY2( boundaryY2 );
-		setMajorGridX( majorGridX );
-		setMajorGridY( majorGridY );
-		setMajorGridZ( majorGridZ );
-		setMinorGridX( minorGridX );
-		setMinorGridY( minorGridY );
-		setMinorGridZ( minorGridZ );
-		setSnapGridX( snapGridX );
-		setSnapGridY( snapGridY );
-		setSnapGridZ( snapGridZ );
+		Txn.run( () -> {
+			setOrigin( origin );
+			setBoundaryX1( boundaryX1 );
+			setBoundaryY1( boundaryY1 );
+			setBoundaryX2( boundaryX2 );
+			setBoundaryY2( boundaryY2 );
+			setMajorGridX( majorGridX );
+			setMajorGridY( majorGridY );
+			setMajorGridZ( majorGridZ );
+			setMinorGridX( minorGridX );
+			setMinorGridY( minorGridY );
+			setMinorGridZ( minorGridZ );
+			setSnapGridX( snapGridX );
+			setSnapGridY( snapGridY );
+			setSnapGridZ( snapGridZ );
+		} );
 	}
 
 	public String getOrigin() {
@@ -210,6 +194,24 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
+	public boolean isMajorGridVisible() {
+		return getValue( MAJOR_GRID_VISIBLE, true );
+	}
+
+	public DesignWorkplane setMajorGridVisible( boolean visible ) {
+		setValue( MAJOR_GRID_VISIBLE, visible );
+		return this;
+	}
+
+	public boolean isMajorGridShowing() {
+		return majorGridShowing;
+	}
+
+	public DesignWorkplane setMajorGridShowing( boolean showing ) {
+		majorGridShowing = showing;
+		return this;
+	}
+
 	public double calcMajorGridX() {
 		return majorGridX;
 	}
@@ -249,6 +251,24 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane setMajorGridZ( String majorGridZ ) {
 		this.majorGridZ = CadMath.evalNoException( majorGridZ );
 		setValue( MAJOR_GRID_Z, majorGridZ );
+		return this;
+	}
+
+	public boolean isMinorGridVisible() {
+		return getValue( MINOR_GRID_VISIBLE, true );
+	}
+
+	public DesignWorkplane setMinorGridVisible( boolean visible ) {
+		setValue( MINOR_GRID_VISIBLE, visible );
+		return this;
+	}
+
+	public boolean isMinorGridShowing() {
+		return minorGridShowing;
+	}
+
+	public DesignWorkplane setMinorGridShowing( boolean showing ) {
+		minorGridShowing = showing;
 		return this;
 	}
 
@@ -346,10 +366,12 @@ public class DesignWorkplane extends Node {
 
 	public DesignWorkplane setBounds( Bounds bounds ) {
 		if( bounds == null ) return this;
-		setBoundaryX1( bounds.getMinX() );
-		setBoundaryY1( bounds.getMinY() );
-		setBoundaryX2( bounds.getMaxX() );
-		setBoundaryY2( bounds.getMaxY() );
+		Txn.run( () -> {
+			setBoundaryX1( bounds.getMinX() );
+			setBoundaryY1( bounds.getMinY() );
+			setBoundaryX2( bounds.getMaxX() );
+			setBoundaryY2( bounds.getMaxY() );
+		} );
 		return this;
 	}
 

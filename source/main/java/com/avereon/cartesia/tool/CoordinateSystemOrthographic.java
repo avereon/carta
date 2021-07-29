@@ -42,6 +42,8 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		double majorIntervalY = workplane.calcMajorGridY();
 		double minorIntervalX = workplane.calcMinorGridX();
 		double minorIntervalY = workplane.calcMinorGridY();
+		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
+		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 
 		// Get all offsets
 		List<Double> axisOffsetsX = new ArrayList<>();
@@ -62,30 +64,36 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		double strokeWidthX = 0.1 * minorIntervalX;
 		double strokeWidthY = 0.1 * minorIntervalY;
 
-		for( double value : minorOffsetsX ) {
-			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
-			shape.setStrokeWidth( strokeWidthX );
-			grid.add( shape );
+		if( minorVisible ) {
+			for( double value : minorOffsetsX ) {
+				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
+				shape.setStrokeWidth( strokeWidthX );
+				grid.add( shape );
+			}
+			for( double value : minorOffsetsY ) {
+				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
+				shape.setStrokeWidth( strokeWidthY );
+				grid.add( shape );
+			}
 		}
-		for( double value : minorOffsetsY ) {
-			Line shape = new Line( boundaryX1, value, boundaryX2, value );
-			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
-			shape.setStrokeWidth( strokeWidthY );
-			grid.add( shape );
+
+		if( majorVisible ) {
+			for( double value : majorOffsetsX ) {
+				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
+				shape.setStrokeWidth( strokeWidthX );
+				grid.add( shape );
+			}
+			for( double value : majorOffsetsY ) {
+				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
+				shape.setStrokeWidth( strokeWidthY );
+				grid.add( shape );
+			}
 		}
-		for( double value : majorOffsetsX ) {
-			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
-			shape.setStrokeWidth( strokeWidthX );
-			grid.add( shape );
-		}
-		for( double value : majorOffsetsY ) {
-			Line shape = new Line( boundaryX1, value, boundaryX2, value );
-			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
-			shape.setStrokeWidth( strokeWidthY );
-			grid.add( shape );
-		}
+
 		for( double value : axisOffsetsX ) {
 			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
 			shape.setStroke( DesignWorkplane.DEFAULT_AXIS_COLOR );

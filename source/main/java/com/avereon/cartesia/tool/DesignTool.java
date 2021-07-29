@@ -16,6 +16,8 @@ import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
+import com.avereon.transaction.Txn;
+import com.avereon.util.DelayedAction;
 import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
@@ -92,6 +94,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final Snap gridSnap = new SnapGrid();
 
+	private static final double MINIMUM_GRID_PIXELS = 3.0;
+
 	private final Map<String, ProgramAction> commandActions;
 
 	private final DesignToolLayersGuide layersGuide;
@@ -121,6 +125,8 @@ public abstract class DesignTool extends GuidedTool {
 	private final UndoAction undoAction;
 
 	private final RedoAction redoAction;
+
+	private final DelayedAction rebuildGridAction;
 
 	private ReticleCursor reticle;
 
@@ -154,6 +160,10 @@ public abstract class DesignTool extends GuidedTool {
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
+
+		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
+		this.rebuildGridAction.setMaxTriggerLimit( 600 );
+		this.rebuildGridAction.setMinTriggerLimit( 200 );
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectedShapesChanged );
@@ -479,25 +489,25 @@ public abstract class DesignTool extends GuidedTool {
 		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
-		layoutBoundsProperty().addListener( ( p, o, n ) -> validateGrid() );
+		layoutBoundsProperty().addListener( ( p, o, n ) -> revalidateGrid() );
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
-			validateGrid();
+			revalidateGrid();
 		} );
 
 		// Add view rotate property listener
 		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
-			validateGrid();
+			revalidateGrid();
 		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			getSettings().set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
-			validateGrid();
+			revalidateGrid();
 		} );
 
 		// Add visible layers listener
@@ -523,7 +533,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.updateView();
-		validateGrid();
+		revalidateGrid();
 	}
 
 	@Override
@@ -843,8 +853,8 @@ public abstract class DesignTool extends GuidedTool {
 	private void configureWorkplane() {
 		// The workplane values are stored in the tool settings
 		// FIXME Where do we store default grid settings?
-		// However, a set of default workplane values may need to be pub in the
-		// asset settings because when a tool is closed, the settings are deleted.
+		// However, a set of default workplane values may need to be put in the
+		// asset settings because when a tool is closed, the tool settings are deleted.
 		DesignWorkplane workplane = getDesignContext().getWorkplane();
 		Settings settings = getAsset().getSettings();
 
@@ -870,30 +880,37 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( DesignWorkplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
 
-		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
-		rebuildGrid();
+		// Rebuild the grid if any workplane values change
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.update() );
 	}
 
-	private void validateGrid() {
+	private void revalidateGrid() {
+		DesignWorkplane workplane = getDesignContext().getWorkplane();
+		Bounds majorGridBounds = new BoundingBox( 0, 0, workplane.calcMajorGridX(), workplane.calcMajorGridY() );
+		Bounds minorGridBounds = new BoundingBox( 0, 0, workplane.calcMinorGridX(), workplane.calcMinorGridY() );
+
 		Fx.run( () -> {
+			Bounds majorBounds = designPane.localToParent( majorGridBounds );
+			Bounds minorBounds = designPane.localToParent( minorGridBounds );
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
-			DesignWorkplane workplane = getDesignContext().getWorkplane();
-			// TODO What if the bounds are significantly smaller thant the workplane?
-			// TODO What if the bounds are so large that the grid is effectively filled in?
-			if( workplane.getBounds().contains( bounds ) ) return;
-			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
+
+			// Updating the workplane values should cause the grid to be rebuilt
+			Txn.run( () -> {
+				workplane.setMajorGridShowing( majorBounds.getWidth() > MINIMUM_GRID_PIXELS && majorBounds.getHeight() > MINIMUM_GRID_PIXELS );
+				workplane.setMinorGridShowing( minorBounds.getWidth() > MINIMUM_GRID_PIXELS && minorBounds.getHeight() > MINIMUM_GRID_PIXELS );
+				workplane.setBounds( bounds );
+			} );
 		} );
-		rebuildGrid();
 	}
 
-	@Deprecated
-	private void rebuildGrid() {
-		// FIXME This takes too much work
-		// NOTE Maybe the grid can be removed during pan operations???
-
+	/**
+	 * Should only be called by triggering the {@link #rebuildGridAction}.
+	 */
+	public void doRebuildGrid() {
 		if( !isGridVisible() ) return;
 
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
+			log.atConfig().log( "Rebuilding grid..." );
 			try {
 				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );

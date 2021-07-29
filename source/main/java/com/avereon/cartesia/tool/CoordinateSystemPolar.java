@@ -52,6 +52,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		double boundaryXmax = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) - origin.getX();
 		double boundaryYmin = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
 		double boundaryYmax = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
+		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
+		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 
 		Point3D a = new Point3D( boundaryXmin, boundaryYmin, 0 );
 		Point3D b = new Point3D( boundaryXmin, boundaryYmax, 0 );
@@ -88,20 +90,25 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 
 		// Circles (radius) need to be centered at origin
 		double maxR = 0;
-		for( double value : minorOffsetsR ) {
-			if( value > maxR ) maxR = value;
-			Circle shape = new Circle( origin.getX(), origin.getY(), value );
-			shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
-			shape.setFill( Color.TRANSPARENT );
-			grid.add( shape );
+		if( minorVisible ) {
+			for( double value : minorOffsetsR ) {
+				if( value > maxR ) maxR = value;
+				Circle shape = new Circle( origin.getX(), origin.getY(), value );
+				shape.setStroke( DesignWorkplane.DEFAULT_MINOR_GRID_COLOR );
+				shape.setFill( Color.TRANSPARENT );
+				grid.add( shape );
+			}
 		}
-		for( double value : majorOffsetsR ) {
-			if( value > maxR ) maxR = value;
-			Circle shape = new Circle( origin.getX(), origin.getY(), value );
-			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
-			shape.setFill( Color.TRANSPARENT );
-			grid.add( shape );
+		if( majorVisible ) {
+			for( double value : majorOffsetsR ) {
+				if( value > maxR ) maxR = value;
+				Circle shape = new Circle( origin.getX(), origin.getY(), value );
+				shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
+				shape.setFill( Color.TRANSPARENT );
+				grid.add( shape );
+			}
 		}
+
 		// Lines (angles) need to be centered at origin
 		for( double value : minorOffsetsA ) {
 			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
@@ -117,6 +124,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			shape.setStroke( DesignWorkplane.DEFAULT_MAJOR_GRID_COLOR );
 			grid.add( shape );
 		}
+
 		for( double value : axisOffsetsA ) {
 			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 			// The center can get a bit crowded, can I fix this?
