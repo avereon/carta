@@ -48,6 +48,7 @@ public class DesignContext {
 		return coordinates;
 	}
 
+	@Deprecated
 	public final DesignWorkplane getWorkplane() {
 		return workplane;
 	}

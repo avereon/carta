@@ -126,6 +126,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final RedoAction redoAction;
 
+	private final DesignWorkplane workplane;
+
 	private final DelayedAction rebuildGridAction;
 
 	private ReticleCursor reticle;
@@ -161,6 +163,8 @@ public abstract class DesignTool extends GuidedTool {
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
 
+		this.workplane = new DesignWorkplane();
+
 		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
 		this.rebuildGridAction.setMaxTriggerLimit( 600 );
 		this.rebuildGridAction.setMinTriggerLimit( 200 );
@@ -190,6 +194,21 @@ public abstract class DesignTool extends GuidedTool {
 
 	public final CommandContext getCommandContext() {
 		return getDesignContext().getCommandContext();
+	}
+
+	public final CoordinateSystem getCoordinateSystem() {
+		return getDesignContext().getCoordinateSystem();
+	}
+
+	public final DesignWorkplane getWorkplane() {
+		//return getDesignContext().getWorkplane();
+
+		// TODO Determine where to store and update grid settings
+		// If each tool has its own workplane, then each tool can have different
+		// grid parameters, or they will have to be stored in the design context
+		// and distributed to the tool workplanes.
+
+		return workplane;
 	}
 
 	public Point3D getViewPoint() {
@@ -855,7 +874,7 @@ public abstract class DesignTool extends GuidedTool {
 		// FIXME Where do we store default grid settings?
 		// However, a set of default workplane values may need to be put in the
 		// asset settings because when a tool is closed, the tool settings are deleted.
-		DesignWorkplane workplane = getDesignContext().getWorkplane();
+		DesignWorkplane workplane = getWorkplane();
 		Settings settings = getAsset().getSettings();
 
 		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", DesignWorkplane.DEFAULT_ORIGIN ) );
@@ -885,7 +904,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void revalidateGrid() {
-		DesignWorkplane workplane = getDesignContext().getWorkplane();
+		DesignWorkplane workplane = getWorkplane();
 		Bounds majorGridBounds = new BoundingBox( 0, 0, workplane.calcMajorGridX(), workplane.calcMajorGridY() );
 		Bounds minorGridBounds = new BoundingBox( 0, 0, workplane.calcMinorGridX(), workplane.calcMinorGridY() );
 
@@ -912,7 +931,7 @@ public abstract class DesignTool extends GuidedTool {
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
 			log.atConfig().log( "Rebuilding grid..." );
 			try {
-				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
+				List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );
 			} catch( Exception exception ) {
 				log.atError().withCause( exception ).log( "Error creating grid" );

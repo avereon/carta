@@ -17,8 +17,8 @@ public class SnapGrid implements Snap {
 		if( mouse == null ) return CadPoints.NONE;
 
 		// NOTE The mouse point is in world coordinates
-		CoordinateSystem system = tool.getDesignContext().getCoordinateSystem();
-		return system.getNearest( tool.getDesignContext().getWorkplane(), mouse );
+		CoordinateSystem system = tool.getCoordinateSystem();
+		return system.getNearest( tool.getWorkplane(), mouse );
 	}
 
 }
