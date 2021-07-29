@@ -80,9 +80,9 @@ public class DesignWorkplane extends Node {
 
 	private double snapGridZ;
 
-	private boolean majorGridShowing;
+	private boolean majorGridShowing = true;
 
-	private boolean minorGridShowing;
+	private boolean minorGridShowing = true;
 
 	public DesignWorkplane() {
 		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_MAJOR_GRID_SIZE, DEFAULT_MINOR_GRID_SIZE, DEFAULT_SNAP_GRID_SIZE );
