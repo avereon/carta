@@ -3,6 +3,7 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
+import com.avereon.settings.Settings;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
@@ -23,12 +24,13 @@ public class Design2dAssetType extends AssetType {
 	public boolean assetNew( Program program, Asset asset ) throws AssetException {
 		Design2D design = initModel( asset );
 
-		// If there is not a default layer, create one
-		if( design.getRootLayer().getLayers().size() == 0 ) {
-			String constructionLayerName = Rb.textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
-			DesignLayer layer = new DesignLayer().setName( constructionLayerName );
-			design.getRootLayer().addLayer( layer );
-		}
+		// Create the default layer
+		String constructionLayerName = Rb.textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
+		DesignLayer layer = new DesignLayer().setName( constructionLayerName );
+		design.getRootLayer().addLayer( layer );
+
+		// Initialize the design settings
+		Settings settings = program.getSettingsManager().getAssetSettings( asset );
 
 		return true;
 	}

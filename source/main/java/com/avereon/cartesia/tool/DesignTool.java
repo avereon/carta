@@ -871,22 +871,22 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void configureWorkplane() {
 		// The workplane values are stored in the tool settings
-		// FIXME Where do we store default grid settings?
+		// FIXME Where do we store default grid settings? ...in the asset settings.
 		// However, a set of default workplane values may need to be put in the
 		// asset settings because when a tool is closed, the tool settings are deleted.
 		DesignWorkplane workplane = getWorkplane();
-		Settings settings = getAsset().getSettings();
+		Settings settings = getAssetSettings();
 
-		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", DesignWorkplane.DEFAULT_ORIGIN ) );
-		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setOrigin( settings.get( "workpane-origin", DesignWorkplane.DEFAULT_ORIGIN ) );
+		workplane.setMajorGridX( settings.get( "workpane-major-grid-x", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridY( settings.get( "workpane-major-grid-y", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMajorGridZ( settings.get( "workpane-major-grid-z", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
+		workplane.setMinorGridX( settings.get( "workpane-minor-grid-x", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridY( settings.get( "workpane-minor-grid-y", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setMinorGridZ( settings.get( "workpane-minor-grid-z", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
+		workplane.setSnapGridX( settings.get( "workpane-snap-grid-x", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridY( settings.get( "workpane-snap-grid-y", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setSnapGridZ( settings.get( "workpane-snap-grid-z", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
 
 		workplane.register( DesignWorkplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
 		workplane.register( DesignWorkplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
