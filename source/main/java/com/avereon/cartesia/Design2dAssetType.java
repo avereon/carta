@@ -31,6 +31,12 @@ public class Design2dAssetType extends AssetType {
 
 		// Initialize the design settings
 		Settings settings = program.getSettingsManager().getAssetSettings( asset );
+		settings.set( "grid-major-x", "1.0" );
+		settings.set( "grid-major-y", "1.0" );
+		settings.set( "grid-minor-x", "0.5" );
+		settings.set( "grid-minor-y", "0.5" );
+		settings.set( "grid-snap-x", "0.1" );
+		settings.set( "grid-snap-y", "0.1" );
 
 		return true;
 	}

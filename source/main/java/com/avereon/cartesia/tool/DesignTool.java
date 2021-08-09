@@ -1068,6 +1068,11 @@ public abstract class DesignTool extends GuidedTool {
 			Asset asset = getAsset();
 			SettingsPage page = asset.getType().getSettingsPages().get( "asset" );
 
+			// FIXME Figure out how to combine the asset settings and the asset node settings
+			Settings assetSettings = getProgram().getSettingsManager().getAssetSettings( asset );
+			// NOTE Using the default values does not work as expected because the set() method never changes the default settings
+			//assetSettings.setDefaultValues( new NodeSettings( getAsset().getModel() ) );
+
 			// Set the settings for the pages
 			page.setSettings( new NodeSettings( getAsset().getModel() ) );
 

@@ -10,6 +10,16 @@
 			<setting key="unit" editor="combobox" provider="design-units"/>
 			<!-- Precision -->
 		</group>
+
+		<!-- Grid -->
+		<group id="grid">
+			<setting key="grid-major-x" type="math-expression"/>
+			<setting key="grid-major-y" type="math-expression"/>
+			<setting key="grid-minor-x" type="math-expression"/>
+			<setting key="grid-minor-y" type="math-expression"/>
+			<setting key="grid-snap-x" type="math-expression"/>
+			<setting key="grid-snap-y" type="math-expression"/>
+		</group>
 	</page>
 
 </pages>
