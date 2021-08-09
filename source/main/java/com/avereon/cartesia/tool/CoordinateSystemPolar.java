@@ -115,19 +115,23 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		}
 
 		// Lines (angles) need to be centered at origin
-		for( double value : minorOffsetsA ) {
-			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
-			// The center can get a bit crowded, can I fix this?
-			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-			shape.setStroke( DesignWorkplane.DEFAULT_GRID_MINOR_COLOR );
-			grid.add( shape );
+		if( minorVisible ) {
+			for( double value : minorOffsetsA ) {
+				Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
+				// The center can get a bit crowded, can I fix this?
+				Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
+				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MINOR_COLOR );
+				grid.add( shape );
+			}
 		}
-		for( double value : majorOffsetsA ) {
-			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
-			// The center can get a bit crowded, can I fix this?
-			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-			shape.setStroke( DesignWorkplane.DEFAULT_GRID_MAJOR_COLOR );
-			grid.add( shape );
+		if( majorVisible ) {
+			for( double value : majorOffsetsA ) {
+				Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
+				// The center can get a bit crowded, can I fix this?
+				Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
+				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MAJOR_COLOR );
+				grid.add( shape );
+			}
 		}
 
 		for( double value : axisOffsetsA ) {
