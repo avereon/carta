@@ -44,6 +44,8 @@ public class DesignWorkplane extends Node {
 
 	public static final String GRID_ORIGIN = "grid-origin";
 
+	public static final String GRID_AXIS_VISIBLE = "grid-axis-visible";
+
 	public static final String GRID_MAJOR_VISIBLE = "grid-major-visible";
 
 	public static final String GRID_MAJOR_X = "grid-major-x";
@@ -97,12 +99,6 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this( DEFAULT_COORDINATE_SYSTEM, DEFAULT_GRID_ORIGIN, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorGrid, majorGrid, majorGrid, minorGrid, minorGrid, minorGrid, snapGrid, snapGrid, snapGrid );
-	}
-
-	public DesignWorkplane(
-		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGridX, String majorGridY, String minorGridX, String minorGridY, String snapGridX, String snapGridY
-	) {
 		this(
 			DEFAULT_COORDINATE_SYSTEM,
 			DEFAULT_GRID_ORIGIN,
@@ -110,12 +106,36 @@ public class DesignWorkplane extends Node {
 			boundaryY1,
 			boundaryX2,
 			boundaryY2,
+			majorGrid,
+			majorGrid,
+			majorGrid,
+			minorGrid,
+			minorGrid,
+			minorGrid,
+			snapGrid,
+			snapGrid,
+			snapGrid
+		);
+	}
+
+	public DesignWorkplane(
+		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGridX, String majorGridY, String minorGridX, String minorGridY, String snapGridX, String snapGridY
+	) {
+		this( DEFAULT_COORDINATE_SYSTEM,
+			DEFAULT_GRID_ORIGIN,
+			boundaryX1,
+			boundaryY1,
+			boundaryX2,
+			boundaryY2,
 			majorGridX,
-			majorGridY, DEFAULT_GRID_MAJOR_SIZE,
+			majorGridY,
+			DEFAULT_GRID_MAJOR_SIZE,
 			minorGridX,
-			minorGridY, DEFAULT_GRID_MINOR_SIZE,
+			minorGridY,
+			DEFAULT_GRID_MINOR_SIZE,
 			snapGridX,
-			snapGridY, DEFAULT_GRID_SNAP_SIZE
+			snapGridY,
+			DEFAULT_GRID_SNAP_SIZE
 		);
 	}
 
@@ -205,6 +225,15 @@ public class DesignWorkplane extends Node {
 
 	public DesignWorkplane setBoundaryY2( double boundaryY2 ) {
 		setValue( BOUNDARY_Y2, boundaryY2 );
+		return this;
+	}
+
+	public boolean isGridAxisVisible() {
+		return getValue( GRID_AXIS_VISIBLE, true );
+	}
+
+	public DesignWorkplane setGridAxisVisible( boolean visible ) {
+		setValue( GRID_AXIS_VISIBLE, visible );
 		return this;
 	}
 

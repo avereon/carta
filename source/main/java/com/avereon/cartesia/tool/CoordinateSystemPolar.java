@@ -1,8 +1,8 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.CadShapes;
-import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Arithmetic;
+import com.avereon.curve.math.Constants;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
@@ -28,8 +28,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		point = point.subtract( origin );
 		point = CadShapes.cartesianToPolarDegrees( point );
 
-		point = new Point3D(
-			Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
+		point = new Point3D( Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
 			Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ),
 			Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() )
 		);
@@ -57,6 +56,7 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		double boundaryXmax = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) - origin.getX();
 		double boundaryYmin = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
 		double boundaryYmax = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
+		boolean axisVisible = workplane.isGridAxisVisible();
 		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
 		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 
@@ -88,10 +88,14 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		List<Double> minorOffsetsA = CoordinateSystem.getOffsets( 0, minorIntervalA, 0, 360, true );
 
 		// Check for conflicts
-		minorOffsetsR.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsR ) );
-		majorOffsetsR.removeIf( value -> value < Constants.RESOLUTION_LENGTH );
-		minorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsA ) );
-		majorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsA ) );
+		if( majorVisible ) {
+			minorOffsetsR.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsR ) );
+			minorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsA ) );
+		}
+		if( axisVisible ) {
+			majorOffsetsR.removeIf( value -> value < Constants.RESOLUTION_LENGTH );
+			majorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsA ) );
+		}
 
 		// Circles (radius) need to be centered at origin
 		double maxR = 0;
@@ -134,12 +138,14 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			}
 		}
 
-		for( double value : axisOffsetsA ) {
-			Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
-			// The center can get a bit crowded, can I fix this?
-			Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-			shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
-			grid.add( shape );
+		if( axisVisible ) {
+			for( double value : axisOffsetsA ) {
+				Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
+				// The center can get a bit crowded, can I fix this?
+				Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
+				shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
+				grid.add( shape );
+			}
 		}
 
 		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );

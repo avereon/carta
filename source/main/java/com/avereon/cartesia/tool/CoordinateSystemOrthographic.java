@@ -20,8 +20,7 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 	public Point3D getNearest( DesignWorkplane workplane, Point3D point ) {
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
 		point = point.subtract( origin );
-		point = new Point3D(
-			Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
+		point = new Point3D( Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
 			Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ),
 			Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() )
 		);
@@ -47,6 +46,7 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		double majorIntervalY = workplane.calcMajorGridY();
 		double minorIntervalX = workplane.calcMinorGridX();
 		double minorIntervalY = workplane.calcMinorGridY();
+		boolean axisVisible = workplane.isGridAxisVisible();
 		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
 		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 
@@ -61,10 +61,14 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		List<Double> minorOffsetsY = CoordinateSystem.getOffsets( origin.getY(), minorIntervalY, boundaryY1, boundaryY2 );
 
 		// Check for conflicts
-		minorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsX ) );
-		minorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsY ) );
-		majorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsX ) );
-		majorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsY ) );
+		if( majorVisible ) {
+			minorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsX ) );
+			minorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsY ) );
+		}
+		if( axisVisible ) {
+			majorOffsetsX.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsX ) );
+			majorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsY ) );
+		}
 
 		double strokeWidthX = 0.1 * minorIntervalX;
 		double strokeWidthY = 0.1 * minorIntervalY;
@@ -99,17 +103,19 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 			}
 		}
 
-		for( double value : axisOffsetsX ) {
-			Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-			shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
-			shape.setStrokeWidth( strokeWidthX );
-			grid.add( shape );
-		}
-		for( double value : axisOffsetsY ) {
-			Line shape = new Line( boundaryX1, value, boundaryX2, value );
-			shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
-			shape.setStrokeWidth( strokeWidthY );
-			grid.add( shape );
+		if( axisVisible ) {
+			for( double value : axisOffsetsX ) {
+				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
+				shape.setStrokeWidth( strokeWidthX );
+				grid.add( shape );
+			}
+			for( double value : axisOffsetsY ) {
+				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
+				shape.setStrokeWidth( strokeWidthY );
+				grid.add( shape );
+			}
 		}
 
 		return grid;
