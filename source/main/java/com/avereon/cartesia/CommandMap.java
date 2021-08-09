@@ -126,6 +126,7 @@ public class CommandMap {
 		add( product, "redo", Redo.class );
 		add( product, "rotate", Rotate.class );
 		add( product, "scale", Scale.class );
+		add( product, "split", Split.class );
 		//add( product, "stretch", Stretch.class );
 		add( product, "trim", Trim.class );
 		add( product, "undo", Undo.class );
