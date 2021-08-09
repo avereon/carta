@@ -166,8 +166,8 @@ public abstract class DesignTool extends GuidedTool {
 		this.workplane = new DesignWorkplane();
 
 		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
-		this.rebuildGridAction.setMaxTriggerLimit( 600 );
-		this.rebuildGridAction.setMinTriggerLimit( 200 );
+		this.rebuildGridAction.setMaxTriggerLimit( 500 );
+		this.rebuildGridAction.setMinTriggerLimit( 100 );
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectedShapesChanged );
@@ -409,6 +409,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setGridVisible( boolean visible ) {
 		getDesignPane().setGridVisible( visible );
+		if( visible ) rebuildGridAction.update();
 	}
 
 	public BooleanProperty gridVisible() {
@@ -505,25 +506,25 @@ public abstract class DesignTool extends GuidedTool {
 		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
-		layoutBoundsProperty().addListener( ( p, o, n ) -> revalidateGrid() );
+		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
-			revalidateGrid();
+			doUpdateGridBounds();
 		} );
 
 		// Add view rotate property listener
 		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
 			getSettings().set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
-			revalidateGrid();
+			doUpdateGridBounds();
 		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			getSettings().set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
-			revalidateGrid();
+			doUpdateGridBounds();
 		} );
 
 		// Add visible layers listener
@@ -549,7 +550,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.updateView();
-		revalidateGrid();
+		doUpdateGridBounds();
 	}
 
 	@Override
@@ -906,7 +907,7 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.update() );
 	}
 
-	private void revalidateGrid() {
+	private void doUpdateGridBounds() {
 		DesignWorkplane workplane = getWorkplane();
 		Bounds majorGridBounds = new BoundingBox( 0, 0, workplane.calcMajorGridX(), workplane.calcMajorGridY() );
 		Bounds minorGridBounds = new BoundingBox( 0, 0, workplane.calcMinorGridX(), workplane.calcMinorGridY() );
@@ -916,11 +917,16 @@ public abstract class DesignTool extends GuidedTool {
 			Bounds minorBounds = designPane.localToParent( minorGridBounds );
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
 
-			// Updating the workplane values should cause the grid to be rebuilt
+			boolean showMajorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class );
+			boolean showMinorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class );
+			boolean showMajorGridForBounds = majorBounds.getWidth() > MINIMUM_GRID_PIXELS && majorBounds.getHeight() > MINIMUM_GRID_PIXELS;
+			boolean showMinorGridForBounds = minorBounds.getWidth() > MINIMUM_GRID_PIXELS && minorBounds.getHeight() > MINIMUM_GRID_PIXELS;
+
+			// Updating some workplane values should cause the grid to be rebuilt
 			Txn.run( () -> {
-				workplane.setMajorGridShowing( majorBounds.getWidth() > MINIMUM_GRID_PIXELS && majorBounds.getHeight() > MINIMUM_GRID_PIXELS );
-				workplane.setMinorGridShowing( minorBounds.getWidth() > MINIMUM_GRID_PIXELS && minorBounds.getHeight() > MINIMUM_GRID_PIXELS );
 				workplane.setBounds( bounds );
+				workplane.setMajorGridShowing( showMajorGridForSettings && showMajorGridForBounds );
+				workplane.setMinorGridShowing( showMinorGridForSettings && showMinorGridForBounds );
 			} );
 		} );
 	}
@@ -928,7 +934,7 @@ public abstract class DesignTool extends GuidedTool {
 	/**
 	 * Should only be called by triggering the {@link #rebuildGridAction}.
 	 */
-	public void doRebuildGrid() {
+	private void doRebuildGrid() {
 		if( !isGridVisible() ) return;
 
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
