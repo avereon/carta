@@ -31,6 +31,7 @@ public class CadPoints {
 	}
 
 	public static Point3D toFxPoint( double[] point ) {
+		if( point == null ) return null;
 		return new Point3D( point[ 0 ], point[ 1 ], point[ 2 ] );
 	}
 

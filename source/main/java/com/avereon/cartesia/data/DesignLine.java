@@ -42,7 +42,7 @@ public class DesignLine extends DesignShape {
 		double[] a = CadPoints.asPoint( getOrigin() );
 		double[] b = CadPoints.asPoint( getPoint() );
 		double[] p = CadPoints.asPoint( point );
-		return Geometry.pointLineDistance( a, b, p );
+		return Geometry.linePointDistance( a, b, p );
 	}
 
 	@Override

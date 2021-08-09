@@ -55,6 +55,14 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Geometry.midpoint( asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
 	}
 
+	public static Point3D nearestLinePoint( Point3D a, Point3D b, Point3D p ) {
+		return CadPoints.toFxPoint( Geometry.nearestLinePoint( asPoint( a ), asPoint( b ), asPoint( p ) ) );
+	}
+
+	public static Point3D nearestBoundLinePoint( Point3D a, Point3D b, Point3D p ) {
+		return CadPoints.toFxPoint( Geometry.nearestBoundLinePoint( asPoint( a ), asPoint( b ), asPoint( p ) ) );
+	}
+
 	/**
 	 * Get the distance between a point and a line.
 	 *
@@ -64,7 +72,7 @@ public class CadGeometry {
 	 * @return The distance between the point and the line
 	 */
 	public static double pointLineDistance( Point3D p, Point3D a, Point3D b ) {
-		return Geometry.pointLineDistance( asPoint( a ), asPoint( b ), asPoint( p ) );
+		return Geometry.linePointDistance( asPoint( a ), asPoint( b ), asPoint( p ) );
 	}
 
 	/**
@@ -76,7 +84,7 @@ public class CadGeometry {
 	 * @return The distance between the line and the point
 	 */
 	public static double linePointDistance( Point3D a, Point3D b, Point3D p ) {
-		return Geometry.pointLineDistance( asPoint( a ), asPoint( b ), asPoint( p ) );
+		return Geometry.linePointDistance( asPoint( a ), asPoint( b ), asPoint( p ) );
 	}
 
 	public static double lineLineDistance( Point3D a, Point3D b, Point3D c, Point3D d ) {
