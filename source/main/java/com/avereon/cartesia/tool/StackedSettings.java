@@ -38,7 +38,7 @@ public class StackedSettings extends AbstractSettings {
 
 	@Override
 	public String getName() {
-		return "SettingsStack" + settingsStack.stream().map( Settings::getName ).collect( Collectors.toList());
+		return "SettingsStack" + settingsStack.stream().map( Settings::getName ).collect( Collectors.toList() );
 	}
 
 	@Override
@@ -68,16 +68,17 @@ public class StackedSettings extends AbstractSettings {
 
 	@Override
 	public Set<String> getKeys() {
-		return null;
+		return settingsStack.stream().flatMap( s -> s.getKeys().stream() ).collect( Collectors.toSet() );
 	}
 
 	@Override
 	public Settings flush() {
-		return null;
+		settingsStack.forEach( Settings::flush );
+		return this;
 	}
 
 	@Override
 	public Settings delete() {
-		return null;
+		return this;
 	}
 }

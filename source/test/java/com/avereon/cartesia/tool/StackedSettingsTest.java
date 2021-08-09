@@ -35,8 +35,6 @@ public class StackedSettingsTest {
 
 		StackedSettings settings = new StackedSettings( base, first );
 
-		System.out.println( settings.getName() );
-
 		assertThat( settings.get( "b", "default" ), is( "b-in-first" ) );
 		settings.set( "b", null );
 		assertThat( settings.get( "b", "default" ), is( "b-in-base" ) );
