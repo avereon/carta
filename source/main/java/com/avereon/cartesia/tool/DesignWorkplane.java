@@ -16,21 +16,21 @@ public class DesignWorkplane extends Node {
 
 	public static final double DEFAULT_BOUNDARY_Y = 0.0;
 
-	public static final String DEFAULT_ORIGIN = "0,0,0";
+	public static final CoordinateSystem DEFAULT_COORDINATE_SYSTEM = CoordinateSystem.ORTHO;
 
-	public static final String DEFAULT_MAJOR_GRID_SIZE = "1.0";
+	public static final String DEFAULT_GRID_ORIGIN = "0,0,0";
 
-	public static final String DEFAULT_MINOR_GRID_SIZE = "0.5";
+	public static final String DEFAULT_GRID_MAJOR_SIZE = "1.0";
 
-	public static final String DEFAULT_SNAP_GRID_SIZE = "0.1";
+	public static final String DEFAULT_GRID_MINOR_SIZE = "0.5";
 
-	public static final Color DEFAULT_AXIS_COLOR = Color.web( "#80a0d060" );
+	public static final String DEFAULT_GRID_SNAP_SIZE = "0.1";
 
-	public static final Color DEFAULT_MAJOR_GRID_COLOR = Color.web( "#80a0d020" );
+	public static final Color DEFAULT_GRID_AXIS_COLOR = Color.web( "#80a0d060" );
 
-	public static final Color DEFAULT_MINOR_GRID_COLOR = Color.web( "#80a0d010" );
+	public static final Color DEFAULT_GRID_MAJOR_COLOR = Color.web( "#80a0d020" );
 
-	public static final String ORIGIN = "origin";
+	public static final Color DEFAULT_GRID_MINOR_COLOR = Color.web( "#80a0d010" );
 
 	public static final String BOUNDARY_X1 = "boundary-x1";
 
@@ -40,27 +40,33 @@ public class DesignWorkplane extends Node {
 
 	public static final String BOUNDARY_Y2 = "boundary-y2";
 
-	public static final String MAJOR_GRID_VISIBLE = "major-grid-visible";
+	public static final String COORDINATE_SYSTEM = "coordinate-system";
 
-	public static final String MAJOR_GRID_X = "major-grid-x";
+	public static final String GRID_ORIGIN = "grid-origin";
 
-	public static final String MAJOR_GRID_Y = "major-grid-y";
+	public static final String GRID_MAJOR_VISIBLE = "grid-major-visible";
 
-	public static final String MAJOR_GRID_Z = "major-grid-z";
+	public static final String GRID_MAJOR_X = "grid-major-x";
 
-	public static final String MINOR_GRID_VISIBLE = "minor-grid-visible";
+	public static final String GRID_MAJOR_Y = "grid-major-y";
 
-	public static final String MINOR_GRID_X = "minor-grid-x";
+	public static final String GRID_MAJOR_Z = "grid-major-z";
 
-	public static final String MINOR_GRID_Y = "minor-grid-y";
+	public static final String GRID_MINOR_VISIBLE = "grid-minor-visible";
 
-	public static final String MINOR_GRID_Z = "minor-grid-z";
+	public static final String GRID_MINOR_X = "grid-minor-x";
 
-	public static final String SNAP_GRID_X = "snap-grid-x";
+	public static final String GRID_MINOR_Y = "grid-minor-y";
 
-	public static final String SNAP_GRID_Y = "snap-grid-y";
+	public static final String GRID_MINOR_Z = "grid-minor-z";
 
-	public static final String SNAP_GRID_Z = "snap-grid-z";
+	public static final String GRID_SNAP_X = "grid-snap-x";
+
+	public static final String GRID_SNAP_Y = "grid-snap-y";
+
+	public static final String GRID_SNAP_Z = "grid-snap-z";
+
+	private CoordinateSystem coordinateSystem;
 
 	private double majorGridX;
 
@@ -85,37 +91,36 @@ public class DesignWorkplane extends Node {
 	private boolean minorGridShowing = true;
 
 	public DesignWorkplane() {
-		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_MAJOR_GRID_SIZE, DEFAULT_MINOR_GRID_SIZE, DEFAULT_SNAP_GRID_SIZE );
+		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
 	}
 
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this( DEFAULT_ORIGIN, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorGrid, majorGrid, majorGrid, minorGrid, minorGrid, minorGrid, snapGrid, snapGrid, snapGrid );
+		this( DEFAULT_COORDINATE_SYSTEM, DEFAULT_GRID_ORIGIN, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorGrid, majorGrid, majorGrid, minorGrid, minorGrid, minorGrid, snapGrid, snapGrid, snapGrid );
 	}
 
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGridX, String majorGridY, String minorGridX, String minorGridY, String snapGridX, String snapGridY
 	) {
 		this(
-			DEFAULT_ORIGIN,
+			DEFAULT_COORDINATE_SYSTEM,
+			DEFAULT_GRID_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
 			boundaryY2,
 			majorGridX,
-			majorGridY,
-			DEFAULT_MAJOR_GRID_SIZE,
+			majorGridY, DEFAULT_GRID_MAJOR_SIZE,
 			minorGridX,
-			minorGridY,
-			DEFAULT_MINOR_GRID_SIZE,
+			minorGridY, DEFAULT_GRID_MINOR_SIZE,
 			snapGridX,
-			snapGridY,
-			DEFAULT_SNAP_GRID_SIZE
+			snapGridY, DEFAULT_GRID_SNAP_SIZE
 		);
 	}
 
 	public DesignWorkplane(
+		CoordinateSystem coordinateSystem,
 		String origin,
 		double boundaryX1,
 		double boundaryY1,
@@ -132,6 +137,7 @@ public class DesignWorkplane extends Node {
 		String snapGridZ
 	) {
 		Txn.run( () -> {
+			setCoordinateSystem( coordinateSystem );
 			setOrigin( origin );
 			setBoundaryX1( boundaryX1 );
 			setBoundaryY1( boundaryY1 );
@@ -149,12 +155,20 @@ public class DesignWorkplane extends Node {
 		} );
 	}
 
+	public CoordinateSystem getCoordinateSystem() {
+		return getValue( COORDINATE_SYSTEM );
+	}
+
+	public void setCoordinateSystem( CoordinateSystem coordinateSystem ) {
+		setValue( COORDINATE_SYSTEM, coordinateSystem == null ? CoordinateSystem.ORTHO : coordinateSystem );
+	}
+
 	public String getOrigin() {
-		return getValue( ORIGIN );
+		return getValue( GRID_ORIGIN, DEFAULT_GRID_ORIGIN );
 	}
 
 	public DesignWorkplane setOrigin( String origin ) {
-		setValue( ORIGIN, origin );
+		setValue( GRID_ORIGIN, origin );
 		return this;
 	}
 
@@ -195,11 +209,11 @@ public class DesignWorkplane extends Node {
 	}
 
 	public boolean isMajorGridVisible() {
-		return getValue( MAJOR_GRID_VISIBLE, true );
+		return getValue( GRID_MAJOR_VISIBLE, true );
 	}
 
 	public DesignWorkplane setMajorGridVisible( boolean visible ) {
-		setValue( MAJOR_GRID_VISIBLE, visible );
+		setValue( GRID_MAJOR_VISIBLE, visible );
 		return this;
 	}
 
@@ -217,12 +231,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getMajorGridX() {
-		return getValue( MAJOR_GRID_X );
+		return getValue( GRID_MAJOR_X );
 	}
 
 	public DesignWorkplane setMajorGridX( String majorGridX ) {
 		this.majorGridX = CadMath.evalNoException( majorGridX );
-		setValue( MAJOR_GRID_X, majorGridX );
+		setValue( GRID_MAJOR_X, majorGridX );
 		return this;
 	}
 
@@ -231,12 +245,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getMajorGridY() {
-		return getValue( MAJOR_GRID_Y );
+		return getValue( GRID_MAJOR_Y );
 	}
 
 	public DesignWorkplane setMajorGridY( String majorGridY ) {
 		this.majorGridY = CadMath.evalNoException( majorGridY );
-		setValue( MAJOR_GRID_Y, majorGridY );
+		setValue( GRID_MAJOR_Y, majorGridY );
 		return this;
 	}
 
@@ -245,21 +259,21 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getMajorGridZ() {
-		return getValue( MAJOR_GRID_Z );
+		return getValue( GRID_MAJOR_Z );
 	}
 
 	public DesignWorkplane setMajorGridZ( String majorGridZ ) {
 		this.majorGridZ = CadMath.evalNoException( majorGridZ );
-		setValue( MAJOR_GRID_Z, majorGridZ );
+		setValue( GRID_MAJOR_Z, majorGridZ );
 		return this;
 	}
 
 	public boolean isMinorGridVisible() {
-		return getValue( MINOR_GRID_VISIBLE, true );
+		return getValue( GRID_MINOR_VISIBLE, true );
 	}
 
 	public DesignWorkplane setMinorGridVisible( boolean visible ) {
-		setValue( MINOR_GRID_VISIBLE, visible );
+		setValue( GRID_MINOR_VISIBLE, visible );
 		return this;
 	}
 
@@ -277,12 +291,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getMinorGridX() {
-		return getValue( MINOR_GRID_X );
+		return getValue( GRID_MINOR_X );
 	}
 
 	public DesignWorkplane setMinorGridX( String minorGridX ) {
 		this.minorGridX = CadMath.evalNoException( minorGridX );
-		setValue( MINOR_GRID_X, minorGridX );
+		setValue( GRID_MINOR_X, minorGridX );
 		return this;
 	}
 
@@ -291,12 +305,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getMinorGridY() {
-		return getValue( MINOR_GRID_Y );
+		return getValue( GRID_MINOR_Y );
 	}
 
 	public DesignWorkplane setMinorGridY( String minorGridY ) {
 		this.minorGridY = CadMath.evalNoException( minorGridY );
-		setValue( MINOR_GRID_Y, minorGridY );
+		setValue( GRID_MINOR_Y, minorGridY );
 		return this;
 	}
 
@@ -305,12 +319,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getMinorGridZ() {
-		return getValue( MINOR_GRID_Z );
+		return getValue( GRID_MINOR_Z );
 	}
 
 	public DesignWorkplane setMinorGridZ( String minorGridZ ) {
 		this.minorGridZ = CadMath.evalNoException( minorGridZ );
-		setValue( MINOR_GRID_Z, minorGridZ );
+		setValue( GRID_MINOR_Z, minorGridZ );
 		return this;
 	}
 
@@ -319,12 +333,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getSnapGridX() {
-		return getValue( SNAP_GRID_X );
+		return getValue( GRID_SNAP_X );
 	}
 
 	public DesignWorkplane setSnapGridX( String snapGridX ) {
 		this.snapGridX = CadMath.evalNoException( snapGridX );
-		setValue( SNAP_GRID_X, snapGridX );
+		setValue( GRID_SNAP_X, snapGridX );
 		return this;
 	}
 
@@ -333,12 +347,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getSnapGridY() {
-		return getValue( SNAP_GRID_Y );
+		return getValue( GRID_SNAP_Y );
 	}
 
 	public DesignWorkplane setSnapGridY( String snapGridY ) {
 		this.snapGridY = CadMath.evalNoException( snapGridY );
-		setValue( SNAP_GRID_Y, snapGridY );
+		setValue( GRID_SNAP_Y, snapGridY );
 		return this;
 	}
 
@@ -347,12 +361,12 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getSnapGridZ() {
-		return getValue( SNAP_GRID_Z );
+		return getValue( GRID_SNAP_Z );
 	}
 
 	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
 		this.snapGridZ = CadMath.evalNoException( snapGridZ );
-		setValue( SNAP_GRID_Z, snapGridZ );
+		setValue( GRID_SNAP_Z, snapGridZ );
 		return this;
 	}
 

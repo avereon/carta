@@ -13,8 +13,16 @@
 
 		<!-- Grid -->
 		<group id="grid">
+			<setting key="coordinate-system" editor="combobox">
+				<option id="ortho" value="ortho"/>
+				<option id="polar" value="polar"/>
+				<option id="iso" value="iso"/>
+			</setting>
+			<setting key="grid-origin"/>
+			<setting key="grid-major-visible" editor="checkbox"/>
 			<setting key="grid-major-x" type="math-expression"/>
 			<setting key="grid-major-y" type="math-expression"/>
+			<setting key="grid-minor-visible" editor="checkbox"/>
 			<setting key="grid-minor-x" type="math-expression"/>
 			<setting key="grid-minor-y" type="math-expression"/>
 			<setting key="grid-snap-x" type="math-expression"/>

@@ -39,4 +39,5 @@ public class StackedSettingsTest {
 		settings.set( "b", null );
 		assertThat( settings.get( "b", "default" ), is( "b-in-base" ) );
 	}
+
 }
