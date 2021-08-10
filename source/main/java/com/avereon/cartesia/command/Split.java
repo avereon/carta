@@ -1,16 +1,19 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.product.Rb;
+import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
+
+import java.text.ParseException;
 
 @CustomLog
 public class Split extends Command {
 
 	private DesignShape splitShape;
-
-	private Point3D splitMouse;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -29,12 +32,16 @@ public class Split extends Command {
 			return INCOMPLETE;
 		}
 
-		splitMouse = asPoint( context, parameters[ 1 ] );
-
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
 
-		com.avereon.cartesia.math.Split.split( context.getTool(), splitShape, splitMouse );
+		try {
+			com.avereon.cartesia.math.Split.split( context.getTool(), splitShape, asPoint( context, parameters[ 1 ] ) );
+		} catch( ParseException exception ) {
+			String title = Rb.text( BundleKey.NOTICE, "command-error" );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-move-shapes", exception );
+			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		}
 
 		return COMPLETE;
 	}

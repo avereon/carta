@@ -45,12 +45,10 @@ public class Move extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			// Start an undo multi-change
 			moveShapes( getCommandShapes( context.getTool() ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
-			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			String message = Rb.text( BundleKey.NOTICE, "unable-to-move-shapes", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
