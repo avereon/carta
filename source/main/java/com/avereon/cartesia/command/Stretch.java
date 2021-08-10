@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
@@ -66,8 +67,8 @@ public class Stretch extends EditCommand {
 
 		try {
 			Bounds bounds = asBounds( context, parameters[ 0 ] );
-			Set<PointCoordinate> points = computeMovingPoints( context.getTool(), context.getTool().getSelectedGeometry(), bounds );
-			stretchShapes( getCommandShapes( context.getTool() ), points, asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			Set<PointCoordinate> points = computeMovingPoints( context.getTool(), getCommandShapes( context.getTool() ), bounds );
+			stretchShapes( points, asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-stretch-shapes", exception );
@@ -88,7 +89,7 @@ public class Stretch extends EditCommand {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
 					if( lastPoint == null ) lastPoint = anchor;
-					stretchShapes( getPreview(), movingPoints, lastPoint, point );
+					stretchShapes( movingPoints, lastPoint, point );
 					lastPoint = point;
 				}
 			}
@@ -111,13 +112,15 @@ public class Stretch extends EditCommand {
 	private static Set<String> getShapePointKeys( DesignShape shape ) {
 		if( shape instanceof DesignLine ) {
 			return Set.of( DesignLine.ORIGIN, DesignLine.POINT );
+		} else if( shape instanceof DesignEllipse ) {
+			return Set.of( DesignLine.ORIGIN );
 		} else if( shape instanceof DesignCurve ) {
 			return Set.of( DesignLine.ORIGIN, DesignLine.POINT );
 		}
 		return Set.of();
 	}
 
-	private static void stretchShapes( Collection<DesignShape> shapes, Set<PointCoordinate> points, Point3D anchor, Point3D target ) {
+	private static void stretchShapes( Set<PointCoordinate> points, Point3D anchor, Point3D target ) {
 		// Get a movement vector
 		Point3D vector = target.subtract( anchor );
 
