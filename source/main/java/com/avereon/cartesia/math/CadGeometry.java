@@ -115,6 +115,10 @@ public class CadGeometry {
 		return Geometry.curveParametricValue( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), asPoint( point ) );
 	}
 
+	public static double getCurveParametricValueNear( DesignCurve curve, Point3D point ) {
+		return Geometry.curveParametricValueNear( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), asPoint( point ) );
+	}
+
 	public static List<DesignCurve> curveSubdivide( DesignCurve curve, double t ) {
 		double[][][] curves = Geometry.curveSubdivide( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), t );
 		if( curves.length < 2 ) return List.of();

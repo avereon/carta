@@ -25,11 +25,11 @@ public class Split extends Command {
 			Point3D mousePoint = context.getScreenMouse();
 			splitShape = selectNearestShapeAtMouse( context, mousePoint );
 			if( splitShape == DesignShape.NONE ) return INVALID;
-			promptForShape( context, "select-split-point" );
+			promptForPoint( context, "select-split-point" );
 			return INCOMPLETE;
 		}
 
-		splitMouse = context.getWorldMouse();
+		splitMouse = asPoint( context, parameters[ 1 ] );
 
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
