@@ -917,8 +917,8 @@ public abstract class DesignTool extends GuidedTool {
 			Bounds minorBounds = designPane.localToParent( minorGridBounds );
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
 
-			boolean showMajorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class );
-			boolean showMinorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class );
+			boolean showMajorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class, true );
+			boolean showMinorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class, true );
 			boolean showMajorGridForBounds = majorBounds.getWidth() > MINIMUM_GRID_PIXELS && majorBounds.getHeight() > MINIMUM_GRID_PIXELS;
 			boolean showMinorGridForBounds = minorBounds.getWidth() > MINIMUM_GRID_PIXELS && minorBounds.getHeight() > MINIMUM_GRID_PIXELS;
 
