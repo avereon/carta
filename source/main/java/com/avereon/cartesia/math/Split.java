@@ -7,28 +7,41 @@ import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
 import java.util.List;
+import java.util.Set;
 
 @CustomLog
 public class Split {
 
 	public static void split( DesignTool tool, DesignShape shape, Point3D mousePoint ) {
+		Set<DesignShape> shapes = Set.of();
+
 		if( shape instanceof DesignLine ) {
-			splitLine( tool, (DesignLine)shape, mousePoint );
+			shapes = splitLine( tool, (DesignLine)shape, mousePoint );
 		} else if( shape instanceof DesignEllipse ) {
 			if( shape instanceof DesignArc ) {
-				splitArc( tool, (DesignArc)shape, mousePoint );
+				shapes = splitArc( tool, (DesignArc)shape, mousePoint );
 			} else {
-				splitEllipse( tool, (DesignEllipse)shape, mousePoint );
+				shapes = splitEllipse( tool, (DesignEllipse)shape, mousePoint );
 			}
 		} else if( shape instanceof DesignCurve ) {
-			splitCurve( tool, (DesignCurve)shape, mousePoint );
+			shapes = splitCurve( tool, (DesignCurve)shape, mousePoint );
+		}
+
+		// Replace the old shape with the new shapes
+		if( !shapes.isEmpty() ) {
+			DesignLayer y = shape.getLayer();
+			final Set<DesignShape> finalShapes = shapes;
+			Txn.run( () -> {
+				y.removeShape( shape );
+				finalShapes.forEach( y::addShape );
+			} );
 		}
 	}
 
-	private static void splitLine( DesignTool tool, DesignLine line, Point3D point ) {
+	static Set<DesignShape> splitLine( DesignTool tool, DesignLine line, Point3D point ) {
 		// Find the point "on the line"
 		Point3D nearest = CadGeometry.nearestBoundLinePoint( line.getOrigin(), line.getPoint(), point );
-		if( nearest == null ) return;
+		if( nearest == null ) return Set.of();
 
 		// Make two new lines
 		DesignLine a = new DesignLine( line.getOrigin(), nearest );
@@ -36,31 +49,20 @@ public class Split {
 		DesignLine b = new DesignLine( nearest, line.getPoint() );
 		b.copyFrom( line );
 
-		// Replace the old line with the new lines
-		DesignLayer y = line.getLayer();
-		Txn.run( () -> {
-			y.removeShape( line );
-			y.addShape( a );
-			y.addShape( b );
-		} );
+		return Set.of( a, b );
 	}
 
-	private static void splitEllipse( DesignTool tool, DesignEllipse ellipse, Point3D point ) {
+	 static Set<DesignShape> splitEllipse( DesignTool tool, DesignEllipse ellipse, Point3D point ) {
 		// Find the angle "on the ellipse"
 		double theta = CadGeometry.ellipseAngle360( ellipse, point );
 
 		// Make a new arc
 		DesignArc arc = new DesignArc( ellipse.getOrigin(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.getRotate(), theta, 360.0, DesignArc.Type.OPEN );
 
-		// Replace the old ellipse with the new arc
-		DesignLayer y = ellipse.getLayer();
-		Txn.run( () -> {
-			y.removeShape( ellipse );
-			y.addShape( arc );
-		} );
+		return Set.of( arc );
 	}
 
-	private static void splitArc( DesignTool tool, DesignArc arc, Point3D point ) {
+	 static Set<DesignShape> splitArc( DesignTool tool, DesignArc arc, Point3D point ) {
 		// Find the point "on the arc" and make to new arcs
 		List<Point3D> xns = CadIntersection.getIntersections( arc, new DesignLine( arc.getOrigin(), point ) );
 		Point3D nearest = CadPoints.getNearest( point, xns );
@@ -72,31 +74,19 @@ public class Split {
 		DesignArc a = new DesignArc( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.getRotate(), arc.getStart(), theta - arc.getStart(), DesignArc.Type.OPEN );
 		DesignArc b = new DesignArc( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.getRotate(), theta, (arc.getStart() + arc.getExtent()) - theta, DesignArc.Type.OPEN );
 
-		// Replace the old arc with the new arcs
-		DesignLayer y = arc.getLayer();
-		Txn.run( () -> {
-			y.removeShape( arc );
-			y.addShape( a );
-			y.addShape( b );
-		} );
+		return Set.of( a, b );
 	}
 
-	private static void splitCurve( DesignTool tool, DesignCurve curve, Point3D point ) {
+	 static Set<DesignShape> splitCurve( DesignTool tool, DesignCurve curve, Point3D point ) {
 		// Fine the parametric value "on the curve"
 		double t = CadGeometry.getCurveParametricValueNear( curve, point );
-		if( Double.isNaN( t ) ) return;
+		if( Double.isNaN( t ) ) return Set.of();
 
 		// Make new curves
 		List<DesignCurve> curves = CadGeometry.curveSubdivide( curve, t );
-		if( curves.size() < 2 ) return;
+		if( curves.size() < 2 ) return Set.of();
 
-		// Replace the old curve with the new curves
-		DesignLayer y = curve.getLayer();
-		Txn.run( () -> {
-			y.removeShape( curve );
-			y.addShape( curves.get( 0 ) );
-			y.addShape( curves.get( 1 ) );
-		} );
+		return Set.of( curves.get( 0 ), curves.get( 1 ) );
 	}
 
 }
