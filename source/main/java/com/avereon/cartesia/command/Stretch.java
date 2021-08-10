@@ -1,22 +1,29 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.data.DesignCurve;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
+import com.avereon.transaction.Txn;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
+@CustomLog
 public class Stretch extends EditCommand {
 
-	private Bounds bounds;
+	private Set<PointCoordinate> movingPoints;
 
 	private DesignLine referenceLine;
 
@@ -37,17 +44,19 @@ public class Stretch extends EditCommand {
 
 		// Ask for an anchor point
 		if( parameters.length < 2 ) {
-			bounds = asBounds( context, parameters[ 0 ] );
+			List<DesignShape> preview = cloneReferenceShapes( context.getTool().getSelectedGeometry() );
+			addPreview( context, preview );
+			movingPoints = computeMovingPoints( context.getTool(), preview, asBounds( context, parameters[ 0 ] ) );
+
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "anchor" );
-			return INCOMPLETE;
+			return movingPoints.isEmpty() ? INVALID : INCOMPLETE;
 		}
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneReferenceShapes( context.getTool().getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
@@ -56,7 +65,9 @@ public class Stretch extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			stretchShapes( getCommandShapes( context.getTool() ), asBounds( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			Bounds bounds = asBounds( context, parameters[ 0 ] );
+			Set<PointCoordinate> points = computeMovingPoints( context.getTool(), context.getTool().getSelectedGeometry(), bounds );
+			stretchShapes( getCommandShapes( context.getTool() ), points, asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-stretch-shapes", exception );
@@ -77,15 +88,62 @@ public class Stretch extends EditCommand {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
 					if( lastPoint == null ) lastPoint = anchor;
-					stretchShapes( getPreview(), bounds, lastPoint, point );
+					stretchShapes( getPreview(), movingPoints, lastPoint, point );
 					lastPoint = point;
 				}
 			}
 		}
 	}
 
-	private static void stretchShapes( Collection<DesignShape> shapes, Bounds bounds, Point3D anchor, Point3D target ) {
-		// TODO Implement Stretch.stretchShapes()
+	private static Set<PointCoordinate> computeMovingPoints( DesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
+		Set<PointCoordinate> points = new HashSet<>();
+
+		for( DesignShape shape : shapes ) {
+			for( String key : getShapePointKeys( shape ) ) {
+				Point3D point = tool.worldToScreen( (Point3D)shape.getValue( key ) );
+				if( bounds.contains( point ) ) points.add( new PointCoordinate( shape, key ) );
+			}
+		}
+
+		return points;
+	}
+
+	private static Set<String> getShapePointKeys( DesignShape shape ) {
+		if( shape instanceof DesignLine ) {
+			return Set.of( DesignLine.ORIGIN, DesignLine.POINT );
+		} else if( shape instanceof DesignCurve ) {
+			return Set.of( DesignLine.ORIGIN, DesignLine.POINT );
+		}
+		return Set.of();
+	}
+
+	private static void stretchShapes( Collection<DesignShape> shapes, Set<PointCoordinate> points, Point3D anchor, Point3D target ) {
+		// Get a movement vector
+		Point3D vector = target.subtract( anchor );
+
+		// Go through the movement points and add the vector
+		Txn.run( () -> points.forEach( p -> p.setPoint( p.getPoint().add( vector ) ) ) );
+	}
+
+	private static class PointCoordinate {
+
+		private final DesignShape shape;
+
+		private final String key;
+
+		public PointCoordinate( DesignShape shape, String key ) {
+			this.shape = shape;
+			this.key = key;
+		}
+
+		public Point3D getPoint() {
+			return shape.getValue( key );
+		}
+
+		public void setPoint( Point3D point ) {
+			shape.setValue( key, point );
+		}
+
 	}
 
 }
