@@ -139,6 +139,10 @@ public class CommandMap {
 		add( product, "layer-delete", LayerDelete.class );
 		add( product, "layer-toggle", LayerToggle.class );
 
+		// View Commands
+		add( product, "view-create", ViewCreate.class );
+
+		// Reference Commands
 		add( product, "reference-toggle", ReferencePointsToggle.class );
 
 		// Snap commands

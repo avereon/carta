@@ -38,12 +38,6 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_FILL_PAINT = null;
 
-	//private static final NodeComparator<DesignLayer> comparator;
-
-	//	static {
-	//		comparator = new NodeComparator<>( ORDER, NAME );
-	//	}
-
 	public DesignLayer() {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, UNIT, LAYERS, SHAPES );
@@ -63,8 +57,9 @@ public class DesignLayer extends DesignDrawable {
 	 * @param id The node id
 	 * @return This instance
 	 */
+	@SuppressWarnings( "unchecked" )
 	public DesignLayer setId( String id ) {
-		super.setValue( ID, id );
+		super.setId( id );
 		return this;
 	}
 
