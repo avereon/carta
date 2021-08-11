@@ -171,7 +171,7 @@ public class CommandMap {
 		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
 		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 
-		printCommandMapByCommand();
+		//printCommandMapByCommand();
 		//printCommandMapByName();
 	}
 
@@ -227,8 +227,11 @@ public class CommandMap {
 	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
 		if( command != null && commandActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
-			log.atSevere().log( "Shortcut already used: shortcut=%s existing=%s conflict=%s", command, LazyEval.of( existing::getAction ), action );
-		} else if( !actionCommands.containsKey( action ) ) {
+			log.atSevere().log( "Shortcut already used [%s]: %s %s", command, LazyEval.of( existing::getAction ), action );
+			return;
+		}
+
+		if( !actionCommands.containsKey( action ) ) {
 			if( command != null ) commandActions.put( command, action );
 			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );
 		}
