@@ -250,6 +250,19 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return asMap( node, DesignNode.ID );
 	}
 
+	private Map<String, Object> mapView( DesignView view ) {
+		return asMap(
+			view,
+			mapDesignNode( view ),
+			DesignDrawable.ORDER,
+			DesignView.NAME,
+			DesignView.ORIGIN,
+			DesignView.VIEW_ROTATE,
+			DesignView.ZOOM
+		);
+		// TODO Map layer links
+	}
+
 	private Map<String, Object> mapDrawable( DesignDrawable drawable ) {
 		return asMap(
 			drawable,

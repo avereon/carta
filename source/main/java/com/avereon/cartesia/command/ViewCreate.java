@@ -18,6 +18,11 @@ public class ViewCreate extends ViewCommand {
 		}
 
 		DesignView ww = new DesignView().setName( String.valueOf( parameters[ 0 ] ) );
+		ww.setOrigin( context.getTool().getViewPoint() );
+		ww.setZoom( context.getTool().getZoom() );
+		ww.setViewRotate( context.getTool().getViewRotate() );
+		ww.setVisibleLayers(context.getTool().getVisibleLayers());
+
 		context.getTool().getDesign().addView( ww );
 		context.getTool().setCurrentView( ww );
 

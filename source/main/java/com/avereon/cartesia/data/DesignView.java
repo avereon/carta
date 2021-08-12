@@ -1,9 +1,12 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.data.NodeLink;
+import javafx.geometry.Point3D;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * A class to represent arbitrary selections of layers to provide different
@@ -15,13 +18,17 @@ public class DesignView extends DesignNode {
 
 	public static final String ORDER = "order";
 
+	public static final String ORIGIN = "origin";
+
+	public static final String VIEW_ROTATE = "rotate";
+
+	public static final String ZOOM = "zoom";
+
 	public static final String LAYER_LINKS = "layer-links";
 
 	public DesignView() {
 		defineNaturalKey( NAME );
-
-		// TODO Add viewpoint and zoom
-		addModifyingKeys( NAME, ORDER, LAYER_LINKS );
+		addModifyingKeys( NAME, ORDER, ORIGIN, VIEW_ROTATE, ZOOM, LAYER_LINKS );
 	}
 
 	/**
@@ -54,17 +61,40 @@ public class DesignView extends DesignNode {
 		return this;
 	}
 
-	public Set<NodeLink<DesignLayer>> getLayerLinks() {
-		return getValues( LAYER_LINKS );
+	public Point3D getOrigin() {
+		return getValue( ORIGIN );
 	}
 
-	public DesignView addLayerLink( NodeLink<DesignLayer> link ) {
-		addToSet( LAYER_LINKS, link );
+	public DesignView setOrigin( Point3D origin ) {
+		setValue( ORIGIN, origin );
 		return this;
 	}
 
-	public DesignView removeLayerLink( NodeLink<DesignLayer> link ) {
-		removeFromSet( LAYER_LINKS, link );
+	public Double getZoom() {
+		return getValue( ZOOM );
+	}
+
+	public DesignView setZoom( Double value ) {
+		setValue( ZOOM, value );
+		return this;
+	}
+
+	public Double getViewRotate() {
+		return getValue( VIEW_ROTATE );
+	}
+
+	public DesignView setViewRotate( Double value ) {
+		setValue( VIEW_ROTATE, value );
+		return this;
+	}
+
+	public Set<DesignLayer> getVisibleLayers() {
+		Collection<NodeLink<DesignLayer>> links = getValue( LAYER_LINKS );
+		return links.stream().map( NodeLink::getNode ).collect( Collectors.toSet());
+	}
+
+	public DesignView setVisibleLayers( Collection<DesignLayer> layers ) {
+		addNodes( LAYER_LINKS, layers.stream().map( NodeLink::new ).collect( Collectors.toSet()) );
 		return this;
 	}
 
