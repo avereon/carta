@@ -66,7 +66,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public int getOrder() {
-		return getValue( ORDER, 0 );
+		return getValue( ORDER, -1 );
 	}
 
 	@SuppressWarnings( "unchecked" )

@@ -1,6 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
 
 import java.util.Map;
@@ -10,9 +9,11 @@ import java.util.Set;
  * A class to represent arbitrary selections of layers to provide different
  * "views" of the design.
  */
-public class DesignView extends IdNode {
+public class DesignView extends DesignNode {
 
 	public static final String NAME = "name";
+
+	public static final String ORDER = "order";
 
 	public static final String LAYER_LINKS = "layer-links";
 
@@ -20,7 +21,7 @@ public class DesignView extends IdNode {
 		defineNaturalKey( NAME );
 
 		// TODO Add viewpoint and zoom
-		addModifyingKeys( NAME, LAYER_LINKS );
+		addModifyingKeys( NAME, ORDER, LAYER_LINKS );
 	}
 
 	/**
@@ -32,6 +33,15 @@ public class DesignView extends IdNode {
 	@SuppressWarnings( "unchecked" )
 	public DesignView setId( String id ) {
 		super.setId( id );
+		return this;
+	}
+
+	public int getOrder() {
+		return getValue( ORDER, -1 );
+	}
+
+	public DesignView setOrder( int order ) {
+		setValue( ORDER, order );
 		return this;
 	}
 
@@ -58,9 +68,10 @@ public class DesignView extends IdNode {
 		return this;
 	}
 
-	public DesignView updateFrom( Map<String,?> map ) {
-		setId( String.valueOf( map.get( DesignLayer.ID ) ) );
-		setName( String.valueOf( map.get( DesignLayer.NAME ) ) );
+	public DesignView updateFrom( Map<String, Object> map ) {
+		super.updateFrom( map );
+		if( map.containsKey( NAME ) ) setName( (String)map.get( NAME ) );
+		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
 		return this;
 	}
 

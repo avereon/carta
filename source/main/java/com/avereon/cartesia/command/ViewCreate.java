@@ -18,9 +18,8 @@ public class ViewCreate extends ViewCommand {
 		}
 
 		DesignView ww = new DesignView().setName( String.valueOf( parameters[ 0 ] ) );
-
 		context.getTool().getDesign().addView( ww );
-//		context.getTool().setCurrentView( ww );
+		context.getTool().setCurrentView( ww );
 
 		return ww;
 	}

@@ -29,7 +29,8 @@ public abstract class Design extends IdNode {
 	private DesignContext context;
 
 	public Design() {
-		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, ROOT_LAYER );
+		defineNaturalKey( NAME );
+		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, ROOT_LAYER, VIEWS );
 
 		// Read-only values
 		setValue( ROOT_LAYER, new DesignLayer() );
@@ -142,6 +143,10 @@ public abstract class Design extends IdNode {
 	public Design removeView( DesignView view ) {
 		removeFromSet( VIEWS, view );
 		return this;
+	}
+
+	public Set<DesignView> findViews( String key, Object value ) {
+		return getViews().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
 	}
 
 	public void clearSelected() {

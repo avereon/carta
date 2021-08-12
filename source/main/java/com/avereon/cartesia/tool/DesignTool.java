@@ -84,6 +84,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final String CURRENT_LAYER = "current-layer";
 
+	private static final String CURRENT_VIEW = "current-view";
+
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
 	private static final String GRID_VISIBLE = "grid-visible";
@@ -115,6 +117,8 @@ public abstract class DesignTool extends GuidedTool {
 	private final ObservableList<Shape> selectedShapes;
 
 	private final ObjectProperty<DesignLayer> currentLayer;
+
+	private final ObjectProperty<DesignView> currentView;
 
 	private final DesignPropertiesMap designPropertiesMap;
 
@@ -157,6 +161,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.designPane = new DesignPane();
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
+		this.currentView = new SimpleObjectProperty<>();
 
 		this.propertiesAction = new PropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
@@ -295,13 +300,13 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		if( visible ) {
-			// Show the specified layer and parent layers
+			// Show the specified view and parent layers
 			while( !layer.isRootLayer() ) {
 				designPane.setLayerVisible( layer, visible );
 				layer = layer.getLayer();
 			}
 		} else {
-			// Only hide the specified layer
+			// Only hide the specified view
 			designPane.setLayerVisible( layer, visible );
 		}
 	}
@@ -332,6 +337,18 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setReferenceLayerVisible( boolean visible ) {
 		Fx.run( () -> designPane.setReferenceLayerVisible( visible ) );
+	}
+
+	public void setCurrentView( DesignView view ) {
+		currentView.set( view );
+	}
+
+	public DesignView getCurrentView() {
+		return currentView.get();
+	}
+
+	public ObjectProperty<DesignView> currentViewProperty() {
+		return currentView;
 	}
 
 	/**
@@ -446,8 +463,8 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Link the guides before loading the design
 		layersGuide.link( designPane );
-		//viewsGuide.init( design );
-		//printsGuide.init( design );
+		viewsGuide.link( design );
+		//printsGuide.link( design );
 
 		Fx.run( () -> {
 			designPane.setDpi( Screen.getPrimary().getDpi() );
@@ -473,57 +490,58 @@ public abstract class DesignTool extends GuidedTool {
 		// Workplane settings
 		configureWorkplane();
 
+		Settings settings = getSettings();
 		String defaultUnitId = DesignUnit.MILLIMETER.name();
 		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName();
-		String defaultLayerId = design.getAllLayers().get( 0 ).getId();
 
 		// Get tool settings
-		double selectApertureRadius = Double.parseDouble( getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
-		DesignUnit selectApertureUnit = DesignUnit.valueOf( getSettings().get( SELECT_APERTURE_UNIT, defaultUnitId ) );
-		setViewPoint( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
-		setViewRotate( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
-		setZoom( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
-		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, defaultReticleId ) ) );
-		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER, defaultLayerId ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		double selectApertureRadius = Double.parseDouble( settings.get( SELECT_APERTURE_RADIUS, "1.0" ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( settings.get( SELECT_APERTURE_UNIT, defaultUnitId ) );
+		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
+		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
+		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
+		setReticle( ReticleCursor.valueOf( settings.get( RETICLE, defaultReticleId ) ) );
 		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
+		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
 		// Restore the list of visible layers
-		Set<String> visibleLayerIds = getSettings().get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
+		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
 		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 
 		// Restore the grid visible flag
-		setGridVisible( Boolean.parseBoolean( getSettings().get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
+		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
 
 		// Restore the grid snap enabled flag
-		setGridSnapEnabled( Boolean.parseBoolean( getSettings().get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
+		setGridSnapEnabled( Boolean.parseBoolean( settings.get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
 
-		// Restore the reference layer visibility
-		setReferenceLayerVisible( Boolean.parseBoolean( getSettings().get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
+		// Restore the reference view visibility
+		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
 
 		// Settings listeners
 		getProduct().getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		settings.register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		settings.register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
-			getSettings().set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
+			settings.set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
 			doUpdateGridBounds();
 		} );
 
 		// Add view rotate property listener
 		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
-			getSettings().set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
+			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
 			doUpdateGridBounds();
 		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
-			getSettings().set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
+			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
 			doUpdateGridBounds();
 		} );
 
@@ -531,16 +549,19 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
 
 		// Add current layer property listener
-		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
+		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
+
+		// Add current view property listener
+		currentViewProperty().addListener( (p,o,n) -> settings.set( CURRENT_VIEW, n.getId() ) );
 
 		// Add grid visible property listener
-		gridVisible().addListener( ( p, o, n ) -> getSettings().set( GRID_VISIBLE, String.valueOf( n ) ) );
+		gridVisible().addListener( ( p, o, n ) -> settings.set( GRID_VISIBLE, String.valueOf( n ) ) );
 
 		// Add grid visible property listener
-		gridSnapEnabled().addListener( ( p, o, n ) -> getSettings().set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
+		gridSnapEnabled().addListener( ( p, o, n ) -> settings.set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
 
 		// Add reference points visible property listener
-		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
+		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -938,7 +959,6 @@ public abstract class DesignTool extends GuidedTool {
 		if( !isGridVisible() ) return;
 
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
-			log.atConfig().log( "Rebuilding grid..." );
 			try {
 				List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );
