@@ -28,7 +28,7 @@ public class DesignDrawableTest {
 		layer.addDrawable( drawable );
 
 		// Check the default values
-		assertThat( drawable.getOrder(), is( 0 ) );
+		assertThat( drawable.getOrder(), is( -1 ) );
 		assertThat( drawable.getDrawPaint(), is( DesignDrawable.MODE_LAYER ) );
 		assertThat( drawable.calcDrawPaint(), is( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) ) );
 		assertThat( drawable.getDrawWidth(), is( DesignDrawable.MODE_LAYER ) );
