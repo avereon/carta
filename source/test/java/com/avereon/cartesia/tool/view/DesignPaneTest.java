@@ -59,7 +59,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testApertureSelect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
@@ -82,7 +82,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testWindowSelectWithIntersect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
@@ -112,7 +112,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testWindowSelectWithContains() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
@@ -146,7 +146,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testAddLayer() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		DesignPaneLayer layers = pane.getLayerPane();
@@ -156,7 +156,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testAddLine() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 

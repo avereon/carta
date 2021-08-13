@@ -25,10 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -108,10 +105,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
 
 		// Load layers
-		layers.values().forEach( l -> loadLayer( design.getRootLayer(), l ) );
+		layers.values().forEach( l -> loadLayer( design.getLayers(), l ) );
 
 		// Load views
-		views.values().forEach( v -> design.addView( new DesignView().updateFrom( v ) ) );
+		views.values().forEach( v -> loadView( design, v ) );
 
 		asset.getUndoManager().forgetHistory();
 	}
@@ -161,6 +158,21 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private void loadDesignNode( Map<String, Object> map, DesignNode node ) {
 		if( map.containsKey( DesignNode.ID ) ) node.setId( (String)map.get( DesignNode.ID ) );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private void loadView( Design design, Map<String, Object> map ) {
+		DesignView view = new DesignView();
+		loadDesignNode( map, view );
+		if( map.containsKey( DesignView.NAME ) ) view.setName( (String)map.get( DesignView.NAME ) );
+		if( map.containsKey( DesignView.ORDER ) ) view.setOrder( Integer.parseInt( (String)map.get( DesignView.ORDER ) ) );
+		if( map.containsKey( DesignView.ORIGIN ) ) view.setOrigin( ParseUtil.parsePoint3D( (String)map.get( DesignView.ORIGIN ) ) );
+		if( map.containsKey( DesignView.ROTATE ) ) view.setRotate( (Double)map.get( DesignView.ROTATE ) );
+		if( map.containsKey( DesignView.ZOOM ) ) view.setZoom( (Double)map.get( DesignView.ZOOM ) );
+
+		List<String> layers = (List<String>)map.getOrDefault( DesignView.LAYERS, Set.of() );
+		view.setLayers( layers.stream().map( design::findLayerById ).collect( Collectors.toSet()) );
+		design.addView( view );
 	}
 
 	private void loadDesignDrawable( Map<String, Object> map, DesignDrawable drawable ) {
@@ -235,7 +247,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private Map<String, Object> mapDesign( Design design ) {
 		Map<String, Object> map = new HashMap<>( asMap( design, Design.ID, Design.NAME, Design.AUTHOR, Design.DESCRIPTION, Design.UNIT ) );
-		map.put( DesignLayer.LAYERS, design.getRootLayer().getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
+		map.put( Design.LAYERS, design.getLayers().getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
+		if( design.getViews().size() > 0 ) map.put( Design.VIEWS, design.getViews().stream().collect( Collectors.toMap( IdNode::getId, this::mapView ) ) );
 		return map;
 	}
 
@@ -251,16 +264,9 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapView( DesignView view ) {
-		return asMap(
-			view,
-			mapDesignNode( view ),
-			DesignDrawable.ORDER,
-			DesignView.NAME,
-			DesignView.ORIGIN,
-			DesignView.VIEW_ROTATE,
-			DesignView.ZOOM
-		);
-		// TODO Map layer links
+		Map<String, Object> map = new HashMap<>( asMap( view, mapDesignNode( view ), DesignView.ORDER, DesignView.NAME, DesignView.ORIGIN, DesignView.ROTATE, DesignView.ZOOM ) );
+		map.put( DesignView.LAYERS, view.getLayers().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+		return map;
 	}
 
 	private Map<String, Object> mapDrawable( DesignDrawable drawable ) {

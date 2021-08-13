@@ -19,6 +19,7 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -122,9 +123,9 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		design.setDescription( "Test design for unit tests." );
 		design.setDesignUnit( DesignUnit.METER );
 		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (Empty layer)" );
-		design.getRootLayer().addLayer( layer0 );
+		design.getLayers().addLayer( layer0 );
 		DesignLayer layer1 = new DesignLayer().setName( "Layer 1" );
-		design.getRootLayer().addLayer( layer1 );
+		design.getLayers().addLayer( layer1 );
 		DesignLayer layer2 = new DesignLayer().setName( "Layer 2" );
 		layer1.addLayer( layer2 );
 		DesignLayer layer3 = new DesignLayer().setName( "Layer 3" );
@@ -133,6 +134,20 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		layer1.addLayer( layer4 );
 		DesignLayer layer5 = new DesignLayer().setName( "Layer 5" );
 		layer1.addLayer( layer5 );
+
+		DesignView view0 = new DesignView().setName( "View 0" );
+		view0.setOrigin( Point3D.ZERO );
+		view0.setRotate( 0.0 );
+		view0.setZoom( 0.5 );
+		view0.setLayers( Set.of( layer0, layer1, layer2 ) );
+		design.addView( view0 );
+
+		DesignView view1 = new DesignView().setName( "View 1" );
+		view1.setOrigin( new Point3D( 1, 2, 0 ) );
+		view1.setRotate( 45.0 );
+		view1.setZoom( 2.0 );
+		view1.setLayers( Set.of( layer3, layer5 ) );
+		design.addView( view1 );
 
 		DesignMarker marker = new DesignMarker( new Point3D( 1, 2, 0 ) );
 		marker.setType( "normal" );

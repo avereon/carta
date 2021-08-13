@@ -28,10 +28,10 @@ public class Design3dAssetType extends AssetType {
 		if( design == null ) asset.setModel( design = new Design3D() );
 
 		// If there is not a default layer, create one
-		if( design.getRootLayer().getLayers().size() == 0 ) {
+		if( design.getLayers().getLayers().size() == 0 ) {
 			String constructionLayerName = Rb.textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 			DesignLayer layer = new DesignLayer().setName( constructionLayerName );
-			design.getRootLayer().addLayer( layer );
+			design.getLayers().addLayer( layer );
 		}
 
 		return true;

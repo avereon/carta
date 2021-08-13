@@ -73,7 +73,7 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public boolean isRootLayer() {
-		return this == getDesign().getRootLayer();
+		return this == getDesign().getLayers();
 	}
 
 	public String getFullName() {

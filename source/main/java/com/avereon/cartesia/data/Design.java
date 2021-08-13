@@ -22,7 +22,7 @@ public abstract class Design extends IdNode {
 
 	public static final String UNIT = "unit";
 
-	public static final String ROOT_LAYER = "root-layer";
+	public static final String LAYERS = "layers";
 
 	public static final String VIEWS = "views";
 
@@ -30,11 +30,11 @@ public abstract class Design extends IdNode {
 
 	public Design() {
 		defineNaturalKey( NAME );
-		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, ROOT_LAYER, VIEWS );
+		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, LAYERS, VIEWS );
 
 		// Read-only values
-		setValue( ROOT_LAYER, new DesignLayer() );
-		defineReadOnly( ROOT_LAYER );
+		setValue( LAYERS, new DesignLayer() );
+		defineReadOnly( LAYERS );
 
 		// Default values
 		setDesignUnit( DEFAULT_DESIGN_UNIT );
@@ -105,8 +105,8 @@ public abstract class Design extends IdNode {
 		return context;
 	}
 
-	public DesignLayer getRootLayer() {
-		return getValue( ROOT_LAYER );
+	public DesignLayer getLayers() {
+		return getValue( LAYERS );
 	}
 
 	public DesignLayer findLayerById( String id ) {
@@ -117,18 +117,18 @@ public abstract class Design extends IdNode {
 	}
 
 	public Set<DesignLayer> findLayers( String key, Object value ) {
-		return getRootLayer().findLayers( key, value );
+		return getLayers().findLayers( key, value );
 	}
 
 	public List<DesignLayer> getAllLayersAndRoot() {
 		List<DesignLayer> layers = new ArrayList<>();
-		layers.add( getRootLayer() );
-		layers.addAll( getRootLayer().getAllLayers() );
+		layers.add( getLayers() );
+		layers.addAll( getLayers().getAllLayers() );
 		return layers;
 	}
 
 	public List<DesignLayer> getAllLayers() {
-		return getRootLayer().getAllLayers();
+		return getLayers().getAllLayers();
 	}
 
 	public Set<DesignView> getViews() {
@@ -159,7 +159,8 @@ public abstract class Design extends IdNode {
 
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
-		map.put( DesignLayer.LAYERS, getRootLayer().getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
+		map.put( DesignLayer.LAYERS, getLayers().getLayers().stream().collect( Collectors.toMap( DesignLayer::getId, DesignLayer::asDeepMap ) ) );
+		if( getViews().size() > 0 ) map.put( Design.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
 		return map;
 	}
 

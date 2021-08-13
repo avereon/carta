@@ -27,7 +27,7 @@ public class Design2dAssetType extends AssetType {
 		// Create the default layer
 		String constructionLayerName = Rb.textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 		DesignLayer layer = new DesignLayer().setName( constructionLayerName );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 
 		// Initialize the design settings
 		Settings settings = program.getSettingsManager().getAssetSettings( asset );

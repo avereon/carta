@@ -1,9 +1,11 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
 import javafx.geometry.Point3D;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,15 +22,15 @@ public class DesignView extends DesignNode {
 
 	public static final String ORIGIN = "origin";
 
-	public static final String VIEW_ROTATE = "rotate";
+	public static final String ROTATE = "rotate";
 
 	public static final String ZOOM = "zoom";
 
-	public static final String LAYER_LINKS = "layer-links";
+	public static final String LAYERS = "layers";
 
 	public DesignView() {
 		defineNaturalKey( NAME );
-		addModifyingKeys( NAME, ORDER, ORIGIN, VIEW_ROTATE, ZOOM, LAYER_LINKS );
+		addModifyingKeys( NAME, ORDER, ORIGIN, ROTATE, ZOOM, LAYERS );
 	}
 
 	/**
@@ -79,29 +81,47 @@ public class DesignView extends DesignNode {
 		return this;
 	}
 
-	public Double getViewRotate() {
-		return getValue( VIEW_ROTATE );
+	public Double getRotate() {
+		return getValue( ROTATE );
 	}
 
-	public DesignView setViewRotate( Double value ) {
-		setValue( VIEW_ROTATE, value );
+	public DesignView setRotate( Double value ) {
+		setValue( ROTATE, value );
 		return this;
 	}
 
-	public Set<DesignLayer> getVisibleLayers() {
-		Collection<NodeLink<DesignLayer>> links = getValue( LAYER_LINKS );
-		return links.stream().map( NodeLink::getNode ).collect( Collectors.toSet());
+	public Set<DesignLayer> getLayers() {
+		// Use node links for the layers
+		Collection<NodeLink<DesignLayer>> links = getValues( LAYERS );
+		return links.stream().map( NodeLink::getNode ).collect( Collectors.toSet() );
 	}
 
-	public DesignView setVisibleLayers( Collection<DesignLayer> layers ) {
-		addNodes( LAYER_LINKS, layers.stream().map( NodeLink::new ).collect( Collectors.toSet()) );
+	public DesignView setLayers( Collection<DesignLayer> layers ) {
+		// Use node links for the layers
+		layers.stream().map( NodeLink::new ).forEach( l -> addToSet( LAYERS,l ) );
 		return this;
+	}
+
+	@Override
+	public Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
+		map.putAll( asMap( NAME, ORDER, ORIGIN, ROTATE, ZOOM ) );
+		return map;
+	}
+
+	public Map<String,Object> asDeepMap() {
+		Map<String, Object> map = new HashMap<>( asMap() );
+		if( getLayers().size() > 0 ) map.put( LAYERS, getLayers().stream().map( IdNode::getId ).collect( Collectors.toSet()) );
+		return map;
 	}
 
 	public DesignView updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( NAME ) ) setName( (String)map.get( NAME ) );
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
+		if( map.containsKey( ORIGIN ) ) setOrigin( (Point3D)map.get( ORDER ) );
+		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
+		if( map.containsKey( ZOOM ) ) setZoom( (Double)map.get( ZOOM ) );
 		return this;
 	}
 
