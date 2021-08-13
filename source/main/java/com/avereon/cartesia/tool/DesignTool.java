@@ -576,7 +576,14 @@ public abstract class DesignTool extends GuidedTool {
 
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
-		newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
+		log.atConfig().log( "guide=%s", getCurrentGuide() );
+		if( getCurrentGuide() == layersGuide ) {
+			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
+		} else if( getCurrentGuide() == viewsGuide ) {
+			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
+		} else if( getCurrentGuide() == printsGuide ) {
+			// Open print tool with this asset
+		}
 	}
 
 	@Override
@@ -972,6 +979,20 @@ public abstract class DesignTool extends GuidedTool {
 		getDesign().findLayers( DesignLayer.ID, id ).stream().findFirst().ifPresent( y -> {
 			currentLayerProperty().set( y );
 			showPropertiesPage( y );
+		} );
+	}
+
+	private void doSetCurrentViewById( String id ) {
+		getDesign().findViews( DesignView.ID, id ).stream().findFirst().ifPresent( v -> {
+			currentViewProperty().set( v );
+
+			Set<DesignLayer> viewLayers = v.getLayers();
+			setViewPoint( v.getOrigin() );
+			setViewRotate( v.getRotate() );
+			setZoom( v.getZoom() );
+			getDesign().getAllLayers().forEach( y -> setLayerVisible( y, viewLayers.contains( y ) ) );
+
+			//showPropertiesPage( v );
 		} );
 	}
 
