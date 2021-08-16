@@ -157,6 +157,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.viewsGuide = new DesignToolViewsGuide( product, this );
 		this.printsGuide = new DesignToolPrintsGuide( product, this );
 		getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
+		getGuideContext().setCurrentGuide( layersGuide );
 
 		this.designPane = new DesignPane();
 		this.selectTolerance = new SimpleObjectProperty<>();
@@ -577,6 +578,7 @@ public abstract class DesignTool extends GuidedTool {
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
 		log.atConfig().log( "guide=%s", getCurrentGuide() );
+
 		if( getCurrentGuide() == layersGuide ) {
 			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
 		} else if( getCurrentGuide() == viewsGuide ) {
