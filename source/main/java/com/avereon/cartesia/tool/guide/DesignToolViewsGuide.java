@@ -33,6 +33,7 @@ public class DesignToolViewsGuide extends Guide {
 		this.viewNodes = new ConcurrentHashMap<>();
 		this.nodeViews = new ConcurrentHashMap<>();
 		setTitle( Rb.textOr( BundleKey.LABEL, "views", "Views" ) );
+		setIcon( "views" );
 	}
 
 	ProgramProduct getProduct() {

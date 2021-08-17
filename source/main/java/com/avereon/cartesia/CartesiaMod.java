@@ -54,6 +54,7 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 		registerIcon( "shape-properties", new PreferencesIcon() );
+		registerIcon( "views", new ViewIcon() );
 		registerIcon( "view", new ViewIcon() );
 
 		registerAction( this, "tool" );
@@ -161,6 +162,7 @@ public class CartesiaMod extends Mod {
 		unregisterAction( "tool" );
 
 		unregisterIcon( "view", new PreferencesIcon() );
+		unregisterIcon( "views", new PreferencesIcon() );
 		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );

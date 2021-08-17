@@ -27,6 +27,7 @@ public class DesignToolPrintsGuide extends Guide {
 		this.tool = tool;
 		this.nodes = new ConcurrentHashMap<>();
 		setTitle( Rb.textOr( BundleKey.LABEL, "prints", "Prints" ) );
+		setIcon( "prints" );
 	}
 
 	ProgramProduct getProduct() {
