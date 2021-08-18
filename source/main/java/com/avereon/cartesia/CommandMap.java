@@ -142,6 +142,7 @@ public class CommandMap {
 		// View Commands
 		add( product, "view-create", ViewCreate.class );
 		add( product, "view-delete", ViewDelete.class );
+		add( product, "view-update", ViewUpdate.class );
 
 		// Reference Commands
 		add( product, "reference-toggle", ReferencePointsToggle.class );

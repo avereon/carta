@@ -577,14 +577,12 @@ public abstract class DesignTool extends GuidedTool {
 
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
-		log.atConfig().log( "guide=%s", getCurrentGuide() );
-
 		if( getCurrentGuide() == layersGuide ) {
 			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
 		} else if( getCurrentGuide() == viewsGuide ) {
 			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
 		} else if( getCurrentGuide() == printsGuide ) {
-			// Open print tool with this asset
+			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentPrintById( n.getId() ) );
 		}
 	}
 
@@ -996,6 +994,10 @@ public abstract class DesignTool extends GuidedTool {
 
 			//showPropertiesPage( v );
 		} );
+	}
+
+	private void doSetCurrentPrintById( String id ) {
+		// TODO Implement DesignTool.doSetCurrentPrintById()
 	}
 
 	private void doSelectedShapesChanged( ListChangeListener.Change<? extends Shape> c ) {

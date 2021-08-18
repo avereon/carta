@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.data.IdNode;
 import com.avereon.data.NodeLink;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  * A class to represent arbitrary selections of layers to provide different
  * "views" of the design.
  */
+@CustomLog
 public class DesignView extends DesignNode {
 
 	public static final String NAME = "name";
@@ -97,6 +99,8 @@ public class DesignView extends DesignNode {
 	}
 
 	public DesignView setLayers( Collection<DesignLayer> layers ) {
+		clearSet( LAYERS );
+
 		// Use node links for the layers
 		layers.stream().map( NodeLink::new ).forEach( l -> addToSet( LAYERS,l ) );
 		return this;
