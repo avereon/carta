@@ -13,6 +13,7 @@ import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zenna.icon.PreferencesIcon;
+import com.avereon.zenna.icon.PrinterIcon;
 import com.avereon.zerra.image.BrokenIcon;
 import lombok.CustomLog;
 
@@ -56,6 +57,7 @@ public class CartesiaMod extends Mod {
 		registerIcon( "shape-properties", new PreferencesIcon() );
 		registerIcon( "views", new ViewIcon() );
 		registerIcon( "view", new ViewIcon() );
+		registerIcon( "prints", new PrinterIcon() );
 
 		registerAction( this, "tool" );
 		registerAction( this, "draw" );
@@ -161,8 +163,9 @@ public class CartesiaMod extends Mod {
 		unregisterAction( "draw" );
 		unregisterAction( "tool" );
 
-		unregisterIcon( "view", new PreferencesIcon() );
-		unregisterIcon( "views", new PreferencesIcon() );
+		unregisterIcon( "prints", new PrinterIcon() );
+		unregisterIcon( "view", new ViewIcon() );
+		unregisterIcon( "views", new ViewIcon() );
 		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
