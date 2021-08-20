@@ -463,7 +463,7 @@ public abstract class DesignTool extends GuidedTool {
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design
-		layersGuide.link( design, designPane );
+		layersGuide.link( design );
 		viewsGuide.link( design );
 		printsGuide.link( design );
 

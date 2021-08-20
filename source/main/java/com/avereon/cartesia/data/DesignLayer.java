@@ -28,6 +28,9 @@ public class DesignLayer extends DesignDrawable {
 
 	public static final String SHAPES = "shapes";
 
+	// Non-modifying value tied to the design layer pane visible property
+	public static final String VISIBLE = "visible";
+
 	static final String DEFAULT_DRAW_PAINT = "#000000ff";
 
 	static final String DEFAULT_DRAW_WIDTH = "0.05";
@@ -164,6 +167,15 @@ public class DesignLayer extends DesignDrawable {
 	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer removeShape( DesignShape shape ) {
 		removeFromSet( SHAPES, shape );
+		return this;
+	}
+
+	public boolean isVisible() {
+		return getValue( VISIBLE );
+	}
+
+	public DesignLayer setVisible( boolean visible ) {
+		setValue( VISIBLE, visible );
 		return this;
 	}
 

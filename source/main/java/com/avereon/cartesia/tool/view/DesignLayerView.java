@@ -17,6 +17,9 @@ public class DesignLayerView extends DesignDrawableView {
 		this.layer = layerPane;
 		layerPane.setVisible( true );
 		DesignShapeView.setDesignData( layerPane, layer );
+
+		// Update the design layer when the layer pane is updated
+		layerPane.visibleProperty().addListener( (p,o,n) -> layer.setVisible( n ) );
 	}
 
 	public  DesignLayer getDesignLayer() {

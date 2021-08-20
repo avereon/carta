@@ -4,9 +4,6 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.tool.view.DesignLayerEvent;
-import com.avereon.cartesia.tool.view.DesignLayerPane;
-import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -15,7 +12,6 @@ import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.zerra.javafx.Fx;
-import javafx.beans.value.ChangeListener;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -29,6 +25,8 @@ public class DesignToolLayersGuide extends Guide {
 	private static final String NAME_HANDLER = DesignToolLayersGuide.class.getName() + ":name-handler";
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
+
+	private static final String VISIBLE_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
 
 	private final ProgramProduct product;
 
@@ -78,7 +76,7 @@ public class DesignToolLayersGuide extends Guide {
 		return product.getProgram();
 	}
 
-	public synchronized void link( Design design, DesignPane pane ) {
+	public synchronized void link( Design design ) {
 		// Populate the guide
 		design.getAllLayers().forEach( this::addLayer );
 
@@ -89,10 +87,6 @@ public class DesignToolLayersGuide extends Guide {
 		design.register( NodeEvent.CHILD_REMOVED, e -> {
 			if( e.getSetKey().equals( Design.LAYERS ) ) Fx.run( () -> removeLayer( e.getOldValue() ) );
 		} );
-
-		// Add design layer pane listeners
-		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> addLayerPaneListener( e.getLayer() ) );
-		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> removeLayerPaneListener( e.getLayer() ) );
 	}
 
 	private void addLayer( DesignLayer layer ) {
@@ -107,12 +101,15 @@ public class DesignToolLayersGuide extends Guide {
 
 		EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
 		EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
+		EventHandler<NodeEvent> visibleHandler = e -> layerGuideNode.setIcon( e.getNewValue() ? "layer" : "layer-hidden" );
 
 		layerGuideNode.setValue( NAME_HANDLER, nameHandler );
 		layerGuideNode.setValue( ORDER_HANDLER, orderHandler );
+		layerGuideNode.setValue( VISIBLE_HANDLER, visibleHandler );
 
 		layer.register( DesignLayer.NAME, nameHandler );
 		layer.register( DesignLayer.ORDER, orderHandler );
+		layer.register( DesignLayer.VISIBLE, visibleHandler );
 		layer.setValue( GUIDE_NODE, layerGuideNode );
 	}
 
@@ -121,34 +118,14 @@ public class DesignToolLayersGuide extends Guide {
 
 		GuideNode layerGuideNode = layer.getValue( GUIDE_NODE );
 
-		EventHandler<NodeEvent> nameHandler = layerGuideNode.getValue( NAME_HANDLER );
-		EventHandler<NodeEvent> orderHandler = layerGuideNode.getValue( ORDER_HANDLER );
-
-		layer.unregister( DesignLayer.ORDER, orderHandler );
-		layer.unregister( DesignLayer.NAME, nameHandler );
+		layer.unregister( DesignLayer.VISIBLE, layerGuideNode.getValue( VISIBLE_HANDLER ) );
+		layer.unregister( DesignLayer.ORDER, layerGuideNode.getValue( ORDER_HANDLER ) );
+		layer.unregister( DesignLayer.NAME, layerGuideNode.getValue( NAME_HANDLER ) );
 		layer.setValue( GUIDE_NODE, null );
 
 		removeNode( layerNodes.get( layer ) );
 		nodeLayers.remove( layerNodes.get( layer ) );
 		layerNodes.remove( layer );
-	}
-
-	private void addLayerPaneListener( DesignLayerPane pane ) {
-		DesignLayer layer = DesignTool.getDesignData( pane );
-		GuideNode layerGuideNode = layer.getValue( GUIDE_NODE );
-		ChangeListener<Boolean> showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
-
-		layerGuideNode.setIcon( pane.isShowing() ? "layer" : "layer-hidden" );
-		layerGuideNode.setValue( SHOWING_HANDLER, showingHandler );
-		pane.showingProperty().addListener( showingHandler );
-	}
-
-	private void removeLayerPaneListener( DesignLayerPane pane ) {
-		DesignLayer layer = DesignTool.getDesignData( pane );
-		GuideNode layerGuideNode = layer.getValue( GUIDE_NODE );
-
-		ChangeListener<Boolean> showingHandler = layerGuideNode.getValue( SHOWING_HANDLER );
-		pane.visibleProperty().removeListener( showingHandler );
 	}
 
 }
