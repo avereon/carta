@@ -94,8 +94,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public void load( Asset asset, InputStream input ) throws IOException {
-		log.atConfig().log( "load asset=" + System.identityHashCode( asset ) );
-
 		Design2D design = asset.setModel( new Design2D() );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );

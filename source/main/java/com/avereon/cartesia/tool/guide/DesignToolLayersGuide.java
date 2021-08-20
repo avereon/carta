@@ -20,8 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @CustomLog
 public class DesignToolLayersGuide extends Guide {
 
-	private static final String SHOWING_HANDLER = DesignToolLayersGuide.class.getName() + ":showing-handler";
-
 	private static final String NAME_HANDLER = DesignToolLayersGuide.class.getName() + ":name-handler";
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
@@ -97,8 +95,6 @@ public class DesignToolLayersGuide extends Guide {
 		layerNodes.put( layer, layerGuideNode );
 		nodeLayers.put( layerGuideNode, layer );
 
-		log.atConfig().log( "Add layer=" + layer.getName() );
-
 		EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
 		EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
 		EventHandler<NodeEvent> visibleHandler = e -> layerGuideNode.setIcon( e.getNewValue() ? "layer" : "layer-hidden" );
@@ -114,8 +110,6 @@ public class DesignToolLayersGuide extends Guide {
 	}
 
 	private void removeLayer( DesignLayer layer ) {
-		log.atConfig().log( "Remove layer=" + layer.getName() );
-
 		GuideNode layerGuideNode = layer.getValue( GUIDE_NODE );
 
 		layer.unregister( DesignLayer.VISIBLE, layerGuideNode.getValue( VISIBLE_HANDLER ) );
