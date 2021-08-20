@@ -9,7 +9,7 @@ import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
 import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
 import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
 import com.avereon.cartesia.tool.view.DesignPane;
-import com.avereon.cartesia.tool.view.DesignPaneLayer;
+import com.avereon.cartesia.tool.view.DesignLayerPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
@@ -313,14 +313,14 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	List<String> getVisibleLayerIds() {
-		return getFilteredLayers( DesignPaneLayer::isVisible ).stream().map( IdNode::getId ).collect( Collectors.toList() );
+		return getFilteredLayers( DesignLayerPane::isVisible ).stream().map( IdNode::getId ).collect( Collectors.toList() );
 	}
 
 	public List<DesignLayer> getVisibleLayers() {
-		return getFilteredLayers( DesignPaneLayer::isVisible );
+		return getFilteredLayers( DesignLayerPane::isVisible );
 	}
 
-	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignPaneLayer> filter ) {
+	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignLayerPane> filter ) {
 		return designPane.getLayers().stream().filter( filter ).map( y -> (DesignLayer)DesignShapeView.getDesignData( y ) ).collect( Collectors.toList() );
 	}
 
@@ -463,7 +463,7 @@ public abstract class DesignTool extends GuidedTool {
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design
-		layersGuide.link( designPane );
+		layersGuide.link( design, designPane );
 		viewsGuide.link( design );
 		printsGuide.link( design );
 
@@ -1050,7 +1050,7 @@ public abstract class DesignTool extends GuidedTool {
 		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
-	public static DesignLayer getDesignData( DesignPaneLayer l ) {
+	public static DesignLayer getDesignData( DesignLayerPane l ) {
 		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
 

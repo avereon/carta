@@ -11,6 +11,7 @@ import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
+import com.avereon.zerra.javafx.Fx;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -47,10 +48,10 @@ public class DesignToolPrintsGuide extends Guide {
 
 		// Add listeners for changes
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			if( e.getSetKey().equals( Design.PRINTS ) ) addPrint( e.getNewValue() );
+			if( e.getSetKey().equals( Design.PRINTS ) ) Fx.run( () -> addPrint( e.getNewValue() ) );
 		} );
 		design.register( NodeEvent.CHILD_REMOVED, e -> {
-			if( e.getSetKey().equals( Design.PRINTS ) ) removePrint( e.getOldValue() );
+			if( e.getSetKey().equals( Design.PRINTS ) ) Fx.run( () -> removePrint( e.getOldValue() ) );
 		} );
 	}
 

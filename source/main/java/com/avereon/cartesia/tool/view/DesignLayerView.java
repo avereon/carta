@@ -5,25 +5,25 @@ import com.avereon.zerra.javafx.Fx;
 
 public class DesignLayerView extends DesignDrawableView {
 
-	private final DesignPaneLayer layer;
+	private final DesignLayerPane layer;
 
 	public DesignLayerView( DesignPane pane, DesignLayer layer ) {
-		this( pane, layer, new DesignPaneLayer() );
+		this( pane, layer, new DesignLayerPane() );
 	}
 
 	// Special handing of the root layer pane
-	DesignLayerView( DesignPane pane, DesignLayer designLayer, DesignPaneLayer layer ) {
-		super( pane, designLayer );
-		this.layer = layer;
-		layer.setVisible( true );
-		DesignShapeView.setDesignData( layer, designLayer );
+	DesignLayerView( DesignPane pane, DesignLayer layer, DesignLayerPane layerPane ) {
+		super( pane, layer );
+		this.layer = layerPane;
+		layerPane.setVisible( true );
+		DesignShapeView.setDesignData( layerPane, layer );
 	}
 
 	public  DesignLayer getDesignLayer() {
 		return (DesignLayer)getDesignNode();
 	}
 
-	public DesignPaneLayer getLayer() {
+	public DesignLayerPane getLayer() {
 		return layer;
 	}
 

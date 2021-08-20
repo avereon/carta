@@ -200,8 +200,13 @@ public class DesignShapeView extends DesignDrawableView {
 		return (DesignShape)getDesignData( s.getParent() );
 	}
 
+	public static <T> T getShapeNode( DesignDrawable data ) {
+		return data.getValue( DesignDrawable.SHAPE_NODE );
+	}
+
 	public static DesignDrawable setDesignData( Node node, DesignDrawable data ) {
 		node.getProperties().put( DESIGN_DATA, data );
+		data.setValue( DesignDrawable.SHAPE_NODE, node );
 		return data;
 	}
 

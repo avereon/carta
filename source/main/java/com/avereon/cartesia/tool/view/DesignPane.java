@@ -66,7 +66,7 @@ public class DesignPane extends StackPane {
 	// FIXME This should probably be moved to the design settings
 	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
-	private static final DesignPaneLayer NO_LAYER = new DesignPaneLayer();
+	private static final DesignLayerPane NO_LAYER = new DesignLayerPane();
 
 	private static final Comparator<Node> LAYER_SORTER = new LayerSorter();
 
@@ -76,7 +76,7 @@ public class DesignPane extends StackPane {
 
 	private final Pane reference;
 
-	private final DesignPaneLayer layers;
+	private final DesignLayerPane layers;
 
 	private final Pane grid;
 
@@ -109,7 +109,7 @@ public class DesignPane extends StackPane {
 	public DesignPane() {
 		select = new Pane();
 		reference = new Pane();
-		layers = new DesignPaneLayer();
+		layers = new DesignLayerPane();
 		grid = new Pane();
 		getChildren().addAll( grid, layers, reference, select );
 
@@ -291,14 +291,14 @@ public class DesignPane extends StackPane {
 		return this;
 	}
 
-	public DesignPaneLayer getShapeLayer( DesignShape shape ) {
+	public DesignLayerPane getShapeLayer( DesignShape shape ) {
 		DesignLayer designLayer = shape.getLayer();
 		if( designLayer == null ) log.atWarn().log( "Shape missing design layer, shape=%s", shape );
 
 		DesignLayerView view = designLayer == null ? null : layerMap.get( designLayer );
 		if( view == null ) log.atWarn().log( "Shape missing design view, shape=%s", shape );
 
-		DesignPaneLayer layer = view == null ? null : view.getLayer();
+		DesignLayerPane layer = view == null ? null : view.getLayer();
 		if( layer == null ) log.atWarn().log( "Shape missing layer: shape=%s", shape );
 
 		return layer == null ? NO_LAYER : layer;
@@ -401,17 +401,17 @@ public class DesignPane extends StackPane {
 		return doSelectByShape( box, contains );
 	}
 
-	public List<DesignPaneLayer> getLayers() {
+	public List<DesignLayerPane> getLayers() {
 		return getLayers( layers );
 	}
 
-	public List<DesignPaneLayer> getVisibleLayers() {
-		return getLayers( layers ).stream().filter( DesignPaneLayer::isShowing ).collect( Collectors.toList() );
+	public List<DesignLayerPane> getVisibleLayers() {
+		return getLayers( layers ).stream().filter( DesignLayerPane::isShowing ).collect( Collectors.toList() );
 	}
 
 	public void addLayerGeometry( DesignLayerView view ) {
-		DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
-		DesignPaneLayer layer = view.getLayer();
+		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
+		DesignLayerPane layer = view.getLayer();
 		parent.getChildren().add( layer );
 		doReorderLayer( parent );
 		layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
@@ -419,8 +419,8 @@ public class DesignPane extends StackPane {
 	}
 
 	public void removeLayerGeometry( DesignLayerView view ) {
-		DesignPaneLayer layer = view.getLayer();
-		((DesignPaneLayer)layer.getParent()).getChildren().remove( layer );
+		DesignLayerPane layer = view.getLayer();
+		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
 		layer.showingProperty().unbind();
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 	}
@@ -460,7 +460,7 @@ public class DesignPane extends StackPane {
 		doRecenter();
 	}
 
-	DesignPaneLayer getLayerPane() {
+	DesignLayerPane getLayerPane() {
 		return layers;
 	}
 
@@ -479,10 +479,10 @@ public class DesignPane extends StackPane {
 		reference.getChildren().add( cp.setType( DesignMarker.Type.REFERENCE ) );
 	}
 
-	private List<DesignPaneLayer> getLayers( DesignPaneLayer root ) {
-		List<DesignPaneLayer> layers = new ArrayList<>();
+	private List<DesignLayerPane> getLayers( DesignLayerPane root ) {
+		List<DesignLayerPane> layers = new ArrayList<>();
 
-		root.getChildren().stream().filter( c -> c instanceof DesignPaneLayer ).map( c -> (DesignPaneLayer)c ).forEach( l -> {
+		root.getChildren().stream().filter( c -> c instanceof DesignLayerPane ).map( c -> (DesignLayerPane)c ).forEach( l -> {
 			layers.add( l );
 			layers.addAll( getLayers( l ) );
 		} );
@@ -579,7 +579,7 @@ public class DesignPane extends StackPane {
 		doReorderLayer( layerMap.get( layer ).getLayer() );
 	}
 
-	private void doReorderLayer( DesignPaneLayer pane ) {
+	private void doReorderLayer( DesignLayerPane pane ) {
 		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( LAYER_SORTER ) ) );
 	}
 
