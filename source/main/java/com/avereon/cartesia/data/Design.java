@@ -26,6 +26,8 @@ public abstract class Design extends IdNode {
 
 	public static final String VIEWS = "views";
 
+	public static final String PRINTS = "prints";
+
 	private DesignContext context;
 
 	public Design() {
@@ -149,6 +151,24 @@ public abstract class Design extends IdNode {
 		return getViews().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
 	}
 
+	public Set<DesignPrint> getPrints() {
+		return getValues( PRINTS );
+	}
+
+	public Design addPrint( DesignPrint print ) {
+		addToSet( PRINTS, print );
+		return this;
+	}
+
+	public Design removePrint( DesignPrint print ) {
+		removeFromSet( PRINTS, print );
+		return this;
+	}
+
+	public Set<DesignPrint> findPrints( String key, Object value ) {
+		return getPrints().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
+	}
+
 	public void clearSelected() {
 		getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> s.setSelected( false ) );
 	}
@@ -161,6 +181,7 @@ public abstract class Design extends IdNode {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( DesignLayer.LAYERS, getLayers().getLayers().stream().collect( Collectors.toMap( DesignLayer::getId, DesignLayer::asDeepMap ) ) );
 		if( getViews().size() > 0 ) map.put( Design.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
+		if( getPrints().size() > 0 ) map.put( Design.PRINTS, getPrints().stream().collect( Collectors.toMap( DesignPrint::getId, DesignPrint::asDeepMap ) ) );
 		return map;
 	}
 

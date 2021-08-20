@@ -465,7 +465,7 @@ public abstract class DesignTool extends GuidedTool {
 		// Link the guides before loading the design
 		layersGuide.link( designPane );
 		viewsGuide.link( design );
-		//printsGuide.link( design );
+		printsGuide.link( design );
 
 		Fx.run( () -> {
 			designPane.setDpi( Screen.getPrimary().getDpi() );
