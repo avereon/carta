@@ -16,23 +16,27 @@ public abstract class Design extends IdNode {
 
 	public static final String NAME = "name";
 
+	public static final String AUTHOR = "author";
+
+	public static final String DESCRIPTION = "description";
+
 	public static final String UNIT = "unit";
 
-	public static final String ROOT_LAYER = "root-layer";
-
-	@Deprecated
-	public static final String CURRENT_LAYER = "current-layer";
+	public static final String LAYERS = "layers";
 
 	public static final String VIEWS = "views";
+
+	public static final String PRINTS = "prints";
 
 	private DesignContext context;
 
 	public Design() {
-		addModifyingKeys( NAME, UNIT, ROOT_LAYER );
+		defineNaturalKey( NAME );
+		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, LAYERS, VIEWS );
 
 		// Read-only values
-		setValue( ROOT_LAYER, new DesignLayer() );
-		defineReadOnly( ROOT_LAYER );
+		setValue( LAYERS, new DesignLayer() );
+		defineReadOnly( LAYERS );
 
 		// Default values
 		setDesignUnit( DEFAULT_DESIGN_UNIT );
@@ -47,11 +51,38 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
-	public DesignUnit getDesignUnit() {
+	public String getAuthor() {
+		return getValue( AUTHOR );
+	}
+
+	public Design setAuthor( String author ) {
+		setValue( AUTHOR, author );
+		return this;
+	}
+
+	public String getDescription() {
+		return getValue( DESCRIPTION );
+	}
+
+	public Design setDescription( String name ) {
+		setValue( DESCRIPTION, name );
+		return this;
+	}
+
+	public DesignUnit calcDesignUnit() {
+		return DesignUnit.valueOf( getDesignUnit().toUpperCase() );
+	}
+
+	public String getDesignUnit() {
 		return getValue( UNIT );
 	}
 
 	public Design setDesignUnit( DesignUnit unit ) {
+		setDesignUnit( unit.name().toLowerCase() );
+		return this;
+	}
+
+	public Design setDesignUnit( String unit ) {
 		setValue( UNIT, unit );
 		return this;
 	}
@@ -76,8 +107,8 @@ public abstract class Design extends IdNode {
 		return context;
 	}
 
-	public DesignLayer getRootLayer() {
-		return getValue( ROOT_LAYER );
+	public DesignLayer getLayers() {
+		return getValue( LAYERS );
 	}
 
 	public DesignLayer findLayerById( String id ) {
@@ -88,18 +119,18 @@ public abstract class Design extends IdNode {
 	}
 
 	public Set<DesignLayer> findLayers( String key, Object value ) {
-		return getRootLayer().findLayers( key, value );
+		return getLayers().findLayers( key, value );
 	}
 
 	public List<DesignLayer> getAllLayersAndRoot() {
 		List<DesignLayer> layers = new ArrayList<>();
-		layers.add( getRootLayer() );
-		layers.addAll( getRootLayer().getAllLayers() );
+		layers.add( getLayers() );
+		layers.addAll( getLayers().getAllLayers() );
 		return layers;
 	}
 
 	public List<DesignLayer> getAllLayers() {
-		return getRootLayer().getAllLayers();
+		return getLayers().getAllLayers();
 	}
 
 	public Set<DesignView> getViews() {
@@ -116,23 +147,50 @@ public abstract class Design extends IdNode {
 		return this;
 	}
 
+	public Set<DesignView> findViews( String key, Object value ) {
+		return getViews().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
+	}
+
+	public Set<DesignPrint> getPrints() {
+		return getValues( PRINTS );
+	}
+
+	public Design addPrint( DesignPrint print ) {
+		addToSet( PRINTS, print );
+		return this;
+	}
+
+	public Design removePrint( DesignPrint print ) {
+		removeFromSet( PRINTS, print );
+		return this;
+	}
+
+	public Set<DesignPrint> findPrints( String key, Object value ) {
+		return getPrints().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
+	}
+
 	public void clearSelected() {
 		getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> s.setSelected( false ) );
 	}
 
 	public Map<String, ?> asMap() {
-		return asMap( ID, NAME );
+		return asMap( ID, NAME, AUTHOR, DESCRIPTION, UNIT );
 	}
 
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
-		map.put( DesignLayer.LAYERS, getRootLayer().getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
+		map.put( DesignLayer.LAYERS, getLayers().getLayers().stream().collect( Collectors.toMap( DesignLayer::getId, DesignLayer::asDeepMap ) ) );
+		if( getViews().size() > 0 ) map.put( Design.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
+		if( getPrints().size() > 0 ) map.put( Design.PRINTS, getPrints().stream().collect( Collectors.toMap( DesignPrint::getId, DesignPrint::asDeepMap ) ) );
 		return map;
 	}
 
 	public Design updateFrom( Map<String, Object> map ) {
-		map.computeIfPresent( DesignLayer.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
-		map.computeIfPresent( DesignLayer.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.AUTHOR, ( k, v ) -> setAuthor( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.DESCRIPTION, ( k, v ) -> setDescription( String.valueOf( v ) ) );
+		map.computeIfPresent( Design.UNIT, ( k, v ) -> setDesignUnit( String.valueOf( v ) ) );
 		return this;
 	}
 

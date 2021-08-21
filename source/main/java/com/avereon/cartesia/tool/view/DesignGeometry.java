@@ -1,7 +1,6 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.tool.view.*;
 
 import java.util.Collections;
 import java.util.HashMap;

@@ -17,6 +17,8 @@ public class DesignContext {
 
 	private final DesignWorkplane workplane;
 
+	// FIXME Move the coordinate system to designWorkplane???
+	@Deprecated
 	private CoordinateSystem coordinateSystem;
 
 	public DesignContext( ProgramProduct product, Design design ) {
@@ -48,6 +50,7 @@ public class DesignContext {
 		return coordinates;
 	}
 
+	@Deprecated
 	public final DesignWorkplane getWorkplane() {
 		return workplane;
 	}

@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Arithmetic;
+import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 
@@ -11,17 +11,27 @@ import java.util.List;
 
 public interface CoordinateSystem {
 
-	CoordinateSystem ISO = new CoordinateSystemIsometric();
-
 	CoordinateSystem ORTHO = new CoordinateSystemOrthographic();
 
 	CoordinateSystem POLAR = new CoordinateSystemPolar();
+
+	CoordinateSystem ISO = new CoordinateSystemIsometric();
+
+	String name();
 
 	Point3D getNearest( DesignWorkplane workplane, Point3D point );
 
 	List<Shape> getGridDots( DesignWorkplane workplane ) throws Exception;
 
 	List<Shape> getGridLines( DesignWorkplane workplane ) throws Exception;
+
+	static CoordinateSystem valueOf( String name ) {
+		return switch( name ) {
+			case "POLAR" -> POLAR;
+			case "ISO" -> ISO;
+			default -> ORTHO;
+		};
+	}
 
 	static boolean isNearAny( Double value, Collection<Double> values ) {
 		for( Double check : values ) {

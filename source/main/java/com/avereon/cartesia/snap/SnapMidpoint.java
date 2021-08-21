@@ -21,10 +21,10 @@ public class SnapMidpoint implements Snap {
 
 	@Override
 	public Point3D snap( DesignTool tool, Point3D point ) {
-		if( point == null ) return null;
+		if( point == null ) return CadPoints.NONE;
 
 		Point3D mouse = tool.worldToScreen( point );
-		List<Shape> shapes = tool.screenPointFindAndWait( mouse );
+		List<Shape> shapes = tool.screenPointFindOneAndWait( mouse );
 		if( shapes.isEmpty() ) return CadPoints.NONE;
 
 		DesignShape shape = DesignShapeView.getDesignData( shapes.get( 0 ) );

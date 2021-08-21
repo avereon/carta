@@ -24,7 +24,7 @@ public class SnapCenter  implements Snap{
 		if( point == null ) return null;
 
 		Point3D mouse = tool.worldToScreen( point );
-		List<Shape> shapes = tool.screenPointFindAndWait( mouse );
+		List<Shape> shapes = tool.screenPointFindOneAndWait( mouse );
 		if( shapes.isEmpty() ) return CadPoints.NONE;
 
 		DesignShape shape = DesignShapeView.getDesignData( shapes.get( 0 ) );

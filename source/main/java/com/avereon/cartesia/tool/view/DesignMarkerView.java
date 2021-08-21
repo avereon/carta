@@ -33,15 +33,16 @@ public class DesignMarkerView extends DesignShapeView {
 	public List<Shape> generateGeometry() {
 		double ox = getDesignMarker().getOrigin().getX();
 		double oy = getDesignMarker().getOrigin().getY();
-		Path path = DesignMarkers.createPoint( getDesignMarker().calcType(), ox, oy, getDesignMarker().getRadius() );
+		Path path = DesignMarkers.createPoint( getDesignMarker().calcType(), 0, 0, getDesignMarker().getRadius() );
+		path.setLayoutX( ox );
+		path.setLayoutY( oy );
 		return List.of( path );
 	}
 
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Path path = (Path)shapes.get( 0 );
-		MoveTo origin = ((MoveTo)path.getElements().get( 0 ));
-		ConstructionPoint o = cp( pane, origin.xProperty(), origin.yProperty() );
+		ConstructionPoint o = cp( pane, path.layoutXProperty(), path.layoutYProperty() );
 		return setConstructionPoints( path, List.of( o ) );
 	}
 

@@ -59,13 +59,13 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testApertureSelect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignPaneLayer layers = pane.getLayerPane();
-		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
+		DesignLayerPane layers = pane.getLayerPane();
+		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
@@ -82,13 +82,13 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testWindowSelectWithIntersect() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignPaneLayer layers = pane.getLayerPane();
-		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
+		DesignLayerPane layers = pane.getLayerPane();
+		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
@@ -112,13 +112,13 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testWindowSelectWithContains() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( -1, 1, 0 ), new Point3D( 1, -1, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignPaneLayer layers = pane.getLayerPane();
-		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
+		DesignLayerPane layers = pane.getLayerPane();
+		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		assertTrue( construction.isVisible() );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
@@ -146,23 +146,23 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testAddLayer() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
-		DesignPaneLayer layers = pane.getLayerPane();
+		DesignLayerPane layers = pane.getLayerPane();
 		assertThat( layers.getChildren().size(), is( 1 ) );
 	}
 
 	@Test
 	void testAddLine() throws Exception {
 		DesignLayer layer = new DesignLayer().setName( "Test Layer" );
-		design.getRootLayer().addLayer( layer );
+		design.getLayers().addLayer( layer );
 		layer.addShape( new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) ) );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane
-		DesignPaneLayer layers = pane.getLayerPane();
-		DesignPaneLayer construction = (DesignPaneLayer)layers.getChildren().get( 0 );
+		DesignLayerPane layers = pane.getLayerPane();
+		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
 		assertThat( line.getStartX(), is( 1.0 ) );
@@ -286,7 +286,7 @@ public class DesignPaneTest implements TestTimeouts {
 	@Test
 	void testChangeDesignUnitCausesRescale() {
 		design.setDesignUnit( DesignUnit.MILLIMETER );
-		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.getDesignUnit() );
+		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.calcDesignUnit() );
 		assertThat( pane.getScaleX(), near( 1.0 * scale ) );
 		assertThat( pane.getScaleY(), near( -1.0 * scale ) );
 	}

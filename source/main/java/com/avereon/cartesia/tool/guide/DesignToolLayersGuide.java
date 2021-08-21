@@ -1,11 +1,9 @@
 package com.avereon.cartesia.tool.guide;
 
 import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.tool.view.DesignLayerEvent;
-import com.avereon.cartesia.tool.view.DesignPane;
-import com.avereon.cartesia.tool.view.DesignPaneLayer;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -13,7 +11,7 @@ import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
-import javafx.beans.value.ChangeListener;
+import com.avereon.zerra.javafx.Fx;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -22,6 +20,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @CustomLog
 public class DesignToolLayersGuide extends Guide {
 
+	private static final String NAME_HANDLER = DesignToolLayersGuide.class.getName() + ":name-handler";
+
+	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
+
+	private static final String VISIBLE_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
+
 	private final ProgramProduct product;
 
 	private final DesignTool tool;
@@ -29,10 +33,6 @@ public class DesignToolLayersGuide extends Guide {
 	private final Map<DesignLayer, GuideNode> layerNodes;
 
 	private final Map<GuideNode, DesignLayer> nodeLayers;
-
-	private ChangeListener<Boolean> showingHandler;
-
-	private EventHandler<NodeEvent> orderHandler;
 
 	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
@@ -74,42 +74,52 @@ public class DesignToolLayersGuide extends Guide {
 		return product.getProgram();
 	}
 
-	public void link( DesignPane pane ) {
-		// If the guide is linked before the design pane is loaded then these event
-		// handlers will populate the guide as the layers are created in the design
-		// pane.
-		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
-			DesignPaneLayer l = e.getLayer();
-			addLayer( DesignTool.getDesignData( l ), l );
+	public synchronized void link( Design design ) {
+		// Populate the guide
+		design.getAllLayers().forEach( this::addLayer );
+
+		// Add listeners for changes
+		design.register( NodeEvent.CHILD_ADDED, e -> {
+			if( e.getSetKey().equals( Design.LAYERS ) ) Fx.run( () -> addLayer( e.getNewValue() ) );
 		} );
-		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
-			DesignPaneLayer l = e.getLayer();
-			removeLayer( DesignTool.getDesignData( l ), l );
+		design.register( NodeEvent.CHILD_REMOVED, e -> {
+			if( e.getSetKey().equals( Design.LAYERS ) ) Fx.run( () -> removeLayer( e.getOldValue() ) );
 		} );
 	}
 
-	private void addLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
-		GuideNode parentGuideNode = layerNodes.get( designLayer.getLayer() );
-		GuideNode layerGuideNode = new GuideNode( getProgram(), designLayer.getId(), designLayer.getName(), "layer", designLayer.getOrder() );
-		layerGuideNode.setIcon( layer.isShowing() ? "layer" : "layer-hidden" );
+	private void addLayer( DesignLayer layer ) {
+		GuideNode parentGuideNode = layerNodes.get( layer.getLayer() );
+		GuideNode layerGuideNode = new GuideNode( getProgram(), layer.getId(), layer.getName(), "layer", layer.getOrder() );
 
 		addNode( parentGuideNode, layerGuideNode );
-		layerNodes.put( designLayer, layerGuideNode );
-		nodeLayers.put( layerGuideNode, designLayer );
+		layerNodes.put( layer, layerGuideNode );
+		nodeLayers.put( layerGuideNode, layer );
 
-		showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
-		orderHandler = e -> layerGuideNode.setOrder( designLayer.getOrder() );
+		EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
+		EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
+		EventHandler<NodeEvent> visibleHandler = e -> layerGuideNode.setIcon( e.getNewValue() ? "layer" : "layer-hidden" );
 
-		layer.showingProperty().addListener( showingHandler );
-		designLayer.register( DesignLayer.ORDER, orderHandler );
+		layerGuideNode.setValue( NAME_HANDLER, nameHandler );
+		layerGuideNode.setValue( ORDER_HANDLER, orderHandler );
+		layerGuideNode.setValue( VISIBLE_HANDLER, visibleHandler );
+
+		layer.register( DesignLayer.NAME, nameHandler );
+		layer.register( DesignLayer.ORDER, orderHandler );
+		layer.register( DesignLayer.VISIBLE, visibleHandler );
+		layer.setValue( GUIDE_NODE, layerGuideNode );
 	}
 
-	private void removeLayer( DesignLayer designLayer, DesignPaneLayer layer ) {
-		designLayer.unregister( DesignLayer.ORDER, orderHandler );
-		layer.visibleProperty().removeListener( showingHandler );
-		removeNode( layerNodes.get( designLayer ) );
-		nodeLayers.remove( layerNodes.get( designLayer ) );
-		layerNodes.remove( designLayer );
+	private void removeLayer( DesignLayer layer ) {
+		GuideNode layerGuideNode = layer.getValue( GUIDE_NODE );
+
+		layer.unregister( DesignLayer.VISIBLE, layerGuideNode.getValue( VISIBLE_HANDLER ) );
+		layer.unregister( DesignLayer.ORDER, layerGuideNode.getValue( ORDER_HANDLER ) );
+		layer.unregister( DesignLayer.NAME, layerGuideNode.getValue( NAME_HANDLER ) );
+		layer.setValue( GUIDE_NODE, null );
+
+		removeNode( layerNodes.get( layer ) );
+		nodeLayers.remove( layerNodes.get( layer ) );
+		layerNodes.remove( layer );
 	}
 
 }

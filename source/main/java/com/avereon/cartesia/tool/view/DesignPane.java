@@ -4,7 +4,6 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.ConstructionPoint;
-import com.avereon.cartesia.tool.DesignGeometry;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.zerra.color.Colors;
@@ -67,7 +66,7 @@ public class DesignPane extends StackPane {
 	// FIXME This should probably be moved to the design settings
 	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
-	private static final DesignPaneLayer NO_LAYER = new DesignPaneLayer();
+	private static final DesignLayerPane NO_LAYER = new DesignLayerPane();
 
 	private static final Comparator<Node> LAYER_SORTER = new LayerSorter();
 
@@ -77,7 +76,7 @@ public class DesignPane extends StackPane {
 
 	private final Pane reference;
 
-	private final DesignPaneLayer layers;
+	private final DesignLayerPane layers;
 
 	private final Pane grid;
 
@@ -110,7 +109,7 @@ public class DesignPane extends StackPane {
 	public DesignPane() {
 		select = new Pane();
 		reference = new Pane();
-		layers = new DesignPaneLayer();
+		layers = new DesignLayerPane();
 		grid = new Pane();
 		getChildren().addAll( grid, layers, reference, select );
 
@@ -149,10 +148,6 @@ public class DesignPane extends StackPane {
 		removeActions.put( DesignEllipse.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 		removeActions.put( DesignArc.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 		removeActions.put( DesignCurve.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
-	}
-
-	DesignPaneLayer getLayerPane() {
-		return layers;
 	}
 
 	public Design getDesign() {
@@ -281,9 +276,10 @@ public class DesignPane extends StackPane {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
-		layerMap.put( design.getRootLayer(), new DesignLayerView( this, design.getRootLayer(), layers ) );
+		// Create the root layer view
+		layerMap.put( design.getLayers(), new DesignLayerView( this, design.getLayers(), layers ) );
 
-		design.getRootLayer().getAllLayers().forEach( this::doAddNode );
+		design.getLayers().getAllLayers().forEach( this::doAddNode );
 
 		updateView();
 
@@ -295,14 +291,14 @@ public class DesignPane extends StackPane {
 		return this;
 	}
 
-	public DesignPaneLayer getShapeLayer( DesignShape shape ) {
+	public DesignLayerPane getShapeLayer( DesignShape shape ) {
 		DesignLayer designLayer = shape.getLayer();
 		if( designLayer == null ) log.atWarn().log( "Shape missing design layer, shape=%s", shape );
 
 		DesignLayerView view = designLayer == null ? null : layerMap.get( designLayer );
 		if( view == null ) log.atWarn().log( "Shape missing design view, shape=%s", shape );
 
-		DesignPaneLayer layer = view == null ? null : view.getLayer();
+		DesignLayerPane layer = view == null ? null : view.getLayer();
 		if( layer == null ) log.atWarn().log( "Shape missing layer: shape=%s", shape );
 
 		return layer == null ? NO_LAYER : layer;
@@ -405,17 +401,17 @@ public class DesignPane extends StackPane {
 		return doSelectByShape( box, contains );
 	}
 
-	public List<DesignPaneLayer> getLayers() {
+	public List<DesignLayerPane> getLayers() {
 		return getLayers( layers );
 	}
 
-	public List<DesignPaneLayer> getVisibleLayers() {
-		return getLayers( layers ).stream().filter( DesignPaneLayer::isShowing ).collect( Collectors.toList() );
+	public List<DesignLayerPane> getVisibleLayers() {
+		return getLayers( layers ).stream().filter( DesignLayerPane::isShowing ).collect( Collectors.toList() );
 	}
 
 	public void addLayerGeometry( DesignLayerView view ) {
-		DesignPaneLayer parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
-		DesignPaneLayer layer = view.getLayer();
+		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
+		DesignLayerPane layer = view.getLayer();
 		parent.getChildren().add( layer );
 		doReorderLayer( parent );
 		layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
@@ -423,8 +419,8 @@ public class DesignPane extends StackPane {
 	}
 
 	public void removeLayerGeometry( DesignLayerView view ) {
-		DesignPaneLayer layer = view.getLayer();
-		((DesignPaneLayer)layer.getParent()).getChildren().remove( layer );
+		DesignLayerPane layer = view.getLayer();
+		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
 		layer.showingProperty().unbind();
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 	}
@@ -438,16 +434,6 @@ public class DesignPane extends StackPane {
 			.filter( n -> n instanceof Shape )
 			.map( n -> (Shape)n )
 			.collect( Collectors.toList() );
-	}
-
-	public void addShapeGeometry( DesignShapeView view ) {
-		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
-		reference.getChildren().add( view.getCpGroup() );
-	}
-
-	public void removeShapeGeometry( DesignShapeView view ) {
-		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
-		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
 	}
 
 	public void setGrid( List<Shape> grid ) {
@@ -474,15 +460,29 @@ public class DesignPane extends StackPane {
 		doRecenter();
 	}
 
+	DesignLayerPane getLayerPane() {
+		return layers;
+	}
+
+	void addShapeGeometry( DesignShapeView view ) {
+		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
+		reference.getChildren().add( view.getCpGroup() );
+	}
+
+	void removeShapeGeometry( DesignShapeView view ) {
+		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
+		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
+	}
+
 	private void addOriginReferencePoint() {
 		ConstructionPoint cp = DesignShapeView.cp( this, Bindings.createDoubleBinding( () -> 0.0 ), Bindings.createDoubleBinding( () -> 0.0 ) );
 		reference.getChildren().add( cp.setType( DesignMarker.Type.REFERENCE ) );
 	}
 
-	private List<DesignPaneLayer> getLayers( DesignPaneLayer root ) {
-		List<DesignPaneLayer> layers = new ArrayList<>();
+	private List<DesignLayerPane> getLayers( DesignLayerPane root ) {
+		List<DesignLayerPane> layers = new ArrayList<>();
 
-		root.getChildren().stream().filter( c -> c instanceof DesignPaneLayer ).map( c -> (DesignPaneLayer)c ).forEach( l -> {
+		root.getChildren().stream().filter( c -> c instanceof DesignLayerPane ).map( c -> (DesignLayerPane)c ).forEach( l -> {
 			layers.add( l );
 			layers.addAll( getLayers( l ) );
 		} );
@@ -491,7 +491,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private DesignUnit getDesignUnit() {
-		return design == null ? Design.DEFAULT_DESIGN_UNIT : design.getDesignUnit();
+		return design == null ? Design.DEFAULT_DESIGN_UNIT : design.calcDesignUnit();
 	}
 
 	private double valueToPixels( DesignValue v ) {
@@ -579,23 +579,23 @@ public class DesignPane extends StackPane {
 		doReorderLayer( layerMap.get( layer ).getLayer() );
 	}
 
-	private void doReorderLayer( DesignPaneLayer pane ) {
+	private void doReorderLayer( DesignLayerPane pane ) {
 		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( LAYER_SORTER ) ) );
 	}
 
 	private void doAddShape( DesignShape shape ) {
 		geometryMap.computeIfAbsent( shape, ( k ) -> {
 			DesignShapeView view = DesignGeometry.from( this, shape );
-			if( view != null ) view.addShapeGeometry();
+			if( view != null ) Fx.run( view::addShapeGeometry );
 			return view;
 		} );
 	}
 
 	private void doRemoveShape( DesignShape shape ) {
-		geometryMap.computeIfPresent( shape, ( k, v ) -> {
-			v.removeShapeGeometry();
+		Fx.run( () -> geometryMap.computeIfPresent( shape, ( k, view ) -> {
+			Fx.run( view::removeShapeGeometry );
 			return null;
-		} );
+		} ) );
 	}
 
 	/**

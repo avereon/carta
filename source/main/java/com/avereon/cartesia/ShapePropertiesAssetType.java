@@ -7,7 +7,7 @@ import com.avereon.xenon.asset.PlaceholderCodec;
 
 public class ShapePropertiesAssetType extends AssetType {
 
-	private static final String uriPattern = "program:/shape-properties";
+	private static final String uriPattern = CartesiaScheme.ID + ":/shape-properties";
 
 	public static final java.net.URI URI = java.net.URI.create( uriPattern );
 

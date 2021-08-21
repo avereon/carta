@@ -7,11 +7,11 @@ import javafx.scene.layout.Pane;
 /**
  * This is the internal layer that represents the design layer.
  */
-public class DesignPaneLayer extends Pane {
+public class DesignLayerPane extends Pane {
 
 	private final BooleanProperty showing;
 
-	public DesignPaneLayer() {
+	public DesignLayerPane() {
 		showing = new SimpleBooleanProperty( true );
 		setVisible( false );
 	}

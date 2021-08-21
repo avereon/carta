@@ -24,7 +24,7 @@ public class DrawMarker extends DrawCommand {
 		if( parameters.length < 1 ) {
 			// Need to start with the point at ZERO until it is added
 			// This is a bit of a fluke with how markers are generated
-			addPreview( context, preview = new DesignMarker( Point3D.ZERO ) );
+			addPreview( context, preview = new DesignMarker( context.getWorldMouse() ) );
 			preview.setOrigin( context.getWorldMouse() );
 			promptForPoint( context, "select-point" );
 			return INCOMPLETE;

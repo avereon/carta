@@ -2,6 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.snap.SnapCenter;
+import com.avereon.cartesia.snap.SnapIntersection;
 import com.avereon.cartesia.snap.SnapMidpoint;
 import com.avereon.cartesia.snap.SnapNearest;
 import com.avereon.log.LazyEval;
@@ -125,7 +126,8 @@ public class CommandMap {
 		add( product, "redo", Redo.class );
 		add( product, "rotate", Rotate.class );
 		add( product, "scale", Scale.class );
-		//add( product, "stretch", Stretch.class );
+		add( product, "split", Split.class );
+		add( product, "stretch", Stretch.class );
 		add( product, "trim", Trim.class );
 		add( product, "undo", Undo.class );
 
@@ -137,6 +139,12 @@ public class CommandMap {
 		add( product, "layer-delete", LayerDelete.class );
 		add( product, "layer-toggle", LayerToggle.class );
 
+		// View Commands
+		add( product, "view-create", ViewCreate.class );
+		add( product, "view-delete", ViewDelete.class );
+		add( product, "view-update", ViewUpdate.class );
+
+		// Reference Commands
 		add( product, "reference-toggle", ReferencePointsToggle.class );
 
 		// Snap commands
@@ -144,11 +152,13 @@ public class CommandMap {
 		add( product, "snap-center", SnapSelect.class, new SnapCenter() );
 		add( product, "snap-midpoint", SnapSelect.class, new SnapMidpoint() );
 		add( product, "snap-nearest", SnapSelect.class, new SnapNearest() );
+		add( product, "snap-intersection", SnapSelect.class, new SnapIntersection() );
 
 		// Snap auto commands
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 		add( product, "snap-grid-toggle", SnapGridToggle.class );
 		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearest() );
+		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
 
 		// Event type actions
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
@@ -163,7 +173,7 @@ public class CommandMap {
 		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
 		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 
-		printCommandMapByCommand();
+		//printCommandMapByCommand();
 		//printCommandMapByName();
 	}
 
@@ -219,8 +229,11 @@ public class CommandMap {
 	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
 		if( command != null && commandActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
-			log.atSevere().log( "Shortcut already used: shortcut=%s existing=%s conflict=%s", command, LazyEval.of( existing::getAction ), action );
-		} else if( !actionCommands.containsKey( action ) ) {
+			log.atSevere().log( "Shortcut already used [%s]: %s %s", command, LazyEval.of( existing::getAction ), action );
+			return;
+		}
+
+		if( !actionCommands.containsKey( action ) ) {
 			if( command != null ) commandActions.put( command, action );
 			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );
 		}

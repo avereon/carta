@@ -33,7 +33,7 @@ public class DesignTest {
 	void testDesignUnitModifiesDesign() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getDesignUnit(), Matchers.is( DesignUnit.CENTIMETER ) );
+		assertThat( design.calcDesignUnit(), Matchers.is( DesignUnit.CENTIMETER ) );
 		assertThat( design.isModified(), is( false ) );
 
 		design.setDesignUnit( DesignUnit.MILLIMETER );
@@ -51,16 +51,16 @@ public class DesignTest {
 	void testAddRemoveLayer() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
+		assertThat( design.getLayers().getLayers().size(), is( 0 ) );
 		assertThat( design.isModified(), is( false ) );
 
 		DesignLayer layer = new DesignLayer().setName( "test-layer" );
-		design.getRootLayer().addLayer( layer );
-		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
+		design.getLayers().addLayer( layer );
+		assertThat( design.getLayers().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( true ) );
 
-		design.getRootLayer().removeLayer( layer );
-		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
+		design.getLayers().removeLayer( layer );
+		assertThat( design.getLayers().getLayers().size(), is( 0 ) );
 		assertThat( design.isModifiedBySelf(), is( false ) );
 		assertThat( design.isModifiedByValue(), is( false ) );
 		assertThat( design.isModifiedByChild(), is( false ) );
@@ -71,16 +71,16 @@ public class DesignTest {
 	void testAddLayerAndClearModified() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getRootLayer().getLayers().size(), is( 0 ) );
+		assertThat( design.getLayers().getLayers().size(), is( 0 ) );
 		assertThat( design.isModified(), is( false ) );
 
 		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
-		design.getRootLayer().addLayer( layer );
-		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
+		design.getLayers().addLayer( layer );
+		assertThat( design.getLayers().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( true ) );
 
 		design.setModified( false );
-		assertThat( design.getRootLayer().getLayers().size(), is( 1 ) );
+		assertThat( design.getLayers().getLayers().size(), is( 1 ) );
 		assertThat( design.isModified(), is( false ) );
 	}
 
@@ -96,8 +96,8 @@ public class DesignTest {
 		DesignLayer layer10 = new DesignLayer().setName( "layer-b" ).setOrder( 0 );
 		DesignLayer layer11 = new DesignLayer().setName( "layer-a" ).setOrder( 1 );
 
-		design.getRootLayer().addLayer( layer0 );
-		design.getRootLayer().addLayer( layer1 );
+		design.getLayers().addLayer( layer0 );
+		design.getLayers().addLayer( layer1 );
 		layer0.addLayer( layer00 );
 		layer0.addLayer( layer01 );
 		layer1.addLayer( layer10 );

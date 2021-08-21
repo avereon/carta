@@ -9,23 +9,29 @@ import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
 import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
 import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
 import com.avereon.cartesia.tool.view.DesignPane;
-import com.avereon.cartesia.tool.view.DesignPaneLayer;
+import com.avereon.cartesia.tool.view.DesignLayerPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
+import com.avereon.transaction.Txn;
+import com.avereon.util.DelayedAction;
 import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.AssetSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.asset.type.PropertiesType;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workpane.Workpane;
+import com.avereon.xenon.workspace.StatusBar;
+import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -78,6 +84,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final String CURRENT_LAYER = "current-layer";
 
+	private static final String CURRENT_VIEW = "current-view";
+
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
 	private static final String GRID_VISIBLE = "grid-visible";
@@ -87,6 +95,8 @@ public abstract class DesignTool extends GuidedTool {
 	private static final String REFERENCE_LAYER_VISIBLE = "";
 
 	private static final Snap gridSnap = new SnapGrid();
+
+	private static final double MINIMUM_GRID_PIXELS = 3.0;
 
 	private final Map<String, ProgramAction> commandActions;
 
@@ -108,15 +118,21 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
+	private final ObjectProperty<DesignView> currentView;
+
 	private final DesignPropertiesMap designPropertiesMap;
 
-	private final DesignShapePropertiesAction designShapePropertiesAction;
+	private final PropertiesAction propertiesAction;
 
 	private final DeleteAction deleteAction;
 
 	private final UndoAction undoAction;
 
 	private final RedoAction redoAction;
+
+	private final DesignWorkplane workplane;
+
+	private final DelayedAction rebuildGridAction;
 
 	private ReticleCursor reticle;
 
@@ -125,6 +141,8 @@ public abstract class DesignTool extends GuidedTool {
 	private ChangeListener<Boolean> gridVisibleToggleHandler;
 
 	private ChangeListener<Boolean> snapGridToggleHandler;
+
+	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -139,15 +157,23 @@ public abstract class DesignTool extends GuidedTool {
 		this.viewsGuide = new DesignToolViewsGuide( product, this );
 		this.printsGuide = new DesignToolPrintsGuide( product, this );
 		getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
+		getGuideContext().setCurrentGuide( layersGuide );
 
 		this.designPane = new DesignPane();
 		this.selectTolerance = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
+		this.currentView = new SimpleObjectProperty<>();
 
-		this.designShapePropertiesAction = new DesignShapePropertiesAction( product.getProgram() );
+		this.propertiesAction = new PropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
+
+		this.workplane = new DesignWorkplane();
+
+		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
+		this.rebuildGridAction.setMaxTriggerLimit( 500 );
+		this.rebuildGridAction.setMinTriggerLimit( 100 );
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectedShapesChanged );
@@ -174,6 +200,18 @@ public abstract class DesignTool extends GuidedTool {
 
 	public final CommandContext getCommandContext() {
 		return getDesignContext().getCommandContext();
+	}
+
+	public final CoordinateSystem getCoordinateSystem() {
+		return getWorkplane().getCoordinateSystem();
+	}
+
+	public final void setCoordinateSystem( CoordinateSystem system ) {
+		getWorkplane().setCoordinateSystem( system );
+	}
+
+	public final DesignWorkplane getWorkplane() {
+		return workplane;
 	}
 
 	public Point3D getViewPoint() {
@@ -263,26 +301,26 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		if( visible ) {
-			// Show the specified layer and parent layers
+			// Show the specified view and parent layers
 			while( !layer.isRootLayer() ) {
 				designPane.setLayerVisible( layer, visible );
 				layer = layer.getLayer();
 			}
 		} else {
-			// Only hide the specified layer
+			// Only hide the specified view
 			designPane.setLayerVisible( layer, visible );
 		}
 	}
 
 	List<String> getVisibleLayerIds() {
-		return getFilteredLayers( DesignPaneLayer::isVisible ).stream().map( IdNode::getId ).collect( Collectors.toList() );
+		return getFilteredLayers( DesignLayerPane::isVisible ).stream().map( IdNode::getId ).collect( Collectors.toList() );
 	}
 
 	public List<DesignLayer> getVisibleLayers() {
-		return getFilteredLayers( DesignPaneLayer::isVisible );
+		return getFilteredLayers( DesignLayerPane::isVisible );
 	}
 
-	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignPaneLayer> filter ) {
+	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignLayerPane> filter ) {
 		return designPane.getLayers().stream().filter( filter ).map( y -> (DesignLayer)DesignShapeView.getDesignData( y ) ).collect( Collectors.toList() );
 	}
 
@@ -300,6 +338,18 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setReferenceLayerVisible( boolean visible ) {
 		Fx.run( () -> designPane.setReferenceLayerVisible( visible ) );
+	}
+
+	public void setCurrentView( DesignView view ) {
+		currentView.set( view );
+	}
+
+	public DesignView getCurrentView() {
+		return currentView.get();
+	}
+
+	public ObjectProperty<DesignView> currentViewProperty() {
+		return currentView;
 	}
 
 	/**
@@ -377,6 +427,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setGridVisible( boolean visible ) {
 		getDesignPane().setGridVisible( visible );
+		if( visible ) rebuildGridAction.update();
 	}
 
 	public BooleanProperty gridVisible() {
@@ -412,9 +463,9 @@ public abstract class DesignTool extends GuidedTool {
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design
-		layersGuide.link( designPane );
-		//viewsGuide.init( design );
-		//printsGuide.init( design );
+		layersGuide.link( design );
+		viewsGuide.link( design );
+		printsGuide.link( design );
 
 		Fx.run( () -> {
 			designPane.setDpi( Screen.getPrimary().getDpi() );
@@ -440,74 +491,78 @@ public abstract class DesignTool extends GuidedTool {
 		// Workplane settings
 		configureWorkplane();
 
+		Settings settings = getSettings();
 		String defaultUnitId = DesignUnit.MILLIMETER.name();
 		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName();
-		String defaultLayerId = design.getAllLayers().get( 0 ).getId();
 
 		// Get tool settings
-		double selectApertureRadius = Double.parseDouble( getSettings().get( SELECT_APERTURE_RADIUS, "1.0" ) );
-		DesignUnit selectApertureUnit = DesignUnit.valueOf( getSettings().get( SELECT_APERTURE_UNIT, defaultUnitId ) );
-		setViewPoint( ParseUtil.parsePoint3D( getSettings().get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
-		setViewRotate( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
-		setZoom( Double.parseDouble( getSettings().get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
-		setReticle( ReticleCursor.valueOf( getSettings().get( RETICLE, defaultReticleId ) ) );
-		design.findLayers( DesignLayer.ID, getSettings().get( CURRENT_LAYER, defaultLayerId ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		double selectApertureRadius = Double.parseDouble( settings.get( SELECT_APERTURE_RADIUS, "1.0" ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( settings.get( SELECT_APERTURE_UNIT, defaultUnitId ) );
+		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
+		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
+		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
+		setReticle( ReticleCursor.valueOf( settings.get( RETICLE, defaultReticleId ) ) );
 		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
+		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
 		// Restore the list of visible layers
-		Set<String> visibleLayerIds = getSettings().get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
+		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
 		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 
 		// Restore the grid visible flag
-		setGridVisible( Boolean.parseBoolean( getSettings().get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
+		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
 
 		// Restore the grid snap enabled flag
-		setGridSnapEnabled( Boolean.parseBoolean( getSettings().get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
+		setGridSnapEnabled( Boolean.parseBoolean( settings.get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
 
-		// Restore the reference layer visibility
-		setReferenceLayerVisible( Boolean.parseBoolean( getSettings().get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
+		// Restore the reference view visibility
+		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
 
 		// Settings listeners
-		getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		getSettings().register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		getSettings().register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		getProduct().getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		settings.register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
+		settings.register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
-		layoutBoundsProperty().addListener( ( p, o, n ) -> validateGrid() );
+		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
-			getSettings().set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
-			validateGrid();
+			settings.set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
+			doUpdateGridBounds();
 		} );
 
 		// Add view rotate property listener
 		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
-			getSettings().set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
-			validateGrid();
+			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
+			doUpdateGridBounds();
 		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
 			getCoordinateStatus().updateZoom( n.doubleValue() );
-			getSettings().set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
-			validateGrid();
+			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
+			doUpdateGridBounds();
 		} );
 
 		// Add visible layers listener
 		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
 
 		// Add current layer property listener
-		currentLayerProperty().addListener( ( p, o, n ) -> getSettings().set( CURRENT_LAYER, n.getId() ) );
+		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
+
+		// Add current view property listener
+		currentViewProperty().addListener( (p,o,n) -> settings.set( CURRENT_VIEW, n.getId() ) );
 
 		// Add grid visible property listener
-		gridVisible().addListener( ( p, o, n ) -> getSettings().set( GRID_VISIBLE, String.valueOf( n ) ) );
+		gridVisible().addListener( ( p, o, n ) -> settings.set( GRID_VISIBLE, String.valueOf( n ) ) );
 
 		// Add grid visible property listener
-		gridSnapEnabled().addListener( ( p, o, n ) -> getSettings().set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
+		gridSnapEnabled().addListener( ( p, o, n ) -> settings.set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
 
 		// Add reference points visible property listener
-		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> getSettings().set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
+		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -517,12 +572,18 @@ public abstract class DesignTool extends GuidedTool {
 
 		getCoordinateStatus().updateZoom( getZoom() );
 		designPane.updateView();
-		validateGrid();
+		doUpdateGridBounds();
 	}
 
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
-		newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
+		if( getCurrentGuide() == layersGuide ) {
+			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
+		} else if( getCurrentGuide() == viewsGuide ) {
+			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
+		} else if( getCurrentGuide() == printsGuide ) {
+			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentPrintById( n.getId() ) );
+		}
 	}
 
 	@Override
@@ -531,10 +592,21 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@Override
+	protected void allocate() throws ToolException {
+		super.allocate();
+
+		// Add asset switch listener to remove command prompt
+		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+			if( e.getOldAsset() == this.getAsset() && isDisplayed() ) unregisterStatusBarItems();
+		} );
+	}
+
+	@Override
 	protected void activate() throws ToolException {
 		super.activate();
 
 		getCommandContext().setLastActiveDesignTool( this );
+
 		registerStatusBarItems();
 		registerCommandCapture();
 		registerActions();
@@ -544,18 +616,20 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	@Override
-	protected void deactivate() throws ToolException {
-		super.deactivate();
-		unregisterStatusBarItems();
+	protected void conceal() throws ToolException {
+		unregisterCommandCapture();
+		unregisterActions();
+		pullMenus();
+		pullTools();
+		super.conceal();
 	}
 
 	@Override
-	protected void conceal() throws ToolException {
-		super.conceal();
-		unregisterCommandCapture();
-		pullMenus();
-		pullTools();
-		unregisterActions();
+	protected void deallocate() throws ToolException {
+		// Remove asset switch listener to unregister status bar items
+		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+
+		super.deallocate();
 	}
 
 	void showCommandPrompt() {
@@ -568,17 +642,24 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerStatusBarItems() {
-		getWorkspace().getStatusBar().setLeftToolItems( getDesignContext().getCommandPrompt() );
-		getWorkspace().getStatusBar().setRightToolItems( getCoordinateStatus() );
+		final StatusBar bar = getWorkspace().getStatusBar();
+		Fx.run( () -> {
+			bar.setLeftToolItems( getDesignContext().getCommandPrompt() );
+			bar.setRightToolItems( getDesignContext().getCoordinateStatus() );
+		} );
 	}
 
 	private void unregisterStatusBarItems() {
-		getWorkspace().getStatusBar().removeRightItems( getCoordinateStatus() );
-		getWorkspace().getStatusBar().removeLeftItems( getDesignContext().getCommandPrompt() );
+		final StatusBar bar = getWorkspace().getStatusBar();
+		Fx.run( () -> {
+			bar.removeLeftToolItems( getDesignContext().getCommandPrompt() );
+			bar.removeRightToolItems( getDesignContext().getCoordinateStatus() );
+		} );
 	}
 
 	private void registerCommandCapture() {
-		// If there is already a command capture handler then remove it (because it may belong to a different design)
+		// If there is already a command capture handler then remove it
+		// (because it may belong to a different design)
 		unregisterCommandCapture();
 
 		// Add the design command capture handler. This captures all key events that
@@ -597,7 +678,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
-		//pushAction( "properties", designShapePropertiesAction );
+		pushAction( "properties", propertiesAction );
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
 		pushAction( "redo", redoAction );
@@ -664,7 +745,7 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
 
-		//pullAction( "properties", designShapePropertiesAction );
+		pullAction( "properties", propertiesAction );
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
@@ -712,9 +793,22 @@ public abstract class DesignTool extends GuidedTool {
 		}
 	}
 
-	public List<Shape> screenPointFindAndWait( Point3D mouse ) {
+	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
 		final List<Shape> selection = new ArrayList<>();
 		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selection::add ) );
+		try {
+			Fx.waitForWithExceptions( 1000 );
+		} catch( TimeoutException exception ) {
+			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
+		} catch( InterruptedException exception ) {
+			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
+		}
+		return selection;
+	}
+
+	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
+		final List<Shape> selection = new ArrayList<>();
+		Fx.run( () -> selection.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ) ) );
 		try {
 			Fx.waitForWithExceptions( 1000 );
 		} catch( TimeoutException exception ) {
@@ -802,54 +896,78 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void configureWorkplane() {
-		Settings settings = getAsset().getSettings();
-		DesignWorkplane workplane = getDesignContext().getWorkplane();
+		// The workplane values are stored in the tool settings
+		// FIXME Where do we store default grid settings? ...in the asset settings.
+		// However, a set of default workplane values may need to be put in the
+		// asset settings because when a tool is closed, the tool settings are deleted.
+		DesignWorkplane workplane = getWorkplane();
+		Settings settings = getAssetSettings();
 
-		workplane.setOrigin( getAsset().getSettings().get( "workpane-origin", DesignWorkplane.DEFAULT_ORIGIN ) );
-		workplane.setMajorGridX( getAsset().getSettings().get( "workpane-major-grid-x", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridY( getAsset().getSettings().get( "workpane-major-grid-y", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMajorGridZ( getAsset().getSettings().get( "workpane-major-grid-z", DesignWorkplane.DEFAULT_MAJOR_GRID_SIZE ) );
-		workplane.setMinorGridX( getAsset().getSettings().get( "workpane-minor-grid-x", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridY( getAsset().getSettings().get( "workpane-minor-grid-y", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setMinorGridZ( getAsset().getSettings().get( "workpane-minor-grid-z", DesignWorkplane.DEFAULT_MINOR_GRID_SIZE ) );
-		workplane.setSnapGridX( getAsset().getSettings().get( "workpane-snap-grid-x", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridY( getAsset().getSettings().get( "workpane-snap-grid-y", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
-		workplane.setSnapGridZ( getAsset().getSettings().get( "workpane-snap-grid-z", DesignWorkplane.DEFAULT_SNAP_GRID_SIZE ) );
+		workplane.setCoordinateSystem( CoordinateSystem.valueOf( settings.get( DesignWorkplane.COORDINATE_SYSTEM, DesignWorkplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
+		workplane.setOrigin( settings.get( "workpane-origin", DesignWorkplane.DEFAULT_GRID_ORIGIN ) );
+		workplane.setMajorGridVisible( settings.get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class, true ) );
+		workplane.setMajorGridX( settings.get( DesignWorkplane.GRID_MAJOR_X, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		workplane.setMajorGridY( settings.get( DesignWorkplane.GRID_MAJOR_Y, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		workplane.setMajorGridZ( settings.get( DesignWorkplane.GRID_MAJOR_Z, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		workplane.setMinorGridVisible( settings.get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class, true ) );
+		workplane.setMinorGridX( settings.get( DesignWorkplane.GRID_MINOR_X, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
+		workplane.setMinorGridY( settings.get( DesignWorkplane.GRID_MINOR_Y, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
+		workplane.setMinorGridZ( settings.get( DesignWorkplane.GRID_MINOR_Z, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
+		workplane.setSnapGridX( settings.get( DesignWorkplane.GRID_SNAP_X, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
+		workplane.setSnapGridY( settings.get( DesignWorkplane.GRID_SNAP_Y, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
+		workplane.setSnapGridZ( settings.get( DesignWorkplane.GRID_SNAP_Z, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
 
-		workplane.register( DesignWorkplane.ORIGIN, e -> settings.set( "workpane-origin", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.MAJOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.MAJOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.MAJOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.MINOR_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.MINOR_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.MINOR_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.SNAP_GRID_X, e -> settings.set( "workpane-major-grid-x", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.SNAP_GRID_Y, e -> settings.set( "workpane-major-grid-y", e.getNewValue() ) );
-		workplane.register( DesignWorkplane.SNAP_GRID_Z, e -> settings.set( "workpane-major-grid-z", e.getNewValue() ) );
+		settings.register( DesignWorkplane.COORDINATE_SYSTEM, e -> setCoordinateSystem( CoordinateSystem.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		settings.register( DesignWorkplane.GRID_ORIGIN, e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_MAJOR_VISIBLE, e -> workplane.setMajorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( DesignWorkplane.GRID_MAJOR_X, e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_MAJOR_Y, e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
+		//settings.register( DesignWorkplane.GRID_MAJOR_Z, e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_MINOR_VISIBLE, e -> workplane.setMinorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( DesignWorkplane.GRID_MINOR_X, e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_MINOR_Y, e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
+		//settings.register( DesignWorkplane.GRID_MINOR_Z, e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_SNAP_X, e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_SNAP_Y, e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
+		//settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
 
-		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGrid() );
-		rebuildGrid();
+		// Rebuild the grid if any workplane values change
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.update() );
 	}
 
-	private void validateGrid() {
+	private void doUpdateGridBounds() {
+		DesignWorkplane workplane = getWorkplane();
+		Bounds majorGridBounds = new BoundingBox( 0, 0, workplane.calcMajorGridX(), workplane.calcMajorGridY() );
+		Bounds minorGridBounds = new BoundingBox( 0, 0, workplane.calcMinorGridX(), workplane.calcMinorGridY() );
+
 		Fx.run( () -> {
+			Bounds majorBounds = designPane.localToParent( majorGridBounds );
+			Bounds minorBounds = designPane.localToParent( minorGridBounds );
 			Bounds bounds = designPane.parentToLocal( getLayoutBounds() );
-			DesignWorkplane workplane = getDesignContext().getWorkplane();
-			// TODO What if the bounds are significantly smaller thant the workplane?
-			// TODO What if the bounds are so large that the grid is effectively filled in?
-			if( workplane.getBounds().contains( bounds ) ) return;
-			workplane.setBounds( designPane.parentToLocal( getLayoutBounds() ) );
+
+			boolean showMajorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class, true );
+			boolean showMinorGridForSettings = getAssetSettings().get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class, true );
+			boolean showMajorGridForBounds = majorBounds.getWidth() > MINIMUM_GRID_PIXELS && majorBounds.getHeight() > MINIMUM_GRID_PIXELS;
+			boolean showMinorGridForBounds = minorBounds.getWidth() > MINIMUM_GRID_PIXELS && minorBounds.getHeight() > MINIMUM_GRID_PIXELS;
+
+			// Updating some workplane values should cause the grid to be rebuilt
+			Txn.run( () -> {
+				workplane.setBounds( bounds );
+				workplane.setMajorGridShowing( showMajorGridForSettings && showMajorGridForBounds );
+				workplane.setMinorGridShowing( showMinorGridForSettings && showMinorGridForBounds );
+			} );
 		} );
-		rebuildGrid();
 	}
 
-	private void rebuildGrid() {
-		// FIXME This takes too much work
-		// NOTE Maybe the grid can be removed during pan operations???
+	/**
+	 * Should only be called by triggering the {@link #rebuildGridAction}.
+	 */
+	private void doRebuildGrid() {
+		if( !isGridVisible() ) return;
 
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
 			try {
-				List<Shape> grid = getDesignContext().getCoordinateSystem().getGridLines( getDesignContext().getWorkplane() );
+				List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );
 			} catch( Exception exception ) {
 				log.atError().withCause( exception ).log( "Error creating grid" );
@@ -864,19 +982,39 @@ public abstract class DesignTool extends GuidedTool {
 		} );
 	}
 
+	private void doSetCurrentViewById( String id ) {
+		getDesign().findViews( DesignView.ID, id ).stream().findFirst().ifPresent( v -> {
+			currentViewProperty().set( v );
+
+			Set<DesignLayer> viewLayers = v.getLayers();
+			setViewPoint( v.getOrigin() );
+			setViewRotate( v.getRotate() );
+			setZoom( v.getZoom() );
+			getDesign().getAllLayers().forEach( y -> setLayerVisible( y, viewLayers.contains( y ) ) );
+
+			//showPropertiesPage( v );
+		} );
+	}
+
+	private void doSetCurrentPrintById( String id ) {
+		// TODO Implement DesignTool.doSetCurrentPrintById()
+	}
+
 	private void doSelectedShapesChanged( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
 			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
 			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 
-			if( c.getList().size() > 1 ) {
+			int size = c.getList().size();
+
+			if( size == 0 ) {
+				showPropertiesPage( getCurrentLayer() );
+			} else if( size == 1 ) {
+				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
+			} else {
 				// Show a combined properties page
 				Set<DesignDrawable> designData = c.getList().parallelStream().map( DesignTool::getDesignData ).collect( Collectors.toSet() );
 				showPropertiesPage( new MultiNodeSettings( designData ), DesignShape.class );
-			} else if( c.getList().size() == 1 ) {
-				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
-			} else {
-				hidePropertiesPage();
 			}
 		}
 		deleteAction.updateEnabled();
@@ -890,17 +1028,29 @@ public abstract class DesignTool extends GuidedTool {
 		SettingsPage page = designPropertiesMap.getSettingsPage( type );
 		if( page != null ) {
 			page.setSettings( settings );
-			getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.SHOW, page ) );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Open the tool but don't make it the active tool
+					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
+
+					// Fire the event on the FX thread
+					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.SHOW, page ) ) );
+				} catch( Exception exception ) {
+					log.atWarn( exception ).log();
+				}
+			} ) );
 		} else {
 			log.atError().log( "Unable to find properties page for %s", type.getName() );
 		}
 	}
 
 	private void hidePropertiesPage() {
-		getWorkspace().getEventBus().dispatch( new PropertiesToolEvent( DesignTool.this, PropertiesToolEvent.HIDE, null ) );
+		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
-	public static DesignLayer getDesignData( DesignPaneLayer l ) {
+	public static DesignLayer getDesignData( DesignLayerPane l ) {
 		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
 
@@ -955,9 +1105,9 @@ public abstract class DesignTool extends GuidedTool {
 
 	}
 
-	private static class DesignShapePropertiesAction extends ProgramAction {
+	private class PropertiesAction extends ProgramAction {
 
-		protected DesignShapePropertiesAction( Program program ) {
+		protected PropertiesAction( Program program ) {
 			super( program );
 		}
 
@@ -968,8 +1118,29 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			//getProgram().getAssetManager().openAsset( PropertiesType.URI );
-			// NEXT Set the asset properties page
+			// Get the settings pages for the asset type
+			Asset asset = getAsset();
+			SettingsPage page = asset.getType().getSettingsPages().get( "asset" );
+
+			Settings assetSettings = getAssetSettings();
+			Settings designSettings = new NodeSettings( getAsset().getModel() );
+
+			// Set the settings for the pages
+			page.setSettings( new StackedSettings( assetSettings, designSettings ) );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Show the properties tool
+					getProgram().getAssetManager().openAsset( PropertiesType.URI ).get();
+
+					// Fire the event on the FX thread
+					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
+					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, page ) ) );
+				} catch( Exception exception ) {
+					log.atError( exception ).log();
+				}
+			} ) );
 		}
 
 	}

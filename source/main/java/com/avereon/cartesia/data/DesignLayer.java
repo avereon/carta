@@ -28,6 +28,9 @@ public class DesignLayer extends DesignDrawable {
 
 	public static final String SHAPES = "shapes";
 
+	// Non-modifying value tied to the design layer pane visible property
+	public static final String VISIBLE = "visible";
+
 	static final String DEFAULT_DRAW_PAINT = "#000000ff";
 
 	static final String DEFAULT_DRAW_WIDTH = "0.05";
@@ -37,12 +40,6 @@ public class DesignLayer extends DesignDrawable {
 	static final String DEFAULT_DRAW_PATTERN = null;
 
 	static final String DEFAULT_FILL_PAINT = null;
-
-	//private static final NodeComparator<DesignLayer> comparator;
-
-	//	static {
-	//		comparator = new NodeComparator<>( ORDER, NAME );
-	//	}
 
 	public DesignLayer() {
 		defineNaturalKey( NAME );
@@ -54,7 +51,7 @@ public class DesignLayer extends DesignDrawable {
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
-		setSetModifyFilter( SHAPES, n -> n.getValue( DesignShape.REFERENCE ) == null );
+		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
 	}
 
 	/**
@@ -63,8 +60,9 @@ public class DesignLayer extends DesignDrawable {
 	 * @param id The node id
 	 * @return This instance
 	 */
+	@SuppressWarnings( "unchecked" )
 	public DesignLayer setId( String id ) {
-		super.setValue( ID, id );
+		super.setId( id );
 		return this;
 	}
 
@@ -78,7 +76,7 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public boolean isRootLayer() {
-		return this == getDesign().getRootLayer();
+		return this == getDesign().getLayers();
 	}
 
 	public String getFullName() {
@@ -169,6 +167,15 @@ public class DesignLayer extends DesignDrawable {
 	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer removeShape( DesignShape shape ) {
 		removeFromSet( SHAPES, shape );
+		return this;
+	}
+
+	public boolean isVisible() {
+		return getValue( VISIBLE );
+	}
+
+	public DesignLayer setVisible( boolean visible ) {
+		setValue( VISIBLE, visible );
 		return this;
 	}
 

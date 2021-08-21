@@ -17,7 +17,12 @@ public class LayerCreate extends LayerCommand {
 			return INCOMPLETE;
 		}
 
-		return addLayer( context.getTool().getCurrentLayer(), new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) ) );
+		DesignLayer yy = new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) );
+
+		yy = addLayer( context.getTool().getCurrentLayer(), yy );
+		context.getTool().setLayerVisible( yy, true );
+
+		return yy;
 	}
 
 	/**
@@ -27,7 +32,8 @@ public class LayerCreate extends LayerCommand {
 	 * @param yy The new layer
 	 */
 	DesignLayer addLayer( DesignLayer currentLayer, DesignLayer yy ) {
-		return currentLayer.getLayer().addLayer( yy );
+		// Add yy as a peer (child of parent) of the currentLayer
+		return currentLayer.getLayer().addLayerBeforeOrAfter( yy, currentLayer, true );
 	}
 
 }

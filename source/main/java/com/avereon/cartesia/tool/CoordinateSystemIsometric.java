@@ -8,6 +8,11 @@ import java.util.List;
 public class CoordinateSystemIsometric implements CoordinateSystem {
 
 	@Override
+	public String name() {
+		return "ISO";
+	}
+
+	@Override
 	public Point3D getNearest( DesignWorkplane workplane, Point3D point) {
 		return null;
 	}

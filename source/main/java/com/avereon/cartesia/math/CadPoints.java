@@ -31,6 +31,7 @@ public class CadPoints {
 	}
 
 	public static Point3D toFxPoint( double[] point ) {
+		if( point == null ) return null;
 		return new Point3D( point[ 0 ], point[ 1 ], point[ 2 ] );
 	}
 
@@ -53,6 +54,20 @@ public class CadPoints {
 		Point3D nearest = null;
 		for( Point3D test : intersections ) {
 			delta = CadGeometry.distance( tool.worldToScreen( test ), screenPoint );
+			if( delta < distance ) {
+				distance = delta;
+				nearest = test;
+			}
+		}
+		return nearest;
+	}
+
+	public static Point3D getNearest( Point3D anchor, Collection<Point3D> points ) {
+		double delta;
+		double distance = Double.MAX_VALUE;
+		Point3D nearest = null;
+		for( Point3D test : points ) {
+			delta = CadGeometry.distance( test, anchor );
 			if( delta < distance ) {
 				distance = delta;
 				nearest = test;

@@ -5,7 +5,6 @@ import com.avereon.product.Rb;
 import com.avereon.xenon.BundleKey;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
-import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -45,8 +44,8 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	@Override
 	protected void ready( OpenAssetRequest request ) {
-		setTitle( Rb.text( BundleKey.TOOL, "properties-name" ) );
-		setGraphic( getProgram().getIconLibrary().getIcon( "properties" ) );
+		setTitle( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		setGraphic( getProgram().getIconLibrary().getIcon( "shape-properties" ) );
 	}
 
 	@Override
@@ -57,8 +56,8 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	@Override
 	protected void activate() {
-		PropertiesToolEvent event = getWorkspace().getEventBus().getPriorEvent( PropertiesToolEvent.class );
-		if( event != null && event.getEventType() == PropertiesToolEvent.SHOW && isEmpty() ) showPage( event.getPage() );
+		ShapePropertiesToolEvent event = getWorkspace().getEventBus().getPriorEvent( ShapePropertiesToolEvent.class );
+		if( event != null && event.getEventType() == ShapePropertiesToolEvent.SHOW && isEmpty() ) showPage( event.getPage() );
 	}
 
 	@Override
@@ -71,14 +70,14 @@ public class ShapePropertiesTool extends ProgramTool {
 		return scroller.getContent() == null;
 	}
 
-	public void showPage( SettingsPage page ) {
+	private void showPage( SettingsPage page ) {
 		Fx.run( () -> {
 			page.setOptionProviders( getProgram().getSettingsManager().getOptionProviders() );
 			scroller.setContent( new SettingsPanel( page ) );
 		});
 	}
 
-	public void hidePage() {
+	private void hidePage() {
 		Fx.run( () -> scroller.setContent( null ) );
 	}
 

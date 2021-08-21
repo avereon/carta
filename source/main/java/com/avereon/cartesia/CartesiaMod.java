@@ -9,8 +9,11 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Mod;
+import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
+import com.avereon.zenna.icon.PreferencesIcon;
+import com.avereon.zenna.icon.PrinterIcon;
 import com.avereon.zerra.image.BrokenIcon;
 import lombok.CustomLog;
 
@@ -51,6 +54,10 @@ public class CartesiaMod extends Mod {
 		registerIcon( "grid-toggle-disabled", new GridIcon( false ) );
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
+		registerIcon( "shape-properties", new PreferencesIcon() );
+		registerIcon( "views", new ViewIcon() );
+		registerIcon( "view", new ViewIcon() );
+		registerIcon( "prints", new PrinterIcon() );
 
 		registerAction( this, "tool" );
 		registerAction( this, "draw" );
@@ -77,13 +84,15 @@ public class CartesiaMod extends Mod {
 		registerAction( this, "snap-grid-toggle" );
 		registerAction( this, "grid-toggle" );
 
+		getProgram().getAssetManager().addScheme( new CartesiaScheme( getProgram() ) );
+
 		// Register Design2D asset type and tools
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
 		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
 		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, design2dEditorRegistration );
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
-		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml" ) );
+		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", BundleKey.PROPS ) );
 
 		// Register Design3D asset type and tools
 		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
@@ -94,7 +103,8 @@ public class CartesiaMod extends Mod {
 		// Register ShapeProperties asset type and tools
 		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
 		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
-		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		shapePropertiesRegistration.setName( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );
 		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
 
 		getProgram().getSettingsManager().putOptionProvider( "point-type-option-provider", new PointTypeOptionProvider() );
@@ -153,6 +163,10 @@ public class CartesiaMod extends Mod {
 		unregisterAction( "draw" );
 		unregisterAction( "tool" );
 
+		unregisterIcon( "prints", new PrinterIcon() );
+		unregisterIcon( "view", new ViewIcon() );
+		unregisterIcon( "views", new ViewIcon() );
+		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
 		unregisterIcon( "grid-toggle-disabled", new GridIcon() );

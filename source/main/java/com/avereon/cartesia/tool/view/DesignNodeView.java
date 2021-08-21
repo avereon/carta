@@ -4,9 +4,9 @@ import com.avereon.cartesia.data.DesignNode;
 
 public class DesignNodeView {
 
-	private DesignPane pane;
+	private final DesignPane pane;
 
-	private DesignNode node;
+	private final DesignNode node;
 
 	public DesignNodeView( DesignPane pane, DesignNode node ) {
 		this.pane = pane;

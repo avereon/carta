@@ -47,6 +47,8 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String MODE_LAYER = "layer";
 
+	public static final String SHAPE_NODE = "shape-node";
+
 	private static final Set<String> nonCustomModes = Set.of( MODE_LAYER );
 
 	protected SettingsPage page;
@@ -66,7 +68,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public int getOrder() {
-		return getValue( ORDER, 0 );
+		return getValue( ORDER, -1 );
 	}
 
 	@SuppressWarnings( "unchecked" )

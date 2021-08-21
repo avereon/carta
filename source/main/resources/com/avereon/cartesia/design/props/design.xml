@@ -3,12 +3,30 @@
 <pages version="1.0">
 
 	<page id="asset">
-		<group id="design-title">
+		<group id="design">
 			<setting key="name"/>
-			<setting key="description" editor="textarea"/>
 			<setting key="author"/>
+			<setting key="description" editor="textarea" rows="2"/>
 			<setting key="unit" editor="combobox" provider="design-units"/>
 			<!-- Precision -->
+		</group>
+
+		<!-- Grid -->
+		<group id="grid">
+			<setting key="coordinate-system" editor="combobox">
+				<option id="ortho" value="ortho"/>
+				<option id="polar" value="polar"/>
+				<option id="iso" value="iso"/>
+			</setting>
+			<setting key="grid-origin"/>
+			<setting key="grid-major-visible" editor="checkbox"/>
+			<setting key="grid-major-x" type="math-expression"/>
+			<setting key="grid-major-y" type="math-expression"/>
+			<setting key="grid-minor-visible" editor="checkbox"/>
+			<setting key="grid-minor-x" type="math-expression"/>
+			<setting key="grid-minor-y" type="math-expression"/>
+			<setting key="grid-snap-x" type="math-expression"/>
+			<setting key="grid-snap-y" type="math-expression"/>
 		</group>
 	</page>
 
