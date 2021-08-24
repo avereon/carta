@@ -22,14 +22,14 @@ public class DesignLayer extends DesignDrawable {
 
 	public static final String UNIT = "unit";
 
-	// NOTE Visibility is a setting in the design tool, not here
+	// NOTE Visibility state is stored in the design tool,
+	// instead of here in the data model so that each tool can have different
+	// layers visible.
+	//public static final String VISIBLE = "visible";
 
 	public static final String LAYERS = "layers";
 
 	public static final String SHAPES = "shapes";
-
-	// Non-modifying value tied to the design layer pane visible property
-	public static final String VISIBLE = "visible";
 
 	static final String DEFAULT_DRAW_PAINT = "#000000ff";
 
@@ -170,14 +170,14 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
-	public boolean isVisible() {
-		return getValue( VISIBLE );
-	}
+//	public boolean isVisible() {
+//		return getValue( VISIBLE, false );
+//	}
 
-	public DesignLayer setVisible( boolean visible ) {
-		setValue( VISIBLE, visible );
-		return this;
-	}
+//	public DesignLayer setVisible( boolean visible ) {
+//		setValue( VISIBLE, visible );
+//		return this;
+//	}
 
 	@SuppressWarnings( "UnusedReturnValue" )
 	public <T extends DesignDrawable> T addDrawable( T drawable ) {

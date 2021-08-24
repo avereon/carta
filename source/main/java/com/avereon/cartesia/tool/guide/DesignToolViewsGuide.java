@@ -45,7 +45,9 @@ public class DesignToolViewsGuide extends Guide {
 		return product.getProgram();
 	}
 
-	public void link( Design design ) {
+	public void link( DesignTool tool ) {
+		Design design = tool.getDesign();
+
 		// Populate the guide
 		design.getViews().forEach( this::addView );
 

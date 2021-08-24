@@ -74,7 +74,12 @@ public class DesignToolLayersGuide extends Guide {
 		return product.getProgram();
 	}
 
-	public synchronized void link( Design design ) {
+	public void link( DesignTool tool ) {
+		Design design = tool.getDesign();
+		//DesignPane pane = tool.getDesignPane();
+
+		// NEXT Need to add listeners to link new layer views to the guide nodes
+
 		// Populate the guide
 		design.getAllLayers().forEach( this::addLayer );
 
@@ -97,25 +102,25 @@ public class DesignToolLayersGuide extends Guide {
 
 		EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
 		EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
-		EventHandler<NodeEvent> visibleHandler = e -> layerGuideNode.setIcon( e.getNewValue() ? "layer" : "layer-hidden" );
+
+		// FIXME Unfortunately this will not work properly due to multiple tools, one model
+		//EventHandler<NodeEvent> visibleHandler = e -> layerGuideNode.setIcon( e.getNewValue() ? "layer" : "layer-hidden" );
 
 		layerGuideNode.setValue( NAME_HANDLER, nameHandler );
 		layerGuideNode.setValue( ORDER_HANDLER, orderHandler );
-		layerGuideNode.setValue( VISIBLE_HANDLER, visibleHandler );
+		//layerGuideNode.setValue( VISIBLE_HANDLER, visibleHandler );
 
 		layer.register( DesignLayer.NAME, nameHandler );
 		layer.register( DesignLayer.ORDER, orderHandler );
-		layer.register( DesignLayer.VISIBLE, visibleHandler );
-		layer.setValue( GUIDE_NODE, layerGuideNode );
+		//layer.register( DesignLayer.VISIBLE, visibleHandler );
 	}
 
 	private void removeLayer( DesignLayer layer ) {
-		GuideNode layerGuideNode = layer.getValue( GUIDE_NODE );
-
-		layer.unregister( DesignLayer.VISIBLE, layerGuideNode.getValue( VISIBLE_HANDLER ) );
+		// Determine the guide node for the layer
+		GuideNode layerGuideNode = getNode( layer.getId() );
+		//layer.unregister( DesignLayer.VISIBLE, layerGuideNode.getValue( VISIBLE_HANDLER ) );
 		layer.unregister( DesignLayer.ORDER, layerGuideNode.getValue( ORDER_HANDLER ) );
 		layer.unregister( DesignLayer.NAME, layerGuideNode.getValue( NAME_HANDLER ) );
-		layer.setValue( GUIDE_NODE, null );
 
 		removeNode( layerNodes.get( layer ) );
 		nodeLayers.remove( layerNodes.get( layer ) );

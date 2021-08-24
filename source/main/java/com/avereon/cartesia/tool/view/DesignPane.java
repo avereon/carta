@@ -298,7 +298,7 @@ public class DesignPane extends StackPane {
 		DesignLayerView view = designLayer == null ? null : layerMap.get( designLayer );
 		if( view == null ) log.atWarn().log( "Shape missing design view, shape=%s", shape );
 
-		DesignLayerPane layer = view == null ? null : view.getLayer();
+		DesignLayerPane layer = view == null ? null : view.getLayerPane();
 		if( layer == null ) log.atWarn().log( "Shape missing layer: shape=%s", shape );
 
 		return layer == null ? NO_LAYER : layer;
@@ -410,8 +410,8 @@ public class DesignPane extends StackPane {
 	}
 
 	public void addLayerGeometry( DesignLayerView view ) {
-		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayer();
-		DesignLayerPane layer = view.getLayer();
+		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayerPane();
+		DesignLayerPane layer = view.getLayerPane();
 		parent.getChildren().add( layer );
 		doReorderLayer( parent );
 		layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
@@ -419,7 +419,7 @@ public class DesignPane extends StackPane {
 	}
 
 	public void removeLayerGeometry( DesignLayerView view ) {
-		DesignLayerPane layer = view.getLayer();
+		DesignLayerPane layer = view.getLayerPane();
 		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
 		layer.showingProperty().unbind();
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
@@ -576,7 +576,7 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doReorderLayer( DesignLayer layer ) {
-		doReorderLayer( layerMap.get( layer ).getLayer() );
+		doReorderLayer( layerMap.get( layer ).getLayerPane() );
 	}
 
 	private void doReorderLayer( DesignLayerPane pane ) {

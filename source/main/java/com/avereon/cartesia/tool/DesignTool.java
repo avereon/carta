@@ -301,13 +301,13 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		if( visible ) {
-			// Show the specified view and parent layers
+			// Show the layer and parent layers
 			while( !layer.isRootLayer() ) {
 				designPane.setLayerVisible( layer, visible );
 				layer = layer.getLayer();
 			}
 		} else {
-			// Only hide the specified view
+			// Just hide the layer
 			designPane.setLayerVisible( layer, visible );
 		}
 	}
@@ -463,9 +463,9 @@ public abstract class DesignTool extends GuidedTool {
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design
-		layersGuide.link( design );
-		viewsGuide.link( design );
-		printsGuide.link( design );
+		layersGuide.link( this );
+		viewsGuide.link( this );
+		printsGuide.link( this );
 
 		Fx.run( () -> {
 			designPane.setDpi( Screen.getPrimary().getDpi() );
