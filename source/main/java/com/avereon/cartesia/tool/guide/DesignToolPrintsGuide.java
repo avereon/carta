@@ -42,7 +42,7 @@ public class DesignToolPrintsGuide extends Guide {
 		return product.getProgram();
 	}
 
-	public void link( DesignTool tool ) {
+	public void link() {
 		Design design = tool.getDesign();
 
 		// Populate the guide

@@ -8,8 +8,8 @@ import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
 import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
 import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
-import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
+import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
@@ -192,6 +192,10 @@ public abstract class DesignTool extends GuidedTool {
 
 	public final Design getDesign() {
 		return getAssetModel();
+	}
+
+	public final DesignPane getDesignPane() {
+		return designPane;
 	}
 
 	public final DesignContext getDesignContext() {
@@ -463,9 +467,9 @@ public abstract class DesignTool extends GuidedTool {
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design
-		layersGuide.link( this );
-		viewsGuide.link( this );
-		printsGuide.link( this );
+		layersGuide.link();
+		viewsGuide.link();
+		printsGuide.link();
 
 		Fx.run( () -> {
 			designPane.setDpi( Screen.getPrimary().getDpi() );
@@ -553,7 +557,7 @@ public abstract class DesignTool extends GuidedTool {
 		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
 
 		// Add current view property listener
-		currentViewProperty().addListener( (p,o,n) -> settings.set( CURRENT_VIEW, n.getId() ) );
+		currentViewProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_VIEW, n.getId() ) );
 
 		// Add grid visible property listener
 		gridVisible().addListener( ( p, o, n ) -> settings.set( GRID_VISIBLE, String.valueOf( n ) ) );
@@ -635,10 +639,6 @@ public abstract class DesignTool extends GuidedTool {
 	void showCommandPrompt() {
 		Fx.run( this::registerStatusBarItems );
 		Fx.run( this::requestFocus );
-	}
-
-	private DesignPane getDesignPane() {
-		return designPane;
 	}
 
 	private void registerStatusBarItems() {

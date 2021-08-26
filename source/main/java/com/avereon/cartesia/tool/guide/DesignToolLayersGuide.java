@@ -4,6 +4,9 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.view.DesignLayerEvent;
+import com.avereon.cartesia.tool.view.DesignLayerPane;
+import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -11,7 +14,7 @@ import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
-import com.avereon.zerra.javafx.Fx;
+import javafx.beans.value.ChangeListener;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -30,15 +33,15 @@ public class DesignToolLayersGuide extends Guide {
 
 	private final DesignTool tool;
 
-	private final Map<DesignLayer, GuideNode> layerNodes;
+	private final Map<DesignLayer, GuideNode> layerGuideNodes;
 
-	private final Map<GuideNode, DesignLayer> nodeLayers;
+	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
 	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
-		this.layerNodes = new ConcurrentHashMap<>();
-		this.nodeLayers = new ConcurrentHashMap<>();
+		this.layerGuideNodes = new ConcurrentHashMap<>();
+		this.guideNodeLayers = new ConcurrentHashMap<>();
 		setIcon( "layers" );
 		setTitle( Rb.textOr( BundleKey.LABEL, "layers", "Layers" ) );
 		setDragAndDropEnabled( true );
@@ -52,8 +55,8 @@ public class DesignToolLayersGuide extends Guide {
 		// turn, causes events that update the guide accordingly.
 
 		// The source and target should have design layers
-		DesignLayer sourceLayer = nodeLayers.get( source );
-		DesignLayer targetLayer = nodeLayers.get( target );
+		DesignLayer sourceLayer = guideNodeLayers.get( source );
+		DesignLayer targetLayer = guideNodeLayers.get( target );
 
 		log.atDebug().log( "Move layer %s to %s %s", sourceLayer, targetLayer, drop );
 
@@ -74,57 +77,67 @@ public class DesignToolLayersGuide extends Guide {
 		return product.getProgram();
 	}
 
-	public void link( DesignTool tool ) {
+	public void link() {
 		Design design = tool.getDesign();
-		//DesignPane pane = tool.getDesignPane();
-
-		// NEXT Need to add listeners to link new layer views to the guide nodes
+		DesignPane pane = tool.getDesignPane();
 
 		// Populate the guide
-		design.getAllLayers().forEach( this::addLayer );
+		design.getAllLayers().forEach( l -> addLayer( l, null ) );
 
 		// Add listeners for changes
-		design.register( NodeEvent.CHILD_ADDED, e -> {
-			if( e.getSetKey().equals( Design.LAYERS ) ) Fx.run( () -> addLayer( e.getNewValue() ) );
+		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
+			DesignLayerPane l = e.getLayer();
+			addLayer( DesignTool.getDesignData( l ), l );
 		} );
-		design.register( NodeEvent.CHILD_REMOVED, e -> {
-			if( e.getSetKey().equals( Design.LAYERS ) ) Fx.run( () -> removeLayer( e.getOldValue() ) );
+		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
+			DesignLayerPane l = e.getLayer();
+			removeLayer( DesignTool.getDesignData( l ), l );
 		} );
 	}
 
-	private void addLayer( DesignLayer layer ) {
-		GuideNode parentGuideNode = layerNodes.get( layer.getLayer() );
-		GuideNode layerGuideNode = new GuideNode( getProgram(), layer.getId(), layer.getName(), "layer", layer.getOrder() );
+	@SuppressWarnings( "unchecked" )
+	private synchronized void addLayer( DesignLayer layer, DesignLayerPane layerPane ) {
+		// This method has to handle two scenarios:
+		// 1. When the guide is initially populated there are no layer panes
+		// 2. When layers are added or removed there are layer panes associated
+		// Also note that the addNode() method is not idempotent
+		GuideNode node = layerGuideNodes.computeIfAbsent( layer, k -> {
+			GuideNode layerGuideNode = new GuideNode( getProgram(), layer.getId(), layer.getName(), "layer", layer.getOrder() );
+			addNode( layerGuideNodes.get( layer.getLayer() ), layerGuideNode );
+			guideNodeLayers.put( layerGuideNode, layer );
 
-		addNode( parentGuideNode, layerGuideNode );
-		layerNodes.put( layer, layerGuideNode );
-		nodeLayers.put( layerGuideNode, layer );
+			EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
+			EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
+			ChangeListener<Boolean> showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
 
-		EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
-		EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
+			layerGuideNode.setValue( NAME_HANDLER, nameHandler );
+			layerGuideNode.setValue( ORDER_HANDLER, orderHandler );
+			layerGuideNode.setValue( VISIBLE_HANDLER, showingHandler );
 
-		// FIXME Unfortunately this will not work properly due to multiple tools, one model
-		//EventHandler<NodeEvent> visibleHandler = e -> layerGuideNode.setIcon( e.getNewValue() ? "layer" : "layer-hidden" );
+			layer.register( DesignLayer.NAME, nameHandler );
+			layer.register( DesignLayer.ORDER, orderHandler );
+			return layerGuideNode;
+		} );
 
-		layerGuideNode.setValue( NAME_HANDLER, nameHandler );
-		layerGuideNode.setValue( ORDER_HANDLER, orderHandler );
-		//layerGuideNode.setValue( VISIBLE_HANDLER, visibleHandler );
-
-		layer.register( DesignLayer.NAME, nameHandler );
-		layer.register( DesignLayer.ORDER, orderHandler );
-		//layer.register( DesignLayer.VISIBLE, visibleHandler );
+		if( layerPane != null ) {
+			String icon = layerPane.isShowing() ? "layer" : "layer-hidden";
+			layerPane.showingProperty().addListener( (ChangeListener<Boolean>)node.getValue( VISIBLE_HANDLER ) );
+			node.setIcon( icon );
+		}
 	}
 
-	private void removeLayer( DesignLayer layer ) {
-		// Determine the guide node for the layer
-		GuideNode layerGuideNode = getNode( layer.getId() );
-		//layer.unregister( DesignLayer.VISIBLE, layerGuideNode.getValue( VISIBLE_HANDLER ) );
-		layer.unregister( DesignLayer.ORDER, layerGuideNode.getValue( ORDER_HANDLER ) );
-		layer.unregister( DesignLayer.NAME, layerGuideNode.getValue( NAME_HANDLER ) );
+	@SuppressWarnings( "unchecked" )
+	private synchronized void removeLayer( DesignLayer layer, DesignLayerPane layerPane ) {
+		layerGuideNodes.computeIfPresent( layer, ( k, layerGuideNode ) -> {
+			layerPane.showingProperty().removeListener( (ChangeListener<Boolean>)layerGuideNode.getValue( VISIBLE_HANDLER ) );
+			layer.unregister( DesignLayer.ORDER, layerGuideNode.getValue( ORDER_HANDLER ) );
+			layer.unregister( DesignLayer.NAME, layerGuideNode.getValue( NAME_HANDLER ) );
 
-		removeNode( layerNodes.get( layer ) );
-		nodeLayers.remove( layerNodes.get( layer ) );
-		layerNodes.remove( layer );
+			removeNode( layerGuideNode );
+			guideNodeLayers.remove( layerGuideNode );
+			layerGuideNodes.remove( layer );
+			return null;
+		} );
 	}
 
 }
