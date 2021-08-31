@@ -53,10 +53,10 @@ public class DesignToolViewsGuide extends Guide {
 
 		// Add listeners for changes
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			if( e.getSetKey().equals( Design.VIEWS ) ) Fx.run( () -> addView( e.getNewValue() ) );
+			if( Design.VIEWS.equals( e.getSetKey() ) ) Fx.run( () -> addView( e.getNewValue() ) );
 		} );
 		design.register( NodeEvent.CHILD_REMOVED, e -> {
-			if( e.getSetKey().equals( Design.VIEWS ) ) Fx.run( () -> removeView( e.getOldValue() ) );
+			if( Design.VIEWS.equals( e.getSetKey() ) ) Fx.run( () -> removeView( e.getOldValue() ) );
 		} );
 	}
 

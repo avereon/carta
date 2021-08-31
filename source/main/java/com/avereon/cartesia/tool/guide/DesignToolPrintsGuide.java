@@ -24,12 +24,15 @@ public class DesignToolPrintsGuide extends Guide {
 
 	private final DesignTool tool;
 
-	private final Map<DesignNode, GuideNode> nodes;
+	private final Map<DesignNode, GuideNode> viewNodes;
+
+	private final Map<GuideNode, DesignNode> nodeViews;
 
 	public DesignToolPrintsGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
-		this.nodes = new ConcurrentHashMap<>();
+		this.viewNodes = new ConcurrentHashMap<>();
+		this.nodeViews = new ConcurrentHashMap<>();
 		setTitle( Rb.textOr( BundleKey.LABEL, "prints", "Prints" ) );
 		setIcon( "prints" );
 	}
@@ -50,16 +53,16 @@ public class DesignToolPrintsGuide extends Guide {
 
 		// Add listeners for changes
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			if( e.getSetKey().equals( Design.PRINTS ) ) Fx.run( () -> addPrint( e.getNewValue() ) );
+			if( Design.PRINTS.equals( e.getSetKey() ) ) Fx.run( () -> addPrint( e.getNewValue() ) );
 		} );
 		design.register( NodeEvent.CHILD_REMOVED, e -> {
-			if( e.getSetKey().equals( Design.PRINTS ) ) Fx.run( () -> removePrint( e.getOldValue() ) );
+			if( Design.PRINTS.equals( e.getSetKey() ) ) Fx.run( () -> removePrint( e.getOldValue() ) );
 		} );
 	}
 
 	private void addPrint( DesignView print ) {
-		GuideNode viewGuideNode = new GuideNode( getProgram(), print.getId(), print.getName(), "print", print.getOrder() );
-		addNode( getRoot().getValue(), viewGuideNode );
+		//GuideNode viewGuideNode = new GuideNode( getProgram(), print.getId(), print.getName(), "print", print.getOrder() );
+		//addNode( getRoot().getValue(), viewGuideNode );
 		//viewNodes.put( view, viewGuideNode );
 		//nodeViews.put( viewGuideNode, view );
 	}
