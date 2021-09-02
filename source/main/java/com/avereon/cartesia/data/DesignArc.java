@@ -98,7 +98,7 @@ public class DesignArc extends DesignEllipse {
 	}
 
 	@Override
-	public DesignArc clone() {
+	public DesignArc cloneShape() {
 		return new DesignArc().copyFrom( this );
 	}
 
