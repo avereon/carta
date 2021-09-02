@@ -369,9 +369,7 @@ public class Command {
 
 	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
-			DesignShape clone = s.clone();
-			clone.setReference( reference );
-			clone.setSelected( false );
+			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
 			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
 			if( s.getLayer() != null ) s.getLayer().addShape( clone );
 			return clone;
