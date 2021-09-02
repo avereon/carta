@@ -42,9 +42,6 @@ public class DesignCurveView extends DesignShapeView {
 			curve.getPoint().getX(),
 			curve.getPoint().getY()
 		);
-		shape.setStrokeWidth( curve.calcDrawWidth() );
-		shape.setStroke( curve.calcDrawPaint() );
-		shape.setFill( curve.calcFillPaint() );
 		return List.of( shape );
 	}
 

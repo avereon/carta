@@ -30,11 +30,8 @@ public class DesignMarkerView extends DesignShapeView {
 
 	@Override
 	public List<Shape> generateGeometry() {
-		double ox = getDesignMarker().getOrigin().getX();
-		double oy = getDesignMarker().getOrigin().getY();
-		Path path = DesignMarkers.createMarker( getDesignMarker().calcType(), 0, 0, getDesignMarker().getRadius() );
-		path.setLayoutX( ox );
-		path.setLayoutY( oy );
+		DesignMarker marker = getDesignMarker();
+		Path path = DesignMarkers.createMarker( marker.calcType(), marker.getOrigin(), marker.getRadius() );
 		return List.of( path );
 	}
 

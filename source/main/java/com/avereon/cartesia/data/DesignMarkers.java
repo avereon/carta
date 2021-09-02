@@ -1,13 +1,14 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.curve.math.Constants;
+import javafx.geometry.Point3D;
 import javafx.scene.shape.*;
 
 public class DesignMarkers {
 
 	private static final DesignMarker.Type DEFAULT_TYPE = DesignMarker.Type.CROSS;
 
-	public static Path createMarker( DesignMarker.Type type, double x, double y, double r ) {
+	public static Path createMarker( DesignMarker.Type type, Point3D p, double r ) {
 		Path path = switch( type ) {
 			case CROSS -> createCrossPoint( 0, 0, r );
 			case REFERENCE -> createReference( 0, 0, r );
@@ -16,8 +17,8 @@ public class DesignMarkers {
 			case SQUARE -> createSquare( 0, 0, r );
 			default -> createXPoint( 0, 0, r );
 		};
-		path.setLayoutX( x );
-		path.setLayoutY( y );
+		path.setLayoutX( p.getX() );
+		path.setLayoutY( p.getY() );
 
 		return path;
 	}

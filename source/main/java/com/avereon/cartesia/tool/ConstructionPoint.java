@@ -54,7 +54,7 @@ public class ConstructionPoint extends Region {
 	}
 
 	private Collection<Shape> getShapes( DesignMarker.Type type ) {
-		return Set.of( DesignMarkers.createMarker( type, 0, 0, getRadius() ) );
+		return Set.of( DesignMarkers.createMarker( type, Point3D.ZERO, getRadius() ) );
 	}
 
 }

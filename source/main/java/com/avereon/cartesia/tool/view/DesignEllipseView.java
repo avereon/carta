@@ -31,12 +31,7 @@ public class DesignEllipseView extends DesignShapeView {
 	@Override
 	protected List<Shape> generateGeometry() {
 		DesignEllipse ellipse = getDesignEllipse();
-
 		Shape shape = new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
-		updateRotate( ellipse, shape );
-		shape.setStrokeWidth( ellipse.calcDrawWidth() );
-		shape.setStroke( ellipse.calcDrawPaint() );
-		shape.setFill( ellipse.calcFillPaint() );
 		return List.of( shape );
 	}
 
@@ -51,6 +46,13 @@ public class DesignEllipseView extends DesignShapeView {
 		ConstructionPoint d = cp( pane, ellipse.centerXProperty(), () -> getEllipsePoint( ellipse, -90 ).getX(), ellipse.centerYProperty(), () -> getEllipsePoint( ellipse, -90 ).getY() );
 
 		return setConstructionPoints( ellipse, List.of( origin, a, b, c, d ) );
+	}
+
+	@Override
+	protected void configureShape( Shape shape ) {
+		super.configureShape( shape );
+
+		updateRotate( getDesignEllipse(), shape );
 	}
 
 	@Override

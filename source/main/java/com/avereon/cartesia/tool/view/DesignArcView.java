@@ -8,6 +8,7 @@ import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Shape;
 
 import java.util.List;
@@ -38,11 +39,6 @@ public class DesignArcView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		DesignArc designArc = getDesignArc();
 		Arc arc = new Arc( designArc.getOrigin().getX(), designArc.getOrigin().getY(), designArc.getXRadius(), designArc.getYRadius(), -designArc.getStart(), -designArc.getExtent() );
-		updateRotate( designArc, arc );
-		if( designArc.getType() != null ) arc.setType( designArc.getType().arcType() );
-		arc.setStrokeWidth( designArc.calcDrawWidth() );
-		arc.setStroke( designArc.calcDrawPaint() );
-		arc.setFill( designArc.calcFillPaint() );
 		return List.of( arc );
 	}
 
@@ -55,22 +51,19 @@ public class DesignArcView extends DesignShapeView {
 			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() ).getX(), arc.centerXProperty(), arc.radiusXProperty(), arc.getTransforms(), arc.startAngleProperty() ),
 			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() ).getY(), arc.centerYProperty(), arc.radiusYProperty(), arc.getTransforms(), arc.startAngleProperty() )
 		);
-		ConstructionPoint c = cp( pane,
-			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(),
-				arc.centerXProperty(),
-				arc.radiusXProperty(),
-				arc.getTransforms(),
-				arc.startAngleProperty(),
-				arc.lengthProperty()
-			),
-			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY(),
-				arc.centerYProperty(),
-				arc.radiusYProperty(),
-				arc.getTransforms(),
-				arc.startAngleProperty(),
-				arc.lengthProperty()
-			)
-		);
+		ConstructionPoint c = cp( pane, Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getX(),
+			arc.centerXProperty(),
+			arc.radiusXProperty(),
+			arc.getTransforms(),
+			arc.startAngleProperty(),
+			arc.lengthProperty()
+		), Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + 0.5 * arc.getLength() ).getY(),
+			arc.centerYProperty(),
+			arc.radiusYProperty(),
+			arc.getTransforms(),
+			arc.startAngleProperty(),
+			arc.lengthProperty()
+		) );
 		ConstructionPoint b = cp( pane,
 			Bindings.createDoubleBinding( () -> getArcPoint( arc, arc.getStartAngle() + arc.getLength() ).getX(),
 				arc.centerXProperty(),
@@ -88,6 +81,16 @@ public class DesignArcView extends DesignShapeView {
 			)
 		);
 		return setConstructionPoints( arc, List.of( a, b, c ) );
+	}
+
+	@Override
+	protected void configureShape( Shape shape ) {
+		super.configureShape( shape );
+
+		DesignArc designArc = getDesignArc();
+		Arc arc = (Arc)shape;
+
+		arc.setType( designArc.getType() == null ? ArcType.OPEN : designArc.getType().arcType() );
 	}
 
 	@Override
