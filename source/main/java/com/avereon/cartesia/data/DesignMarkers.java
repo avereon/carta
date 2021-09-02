@@ -7,7 +7,7 @@ public class DesignMarkers {
 
 	private static final DesignMarker.Type DEFAULT_TYPE = DesignMarker.Type.CROSS;
 
-	public static Path createPoint( DesignMarker.Type type, double x, double y, double r ) {
+	public static Path createMarker( DesignMarker.Type type, double x, double y, double r ) {
 		Path path = switch( type ) {
 			case CROSS -> createCrossPoint( 0, 0, r );
 			case REFERENCE -> createReference( 0, 0, r );
