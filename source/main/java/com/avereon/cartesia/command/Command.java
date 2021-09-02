@@ -35,6 +35,8 @@ public class Command {
 
 	public static final Object INVALID = new Object();
 
+	public static final Object FAIL = new Object();
+
 	private final List<DesignShape> reference;
 
 	private final List<DesignShape> preview;
@@ -55,8 +57,8 @@ public class Command {
 	public void cancel( CommandContext context ) {
 		if( context.getTool() != null ) {
 			clearReferenceAndPreview( context );
-			context.getTool().getDesign().clearSelected();
 			context.getTool().setCursor( Cursor.DEFAULT );
+			context.getTool().getDesign().clearSelected();
 		}
 	}
 

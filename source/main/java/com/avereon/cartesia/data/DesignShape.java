@@ -5,10 +5,12 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Comparator;
 import java.util.Map;
 
+@CustomLog
 public abstract class DesignShape extends DesignDrawable {
 
 	public static final DesignShape NONE = new DesignShape() {}.setId( "NONE" );

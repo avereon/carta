@@ -31,9 +31,12 @@ public class Meet extends EditCommand {
 		DesignShape edge = findNearestShapeAtMouse( context, edgeMouse );
 		if( edge == DesignShape.NONE ) return INVALID;
 
-		// Start an undo multi-change
-		com.avereon.cartesia.math.Meet.meet( context.getTool(), trim, edge, trimMouse, edgeMouse );
-		// Done with undo multi-change
+		try {
+			com.avereon.cartesia.math.Meet.meet( context.getTool(), trim, edge, trimMouse, edgeMouse );
+		} catch( Exception exception ) {
+			log.atWarn( exception ).log( "Error meeting objects" );
+			return FAIL;
+		}
 
 		return COMPLETE;
 	}

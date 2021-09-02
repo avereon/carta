@@ -323,8 +323,6 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
-		// TODO Is parameter data leaking to the next command stack???
-
 		synchronized( commandStack ) {
 			CommandExecuteRequest request = new CommandExecuteRequest( this, tool, command, parameters );
 			log.atTrace().log( "Command submitted %s", request );
@@ -343,11 +341,11 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void logCommandStack() {
-		if( log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) {
-			List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
-			Collections.reverse( invertedCommandStack );
-			if( commandStack.size() != 0 ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
-		}
+		if( !log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) return;
+
+		List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
+		Collections.reverse( invertedCommandStack );
+		if( commandStack.size() != 0 ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
 	}
 
 	private Object doProcessCommands() throws Exception {
@@ -391,6 +389,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		private Object[] parameters;
 
+		private Object result;
+
 		public CommandExecuteRequest( CommandContext context, DesignTool tool, Command command, Object... parameters ) {
 			this.context = Objects.requireNonNull( context );
 			this.tool = Objects.requireNonNull( tool );
@@ -413,6 +413,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		public Object executeCommandStep( Object priorResult ) throws Exception {
 			// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
+			if( result == Command.FAIL ) return Command.FAIL;
 			if( priorResult == null ) log.atWarning().log( "A prior result of null was passed to execute" );
 			if( priorResult == Command.INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
 			if( priorResult != null && priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
@@ -422,11 +423,19 @@ public class CommandContext implements EventHandler<KeyEvent> {
 				context.setTool( tool );
 				result = command.execute( context, parameters );
 				if( result != Command.INVALID ) command.incrementStep();
+			} catch( Throwable throwable ) {
+				log.atWarn( throwable ).log( "Unhandled error executing command=%s", command );
 			} finally {
-				if( result != Command.INCOMPLETE ) doComplete();
-				command.setExecuted();
+				if( result == Command.COMPLETE || result == Command.INVALID ) doComplete();
+				if( result != Command.INCOMPLETE ) command.setExecuted();
 			}
 
+			this.result = result;
+
+			return getResult();
+		}
+
+		public Object getResult() {
 			return result;
 		}
 
