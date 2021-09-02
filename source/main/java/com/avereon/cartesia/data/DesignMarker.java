@@ -106,7 +106,7 @@ public class DesignMarker extends DesignShape {
 
 	@Override
 	public DesignMarker cloneShape() {
-		return new DesignMarker().copyFrom( this );
+		return new DesignMarker().copyFrom( this, true );
 	}
 
 	@Override

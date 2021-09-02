@@ -24,7 +24,7 @@ public class DesignPath extends DesignShape {
 
 	@Override
 	public DesignPath cloneShape() {
-		return new DesignPath().copyFrom( this );
+		return new DesignPath().copyFrom( this, true );
 	}
 
 	@Override

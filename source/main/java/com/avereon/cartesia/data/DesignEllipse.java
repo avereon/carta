@@ -139,7 +139,7 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public DesignEllipse cloneShape() {
-		return new DesignEllipse().copyFrom( this );
+		return new DesignEllipse().copyFrom( this, true );
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class DesignLine extends DesignShape {
 
 	@Override
 	public DesignLine cloneShape() {
-		return new DesignLine().copyFrom( this );
+		return new DesignLine().copyFrom( this, true );
 	}
 
 	@Override
@@ -73,9 +73,9 @@ public class DesignLine extends DesignShape {
 		return this;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString( ORIGIN, POINT );
-	}
+//	@Override
+//	public String toString() {
+//		return super.toString( ORIGIN, POINT );
+//	}
 
 }
