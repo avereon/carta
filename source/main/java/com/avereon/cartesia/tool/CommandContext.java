@@ -427,7 +427,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 				log.atWarn( throwable ).log( "Unhandled error executing command=%s", command );
 			} finally {
 				if( result == Command.COMPLETE || result == Command.INVALID ) doComplete();
-				if( result != Command.INCOMPLETE ) command.setExecuted();
+				command.setStepExecuted();
 			}
 
 			this.result = result;

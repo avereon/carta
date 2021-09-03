@@ -38,8 +38,10 @@ public class CommandPrompt extends BorderPane {
 	public void setPrompt( String prompt ) {
 		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
 		final DesignTool tool = context.getTool();
-		if( tool != null ) Fx.run( tool::showCommandPrompt );
-		Fx.run( () -> this.prompt.setText( effectivePrompt ) );
+		Fx.run( () -> {
+			if( tool != null )  tool.showCommandPrompt();
+			this.prompt.setText( effectivePrompt );
+		});
 	}
 
 	public String getText() {

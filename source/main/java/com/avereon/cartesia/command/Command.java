@@ -43,7 +43,7 @@ public class Command {
 
 	private int step;
 
-	private boolean executed;
+	private boolean stepExecuted;
 
 	protected Command() {
 		this.reference = new CopyOnWriteArrayList<>();
@@ -75,14 +75,14 @@ public class Command {
 	}
 
 	public synchronized void waitFor( long length ) throws InterruptedException {
-		while( !executed ) {
+		while( !stepExecuted ) {
 			wait( length );
 		}
-		this.executed = false;
+		this.stepExecuted = false;
 	}
 
-	public synchronized void setExecuted() {
-		this.executed = true;
+	public synchronized void setStepExecuted() {
+		this.stepExecuted = true;
 		notifyAll();
 	}
 

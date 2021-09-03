@@ -8,16 +8,19 @@ import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.error.UnknownCommand;
+import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.AssetType;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.Future;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandContextUIT extends BaseCartesiaUIT {
 
@@ -30,9 +33,14 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		super.setup();
 		this.context = new CommandContext( getMod() );
 
-		Asset asset = getProgram().getAssetManager().createAsset( new Design2dAssetType( getProgram() ) );
+		AssetType assetType = getProgram().getAssetManager().getAssetType( Design2dAssetType.class.getName() );
+		Asset asset = getProgram().getAssetManager().createAsset( assetType );
 		asset.setModel( new Design2D() );
-		this.tool = new Design2dEditor( getMod(), asset );
+		//this.tool = new Design2dEditor( getMod(), asset );
+
+		assertTrue( getProgram().getTaskManager().isRunning() );
+		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( asset );
+		this.tool = (DesignTool)future.get();
 
 		context.setLastActiveDesignTool( tool );
 	}
