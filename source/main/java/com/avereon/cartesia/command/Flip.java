@@ -46,9 +46,10 @@ public class Flip extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			// Start an undo multi-change
-			flipShapes( getCommandShapes( context.getTool() ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
-			// Done with undo multi-change
+			final Point3D anchor = asPoint( context, parameters[ 0 ] );
+			final Point3D point = asPoint( context, parameters[ 1 ] );
+
+			flipShapes( getCommandShapes( context.getTool() ), anchor, point );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );

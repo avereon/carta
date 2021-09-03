@@ -5,7 +5,6 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
-import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -52,12 +51,10 @@ public class DesignLine extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		try( Txn ignored = Txn.create() ) {
+		Txn.run(() -> {
 			setOrigin( transform.apply( getOrigin() ) );
 			setPoint( transform.apply( getPoint() ) );
-		} catch( TxnException exception ) {
-			log.atWarn().log( "Unable to apply transform" );
-		}
+		});
 	}
 
 	protected Map<String, Object> asMap() {

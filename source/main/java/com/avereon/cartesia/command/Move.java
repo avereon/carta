@@ -45,7 +45,14 @@ public class Move extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			moveShapes( getCommandShapes( context.getTool() ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ) );
+			final Point3D anchor = asPoint( context, parameters[ 0 ] );
+			final Point3D point = asPoint( context, parameters[ 1 ] );
+
+			// FIXME These actions are distributed between two Txns but create and add need to be separated
+			// - Create
+			// - Add
+			// - Transform
+			moveShapes( getCommandShapes( context.getTool() ), anchor, point );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-move-shapes", exception );
