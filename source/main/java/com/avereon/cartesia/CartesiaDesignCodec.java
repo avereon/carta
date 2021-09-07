@@ -167,11 +167,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 		if( map.containsKey( DesignView.NAME ) ) view.setName( (String)map.get( DesignView.NAME ) );
 		if( map.containsKey( DesignView.ORDER ) ) view.setOrder( Integer.parseInt( (String)map.get( DesignView.ORDER ) ) );
 		if( map.containsKey( DesignView.ORIGIN ) ) view.setOrigin( ParseUtil.parsePoint3D( (String)map.get( DesignView.ORIGIN ) ) );
-		if( map.containsKey( DesignView.ROTATE ) ) view.setRotate( (Double)map.get( DesignView.ROTATE ) );
-		if( map.containsKey( DesignView.ZOOM ) ) view.setZoom( (Double)map.get( DesignView.ZOOM ) );
+		if( map.containsKey( DesignView.ROTATE ) ) view.setRotate( ((Number)map.get( DesignView.ROTATE )).doubleValue() );
+		if( map.containsKey( DesignView.ZOOM ) ) view.setZoom( ((Number)map.get( DesignView.ZOOM )).doubleValue() );
 
 		List<String> layers = (List<String>)map.getOrDefault( DesignView.LAYERS, Set.of() );
-		view.setLayers( layers.stream().map( design::findLayerById ).collect( Collectors.toSet()) );
+		view.setLayers( layers.stream().map( design::findLayerById ).collect( Collectors.toSet() ) );
 		design.addView( view );
 	}
 
@@ -211,11 +211,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private <T extends DesignEllipse> T loadDesignEllipse( Map<String, Object> map, T ellipse ) {
-		if( map.containsKey( RADIUS ) ) ellipse.setXRadius( (Double)map.get( RADIUS ) );
-		if( map.containsKey( RADIUS ) ) ellipse.setYRadius( (Double)map.get( RADIUS ) );
-		if( map.containsKey( DesignEllipse.X_RADIUS ) ) ellipse.setXRadius( (Double)map.get( DesignEllipse.X_RADIUS ) );
-		if( map.containsKey( DesignEllipse.Y_RADIUS ) ) ellipse.setYRadius( (Double)map.get( DesignEllipse.Y_RADIUS ) );
-		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( (Double)map.get( DesignEllipse.ROTATE ) );
+		if( map.containsKey( RADIUS ) ) ellipse.setXRadius( ((Number)map.get( RADIUS )).doubleValue() );
+		if( map.containsKey( RADIUS ) ) ellipse.setYRadius( ((Number)map.get( RADIUS )).doubleValue() );
+		if( map.containsKey( DesignEllipse.X_RADIUS ) ) ellipse.setXRadius( ((Number)map.get( DesignEllipse.X_RADIUS )).doubleValue() );
+		if( map.containsKey( DesignEllipse.Y_RADIUS ) ) ellipse.setYRadius( ((Number)map.get( DesignEllipse.Y_RADIUS )).doubleValue() );
+		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( ((Number)map.get( DesignEllipse.ROTATE )).doubleValue() );
 		return ellipse;
 	}
 
@@ -225,8 +225,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private DesignArc loadDesignArc( Map<String, Object> map ) {
 		DesignArc arc = loadDesignEllipse( map, loadDesignShape( map, new DesignArc() ) );
-		if( map.containsKey( DesignArc.START ) ) arc.setStart( (Double)map.get( DesignArc.START ) );
-		if( map.containsKey( DesignArc.EXTENT ) ) arc.setExtent( (Double)map.get( DesignArc.EXTENT ) );
+		if( map.containsKey( DesignArc.START ) ) arc.setStart( ((Number)map.get( DesignArc.START )).doubleValue() );
+		if( map.containsKey( DesignArc.EXTENT ) ) arc.setExtent( ((Number)map.get( DesignArc.EXTENT )).doubleValue() );
 		if( map.containsKey( DesignArc.TYPE ) ) arc.setType( DesignArc.Type.valueOf( ((String)map.get( DesignArc.TYPE )).toUpperCase() ) );
 		return arc;
 	}
