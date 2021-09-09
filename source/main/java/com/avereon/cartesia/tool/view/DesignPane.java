@@ -27,7 +27,10 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -368,7 +371,7 @@ public class DesignPane extends StackPane {
 	}
 
 	public List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
-		return windowSelect( parentToLocal( a ), parentToLocal( b ), contains );
+		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), contains );
 	}
 
 	public List<Shape> worldPointSelect( Point3D anchor, DesignValue v ) {
@@ -379,8 +382,8 @@ public class DesignPane extends StackPane {
 		return worldPointSelect( anchor, new Point2D( radius, radius ) );
 	}
 
-	public List<Shape> worldPointSelect( Point3D anchor, Point2D aperture ) {
-		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), aperture.getX(), aperture.getY() ), false );
+	public List<Shape> worldPointSelect( Point3D anchor, Point2D radii ) {
+		return doSelectByShape( new Ellipse( anchor.getX() - radii.getX(), anchor.getY() - radii.getY(), 2 * radii.getX(), 2 * radii.getY() ), false );
 	}
 
 	/**
@@ -391,7 +394,7 @@ public class DesignPane extends StackPane {
 	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
 	 * @return The set of selected nodes
 	 */
-	public List<Shape> windowSelect( Point3D a, Point3D b, boolean contains ) {
+	public List<Shape> worldWindowSelect( Point3D a, Point3D b, boolean contains ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
@@ -606,6 +609,31 @@ public class DesignPane extends StackPane {
 	 * @return The list of selected shapes
 	 */
 	private List<Shape> doSelectByShape( Shape selector, boolean contains ) {
+		// This method should be thread agnostic, however, the code to calculate
+		// selections must be run on the FX thread. If we are on the FX thread then
+		// this is just a simple call to fxSelectByShape(). If not, a future must
+		// be created to run on the FX thread and return the result.
+
+		try {
+			Callable<List<Shape>> callable = () -> fxSelectByShape( selector, contains );
+			if( Fx.isFxThread() ) {
+				return callable.call();
+			} else {
+				FutureTask<List<Shape>> future = new FutureTask<>( callable );
+				Fx.run( future );
+				return future.get( 500, TimeUnit.MILLISECONDS );
+			}
+		} catch( Exception exception ) {
+			log.atWarn( exception ).log( "Unable to select shapes" );
+		}
+
+		return List.of();
+	}
+
+	// THREAD JavaFX Application Thread
+	private List<Shape> fxSelectByShape( Shape selector, boolean contains ) {
+		Fx.checkFxThread();
+
 		// The shape must have a fill but no stroke. The selector color is not
 		// important since the selector shape is not shown, is just needs to be set.
 		selector.setFill( Color.RED );

@@ -59,7 +59,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -794,43 +793,16 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		final List<Shape> selection = new ArrayList<>();
-		Fx.run( () -> designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selection::add ) );
-		try {
-			Fx.waitForWithExceptions( 1000 );
-		} catch( TimeoutException exception ) {
-			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
-		} catch( InterruptedException exception ) {
-			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
-		}
-		return selection;
+		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().collect( Collectors.toList() );
 	}
 
 	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		final List<Shape> selection = new ArrayList<>();
-		Fx.run( () -> selection.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ) ) );
-		try {
-			Fx.waitForWithExceptions( 1000 );
-		} catch( TimeoutException exception ) {
-			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
-		} catch( InterruptedException exception ) {
-			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
-		}
-		return selection;
+		return new ArrayList<>( designPane.screenPointSelect( mouse, getSelectTolerance() ) );
 	}
 
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
-		Fx.run( () -> {
-			selectedShapes.clear();
-			designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( selectedShapes()::add );
-		} );
-		try {
-			Fx.waitForWithExceptions( 1000 );
-		} catch( TimeoutException exception ) {
-			log.atWarn().withCause( exception ).log( "Timeout waiting for FX thread" );
-		} catch( InterruptedException exception ) {
-			log.atWarn().withCause( exception ).log( "Interrupted waiting for FX thread" );
-		}
+		selectedShapes.clear();
+		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().collect( Collectors.toList() ) );
 		return selectedShapes();
 	}
 
@@ -839,17 +811,14 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
-		Fx.run( () -> {
-			if( !toggle ) selectedShapes().clear();
+		if( !toggle ) selectedShapes().clear();
 
-			List<Shape> selection = designPane.screenPointSelect( mouse, getSelectTolerance() );
-			selection.stream().findFirst().ifPresent( shape -> {
-				if( toggle && getDesignData( shape ).isSelected() ) {
-					selectedShapes().remove( shape );
-				} else {
-					selectedShapes().add( shape );
-				}
-			} );
+		designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
+			if( toggle && getDesignData( shape ).isSelected() ) {
+				selectedShapes().remove( shape );
+			} else {
+				selectedShapes().add( shape );
+			}
 		} );
 	}
 
