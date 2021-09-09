@@ -174,12 +174,12 @@ public class Command {
 		return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 	}
 
-	protected List<DesignShape> cloneShapes( Collection<DesignShape> shapes ) {
-		return cloneShapes( shapes, false );
+	protected List<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {
+		return cloneAndAddShapes( shapes, false );
 	}
 
-	protected List<DesignShape> cloneReferenceShapes( Collection<DesignShape> shapes ) {
-		return cloneShapes( shapes, true );
+	protected List<DesignShape> cloneAndAddReferenceShapes( Collection<DesignShape> shapes ) {
+		return cloneAndAddShapes( shapes, true );
 	}
 
 	protected void setCaptureUndoChanges( CommandContext context, boolean enabled ) {
@@ -370,6 +370,15 @@ public class Command {
 	}
 
 	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
+		return shapes.stream().map( s -> {
+			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
+			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
+			//if( s.getLayer() != null ) s.getLayer().addShape( clone );
+			return clone;
+		} ).collect( Collectors.toList() );
+	}
+
+	private List<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
 			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag

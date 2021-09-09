@@ -225,7 +225,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
 
-	public DesignTool getTool() {
+	public final DesignTool getTool() {
 		return tool;
 	}
 

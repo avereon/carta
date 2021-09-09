@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -36,7 +37,7 @@ public class Move extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneReferenceShapes( context.getTool().getSelectedGeometry() ) );
+			addPreview( context, cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
@@ -46,13 +47,9 @@ public class Move extends EditCommand {
 
 		try {
 			final Point3D anchor = asPoint( context, parameters[ 0 ] );
-			final Point3D point = asPoint( context, parameters[ 1 ] );
-
-			// FIXME These actions are distributed between two Txns but create and add need to be separated
-			// - Create
-			// - Add
-			// - Transform
-			moveShapes( getCommandShapes( context.getTool() ), anchor, point );
+			final Point3D target = asPoint( context, parameters[ 1 ] );
+			moveShapes( context.getTool(), anchor, target );
+			//edit( context.getTool(), CadTransform.translation( target.subtract( anchor ) ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-move-shapes", exception );

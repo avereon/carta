@@ -27,10 +27,7 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.FutureTask;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -608,22 +605,17 @@ public class DesignPane extends StackPane {
 	 * @param contains True to require selected shapes be contained by the selecting shape
 	 * @return The list of selected shapes
 	 */
-	private List<Shape> doSelectByShape( Shape selector, boolean contains ) {
+	private List<Shape> doSelectByShape( final Shape selector, final boolean contains ) {
 		// This method should be thread agnostic, however, the code to calculate
 		// selections must be run on the FX thread. If we are on the FX thread then
 		// this is just a simple call to fxSelectByShape(). If not, a future must
 		// be created to run on the FX thread and return the result.
 
+		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
+
 		try {
-			Callable<List<Shape>> callable = () -> fxSelectByShape( selector, contains );
-			if( Fx.isFxThread() ) {
-				return callable.call();
-			} else {
-				FutureTask<List<Shape>> future = new FutureTask<>( callable );
-				Fx.run( future );
-				return future.get( 500, TimeUnit.MILLISECONDS );
-			}
-		} catch( Exception exception ) {
+			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, contains ) ) ).get( 500, TimeUnit.MILLISECONDS );
+		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
 			log.atWarn( exception ).log( "Unable to select shapes" );
 		}
 
@@ -631,7 +623,7 @@ public class DesignPane extends StackPane {
 	}
 
 	// THREAD JavaFX Application Thread
-	private List<Shape> fxSelectByShape( Shape selector, boolean contains ) {
+	private List<Shape> fxSelectByShape( final Shape selector, final boolean contains ) {
 		Fx.checkFxThread();
 
 		// The shape must have a fill but no stroke. The selector color is not

@@ -48,7 +48,7 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 3 ) {
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( center );
-			addPreview( context, cloneReferenceShapes( tool.getSelectedGeometry() ) );
+			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
@@ -58,7 +58,7 @@ public class Rotate extends EditCommand {
 
 		try {
 			// Start an undo multi-change
-			rotateShapes( getCommandShapes( tool ), asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			rotateShapes( tool, asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );

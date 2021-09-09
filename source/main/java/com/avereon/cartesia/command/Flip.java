@@ -37,7 +37,7 @@ public class Flip extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneReferenceShapes( context.getTool().getSelectedGeometry() ) );
+			addPreview( context, cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
@@ -49,7 +49,7 @@ public class Flip extends EditCommand {
 			final Point3D anchor = asPoint( context, parameters[ 0 ] );
 			final Point3D point = asPoint( context, parameters[ 1 ] );
 
-			flipShapes( getCommandShapes( context.getTool() ), anchor, point );
+			flipShapes( context.getTool(), anchor, point );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );

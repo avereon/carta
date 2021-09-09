@@ -13,7 +13,7 @@ public class Delete extends EditCommand {
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
 
-		deleteShapes( getCommandShapes( context.getTool() ) );
+		deleteShapes(  context.getTool() );
 
 		return COMPLETE;
 	}

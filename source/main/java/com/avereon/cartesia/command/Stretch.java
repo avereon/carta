@@ -16,7 +16,6 @@ import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,7 +23,7 @@ import java.util.Set;
 @CustomLog
 public class Stretch extends EditCommand {
 
-	private Set<PointCoordinate> movingPoints;
+	private Set<PointCoordinate> pointsToMove;
 
 	private DesignLine referenceLine;
 
@@ -45,13 +44,14 @@ public class Stretch extends EditCommand {
 
 		// Ask for an anchor point
 		if( parameters.length < 2 ) {
-			List<DesignShape> preview = cloneReferenceShapes( context.getTool().getSelectedGeometry() );
+			List<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() );
 			addPreview( context, preview );
-			movingPoints = computeMovingPoints( context.getTool(), preview, asBounds( context, parameters[ 0 ] ) );
+
+			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, parameters[ 0 ] ) );
 
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "anchor" );
-			return movingPoints.isEmpty() ? INVALID : INCOMPLETE;
+			return pointsToMove.isEmpty() ? INVALID : INCOMPLETE;
 		}
 
 		// Ask for a target point
@@ -67,8 +67,9 @@ public class Stretch extends EditCommand {
 
 		try {
 			Bounds bounds = asBounds( context, parameters[ 0 ] );
-			Set<PointCoordinate> points = computeMovingPoints( context.getTool(), getCommandShapes( context.getTool() ), bounds );
-			stretchShapes( points, asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			Point3D anchor = asPoint( context, parameters[ 1 ] );
+			Point3D target = asPoint( context, parameters[ 2 ] );
+			stretchShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedGeometry(), bounds ), anchor, target );
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );
 			String message = Rb.text( BundleKey.NOTICE, "unable-to-stretch-shapes", exception );
@@ -89,14 +90,14 @@ public class Stretch extends EditCommand {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
 					if( lastPoint == null ) lastPoint = anchor;
-					stretchShapes( movingPoints, lastPoint, point );
+					stretchShapes( pointsToMove, lastPoint, point );
 					lastPoint = point;
 				}
 			}
 		}
 	}
 
-	private static Set<PointCoordinate> computeMovingPoints( DesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
+	private static Set<PointCoordinate> computePointsToMove( DesignTool tool, List<DesignShape> shapes, Bounds bounds ) {
 		Set<PointCoordinate> points = new HashSet<>();
 
 		for( DesignShape shape : shapes ) {
@@ -121,11 +122,11 @@ public class Stretch extends EditCommand {
 	}
 
 	private static void stretchShapes( Set<PointCoordinate> points, Point3D anchor, Point3D target ) {
-		// Get a movement vector
-		Point3D vector = target.subtract( anchor );
+		// Get an offset vector
+		Point3D offset = target.subtract( anchor );
 
-		// Go through the movement points and add the vector
-		Txn.run( () -> points.forEach( p -> p.setPoint( p.getPoint().add( vector ) ) ) );
+		// Go through the points to move and add the offset
+		Txn.run( () -> points.forEach( p -> p.update( p.getPoint().add( offset ) ) ) );
 	}
 
 	private static class PointCoordinate {
@@ -143,7 +144,8 @@ public class Stretch extends EditCommand {
 			return shape.getValue( key );
 		}
 
-		public void setPoint( Point3D point ) {
+		public void update( Point3D point ) {
+			// FIXME This is not generating the events needed for undo to work
 			shape.setValue( key, point );
 		}
 
