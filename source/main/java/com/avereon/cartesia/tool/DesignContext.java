@@ -71,6 +71,7 @@ public class DesignContext {
 		Point3D worldMouse = tool.mouseToWorkplane( screenMouse );
 		getCommandContext().setWorldMouse( worldMouse );
 		getCoordinateStatus().updatePosition( worldMouse );
+		getCoordinateStatus().updateZoom( tool.getZoom() );
 	}
 
 }
