@@ -3,8 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignNode;
-import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.data.NodeEvent;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Program;
@@ -24,15 +23,15 @@ public class DesignToolPrintsGuide extends Guide {
 
 	private final DesignTool tool;
 
-	private final Map<DesignNode, GuideNode> viewNodes;
+	private final Map<DesignNode, GuideNode> printNodes;
 
-	private final Map<GuideNode, DesignNode> nodeViews;
+	private final Map<GuideNode, DesignNode> nodePrints;
 
 	public DesignToolPrintsGuide( ProgramProduct product, DesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
-		this.viewNodes = new ConcurrentHashMap<>();
-		this.nodeViews = new ConcurrentHashMap<>();
+		this.printNodes = new ConcurrentHashMap<>();
+		this.nodePrints = new ConcurrentHashMap<>();
 		setTitle( Rb.textOr( BundleKey.LABEL, "prints", "Prints" ) );
 		setIcon( "prints" );
 	}
@@ -49,7 +48,7 @@ public class DesignToolPrintsGuide extends Guide {
 		Design design = tool.getDesign();
 
 		// Populate the guide
-		design.getViews().forEach( this::addPrint );
+		design.getPrints().forEach( this::addPrint );
 
 		// Add listeners for changes
 		design.register( NodeEvent.CHILD_ADDED, e -> {
@@ -60,17 +59,17 @@ public class DesignToolPrintsGuide extends Guide {
 		} );
 	}
 
-	private void addPrint( DesignView print ) {
-		//GuideNode viewGuideNode = new GuideNode( getProgram(), print.getId(), print.getName(), "print", print.getOrder() );
-		//addNode( getRoot().getValue(), viewGuideNode );
-		//viewNodes.put( view, viewGuideNode );
-		//nodeViews.put( viewGuideNode, view );
+	private void addPrint( DesignPrint print ) {
+		GuideNode printGuideNode = new GuideNode( getProgram(), print.getId(), print.getName(), "print", print.getOrder() );
+		addNode( getRoot().getValue(), printGuideNode );
+		printNodes.put( print, printGuideNode );
+		nodePrints.put( printGuideNode, print );
 	}
 
-	private void removePrint( DesignView view ) {
-		//removeNode( viewNodes.get( view ) );
-		//nodeViews.remove( viewNodes.get( view ) );
-		//viewNodes.remove( view );
+	private void removePrint( DesignPrint print ) {
+		removeNode( printNodes.get( print ) );
+		nodePrints.remove( printNodes.get( print ) );
+		printNodes.remove( print );
 	}
 
 }

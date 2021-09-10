@@ -31,17 +31,19 @@ public class CommandMap {
 		// High level letters
 		// a - arc
 		// c - circle
-		// d - draw (size, paint, pattern, etc.)
+		// d - draw [verb] (size, paint, pattern, etc.)
 		// e - ellipse
-		// f - fill (paint, pattern, pattern offset, etc.)
+		// f - fill [verb] (paint, pattern, pattern offset, etc.)
 		// g - grid
-		// k - color/paint
+		// k - color/paint [verb]
 		// l - line
-		// p - point
+		// m - marker
+		// p - print
+		// r - reference
 		// s - snap
 		// t - text
 		// v - curve
-		// w - path?
+		// w - view
 		// y - layer
 		// z - zoom
 
