@@ -600,7 +600,10 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Add asset switch listener to remove command prompt
 		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-			if( e.getOldAsset() == this.getAsset() && isDisplayed() ) unregisterStatusBarItems();
+			// FIXME #113 Design tool activate does not show coordinate status
+			if( isDisplayed() && e.getOldAsset() == this.getAsset() && e.getNewAsset() != this.getAsset() ) {
+				unregisterStatusBarItems();
+			}
 		} );
 	}
 
