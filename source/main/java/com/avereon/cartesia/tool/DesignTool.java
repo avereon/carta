@@ -643,16 +643,16 @@ public abstract class DesignTool extends GuidedTool {
 	private void registerStatusBarItems() {
 		final StatusBar bar = getWorkspace().getStatusBar();
 		Fx.run( () -> {
-			bar.setLeftToolItems( getDesignContext().getCommandPrompt() );
-			bar.setRightToolItems( getDesignContext().getCoordinateStatus() );
+			bar.setLeftToolItems( getCommandPrompt() );
+			bar.setRightToolItems( getCoordinateStatus() );
 		} );
 	}
 
 	private void unregisterStatusBarItems() {
 		final StatusBar bar = getWorkspace().getStatusBar();
 		Fx.run( () -> {
-			bar.removeLeftToolItems( getDesignContext().getCommandPrompt() );
-			bar.removeRightToolItems( getDesignContext().getCoordinateStatus() );
+			bar.removeLeftToolItems( getCommandPrompt() );
+			bar.removeRightToolItems( getCoordinateStatus() );
 		} );
 	}
 
@@ -769,6 +769,10 @@ public abstract class DesignTool extends GuidedTool {
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
 		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
+	}
+
+	private CommandPrompt getCommandPrompt() {
+		return getDesignContext().getCommandPrompt();
 	}
 
 	private CoordinateStatus getCoordinateStatus() {
