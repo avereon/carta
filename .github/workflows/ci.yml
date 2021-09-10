@@ -9,6 +9,7 @@ on:
       - stable
   schedule:
     - cron: '40 12 * * *'
+  workflow_dispatch:
 
 env:
   AVN_PRODUCT: "carta"
