@@ -592,10 +592,10 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doRemoveShape( DesignShape shape ) {
-		Fx.run( () -> geometryMap.computeIfPresent( shape, ( k, view ) -> {
+		geometryMap.computeIfPresent( shape, ( k, view ) -> {
 			Fx.run( view::removeShapeGeometry );
 			return null;
-		} ) );
+		} );
 	}
 
 	/**

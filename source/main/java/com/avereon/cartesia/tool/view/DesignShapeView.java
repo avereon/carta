@@ -105,11 +105,10 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	public void removeShapeGeometry() {
-		final DesignPane pane = getPane();
 		unregisterListeners();
 		getCpGroup().visibleProperty().unbind();
 		getGroup().visibleProperty().unbind();
-		pane.removeShapeGeometry( this );
+		getPane().removeShapeGeometry( this );
 	}
 
 	@Override

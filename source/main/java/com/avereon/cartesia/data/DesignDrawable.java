@@ -231,13 +231,11 @@ public abstract class DesignDrawable extends DesignNode {
 		String newLayerId = String.valueOf( newValue );
 		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
 
-		DesignLayer oldLayer = getLayer();
-		try( Txn ignored = Txn.create() ) {
+		final DesignLayer oldLayer = getLayer();
+		Txn.run( () -> {
 			DesignLayer newLayer = getDesign().findLayerById( newLayerId );
 			newLayer.addDrawable( oldLayer.removeDrawable( this ) );
-		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error changing layer" );
-		}
+		} );
 
 		return newValue;
 	}
