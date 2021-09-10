@@ -36,6 +36,7 @@ public abstract class DesignShape extends DesignDrawable {
 		return getValue( ORIGIN );
 	}
 
+	@SuppressWarnings( "unchecked" )
 	public <T extends DesignShape> T setOrigin( Point3D origin ) {
 		setValue( ORIGIN, origin );
 		return (T)this;

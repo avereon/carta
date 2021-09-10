@@ -5,9 +5,6 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
-import com.avereon.cartesia.tool.guide.DesignToolLayersGuide;
-import com.avereon.cartesia.tool.guide.DesignToolPrintsGuide;
-import com.avereon.cartesia.tool.guide.DesignToolViewsGuide;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
 import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
@@ -191,10 +188,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	public final Design getDesign() {
 		return getAssetModel();
-	}
-
-	public final DesignPane getDesignPane() {
-		return designPane;
 	}
 
 	public final DesignContext getDesignContext() {
@@ -638,7 +631,11 @@ public abstract class DesignTool extends GuidedTool {
 		super.deallocate();
 	}
 
-	void showCommandPrompt() {
+	final DesignPane getDesignPane() {
+		return designPane;
+	}
+
+	final void showCommandPrompt() {
 		Fx.run( this::registerStatusBarItems );
 		Fx.run( this::requestFocus );
 	}
