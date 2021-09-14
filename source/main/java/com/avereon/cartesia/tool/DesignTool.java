@@ -44,10 +44,13 @@ import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.print.PageLayout;
+import javafx.print.PrinterJob;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
@@ -118,6 +121,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignPropertiesMap designPropertiesMap;
 
+	private final PrintAction printAction;
+
 	private final PropertiesAction propertiesAction;
 
 	private final DeleteAction deleteAction;
@@ -160,6 +165,7 @@ public abstract class DesignTool extends GuidedTool {
 		this.currentLayer = new SimpleObjectProperty<>();
 		this.currentView = new SimpleObjectProperty<>();
 
+		this.printAction = new PrintAction( product.getProgram() );
 		this.propertiesAction = new PropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
@@ -677,6 +683,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerActions() {
+		pushAction( "print", printAction );
 		pushAction( "properties", propertiesAction );
 		pushAction( "delete", deleteAction );
 		pushAction( "undo", undoAction );
@@ -744,6 +751,7 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
 
+		pullAction( "print", printAction );
 		pullAction( "properties", propertiesAction );
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
@@ -958,13 +966,7 @@ public abstract class DesignTool extends GuidedTool {
 	private void doSetCurrentViewById( String id ) {
 		getDesign().findViews( DesignView.ID, id ).stream().findFirst().ifPresent( v -> {
 			currentViewProperty().set( v );
-
-			Set<DesignLayer> viewLayers = v.getLayers();
-			setViewPoint( v.getOrigin() );
-			setViewRotate( v.getRotate() );
-			setZoom( v.getZoom() );
-			getDesign().getAllLayers().forEach( y -> setLayerVisible( y, viewLayers.contains( y ) ) );
-
+			getDesignPane().setView( v.getLayers(), v.getOrigin(), v.getZoom(), v.getRotate() );
 			//showPropertiesPage( v );
 		} );
 	}
@@ -1074,6 +1076,74 @@ public abstract class DesignTool extends GuidedTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			getCommandContext().command( shortcut );
+		}
+
+	}
+
+	private class PrintAction extends ProgramAction {
+
+		protected PrintAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+
+			getProgram().getTaskManager().submit( Task.of( "Print " + getAsset().getName(), () -> {
+				final PrinterJob job = PrinterJob.createPrinterJob();
+				final PageLayout layout = job.getJobSettings().getPageLayout();
+
+				// NOTE This can be used to give feedback to the user. It can be bound to a text field
+				job.jobStatusProperty().asString();
+
+				// WIDTH and HEIGHT in printer points (1/72)
+				double printableWidth = layout.getPrintableWidth() / 72.0;
+				double printableHeight = layout.getPrintableHeight() / 72.0;
+				log.atConfig().log( "printable w=%sx%s", printableWidth, printableHeight );
+
+				// NOTE This is a rather Swing looking dialog, maybe handle print properties separately
+				//				boolean print = job.showPrintDialog( getScene().getWindow() );
+				//				if( !print ) return;
+
+				final DesignPane printPane = new DesignPane();
+				printPane.setDesign( getDesign() );
+
+				// NOTE The print API uses 72 DPI regardless of the printer
+				printPane.setDpi( 72 );
+
+				printPane.setView( getVisibleLayers(), Point3D.ZERO, getZoom(), getViewRotate() );
+				printPane.setReferenceLayerVisible( false );
+
+				// Move the center of the pane to the center of the page
+				double unitZoom = getDesign().calcDesignUnit().from( 1, DesignUnit.INCH );
+				//				double offsetX = (0.5 * printableWidth) / unitZoom;
+				//				double offsetY = (-0.5 * printableHeight) / unitZoom - getViewPoint().getY() / getZoom();
+
+				double viewpointOffsetX = 0;
+				double viewpointOffsetY = 0;
+
+				// NEXT When the unit is cm, even the offset of zero does not put the origin on the left margin
+				double printableOffsetX = 0;
+				double printableOffsetY = -0.5 * printableHeight * 2.54;
+				double offsetX = printableOffsetX + viewpointOffsetX;
+				double offsetY = printableOffsetY + viewpointOffsetY;
+
+				printPane.getTransforms().add( new Translate( offsetX, offsetY ) );
+
+				// Set the
+				//new Scene( printPane ).setUserAgentStylesheet( getScene().getUserAgentStylesheet() );
+
+				// NOTE DesignPane uses the FX thread for a lot of its work
+				// Need to wait for it to complete
+				Fx.waitFor( 1000 );
+
+				if( job.printPage( printPane ) ) job.endJob();
+			} ) );
 		}
 
 	}

@@ -226,6 +226,11 @@ public class DesignPane extends StackPane {
 		setViewPoint( center );
 	}
 
+	public void setView( Collection<DesignLayer> layers, Point3D center, double zoom, double rotate ) {
+		setView( center, zoom, rotate );
+		getDesign().getAllLayers().forEach( y -> setLayerVisible( y, layers.contains( y ) ) );
+	}
+
 	public Paint getSelectDrawPaint() {
 		return selectDrawPaint == null ? DEFAULT_SELECT_DRAW_PAINT : selectDrawPaint.get();
 	}
