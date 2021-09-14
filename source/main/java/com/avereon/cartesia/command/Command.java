@@ -5,7 +5,6 @@ import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.zerra.color.Paints;
@@ -196,7 +195,7 @@ public class Command {
 
 	protected void addReference( CommandContext context, Collection<DesignShape> shapes ) {
 		this.reference.addAll( shapes );
-		String referencePaint = Paints.toString( DesignPane.DEFAULT_SELECT_DRAW_PAINT );
+		final String referencePaint = Paints.toString( context.getTool().getSelectedDrawPaint() );
 		this.reference.forEach( s -> {
 			s.setReference( true );
 			s.setDrawPaint( referencePaint );

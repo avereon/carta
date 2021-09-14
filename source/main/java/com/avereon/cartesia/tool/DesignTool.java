@@ -51,6 +51,7 @@ import javafx.print.PageLayout;
 import javafx.print.PrinterJob;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Translate;
@@ -335,6 +336,14 @@ public abstract class DesignTool extends GuidedTool {
 
 	public List<Shape> getSelectedShapes() {
 		return new ArrayList<>( selectedShapes );
+	}
+
+	public Paint getSelectedDrawPaint() {
+		return designPane.getSelectDrawPaint();
+	}
+
+	public Paint getSelectedFillPaint() {
+		return designPane.getSelectFillPaint();
 	}
 
 	public boolean isReferenceLayerVisible() {

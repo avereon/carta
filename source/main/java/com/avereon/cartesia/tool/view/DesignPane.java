@@ -60,11 +60,9 @@ public class DesignPane extends StackPane {
 
 	public static final double DEFAULT_ROTATE = 0;
 
-	// FIXME This should probably be moved to the design settings
-	public static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
+	private static final Color DEFAULT_SELECT_DRAW_PAINT = Colors.parse( "#ff00c0ff" );
 
-	// FIXME This should probably be moved to the design settings
-	static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
+	private static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
 	private static final DesignLayerPane NO_LAYER = new DesignLayerPane();
 
@@ -657,7 +655,7 @@ public class DesignPane extends StackPane {
 		boolean invisibleShape = shape.getFill() == null && shape.getStroke() == null;
 		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
-		// This first test is an optimization to determine if the the accurate test needs to be used
+		// This first test is an optimization to determine if the the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is intersecting
 		boolean result = !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
@@ -671,7 +669,7 @@ public class DesignPane extends StackPane {
 		boolean invisibleShape = shape.getFill() == null && shape.getStroke() == null;
 		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
-		// This first test is an optimization to determine if the the accurate test needs to be used
+		// This first test is an optimization to determine if the the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is contained
 		boolean result = ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
