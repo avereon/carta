@@ -889,8 +889,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void configureWorkplane() {
-		// The workplane values are stored in the tool settings
-		// FIXME Where do we store default grid settings? ...in the asset settings.
+		// The workplane values are stored in the asset settings
 		// However, a set of default workplane values may need to be put in the
 		// asset settings because when a tool is closed, the tool settings are deleted.
 		DesignWorkplane workplane = getWorkplane();
@@ -910,7 +909,7 @@ public abstract class DesignTool extends GuidedTool {
 		workplane.setSnapGridY( settings.get( DesignWorkplane.GRID_SNAP_Y, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
 		workplane.setSnapGridZ( settings.get( DesignWorkplane.GRID_SNAP_Z, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
 
-		settings.register( DesignWorkplane.COORDINATE_SYSTEM, e -> setCoordinateSystem( CoordinateSystem.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		settings.register( DesignWorkplane.COORDINATE_SYSTEM, e -> workplane.setCoordinateSystem( CoordinateSystem.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		settings.register( DesignWorkplane.GRID_ORIGIN, e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_VISIBLE, e -> workplane.setMajorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_X, e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
