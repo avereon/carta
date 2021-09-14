@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
@@ -12,6 +13,7 @@ import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
+import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.transaction.Txn;
 import com.avereon.util.DelayedAction;
@@ -21,6 +23,7 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.PropertiesType;
+import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
@@ -1093,8 +1096,10 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
+			String label = Rb.textOr( BundleKey.LABEL, "print", "Print" );
+			String taskName = label + " " + getAsset().getName();
 
-			getProgram().getTaskManager().submit( Task.of( "Print " + getAsset().getName(), () -> {
+			getProgram().getTaskManager().submit( Task.of( taskName, () -> {
 				final PrinterJob job = PrinterJob.createPrinterJob();
 				final PageLayout layout = job.getJobSettings().getPageLayout();
 
@@ -1104,7 +1109,6 @@ public abstract class DesignTool extends GuidedTool {
 				// WIDTH and HEIGHT in printer points (1/72)
 				double printableWidth = layout.getPrintableWidth();
 				double printableHeight = layout.getPrintableHeight();
-				log.atConfig().log( "printable w=%sx%s", printableWidth, printableHeight );
 
 				// NOTE This is a rather Swing looking dialog, maybe handle print properties separately
 				//				boolean print = job.showPrintDialog( getScene().getWindow() );
@@ -1127,7 +1131,8 @@ public abstract class DesignTool extends GuidedTool {
 				// Need to wait for it to complete
 				Fx.waitFor( 1000 );
 
-				if( job.printPage( paperPane ) ) job.endJob();
+				boolean successful = job.printPage( paperPane ) && job.endJob();
+				if( !successful ) getProgram().getNoticeManager().addNotice( new Notice( taskName, job.getJobStatus() ) );
 			} ) );
 		}
 
