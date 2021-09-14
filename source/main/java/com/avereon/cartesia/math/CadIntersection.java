@@ -10,7 +10,9 @@ import com.avereon.curve.math.Intersection3D;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.avereon.cartesia.math.CadPoints.*;
@@ -134,15 +136,15 @@ public class CadIntersection {
 		if( a == null || b == null ) return null;
 
 		// If the line and ellipse are not coplanar then the intersection is potentially the line to the plane.
-		// FIXME This coplanar test is not complete
 		boolean coplanar = CadGeometry.areCoplanar( a.getOrientation(), b.getOrigin() );
 
 		if( !coplanar ) {
-			//			// Use the plane-plane intersection method
-			//			CadOrientation orientationB = a.getOrientation();
-			//			CadOrientation orientationB = b.getOrientation();
-			//			double[][] line = intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(),orientationB.getOrigin(), orientationB.getNormal() );
-			//			return line;
+			// Use the plane-plane intersection method
+			CadOrientation orientationA = a.getOrientation();
+			CadOrientation orientationB = b.getOrientation();
+//			double[][] line = intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(), orientationB.getOrigin(), orientationB.getNormal() );
+//			return line;
+			intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(), orientationB.getOrigin(), orientationB.getNormal() ).stream().findAny().get();
 		}
 
 		Intersection2D xn = Intersection2D.intersectEllipseEllipse( asPoint( a.getOrigin() ),
@@ -185,8 +187,15 @@ public class CadIntersection {
 	}
 
 	public static List<Point3D> intersectLinePlane( DesignLine line, Point3D planeOrigin, Point3D planeNormal ) {
-		Intersection3D intersection = Intersection3D.intersectionLinePlane( asPoint( line.getOrigin() ), asPoint( line.getPoint() ), asPoint( planeOrigin ), asPoint( planeNormal ) );
+		Intersection3D intersection = Intersection3D.intersectLinePlane( asPoint( line.getOrigin() ), asPoint( line.getPoint() ), asPoint( planeOrigin ), asPoint( planeNormal ) );
 		return toFxPoints( intersection.getPoints() );
+	}
+
+	public static Collection<DesignLine> intersectPlanePlane( Point3D originA, Point3D normalA, Point3D originB, Point3D normalB ) {
+		Intersection3D intersection = Intersection3D.intersectPlanePlane( asPoint( originA ), asPoint( normalA ), asPoint( originB ), asPoint( normalB ) );
+		if( intersection.getType() != Intersection.Type.INTERSECTION ) return Set.of();
+		List<Point3D> points = toFxPoints( intersection.getPoints() );
+		return Set.of( new DesignLine( points.get( 0 ), points.get( 1 ) ) );
 	}
 
 	private static List<Point3D> intersectLineCircle( DesignLine a, DesignEllipse b ) {
