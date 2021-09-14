@@ -110,21 +110,13 @@ public class CadIntersection {
 			return points.stream().filter( ellipse::isCoincident ).findFirst().stream().collect( Collectors.toList() );
 		}
 
-		// FIXME Move this logic to Intersection2D
-		// From here to intersectLineCircle() below should be moved
+		Point3D p1 = line.getOrigin();
+		Point3D p2 = line.getPoint();
+		Point3D o = ellipse.getOrigin();
 		double rx = ellipse.getXRadius();
 		double ry = ellipse.getYRadius();
 
-		CadTransform targetToLocal = CadTransform.scale( 1, rx / ry, 0 ).combine( ellipse.getOrientation().getTargetToLocalTransform() );
-		CadTransform localToTarget = ellipse.getOrientation().getLocalToTargetTransform().combine( CadTransform.scale( 1, ry / rx, 0 ) );
-
-		// Transform the line points according to the eccentricity of the ellipse
-		Point3D p1 = targetToLocal.apply( line.getOrigin() );
-		Point3D p2 = targetToLocal.apply( line.getPoint() );
-		List<Point3D> points = intersectLineCircle( new DesignLine( p1, p2 ), ellipse );
-
-		// Transform the intersection points back to the world
-		return points.stream().map( localToTarget::apply ).collect( Collectors.toList() );
+		return toFxPoints( Intersection2D.intersectLineEllipse( asPoint( p1 ), asPoint( p2 ), asPoint( o ), rx, ry ).getPoints() );
 	}
 
 	public static List<Point3D> intersectLineCurve( DesignLine a, DesignCurve b ) {
@@ -180,8 +172,7 @@ public class CadIntersection {
 	}
 
 	public static List<Point3D> intersectCurveCurve( DesignCurve a, DesignCurve b ) {
-		Intersection2D xn = Intersection2D.intersectBezier3Bezier3(
-			asPoint( a.getOrigin() ),
+		Intersection2D xn = Intersection2D.intersectBezier3Bezier3( asPoint( a.getOrigin() ),
 			asPoint( a.getOriginControl() ),
 			asPoint( a.getPointControl() ),
 			asPoint( a.getPoint() ),

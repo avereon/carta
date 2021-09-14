@@ -23,7 +23,7 @@ public class CadOrientation {
 		this.orientation = new Orientation( CadPoints.asPoint( origin ), CadPoints.asPoint( normal ), CadPoints.asPoint( rotate ) );
 	}
 
-	private CadOrientation( Orientation orientation ) {
+	CadOrientation( Orientation orientation ) {
 		this.orientation = orientation;
 	}
 
@@ -121,5 +121,9 @@ public class CadOrientation {
 	}
 
 	public static boolean areGeometricallyEqual( CadOrientation a, CadOrientation b ) {return Orientation.areGeometricallyEqual( a.orientation, b.orientation );}
+
+	Orientation getOrientation() {
+		return orientation;
+	}
 
 }
