@@ -1102,47 +1102,32 @@ public abstract class DesignTool extends GuidedTool {
 				job.jobStatusProperty().asString();
 
 				// WIDTH and HEIGHT in printer points (1/72)
-				double printableWidth = layout.getPrintableWidth() / 72.0;
-				double printableHeight = layout.getPrintableHeight() / 72.0;
+				double printableWidth = layout.getPrintableWidth();
+				double printableHeight = layout.getPrintableHeight();
 				log.atConfig().log( "printable w=%sx%s", printableWidth, printableHeight );
 
 				// NOTE This is a rather Swing looking dialog, maybe handle print properties separately
 				//				boolean print = job.showPrintDialog( getScene().getWindow() );
 				//				if( !print ) return;
 
-				final DesignPane printPane = new DesignPane();
-				printPane.setDesign( getDesign() );
-
 				// NOTE The print API uses 72 DPI regardless of the printer
-				printPane.setDpi( 72 );
+				final DesignPane designPane = new DesignPane();
+				designPane.setDpi( 72 );
+				designPane.setReferenceLayerVisible( false );
+				designPane.setDesign( getDesign() );
+				designPane.setView( getVisibleLayers(), getViewPoint(), getZoom(), getViewRotate() );
 
-				printPane.setView( getVisibleLayers(), Point3D.ZERO, getZoom(), getViewRotate() );
-				printPane.setReferenceLayerVisible( false );
+				// Create an encapsulating pane to represent the paper
+				final Pane paperPane = new Pane( designPane );
 
-				// Move the center of the pane to the center of the page
-				double unitZoom = getDesign().calcDesignUnit().from( 1, DesignUnit.INCH );
-				//				double offsetX = (0.5 * printableWidth) / unitZoom;
-				//				double offsetY = (-0.5 * printableHeight) / unitZoom - getViewPoint().getY() / getZoom();
-
-				double viewpointOffsetX = 0;
-				double viewpointOffsetY = 0;
-
-				// NEXT When the unit is cm, even the offset of zero does not put the origin on the left margin
-				double printableOffsetX = 0;
-				double printableOffsetY = -0.5 * printableHeight * 2.54;
-				double offsetX = printableOffsetX + viewpointOffsetX;
-				double offsetY = printableOffsetY + viewpointOffsetY;
-
-				printPane.getTransforms().add( new Translate( offsetX, offsetY ) );
-
-				// Set the
-				//new Scene( printPane ).setUserAgentStylesheet( getScene().getUserAgentStylesheet() );
+				// Move the center of the paper pane to the center of the printable area
+				paperPane.getTransforms().add( new Translate( 0.5 * printableWidth, 0.5 * printableHeight ) );
 
 				// NOTE DesignPane uses the FX thread for a lot of its work
 				// Need to wait for it to complete
 				Fx.waitFor( 1000 );
 
-				if( job.printPage( printPane ) ) job.endJob();
+				if( job.printPage( paperPane ) ) job.endJob();
 			} ) );
 		}
 
