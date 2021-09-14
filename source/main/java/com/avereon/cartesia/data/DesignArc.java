@@ -138,6 +138,30 @@ public class DesignArc extends DesignEllipse {
 		return this;
 	}
 
+	public void moveEndpoint( Point3D point, Point3D target ) {
+		if( point == null ) return;
+
+		// Determine the start point
+		Point3D startPoint = CadGeometry.ellipsePoint360( this, getStart() );
+
+		// Determine the point angle
+		double theta = CadGeometry.ellipseAngle360( this, point );
+
+		try( Txn ignore = Txn.create() ) {
+			if( CadGeometry.areSamePoint( target, startPoint ) ) {
+				setStart( theta );
+				setExtent( getExtent() + getStart() - theta );
+			} else {
+				double extent = (theta - getStart()) % 360;
+				if( extent < -180 ) extent += 360;
+				if( extent > 180 ) extent -= 360;
+				setExtent( extent );
+			}
+		} catch( TxnException exception ) {
+			log.atSevere().log( "Unable to trim arc" );
+		}
+	}
+
 	@Override
 	public String toString() {
 		return super.toString( ORIGIN, X_RADIUS, Y_RADIUS, ROTATE, START, EXTENT, TYPE );

@@ -51,10 +51,10 @@ public class DesignLine extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		Txn.run(() -> {
+		Txn.run( () -> {
 			setOrigin( transform.apply( getOrigin() ) );
 			setPoint( transform.apply( getPoint() ) );
-		});
+		} );
 	}
 
 	protected Map<String, Object> asMap() {
@@ -70,9 +70,17 @@ public class DesignLine extends DesignShape {
 		return this;
 	}
 
-//	@Override
-//	public String toString() {
-//		return super.toString( ORIGIN, POINT );
-//	}
+	public void moveEndpoint( Point3D target ) {
+		if( getOrigin() == target ) {
+			setOrigin( target );
+		} else {
+			setPoint( target );
+		}
+	}
+
+	//	@Override
+	//	public String toString() {
+	//		return super.toString( ORIGIN, POINT );
+	//	}
 
 }

@@ -194,7 +194,7 @@ public class DesignArcTest {
 		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( -45.0 ) );
 		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 
 		// Mirror it back
 		arc.apply( transform );
@@ -202,7 +202,7 @@ public class DesignArcTest {
 		// This ends up as 255 normalized to -135
 		assertThat( arc.getStart(), near( -135.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 	}
 
 	@Test
@@ -214,14 +214,14 @@ public class DesignArcTest {
 		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( 45.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 
 		// Mirror it back
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( 135 ) );
 		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 	}
 
 	@Test
@@ -234,14 +234,14 @@ public class DesignArcTest {
 		// The sum of the start and the rotate should be -135
 		assertThat( arc.getStart(), near( -45.0 ) );
 		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( -90.0 ));
+		assertThat( arc.getRotate(), near( -90.0 ) );
 
 		// Mirror it back
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( -135.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 	}
 
 	@Test
@@ -253,14 +253,14 @@ public class DesignArcTest {
 		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( 45.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 
 		// Mirror it back
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( 135.0 ) );
 		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
 	}
 
 	@Test
@@ -273,14 +273,61 @@ public class DesignArcTest {
 		// The sum of the start and the rotate should be -135
 		assertThat( arc.getStart(), near( 45.0 ) );
 		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( -90.0 ));
+		assertThat( arc.getRotate(), near( -90.0 ) );
 
 		// Mirror it back
 		arc.apply( transform );
 		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
 		assertThat( arc.getStart(), near( 135.0 ) );
 		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ));
+		assertThat( arc.getRotate(), near( 0.0 ) );
+	}
+
+	@Test
+	void testMoveEndpointCW() {
+		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
+
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 180 - alpha, -180 + alpha, DesignArc.Type.OPEN );
+		arc.moveEndpoint( new Point3D( 5, 5, 0 ), new Point3D( 6, 2, 0 ) );
+
+		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( 180 - alpha ) );
+		assertThat( arc.getExtent(), is( -180 + 2 * alpha ) );
+	}
+
+	@Test
+	void testMoveEndpointCCW() {
+		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, alpha, 180 - alpha, DesignArc.Type.OPEN );
+		arc.moveEndpoint( new Point3D( -3, 5, 0 ), new Point3D( -4, 2, 0 ) );
+
+		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( alpha ) );
+		assertThat( arc.getExtent(), is( 180 - 2 * alpha ) );
+	}
+
+	@Test
+	void testMoveEndpointBacksideCW() {
+		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, -90 - alpha, -180 + alpha, DesignArc.Type.OPEN );
+		arc.moveEndpoint( new Point3D( -2, 6, 0 ), new Point3D( 1, -3, 0 ) );
+		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( -90 - alpha ) );
+		assertThat( arc.getExtent(), is( -180 + 2 * alpha ) );
+	}
+
+	@Test
+	void testMoveEndpointBacksideCCW() {
+		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 90 + alpha, 180 - alpha, DesignArc.Type.OPEN );
+		arc.moveEndpoint( new Point3D( -2, -2, 0 ), new Point3D( 1, -3, 0 ) );
+		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
+		assertThat( arc.calcRotate(), is( 0.0 ) );
+		assertThat( arc.getStart(), is( 90 + alpha ) );
+		assertThat( arc.getExtent(), is( 180 - 2 * alpha ) );
 	}
 
 }
