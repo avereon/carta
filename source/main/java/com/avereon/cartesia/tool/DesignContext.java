@@ -15,19 +15,11 @@ public class DesignContext {
 
 	private final CoordinateStatus coordinates;
 
-	private final DesignWorkplane workplane;
-
-	// FIXME Move the coordinate system to designWorkplane???
-	@Deprecated
-	private CoordinateSystem coordinateSystem;
-
 	public DesignContext( ProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
 		this.commandContext = new CommandContext( product );
 		this.coordinates = new CoordinateStatus( product );
-		this.coordinateSystem = CoordinateSystem.ORTHO;
-		this.workplane = new DesignWorkplane();
 	}
 
 	public final ProgramProduct getProduct() {
@@ -48,19 +40,6 @@ public class DesignContext {
 
 	public final CoordinateStatus getCoordinateStatus() {
 		return coordinates;
-	}
-
-	@Deprecated
-	public final DesignWorkplane getWorkplane() {
-		return workplane;
-	}
-
-	public final CoordinateSystem getCoordinateSystem() {
-		return coordinateSystem;
-	}
-
-	public final void setCoordinateSystem( CoordinateSystem coordinateSystem ) {
-		this.coordinateSystem = coordinateSystem == null ? CoordinateSystem.ORTHO : coordinateSystem;
 	}
 
 	public final void setMouse( MouseEvent event ) {
