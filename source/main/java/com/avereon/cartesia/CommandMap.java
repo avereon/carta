@@ -162,16 +162,20 @@ public class CommandMap {
 		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearest() );
 		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
 
-		// Event type actions
+		// Single select
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
+		// Add/remove select
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );
+		// Snap nearest
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
-
-		// FIXME Conflicts with select
-		//add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-spin" );
+		// Camera move
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
+		// Camera spin
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, true, false, false ), "camera-spin" );
+		// Camera zoom
 		add( new CommandEventKey( ScrollEvent.SCROLL ), "camera-zoom" );
 		add( new CommandEventKey( ZoomEvent.ZOOM ), "camera-zoom" );
+		// Camera walk
 		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-walk" );
 		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-walk" );
 
