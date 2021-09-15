@@ -16,8 +16,8 @@ public class Trim extends CadEdit{
 
 	public static void trim( DesignTool tool, DesignShape trim, DesignShape edge, Point3D trimPoint, Point3D edgePoint ) {
 		List<Point3D> intersections = CadIntersection.getIntersections( trim, edge );
-		Point3D point = CadPoints.getNearestOnScreen( tool, edgePoint, intersections );
-		update( tool, trim, trimPoint, point );
+		Point3D target = CadPoints.getNearestOnScreen( tool, edgePoint, intersections );
+		update( tool, trim, trimPoint, target );
 	}
 
 }

@@ -70,8 +70,9 @@ public class DesignLine extends DesignShape {
 		return this;
 	}
 
-	public void moveEndpoint( Point3D target ) {
-		if( getOrigin() == target ) {
+	public void moveEndpoint( Point3D source, Point3D target ) {
+		log.atConfig().log( "CadEdit.updateLine() called..." );
+		if( getOrigin() == source ) {
 			setOrigin( target );
 		} else {
 			setPoint( target );

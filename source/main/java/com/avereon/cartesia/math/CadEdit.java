@@ -13,36 +13,37 @@ import java.util.List;
 @CustomLog
 public class CadEdit {
 
-	protected static void update( DesignTool tool, DesignShape shape, Point3D shapePoint, Point3D point ) {
+	protected static void update( DesignTool tool, DesignShape shape, Point3D shapePoint, Point3D target ) {
 		if( shape instanceof DesignLine ) {
-			updateLine( tool, (DesignLine)shape, shapePoint, point );
+			updateLine( tool, (DesignLine)shape, shapePoint, target );
 		} else if( shape instanceof DesignArc ) {
-			updateArc( tool, (DesignArc)shape, shapePoint, point );
+			updateArc( tool, (DesignArc)shape, shapePoint, target );
 		} else if( shape instanceof DesignCurve ) {
-			updateCurve( tool, (DesignCurve)shape, shapePoint, point );
+			updateCurve( tool, (DesignCurve)shape, shapePoint, target );
 		}
 	}
 
-	protected static void updateLine( DesignTool tool, DesignLine line, Point3D linePoint, Point3D point ) {
-		if( point == null ) return;
-		line.moveEndpoint( CadPoints.getNearestOnScreen( tool, linePoint, line.getOrigin(), line.getPoint() ) );
+	protected static void updateLine( DesignTool tool, DesignLine line, Point3D linePoint, Point3D target ) {
+		if( target == null ) return;
+		Point3D source = CadPoints.getNearestOnScreen( tool, linePoint, line.getOrigin(), line.getPoint() );
+		line.moveEndpoint( source, target );
 	}
 
-	protected static void updateArc( DesignTool tool, DesignArc arc, Point3D trimPoint, Point3D point ) {
+	protected static void updateArc( DesignTool tool, DesignArc arc, Point3D trimPoint, Point3D target ) {
 		// Determine the start point
 		Point3D startPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() );
 		// Determine the extent point
 		Point3D extentPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() + arc.getExtent() );
 		// Determine if we are moving the start point or the extent point
-		Point3D target = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
+		Point3D source = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
 
-		arc.moveEndpoint( point, target );
+		arc.moveEndpoint( source, target );
 	}
 
-	protected static void updateCurve( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D point ) {
-		if( point == null ) return;
+	protected static void updateCurve( DesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D target ) {
+		if( target == null ) return;
 
-		double t = CadGeometry.getCurveParametricValue( curve, point );
+		double t = CadGeometry.getCurveParametricValue( curve, target );
 		List<DesignCurve> curves = CadGeometry.curveSubdivide( curve, t );
 		if( curves.size() < 1 ) return;
 

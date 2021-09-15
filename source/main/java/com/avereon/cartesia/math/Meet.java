@@ -16,9 +16,9 @@ public class Meet extends CadEdit {
 
 	public static void meet( DesignTool tool, DesignShape trim, DesignShape edge, Point3D trimPoint, Point3D edgePoint ) {
 		List<Point3D> intersections = CadIntersection.getIntersections( trim, edge );
-		Point3D point = CadPoints.getNearestOnScreen( tool, edgePoint, intersections );
-		update( tool, trim, trimPoint, point );
-		update( tool, edge, edgePoint, point );
+		Point3D target = CadPoints.getNearestOnScreen( tool, edgePoint, intersections );
+		update( tool, trim, trimPoint, target );
+		update( tool, edge, edgePoint, target );
 	}
 
 }
