@@ -138,14 +138,8 @@ public class CadIntersection {
 		// If the line and ellipse are not coplanar then the intersection is potentially the line to the plane.
 		boolean coplanar = CadGeometry.areCoplanar( a.getOrientation(), b.getOrigin() );
 
-		if( !coplanar ) {
-			// Use the plane-plane intersection method
-			CadOrientation orientationA = a.getOrientation();
-			CadOrientation orientationB = b.getOrientation();
-//			double[][] line = intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(), orientationB.getOrigin(), orientationB.getNormal() );
-//			return line;
-			intersectPlanePlane( orientationA.getOrigin(), orientationA.getNormal(), orientationB.getOrigin(), orientationB.getNormal() ).stream().findAny().get();
-		}
+		// This results in a line and is not supported
+		if( !coplanar ) return List.of();
 
 		Intersection2D xn = Intersection2D.intersectEllipseEllipse( asPoint( a.getOrigin() ),
 			a.getXRadius(),
