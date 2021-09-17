@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
@@ -71,8 +72,7 @@ public class DesignLine extends DesignShape {
 	}
 
 	public void moveEndpoint( Point3D source, Point3D target ) {
-		log.atConfig().log( "CadEdit.updateLine() called..." );
-		if( getOrigin() == source ) {
+		if( CadGeometry.areSamePoint( getOrigin(), source ) ) {
 			setOrigin( target );
 		} else {
 			setPoint( target );

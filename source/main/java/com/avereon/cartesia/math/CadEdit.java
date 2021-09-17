@@ -35,7 +35,7 @@ public class CadEdit {
 		// Determine the extent point
 		Point3D extentPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() + arc.getExtent() );
 		// Determine if we are moving the start point or the extent point
-		Point3D source = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
+		Point3D source = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, target );
 
 		arc.moveEndpoint( source, target );
 	}

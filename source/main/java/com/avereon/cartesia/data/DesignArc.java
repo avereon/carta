@@ -138,17 +138,17 @@ public class DesignArc extends DesignEllipse {
 		return this;
 	}
 
-	public void moveEndpoint( Point3D point, Point3D target ) {
-		if( point == null ) return;
+	public void moveEndpoint( Point3D source, Point3D target ) {
+		if( source == null ) return;
 
 		// Determine the start point
 		Point3D startPoint = CadGeometry.ellipsePoint360( this, getStart() );
 
 		// Determine the point angle
-		double theta = CadGeometry.ellipseAngle360( this, point );
+		double theta = CadGeometry.ellipseAngle360( this, target );
 
 		try( Txn ignore = Txn.create() ) {
-			if( CadGeometry.areSamePoint( target, startPoint ) ) {
+			if( CadGeometry.areSamePoint( startPoint, source ) ) {
 				setStart( theta );
 				setExtent( getExtent() + getStart() - theta );
 			} else {
