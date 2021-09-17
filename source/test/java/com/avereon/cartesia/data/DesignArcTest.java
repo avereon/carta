@@ -288,7 +288,7 @@ public class DesignArcTest {
 		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
 
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 180 - alpha, -180 + alpha, DesignArc.Type.OPEN );
-		arc.moveEndpoint( new Point3D( 5, 5, 0 ), new Point3D( 6, 2, 0 ) );
+		arc.moveEndpoint( new Point3D( 6, 2, 0 ), new Point3D( 5, 5, 0 ) );
 
 		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
 		assertThat( arc.calcRotate(), is( 0.0 ) );
@@ -300,7 +300,7 @@ public class DesignArcTest {
 	void testMoveEndpointCCW() {
 		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, alpha, 180 - alpha, DesignArc.Type.OPEN );
-		arc.moveEndpoint( new Point3D( -3, 5, 0 ), new Point3D( -4, 2, 0 ) );
+		arc.moveEndpoint( new Point3D( -4, 2, 0 ), new Point3D( -3, 5, 0 ) );
 
 		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
 		assertThat( arc.calcRotate(), is( 0.0 ) );
@@ -312,7 +312,7 @@ public class DesignArcTest {
 	void testMoveEndpointBacksideCW() {
 		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, -90 - alpha, -180 + alpha, DesignArc.Type.OPEN );
-		arc.moveEndpoint( new Point3D( -2, 6, 0 ), new Point3D( 1, -3, 0 ) );
+		arc.moveEndpoint( new Point3D( 1, -3, 0 ), new Point3D( -2, 6, 0 ) );
 		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
 		assertThat( arc.calcRotate(), is( 0.0 ) );
 		assertThat( arc.getStart(), is( -90 - alpha ) );
@@ -323,7 +323,7 @@ public class DesignArcTest {
 	void testMoveEndpointBacksideCCW() {
 		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 90 + alpha, 180 - alpha, DesignArc.Type.OPEN );
-		arc.moveEndpoint( new Point3D( -2, -2, 0 ), new Point3D( 1, -3, 0 ) );
+		arc.moveEndpoint( new Point3D( 1, -3, 0 ), new Point3D( -2, -2, 0 ) );
 		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
 		assertThat( arc.calcRotate(), is( 0.0 ) );
 		assertThat( arc.getStart(), is( 90 + alpha ) );
