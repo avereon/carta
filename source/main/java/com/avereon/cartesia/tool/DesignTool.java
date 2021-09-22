@@ -801,6 +801,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
 		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+		// NOTE This does not store the showing flag, just the visible flag
 	}
 
 	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {

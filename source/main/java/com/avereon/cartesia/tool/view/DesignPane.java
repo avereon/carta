@@ -269,8 +269,19 @@ public class DesignPane extends StackPane {
 			yy.setVisible( visible );
 			if( visible ) {
 				visibleLayers.add( layer );
+				// Add showing child layers
+				layer
+					.getAllLayers()
+					.stream()
+					.filter( layerMap::containsKey )
+					.map( layerMap::get )
+					.filter( ysy -> ysy.getLayerPane().isShowing() )
+					.map( DesignLayerView::getDesignLayer )
+					.forEach( visibleLayers::add );
 			} else {
 				visibleLayers.remove( layer );
+				// Remove hidden child layers
+				layer.getAllLayers().forEach( visibleLayers::remove );
 			}
 		} ) );
 	}
