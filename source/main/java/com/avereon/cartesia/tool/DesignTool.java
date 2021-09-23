@@ -4,6 +4,7 @@ import com.avereon.cartesia.BundleKey;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
@@ -58,10 +59,7 @@ import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -289,6 +287,49 @@ public abstract class DesignTool extends GuidedTool {
 		return selectedShapes;
 	}
 
+	public Shape nearestShape2d( Collection<Shape> shapes, Point3D point ) {
+		// Go through all the shapes and find the nearest
+		double distance;
+		double minDistance = Double.MAX_VALUE;
+		Shape nearest = null;
+
+		for( Shape shape : shapes ) {
+			DesignShape data = DesignShapeView.getDesignData( shape );
+			if( data == null || data.isReference() ) continue;
+			distance = data.distanceTo( point );
+			if( distance < minDistance ) {
+				nearest = shape;
+				minDistance = distance;
+			}
+		}
+
+		return nearest;
+	}
+
+	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
+		Point3D mouse = worldToScreen( point );
+
+		// Go through all the reference points, convert them to screen coordinates and find the nearest
+		double distance;
+		double minDistance = Double.MAX_VALUE;
+		Point3D nearest = CadPoints.NONE;
+
+		for( Shape shape : shapes ) {
+			DesignShape data = DesignShapeView.getDesignData( shape );
+			if( data == null || data.isReference() ) continue;
+			List<ConstructionPoint> cps = DesignShapeView.getConstructionPoints( shape );
+			for( ConstructionPoint cp : cps ) {
+				distance = mouse.distance( worldToScreen( cp.getLayoutX(), cp.getLayoutY(), 0 ) );
+				if( distance < minDistance ) {
+					nearest = cp.getLocation();
+					minDistance = distance;
+				}
+			}
+		}
+
+		return nearest;
+	}
+
 	public void setCurrentLayer( DesignLayer layer ) {
 		currentLayer.set( layer );
 	}
@@ -332,10 +373,6 @@ public abstract class DesignTool extends GuidedTool {
 
 	public List<Shape> getVisibleShapes() {
 		return designPane.getVisibleShapes();
-	}
-
-	public List<Shape> getSelectedShapes() {
-		return new ArrayList<>( selectedShapes );
 	}
 
 	public Paint getSelectedDrawPaint() {
@@ -510,7 +547,7 @@ public abstract class DesignTool extends GuidedTool {
 		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName();
 
 		// Get tool settings
-		double selectApertureRadius = Double.parseDouble( settings.get( SELECT_APERTURE_RADIUS, "1.0" ) );
+		double selectApertureRadius = Double.parseDouble( settings.get( SELECT_APERTURE_RADIUS, "1.5" ) );
 		DesignUnit selectApertureUnit = DesignUnit.valueOf( settings.get( SELECT_APERTURE_UNIT, defaultUnitId ) );
 		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
 		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
@@ -874,7 +911,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void clearSelected() {
-		getSelectedShapes().clear();
+		selectedShapes().clear();
 	}
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {

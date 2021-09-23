@@ -2,9 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -39,10 +37,7 @@ public class DesignLine extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		double[] a = CadPoints.asPoint( getOrigin() );
-		double[] b = CadPoints.asPoint( getPoint() );
-		double[] p = CadPoints.asPoint( point );
-		return Geometry.linePointDistance( a, b, p );
+		return CadGeometry.linePointDistance( getOrigin(), getPoint(), point );
 	}
 
 	@Override

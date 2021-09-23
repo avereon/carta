@@ -13,6 +13,7 @@ import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -394,7 +395,7 @@ public class DesignPane extends StackPane {
 	}
 
 	public List<Shape> worldPointSelect( Point3D anchor, Point2D radii ) {
-		return doSelectByShape( new Ellipse( anchor.getX() - radii.getX(), anchor.getY() - radii.getY(), 2 * radii.getX(), 2 * radii.getY() ), false );
+		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), radii.getX(), radii.getY() ), false );
 	}
 
 	/**
@@ -628,7 +629,10 @@ public class DesignPane extends StackPane {
 		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
 
 		try {
-			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, contains ) ) ).get( 500, TimeUnit.MILLISECONDS );
+			FutureTask<List<Shape>> task = new FutureTask<>( () -> fxSelectByShape( selector, contains ) );
+			Fx.run( task );
+			Thread.yield();
+			return task.get( 500, TimeUnit.MILLISECONDS );
 		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
 			log.atWarn( exception ).log( "Unable to select shapes" );
 		}
@@ -642,21 +646,26 @@ public class DesignPane extends StackPane {
 
 		// The shape must have a fill but no stroke. The selector color is not
 		// important since the selector shape is not shown, is just needs to be set.
-		selector.setFill( Color.RED );
+		selector.setFill( Colors.translucent( Color.RED, 0.5 ) );
 		selector.setStroke( null );
+		selector.setVisible( false );
+
+		Bounds bounds = selector.getLayoutBounds();
+		Point3D center = new Point3D( bounds.getCenterX(), bounds.getCenterY(), bounds.getCenterZ() );
 
 		// check for contains or intersecting
 		List<Shape> shapes = getVisibleShapes();
 		try {
 			select.getChildren().add( selector );
 
-			Stream<Shape> selectStream = shapes.stream().filter( s -> isIntersecting( selector, s ) );
-			if( contains ) selectStream = shapes.stream().filter( s -> isContained( selector, s ) );
+			Stream<Shape> selectStream = shapes.stream().filter( contains ? s -> isContained( selector, s ) : s -> isIntersecting( selector, s ) );
 
-			// This list is in design order
-			List<Shape> selected = selectStream.filter( s -> !DesignShapeView.getDesignData( s ).isReference() ).collect( Collectors.toList() );
-			Collections.reverse( selected );
-			return selected;
+			return selectStream
+				.map( DesignShapeView::getDesignData )
+				.filter( d -> !d.isReference() )
+				.sorted( new NearestShapeComparator( center ) )
+				.flatMap( d -> ((Group)DesignShapeView.getShapeNode( d )).getChildren().stream().map( n -> (Shape)n ) )
+				.collect( Collectors.toList() );
 		} finally {
 			select.getChildren().remove( selector );
 		}
