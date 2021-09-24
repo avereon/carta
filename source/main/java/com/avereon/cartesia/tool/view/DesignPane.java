@@ -650,13 +650,12 @@ public class DesignPane extends StackPane {
 		selector.setStroke( null );
 		selector.setVisible( false );
 
-		Bounds bounds = selector.getLayoutBounds();
-		Point3D center = new Point3D( bounds.getCenterX(), bounds.getCenterY(), bounds.getCenterZ() );
-
 		// check for contains or intersecting
 		List<Shape> shapes = getVisibleShapes();
 		try {
 			select.getChildren().add( selector );
+			Bounds bounds = selector.getLayoutBounds();
+			Point3D center = new Point3D( bounds.getCenterX(), bounds.getCenterY(), bounds.getCenterZ() );
 
 			Stream<Shape> selectStream = shapes.stream().filter( contains ? s -> isContained( selector, s ) : s -> isIntersecting( selector, s ) );
 
