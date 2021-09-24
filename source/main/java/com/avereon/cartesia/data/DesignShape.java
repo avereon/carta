@@ -64,6 +64,10 @@ public abstract class DesignShape extends DesignDrawable {
 		return Double.NaN;
 	}
 
+	public double pathLength() {
+		return Double.NaN;
+	}
+
 	@SuppressWarnings( "MethodDoesntCallSuperMethod" )
 	public DesignShape clone() {
 		// NOTE Immediately adding the cloned shape to the layer will trigger the modified flag

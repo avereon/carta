@@ -1,11 +1,13 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.avereon.cartesia.match.Near.near;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -81,6 +83,14 @@ public class DesignLineTest {
 	void testDistanceTo() {
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) );
 		assertThat( line.distanceTo( new Point3D( 0.5, 0.5, 0 ) ), is( 0.5 ) );
+	}
+
+	@Test
+	void testPathLength() {
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) ).pathLength(), near( 1.0 ) );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, -1, 0 ) ).pathLength(), near( 1.0 ) );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ).pathLength(), near( Constants.SQRT_TWO ) );
+		assertThat( new DesignLine( new Point3D( -2, 1, 0 ), new Point3D( 2, -2, 0 ) ).pathLength(), near( 5.0 ) );
 	}
 
 }

@@ -41,6 +41,11 @@ public class DesignLine extends DesignShape {
 	}
 
 	@Override
+	public double pathLength() {
+		return getPoint().distance( getOrigin() );
+	}
+
+	@Override
 	public DesignLine cloneShape() {
 		return new DesignLine().copyFrom( this, true );
 	}

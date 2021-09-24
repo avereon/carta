@@ -105,6 +105,11 @@ public class DesignMarker extends DesignShape {
 	}
 
 	@Override
+	public double pathLength() {
+		return 0.0;
+	}
+
+	@Override
 	public DesignMarker cloneShape() {
 		return new DesignMarker().copyFrom( this, true );
 	}

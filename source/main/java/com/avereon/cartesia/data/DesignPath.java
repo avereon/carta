@@ -23,6 +23,11 @@ public class DesignPath extends DesignShape {
 	}
 
 	@Override
+	public double pathLength() {
+		return Double.NaN;
+	}
+
+	@Override
 	public DesignPath cloneShape() {
 		return new DesignPath().copyFrom( this, true );
 	}

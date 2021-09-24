@@ -72,6 +72,13 @@ public class DesignCurve extends DesignShape {
 	}
 
 	@Override
+	public double pathLength() {
+		// TODO Improve DesignCurve.pathLength()
+		// This implementation is a simple estimate based on the control points
+		return getPoint().distance( getOrigin() );
+	}
+
+	@Override
 	public DesignCurve cloneShape() {
 		return new DesignCurve().copyFrom( this, true );
 	}

@@ -98,6 +98,13 @@ public class DesignArc extends DesignEllipse {
 	}
 
 	@Override
+	public double pathLength() {
+		// TODO Improve DesignArc.pathLength()
+		// This implementation is a simple estimate based on the origin and radius
+		return 2 * Math.PI * getRadius();
+	}
+
+	@Override
 	public DesignArc cloneShape() {
 		return new DesignArc().copyFrom( this, true );
 	}

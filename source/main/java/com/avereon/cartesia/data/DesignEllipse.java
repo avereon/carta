@@ -138,6 +138,13 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	@Override
+	public double pathLength() {
+		// TODO Improve DesignEllipse.pathLength()
+		// This implementation is a simple estimate based on the origin and radius
+		return 2 * Math.PI * getRadius();
+	}
+
+	@Override
 	public DesignEllipse cloneShape() {
 		return new DesignEllipse().copyFrom( this, true );
 	}
