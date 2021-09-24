@@ -631,8 +631,7 @@ public class DesignPane extends StackPane {
 		try {
 			FutureTask<List<Shape>> task = new FutureTask<>( () -> fxSelectByShape( selector, contains ) );
 			Fx.run( task );
-			Thread.yield();
-			return task.get( 500, TimeUnit.MILLISECONDS );
+			return task.get( 100, TimeUnit.MILLISECONDS );
 		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
 			log.atWarn( exception ).log( "Unable to select shapes" );
 		}
