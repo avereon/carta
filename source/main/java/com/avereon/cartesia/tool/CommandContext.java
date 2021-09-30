@@ -36,7 +36,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private static final boolean DEFAULT_AUTO_COMMAND = true;
 
-	private static final Level COMMAND_STACK_LOG_LEVEL = Level.FINE;
+	private static final Level COMMAND_STACK_LOG_LEVEL = Level.CONFIG;
 
 	private final ProgramProduct product;
 
@@ -205,8 +205,14 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	void handle( MouseEvent event ) {
-		if( !event.isConsumed() ) commandStack.stream().map( CommandExecuteRequest::getCommand ).forEach( c -> c.handle( event ) );
 		doEventCommand( event );
+
+		// FIXME In the case of select, the mouse released event is sometimes handled before the select command is even on the stack
+		//if( event.getEventType() != MouseEvent.MOUSE_MOVED ) log.atConfig().log( "pass mouse event to command: event=%s", event );
+		//log.atConfig().log("source event type=%s", event.getEventType());
+
+		// NOTE Synchronizing on the command stack here will cause the FX thread to hang
+		commandStack.forEach( r -> r.getCommand().handle( event ) );
 	}
 
 	void handle( ScrollEvent event ) {
@@ -274,13 +280,9 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void doEventCommand( InputEvent event ) {
-		// This method does not handle the key events, those are handled by the action infrastructure
-
+		// NOTE This method does not handle key events, those are handled by the action infrastructure
 		CommandMetadata metadata = CommandMap.get( event );
-		if( metadata != CommandMap.NONE ) {
-			pushCommand( event, metadata.getType(), metadata.getParameters() );
-			event.consume();
-		}
+		if( metadata != CommandMap.NONE ) pushCommand( event, metadata.getType(), metadata.getParameters() );
 	}
 
 	private CommandMetadata mapCommand( String input ) {
@@ -328,6 +330,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			log.atTrace().log( "Command submitted %s", request );
 
 			commandStack.push( request );
+			logCommandStack();
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 
@@ -354,7 +357,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			try {
 				List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
 				for( CommandExecuteRequest request : requests ) {
-					logCommandStack();
+					//logCommandStack();
 					setInputMode( request.getCommand().getInputMode() );
 					result = request.executeCommandStep( result );
 					if( result == Command.INVALID ) break;

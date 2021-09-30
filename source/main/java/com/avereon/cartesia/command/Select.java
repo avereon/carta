@@ -7,7 +7,9 @@ import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
+@CustomLog
 public class Select extends Command {
 
 	private CommandEventKey eventKey;
@@ -33,12 +35,12 @@ public class Select extends Command {
 			}
 		}
 
-		return COMPLETE;
+		throw new IllegalArgumentException( "Invalid parameter=%s" + parameters[0] );
 	}
 
 	private Object mousePressed( CommandContext context, MouseEvent event ) {
-		eventKey = CommandEventKey.of( event );
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
+		eventKey = CommandEventKey.of( event );
 		return INCOMPLETE;
 	}
 
