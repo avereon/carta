@@ -205,7 +205,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	void handle( MouseEvent event ) {
+		if( event.getEventType() == MouseEvent.MOUSE_RELEASED && commandStack.isEmpty() ) log.atWarn().log( "Command stack is empty on mouse release!" );
 		doEventCommand( event );
+
+		if( event.getEventType() == MouseEvent.MOUSE_PRESSED && commandStack.isEmpty() ) log.atWarn().log( "Command stack is empty on mouse pressed!" );
 
 		// FIXME In the case of select, the mouse released event is sometimes handled before the select command is even on the stack
 		//if( event.getEventType() != MouseEvent.MOUSE_MOVED ) log.atConfig().log( "pass mouse event to command: event=%s", event );
@@ -330,7 +333,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			log.atTrace().log( "Command submitted %s", request );
 
 			commandStack.push( request );
-			logCommandStack();
+			//logCommandStack();
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 
