@@ -332,7 +332,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			log.atTrace().log( "Command submitted %s", request );
 
 			commandStack.push( request );
-			//logCommandStack();
+			logCommandStack();
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 
@@ -458,7 +458,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		@Override
 		public String toString() {
-			return command + "{step=" + command.getStep() + " parameters.length=" + parameters.length;
+			return command + "{s=" + command.getStep() + " p=" + parameters.length + "}";
 		}
 	}
 
