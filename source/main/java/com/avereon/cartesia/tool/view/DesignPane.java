@@ -71,6 +71,8 @@ public class DesignPane extends StackPane {
 
 	private static final Paint BARELY_VISIBLE = Paints.parse( "#80808001" );
 
+	private static final Paint SELECTOR_FILL = Colors.translucent( Color.RED, 0.5 );
+
 	private final Pane select;
 
 	private final Pane reference;
@@ -629,9 +631,12 @@ public class DesignPane extends StackPane {
 		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
 
 		try {
-			FutureTask<List<Shape>> task = new FutureTask<>( () -> fxSelectByShape( selector, contains ) );
+			FutureTask<List<Shape>> task = new FutureTask<>( () -> {
+				List<Shape> shapes = fxSelectByShape( selector, contains );
+				return shapes;
+			} );
 			Fx.run( task );
-			return task.get( 100, TimeUnit.MILLISECONDS );
+			return task.get( 500, TimeUnit.MILLISECONDS );
 		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
 			log.atWarn( exception ).log( "Unable to select shapes" );
 		}
@@ -645,7 +650,7 @@ public class DesignPane extends StackPane {
 
 		// The shape must have a fill but no stroke. The selector color is not
 		// important since the selector shape is not shown, is just needs to be set.
-		selector.setFill( Colors.translucent( Color.RED, 0.5 ) );
+		selector.setFill( SELECTOR_FILL );
 		selector.setStroke( null );
 		selector.setVisible( false );
 
@@ -670,31 +675,35 @@ public class DesignPane extends StackPane {
 	}
 
 	private boolean isIntersecting( Shape selector, Shape shape ) {
-		boolean invisibleShape = shape.getFill() == null && shape.getStroke() == null;
-		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+//		boolean invisibleShape = isInvisible( shape );
+//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
 		// This first test is an optimization to determine if the the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is intersecting
 		boolean result = !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
 
-		if( invisibleShape ) shape.setStroke( null );
+//		if( invisibleShape ) shape.setStroke( null );
 
 		return result;
 	}
 
 	private boolean isContained( Shape selector, Shape shape ) {
-		boolean invisibleShape = shape.getFill() == null && shape.getStroke() == null;
-		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+//		boolean invisibleShape = isInvisible( shape );
+//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
 		// This first test is an optimization to determine if the the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is contained
 		boolean result = ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
 
-		if( invisibleShape ) shape.setStroke( null );
+//		if( invisibleShape ) shape.setStroke( null );
 
 		return result;
+	}
+
+	private boolean isInvisible( Shape shape ) {
+		return shape.getFill() == null && shape.getStroke() == null && shape.getFill() != Color.TRANSPARENT && shape.getStroke() != Color.TRANSPARENT;
 	}
 
 	private static class LayerSorter implements Comparator<Node> {
