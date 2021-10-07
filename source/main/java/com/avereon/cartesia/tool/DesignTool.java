@@ -1201,11 +1201,11 @@ public abstract class DesignTool extends GuidedTool {
 			Asset asset = getAsset();
 			SettingsPage page = asset.getType().getSettingsPages().get( "asset" );
 
-			Settings assetSettings = getAssetSettings();
 			Settings designSettings = new NodeSettings( getAsset().getModel() );
+			Settings assetSettings = getAssetSettings();
 
 			// Set the settings for the pages
-			page.setSettings( new StackedSettings( assetSettings, designSettings ) );
+			page.setSettings( new StackedSettings( designSettings, assetSettings ) );
 
 			// Switch to a task thread to get the tool
 			getProgram().getTaskManager().submit( Task.of( () -> {
