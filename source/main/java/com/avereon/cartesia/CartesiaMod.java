@@ -14,7 +14,7 @@ import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
-import com.avereon.zerra.image.BrokenIcon;
+import com.avereon.zarra.image.BrokenIcon;
 import lombok.CustomLog;
 
 @CustomLog

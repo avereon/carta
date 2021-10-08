@@ -1,7 +1,7 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.zerra.image.Proof;
-import com.avereon.zerra.image.SvgIcon;
+import com.avereon.zarra.image.Proof;
+import com.avereon.zarra.image.SvgIcon;
 
 public class DuplexPixelReticle extends DuplexReticle {
 

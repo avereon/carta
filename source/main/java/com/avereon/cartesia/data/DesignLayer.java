@@ -6,7 +6,7 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
-import com.avereon.zerra.color.Paints;
+import com.avereon.zarra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 import lombok.CustomLog;

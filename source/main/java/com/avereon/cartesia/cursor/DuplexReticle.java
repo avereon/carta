@@ -1,8 +1,8 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.zerra.image.Proof;
-import com.avereon.zerra.image.RenderedIcon;
-import com.avereon.zerra.image.VectorImage;
+import com.avereon.zarra.image.Proof;
+import com.avereon.zarra.image.RenderedIcon;
+import com.avereon.zarra.image.VectorImage;
 
 public class DuplexReticle extends RenderedIcon {
 
