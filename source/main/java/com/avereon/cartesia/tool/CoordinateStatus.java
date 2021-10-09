@@ -4,7 +4,7 @@ import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.zerra.javafx.Fx;
+import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;

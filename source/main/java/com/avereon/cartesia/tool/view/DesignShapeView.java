@@ -7,7 +7,7 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
-import com.avereon.zerra.javafx.Fx;
+import com.avereon.zarra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point3D;

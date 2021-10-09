@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
-import com.avereon.zerra.javafx.Fx;
+import com.avereon.zarra.javafx.Fx;
 import javafx.scene.shape.CubicCurve;
 import javafx.scene.shape.Shape;
 

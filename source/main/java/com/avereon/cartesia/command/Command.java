@@ -8,7 +8,7 @@ import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.zarra.color.Paints;
-import com.avereon.zerra.javafx.FxUtil;
+import com.avereon.zarra.javafx.FxUtil;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;

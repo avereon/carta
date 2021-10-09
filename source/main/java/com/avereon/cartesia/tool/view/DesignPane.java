@@ -8,7 +8,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.color.Paints;
-import com.avereon.zerra.javafx.Fx;
+import com.avereon.zarra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
