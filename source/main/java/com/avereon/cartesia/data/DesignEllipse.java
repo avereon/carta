@@ -4,6 +4,8 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.curve.math.Arithmetic;
+import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
@@ -139,9 +141,25 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public double pathLength() {
-		// TODO Improve DesignEllipse.pathLength()
-		// This implementation is a simple estimate based on the origin and radius
-		return 2 * Math.PI * getRadius();
+		double a = getXRadius();
+		double b = getYRadius();
+		double h = ((a - b) * (a - b)) / ((a + b) * (a + b));
+
+		if( Geometry.areSameSize( a, b ) ) return Constants.FULL_CIRCLE * a;
+		if( Geometry.areSameSize( a, 0.0 ) ) return 4 * b;
+		if( Geometry.areSameSize( b, 0.0 ) ) return 4 * a;
+
+		double factor = 0.0;
+		for( int index = 0; index < 12; index++ ) {
+			factor += pathTerm( index, h );
+		}
+
+		return Math.PI * (a + b) * factor;
+	}
+
+	private double pathTerm( int iteration, double h ) {
+		double b = Arithmetic.bchi( iteration );
+		return b * b * Math.pow( h, iteration );
 	}
 
 	@Override

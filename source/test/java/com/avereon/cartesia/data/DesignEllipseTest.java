@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -154,7 +155,19 @@ public class DesignEllipseTest {
 		assertThat( arc.distanceTo( new Point3D( 0, 0, 0 ) ), is( 4.0 ) );
 		assertThat( arc.distanceTo( new Point3D( 5, 0, 0 ) ), is( 1.0 ) );
 
-		// TODO Test ellipses
+		// TODO Test DesignEllipse.distanceTo()
+	}
+
+	@Test
+	void testPathLength() {
+		// Circle
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 1.0 ).pathLength(), near( Constants.FULL_CIRCLE ) );
+
+		// Degenerate ellipses
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 2.0, 0.0 ).pathLength(), near( 8.0, Constants.RESOLUTION_LENGTH ) );
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 0.0, 1.0 ).pathLength(), near( 4.0, Constants.RESOLUTION_LENGTH ) );
+
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0 ).pathLength(), near( 48.44224110273837, Constants.RESOLUTION_LENGTH ) );
 	}
 
 	@Test
