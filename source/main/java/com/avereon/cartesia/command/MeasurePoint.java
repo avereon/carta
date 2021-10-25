@@ -5,7 +5,6 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
@@ -34,20 +33,21 @@ public class MeasurePoint extends MeasureCommand {
 
 		try {
 			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );
+			// TODO Run the point value through the design value formatter
+			String point = CadShapes.toString( p1 );
 
 			String title = Rb.text( BundleKey.NOTICE, "measurement" );
-			String message = Rb.text( BundleKey.NOTICE, "point", CadShapes.toString( p1 ) );
+			String message = Rb.text( BundleKey.NOTICE, "point", point );
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
 				ClipboardContent content = new ClipboardContent();
-				// TODO Run the point value through the design value formatter
-				content.putString( CadShapes.toString( p1 ) );
+				content.putString( point );
 				clipboard.setContent( content );
 			} ) );
 			if( context.isInteractive() ) context.getProduct().getProgram().getNoticeManager().addNotice( notice );
 
-			log.atDebug().log( "Measured point=%s", LazyEval.of( () -> CadShapes.toString( p1 ) ) );
+			log.atDebug().log( "Measured point=%s", point );
 			return p1;
 		} catch( ParseException exception ) {
 			String title = Rb.text( BundleKey.NOTICE, "command-error" );

@@ -751,6 +751,15 @@ public abstract class DesignTool extends GuidedTool {
 		pushCommandAction( "draw-marker" );
 		pushCommandAction( "draw-path" );
 
+		pushCommandAction( "measure-angle" );
+		pushCommandAction( "measure-distance" );
+		pushCommandAction( "measure-point" );
+
+		ProgramAction gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
+		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
+		ProgramAction snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
+		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
+
 		String viewActions = "grid-toggle snap-grid-toggle";
 		String drawMarkerActions = "marker[draw-marker]";
 		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
@@ -758,12 +767,15 @@ public abstract class DesignTool extends GuidedTool {
 		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
 		String drawCurveActions = "curve[draw-curve-4 draw-path]";
 
+		String measurementActions = "measure[measure-angle measure-distance measure-point]";
+
 		StringBuilder menus = new StringBuilder( viewActions );
-		menus.append( " " ).append( drawMarkerActions );
+		menus.append( "|" ).append( drawMarkerActions );
 		menus.append( " " ).append( drawLineActions );
 		menus.append( " " ).append( drawCircleActions );
 		menus.append( " " ).append( drawEllipseActions );
 		menus.append( " " ).append( drawCurveActions );
+		menus.append( "|" ).append( measurementActions );
 
 		StringBuilder tools = new StringBuilder( viewActions );
 		tools.append( " " ).append( drawMarkerActions );
@@ -774,11 +786,6 @@ public abstract class DesignTool extends GuidedTool {
 
 		pushMenus( menus.toString() );
 		pushTools( tools.toString() );
-
-		ProgramAction gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
-		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
-		ProgramAction snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
-		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 	}
 
 	private void unregisterActions() {

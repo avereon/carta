@@ -36,7 +36,9 @@
 
 	<properties>
 		<curve.version>[0.2,)</curve.version>
-		<xenon.version>[1.5,)</xenon.version>
+		<xenon.version>[1.6-SNAPSHOT,)</xenon.version>
+		<zerra.version>[0.8-SNAPSHOT,)</zerra.version>
+		<monocle.version>jdk-12.0.1+2</monocle.version>
 		<jep.version>2.24</jep.version>
 		<images-folder>target/main/images</images-folder>
 	</properties>
