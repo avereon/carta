@@ -136,7 +136,11 @@ public class DesignEllipse extends DesignShape {
 		// This implementation is a simple estimate based on the origin and radius
 		double[] o = CadPoints.asPoint( getOrigin() );
 		double[] p = CadPoints.asPoint( point );
-		return Math.abs( Geometry.distance( o, p ) - getRadius() );
+		return isCircle() ? Math.abs( Geometry.distance( o, p ) - getRadius() ) : Double.NaN;
+	}
+
+	private boolean isCircle() {
+		return Geometry.areSameSize( getXRadius(), getYRadius() );
 	}
 
 	@Override

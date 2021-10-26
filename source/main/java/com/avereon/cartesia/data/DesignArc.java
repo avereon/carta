@@ -99,9 +99,21 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public double pathLength() {
+		// TODO Calc the t of the start
+		// TODO Calc the t of the start+extent
+		// TODO Calc the parametric path length
+
 		// TODO Improve DesignArc.pathLength()
 		// This implementation is a simple estimate based on the origin and radius
-		return 2 * Math.PI * getRadius();
+		return Double.NaN;
+	}
+
+	private double t( double angle ) {
+		return Math.atan( getXRadius() / getYRadius() * Math.tan( angle ) );
+	}
+
+	private double t360( double angle ) {
+		return Math.toDegrees( t( Math.toRadians( angle ) ) );
 	}
 
 	@Override
