@@ -6,7 +6,7 @@ import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
 @CustomLog
-public class Meet extends EditCommand {
+public class Join extends EditCommand {
 
 	private DesignShape trim;
 

@@ -753,7 +753,9 @@ public abstract class DesignTool extends GuidedTool {
 
 		pushCommandAction( "measure-angle" );
 		pushCommandAction( "measure-distance" );
+		pushCommandAction( "measure-length" );
 		pushCommandAction( "measure-point" );
+		pushCommandAction( "measure-shape" );
 
 		ProgramAction gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
 		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
@@ -767,7 +769,7 @@ public abstract class DesignTool extends GuidedTool {
 		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
 		String drawCurveActions = "curve[draw-curve-4 draw-path]";
 
-		String measurementActions = "measure[measure-angle measure-distance measure-point]";
+		String measurementActions = "measure[measure-angle measure-distance measure-point measure-length measure-shape]";
 
 		StringBuilder menus = new StringBuilder( viewActions );
 		menus.append( "|" ).append( drawMarkerActions );
@@ -806,6 +808,12 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-circle-2" );
 		pullCommandAction( "draw-arc-3" );
 		pullCommandAction( "draw-arc-2" );
+
+		pullCommandAction( "measure-shape" );
+		pullCommandAction( "measure-point" );
+		pullCommandAction( "measure-length" );
+		pullCommandAction( "measure-distance" );
+		pullCommandAction( "measure-angle" );
 
 		pullAction( "print", printAction );
 		pullAction( "properties", propertiesAction );

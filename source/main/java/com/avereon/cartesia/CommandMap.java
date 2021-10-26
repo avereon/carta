@@ -111,15 +111,17 @@ public class CommandMap {
 		// Measure commands
 		add( product, "measure-angle", MeasureAngle.class );
 		add( product, "measure-distance", MeasureDistance.class );
+		add( product, "measure-length", MeasureLength.class );
 		add( product, "measure-point", MeasurePoint.class );
+		add( product, "measure-shape", MeasureShape.class );
 
 		// Modify commands
 		add( product, "copy", Copy.class );
 		add( product, "delete", Delete.class );
 		add( product, "extend", Trim.class );
 		add( product, "flip", Flip.class );
+		add( product, "join", Join.class );
 		add( product, "mirror", Mirror.class );
-		add( product, "meet", Meet.class );
 		add( product, "move", Move.class );
 		add( product, "radial-copy", RadialCopy.class );
 		//add( product, "multi-copy", Copy.class );
