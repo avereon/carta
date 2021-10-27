@@ -1214,13 +1214,17 @@ public abstract class DesignTool extends GuidedTool {
 		public void handle( ActionEvent event ) {
 			// Get the settings pages for the asset type
 			Asset asset = getAsset();
-			SettingsPage page = asset.getType().getSettingsPages().get( "asset" );
+			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
+
+			// FIXME This page doesn't exist yet
+			SettingsPage assetSettingsPage = asset.getType().getSettingsPages().get( "grid" );
 
 			Settings designSettings = new NodeSettings( getAsset().getModel() );
 			Settings assetSettings = getAssetSettings();
 
 			// Set the settings for the pages
-			page.setSettings( new StackedSettings( designSettings, assetSettings ) );
+			designSettingsPage.setSettings( designSettings );
+			assetSettingsPage.setSettings( assetSettings );
 
 			// Switch to a task thread to get the tool
 			getProgram().getTaskManager().submit( Task.of( () -> {
@@ -1230,7 +1234,7 @@ public abstract class DesignTool extends GuidedTool {
 
 					// Fire the event on the FX thread
 					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
-					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, page ) ) );
+					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage ) ) );
 				} catch( Exception exception ) {
 					log.atError( exception ).log();
 				}

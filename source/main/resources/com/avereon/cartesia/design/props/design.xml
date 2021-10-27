@@ -10,8 +10,10 @@
 			<setting key="unit" editor="combobox" provider="design-units"/>
 			<!-- Precision -->
 		</group>
+	</page>
 
-		<!-- Grid -->
+	<!-- Grid -->
+	<page id="grid">
 		<group id="grid">
 			<setting key="coordinate-system" editor="combobox">
 				<option id="ortho" value="ortho"/>
