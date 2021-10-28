@@ -11,6 +11,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.shape.ArcType;
 import lombok.CustomLog;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @CustomLog
@@ -39,6 +40,10 @@ public class DesignArc extends DesignEllipse {
 	public static final String EXTENT = "extent";
 
 	public static final String TYPE = "type";
+
+	private static final String END = "end";
+
+	private static final String LENGTH = "length";
 
 	public DesignArc() {
 		this( null, null, null, null, null );
@@ -114,6 +119,24 @@ public class DesignArc extends DesignEllipse {
 
 	private double t360( double angle ) {
 		return Math.toDegrees( t( Math.toRadians( angle ) ) );
+	}
+
+	@Override
+	public Map<String, Object> getInformation() {
+		Map<String, Object> info = new HashMap<>();
+		info.put( ORIGIN, getOrigin() );
+		if( isCircle() ) {
+			info.put( RADIUS, getRadius() );
+		} else {
+			info.put( X_RADIUS, getXRadius() );
+			info.put( Y_RADIUS, getYRadius() );
+		}
+		if( getRotate() != null ) info.put( ROTATE, getRotate() );
+		info.put( START, getStart() );
+		info.put( EXTENT, getExtent() );
+		info.put( END, getStart() + getExtent() );
+		info.put( LENGTH, pathLength() );
+		return info;
 	}
 
 	@Override

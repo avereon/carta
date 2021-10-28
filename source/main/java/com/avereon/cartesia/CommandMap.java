@@ -113,7 +113,7 @@ public class CommandMap {
 		add( product, "measure-distance", MeasureDistance.class );
 		add( product, "measure-length", MeasureLength.class );
 		add( product, "measure-point", MeasurePoint.class );
-		add( product, "measure-shape", MeasureShape.class );
+		add( product, "shape-information", ShapeInformation.class );
 
 		// Modify commands
 		add( product, "copy", Copy.class );

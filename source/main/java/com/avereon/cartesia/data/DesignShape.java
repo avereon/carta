@@ -68,6 +68,15 @@ public abstract class DesignShape extends DesignDrawable {
 		return Double.NaN;
 	}
 
+	/**
+	 * Get a map of the shape information keyed by RB label.
+	 *
+	 * @return the map of the shape information
+	 */
+	public Map<String,Object> getInformation() {
+		return Map.of();
+	}
+
 	@SuppressWarnings( "MethodDoesntCallSuperMethod" )
 	public DesignShape clone() {
 		// NOTE Immediately adding the cloned shape to the layer will trigger the modified flag

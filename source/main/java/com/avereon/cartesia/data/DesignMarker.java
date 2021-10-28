@@ -110,6 +110,11 @@ public class DesignMarker extends DesignShape {
 	}
 
 	@Override
+	public Map<String, Object> getInformation() {
+		return Map.of( ORIGIN, getOrigin() );
+	}
+
+	@Override
 	public DesignMarker cloneShape() {
 		return new DesignMarker().copyFrom( this, true );
 	}

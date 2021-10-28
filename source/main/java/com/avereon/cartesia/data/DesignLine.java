@@ -16,6 +16,8 @@ public class DesignLine extends DesignShape {
 
 	public static final String POINT = "point";
 
+	public static final String LENGTH = "length";
+
 	public DesignLine() {
 		this( null, null );
 	}
@@ -43,6 +45,11 @@ public class DesignLine extends DesignShape {
 	@Override
 	public double pathLength() {
 		return getPoint().distance( getOrigin() );
+	}
+
+	@Override
+	public Map<String, Object> getInformation() {
+		return Map.of( ORIGIN, getOrigin(), POINT, getPoint(), LENGTH, pathLength() );
 	}
 
 	@Override
@@ -74,7 +81,7 @@ public class DesignLine extends DesignShape {
 	public void moveEndpoint( Point3D source, Point3D target ) {
 		if( CadGeometry.areSamePoint( getOrigin(), source ) ) {
 			setOrigin( target );
-		} else {
+		} else if( CadGeometry.areSamePoint( getPoint(), source ) ) {
 			setPoint( target );
 		}
 	}

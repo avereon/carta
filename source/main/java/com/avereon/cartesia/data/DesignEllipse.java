@@ -12,6 +12,7 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -27,6 +28,8 @@ public class DesignEllipse extends DesignShape {
 	public static final String Y_RADIUS = "y-radius";
 
 	public static final String ROTATE = "rotate";
+
+	private static final String PERIMETER = "perimeter";
 
 	// This is not to be used publicly
 	static final String RADIUS = "radius";
@@ -139,7 +142,7 @@ public class DesignEllipse extends DesignShape {
 		return isCircle() ? Math.abs( Geometry.distance( o, p ) - getRadius() ) : Double.NaN;
 	}
 
-	private boolean isCircle() {
+	boolean isCircle() {
 		return Geometry.areSameSize( getXRadius(), getYRadius() );
 	}
 
@@ -164,6 +167,21 @@ public class DesignEllipse extends DesignShape {
 	private double pathTerm( int iteration, double h ) {
 		double b = Arithmetic.bchi( iteration );
 		return b * b * Math.pow( h, iteration );
+	}
+
+	@Override
+	public Map<String, Object> getInformation() {
+		Map<String,Object> info = new HashMap<>();
+		info.put( ORIGIN, getOrigin() );
+		if( isCircle() ) {
+			info.put( RADIUS, getRadius() );
+		} else {
+			info.put( X_RADIUS, getXRadius() );
+			info.put( Y_RADIUS, getYRadius() );
+		}
+		if( getRotate() != null ) info.put( ROTATE, getRotate() );
+		info.put( PERIMETER, pathLength() );
+		return info;
 	}
 
 	@Override

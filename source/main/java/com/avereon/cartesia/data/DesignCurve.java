@@ -22,6 +22,8 @@ public class DesignCurve extends DesignShape {
 
 	public static final String POINT = "point";
 
+	private static final String LENGTH = "length";
+
 	public DesignCurve() {
 		this( null, null, null, null );
 	}
@@ -73,9 +75,15 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public double pathLength() {
+		return Double.NaN;
 		// TODO Improve DesignCurve.pathLength()
 		// This implementation is a simple estimate based on the control points
-		return getPoint().distance( getOrigin() );
+		//return getPoint().distance( getOrigin() );
+	}
+
+	@Override
+	public Map<String, Object> getInformation() {
+		return Map.of( ORIGIN, getOrigin(),ORIGIN_CONTROL, getOriginControl(), POINT_CONTROL, getPointControl(), POINT, getPoint(), LENGTH, pathLength() );
 	}
 
 	@Override
