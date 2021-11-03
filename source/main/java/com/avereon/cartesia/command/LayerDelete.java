@@ -11,7 +11,12 @@ public class LayerDelete extends LayerCommand {
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		DesignLayer layer = context.getTool().getCurrentLayer();
 		DesignLayer nextLayer = getNextValidLayer( layer );
+
 		layer.getLayer().removeLayer( layer );
+		// FIXME Remove the layer from any views
+		// FIXME Remove the layer from any prints
+
+
 		context.getTool().setCurrentLayer( nextLayer );
 		return COMPLETE;
 	}

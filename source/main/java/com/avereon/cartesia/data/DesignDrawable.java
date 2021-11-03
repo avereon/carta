@@ -232,10 +232,10 @@ public abstract class DesignDrawable extends DesignNode {
 		if( getValue( VIRTUAL_LAYER ).equals( newLayerId ) ) return newValue;
 
 		final DesignLayer oldLayer = getLayer();
-		Txn.run( () -> {
-			DesignLayer newLayer = getDesign().findLayerById( newLayerId );
+		Txn.run( () -> getDesign().ifPresent( d -> {
+			DesignLayer newLayer = d.findLayerById( newLayerId );
 			newLayer.addDrawable( oldLayer.removeDrawable( this ) );
-		} );
+		} ) );
 
 		return newValue;
 	}

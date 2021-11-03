@@ -4,6 +4,7 @@ import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The base node for all design data objects.
@@ -19,12 +20,12 @@ public abstract class DesignNode extends IdNode {
 		return this;
 	}
 
-	public Design getDesign() {
+	public Optional<Design> getDesign() {
 		Node node = this;
-		while( !(node instanceof Design ) ) {
+		while( node != null && !(node instanceof Design) ) {
 			node = node.getParent();
 		}
-		return (Design)node;
+		return Optional.ofNullable( (Design)node );
 	}
 
 }

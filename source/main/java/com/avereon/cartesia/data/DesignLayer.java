@@ -76,7 +76,9 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public boolean isRootLayer() {
-		return this == getDesign().getLayers();
+		Optional<Design> optional = getDesign();
+		if( optional.isEmpty() ) return false;
+		return this == optional.get().getLayers();
 	}
 
 	public String getFullName() {
@@ -99,6 +101,7 @@ public class DesignLayer extends DesignDrawable {
 
 	/**
 	 * Deeply get all the descendent layers in this layer.
+	 *
 	 * @return All descendent layers of this layer
 	 */
 	public List<DesignLayer> getAllLayers() {
@@ -116,6 +119,7 @@ public class DesignLayer extends DesignDrawable {
 
 	/**
 	 * Get only the child layers of this layer, not any descendents.
+	 *
 	 * @return The child layers of this layer
 	 */
 	public List<DesignLayer> getLayers() {
@@ -152,6 +156,12 @@ public class DesignLayer extends DesignDrawable {
 	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer removeLayer( DesignLayer layer ) {
 		removeFromSet( LAYERS, layer );
+
+		getDesign().ifPresent( d -> {
+			d.getViews().forEach( v -> v.removeLayer( layer ) );
+			d.getPrints().forEach( p -> p.removeLayer( layer ) );
+		} );
+
 		return this;
 	}
 
@@ -170,14 +180,14 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
-//	public boolean isVisible() {
-//		return getValue( VISIBLE, false );
-//	}
+	//	public boolean isVisible() {
+	//		return getValue( VISIBLE, false );
+	//	}
 
-//	public DesignLayer setVisible( boolean visible ) {
-//		setValue( VISIBLE, visible );
-//		return this;
-//	}
+	//	public DesignLayer setVisible( boolean visible ) {
+	//		setValue( VISIBLE, visible );
+	//		return this;
+	//	}
 
 	@SuppressWarnings( "UnusedReturnValue" )
 	public <T extends DesignDrawable> T addDrawable( T drawable ) {

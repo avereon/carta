@@ -5,10 +5,7 @@ import com.avereon.data.NodeLink;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -102,7 +99,15 @@ public class DesignView extends DesignNode {
 		clearSet( LAYERS );
 
 		// Use node links for the layers
-		layers.stream().map( NodeLink::new ).forEach( l -> addToSet( LAYERS,l ) );
+		layers.stream().map( NodeLink::new ).forEach( l -> addToSet( LAYERS, l ) );
+		return this;
+	}
+
+	public DesignView removeLayer( DesignLayer layer ) {
+		Collection<NodeLink<DesignLayer>> links = getValues( LAYERS );
+		for( NodeLink<DesignLayer> link : links ) {
+			if( layer.equals( link.getNode() ) ) removeFromSet( LAYERS, link );
+		}
 		return this;
 	}
 
@@ -113,9 +118,9 @@ public class DesignView extends DesignNode {
 		return map;
 	}
 
-	public Map<String,Object> asDeepMap() {
+	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
-		if( getLayers().size() > 0 ) map.put( LAYERS, getLayers().stream().map( IdNode::getId ).collect( Collectors.toSet()) );
+		if( getLayers().size() > 0 ) map.put( LAYERS, getLayers().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
 		return map;
 	}
 

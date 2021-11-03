@@ -171,7 +171,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		if( map.containsKey( DesignView.ZOOM ) ) view.setZoom( ((Number)map.get( DesignView.ZOOM )).doubleValue() );
 
 		List<String> layers = (List<String>)map.getOrDefault( DesignView.LAYERS, Set.of() );
-		view.setLayers( layers.stream().map( design::findLayerById ).collect( Collectors.toSet() ) );
+		view.setLayers( layers.stream().map( design::findLayerById ).filter( Objects::nonNull ).collect( Collectors.toSet() ) );
 		design.addView( view );
 	}
 
