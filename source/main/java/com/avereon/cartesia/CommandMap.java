@@ -89,9 +89,9 @@ public class CommandMap {
 		add( product, "camera-zoom-selected", CameraZoomSelected.class );
 		add( product, "camera-zoom-window", CameraZoomWindow.class );
 
-		// Grid commands
-		// gg - grid toggle
+		// Toggle commands
 		add( product, "grid-toggle", GridToggle.class );
+		add( product, "snap-grid-toggle", SnapGridToggle.class );
 
 		// Draw commands
 		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
@@ -152,17 +152,18 @@ public class CommandMap {
 		add( product, "reference-toggle", ReferencePointsToggle.class );
 
 		// Snap commands
-		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
 		add( product, "snap-center", SnapSelect.class, new SnapCenter() );
 		add( product, "snap-midpoint", SnapSelect.class, new SnapMidpoint() );
 		add( product, "snap-nearest", SnapSelect.class, new SnapNearestCp() );
 		add( product, "snap-intersection", SnapSelect.class, new SnapIntersection() );
+		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
 
 		// Snap auto commands
-		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
-		add( product, "snap-grid-toggle", SnapGridToggle.class );
+		add( product, "snap-auto-center", SnapAuto.class, new SnapCenter() );
+		add( product, "snap-auto-midpoint", SnapAuto.class, new SnapMidpoint() );
 		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearestCp() );
 		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
+		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 
 		// Single select
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
@@ -187,12 +188,15 @@ public class CommandMap {
 
 	private static void printCommandMapByCommand() {
 		actionCommands.values().stream().sorted().forEach( k -> {
+			if( TextUtil.isEmpty( k.getCommand() ) ) return;
 			StringBuilder builder = new StringBuilder();
 			builder.append( k.getCommand() == null ? "  " : k.getCommand() ).append( " -> " ).append( k.getName() );
 			builder.append( " [" ).append( k.getAction() ).append( "]" );
 			if( k.getShortcut() != null ) builder.append( " <" ).append( k.getShortcut() ).append( ">" );
 			System.out.println( builder );
 		} );
+
+		// Event actions???
 	}
 
 	public static boolean hasCommand( String shortcut ) {
