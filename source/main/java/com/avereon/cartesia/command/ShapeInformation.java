@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.view.DesignShapeView;
@@ -45,7 +45,7 @@ public class ShapeInformation extends Command {
 			Map<String, Object> information = shape.getInformation();
 			if( information.isEmpty() ) return COMPLETE;
 
-			Map<String, Object> view = information.keySet().stream().collect( Collectors.toMap( k -> Rb.text( BundleKey.LABEL, k ), information::get ) );
+			Map<String, Object> view = information.keySet().stream().collect( Collectors.toMap( k -> Rb.text( RbKey.LABEL, k ), information::get ) );
 			List<String> labels = new ArrayList<>( view.keySet() );
 			Collections.sort( labels );
 
@@ -58,8 +58,8 @@ public class ShapeInformation extends Command {
 			} );
 			String description = infoString.toString().trim();
 
-			String title = Rb.text( BundleKey.NOTICE, "measurement" );
-			String message = shape == DesignShape.NONE ? Rb.text( BundleKey.NOTICE, "shape-not-selected" ) : description;
+			String title = Rb.text( RbKey.NOTICE, "measurement" );
+			String message = shape == DesignShape.NONE ? Rb.text( RbKey.NOTICE, "shape-not-selected" ) : description;
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -72,8 +72,8 @@ public class ShapeInformation extends Command {
 			log.atDebug().log( "Measured shape=%s", shape );
 			return shape;
 		} catch( Exception exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-measure-shape", exception.getMessage() );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-measure-shape", exception.getMessage() );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		} finally {
 			clearReferenceAndPreview( context );

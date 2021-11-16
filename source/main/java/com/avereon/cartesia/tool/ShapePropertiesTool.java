@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
-import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
@@ -44,7 +44,7 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	@Override
 	protected void ready( OpenAssetRequest request ) {
-		setTitle( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		setTitle( Rb.text( RbKey.LABEL, "shape-properties-tool" ) );
 		setGraphic( getProgram().getIconLibrary().getIcon( "shape-properties" ) );
 	}
 

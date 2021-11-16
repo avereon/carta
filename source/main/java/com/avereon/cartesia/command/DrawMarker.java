@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignMarker;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -36,8 +36,8 @@ public class DrawMarker extends DrawCommand {
 		try {
 			context.getTool().getCurrentLayer().addShape( new DesignMarker( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );
 		} catch( ParseException exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

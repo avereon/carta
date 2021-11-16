@@ -91,21 +91,21 @@ public class CartesiaMod extends Mod {
 		// Register Design2D asset type and tools
 		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
 		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-		design2dEditorRegistration.setName( Rb.text( BundleKey.LABEL, "design-2d-editor" ) );
+		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, design2dEditorRegistration );
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
-		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", BundleKey.PROPS ) );
+		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
 
 		// Register Design3D asset type and tools
 		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
 		//ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
-		//design3dEditorRegistration.setName( Rb.text(BundleKey.LABEL, "design-3d-editor") );
+		//design3dEditorRegistration.setName( Rb.text(RbKey.LABEL, "design-3d-editor") );
 		//registerTool( design3dAssetType, design3dEditorRegistration );
 
 		// Register ShapeProperties asset type and tools
 		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
 		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
-		shapePropertiesRegistration.setName( Rb.text( BundleKey.LABEL, "shape-properties-tool" ) );
+		shapePropertiesRegistration.setName( Rb.text( RbKey.LABEL, "shape-properties-tool" ) );
 		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );
 		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
 

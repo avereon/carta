@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignCurve;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
@@ -71,8 +71,8 @@ public class Stretch extends EditCommand {
 			Point3D target = asPoint( context, parameters[ 2 ] );
 			stretchShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedGeometry(), bounds ), anchor, target );
 		} catch( ParseException exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-stretch-shapes", exception );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-stretch-shapes", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

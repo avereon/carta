@@ -1,8 +1,7 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -51,8 +50,8 @@ public class Move extends EditCommand {
 			moveShapes( context.getTool(), anchor, target );
 			//edit( context.getTool(), CadTransform.translation( target.subtract( anchor ) ) );
 		} catch( ParseException exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-move-shapes", exception );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-move-shapes", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

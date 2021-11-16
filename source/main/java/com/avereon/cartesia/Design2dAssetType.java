@@ -4,7 +4,7 @@ import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
-import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -25,7 +25,7 @@ public class Design2dAssetType extends AssetType {
 		Design2D design = initModel( asset );
 
 		// Create the default layer
-		String constructionLayerName = Rb.textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
+		String constructionLayerName = Rb.textOr( RbKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 		DesignLayer layer = new DesignLayer().setName( constructionLayerName );
 		design.getLayers().addLayer( layer );
 

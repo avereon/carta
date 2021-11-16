@@ -1,7 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.product.Rb;
-import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class PointTypeOptionProvider implements SettingOptionProvider {
 	@Override
 	public String getName( String key ) {
 		if( key.equals( NULL_VALUE_OPTION_KEY ) ) key = "default";
-		return Rb.text( BundleKey.PROPS, "point-type-" + key );
+		return Rb.text( RbKey.PROPS, "point-type-" + key );
 	}
 
 }

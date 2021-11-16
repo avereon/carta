@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignNode;
 import com.avereon.cartesia.data.DesignPrint;
@@ -32,7 +32,7 @@ public class DesignToolPrintsGuide extends Guide {
 		this.tool = tool;
 		this.printNodes = new ConcurrentHashMap<>();
 		this.nodePrints = new ConcurrentHashMap<>();
-		setTitle( Rb.textOr( BundleKey.LABEL, "prints", "Prints" ) );
+		setTitle( Rb.textOr( RbKey.LABEL, "prints", "Prints" ) );
 		setIcon( "prints" );
 	}
 
