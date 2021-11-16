@@ -3,8 +3,8 @@ package com.avereon.cartesia.command;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
-import static com.avereon.cartesia.match.Near.near;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static com.avereon.cartesia.TestConstants.TOLERANCE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DrawCommandTest {
 
@@ -12,26 +12,26 @@ public class DrawCommandTest {
 
 	@Test
 	void testDeriveRotate() {
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 2, 2, 0 ) ), near( 0.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ) ), near( 45.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 1, 3, 0 ) ), near( 90.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 0, 3, 0 ) ), near( 135.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 0, 2, 0 ) ), near( 180.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 0, 1, 0 ) ), near( -135.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 1, 1, 0 ) ), near( -90.0 ) );
-		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 2, 1, 0 ) ), near( -45.0 ) );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 2, 2, 0 ) ) ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ) ) ).isCloseTo( 45.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 1, 3, 0 ) ) ).isCloseTo( 90.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 0, 3, 0 ) ) ).isCloseTo( 135.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 0, 2, 0 ) ) ).isCloseTo( 180.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 0, 1, 0 ) ) ).isCloseTo( -135.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 1, 1, 0 ) ) ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( command.deriveRotate( new Point3D( 1, 2, 0 ), new Point3D( 2, 1, 0 ) ) ).isCloseTo( -45.0, TOLERANCE );
 	}
 
 	@Test
 	void testDeriveYRadius() {
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 2, 3, 0 ) ), near( 0.0 ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 1, 3, 0 ) ), near( Math.sqrt( 0.5 ) ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 0, 3, 0 ) ), near( Math.sqrt( 2 ) ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 0, 2, 0 ) ), near( Math.sqrt( 0.5 ) ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 0, 1, 0 ) ), near( 0.0 ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 1, 1, 0 ) ), near( Math.sqrt( 0.5 ) ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 2, 1, 0 ) ), near( Math.sqrt( 2 ) ) );
-		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 2, 2, 0 ) ), near( Math.sqrt( 0.5 ) ) );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 2, 3, 0 ) ) ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 1, 3, 0 ) ) ).isCloseTo( Math.sqrt( 0.5 ), TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 0, 3, 0 ) ) ).isCloseTo( Math.sqrt( 2 ), TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 0, 2, 0 ) ) ).isCloseTo( Math.sqrt( 0.5 ), TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 0, 1, 0 ) ) ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 1, 1, 0 ) ) ).isCloseTo( Math.sqrt( 0.5 ), TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 2, 1, 0 ) ) ).isCloseTo( Math.sqrt( 2 ), TOLERANCE );
+		assertThat( command.deriveYRadius( new Point3D( 1, 2, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 2, 2, 0 ) ) ).isCloseTo( Math.sqrt( 0.5 ), TOLERANCE );
 	}
 
 }

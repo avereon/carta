@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.view.DesignLayerEvent;
@@ -42,7 +42,7 @@ public class DesignToolLayersGuide extends Guide {
 		this.layerGuideNodes = new ConcurrentHashMap<>();
 		this.guideNodeLayers = new ConcurrentHashMap<>();
 		setIcon( "layers" );
-		setTitle( Rb.textOr( BundleKey.LABEL, "layers", "Layers" ) );
+		setTitle( Rb.textOr( RbKey.LABEL, "layers", "Layers" ) );
 		setDragAndDropEnabled( true );
 	}
 

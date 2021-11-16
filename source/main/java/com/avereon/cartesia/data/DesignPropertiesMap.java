@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
@@ -47,7 +47,7 @@ public class DesignPropertiesMap {
 
 	private static SettingsPage loadSettingsPage( ProgramProduct product, String key ) throws IOException {
 		String pagePath = propertiesPagePath + key + propertiesPageExt;
-		return SettingsPageParser.parse( product, pagePath, BundleKey.PROPS ).get( key );
+		return SettingsPageParser.parse( product, pagePath, RbKey.PROPS ).get( key );
 	}
 
 }

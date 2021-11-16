@@ -17,10 +17,8 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Future;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class CommandContextUIT extends BaseCartesiaUIT {
 
@@ -38,7 +36,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		asset.setModel( new Design2D() );
 		//this.tool = new Design2dEditor( getMod(), asset );
 
-		assertTrue( getProgram().getTaskManager().isRunning() );
+		assertThat( getProgram().getTaskManager().isRunning() ).isTrue();
 		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( asset );
 		this.tool = (DesignTool)future.get();
 
@@ -47,21 +45,21 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 
 	@Test
 	void testInputMode() throws Exception {
-		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 
 		MockCommand command = new MockCommand( 0 );
 		context.submit( tool, command ).waitFor( TIMEOUT );
 
 		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( TIMEOUT );
-		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor( TIMEOUT );
-		assertThat( context.getInputMode(), is( CommandContext.Input.NUMBER ) );
+		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NUMBER );
 		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor( TIMEOUT );
-		assertThat( context.getInputMode(), is( CommandContext.Input.POINT ) );
+		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.POINT );
 		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor( TIMEOUT );
-		assertThat( context.getInputMode(), is( CommandContext.Input.TEXT ) );
+		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.TEXT );
 		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( TIMEOUT );
-		assertThat( context.getInputMode(), is( CommandContext.Input.NONE ) );
+		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 	}
 
 	@Test
@@ -75,7 +73,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		MockCommand command = new MockCommand();
 		context.submit( tool, command );
 		command.waitFor();
-		assertThat( command.getValues().length, is( 0 ) );
+		assertThat( command.getValues().length ).isEqualTo( 0 );
 	}
 
 	@Test
@@ -83,7 +81,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		MockCommand command = new MockCommand();
 		context.submit( tool, command, "0" );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( "0" ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( "0" );
 	}
 
 	@Test
@@ -91,8 +89,8 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		MockCommand command = new MockCommand();
 		context.submit( tool, command, "0", "1" );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( "0" ) );
-		assertThat( command.getValues()[ 1 ], is( "1" ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( "0" );
+		assertThat( command.getValues()[ 1 ] ).isEqualTo( "1" );
 	}
 
 	@Test
@@ -102,7 +100,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		command.waitFor();
 		context.submit( tool, new Value(), "hello" );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( "hello" ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( "hello" );
 	}
 
 	@Test
@@ -114,8 +112,8 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		command.waitFor();
 		context.submit( tool, new Value(), "1" );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( "0" ) );
-		assertThat( command.getValues()[ 1 ], is( "1" ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( "0" );
+		assertThat( command.getValues()[ 1 ] ).isEqualTo( "1" );
 	}
 
 	@Test
@@ -126,7 +124,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		context.setInputMode( CommandContext.Input.NUMBER );
 		context.processText( "4,3,2", true );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( 4.0 ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( 4.0 );
 	}
 
 	@Test
@@ -137,7 +135,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		context.setInputMode( CommandContext.Input.POINT );
 		context.processText( "4,3,2", true );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( new Point3D( 4, 3, 2 ) ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( new Point3D( 4, 3, 2 ) );
 	}
 
 	@Test
@@ -149,7 +147,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		context.setInputMode( CommandContext.Input.POINT );
 		context.processText( "@4,3,2", true );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( new Point3D( 5, 4, 3 ) ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( new Point3D( 5, 4, 3 ) );
 	}
 
 	@Test
@@ -160,7 +158,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		context.setInputMode( CommandContext.Input.TEXT );
 		context.processText( "test", true );
 		command.waitFor();
-		assertThat( command.getValues()[ 0 ], is( "test" ) );
+		assertThat( command.getValues()[ 0 ] ).isEqualTo( "test" );
 	}
 
 	@Test
@@ -173,7 +171,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 			context.processText( "unknown", true );
 			fail();
 		} catch( UnknownCommand exception ) {
-			assertThat( exception.getMessage(), is( "unknown" ) );
+			assertThat( exception.getMessage() ).isEqualTo( "unknown" );
 		}
 	}
 
@@ -181,7 +179,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 	void testAutoCommand() {
 		CommandMap.add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = context.processText( "test", false );
-		assertThat( command, instanceOf( MockCommand.class ) );
+		assertThat( command ).isInstanceOf( MockCommand.class );
 	}
 
 	@Test
@@ -189,7 +187,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		context.setInputMode( CommandContext.Input.TEXT );
 		CommandMap.add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = context.processText( "test", false );
-		assertNull( command );
+		assertThat( command ).isNull();
 	}
 
 }

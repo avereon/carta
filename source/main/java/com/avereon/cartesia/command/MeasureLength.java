@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
@@ -31,8 +31,8 @@ public class MeasureLength extends MeasureCommand {
 
 			double length = shape.pathLength();
 
-			String title = Rb.text( BundleKey.NOTICE, "measurement" );
-			String message = shape == DesignShape.NONE ? Rb.text( BundleKey.NOTICE, "shape-not-selected" ) : Rb.text( BundleKey.NOTICE, "length", length );
+			String title = Rb.text( RbKey.NOTICE, "measurement" );
+			String message = shape == DesignShape.NONE ? Rb.text( RbKey.NOTICE, "shape-not-selected" ) : Rb.text( RbKey.NOTICE, "length", length );
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -45,8 +45,8 @@ public class MeasureLength extends MeasureCommand {
 			log.atDebug().log( "Measured length=%s", length );
 			return point;
 		} catch( Exception exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-measure-shape", exception.getMessage() );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-measure-shape", exception.getMessage() );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

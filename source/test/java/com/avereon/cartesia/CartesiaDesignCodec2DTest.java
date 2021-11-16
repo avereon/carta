@@ -22,8 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 
@@ -61,9 +60,9 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	@Test
 	void testMapper() throws Exception {
 		ObjectWriter writer = MAPPER.writer();
-		assertThat( writer.writeValueAsString( new Point2D( 1, 2 ) ), is( "\"1.0,2.0\"" ) );
-		assertThat( writer.writeValueAsString( new Point3D( 3, 2, 1 ) ), is( "\"3.0,2.0,1.0\"" ) );
-		assertThat( writer.writeValueAsString( Color.web( "0x20608080" ) ), is( "\"0x20608080\"" ) );
+		assertThat( writer.writeValueAsString( new Point2D( 1, 2 ) )).isEqualTo( "\"1.0,2.0\""  );
+		assertThat( writer.writeValueAsString( new Point3D( 3, 2, 1 ) )).isEqualTo( "\"3.0,2.0,1.0\""  );
+		assertThat( writer.writeValueAsString( Color.web( "0x20608080" ) )).isEqualTo( "\"0x20608080\""  );
 	}
 
 	@Test
@@ -81,7 +80,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		codec.load( asset, new ByteArrayInputStream( buffer ) );
 
 		// Check the result
-		assertThat( ((Design)asset.getModel()).asDeepMap(), is( deepMap ) );
+		assertThat( ((Design)asset.getModel()).asDeepMap()).isEqualTo( deepMap  );
 	}
 
 	@Test
@@ -114,7 +113,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 			} );
 
 		Map<String, Object> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
-		assertThat( actual, is( expected ) );
+		assertThat( actual).isEqualTo( expected );
 	}
 
 	private Design createTestDesign( Design design ) {

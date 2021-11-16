@@ -4,37 +4,36 @@ import org.junit.jupiter.api.Test;
 
 import java.text.ParseException;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CadMathTest {
 
 	@Test
 	void testDeg() {
-		assertThat( CadMath.evalNoException( "deg(pi)" ), is( java.lang.Math.toDegrees( java.lang.Math.PI ) ) );
+		assertThat( CadMath.evalNoException( "deg(pi)" ) ).isEqualTo( java.lang.Math.toDegrees( java.lang.Math.PI ) );
 	}
 
 	@Test
 	void testRad() {
-		assertThat( CadMath.evalNoException( "rad(270)" ), is( java.lang.Math.toRadians( 270 ) ) );
+		assertThat( CadMath.evalNoException( "rad(270)" ) ).isEqualTo( java.lang.Math.toRadians( 270 ) );
 	}
 
 	@Test
 	void testEval() throws Exception {
-		assertThat( CadMath.eval( "1/8" ), is( 0.125 ) );
+		assertThat( CadMath.eval( "1/8" ) ).isEqualTo( 0.125 );
 		try {
 			CadMath.eval( "not a valid expression" );
 		} catch( CadMathExpressionException exception ) {
-			assertThat( exception.getMessage(), startsWith( "Unrecognized symbol \"not\"" ) );
-			assertThat( ((ParseException)exception.getCause()).getErrorOffset(), is( -1 ) );
+			assertThat( exception.getMessage() ).startsWith( "Unrecognized symbol \"not\"" );
+			assertThat( ((ParseException)exception.getCause()).getErrorOffset() ).isEqualTo( -1 );
 		}
 	}
 
 	@Test
 	void testEvalNoException() {
-		assertThat( CadMath.evalNoException( "" ), is( 0.0 ) );
-		assertThat( CadMath.evalNoException( "1/8" ), is( 0.125 ) );
-		assertThat( CadMath.evalNoException( "sin(pi)" ), is( java.lang.Math.sin( java.lang.Math.PI ) ) );
+		assertThat( CadMath.evalNoException( "" ) ).isEqualTo( 0.0 );
+		assertThat( CadMath.evalNoException( "1/8" ) ).isEqualTo( 0.125 );
+		assertThat( CadMath.evalNoException( "sin(pi)" ) ).isEqualTo( java.lang.Math.sin( java.lang.Math.PI ) );
 	}
 
 }

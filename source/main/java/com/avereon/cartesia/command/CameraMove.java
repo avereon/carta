@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.CommandEventKey;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
@@ -42,8 +42,8 @@ public class CameraMove extends CameraCommand {
 		try {
 			context.getTool().setViewPoint( context.getTool().getViewPoint().subtract( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );
 		} catch( ParseException exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-marker", exception );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-create-marker", exception );
 			context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

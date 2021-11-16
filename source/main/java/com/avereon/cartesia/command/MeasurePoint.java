@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.cartesia.tool.CommandContext;
@@ -36,8 +36,8 @@ public class MeasurePoint extends MeasureCommand {
 			// TODO Run the point value through the design value formatter
 			String point = CadShapes.toString( p1 );
 
-			String title = Rb.text( BundleKey.NOTICE, "measurement" );
-			String message = Rb.text( BundleKey.NOTICE, "point", point );
+			String title = Rb.text( RbKey.NOTICE, "measurement" );
+			String message = Rb.text( RbKey.NOTICE, "point", point );
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -50,8 +50,8 @@ public class MeasurePoint extends MeasureCommand {
 			log.atDebug().log( "Measured point=%s", point );
 			return p1;
 		} catch( ParseException exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-measure-distance", exception.getMessage() );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-measure-distance", exception.getMessage() );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

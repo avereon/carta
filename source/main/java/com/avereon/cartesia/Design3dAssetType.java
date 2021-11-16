@@ -3,7 +3,7 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.data.Design3D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
-import com.avereon.xenon.BundleKey;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Program;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -29,7 +29,7 @@ public class Design3dAssetType extends AssetType {
 
 		// If there is not a default layer, create one
 		if( design.getLayers().getLayers().size() == 0 ) {
-			String constructionLayerName = Rb.textOr( BundleKey.LABEL, "layer-construction", "construction" ).toLowerCase();
+			String constructionLayerName = Rb.textOr( RbKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 			DesignLayer layer = new DesignLayer().setName( constructionLayerName );
 			design.getLayers().addLayer( layer );
 		}

@@ -5,8 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CoordinateSystemIsometricTest {
 
@@ -14,7 +13,7 @@ public class CoordinateSystemIsometricTest {
 	void testGetGridDots() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "1", "1", "1", "1", "1" );
 		List<Shape> dots = CoordinateSystem.ISO.getGridDots( workplane );
-		assertThat( dots.size(), is( 0 ) );
+		assertThat( dots.size()).isEqualTo( 0 );
 	}
 
 }

@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.PointAssert;
 import com.avereon.cartesia.math.CadTransform;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
@@ -7,51 +8,49 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.avereon.cartesia.match.Near.near;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.avereon.cartesia.TestConstants.TOLERANCE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignArcTest {
 
 	@Test
 	void testModify() {
 		DesignArc line = new DesignArc( new Point3D( 0, 0, 0 ), 1.0, 0.0, 45.0, DesignArc.Type.OPEN );
-		assertTrue( line.isModified() );
+		assertThat( line.isModified() ).isTrue();
 		line.setModified( false );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 
 		line.setOrigin( new Point3D( 0, 0, 0 ) );
 		line.setRadius( 1.0 );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 
 		line.setOrigin( new Point3D( 1, 1, 0 ) );
-		assertTrue( line.isModified() );
+		assertThat( line.isModified() ).isTrue();
 		line.setModified( false );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 
 		line.setRadius( 2.0 );
-		assertTrue( line.isModified() );
+		assertThat( line.isModified() ).isTrue();
 		line.setModified( false );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 	}
 
 	@Test
 	void testOrigin() {
 		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), 2.0, 0.0, 45.0, DesignArc.Type.OPEN );
-		assertThat( arc.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
+		assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 
 		arc.setOrigin( new Point3D( 1, 2, 3 ) );
-		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 3 ) ) );
+		assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
 	void testRadius() {
 		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), 3.0, 0.0, 45.0, DesignArc.Type.OPEN );
-		assertThat( arc.getRadius(), is( 3.0 ) );
+		assertThat( arc.getRadius() ).isEqualTo( 3.0 );
 
 		arc.setRadius( 3.5 );
-		assertThat( arc.getRadius(), is( 3.5 ) );
+		assertThat( arc.getRadius() ).isEqualTo( 3.5 );
 	}
 
 	@Test
@@ -59,15 +58,15 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 3 ), 4.0, 0.0, 90.0, DesignArc.Type.PIE );
 		Map<String, Object> map = arc.asMap();
 
-		assertThat( map.get( DesignArc.SHAPE ), is( DesignArc.ARC ) );
-		assertThat( map.get( DesignArc.ORIGIN ), is( new Point3D( 1, 2, 3 ) ) );
-		assertThat( map.get( DesignArc.RADIUS ), is( 4.0 ) );
-		assertNull( map.get( DesignArc.X_RADIUS ) );
-		assertNull( map.get( DesignArc.Y_RADIUS ) );
-		assertThat( map.get( DesignArc.START ), is( 0.0 ) );
-		assertThat( map.get( DesignArc.EXTENT ), is( 90.0 ) );
-		assertNull( map.get( DesignArc.ROTATE ) );
-		assertThat( map.get( DesignArc.TYPE ), is( DesignArc.Type.PIE ) );
+		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
+		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
+		assertThat( map.get( DesignArc.RADIUS ) ).isEqualTo( 4.0 );
+		assertThat( map.get( DesignArc.X_RADIUS ) ).isNull();
+		assertThat( map.get( DesignArc.Y_RADIUS ) ).isNull();
+		assertThat( map.get( DesignArc.START ) ).isEqualTo( 0.0 );
+		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 90.0 );
+		assertThat( map.get( DesignArc.ROTATE ) ).isNull();
+		assertThat( map.get( DesignArc.TYPE ) ).isEqualTo( DesignArc.Type.PIE );
 	}
 
 	@Test
@@ -75,14 +74,14 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 3 ), 4.0, 5.0, 0.0, 360.0, DesignArc.Type.OPEN );
 		Map<String, Object> map = arc.asMap();
 
-		assertThat( map.get( DesignArc.SHAPE ), is( DesignArc.ARC ) );
-		assertThat( map.get( DesignArc.ORIGIN ), is( new Point3D( 1, 2, 3 ) ) );
-		assertThat( map.get( DesignArc.X_RADIUS ), is( 4.0 ) );
-		assertThat( map.get( DesignArc.Y_RADIUS ), is( 5.0 ) );
-		assertThat( map.get( DesignArc.START ), is( 0.0 ) );
-		assertThat( map.get( DesignArc.EXTENT ), is( 360.0 ) );
-		assertNull( map.get( DesignArc.ROTATE ) );
-		assertThat( map.get( DesignArc.TYPE ), is( DesignArc.Type.OPEN ) );
+		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
+		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
+		assertThat( map.get( DesignArc.X_RADIUS ) ).isEqualTo( 4.0 );
+		assertThat( map.get( DesignArc.Y_RADIUS ) ).isEqualTo( 5.0 );
+		assertThat( map.get( DesignArc.START ) ).isEqualTo( 0.0 );
+		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 360.0 );
+		assertThat( map.get( DesignArc.ROTATE ) ).isNull();
+		assertThat( map.get( DesignArc.TYPE ) ).isEqualTo( DesignArc.Type.OPEN );
 	}
 
 	@Test
@@ -90,14 +89,14 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 3 ), 4.0, 5.0, 6.0, 7.0, 8.0, DesignArc.Type.CHORD );
 		Map<String, Object> map = arc.asMap();
 
-		assertThat( map.get( DesignArc.SHAPE ), is( DesignArc.ARC ) );
-		assertThat( map.get( DesignArc.ORIGIN ), is( new Point3D( 1, 2, 3 ) ) );
-		assertThat( map.get( DesignArc.X_RADIUS ), is( 4.0 ) );
-		assertThat( map.get( DesignArc.Y_RADIUS ), is( 5.0 ) );
-		assertThat( map.get( DesignArc.ROTATE ), is( 6.0 ) );
-		assertThat( map.get( DesignArc.START ), is( 7.0 ) );
-		assertThat( map.get( DesignArc.EXTENT ), is( 8.0 ) );
-		assertThat( map.get( DesignArc.TYPE ), is( DesignArc.Type.CHORD ) );
+		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
+		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
+		assertThat( map.get( DesignArc.X_RADIUS ) ).isEqualTo( 4.0 );
+		assertThat( map.get( DesignArc.Y_RADIUS ) ).isEqualTo( 5.0 );
+		assertThat( map.get( DesignArc.ROTATE ) ).isEqualTo( 6.0 );
+		assertThat( map.get( DesignArc.START ) ).isEqualTo( 7.0 );
+		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 8.0 );
+		assertThat( map.get( DesignArc.TYPE ) ).isEqualTo( DesignArc.Type.CHORD );
 	}
 
 	@Test
@@ -112,15 +111,15 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc();
 		arc.updateFrom( map );
 
-		assertThat( arc.getOrigin(), is( Point3D.ZERO ) );
-		assertThat( arc.getRadius(), is( 4.0 ) );
-		assertThat( arc.getXRadius(), is( 4.0 ) );
-		assertThat( arc.getYRadius(), is( 4.0 ) );
-		assertThat( arc.getStart(), is( 180.0 ) );
-		assertThat( arc.getExtent(), is( 17.0 ) );
-		assertThat( arc.calcRotate(), is( 0.0 ) );
-		assertNull( arc.getRotate() );
-		assertNull( arc.getType() );
+		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getStart() ).isEqualTo( 180.0 );
+		assertThat( arc.getExtent() ).isEqualTo( 17.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getRotate() ).isNull();
+		assertThat( arc.getType() ).isNull();
 	}
 
 	@Test
@@ -136,15 +135,15 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc();
 		arc.updateFrom( map );
 
-		assertThat( arc.getOrigin(), is( Point3D.ZERO ) );
-		assertThat( arc.getRadius(), is( 4.0 ) );
-		assertThat( arc.getXRadius(), is( 4.0 ) );
-		assertThat( arc.getYRadius(), is( 5.0 ) );
-		assertThat( arc.calcRotate(), is( 0.0 ) );
-		assertNull( arc.getRotate() );
-		assertThat( arc.getStart(), is( 6.0 ) );
-		assertThat( arc.getExtent(), is( 7.0 ) );
-		assertNull( arc.getType() );
+		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 5.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getRotate() ).isNull();
+		assertThat( arc.getStart() ).isEqualTo( 6.0 );
+		assertThat( arc.getExtent() ).isEqualTo( 7.0 );
+		assertThat( arc.getType() ).isNull();
 	}
 
 	@Test
@@ -162,23 +161,23 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc();
 		arc.updateFrom( map );
 
-		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 3 ) ) );
-		assertThat( arc.getRadius(), is( 4.0 ) );
-		assertThat( arc.getXRadius(), is( 4.0 ) );
-		assertThat( arc.getYRadius(), is( 5.0 ) );
-		assertThat( arc.calcRotate(), is( 6.0 ) );
-		assertThat( arc.getRotate(), is( 6.0 ) );
-		assertThat( arc.getStart(), is( 7.0 ) );
-		assertThat( arc.getExtent(), is( 8.0 ) );
-		assertThat( arc.getType(), is( DesignArc.Type.CHORD ) );
+		assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 5.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 6.0 );
+		assertThat( arc.getRotate() ).isEqualTo( 6.0 );
+		assertThat( arc.getStart() ).isEqualTo( 7.0 );
+		assertThat( arc.getExtent() ).isEqualTo( 8.0 );
+		assertThat( arc.getType() ).isEqualTo( DesignArc.Type.CHORD );
 	}
 
 	@Test
 	void testDistanceTo() {
 		// Test circles
 		DesignArc arc = new DesignArc( new Point3D( 5, 0, 0 ), 1.0, 0.0, 45.0, DesignArc.Type.OPEN );
-		assertThat( arc.distanceTo( new Point3D( 0, 0, 0 ) ), is( 4.0 ) );
-		assertThat( arc.distanceTo( new Point3D( 5, 0, 0 ) ), is( 1.0 ) );
+		assertThat( arc.distanceTo( new Point3D( 0, 0, 0 ) ) ).isEqualTo( 4.0 );
+		assertThat( arc.distanceTo( new Point3D( 5, 0, 0 ) ) ).isEqualTo( 1.0 );
 
 		// TODO Test circle arcs
 
@@ -191,18 +190,18 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( -45.0 ) );
-		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( -45.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		// This ends up as 255 normalized to -135
-		assertThat( arc.getStart(), near( -135.0 ) );
-		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		assertThat( arc.getStart() ).isCloseTo( -135.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -211,17 +210,17 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 45.0 ) );
-		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 135 ) );
-		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( 135, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -230,18 +229,18 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 2, 0, 0 ) ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
 		// The sum of the start and the rotate should be -135
-		assertThat( arc.getStart(), near( -45.0 ) );
-		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( -90.0 ) );
+		assertThat( arc.getStart() ).isCloseTo( -45.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( -90.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( -135.0 ) );
-		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( -135.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -250,17 +249,17 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 4, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 45.0 ) );
-		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 135.0 ) );
-		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( 135.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -269,18 +268,18 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 2, 0, 0 ) ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
 		// The sum of the start and the rotate should be -135
-		assertThat( arc.getStart(), near( 45.0 ) );
-		assertThat( arc.getExtent(), near( -90.0 ) );
-		assertThat( arc.getRotate(), near( -90.0 ) );
+		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( -90.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		assertThat( arc.getOrigin(), near( new Point3D( 0, 2, 0 ) ) );
-		assertThat( arc.getStart(), near( 135.0 ) );
-		assertThat( arc.getExtent(), near( 90.0 ) );
-		assertThat( arc.getRotate(), near( 0.0 ) );
+		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		assertThat( arc.getStart() ).isCloseTo( 135.0, TOLERANCE );
+		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
+		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -290,10 +289,10 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 180 - alpha, -180 + alpha, DesignArc.Type.OPEN );
 		arc.moveEndpoint( new Point3D( 6, 2, 0 ), new Point3D( 5, 5, 0 ) );
 
-		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
-		assertThat( arc.calcRotate(), is( 0.0 ) );
-		assertThat( arc.getStart(), is( 180 - alpha ) );
-		assertThat( arc.getExtent(), is( -180 + 2 * alpha ) );
+		assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getStart() ).isEqualTo( 180 - alpha );
+		assertThat( arc.getExtent() ).isEqualTo( -180 + 2 * alpha );
 	}
 
 	@Test
@@ -302,10 +301,10 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, alpha, 180 - alpha, DesignArc.Type.OPEN );
 		arc.moveEndpoint( new Point3D( -4, 2, 0 ), new Point3D( -3, 5, 0 ) );
 
-		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
-		assertThat( arc.calcRotate(), is( 0.0 ) );
-		assertThat( arc.getStart(), is( alpha ) );
-		assertThat( arc.getExtent(), is( 180 - 2 * alpha ) );
+		PointAssert.assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getStart() ).isEqualTo( alpha );
+		assertThat( arc.getExtent() ).isEqualTo( 180 - 2 * alpha );
 	}
 
 	@Test
@@ -313,10 +312,10 @@ public class DesignArcTest {
 		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, -90 - alpha, -180 + alpha, DesignArc.Type.OPEN );
 		arc.moveEndpoint( new Point3D( 1, -3, 0 ), new Point3D( -2, 6, 0 ) );
-		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
-		assertThat( arc.calcRotate(), is( 0.0 ) );
-		assertThat( arc.getStart(), is( -90 - alpha ) );
-		assertThat( arc.getExtent(), is( -180 + 2 * alpha ) );
+		assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getStart() ).isEqualTo( -90 - alpha );
+		assertThat( arc.getExtent() ).isEqualTo( -180 + 2 * alpha );
 	}
 
 	@Test
@@ -324,10 +323,10 @@ public class DesignArcTest {
 		final double alpha = Math.toDegrees( Math.atan2( 3, 4 ) );
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 90 + alpha, 180 - alpha, DesignArc.Type.OPEN );
 		arc.moveEndpoint( new Point3D( 1, -3, 0 ), new Point3D( -2, -2, 0 ) );
-		assertThat( arc.getOrigin(), is( new Point3D( 1, 2, 0 ) ) );
-		assertThat( arc.calcRotate(), is( 0.0 ) );
-		assertThat( arc.getStart(), is( 90 + alpha ) );
-		assertThat( arc.getExtent(), is( 180 - 2 * alpha ) );
+		assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getStart() ).isEqualTo( 90 + alpha );
+		assertThat( arc.getExtent() ).isEqualTo( 180 - 2 * alpha );
 	}
 
 }

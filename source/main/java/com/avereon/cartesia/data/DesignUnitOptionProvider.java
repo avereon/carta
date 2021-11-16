@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.product.Rb;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
@@ -34,7 +34,7 @@ public class DesignUnitOptionProvider implements SettingOptionProvider {
 
 	@Override
 	public String getName( String key ) {
-		return Rb.text( BundleKey.PROPS, "design-unit-" + key );
+		return Rb.text( RbKey.PROPS, "design-unit-" + key );
 	}
 
 }

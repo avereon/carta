@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
@@ -354,7 +354,7 @@ public class Command {
 	}
 
 	private void promptForValue( CommandContext context, String key, CommandContext.Input mode ) {
-		String text = Rb.text( BundleKey.PROMPT, key );
+		String text = Rb.text( RbKey.PROMPT, key );
 		context.submit( context.getTool(), new Prompt( text, mode ) );
 	}
 

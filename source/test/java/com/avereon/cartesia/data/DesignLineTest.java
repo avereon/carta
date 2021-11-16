@@ -7,52 +7,49 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.avereon.cartesia.match.Near.near;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static com.avereon.cartesia.TestConstants.TOLERANCE;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignLineTest {
 
 	@Test
 	void testModify() {
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
-		assertTrue( line.isModified() );
+		assertThat( line.isModified() ).isTrue();
 		line.setModified( false );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 
 		line.setOrigin( new Point3D( 0, 0, 0 ) );
 		line.setPoint( new Point3D( 0, 0, 0 ) );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 
 		line.setOrigin( new Point3D( 1, 1, 0 ) );
-		assertTrue( line.isModified() );
+		assertThat( line.isModified() ).isTrue();
 		line.setModified( false );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 
 		line.setPoint( new Point3D( 2, 2, 0 ) );
-		assertTrue( line.isModified() );
+		assertThat( line.isModified() ).isTrue();
 		line.setModified( false );
-		assertFalse( line.isModified() );
+		assertThat( line.isModified() ).isFalse();
 	}
 
 	@Test
 	void testOrigin() {
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
-		assertThat( line.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
+		assertThat( line.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 
 		line.setOrigin( new Point3D( 1, 2, 3 ) );
-		assertThat( line.getOrigin(), is( new Point3D( 1, 2, 3 ) ) );
+		assertThat( line.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
 	void testPoint() {
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
-		assertThat( line.getPoint(), is( new Point3D( 0, 0, 0 ) ) );
+		assertThat( line.getPoint() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 
 		line.setPoint( new Point3D( 1, 2, 3 ) );
-		assertThat( line.getPoint(), is( new Point3D( 1, 2, 3 ) ) );
+		assertThat( line.getPoint() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
@@ -60,9 +57,9 @@ public class DesignLineTest {
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) );
 		Map<String, Object> map = line.asMap();
 
-		assertThat( map.get( DesignLine.SHAPE ), is( DesignLine.LINE ) );
-		assertThat( map.get( DesignLine.ORIGIN ), is( new Point3D( 0, 0, 0 ) ) );
-		assertThat( map.get( DesignLine.POINT ), is( new Point3D( 1, 0, 0 ) ) );
+		assertThat( map.get( DesignLine.SHAPE ) ).isEqualTo( DesignLine.LINE );
+		assertThat( map.get( DesignLine.ORIGIN ) ).isEqualTo( new Point3D( 0, 0, 0 ) );
+		assertThat( map.get( DesignLine.POINT ) ).isEqualTo( new Point3D( 1, 0, 0 ) );
 	}
 
 	@Test
@@ -75,22 +72,22 @@ public class DesignLineTest {
 		DesignLine line = new DesignLine();
 		line.updateFrom( map );
 
-		assertThat( line.getOrigin(), is( new Point3D( 0, 0, 0 ) ) );
-		assertThat( line.getPoint(), is( new Point3D( 1, 0, 0 ) ) );
+		assertThat( line.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+		assertThat( line.getPoint() ).isEqualTo( new Point3D( 1, 0, 0 ) );
 	}
 
 	@Test
 	void testDistanceTo() {
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) );
-		assertThat( line.distanceTo( new Point3D( 0.5, 0.5, 0 ) ), is( 0.5 ) );
+		assertThat( line.distanceTo( new Point3D( 0.5, 0.5, 0 ) ) ).isEqualTo( 0.5 );
 	}
 
 	@Test
 	void testPathLength() {
-		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) ).pathLength(), near( 1.0 ) );
-		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, -1, 0 ) ).pathLength(), near( 1.0 ) );
-		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ).pathLength(), near( Constants.SQRT_TWO ) );
-		assertThat( new DesignLine( new Point3D( -2, 1, 0 ), new Point3D( 2, -2, 0 ) ).pathLength(), near( 5.0 ) );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) ).pathLength() ).isCloseTo( 1.0, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, -1, 0 ) ).pathLength() ).isCloseTo( 1.0, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ).pathLength() ).isCloseTo( Constants.SQRT_TWO, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( -2, 1, 0 ), new Point3D( 2, -2, 0 ) ).pathLength() ).isCloseTo( 5.0, TOLERANCE );
 	}
 
 }

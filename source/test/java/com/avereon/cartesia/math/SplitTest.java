@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SplitTest {
 
@@ -19,9 +18,9 @@ public class SplitTest {
 
 		Set<DesignShape> shapes = Split.splitLine( null, a, new Point3D( 2, 0, 0 ) );
 
-		assertTrue( containsLine( shapes, b ) );
-		assertTrue( containsLine( shapes, c ) );
-		assertFalse( shapes.isEmpty() );
+		assertThat( containsLine( shapes, b ) ).isTrue();
+		assertThat( containsLine( shapes, c ) ).isTrue();
+		assertThat( shapes.isEmpty() ).isFalse();
 	}
 
 	@Test
@@ -32,8 +31,8 @@ public class SplitTest {
 
 		Set<DesignShape> shapes = Split.splitEllipse( null, a, new Point3D( 9, 8, 0 ) );
 
-		assertTrue( containsArc( shapes, arc ) );
-		assertFalse( shapes.isEmpty() );
+		assertThat( containsArc( shapes, arc ) ).isTrue();
+		assertThat( shapes.isEmpty() ).isFalse();
 	}
 
 	@Test
@@ -44,9 +43,9 @@ public class SplitTest {
 
 		Set<DesignShape> shapes = Split.splitArc( null, a, new Point3D( -9, 12, 0 ) );
 
-		assertTrue( containsArc( shapes, b ) );
-		assertTrue( containsArc( shapes, c ) );
-		assertFalse( shapes.isEmpty() );
+		assertThat( containsArc( shapes, b ) ).isTrue();
+		assertThat( containsArc( shapes, c ) ).isTrue();
+		assertThat( shapes.isEmpty() ).isFalse();
 	}
 
 	@Test
@@ -58,9 +57,9 @@ public class SplitTest {
 
 		Set<DesignShape> shapes = Split.splitCurve( null, a, mouse );
 
-		assertTrue( containsCurve( shapes, b ) );
-		assertTrue( containsCurve( shapes, c ) );
-		assertFalse( shapes.isEmpty() );
+		assertThat( containsCurve( shapes, b ) ).isTrue();
+		assertThat( containsCurve( shapes, c ) ).isTrue();
+		assertThat( shapes.isEmpty() ).isFalse();
 	}
 
 	private static boolean containsLine( Set<DesignShape> shapes, DesignShape shape ) {
@@ -80,7 +79,6 @@ public class SplitTest {
 	private static boolean containsCurve( Set<DesignShape> shapes, DesignShape shape ) {
 		for( DesignShape test : shapes ) {
 			if( test.equals( shape, DesignCurve.ORIGIN, DesignCurve.ORIGIN_CONTROL, DesignCurve.POINT_CONTROL, DesignLine.POINT ) ) return true;
-			//			if( test.equals( shape, DesignCurve.ORIGIN, DesignLine.POINT ) ) return true;
 		}
 		return false;
 	}

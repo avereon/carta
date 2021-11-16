@@ -1,13 +1,9 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.contains;
-import static org.hamcrest.Matchers.is;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignTest {
 
@@ -15,73 +11,73 @@ public class DesignTest {
 	void testNameModifiesDesign() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertNull( design.getName() );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.getName() ).isNull();
+		assertThat( design.isModified() ).isFalse();
 
 		design.setName( "Mock Design Alpha" );
-		assertThat( design.isModified(), is( true ) );
+		assertThat( design.isModified() ).isTrue();
 		design.setModified( false );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.isModified() ).isFalse();
 
 		design.setName( "Mock Design Final" );
-		assertThat( design.isModified(), is( true ) );
+		assertThat( design.isModified() ).isTrue();
 		design.setModified( false );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.isModified() ).isFalse();
 	}
 
 	@Test
 	void testDesignUnitModifiesDesign() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.calcDesignUnit(), Matchers.is( DesignUnit.CENTIMETER ) );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.calcDesignUnit() ).isEqualTo( DesignUnit.CENTIMETER );
+		assertThat( design.isModified() ).isFalse();
 
 		design.setDesignUnit( DesignUnit.MILLIMETER );
-		assertThat( design.isModified(), is( true ) );
+		assertThat( design.isModified() ).isTrue();
 		design.setModified( false );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.isModified() ).isFalse();
 
 		design.setDesignUnit( DesignUnit.INCH );
-		assertThat( design.isModified(), is( true ) );
+		assertThat( design.isModified() ).isTrue();
 		design.setModified( false );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.isModified() ).isFalse();
 	}
 
 	@Test
 	void testAddRemoveLayer() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getLayers().getLayers().size(), is( 0 ) );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 0 );
+		assertThat( design.isModified() ).isFalse();
 
 		DesignLayer layer = new DesignLayer().setName( "test-layer" );
 		design.getLayers().addLayer( layer );
-		assertThat( design.getLayers().getLayers().size(), is( 1 ) );
-		assertThat( design.isModified(), is( true ) );
+		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 1 );
+		assertThat( design.isModified() ).isTrue();
 
 		design.getLayers().removeLayer( layer );
-		assertThat( design.getLayers().getLayers().size(), is( 0 ) );
-		assertThat( design.isModifiedBySelf(), is( false ) );
-		assertThat( design.isModifiedByValue(), is( false ) );
-		assertThat( design.isModifiedByChild(), is( false ) );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 0 );
+		assertThat( design.isModifiedBySelf() ).isFalse();
+		assertThat( design.isModifiedByValue() ).isFalse();
+		assertThat( design.isModifiedByChild() ).isFalse();
+		assertThat( design.isModified() ).isFalse();
 	}
 
 	@Test
 	void testAddLayerAndClearModified() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.getLayers().getLayers().size(), is( 0 ) );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 0 );
+		assertThat( design.isModified() ).isFalse();
 
 		DesignLayer layer = new DesignLayer().setName( "mock-layer" );
 		design.getLayers().addLayer( layer );
-		assertThat( design.getLayers().getLayers().size(), is( 1 ) );
-		assertThat( design.isModified(), is( true ) );
+		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 1 );
+		assertThat( design.isModified() ).isTrue();
 
 		design.setModified( false );
-		assertThat( design.getLayers().getLayers().size(), is( 1 ) );
-		assertThat( design.isModified(), is( false ) );
+		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 1 );
+		assertThat( design.isModified() ).isFalse();
 	}
 
 	@Test
@@ -103,7 +99,7 @@ public class DesignTest {
 		layer1.addLayer( layer10 );
 		layer1.addLayer( layer11 );
 
-		assertThat( design.getAllLayers(), contains( layer0, layer00, layer01, layer1, layer10, layer11));
+		assertThat( design.getAllLayers() ).contains( layer0, layer00, layer01, layer1, layer10, layer11 );
 	}
 
 	private static class MockDesign extends Design {}

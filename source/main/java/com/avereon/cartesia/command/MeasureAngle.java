@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
@@ -75,8 +75,8 @@ public class MeasureAngle extends MeasureCommand {
 			double start = deriveStart( origin, radius, radius, 0.0, startPoint );
 			double extent = deriveExtent( origin, radius, radius, 0.0, start, extentPoint, spin );
 
-			String title = Rb.text( BundleKey.NOTICE, "measurement" );
-			String message = Rb.text( BundleKey.NOTICE, "angle", extent );
+			String title = Rb.text( RbKey.NOTICE, "measurement" );
+			String message = Rb.text( RbKey.NOTICE, "angle", extent );
 			Notice notice = new Notice( title, message );
 			notice.setAction( () -> Fx.run( () -> {
 				Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -90,8 +90,8 @@ public class MeasureAngle extends MeasureCommand {
 			log.atDebug().log( "Measured distance=%s", extent );
 			return extent;
 		} catch( ParseException exception ) {
-			String title = Rb.text( BundleKey.NOTICE, "command-error" );
-			String message = Rb.text( BundleKey.NOTICE, "unable-to-create-shape", exception );
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 

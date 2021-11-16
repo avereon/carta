@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.BundleKey;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
@@ -1157,7 +1157,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			String label = Rb.textOr( BundleKey.LABEL, "print", "Print" );
+			String label = Rb.textOr( RbKey.LABEL, "print", "Print" );
 			String taskName = label + " " + getAsset().getName();
 
 			getProgram().getTaskManager().submit( Task.of( taskName, () -> {
