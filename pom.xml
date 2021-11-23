@@ -58,13 +58,13 @@
 			<version>${jep.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.avereon</groupId>
-			<artifactId>xenon</artifactId>
-			<classifier>tests</classifier>
-			<version>${xenon.version}</version>
-			<scope>test</scope>
-		</dependency>
+<!--		<dependency>-->
+<!--			<groupId>com.avereon</groupId>-->
+<!--			<artifactId>xenon</artifactId>-->
+<!--			<classifier>tests</classifier>-->
+<!--			<version>${xenon.version}</version>-->
+<!--			<scope>test</scope>-->
+<!--		</dependency>-->
 
 		<dependency>
 			<groupId>com.avereon</groupId>

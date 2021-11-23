@@ -3,10 +3,10 @@ package com.avereon.cartesia;
 import com.avereon.product.ProductCard;
 import com.avereon.product.Rb;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.xenon.test.BaseTestCase;
+import com.avereon.zerra.test.BaseXenonTestCase;
 import org.junit.jupiter.api.BeforeEach;
 
-public abstract class BaseCartesiaTest extends BaseTestCase {
+public abstract class BaseCartesiaTest extends BaseXenonTestCase {
 
 	private CartesiaMod mod;
 

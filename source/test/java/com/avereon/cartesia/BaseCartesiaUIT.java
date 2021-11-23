@@ -4,7 +4,7 @@ import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.product.ProductCard;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.AssetType;
-import com.avereon.xenon.test.BaseModUIT;
+import com.avereon.zerra.test.BaseModUiTestCase;
 import lombok.CustomLog;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @CustomLog
-public class BaseCartesiaUIT extends BaseModUIT {
+public class BaseCartesiaUIT extends BaseModUiTestCase {
 
 	@BeforeEach
 	protected void setup() throws Exception {
