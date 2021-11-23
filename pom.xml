@@ -95,21 +95,9 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>14</source>
-					<target>14</target>
+					<source>17</source>
+					<target>17</target>
 				</configuration>
-				<!--				<executions>-->
-				<!--					<execution>-->
-				<!--						<id>default-testCompile</id>-->
-				<!--						<configuration>-->
-				<!--							<release>14</release>-->
-				<!--							<compilerArgs>-->
-				<!--								<arg>&#45;&#45;patch-module</arg>-->
-				<!--								<arg>com.avereon.xenon=${settings.localRepository}/com/avereon/xenon/${xenon.version}/xenon-${xenon.version}-tests.jar</arg>-->
-				<!--							</compilerArgs>-->
-				<!--						</configuration>-->
-				<!--					</execution>-->
-				<!--				</executions>-->
 			</plugin>
 
 			<plugin>
