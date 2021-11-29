@@ -4,7 +4,7 @@ import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.product.ProductCard;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.AssetType;
-import com.avereon.zerra.test.BaseModUiTestCase;
+import com.avereon.xenon.test.BaseModUiTestCase;
 import lombok.CustomLog;
 import org.junit.jupiter.api.BeforeEach;
 

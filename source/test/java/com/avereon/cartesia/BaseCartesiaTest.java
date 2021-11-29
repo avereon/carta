@@ -3,7 +3,7 @@ package com.avereon.cartesia;
 import com.avereon.product.ProductCard;
 import com.avereon.product.Rb;
 import com.avereon.xenon.ProgramProduct;
-import com.avereon.zerra.test.BaseXenonTestCase;
+import com.avereon.xenon.test.BaseXenonTestCase;
 import org.junit.jupiter.api.BeforeEach;
 
 public abstract class BaseCartesiaTest extends BaseXenonTestCase {
