@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Future;
 
+import static com.avereon.xenon.test.ProgramTestConfig.TIMEOUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
