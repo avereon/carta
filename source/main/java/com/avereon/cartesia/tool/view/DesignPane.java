@@ -87,6 +87,8 @@ public class DesignPane extends StackPane {
 
 	private final Map<EventType<NodeEvent>, Map<Class<?>, Consumer<Object>>> designActions;
 
+	private final ObservableSet<DesignLayer> enabledLayers;
+
 	private final ObservableSet<DesignLayer> visibleLayers;
 
 	private Design design;
@@ -119,6 +121,7 @@ public class DesignPane extends StackPane {
 
 		layerMap = new ConcurrentHashMap<>();
 		geometryMap = new ConcurrentHashMap<>();
+		enabledLayers = FXCollections.observableSet();
 		visibleLayers = FXCollections.observableSet();
 
 		// Internal listeners
@@ -258,6 +261,26 @@ public class DesignPane extends StackPane {
 		return selectFillPaint;
 	}
 
+	public ObservableSet<DesignLayer> enabledLayersProperty() {
+		return enabledLayers;
+	}
+
+	public boolean isLayerEnabled( DesignLayer layer ) {
+		DesignLayerView view = layerMap.get( layer );
+		return view != null && view.isEnabled();
+	}
+
+	public void setLayerEnabled( DesignLayer layer, boolean enabled ) {
+		Fx.run( () -> Optional.ofNullable( layerMap.get( layer ) ).ifPresent( yy -> {
+			yy.setEnabled( enabled );
+			if( enabled ) {
+				enabledLayers.add( layer );
+			} else {
+				enabledLayers.remove( layer );
+			}
+		} ) );
+	}
+
 	public ObservableSet<DesignLayer> visibleLayersProperty() {
 		return visibleLayers;
 	}
@@ -272,13 +295,13 @@ public class DesignPane extends StackPane {
 			yy.setVisible( visible );
 			if( visible ) {
 				visibleLayers.add( layer );
-				// Add showing child layers
+				// Add enabled child layers
 				layer
 					.getAllLayers()
 					.stream()
 					.filter( layerMap::containsKey )
 					.map( layerMap::get )
-					.filter( ysy -> ysy.getLayerPane().isShowing() )
+					.filter( ysy -> ysy.getLayerPane().isEnabled() )
 					.map( DesignLayerView::getDesignLayer )
 					.forEach( visibleLayers::add );
 			} else {
@@ -423,7 +446,7 @@ public class DesignPane extends StackPane {
 	}
 
 	public List<DesignLayerPane> getVisibleLayers() {
-		return getLayers( layers ).stream().filter( DesignLayerPane::isShowing ).collect( Collectors.toList() );
+		return getLayers( layers ).stream().filter( DesignLayerPane::isEnabled ).collect( Collectors.toList() );
 	}
 
 	public void addLayerGeometry( DesignLayerView view ) {
@@ -431,14 +454,14 @@ public class DesignPane extends StackPane {
 		DesignLayerPane layer = view.getLayerPane();
 		parent.getChildren().add( layer );
 		doReorderLayer( parent );
-		layer.showingProperty().bind( layer.visibleProperty().and( parent.showingProperty() ) );
+		layer.enabledProperty().bind( layer.visibleProperty().and( parent.enabledProperty() ) );
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
 	}
 
 	public void removeLayerGeometry( DesignLayerView view ) {
 		DesignLayerPane layer = view.getLayerPane();
 		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
-		layer.showingProperty().unbind();
+		layer.enabledProperty().unbind();
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 	}
 
@@ -631,12 +654,7 @@ public class DesignPane extends StackPane {
 		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
 
 		try {
-			FutureTask<List<Shape>> task = new FutureTask<>( () -> {
-				List<Shape> shapes = fxSelectByShape( selector, contains );
-				return shapes;
-			} );
-			Fx.run( task );
-			return task.get( 500, TimeUnit.MILLISECONDS );
+			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, contains ) ) ).get( 500, TimeUnit.MILLISECONDS );
 		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
 			log.atWarn( exception ).log( "Unable to select shapes" );
 		}
@@ -675,29 +693,29 @@ public class DesignPane extends StackPane {
 	}
 
 	private boolean isIntersecting( Shape selector, Shape shape ) {
-//		boolean invisibleShape = isInvisible( shape );
-//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+		//		boolean invisibleShape = isInvisible( shape );
+		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
 		// This first test is an optimization to determine if the the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is intersecting
 		boolean result = !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
 
-//		if( invisibleShape ) shape.setStroke( null );
+		//		if( invisibleShape ) shape.setStroke( null );
 
 		return result;
 	}
 
 	private boolean isContained( Shape selector, Shape shape ) {
-//		boolean invisibleShape = isInvisible( shape );
-//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+		//		boolean invisibleShape = isInvisible( shape );
+		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
 		// This first test is an optimization to determine if the the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is contained
 		boolean result = ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
 
-//		if( invisibleShape ) shape.setStroke( null );
+		//		if( invisibleShape ) shape.setStroke( null );
 
 		return result;
 	}

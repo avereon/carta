@@ -99,8 +99,8 @@ public class DesignShapeView extends DesignDrawableView {
 
 	public void addShapeGeometry() {
 		getPane().addShapeGeometry( this );
-		getGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).showingProperty() );
-		getCpGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).showingProperty() );
+		getGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).enabledProperty() );
+		getCpGroup().visibleProperty().bind( getPane().getShapeLayer( getDesignShape() ).enabledProperty() );
 		registerListeners();
 	}
 

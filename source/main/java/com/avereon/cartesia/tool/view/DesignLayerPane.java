@@ -9,19 +9,24 @@ import javafx.scene.layout.Pane;
  */
 public class DesignLayerPane extends Pane {
 
-	private final BooleanProperty showing;
+	private final BooleanProperty enabled;
 
 	public DesignLayerPane() {
-		showing = new SimpleBooleanProperty( true );
+		enabled = new SimpleBooleanProperty( true );
 		setVisible( false );
 	}
 
-	public boolean isShowing() {
-		return showing != null && showing.get();
+	public boolean isEnabled() {
+		return enabled.get();
 	}
 
-	public BooleanProperty showingProperty() {
-		return showing;
+	public DesignLayerPane setEnabled( boolean enabled ) {
+		enabledProperty().set( enabled );
+		return this;
+	}
+
+	public BooleanProperty enabledProperty() {
+		return enabled;
 	}
 
 }

@@ -87,6 +87,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private static final String CURRENT_VIEW = "current-view";
 
+	private static final String ENABLED_LAYERS = "enabled-layers";
+
 	private static final String VISIBLE_LAYERS = "visible-layers";
 
 	private static final String GRID_VISIBLE = "grid-visible";
@@ -342,6 +344,10 @@ public abstract class DesignTool extends GuidedTool {
 		return currentLayer;
 	}
 
+	private void setLayerEnabled( DesignLayer layer, boolean enabled ) {
+		designPane.setLayerEnabled( layer, enabled );
+	}
+
 	public boolean isLayerVisible( DesignLayer layer ) {
 		return designPane.isLayerVisible( layer );
 	}
@@ -557,9 +563,13 @@ public abstract class DesignTool extends GuidedTool {
 		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
+		// Restore the list of enabled layers
+		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
+		design.getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
+
 		// Restore the list of visible layers
 		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
-		design.getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+		design.getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 
 		// Restore the grid visible flag
 		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
@@ -596,6 +606,9 @@ public abstract class DesignTool extends GuidedTool {
 			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
 			doUpdateGridBounds();
 		} );
+
+		// Add visible layers listener
+		designPane.enabledLayersProperty().addListener( this::doStoreEnabledLayers );
 
 		// Add visible layers listener
 		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
@@ -771,7 +784,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		String measurementActions = "measure[shape-information measure-angle measure-distance measure-point measure-length]";
 
-		StringBuilder menus = new StringBuilder( viewActions );
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder menus = new StringBuilder( viewActions );
 		menus.append( "|" ).append( drawMarkerActions );
 		menus.append( " " ).append( drawLineActions );
 		menus.append( " " ).append( drawCircleActions );
@@ -779,7 +792,7 @@ public abstract class DesignTool extends GuidedTool {
 		menus.append( " " ).append( drawCurveActions );
 		menus.append( "|" ).append( measurementActions );
 
-		StringBuilder tools = new StringBuilder( viewActions );
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder tools = new StringBuilder( viewActions );
 		tools.append( " " ).append( drawMarkerActions );
 		tools.append( " " ).append( drawLineActions );
 		tools.append( " " ).append( drawCircleActions );
@@ -851,9 +864,12 @@ public abstract class DesignTool extends GuidedTool {
 		return getDesignContext().getCoordinateStatus();
 	}
 
+	private void doStoreEnabledLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
+		getSettings().set( ENABLED_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+	}
+
 	private void doStoreVisibleLayers( SetChangeListener.Change<? extends DesignLayer> c ) {
 		getSettings().set( VISIBLE_LAYERS, c.getSet().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
-		// NOTE This does not store the showing flag, just the visible flag
 	}
 
 	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {
@@ -879,7 +895,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
 		selectedShapes.clear();
-		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().collect( Collectors.toList() ) );
+		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().toList() );
 		return selectedShapes();
 	}
 
@@ -1089,7 +1105,7 @@ public abstract class DesignTool extends GuidedTool {
 		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
-	public static DesignLayer getDesignData( DesignLayerPane l ) {
+	static DesignLayer getDesignData( DesignLayerPane l ) {
 		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
 

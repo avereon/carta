@@ -27,6 +27,14 @@ public class DesignLayerView extends DesignDrawableView {
 		return layerPane;
 	}
 
+	public boolean isEnabled() {
+		return this.layerPane.isEnabled();
+	}
+
+	public void setEnabled( boolean enabled ) {
+		this.layerPane.setEnabled( enabled );
+	}
+
 	public boolean isVisible() {
 		return this.layerPane.isVisible();
 	}

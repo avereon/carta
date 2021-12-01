@@ -26,7 +26,7 @@ public class DesignToolLayersGuide extends Guide {
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
 
-	private static final String VISIBLE_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
+	private static final String ENABLED_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
 
 	private final ProgramProduct product;
 
@@ -107,11 +107,11 @@ public class DesignToolLayersGuide extends Guide {
 
 			EventHandler<NodeEvent> nameHandler = e -> layerGuideNode.setName( layer.getName() );
 			EventHandler<NodeEvent> orderHandler = e -> layerGuideNode.setOrder( layer.getOrder() );
-			ChangeListener<Boolean> showingHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
+			ChangeListener<Boolean> enabledHandler = ( p, o, n ) -> layerGuideNode.setIcon( n ? "layer" : "layer-hidden" );
 
 			layerGuideNode.setValue( NAME_HANDLER, nameHandler );
 			layerGuideNode.setValue( ORDER_HANDLER, orderHandler );
-			layerGuideNode.setValue( VISIBLE_HANDLER, showingHandler );
+			layerGuideNode.setValue( ENABLED_HANDLER, enabledHandler );
 
 			layer.register( DesignLayer.NAME, nameHandler );
 			layer.register( DesignLayer.ORDER, orderHandler );
@@ -119,8 +119,8 @@ public class DesignToolLayersGuide extends Guide {
 		} );
 
 		if( layerPane != null ) {
-			String icon = layerPane.isShowing() ? "layer" : "layer-hidden";
-			layerPane.showingProperty().addListener( (ChangeListener<Boolean>)node.getValue( VISIBLE_HANDLER ) );
+			String icon = layerPane.isEnabled() ? "layer" : "layer-hidden";
+			layerPane.enabledProperty().addListener( (ChangeListener<Boolean>)node.getValue( ENABLED_HANDLER ) );
 			node.setIcon( icon );
 		}
 	}
@@ -128,7 +128,7 @@ public class DesignToolLayersGuide extends Guide {
 	@SuppressWarnings( "unchecked" )
 	private synchronized void removeLayer( DesignLayer layer, DesignLayerPane layerPane ) {
 		layerGuideNodes.computeIfPresent( layer, ( k, layerGuideNode ) -> {
-			layerPane.showingProperty().removeListener( (ChangeListener<Boolean>)layerGuideNode.getValue( VISIBLE_HANDLER ) );
+			layerPane.enabledProperty().removeListener( (ChangeListener<Boolean>)layerGuideNode.getValue( ENABLED_HANDLER ) );
 			layer.unregister( DesignLayer.ORDER, layerGuideNode.getValue( ORDER_HANDLER ) );
 			layer.unregister( DesignLayer.NAME, layerGuideNode.getValue( NAME_HANDLER ) );
 
