@@ -35,7 +35,7 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_DRAW_WIDTH = "0.05";
 
-	static final String DEFAULT_DRAW_CAP = StrokeLineCap.BUTT.name().toLowerCase();
+	static final String DEFAULT_DRAW_CAP = StrokeLineCap.ROUND.name().toLowerCase();
 
 	static final String DEFAULT_DRAW_PATTERN = null;
 

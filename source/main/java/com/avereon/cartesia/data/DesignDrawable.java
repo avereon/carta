@@ -78,12 +78,15 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Paint calcDrawPaint() {
+		return Paints.parseWithNullOnException( getDrawPaintWithInheritance() );
+	}
+
+	public String getDrawPaintWithInheritance() {
 		String paint = getDrawPaint();
-		if( paint == null ) return null;
-		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
+		if( paint == null || isCustomValue( paint ) ) return paint;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? Paints.parseWithNullOnException( DesignLayer.DEFAULT_DRAW_PAINT ) : layer.calcDrawPaint();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_PAINT : layer.getDrawPaint();
 	}
 
 	public String getDrawPaint() {
@@ -96,11 +99,15 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
+		return CadMath.evalNoException( getDrawWidthWithInheritance() );
+	}
+
+	public String getDrawWidthWithInheritance() {
 		String width = getDrawWidth();
-		if( isCustomValue( width ) ) return CadMath.evalNoException( width );
+		if( isCustomValue( width ) ) return width;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? Double.parseDouble( DesignLayer.DEFAULT_DRAW_WIDTH ) : layer.calcDrawWidth();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_WIDTH : layer.getDrawWidth();
 	}
 
 	public String getDrawWidth() {
@@ -113,11 +120,15 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public List<Double> calcDrawPattern() {
+		return CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
+	}
+
+	public String getDrawPatternWithInheritance() {
 		String pattern = getDrawPattern();
-		if( isCustomValue( pattern ) ) return CadShapes.parseDashPattern( pattern );
+		if( isCustomValue( pattern ) ) return pattern;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) : layer.calcDrawPattern();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_PATTERN : layer.getDrawPattern();
 	}
 
 	public String getDrawPattern() {
@@ -131,11 +142,15 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public StrokeLineCap calcDrawCap() {
+		return StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
+	}
+
+	public String getDrawCapWithInheritance() {
 		String cap = getDrawCap();
-		if( isCustomValue( cap ) ) return StrokeLineCap.valueOf( cap.toUpperCase() );
+		if( isCustomValue( cap ) ) return cap;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) : layer.calcDrawCap();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_CAP : layer.getDrawCap();
 	}
 
 	public String getDrawCap() {
@@ -148,12 +163,15 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Paint calcFillPaint() {
+		return Paints.parseWithNullOnException( getFillPaintWithInheritance() );
+	}
+
+	public String getFillPaintWithInheritance() {
 		String paint = getFillPaint();
-		if( paint == null ) return null;
-		if( isCustomValue( paint ) ) return Paints.parseWithNullOnException( paint );
+		if( paint == null || isCustomValue( paint ) ) return paint;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? Paints.parseWithNullOnException( DesignLayer.DEFAULT_FILL_PAINT ) : layer.calcFillPaint();
+		return layer == null ? DesignLayer.DEFAULT_FILL_PAINT : layer.getFillPaint();
 	}
 
 	public String getFillPaint() {
@@ -245,7 +263,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_DRAW_PAINT_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawPaint( isCustom ? Paints.toString( calcDrawPaint() ) : String.valueOf( newValue ).toLowerCase() );
+			setDrawPaint( isCustom ? getDrawPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PAINT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error changing draw paint" );
@@ -258,7 +276,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_DRAW_WIDTH_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawWidth( isCustom ? String.valueOf( calcDrawWidth() ) : String.valueOf( newValue ).toLowerCase() );
+			setDrawWidth( isCustom ? getDrawWidthWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_WIDTH_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw width" );
@@ -271,7 +289,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_DRAW_CAP_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawCap( isCustom ? calcDrawCap().name().toLowerCase() : String.valueOf( newValue ).toLowerCase() );
+			setDrawCap( isCustom ? getDrawCapWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_CAP_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw cap" );
@@ -284,7 +302,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawPattern( isCustom ? TextUtil.toString( calcDrawPattern(), ", " ) : String.valueOf( newValue ).toLowerCase() );
+			setDrawPattern( isCustom ? getDrawPatternWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw patter" );
@@ -297,7 +315,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setFillPaint( isCustom ? Paints.toString( calcFillPaint() ) : String.valueOf( newValue ).toLowerCase() );
+			setFillPaint( isCustom ? getFillPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw width" );

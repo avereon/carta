@@ -65,17 +65,37 @@ public class DesignDrawableTest {
 
 	@Test
 	void testChangeDrawPaintModeFromDefaultToCustom() {
-		// Change mode to custom to copy current calcDrawPaint value
+		// Change mode to custom to copy current getDrawPaintWithInheritance value
 		drawable.changeDrawPaintMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawPaint() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-		// Check that the cap value is a copy of the layer cap value
+
+		// Check that the draw paint value is a copy of the layer draw paint value
 		assertThat( drawable.getDrawPaint() ).isEqualTo( Paints.toString( Color.BLACK ) );
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Color.BLACK );
 
-		// Change the layer cap to ensure that cap values are still the custom value
+		// Change the layer draw paint to ensure that draw paint value is still the custom value
 		layer.setDrawPaint( Paints.toString( Color.WHITE ) );
 		assertThat( drawable.getDrawPaint() ).isEqualTo( Paints.toString( Color.BLACK ) );
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Color.BLACK );
+	}
+
+	@Test
+	void testChangeDrawPaintModeFromLayerToCustom() {
+		String layerDrawPaint = "#402080";
+		layer.setDrawPaint( layerDrawPaint );
+
+		// Change mode to custom to copy current getDrawPaintWithInheritance value
+		drawable.changeDrawPaintMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getDrawPaint() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the draw paint value is a copy of the layer draw paint value
+		assertThat( drawable.getDrawPaint() ).isEqualTo( layerDrawPaint );
+		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( layerDrawPaint ) );
+
+		// Change the layer draw paint to ensure that draw paint value is still the custom value
+		layer.setDrawPaint( Paints.toString( Color.WHITE ) );
+		assertThat( drawable.getDrawPaint() ).isEqualTo( layerDrawPaint );
+		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( layerDrawPaint ) );
 	}
 
 	@Test
@@ -88,17 +108,37 @@ public class DesignDrawableTest {
 
 	@Test
 	void testChangeDrawWidthModeFromDefaultToCustom() {
-		// Change mode to custom to copy current calcDrawWidth value
+		// Change mode to custom to copy current getDrawWidthWithInheritance value
 		drawable.changeDrawWidthMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawWidth() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-		// Check that the cap value is a copy of the layer cap value
+
+		// Check that the width value is a copy of the layer width value
 		assertThat( drawable.getDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_DRAW_WIDTH );
 		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 
-		// Change the layer cap to ensure that cap values are still the custom value
+		// Change the layer width to ensure that width value is still the custom value
 		layer.setDrawWidth( String.valueOf( 1.0 ) );
 		assertThat( drawable.getDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_DRAW_WIDTH );
 		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+	}
+
+	@Test
+	void testChangeDrawWidthModeFromLayerToCustom() {
+		String layerWidth = "1/2";
+		layer.setDrawWidth( layerWidth );
+
+		// Change mode to custom to copy current getDrawWidthWithInheritance value
+		drawable.changeDrawWidthMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getDrawWidth() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the width value is a copy of the layer width value
+		assertThat( drawable.getDrawWidth() ).isEqualTo( layerWidth );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( layerWidth ) );
+
+		// Change the layer width to ensure that width value is still the custom value
+		layer.setDrawWidth( "1/3" );
+		assertThat( drawable.getDrawWidth() ).isEqualTo( layerWidth );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( layerWidth ) );
 	}
 
 	@Test
@@ -111,17 +151,37 @@ public class DesignDrawableTest {
 
 	@Test
 	void testChangeDrawCapModeFromDefaultToCustom() {
-		// Change mode to custom to copy current calcDrawCap value
+		// Change mode to custom to copy current getDrawCapWithInheritance value
 		drawable.changeDrawCapMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawCap() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
 		// Check that the cap value is a copy of the layer cap value
 		assertThat( drawable.getDrawCap() ).isEqualTo( DesignLayer.DEFAULT_DRAW_CAP );
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 
-		// Change the layer cap to ensure that cap values are still the custom value
+		// Change the layer cap to ensure that cap value is still the custom value
 		layer.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );
 		assertThat( drawable.getDrawCap() ).isEqualTo( DesignLayer.DEFAULT_DRAW_CAP );
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
+	}
+
+	@Test
+	void testChangeDrawCapModeFromLayerToCustom() {
+		String layerCap = StrokeLineCap.SQUARE.name().toLowerCase();
+		layer.setDrawCap( layerCap );
+
+		// Change mode to custom to copy current getDrawCapWithInheritance value
+		drawable.changeDrawCapMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getDrawCap() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the cap value is a copy of the layer cap value
+		assertThat( drawable.getDrawCap() ).isEqualTo( layerCap );
+		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( layerCap.toUpperCase() ) );
+
+		// Change the layer cap to ensure that cap value is still the custom value
+		layer.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );
+		assertThat( drawable.getDrawCap() ).isEqualTo( layerCap );
+		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( layerCap.toUpperCase() ) );
 	}
 
 	@Test
@@ -143,17 +203,37 @@ public class DesignDrawableTest {
 
 	@Test
 	void testChangeDrawPatternModeFromDefaultToCustom() {
-		// Change mode to custom to copy current calcDrawPattern value
+		// Change mode to custom to copy current getDrawPatternWithInheritance value
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-		// Check that the layer values are a copy of the layer pattern values
+
+		// Check that the pattern is a copy of the layer pattern value
 		assertThat( drawable.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 
-		// Change the layer cap to ensure that cap values are still the custom value
+		// Change the layer pattern to ensure that pattern value is still the custom value
 		layer.setDrawPattern( "1/8,1/4" );
 		assertThat( drawable.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+	}
+
+	@Test
+	void testChangeDrawPatternModeFromLayerToCustom() {
+		String layerPattern = "1/6,1/3";
+		layer.setDrawPattern( layerPattern );
+
+		// Change mode to custom to copy current getDrawPatternWithInheritance value
+		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the pattern value is a copy of the layer pattern value
+		assertThat( drawable.getDrawPattern() ).isEqualTo( layerPattern );
+		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( layerPattern ) );
+
+		// Change the layer pattern to ensure that pattern value is still the custom value
+		layer.setDrawPattern( "1/8,1/4" );
+		assertThat( drawable.getDrawPattern() ).isEqualTo( layerPattern );
+		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( layerPattern ) );
 	}
 
 	@Test
@@ -175,17 +255,37 @@ public class DesignDrawableTest {
 
 	@Test
 	void testChangeFillPaintModeFromDefaultToCustom() {
-		// Change mode to custom to copy current calcFillPaint value
+		// Change mode to custom to copy current getFillPaintWithInheritance value
 		drawable.changeFillPaintMode( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( drawable.getFillPaint() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-		// Check that the cap value is a copy of the layer cap value
+
+		// Check that the fill paint value is a copy of the layer fill paint value
 		assertThat( drawable.getFillPaint() ).isEqualTo( DesignLayer.DEFAULT_FILL_PAINT );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 
-		// Change the layer cap to ensure that cap values are still the custom value
+		// Change the layer fill paint to ensure that fill paint value is still the custom value
 		layer.setFillPaint( Paints.toString( Color.WHITE ) );
 		assertThat( drawable.getFillPaint() ).isEqualTo( DesignLayer.DEFAULT_FILL_PAINT );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
+	}
+
+	@Test
+	void testChangeFillPaintModeFromLayerToCustom() {
+		String layerFillPaint = "#204080";
+		layer.setFillPaint( layerFillPaint );
+
+		// Change mode to custom to copy current getFillPaintWithInheritance value
+		drawable.changeFillPaintMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getFillPaint() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the fill paint value is a copy of the layer fill paint value
+		assertThat( drawable.getFillPaint() ).isEqualTo( layerFillPaint );
+		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( layerFillPaint ) );
+
+		// Change the layer fill paint to ensure that fill paint value is still the custom value
+		layer.setFillPaint( Paints.toString( Color.WHITE ) );
+		assertThat( drawable.getFillPaint() ).isEqualTo( layerFillPaint );
+		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( layerFillPaint ) );
 	}
 
 	@Test
