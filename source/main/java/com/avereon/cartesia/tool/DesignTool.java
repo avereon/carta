@@ -69,7 +69,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public static final String RETICLE = "reticle";
 
-	public static final String SELECT_APERTURE_RADIUS = "select-aperture-radius";
+	public static final String SELECT_APERTURE_SIZE = "select-aperture-size";
 
 	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
 
@@ -115,7 +115,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final SelectWindow selectWindow;
 
-	private final ObjectProperty<DesignValue> selectTolerance;
+	private final ObjectProperty<DesignValue> selectAperture;
 
 	private final ObservableList<Shape> selectedShapes;
 
@@ -165,7 +165,7 @@ public abstract class DesignTool extends GuidedTool {
 		getGuideContext().setCurrentGuide( layersGuide );
 
 		this.designPane = new DesignPane();
-		this.selectTolerance = new SimpleObjectProperty<>();
+		this.selectAperture = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 		this.currentView = new SimpleObjectProperty<>();
 
@@ -273,16 +273,16 @@ public abstract class DesignTool extends GuidedTool {
 		setView( worldCenter, zoom );
 	}
 
-	public void setSelectTolerance( DesignValue tolerance ) {
-		selectTolerance.set( tolerance );
+	public void setSelectAperture( DesignValue aperture ) {
+		selectAperture.set( aperture );
 	}
 
-	public DesignValue getSelectTolerance() {
-		return selectTolerance.get();
+	public DesignValue getSelectAperture() {
+		return selectAperture.get();
 	}
 
-	public ObjectProperty<DesignValue> selectToleranceProperty() {
-		return selectTolerance;
+	public ObjectProperty<DesignValue> selectApertureProperty() {
+		return selectAperture;
 	}
 
 	public ObservableList<Shape> selectedShapes() {
@@ -548,18 +548,20 @@ public abstract class DesignTool extends GuidedTool {
 		// Workplane settings
 		configureWorkplane();
 
+		Settings productSettings = getProduct().getSettings();
 		Settings settings = getSettings();
-		String defaultUnitId = DesignUnit.MILLIMETER.name();
-		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName();
+		String defaultSelectSize = "2";
+		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
+		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
 
 		// Get tool settings
-		double selectApertureRadius = Double.parseDouble( settings.get( SELECT_APERTURE_RADIUS, "1.5" ) );
-		DesignUnit selectApertureUnit = DesignUnit.valueOf( settings.get( SELECT_APERTURE_UNIT, defaultUnitId ) );
+		double selectApertureRadius = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
 		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
 		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
 		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
-		setReticle( ReticleCursor.valueOf( settings.get( RETICLE, defaultReticleId ) ) );
-		setSelectTolerance( new DesignValue( selectApertureRadius, selectApertureUnit ) );
+		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticleId ) ) );
+		setSelectAperture( new DesignValue( selectApertureRadius, selectApertureUnit ) );
 		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
@@ -581,9 +583,9 @@ public abstract class DesignTool extends GuidedTool {
 		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
 
 		// Settings listeners
-		getProduct().getSettings().register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		settings.register( SELECT_APERTURE_RADIUS, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), selectApertureUnit ) ) );
-		settings.register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( selectApertureRadius, DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		productSettings.register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
+		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
@@ -886,16 +888,16 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().collect( Collectors.toList() );
+		return designPane.screenPointSelect( mouse, getSelectAperture() ).stream().findFirst().stream().collect( Collectors.toList() );
 	}
 
 	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		return new ArrayList<>( designPane.screenPointSelect( mouse, getSelectTolerance() ) );
+		return new ArrayList<>( designPane.screenPointSelect( mouse, getSelectAperture() ) );
 	}
 
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
 		selectedShapes.clear();
-		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().toList() );
+		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectAperture() ).stream().findFirst().stream().toList() );
 		return selectedShapes();
 	}
 
@@ -906,7 +908,7 @@ public abstract class DesignTool extends GuidedTool {
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
 		if( !toggle ) selectedShapes().clear();
 
-		designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
+		designPane.screenPointSelect( mouse, getSelectAperture() ).stream().findFirst().ifPresent( shape -> {
 			if( toggle && getDesignData( shape ).isSelected() ) {
 				selectedShapes().remove( shape );
 			} else {
@@ -930,7 +932,7 @@ public abstract class DesignTool extends GuidedTool {
 		Fx.run( () -> {
 			if( !toggle ) selectedShapes().clear();
 
-			List<Shape> selection = designPane.worldPointSelect( point, getSelectTolerance() );
+			List<Shape> selection = designPane.worldPointSelect( point, getSelectAperture() );
 			selection.stream().findFirst().ifPresent( shape -> {
 				if( toggle && getDesignData( shape ).isSelected() ) {
 					selectedShapes().remove( shape );
@@ -946,11 +948,11 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
-		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+		return designPane.screenPointSelect( mouse, getSelectAperture() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	public List<DesignShape> findShapesWithPoint( Point3D point ) {
-		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+		return designPane.worldPointSelect( point, getSelectAperture() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	public List<DesignShape> getSelectedGeometry() {
@@ -1231,8 +1233,6 @@ public abstract class DesignTool extends GuidedTool {
 			// Get the settings pages for the asset type
 			Asset asset = getAsset();
 			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
-
-			// FIXME This page doesn't exist yet
 			SettingsPage assetSettingsPage = asset.getType().getSettingsPages().get( "grid" );
 
 			Settings designSettings = new NodeSettings( getAsset().getModel() );

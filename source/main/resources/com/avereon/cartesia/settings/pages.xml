@@ -12,6 +12,8 @@
 				<option key="duplex_circle"/>
 				<option key="crosshair"/>
 			</setting>
+			<setting key="select-aperture-size"/>
+			<setting key="select-aperture-unit" editor="combobox" provider="design-units"/>
 		</group>
 	</page>
 
