@@ -559,9 +559,9 @@ public abstract class DesignTool extends GuidedTool {
 		Settings settings = getSettings();
 		String defaultSelectSize = "2";
 		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
-		String defaultReferencePointType = DesignMarker.Type.X.name().toLowerCase();
-		String defaultReferencePointSize = "50";
-		String defaultReferencePointPaint = "#ff8080";
+		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
+		String defaultReferencePointSize = "10";
+		String defaultReferencePointPaint = "#808080";
 		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
 
 		// Get tool settings
@@ -578,9 +578,9 @@ public abstract class DesignTool extends GuidedTool {
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 
 		// FIXME Why does linking these cause the RPs to stop showing?
-		//designPane.setReferencePointType( referencePointType );
-		//designPane.setReferencePointSize( referencePointSize );
-		//designPane.setReferencePointPaint( referencePointPaint );
+		designPane.setReferencePointType( referencePointType );
+		designPane.setReferencePointSize( referencePointSize );
+		designPane.setReferencePointPaint( referencePointPaint );
 
 		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );

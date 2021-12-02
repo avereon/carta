@@ -5,7 +5,7 @@
 	<page id="point">
 		<group id="point-title">
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
-			<setting key="type" editor="combobox" provider="point-type-option-provider"/>
+			<setting key="type" editor="combobox" provider="marker-type-option-provider"/>
 			<setting key="size" type="math-expression" editor="textline"/>
 
 			<setting id="draw-paint" key="draw-paint-mode" editor="combobox">

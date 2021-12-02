@@ -46,10 +46,11 @@ public class DesignMarker extends DesignShape {
 		},
 		CIRCLE {
 			public Path getPath() {
+				double r = HALF_SIZE;
 				Path path = new Path();
-				path.getElements().add( new MoveTo( 0, -HALF_SIZE ) );
-				path.getElements().add( new ArcTo( HALF_SIZE, HALF_SIZE, 0, 0, HALF_SIZE, false, false ) );
-				path.getElements().add( new ArcTo( HALF_SIZE, HALF_SIZE, 0, 0, HALF_SIZE, false, false ) );
+				path.getElements().add( new MoveTo( 0, -r ) );
+				path.getElements().add( new ArcTo( r, r, 0, 0, r, false, false ) );
+				path.getElements().add( new ArcTo( r, r, 0, 0, -r, false, false ) );
 				path.getElements().add( new ClosePath() );
 				return path;
 			}

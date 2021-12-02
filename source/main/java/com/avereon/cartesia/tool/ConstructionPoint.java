@@ -22,13 +22,14 @@ public class ConstructionPoint extends Region {
 	private Path path;
 
 	public ConstructionPoint() {
-		this( DesignMarker.Type.CIRCLE );
+		this( DEFAULT_TYPE );
 	}
 
 	public ConstructionPoint( DesignMarker.Type type ) {
 		getStyleClass().addAll( "construction-point" );
 		setManaged( false );
 		setType( type );
+		doUpdateGeometry();
 	}
 
 	public DesignMarker.Type getType() {
@@ -60,7 +61,7 @@ public class ConstructionPoint extends Region {
 	public ObjectProperty<Paint> paintProperty() {
 		if( paint == null ) {
 			paint = new SimpleObjectProperty<>( DEFAULT_PAINT );
-			paint.addListener( ( p, o, n ) -> this.doSetFill( n ) );
+			paint.addListener( ( p, o, n ) -> path.setFill( n ) );
 		}
 		return paint;
 	}
@@ -71,12 +72,8 @@ public class ConstructionPoint extends Region {
 
 	private void doUpdateGeometry() {
 		path = getType().getPath();
-		doSetFill( getPaint() );
+		path.setFill( getPaint() );
 		getChildren().setAll( path );
-	}
-
-	private void doSetFill( Paint paint ) {
-		if( path != null ) path.setFill( paint );
 	}
 
 }
