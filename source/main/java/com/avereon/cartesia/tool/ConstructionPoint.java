@@ -60,7 +60,7 @@ public class ConstructionPoint extends Region {
 	public ObjectProperty<Paint> paintProperty() {
 		if( paint == null ) {
 			paint = new SimpleObjectProperty<>( DEFAULT_PAINT );
-			paint.addListener( ( p, o, n ) -> path.setFill( n ) );
+			paint.addListener( ( p, o, n ) -> this.doSetFill( n ) );
 		}
 		return paint;
 	}
@@ -71,8 +71,12 @@ public class ConstructionPoint extends Region {
 
 	private void doUpdateGeometry() {
 		path = getType().getPath();
-		path.setFill( getPaint() );
+		doSetFill( getPaint() );
 		getChildren().setAll( path );
+	}
+
+	private void doSetFill( Paint paint ) {
+		if( path != null ) path.setFill( paint );
 	}
 
 }

@@ -65,11 +65,11 @@ public class DesignPane extends StackPane {
 
 	private static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
-	private static final double DEFAULT_REFERENCE_POINT_SIZE = 5;
+	private static final double DEFAULT_REFERENCE_POINT_SIZE = 10;
 
 	private static final DesignMarker.Type DEFAULT_REFERENCE_POINT_TYPE = DesignMarker.Type.X;
 
-	private static final Paint DEFAULT_REFERENCE_POINT_PAINT = Colors.parse( "#808080ff" );
+	private static final Paint DEFAULT_REFERENCE_POINT_PAINT = Colors.parse( "#808080" );
 
 	private static final DesignLayerPane NO_LAYER = new DesignLayerPane();
 

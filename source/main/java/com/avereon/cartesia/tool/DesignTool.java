@@ -559,23 +559,29 @@ public abstract class DesignTool extends GuidedTool {
 		Settings settings = getSettings();
 		String defaultSelectSize = "2";
 		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
-		String defaultReferencePointSize = "5";
 		String defaultReferencePointType = DesignMarker.Type.X.name().toLowerCase();
-		String defaultReferencePointPaint = "#ff808080";
+		String defaultReferencePointSize = "50";
+		String defaultReferencePointPaint = "#ff8080";
 		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
 
 		// Get tool settings
 		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
 		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
-		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
 		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
+		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
 		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
+
 		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
 		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
 		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
 		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ) ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
-		// TODO setReferencePointSize( referencePointSize );
+
+		// FIXME Why does linking these cause the RPs to stop showing?
+		//designPane.setReferencePointType( referencePointType );
+		//designPane.setReferencePointSize( referencePointSize );
+		//designPane.setReferencePointPaint( referencePointPaint );
+
 		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
