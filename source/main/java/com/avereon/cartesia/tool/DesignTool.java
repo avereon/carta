@@ -33,6 +33,7 @@ import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workpane.Workpane;
 import com.avereon.xenon.workspace.StatusBar;
 import com.avereon.xenon.workspace.Workspace;
+import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -72,6 +73,12 @@ public abstract class DesignTool extends GuidedTool {
 	public static final String SELECT_APERTURE_SIZE = "select-aperture-size";
 
 	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
+
+	public static final String REFERENCE_POINT_SIZE = "reference-point-size";
+
+	public static final String REFERENCE_POINT_TYPE = "reference-point-type";
+
+	public static final String REFERENCE_POINT_PAINT = "reference-point-paint";
 
 	public static final boolean DEFAULT_GRID_VISIBLE = true;
 
@@ -552,16 +559,23 @@ public abstract class DesignTool extends GuidedTool {
 		Settings settings = getSettings();
 		String defaultSelectSize = "2";
 		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
-		String defaultReticleId = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
+		String defaultReferencePointSize = "5";
+		String defaultReferencePointType = DesignMarker.Type.X.name().toLowerCase();
+		String defaultReferencePointPaint = "#ff808080";
+		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
 
 		// Get tool settings
-		double selectApertureRadius = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
+		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
 		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
+		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
+		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
+		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
 		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
 		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
 		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
-		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticleId ) ) );
-		setSelectAperture( new DesignValue( selectApertureRadius, selectApertureUnit ) );
+		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ) ) );
+		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
+		// TODO setReferencePointSize( referencePointSize );
 		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 

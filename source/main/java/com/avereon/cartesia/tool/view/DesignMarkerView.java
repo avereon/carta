@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignMarker;
-import com.avereon.cartesia.data.DesignMarkers;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
@@ -30,9 +29,7 @@ public class DesignMarkerView extends DesignShapeView {
 
 	@Override
 	public List<Shape> generateGeometry() {
-		DesignMarker marker = getDesignMarker();
-		Path path = DesignMarkers.createMarker( marker.calcType(), marker.getOrigin(), marker.getRadius() );
-		return List.of( path );
+		return List.of( getDesignMarker().calcType().getPath() );
 	}
 
 	@Override

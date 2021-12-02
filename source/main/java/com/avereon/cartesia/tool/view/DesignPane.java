@@ -65,6 +65,12 @@ public class DesignPane extends StackPane {
 
 	private static final Color DEFAULT_SELECT_FILL_PAINT = Colors.parse( "#ff00c040" );
 
+	private static final double DEFAULT_REFERENCE_POINT_SIZE = 5;
+
+	private static final DesignMarker.Type DEFAULT_REFERENCE_POINT_TYPE = DesignMarker.Type.X;
+
+	private static final Paint DEFAULT_REFERENCE_POINT_PAINT = Colors.parse( "#808080ff" );
+
 	private static final DesignLayerPane NO_LAYER = new DesignLayerPane();
 
 	private static final Comparator<Node> LAYER_SORTER = new LayerSorter();
@@ -104,6 +110,12 @@ public class DesignPane extends StackPane {
 	private ObjectProperty<Paint> selectDrawPaint;
 
 	private ObjectProperty<Paint> selectFillPaint;
+
+	private DoubleProperty referencePointSize;
+
+	private ObjectProperty<DesignMarker.Type> referencePointType;
+
+	private ObjectProperty<Paint> referencePointPaint;
 
 	private double dpu;
 
@@ -259,6 +271,45 @@ public class DesignPane extends StackPane {
 	public final ObjectProperty<Paint> selectFillPaintProperty() {
 		if( selectFillPaint == null ) selectFillPaint = new SimpleObjectProperty<>( DEFAULT_SELECT_FILL_PAINT );
 		return selectFillPaint;
+	}
+
+	public Double getReferencePointSize() {
+		return referencePointSize == null ? DEFAULT_REFERENCE_POINT_SIZE : referencePointSize.get();
+	}
+
+	public void setReferencePointSize( double size ) {
+		referencePointSize().set( size );
+	}
+
+	public final DoubleProperty referencePointSize() {
+		if( referencePointSize == null ) referencePointSize = new SimpleDoubleProperty( DEFAULT_REFERENCE_POINT_SIZE );
+		return referencePointSize;
+	}
+
+	public DesignMarker.Type getReferencePointType() {
+		return referencePointType == null ? DEFAULT_REFERENCE_POINT_TYPE : referencePointType.get();
+	}
+
+	public void setReferencePointType( DesignMarker.Type type ) {
+		referencePointType().set( type );
+	}
+
+	public ObjectProperty<DesignMarker.Type> referencePointType() {
+		if( referencePointType == null ) referencePointType = new SimpleObjectProperty<>( DEFAULT_REFERENCE_POINT_TYPE );
+		return referencePointType;
+	}
+
+	public final Paint getReferencePointPaint() {
+		return referencePointPaint == null ? DEFAULT_REFERENCE_POINT_PAINT : referencePointPaint.get();
+	}
+
+	public void setReferencePointPaint( Paint paint ) {
+		referencePointPaint().set( paint );
+	}
+
+	public ObjectProperty<Paint> referencePointPaint() {
+		if( referencePointPaint == null ) referencePointPaint = new SimpleObjectProperty<>( DEFAULT_REFERENCE_POINT_PAINT );
+		return referencePointPaint;
 	}
 
 	public ObservableSet<DesignLayer> enabledLayersProperty() {
@@ -516,6 +567,7 @@ public class DesignPane extends StackPane {
 
 	private void addOriginReferencePoint() {
 		ConstructionPoint cp = DesignShapeView.cp( this, Bindings.createDoubleBinding( () -> 0.0 ), Bindings.createDoubleBinding( () -> 0.0 ) );
+		cp.typeProperty().unbind();
 		reference.getChildren().add( cp.setType( DesignMarker.Type.REFERENCE ) );
 	}
 

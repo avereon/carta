@@ -4,22 +4,19 @@ import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class PointTypeOptionProvider implements SettingOptionProvider {
 
 	private static List<String> keys;
 
 	static {
-		PointTypeOptionProvider.keys = List.of(
-			NULL_VALUE_OPTION_KEY,
-			DesignMarker.Type.CROSS.name().toLowerCase(),
-			DesignMarker.Type.X.name().toLowerCase(),
-			DesignMarker.Type.REFERENCE.name().toLowerCase(),
-			DesignMarker.Type.CIRCLE.name().toLowerCase(),
-			DesignMarker.Type.DIAMOND.name().toLowerCase(),
-			DesignMarker.Type.SQUARE.name().toLowerCase()
-		);
+		Stream<String> types = Arrays.stream( DesignMarker.Type.values() ).map( t -> t.name().toLowerCase() );
+		List<String> keys = Stream.concat( Stream.of( NULL_VALUE_OPTION_KEY ), types ).toList();
+		PointTypeOptionProvider.keys = Collections.unmodifiableList( keys );
 	}
 
 	@Override

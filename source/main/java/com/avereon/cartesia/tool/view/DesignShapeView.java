@@ -220,8 +220,10 @@ public class DesignShapeView extends DesignDrawableView {
 
 	public static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xBinding, ObservableValue<Number> yBinding ) {
 		ConstructionPoint cp = new ConstructionPoint();
-		cp.scaleXProperty().bind( Bindings.divide( 1, pane.scaleXProperty() ) );
-		cp.scaleYProperty().bind( Bindings.divide( 1, pane.scaleYProperty() ) );
+		cp.typeProperty().bind( pane.referencePointType() );
+		cp.paintProperty().bind( pane.referencePointPaint() );
+		cp.scaleXProperty().bind( Bindings.multiply( 0.5, pane.referencePointSize() ).divide( pane.scaleXProperty() ) );
+		cp.scaleYProperty().bind( Bindings.multiply( 0.5, pane.referencePointSize() ).divide( pane.scaleXProperty() ) );
 		cp.layoutXProperty().bind( xBinding );
 		cp.layoutYProperty().bind( yBinding );
 		return cp;
