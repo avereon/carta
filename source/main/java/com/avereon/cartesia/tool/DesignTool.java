@@ -559,9 +559,9 @@ public abstract class DesignTool extends GuidedTool {
 		Settings settings = getSettings();
 		String defaultSelectSize = "2";
 		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
-		String defaultReferencePointType = DesignMarker.Type.X.name().toLowerCase();
-		String defaultReferencePointSize = "50";
-		String defaultReferencePointPaint = "#ff8080";
+		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
+		String defaultReferencePointSize = "10";
+		String defaultReferencePointPaint = "#808080";
 		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
 
 		// Get tool settings
@@ -576,11 +576,9 @@ public abstract class DesignTool extends GuidedTool {
 		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
 		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ) ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
-
-		// FIXME Why does linking these cause the RPs to stop showing?
-		//designPane.setReferencePointType( referencePointType );
-		//designPane.setReferencePointSize( referencePointSize );
-		//designPane.setReferencePointPaint( referencePointPaint );
+		designPane.setReferencePointType( referencePointType );
+		designPane.setReferencePointSize( referencePointSize );
+		designPane.setReferencePointPaint( referencePointPaint );
 
 		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
@@ -606,6 +604,9 @@ public abstract class DesignTool extends GuidedTool {
 		productSettings.register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
 		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
+		productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 
 		// Add layout bounds property listener
 		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );

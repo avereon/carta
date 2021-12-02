@@ -15,6 +15,11 @@
 			<setting key="select-aperture-size"/>
 			<setting key="select-aperture-unit" editor="combobox" provider="design-units"/>
 		</group>
+		<group id="reference-points">
+			<setting key="reference-point-type" editor="combobox" provider="marker-type-option-provider"/>
+			<setting key="reference-point-size" editor="textfield" type="math-expression"/>
+			<setting key="reference-point-paint" editor="paint"/>
+		</group>
 	</page>
 
 </pages>

@@ -19,6 +19,11 @@ public class DesignMarker extends DesignShape {
 
 	public enum Type {
 
+		DEFAULT {
+			public Path getPath() {
+				return CROSS.getPath();
+			}
+		},
 		CG {
 			public Path getPath() {
 				double r = HALF_SIZE;
@@ -46,17 +51,18 @@ public class DesignMarker extends DesignShape {
 		},
 		CIRCLE {
 			public Path getPath() {
+				double r = HALF_SIZE;
 				Path path = new Path();
-				path.getElements().add( new MoveTo( 0, -HALF_SIZE ) );
-				path.getElements().add( new ArcTo( HALF_SIZE, HALF_SIZE, 0, 0, HALF_SIZE, false, false ) );
-				path.getElements().add( new ArcTo( HALF_SIZE, HALF_SIZE, 0, 0, HALF_SIZE, false, false ) );
+				path.getElements().add( new MoveTo( 0, -r ) );
+				path.getElements().add( new ArcTo( r, r, 0, 0, r, false, false ) );
+				path.getElements().add( new ArcTo( r, r, 0, 0, -r, false, false ) );
 				path.getElements().add( new ClosePath() );
 				return path;
 			}
 		},
 		CROSS {
 			public Path getPath() {
-				double r = 1;
+				double r = HALF_SIZE;
 				double s = HALF_WIDTH * r;
 				Path path = new Path( new MoveTo( -s, -r ) );
 				path.getElements().add( new LineTo( s, -r ) );
@@ -80,11 +86,12 @@ public class DesignMarker extends DesignShape {
 		},
 		DIAMOND {
 			public Path getPath() {
+				double r = HALF_SIZE;
 				Path path = new Path();
-				path.getElements().add( new MoveTo( -1, 0 ) );
-				path.getElements().add( new LineTo( 0, 1 ) );
-				path.getElements().add( new LineTo( 1, 0 ) );
-				path.getElements().add( new LineTo( 0, -1 ) );
+				path.getElements().add( new MoveTo( -r, 0 ) );
+				path.getElements().add( new LineTo( 0, r ) );
+				path.getElements().add( new LineTo( r, 0 ) );
+				path.getElements().add( new LineTo( 0, -r ) );
 				path.getElements().add( new ClosePath() );
 				return path;
 			}
@@ -96,7 +103,8 @@ public class DesignMarker extends DesignShape {
 		},
 		SQUARE {
 			public Path getPath() {
-				double z = Constants.SQRT_ONE_HALF;
+				double r = HALF_SIZE;
+				double z = r * Constants.SQRT_ONE_HALF;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( -z, -z ) );
 				path.getElements().add( new LineTo( -z, z ) );
@@ -108,7 +116,7 @@ public class DesignMarker extends DesignShape {
 		},
 		STAR {
 			public Path getPath() {
-				double r = 1;
+				double r = HALF_SIZE;
 				double s = r * 0.5 * (3 - Math.sqrt( 5 ));
 
 				Path path = new Path();
@@ -127,7 +135,7 @@ public class DesignMarker extends DesignShape {
 		},
 		X {
 			public Path getPath() {
-				double r = 1;
+				double r = HALF_SIZE;
 				double s = Constants.SQRT_ONE_HALF * r;
 				double t = HALF_WIDTH * s;
 
