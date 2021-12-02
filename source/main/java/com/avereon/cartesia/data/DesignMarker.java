@@ -19,6 +19,11 @@ public class DesignMarker extends DesignShape {
 
 	public enum Type {
 
+		DEFAULT {
+			public Path getPath() {
+				return CROSS.getPath();
+			}
+		},
 		CG {
 			public Path getPath() {
 				double r = 1;
@@ -198,7 +203,9 @@ public class DesignMarker extends DesignShape {
 	}
 
 	public Type calcType() {
-		return DesignMarker.Type.valueOf( getType().toUpperCase() );
+		String type = getType();
+		if( type == null ) type = DesignMarker.Type.DEFAULT.name();
+		return DesignMarker.Type.valueOf( type.toUpperCase() );
 	}
 
 	public String getType() {

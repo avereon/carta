@@ -7,7 +7,6 @@ import com.avereon.event.EventHandler;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.Shape;
-import javafx.scene.shape.StrokeLineCap;
 
 import java.util.List;
 
@@ -29,7 +28,13 @@ public class DesignMarkerView extends DesignShapeView {
 
 	@Override
 	public List<Shape> generateGeometry() {
-		return List.of( getDesignMarker().calcType().getPath() );
+		DesignMarker marker = getDesignMarker();
+		Path path = marker.calcType().getPath();
+		path.setLayoutX( marker.getOrigin().getX() );
+		path.setLayoutY( marker.getOrigin().getY() );
+		path.setScaleX( marker.calcSize() );
+		path.setScaleY( marker.calcSize() );
+		return List.of( path );
 	}
 
 	@Override
@@ -44,7 +49,6 @@ public class DesignMarkerView extends DesignShapeView {
 		super.configureShape( shape );
 
 		// But then do some things different for markers
-		shape.setStrokeLineCap( StrokeLineCap.BUTT );
 		shape.setFill( getDesignShape().calcDrawPaint() );
 	}
 
