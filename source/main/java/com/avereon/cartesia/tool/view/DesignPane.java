@@ -748,7 +748,7 @@ public class DesignPane extends StackPane {
 		//		boolean invisibleShape = isInvisible( shape );
 		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
-		// This first test is an optimization to determine if the the accurate test can be skipped
+		// This first test is an optimization to determine if the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
 		// This is the slow but accurate test if the shape is intersecting
 		boolean result = !((Path)Shape.intersect( shape, selector )).getElements().isEmpty();
@@ -762,8 +762,10 @@ public class DesignPane extends StackPane {
 		//		boolean invisibleShape = isInvisible( shape );
 		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
-		// This first test is an optimization to determine if the the accurate test can be skipped
+		// This first test is an optimization to determine if the accurate test can be skipped
 		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+		// This second test is an optimization for fully contained shapes
+		if( selector.getBoundsInParent().contains( shape.getBoundsInParent() ) ) return true;
 		// This is the slow but accurate test if the shape is contained
 		boolean result = ((Path)Shape.subtract( shape, selector )).getElements().isEmpty();
 
