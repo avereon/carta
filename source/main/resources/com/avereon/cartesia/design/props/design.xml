@@ -21,12 +21,23 @@
 				<option id="iso" value="iso"/>
 			</setting>
 			<setting key="grid-origin"/>
+
+			<setting key="grid-axis-visible" editor="checkbox"/>
+			<setting key="grid-axis-paint" editor="paint"/>
+			<setting key="grid-axis-width" editor="textline" type="math-expression"/>
+
 			<setting key="grid-major-visible" editor="checkbox"/>
 			<setting key="grid-major-x" type="math-expression"/>
 			<setting key="grid-major-y" type="math-expression"/>
+			<setting key="grid-major-paint" editor="paint"/>
+			<setting key="grid-major-width" editor="textline" type="math-expression"/>
+
 			<setting key="grid-minor-visible" editor="checkbox"/>
 			<setting key="grid-minor-x" type="math-expression"/>
 			<setting key="grid-minor-y" type="math-expression"/>
+			<setting key="grid-minor-paint" editor="paint"/>
+			<setting key="grid-minor-width" editor="textline" type="math-expression"/>
+
 			<setting key="grid-snap-x" type="math-expression"/>
 			<setting key="grid-snap-y" type="math-expression"/>
 		</group>

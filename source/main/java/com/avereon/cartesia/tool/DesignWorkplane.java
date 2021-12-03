@@ -3,9 +3,10 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
+import com.avereon.zarra.color.Paints;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
 @CustomLog
@@ -20,17 +21,29 @@ public class DesignWorkplane extends Node {
 
 	public static final String DEFAULT_GRID_ORIGIN = "0,0,0";
 
+	public static final boolean DEFAULT_GRID_AXIS_VISIBILE = true;
+
+	public static final String DEFAULT_GRID_AXIS_PAINT = "#80a0d060";
+
+	public static final String DEFAULT_GRID_AXIS_WIDTH = "0.1";
+
+	public static final boolean DEFAULT_GRID_MAJOR_VISIBILE = true;
+
 	public static final String DEFAULT_GRID_MAJOR_SIZE = "1.0";
+
+	public static final String DEFAULT_GRID_MAJOR_PAINT = "#80a0d020";
+
+	public static final String DEFAULT_GRID_MAJOR_WIDTH = "0.1";
+
+	public static final boolean DEFAULT_GRID_MINOR_VISIBILE = true;
 
 	public static final String DEFAULT_GRID_MINOR_SIZE = "0.5";
 
+	public static final String DEFAULT_GRID_MINOR_PAINT = "#80a0d010";
+
+	public static final String DEFAULT_GRID_MINOR_WIDTH = "0.05";
+
 	public static final String DEFAULT_GRID_SNAP_SIZE = "0.1";
-
-	public static final Color DEFAULT_GRID_AXIS_COLOR = Color.web( "#80a0d060" );
-
-	public static final Color DEFAULT_GRID_MAJOR_COLOR = Color.web( "#80a0d020" );
-
-	public static final Color DEFAULT_GRID_MINOR_COLOR = Color.web( "#80a0d010" );
 
 	public static final String BOUNDARY_X1 = "boundary-x1";
 
@@ -46,6 +59,10 @@ public class DesignWorkplane extends Node {
 
 	public static final String GRID_AXIS_VISIBLE = "grid-axis-visible";
 
+	public static final String GRID_AXIS_PAINT = "grid-axis-paint";
+
+	public static final String GRID_AXIS_WIDTH = "grid-axis-width";
+
 	public static final String GRID_MAJOR_VISIBLE = "grid-major-visible";
 
 	public static final String GRID_MAJOR_X = "grid-major-x";
@@ -53,6 +70,10 @@ public class DesignWorkplane extends Node {
 	public static final String GRID_MAJOR_Y = "grid-major-y";
 
 	public static final String GRID_MAJOR_Z = "grid-major-z";
+
+	public static final String GRID_MAJOR_PAINT = "grid-major-paint";
+
+	public static final String GRID_MAJOR_WIDTH = "grid-major-width";
 
 	public static final String GRID_MINOR_VISIBLE = "grid-minor-visible";
 
@@ -62,6 +83,10 @@ public class DesignWorkplane extends Node {
 
 	public static final String GRID_MINOR_Z = "grid-minor-z";
 
+	public static final String GRID_MINOR_PAINT = "grid-minor-paint";
+
+	public static final String GRID_MINOR_WIDTH = "grid-minor-width";
+
 	public static final String GRID_SNAP_X = "grid-snap-x";
 
 	public static final String GRID_SNAP_Y = "grid-snap-y";
@@ -70,11 +95,19 @@ public class DesignWorkplane extends Node {
 
 	private CoordinateSystem coordinateSystem;
 
+	private Paint gridAxisPaint;
+
+	private double gridAxisWidth;
+
 	private double majorGridX;
 
 	private double majorGridY;
 
 	private double majorGridZ;
+
+	private Paint majorGridPaint;
+
+	private double majorGridWidth;
 
 	private double minorGridX;
 
@@ -82,15 +115,19 @@ public class DesignWorkplane extends Node {
 
 	private double minorGridZ;
 
+	private Paint minorGridPaint;
+
+	private double minorGridWidth;
+
 	private double snapGridX;
 
 	private double snapGridY;
 
 	private double snapGridZ;
 
-	private boolean majorGridShowing = true;
+	private boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBILE;
 
-	private boolean minorGridShowing = true;
+	private boolean minorGridShowing = DEFAULT_GRID_MINOR_VISIBILE;
 
 	public DesignWorkplane() {
 		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
@@ -99,8 +136,7 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this(
-			DEFAULT_COORDINATE_SYSTEM,
+		this( DEFAULT_COORDINATE_SYSTEM,
 			DEFAULT_GRID_ORIGIN,
 			boundaryX1,
 			boundaryY1,
@@ -228,8 +264,11 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
+	// ******************************
+	// Grid Axis
+	// ******************************
 	public boolean isGridAxisVisible() {
-		return getValue( GRID_AXIS_VISIBLE, true );
+		return getValue( GRID_AXIS_VISIBLE, DEFAULT_GRID_AXIS_VISIBILE );
 	}
 
 	public DesignWorkplane setGridAxisVisible( boolean visible ) {
@@ -237,8 +276,39 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
+	public Paint calcGridAxisPaint() {
+		return gridAxisPaint;
+	}
+
+	public String getGridAxisPaint() {
+		return getValue( GRID_AXIS_PAINT );
+	}
+
+	public DesignWorkplane setGridAxisPaint( Paint paint ) {
+		this.gridAxisPaint = paint;
+		setValue( GRID_AXIS_PAINT, Paints.toString( paint ) );
+		return this;
+	}
+
+	public double calcGridAxisWidth() {
+		return gridAxisWidth;
+	}
+
+	public String getGridAxisWidth() {
+		return getValue( GRID_AXIS_WIDTH );
+	}
+
+	public DesignWorkplane setGridAxisWidth( String width ) {
+		this.gridAxisWidth = CadMath.evalNoException( width );
+		setValue( GRID_AXIS_WIDTH, width );
+		return this;
+	}
+
+	// ******************************
+	// Grid Major Spacing
+	// ******************************
 	public boolean isMajorGridVisible() {
-		return getValue( GRID_MAJOR_VISIBLE, true );
+		return getValue( GRID_MAJOR_VISIBLE, DEFAULT_GRID_MAJOR_VISIBILE );
 	}
 
 	public DesignWorkplane setMajorGridVisible( boolean visible ) {
@@ -297,8 +367,39 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
+	public Paint calcMajorGridPaint() {
+		return majorGridPaint;
+	}
+
+	public String getMajorGridPaint() {
+		return getValue( GRID_MAJOR_PAINT );
+	}
+
+	public DesignWorkplane setMajorGridPaint( Paint paint ) {
+		this.majorGridPaint = paint;
+		setValue( GRID_MAJOR_PAINT, Paints.toString( paint ) );
+		return this;
+	}
+
+	public double calcMajorGridWidth() {
+		return majorGridWidth;
+	}
+
+	public String getMajorGridWidth() {
+		return getValue( GRID_MAJOR_WIDTH );
+	}
+
+	public DesignWorkplane setMajorGridWidth( String width ) {
+		this.majorGridWidth = CadMath.evalNoException( width );
+		setValue( GRID_MAJOR_WIDTH, width );
+		return this;
+	}
+
+	// ******************************
+	// Grid Minor Spacing
+	// ******************************
 	public boolean isMinorGridVisible() {
-		return getValue( GRID_MINOR_VISIBLE, true );
+		return getValue( GRID_MINOR_VISIBLE, DEFAULT_GRID_MINOR_VISIBILE );
 	}
 
 	public DesignWorkplane setMinorGridVisible( boolean visible ) {
@@ -357,6 +458,37 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
+	public Paint calcMinorGridPaint() {
+		return minorGridPaint;
+	}
+
+	public String getMinorGridPaint() {
+		return getValue( GRID_MINOR_PAINT );
+	}
+
+	public DesignWorkplane setMinorGridPaint( Paint paint ) {
+		this.minorGridPaint = paint;
+		setValue( GRID_MINOR_PAINT, Paints.toString( paint ) );
+		return this;
+	}
+
+	public double calcMinorGridWidth() {
+		return minorGridWidth;
+	}
+
+	public String getMinorGridWidth() {
+		return getValue( GRID_MINOR_WIDTH );
+	}
+
+	public DesignWorkplane setMinorGridWidth( String width ) {
+		this.minorGridWidth = CadMath.evalNoException( width );
+		setValue( GRID_MINOR_WIDTH, width );
+		return this;
+	}
+
+	// ******************************
+	// Grid Snap Spacing
+	// ******************************
 	public double calcSnapGridX() {
 		return snapGridX;
 	}

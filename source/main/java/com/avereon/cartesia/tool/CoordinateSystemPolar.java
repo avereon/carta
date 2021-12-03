@@ -5,7 +5,7 @@ import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
@@ -57,8 +57,14 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		double boundaryYmin = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
 		double boundaryYmax = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) - origin.getY();
 		boolean axisVisible = workplane.isGridAxisVisible();
+		Paint axisPaint = workplane.calcGridAxisPaint();
+		double axisWidth = workplane.calcGridAxisWidth();
 		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
+		Paint majorPaint = workplane.calcMajorGridPaint();
+		double majorWidth = workplane.calcMajorGridWidth();
 		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
+		Paint minorPaint = workplane.calcMinorGridPaint();
+		double minorWidth = workplane.calcMinorGridWidth();
 
 		Point3D a = new Point3D( boundaryXmin, boundaryYmin, 0 );
 		Point3D b = new Point3D( boundaryXmin, boundaryYmax, 0 );
@@ -103,8 +109,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			for( double value : minorOffsetsR ) {
 				if( value > maxR ) maxR = value;
 				Circle shape = new Circle( origin.getX(), origin.getY(), value );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MINOR_COLOR );
-				shape.setFill( Color.TRANSPARENT );
+				shape.setStroke( minorPaint );
+				shape.setFill( null );
 				grid.add( shape );
 			}
 		}
@@ -112,8 +118,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 			for( double value : majorOffsetsR ) {
 				if( value > maxR ) maxR = value;
 				Circle shape = new Circle( origin.getX(), origin.getY(), value );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MAJOR_COLOR );
-				shape.setFill( Color.TRANSPARENT );
+				shape.setStroke( majorPaint );
+				shape.setFill( null );
 				grid.add( shape );
 			}
 		}
@@ -124,7 +130,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 				Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 				// The center can get a bit crowded, can I fix this?
 				Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MINOR_COLOR );
+				shape.setStroke( minorPaint );
+				shape.setStrokeWidth( minorWidth );
 				grid.add( shape );
 			}
 		}
@@ -133,7 +140,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 				Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 				// The center can get a bit crowded, can I fix this?
 				Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MAJOR_COLOR );
+				shape.setStroke( majorPaint );
+				shape.setStrokeWidth( majorWidth );
 				grid.add( shape );
 			}
 		}
@@ -143,7 +151,8 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 				Point3D p = CadShapes.polarDegreesToCartesian( new Point3D( maxR, value, 0 ) );
 				// The center can get a bit crowded, can I fix this?
 				Line shape = new Line( origin.getX(), origin.getY(), origin.getX() + p.getX(), origin.getY() + p.getY() );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
+				shape.setStroke( axisPaint );
+				shape.setStrokeWidth( axisWidth );
 				grid.add( shape );
 			}
 		}

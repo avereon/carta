@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Arithmetic;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
@@ -42,13 +43,22 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
 		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() );
 		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() );
+
+		boolean axisVisible = workplane.isGridAxisVisible();
+		Paint axisPaint = workplane.calcGridAxisPaint();
+		double axisWidth = workplane.calcGridAxisWidth();
+
+		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
 		double majorIntervalX = workplane.calcMajorGridX();
 		double majorIntervalY = workplane.calcMajorGridY();
+		Paint majorPaint = workplane.calcMajorGridPaint();
+		double majorWidth = workplane.calcMajorGridWidth();
+
+		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 		double minorIntervalX = workplane.calcMinorGridX();
 		double minorIntervalY = workplane.calcMinorGridY();
-		boolean axisVisible = workplane.isGridAxisVisible();
-		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
-		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
+		Paint minorPaint = workplane.calcMinorGridPaint();
+		double minorWidth = workplane.calcMinorGridWidth();
 
 		// Get all offsets
 		List<Double> axisOffsetsX = new ArrayList<>();
@@ -70,20 +80,17 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 			majorOffsetsY.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsY ) );
 		}
 
-		double strokeWidthX = 0.1 * minorIntervalX;
-		double strokeWidthY = 0.1 * minorIntervalY;
-
 		if( minorVisible ) {
 			for( double value : minorOffsetsX ) {
 				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MINOR_COLOR );
-				shape.setStrokeWidth( strokeWidthX );
+				shape.setStroke( minorPaint );
+				shape.setStrokeWidth( minorWidth );
 				grid.add( shape );
 			}
 			for( double value : minorOffsetsY ) {
 				Line shape = new Line( boundaryX1, value, boundaryX2, value );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MINOR_COLOR );
-				shape.setStrokeWidth( strokeWidthY );
+				shape.setStroke( minorPaint );
+				shape.setStrokeWidth( minorWidth );
 				grid.add( shape );
 			}
 		}
@@ -91,14 +98,14 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		if( majorVisible ) {
 			for( double value : majorOffsetsX ) {
 				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MAJOR_COLOR );
-				shape.setStrokeWidth( strokeWidthX );
+				shape.setStroke( majorPaint );
+				shape.setStrokeWidth( majorWidth );
 				grid.add( shape );
 			}
 			for( double value : majorOffsetsY ) {
 				Line shape = new Line( boundaryX1, value, boundaryX2, value );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_MAJOR_COLOR );
-				shape.setStrokeWidth( strokeWidthY );
+				shape.setStroke( majorPaint );
+				shape.setStrokeWidth( majorWidth );
 				grid.add( shape );
 			}
 		}
@@ -106,14 +113,14 @@ public class CoordinateSystemOrthographic implements CoordinateSystem {
 		if( axisVisible ) {
 			for( double value : axisOffsetsX ) {
 				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
-				shape.setStrokeWidth( strokeWidthX );
+				shape.setStroke( axisPaint );
+				shape.setStrokeWidth( axisWidth );
 				grid.add( shape );
 			}
 			for( double value : axisOffsetsY ) {
 				Line shape = new Line( boundaryX1, value, boundaryX2, value );
-				shape.setStroke( DesignWorkplane.DEFAULT_GRID_AXIS_COLOR );
-				shape.setStrokeWidth( strokeWidthY );
+				shape.setStroke( axisPaint );
+				shape.setStrokeWidth( axisWidth );
 				grid.add( shape );
 			}
 		}
