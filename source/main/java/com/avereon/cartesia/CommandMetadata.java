@@ -25,13 +25,16 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 
 	private final Object[] parameters;
 
-	public CommandMetadata( String action, String name, String command, String shortcut, Class<? extends Command> type, Object... parameters ) {
+	private final String[] tags;
+
+	public CommandMetadata( String action, String name, String command, String shortcut, String[] tags, Class<? extends Command> type, Object... parameters ) {
 		this.action = Objects.requireNonNull( action );
 		this.name = Objects.requireNonNull( name );
 		this.command = command;
 		this.shortcut = shortcut;
 		this.type = Objects.requireNonNull( type );
 		this.parameters = Objects.requireNonNull( parameters );
+		this.tags = tags;
 	}
 
 	public String getAction() {
@@ -56,6 +59,10 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 
 	public Object[] getParameters() {
 		return parameters;
+	}
+
+	public String[] getTags() {
+		return tags;
 	}
 
 	@Override

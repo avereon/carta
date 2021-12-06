@@ -6,21 +6,29 @@ import com.avereon.cartesia.data.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
+import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
+import com.avereon.zarra.image.BrokenIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
-import com.avereon.zarra.image.BrokenIcon;
 import lombok.CustomLog;
+
+import java.io.Reader;
+import java.io.StringReader;
+import java.net.URI;
+import java.util.Map;
 
 @CustomLog
 public class CartesiaMod extends Mod {
 
 	public static final String STYLESHEET = "cartesia.css";
+
+	public static final String INDEX_ID = "cartesia";
 
 	private Design2dAssetType design2dAssetType;
 
@@ -120,13 +128,21 @@ public class CartesiaMod extends Mod {
 		// Register the settings pages
 		registerSettingsPages();
 
+		// Load the command map
 		CommandMap.load( this );
+
+		// Index the help pages
+		registerIndexes();
+
 		log.atInfo().log( "%s started.", LazyEval.of( () -> getCard().getName() ) );
 	}
 
 	@Override
 	public void shutdown() throws Exception {
 		log.atFine().log( "%s stopping...", LazyEval.of( () -> getCard().getName() ) );
+
+		// Unregister the module indexes
+		unregisterIndexes();
 
 		// Unregister the settings pages
 		unregisterSettingsPages();
@@ -194,6 +210,22 @@ public class CartesiaMod extends Mod {
 		super.shutdown();
 
 		log.atInfo().log( "%s stopped.", LazyEval.of( () -> getCard().getName() ) );
+	}
+
+	private void registerIndexes() {
+		Map<String, CommandMetadata> commands = CommandMap.getAll();
+		for( CommandMetadata command : commands.values() ) {
+			URI uri = URI.create( "program:help:/cartesia/" + command.getAction() );
+			String icon = "command";
+			String title = command.getName();
+			Reader content = new StringReader( title.toLowerCase() );
+			Document document = new Document( uri, icon, title, content ).tags( command.getTags() );
+			getProgram().getIndexService().submit( INDEX_ID, document );
+		}
+	}
+
+	private void unregisterIndexes() {
+		getProgram().getIndexService().removeIndex( INDEX_ID );
 	}
 
 }

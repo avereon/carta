@@ -13,17 +13,18 @@ import com.avereon.xenon.ProgramProduct;
 import javafx.scene.input.*;
 import lombok.CustomLog;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @CustomLog
 public class CommandMap {
 
-	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", Noop.class );
-
-	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
+	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", new String[]{}, Noop.class );
 
 	private static final Map<String, String> commandActions = new ConcurrentHashMap<>();
+
+	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
 	private static final Map<CommandEventKey, String> eventActions = new ConcurrentHashMap<>();
 
@@ -199,6 +200,10 @@ public class CommandMap {
 		// Event actions???
 	}
 
+	public static Map<String,CommandMetadata> getAll() {
+		return Collections.unmodifiableMap(actionCommands);
+	}
+
 	public static boolean hasCommand( String shortcut ) {
 		return get( shortcut ) != NONE;
 	}
@@ -234,11 +239,16 @@ public class CommandMap {
 		String command = null;
 		if( proxy.getCommand() != null ) command = proxy.getCommand().toLowerCase();
 		String shortcut = proxy.getShortcut();
+		String[] tags = proxy.getTags();
 
-		add( action, type, name, command, shortcut, parameters );
+		add( action, type, name, command, shortcut, tags, parameters );
 	}
 
 	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
+		add( action, type, name, command, shortcut, null, parameters );
+	}
+
+	private static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, String[] tags, Object... parameters ) {
 		if( command != null && commandActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
 			log.atSevere().log( "Shortcut already used [%s]: %s %s", command, LazyEval.of( existing::getAction ), action );
@@ -247,7 +257,7 @@ public class CommandMap {
 
 		if( !actionCommands.containsKey( action ) ) {
 			if( command != null ) commandActions.put( command, action );
-			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, type, parameters ) );
+			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, tags, type, parameters ) );
 		}
 	}
 
