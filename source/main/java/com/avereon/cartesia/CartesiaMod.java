@@ -9,6 +9,7 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
+import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
@@ -215,8 +216,9 @@ public class CartesiaMod extends Mod {
 	private void registerIndexes() {
 		Map<String, CommandMetadata> commands = CommandMap.getAll();
 		for( CommandMetadata command : commands.values() ) {
+			ActionProxy action = getProgram().getActionLibrary().getAction( command.getAction() );
 			URI uri = URI.create( "program:help:/cartesia/" + command.getAction() );
-			String icon = "command";
+			String icon = action.getIcon();
 			String title = command.getName();
 			Reader content = new StringReader( title.toLowerCase() );
 			Document document = new Document( uri, icon, title, content ).tags( command.getTags() );
