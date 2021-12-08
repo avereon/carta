@@ -3,6 +3,7 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.command.Command;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Objects;
 
 public class CommandMetadata implements Comparable<CommandMetadata> {
@@ -25,9 +26,9 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 
 	private final Object[] parameters;
 
-	private final String[] tags;
+	private final List<String> tags;
 
-	public CommandMetadata( String action, String name, String command, String shortcut, String[] tags, Class<? extends Command> type, Object... parameters ) {
+	public CommandMetadata( String action, String name, String command, String shortcut, List<String> tags, Class<? extends Command> type, Object... parameters ) {
 		this.action = Objects.requireNonNull( action );
 		this.name = Objects.requireNonNull( name );
 		this.command = command;
@@ -61,7 +62,7 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 		return parameters;
 	}
 
-	public String[] getTags() {
+	public List<String> getTags() {
 		return tags;
 	}
 

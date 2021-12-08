@@ -221,7 +221,7 @@ public class CartesiaMod extends Mod {
 			String icon = action.getIcon();
 			String title = command.getName();
 			Reader content = new StringReader( title.toLowerCase() );
-			Document document = new Document( uri, icon, title, content ).tags( command.getTags() );
+			Document document = new Document( uri, icon, title, content ).tags(  command.getTags() );
 			getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}

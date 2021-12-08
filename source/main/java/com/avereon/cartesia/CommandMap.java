@@ -14,13 +14,14 @@ import javafx.scene.input.*;
 import lombok.CustomLog;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @CustomLog
 public class CommandMap {
 
-	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", new String[]{}, Noop.class );
+	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", List.of(), Noop.class );
 
 	private static final Map<String, String> commandActions = new ConcurrentHashMap<>();
 
@@ -239,16 +240,16 @@ public class CommandMap {
 		String command = null;
 		if( proxy.getCommand() != null ) command = proxy.getCommand().toLowerCase();
 		String shortcut = proxy.getShortcut();
-		String[] tags = proxy.getTags();
+		List<String> tags = proxy.getTags();
 
 		add( action, type, name, command, shortcut, tags, parameters );
 	}
 
 	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
-		add( action, type, name, command, shortcut, null, parameters );
+		add( action, type, name, command, shortcut, List.of(), parameters );
 	}
 
-	private static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, String[] tags, Object... parameters ) {
+	private static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, List<String> tags, Object... parameters ) {
 		if( command != null && commandActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
 			log.atSevere().log( "Shortcut already used [%s]: %s %s", command, LazyEval.of( existing::getAction ), action );
