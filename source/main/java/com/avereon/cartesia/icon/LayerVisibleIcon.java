@@ -6,11 +6,9 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class LayerVisibleIcon extends LayerIcon {
 
-	@Override
-	protected void doRender() {
+	public LayerVisibleIcon() {
 		fill( getPath() );
 		draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER );
-		super.doRender();
 	}
 
 	public static void main( String[] commands ) {

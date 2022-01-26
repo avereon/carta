@@ -6,8 +6,7 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class Ellipse3Icon extends DrawIcon {
 
-	@Override
-	protected void doRender() {
+	public Ellipse3Icon() {
 		double r = 16;
 		double p = 10;
 		double g = Math.sqrt( 0.5 * (r * r) );
@@ -22,7 +21,6 @@ public class Ellipse3Icon extends DrawIcon {
 		fill( circle( 16, 16, getDotRadius() ) );
 		fill( circle( 16 + g, 16 - g, getDotRadius() ) );
 		fill( circle( 16 - h, 16 - h, getDotRadius() ) );
-		super.doRender();
 	}
 
 	public static void main( String[] commands ) {

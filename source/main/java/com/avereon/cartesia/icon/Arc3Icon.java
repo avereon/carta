@@ -6,8 +6,7 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class Arc3Icon extends DrawIcon {
 
-	@Override
-	protected void doRender() {
+	public Arc3Icon() {
 		double r = 24;
 		double g = Math.sqrt( 0.5 * (r * r) );
 
@@ -15,7 +14,6 @@ public class Arc3Icon extends DrawIcon {
 		fill( circle( 4, 28, getDotRadius() ) );
 		fill( circle( 28, 4, getDotRadius() ) );
 		fill( circle( 28 - g, 28 - g, getDotRadius() ) );
-		super.doRender();
 	}
 
 	public static void main( String[] commands ) {

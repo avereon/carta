@@ -34,11 +34,6 @@ public class ViewIcon extends SvgIcon {
 	private static final double Py = 15;
 
 	public ViewIcon() {
-		super( 32, 32 );
-	}
-
-	@Override
-	protected void doRender() {
 		String tLid = "M 2,14 A 20 20 0 0 1 30,14 A 15 15 0 0 0 2,14 Z";
 		//String eye = "M 2,16 A 16 16 0 0 0 30,16 L 28,16 A 16 16 0 0 0 4,16 Z";
 		String eye = "M 4,16 A 16 16 0 0 0 28,16 A 16 16 0 0 0 4,16 Z";
@@ -51,8 +46,6 @@ public class ViewIcon extends SvgIcon {
 		clip(null);
 		fill( tLid );
 		fill( bLid );
-
-		super.doRender();
 	}
 
 	protected void doRenderOld() {
