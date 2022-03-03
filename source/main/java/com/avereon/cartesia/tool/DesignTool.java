@@ -49,8 +49,7 @@ import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.print.PageLayout;
-import javafx.print.PrinterJob;
+import javafx.print.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
@@ -1223,6 +1222,8 @@ public abstract class DesignTool extends GuidedTool {
 
 			getProgram().getTaskManager().submit( Task.of( taskName, () -> {
 				final PrinterJob job = PrinterJob.createPrinterJob();
+				final Printer printer = job.getPrinter();
+				job.getJobSettings().setPageLayout( printer.createPageLayout( Paper.NA_LETTER, PageOrientation.PORTRAIT, 0,0,0,0 ) );
 				final PageLayout layout = job.getJobSettings().getPageLayout();
 
 				// NOTE This can be used to give feedback to the user. It can be bound to a text field
