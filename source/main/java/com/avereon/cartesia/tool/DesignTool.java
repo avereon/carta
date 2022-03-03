@@ -1223,7 +1223,7 @@ public abstract class DesignTool extends GuidedTool {
 			getProgram().getTaskManager().submit( Task.of( taskName, () -> {
 				final PrinterJob job = PrinterJob.createPrinterJob();
 				final Printer printer = job.getPrinter();
-				job.getJobSettings().setPageLayout( printer.createPageLayout( Paper.NA_LETTER, PageOrientation.PORTRAIT, 0,0,0,0 ) );
+				job.getJobSettings().setPageLayout( printer.createPageLayout( Paper.NA_LETTER, PageOrientation.PORTRAIT, 0, 0, 0, 0 ) );
 				final PageLayout layout = job.getJobSettings().getPageLayout();
 
 				// NOTE This can be used to give feedback to the user. It can be bound to a text field
@@ -1234,6 +1234,7 @@ public abstract class DesignTool extends GuidedTool {
 				double printableHeight = layout.getPrintableHeight();
 
 				// NOTE This is a rather Swing looking dialog, maybe handle print properties separately
+				//				boolean print = job.showPageSetupDialog( getScene().getWindow() );
 				//				boolean print = job.showPrintDialog( getScene().getWindow() );
 				//				if( !print ) return;
 
