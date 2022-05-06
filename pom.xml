@@ -105,18 +105,6 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<!-- Version comes from parent -->
 				<configuration>
-					<!-- The argLine and systemPropertyVariables should match the failsafe configuration below -->
-					<argLine>
-<!--						&#45;&#45;add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED-->
-<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED-->
-					</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -142,20 +130,7 @@
 									<forkCount>1</forkCount>
 									<reuseForks>false</reuseForks>
 									<runOrder>alphabetical</runOrder>
-									<argLine>
-										-Xmx128m
-										--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
-										--add-opens=javafx.graphics/com.sun.glass.ui.monocle=ALL-UNNAMED
-<!--										&#45;&#45;add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED-->
-<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED-->
-									</argLine>
+									<argLine>-Xmx128m --add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED</argLine>
 									<systemPropertyVariables>
 										<!-- Set testfx.setup.timeout to a reasonable time -->
 										<!-- This might be as low as 1000 for a fast computer -->

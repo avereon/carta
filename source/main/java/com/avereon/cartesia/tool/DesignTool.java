@@ -731,16 +731,18 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void registerStatusBarItems() {
-		final StatusBar bar = getWorkspace().getStatusBar();
+		if( getWorkspace() == null ) return;
 		Fx.run( () -> {
+			StatusBar bar = getWorkspace().getStatusBar();
 			bar.setLeftToolItems( getCommandPrompt() );
 			bar.setRightToolItems( getCoordinateStatus() );
 		} );
 	}
 
 	private void unregisterStatusBarItems() {
-		final StatusBar bar = getWorkspace().getStatusBar();
+		if( getWorkspace() == null ) return;
 		Fx.run( () -> {
+			StatusBar bar = getWorkspace().getStatusBar();
 			bar.removeLeftToolItems( getCommandPrompt() );
 			bar.removeRightToolItems( getCoordinateStatus() );
 		} );
