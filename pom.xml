@@ -107,15 +107,15 @@
 				<configuration>
 					<!-- The argLine and systemPropertyVariables should match the failsafe configuration below -->
 					<argLine>
-						--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED
-						--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED
+<!--						&#45;&#45;add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED-->
+<!--						&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED-->
 					</argLine>
 				</configuration>
 			</plugin>
@@ -145,15 +145,16 @@
 									<argLine>
 										-Xmx128m
 										--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
-										--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED
-										--add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED
+										--add-opens=javafx.graphics/com.sun.glass.ui.monocle=ALL-UNNAMED
+<!--										&#45;&#45;add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.command=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.cursor=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.data=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.icon=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.math=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool=ALL-UNNAMED-->
+<!--										&#45;&#45;add-opens=com.avereon.cartesia/com.avereon.cartesia.tool.view=ALL-UNNAMED-->
 									</argLine>
 									<systemPropertyVariables>
 										<!-- Set testfx.setup.timeout to a reasonable time -->
