@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.math.CadConstants;
 import com.avereon.cartesia.math.CadGeometry;
 import javafx.geometry.Point3D;
 import org.assertj.core.api.AbstractAssert;
@@ -17,7 +18,7 @@ public class PointAssert extends AbstractAssert<PointAssert, Point3D> {
 	}
 
 	public PointAssert isCloseTo( Point3D expected ) {
-		return this;
+		return isCloseTo( expected, CadConstants.RESOLUTION_LENGTH );
 	}
 
 	public PointAssert isCloseTo( Point3D expected, double tolerance ) {

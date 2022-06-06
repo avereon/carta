@@ -52,20 +52,30 @@ public class CadShapes {
 				relative = true;
 			}
 
+			String[] coords = input.split( "," );
+
 			// Polar (radius first)
-			if( input.contains( "<" ) ) {
-				input = input.substring( 1 ).trim();
+			//			if( input.contains( "<" ) ) {
+			//				input = input.substring( 1 ).trim();
+			//				polar = true;
+			//			}
+			if( coords.length > 1 && coords[ 1 ].trim().startsWith( "<" ) ) {
+				coords[ 1 ] = coords[ 1 ].trim().substring( 1 ).trim();
 				polar = true;
 			}
 
 			// Reverse Polar (angle first)
-			if( input.contains( ">" ) ) {
-				input = input.substring( 1 ).trim();
+			//			if( input.contains( ">" ) ) {
+			//				input = input.substring( 1 ).trim();
+			//				polar = true;
+			//				reverse = true;
+			//			}
+			if( coords.length > 0 && coords[ 0 ].trim().startsWith( "<" ) ) {
+				coords[ 0 ] = coords[ 0 ].trim().substring( 1 ).trim();
 				polar = true;
 				reverse = true;
 			}
 
-			String[] coords = input.split( "[,<>]" );
 			Point3D point = switch( coords.length ) {
 				case 1 -> new Point3D( CadMath.eval( coords[ 0 ] ), 0, 0 );
 				case 2 -> new Point3D( CadMath.eval( coords[ 0 ] ), CadMath.eval( coords[ 1 ] ), 0 );
@@ -97,7 +107,7 @@ public class CadShapes {
 
 	public static List<Double> parseDashPattern( String pattern ) {
 		List<Double> values = CadMath.evalExpressions( pattern );
-		double sum = values.stream().reduce( Double::sum ).orElse(0.0);
+		double sum = values.stream().reduce( Double::sum ).orElse( 0.0 );
 		if( sum == 0.0 ) return List.of();
 		return values;
 	}
