@@ -53,19 +53,19 @@ public class CadShapes {
 			}
 
 			// Polar (radius first)
-			if( input.charAt( 0 ) == '<' ) {
+			if( input.contains( "<" ) ) {
 				input = input.substring( 1 ).trim();
 				polar = true;
 			}
 
 			// Reverse Polar (angle first)
-			if( input.charAt( 0 ) == '>' ) {
+			if( input.contains( ">" ) ) {
 				input = input.substring( 1 ).trim();
 				polar = true;
 				reverse = true;
 			}
 
-			String[] coords = input.split( "," );
+			String[] coords = input.split( "[,<>]" );
 			Point3D point = switch( coords.length ) {
 				case 1 -> new Point3D( CadMath.eval( coords[ 0 ] ), 0, 0 );
 				case 2 -> new Point3D( CadMath.eval( coords[ 0 ] ), CadMath.eval( coords[ 1 ] ), 0 );
