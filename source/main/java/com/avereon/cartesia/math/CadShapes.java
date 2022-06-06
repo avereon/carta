@@ -6,10 +6,7 @@ import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @CustomLog
 public class CadShapes {
@@ -39,7 +36,8 @@ public class CadShapes {
 	}
 
 	public static Point3D parsePoint( String input, Point3D anchor ) {
-		input = Objects.requireNonNull( input ).trim();
+		// Require non-null and remove all spaces
+		input = Objects.requireNonNull( input ).replace( " ", "" );
 
 		try {
 			boolean relative = false;
@@ -48,33 +46,21 @@ public class CadShapes {
 
 			// Relative
 			if( input.charAt( 0 ) == '@' ) {
-				input = input.substring( 1 ).trim();
+				input = input.substring( 1 );
 				relative = true;
 			}
 
-			String[] coords = input.split( "," );
+			// Reverse Polar (angle first)
+			if( input.charAt( 0 ) == '<' ) {
+				input = input.substring( 1 );
+				reverse = true;
+				polar = true;
+			}
 
 			// Polar (radius first)
-			//			if( input.contains( "<" ) ) {
-			//				input = input.substring( 1 ).trim();
-			//				polar = true;
-			//			}
-			if( coords.length > 1 && coords[ 1 ].trim().startsWith( "<" ) ) {
-				coords[ 1 ] = coords[ 1 ].trim().substring( 1 ).trim();
-				polar = true;
-			}
+			if( input.contains( "<" ) ) polar = true;
 
-			// Reverse Polar (angle first)
-			//			if( input.contains( ">" ) ) {
-			//				input = input.substring( 1 ).trim();
-			//				polar = true;
-			//				reverse = true;
-			//			}
-			if( coords.length > 0 && coords[ 0 ].trim().startsWith( "<" ) ) {
-				coords[ 0 ] = coords[ 0 ].trim().substring( 1 ).trim();
-				polar = true;
-				reverse = true;
-			}
+			String[] coords = input.split( "[,<]+" );
 
 			Point3D point = switch( coords.length ) {
 				case 1 -> new Point3D( CadMath.eval( coords[ 0 ] ), 0, 0 );

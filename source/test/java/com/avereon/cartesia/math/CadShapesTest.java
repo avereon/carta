@@ -81,32 +81,28 @@ public class CadShapesTest {
 		PointAssert.assertThat( CadShapes.parsePoint( "<rad(45),1" ) ).isCloseTo( new Point3D( java.lang.Math.cos( Constants.PI_OVER_4 ), java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) );
 	}
 
-//	@Test
-//	void testParsePolarCoordinatesAngleSeparator() {
-//		PointAssert.assertThat( CadShapes.parsePoint( "1<0" ) ).isCloseTo( new Point3D( 1, 0, 0 ) );
-//	}
-//
-//	@Test
-//	void testParsePolarCoordinatesReverseAngleSeparator() {
-//		PointAssert.assertThat( CadShapes.parsePoint( "1>0" ) ).isCloseTo( new Point3D( 0, 1, 0 ) );
-//	}
+	@Test
+	void testParsePolarCoordinatesAngleSeparator() {
+		PointAssert.assertThat( CadShapes.parsePoint( "1<0" ) ).isCloseTo( new Point3D( 1, 0, 0 ) );
+	}
+
+	@Test
+	void testParsePolarCoordinatesReverseAngleSeparator() {
+		PointAssert.assertThat( CadShapes.parsePoint( "<0,1" ) ).isCloseTo( new Point3D( 1, 0, 0 ) );
+	}
 
 	@Test
 	void testParseRelativePolarCoordinates() {
 		Point3D anchor = new Point3D( 1, 1, 0 );
 		PointAssert
+			.assertThat( CadShapes.parsePoint( "@1<rad(180+45)", anchor ) )
+			.isCloseTo( new Point3D( 1 - java.lang.Math.cos( Constants.PI_OVER_4 ), 1 - java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) );
+		PointAssert
 			.assertThat( CadShapes.parsePoint( "@1,<rad(180+45)", anchor ) )
 			.isCloseTo( new Point3D( 1 - java.lang.Math.cos( Constants.PI_OVER_4 ), 1 - java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) );
-//		PointAssert
-//			.assertThat( CadShapes.parsePoint( "@1<rad(180+45)", anchor ) )
-//			.isCloseTo( new Point3D( 1 - java.lang.Math.cos( Constants.PI_OVER_4 ), 1 - java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) );
-
 		PointAssert
 			.assertThat( CadShapes.parsePoint( "@<rad(180+45),1", anchor ) )
 			.isCloseTo( new Point3D( 1 - java.lang.Math.cos( Constants.PI_OVER_4 ), 1 - java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) );
-//		PointAssert
-//			.assertThat( CadShapes.parsePoint( "@rad(180+45)>1", anchor ) )
-//			.isCloseTo( new Point3D( 1 - java.lang.Math.cos( Constants.PI_OVER_4 ), 1 - java.lang.Math.sin( Constants.PI_OVER_4 ), 0 ) );
 
 		// Test missing anchor point
 		assertThat( CadShapes.parsePoint( "@1,<rad(180+45)", null ) ).isNull();
