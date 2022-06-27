@@ -553,20 +553,21 @@ public class DesignPaneMarea extends StackPane {
 		doRecenter();
 	}
 
+	// NOTE For testing only
 	Pane getLayerPane() {
 		// FIXME return layers;
 		return layers;
 	}
 
-	void addShapeGeometry( DesignShapeView view ) {
-		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
-		reference.getChildren().add( view.getCpGroup() );
-	}
-
-	void removeShapeGeometry( DesignShapeView view ) {
-		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
-		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
-	}
+//	void addShapeGeometry( DesignShapeView view ) {
+//		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
+//		reference.getChildren().add( view.getCpGroup() );
+//	}
+//
+//	void removeShapeGeometry( DesignShapeView view ) {
+//		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
+//		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
+//	}
 
 	private void addOriginReferencePoint() {
 //		ConstructionPoint cp = DesignShapeView.cp( this, Bindings.createDoubleBinding( () -> 0.0 ), Bindings.createDoubleBinding( () -> 0.0 ) );
