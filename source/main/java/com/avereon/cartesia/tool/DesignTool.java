@@ -383,6 +383,7 @@ public abstract class DesignTool extends GuidedTool {
 		return designPane.getLayers().stream().filter( filter ).map( y -> (DesignLayer)DesignShapeView.getDesignData( y ) ).collect( Collectors.toList() );
 	}
 
+	// FIXME This really should return design shapes and not FX shapes
 	public List<Shape> getVisibleShapes() {
 		return designPane.getVisibleShapes();
 	}

@@ -500,7 +500,7 @@ public class DesignPane extends StackPane {
 		return getLayers( layers ).stream().filter( DesignLayerPane::isEnabled ).collect( Collectors.toList() );
 	}
 
-	public void addLayerGeometry( DesignLayerView view ) {
+	void addLayerGeometry( DesignLayerView view ) {
 		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayerPane();
 		DesignLayerPane layer = view.getLayerPane();
 		parent.getChildren().add( layer );
@@ -509,7 +509,7 @@ public class DesignPane extends StackPane {
 		fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
 	}
 
-	public void removeLayerGeometry( DesignLayerView view ) {
+	void removeLayerGeometry( DesignLayerView view ) {
 		DesignLayerPane layer = view.getLayerPane();
 		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
 		layer.enabledProperty().unbind();
