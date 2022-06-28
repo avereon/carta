@@ -551,7 +551,7 @@ public class DesignPane extends StackPane {
 		doRecenter();
 	}
 
-	DesignLayerPane getLayerPane() {
+	Pane getLayerPane() {
 		return layers;
 	}
 

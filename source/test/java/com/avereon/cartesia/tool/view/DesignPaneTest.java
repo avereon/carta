@@ -11,6 +11,7 @@ import com.avereon.zarra.javafx.Fx;
 import com.avereon.zarra.javafx.JavaFxStarter;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import org.assertj.core.data.Offset;
@@ -63,7 +64,7 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignLayerPane layers = pane.getLayerPane();
+		Pane layers = pane.getLayerPane();
 		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		assertThat( construction.isVisible() ).isTrue();
 		Group group = (Group)construction.getChildren().get( 0 );
@@ -86,7 +87,7 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignLayerPane layers = pane.getLayerPane();
+		Pane layers = pane.getLayerPane();
 		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		assertThat( construction.isVisible() ).isTrue();
 		Group group = (Group)construction.getChildren().get( 0 );
@@ -116,7 +117,7 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Get the line that was added for use later
-		DesignLayerPane layers = pane.getLayerPane();
+		Pane layers = pane.getLayerPane();
 		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		assertThat( construction.isVisible() ).isTrue();
 		Group group = (Group)construction.getChildren().get( 0 );
@@ -148,7 +149,7 @@ public class DesignPaneTest implements TestTimeouts {
 		design.getLayers().addLayer( layer );
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
-		DesignLayerPane layers = pane.getLayerPane();
+		Pane layers = pane.getLayerPane();
 		assertThat( layers.getChildren().size() ).isEqualTo( 1 );
 	}
 
@@ -160,7 +161,7 @@ public class DesignPaneTest implements TestTimeouts {
 		Fx.waitForWithExceptions( FX_WAIT_TIMEOUT );
 
 		// Now there should be a line in the pane
-		DesignLayerPane layers = pane.getLayerPane();
+		Pane layers = pane.getLayerPane();
 		DesignLayerPane construction = (DesignLayerPane)layers.getChildren().get( 0 );
 		Group group = (Group)construction.getChildren().get( 0 );
 		Line line = (Line)group.getChildren().get( 0 );
