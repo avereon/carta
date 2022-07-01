@@ -4,7 +4,11 @@ import com.avereon.cartesia.data.DesignLayer;
 
 public class DesignLayerMeta extends DesignDrawableMeta {
 
-	private final DesignLayerPane layerPane;
+	//private final DesignLayerPane layerPane;
+
+	private boolean enabled;
+
+	private boolean visible;
 
 	public DesignLayerMeta( DesignPane pane, DesignLayer layerPane ) {
 		this( pane, layerPane, new DesignLayerPane() );
@@ -13,7 +17,7 @@ public class DesignLayerMeta extends DesignDrawableMeta {
 	// Special handing of the root layer pane
 	DesignLayerMeta( DesignPane pane, DesignLayer layer, DesignLayerPane layerPane ) {
 		super( pane, layer );
-		this.layerPane = layerPane;
+		//this.layerPane = layerPane;
 		DesignShapeView.setDesignData( layerPane, layer );
 		layerPane.setVisible( true );
 	}
@@ -22,24 +26,22 @@ public class DesignLayerMeta extends DesignDrawableMeta {
 		return (DesignLayer)getDesignNode();
 	}
 
-	public DesignLayerPane getLayerPane() {
-		return layerPane;
-	}
-
 	public boolean isEnabled() {
-		return this.layerPane.isEnabled();
+		return enabled;
 	}
 
 	public void setEnabled( boolean enabled ) {
-		this.layerPane.setEnabled( enabled );
+		this.enabled = enabled;
+		// TODO Notify listeners
 	}
 
 	public boolean isVisible() {
-		return this.layerPane.isVisible();
+		return visible;
 	}
 
 	public void setVisible( boolean visible ) {
-		this.layerPane.setVisible( visible );
+		this.visible = visible;
+		// TODO Notify listeners
 	}
 
 	void addLayerGeometry() {

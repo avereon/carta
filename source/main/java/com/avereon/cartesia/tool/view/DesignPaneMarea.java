@@ -350,7 +350,7 @@ public class DesignPaneMarea extends StackPane {
 					.stream()
 					.filter( layerMap::containsKey )
 					.map( layerMap::get )
-					.filter( ysy -> ysy.getLayerPane().isEnabled() )
+					.filter( DesignLayerMeta::isEnabled )
 					.map( DesignLayerMeta::getDesignLayer )
 					.forEach( visibleLayers::add );
 			} else {
@@ -655,11 +655,11 @@ public class DesignPaneMarea extends StackPane {
 	}
 
 	private void doReorderLayer( DesignLayer layer ) {
-		doReorderLayer( layerMap.get( layer ).getLayerPane() );
+		doReorderLayer( layerMap.get( layer ) );
 	}
 
-	private void doReorderLayer( DesignLayerPane pane ) {
-		Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( LAYER_SORTER ) ) );
+	private void doReorderLayer( DesignLayerMeta pane ) {
+		//Fx.run( () -> pane.getChildren().setAll( pane.getChildren().sorted( LAYER_SORTER ) ) );
 	}
 
 	private void doAddShape( DesignShape shape ) {
