@@ -9,6 +9,7 @@ import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
 import com.avereon.cartesia.tool.view.DesignPane;
+import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
@@ -115,7 +116,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final DesignToolPrintsGuide printsGuide;
 
-	private final DesignPane designPane;
+	private final DesignPaneMarea designPane;
 
 	private final Pane selectPane;
 
@@ -170,7 +171,7 @@ public abstract class DesignTool extends GuidedTool {
 		getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
 		getGuideContext().setCurrentGuide( layersGuide );
 
-		this.designPane = new DesignPane();
+		this.designPane = new DesignPaneMarea();
 		this.selectAperture = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 		this.currentView = new SimpleObjectProperty<>();
@@ -722,7 +723,7 @@ public abstract class DesignTool extends GuidedTool {
 		super.deallocate();
 	}
 
-	final DesignPane getDesignPane() {
+	final DesignPaneMarea getDesignPane() {
 		return designPane;
 	}
 

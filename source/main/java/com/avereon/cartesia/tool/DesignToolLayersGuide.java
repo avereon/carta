@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.view.DesignLayerEvent;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
-import com.avereon.cartesia.tool.view.DesignPane;
+import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -78,7 +78,7 @@ public class DesignToolLayersGuide extends Guide {
 
 	public void link() {
 		Design design = tool.getDesign();
-		DesignPane pane = tool.getDesignPane();
+		DesignPaneMarea pane = tool.getDesignPane();
 
 		// Populate the guide
 		design.getAllLayers().forEach( l -> addLayer( l, null ) );
