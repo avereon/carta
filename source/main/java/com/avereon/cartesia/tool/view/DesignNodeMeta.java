@@ -2,13 +2,13 @@ package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignNode;
 
-public class DesignNodeView {
+public class DesignNodeMeta {
 
 	private final DesignPane pane;
 
 	private final DesignNode node;
 
-	public DesignNodeView( DesignPane pane, DesignNode node ) {
+	public DesignNodeMeta( DesignPane pane, DesignNode node ) {
 		this.pane = pane;
 		this.node = node;
 	}

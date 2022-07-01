@@ -25,7 +25,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 @CustomLog
-public class DesignShapeView extends DesignDrawableView {
+@Deprecated
+public class DesignShapeView extends DesignDrawableMeta {
 
 	private static final String DESIGN_DATA = "design-data";
 

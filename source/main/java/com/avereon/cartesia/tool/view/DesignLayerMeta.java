@@ -1,18 +1,17 @@
 package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.zarra.javafx.Fx;
 
-public class DesignLayerView extends DesignDrawableMeta {
+public class DesignLayerMeta extends DesignDrawableMeta {
 
 	private final DesignLayerPane layerPane;
 
-	public DesignLayerView( DesignPane pane, DesignLayer layerPane ) {
+	public DesignLayerMeta( DesignPane pane, DesignLayer layerPane ) {
 		this( pane, layerPane, new DesignLayerPane() );
 	}
 
 	// Special handing of the root layer pane
-	DesignLayerView( DesignPane pane, DesignLayer layer, DesignLayerPane layerPane ) {
+	DesignLayerMeta( DesignPane pane, DesignLayer layer, DesignLayerPane layerPane ) {
 		super( pane, layer );
 		this.layerPane = layerPane;
 		DesignShapeView.setDesignData( layerPane, layer );
@@ -44,13 +43,13 @@ public class DesignLayerView extends DesignDrawableMeta {
 	}
 
 	void addLayerGeometry() {
-		Fx.run( () -> getPane().addLayerGeometry( this ) );
+		//Fx.run( () -> getPane().addLayerGeometry( this ) );
 		registerListeners();
 	}
 
 	void removeLayerGeometry() {
 		unregisterListeners();
-		Fx.run( () -> getPane().removeLayerGeometry( this ) );
+		//Fx.run( () -> getPane().removeLayerGeometry( this ) );
 	}
 
 	@Override

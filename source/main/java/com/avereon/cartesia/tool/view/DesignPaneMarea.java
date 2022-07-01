@@ -81,13 +81,11 @@ public class DesignPaneMarea extends StackPane {
 
 	private final Pane reference;
 
-	//private final DesignLayerPane layers;
-
 	private final Pane layers;
 
 	private final Pane grid;
 
-	private final Map<DesignLayer, DesignLayerView> layerMap;
+	private final Map<DesignLayer, DesignLayerMeta> layerMap;
 
 	private final Map<DesignShape, DesignShapeView> geometryMap;
 
@@ -317,7 +315,7 @@ public class DesignPaneMarea extends StackPane {
 	}
 
 	public boolean isLayerEnabled( DesignLayer layer ) {
-		DesignLayerView view = layerMap.get( layer );
+		DesignLayerMeta view = layerMap.get( layer );
 		return view != null && view.isEnabled();
 	}
 
@@ -337,7 +335,7 @@ public class DesignPaneMarea extends StackPane {
 	}
 
 	public boolean isLayerVisible( DesignLayer layer ) {
-		DesignLayerView view = layerMap.get( layer );
+		DesignLayerMeta view = layerMap.get( layer );
 		return view != null && view.isVisible();
 	}
 
@@ -353,7 +351,7 @@ public class DesignPaneMarea extends StackPane {
 					.filter( layerMap::containsKey )
 					.map( layerMap::get )
 					.filter( ysy -> ysy.getLayerPane().isEnabled() )
-					.map( DesignLayerView::getDesignLayer )
+					.map( DesignLayerMeta::getDesignLayer )
 					.forEach( visibleLayers::add );
 			} else {
 				visibleLayers.remove( layer );
@@ -382,18 +380,18 @@ public class DesignPaneMarea extends StackPane {
 		return this;
 	}
 
-	public DesignLayerPane getShapeLayer( DesignShape shape ) {
-		DesignLayer designLayer = shape.getLayer();
-		if( designLayer == null ) log.atWarn().log( "Shape missing design layer, shape=%s", shape );
-
-		DesignLayerView view = designLayer == null ? null : layerMap.get( designLayer );
-		if( view == null ) log.atWarn().log( "Shape missing design view, shape=%s", shape );
-
-		DesignLayerPane layer = view == null ? null : view.getLayerPane();
-		if( layer == null ) log.atWarn().log( "Shape missing layer: shape=%s", shape );
-
-		return layer == null ? NO_LAYER : layer;
-	}
+//	public DesignLayerPane getShapeLayer( DesignShape shape ) {
+//		DesignLayer designLayer = shape.getLayer();
+//		if( designLayer == null ) log.atWarn().log( "Shape missing design layer, shape=%s", shape );
+//
+//		DesignLayerMeta view = designLayer == null ? null : layerMap.get( designLayer );
+//		if( view == null ) log.atWarn().log( "Shape missing design view, shape=%s", shape );
+//
+//		DesignLayerPane layer = view == null ? null : view.getLayerPane();
+//		if( layer == null ) log.atWarn().log( "Shape missing layer: shape=%s", shape );
+//
+//		return layer == null ? NO_LAYER : layer;
+//	}
 
 	Pane getReferenceLayer() {
 		return reference;
@@ -411,7 +409,7 @@ public class DesignPaneMarea extends StackPane {
 		return getReferenceLayer().visibleProperty();
 	}
 
-	DesignLayerView getDesignLayerView( DesignLayer layer ) {
+	DesignLayerMeta getDesignLayerView( DesignLayer layer ) {
 		return layerMap.get( layer );
 	}
 
@@ -502,19 +500,19 @@ public class DesignPaneMarea extends StackPane {
 		return List.of();
 	}
 
-	void addLayerGeometry( DesignLayerView view ) {
-		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayerPane();
-		DesignLayerPane layer = view.getLayerPane();
-		parent.getChildren().add( layer );
-		doReorderLayer( parent );
-		layer.enabledProperty().bind( layer.visibleProperty().and( parent.enabledProperty() ) );
+	void addLayerGeometry( DesignLayerMeta view ) {
+//		DesignLayerPane parent = getDesignLayerView( view.getDesignLayer().getLayer() ).getLayerPane();
+//		DesignLayerPane layer = view.getLayerPane();
+//		parent.getChildren().add( layer );
+//		doReorderLayer( parent );
+//		layer.enabledProperty().bind( layer.visibleProperty().and( parent.enabledProperty() ) );
 		// FIXME fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_ADDED, layer ) );
 	}
 
-	void removeLayerGeometry( DesignLayerView view ) {
-		DesignLayerPane layer = view.getLayerPane();
-		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
-		layer.enabledProperty().unbind();
+	void removeLayerGeometry( DesignLayerMeta view ) {
+//		DesignLayerPane layer = view.getLayerPane();
+//		((DesignLayerPane)layer.getParent()).getChildren().remove( layer );
+//		layer.enabledProperty().unbind();
 		// FIXME fireEvent( new DesignLayerEvent( this, DesignLayerEvent.LAYER_REMOVED, layer ) );
 	}
 
@@ -552,22 +550,6 @@ public class DesignPaneMarea extends StackPane {
 		doRescale();
 		doRecenter();
 	}
-
-	// NOTE For testing only
-	Pane getLayerPane() {
-		// FIXME return layers;
-		return layers;
-	}
-
-//	void addShapeGeometry( DesignShapeView view ) {
-//		getShapeLayer( view.getDesignShape() ).getChildren().add( view.getGroup() );
-//		reference.getChildren().add( view.getCpGroup() );
-//	}
-//
-//	void removeShapeGeometry( DesignShapeView view ) {
-//		((Pane)view.getCpGroup().getParent()).getChildren().remove( view.getCpGroup() );
-//		((Pane)view.getGroup().getParent()).getChildren().remove( view.getGroup() );
-//	}
 
 	private void addOriginReferencePoint() {
 //		ConstructionPoint cp = DesignShapeView.cp( this, Bindings.createDoubleBinding( () -> 0.0 ), Bindings.createDoubleBinding( () -> 0.0 ) );
@@ -656,8 +638,8 @@ public class DesignPaneMarea extends StackPane {
 //			view.addLayerGeometry();
 //			return view;
 //		} );
-		doAddLayerShapes( yy );
-		doReorderLayer( yy );
+		//doAddLayerShapes( yy );
+		//doReorderLayer( yy );
 	}
 
 	private void doAddLayerShapes( DesignLayer yy ) {

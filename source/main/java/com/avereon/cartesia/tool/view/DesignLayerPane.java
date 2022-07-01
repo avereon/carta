@@ -7,6 +7,7 @@ import javafx.scene.layout.Pane;
 /**
  * This is the internal layer that represents the design layer.
  */
+@Deprecated
 public class DesignLayerPane extends Pane {
 
 	private final BooleanProperty enabled;
