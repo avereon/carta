@@ -10,7 +10,7 @@ public class LayerHiddenIcon extends LayerIcon {
 
 	private final double r = 0.0625 * Math.sqrt( R * R + R * R );
 
-	public LayerHiddenIcon() {
+	public void define() {
 		fill( getPath(), Colors.mix( (Color)getStrokePaint(), Color.TRANSPARENT, 0.2 ) );
 		draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 2 * r, 4 * r, 4 * r );
 		//draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 4 * r, 8 * r, 2 * r, 4 * r, 2 * r );
