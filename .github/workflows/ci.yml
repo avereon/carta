@@ -36,10 +36,10 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Fetch sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Fetch CI/CD resources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: avereon/canoe
           path: .github
@@ -57,11 +57,11 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          distribution: adopt
+          distribution: ${{env.JAVA_DISTRO}}
           java-version: ${{env.JAVA_VERSION}}
 
       - name: Maven Repository Cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.m2/repository
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
