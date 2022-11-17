@@ -5,6 +5,8 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
+import com.avereon.marea.Renderer2d;
+import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
@@ -81,7 +83,8 @@ public class DesignPaneMarea extends StackPane {
 
 	private final Pane reference;
 
-	private final Pane layers;
+	//private final Pane layers;
+	private final Renderer2d renderer;
 
 	private final Pane grid;
 
@@ -122,9 +125,10 @@ public class DesignPaneMarea extends StackPane {
 	public DesignPaneMarea() {
 		select = new Pane();
 		reference = new Pane();
-		layers = new DesignLayerPane();
+		//layers = new Pane(); // FIXME Change to a Marea renderer
+		renderer = new FxRenderer2d( 100,100 );
 		grid = new Pane();
-		getChildren().addAll( grid, new Pane(), reference, select );
+		getChildren().addAll( grid, (Node)renderer, reference, select );
 
 		addOriginReferencePoint();
 		setManaged( false );
@@ -365,17 +369,19 @@ public class DesignPaneMarea extends StackPane {
 		if( this.design != null ) throw new IllegalStateException( "Design already set" );
 		this.design = Objects.requireNonNull( design );
 
-		// Create the root layer view
-		// FIXME layerMap.put( design.getLayers(), new DesignLayerView( this, design.getLayers(), layers ) );
+		design.register( NodeEvent.ANY, e-> render());
 
-		design.getLayers().getAllLayers().forEach( this::doAddNode );
-
-		updateView();
-
-		// Design listeners
-		design.register( Design.UNIT, e -> updateView() );
-		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
-		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
+//		// Create the root layer view
+//		// FIXME layerMap.put( design.getLayers(), new DesignLayerView( this, design.getLayers(), layers ) );
+//
+//		design.getLayers().getAllLayers().forEach( this::doAddNode );
+//
+//		updateView();
+//
+//		// Design listeners
+//		design.register( Design.UNIT, e -> updateView() );
+//		design.register( NodeEvent.CHILD_ADDED, this::doChildAddedAction );
+//		design.register( NodeEvent.CHILD_REMOVED, this::doChildRemovedAction );
 
 		return this;
 	}
@@ -549,6 +555,16 @@ public class DesignPaneMarea extends StackPane {
 		doRotate();
 		doRescale();
 		doRecenter();
+	}
+
+	private void render() {
+		// TODO Render the grid
+
+		// TODO Render the design
+
+		// TODO Render the reference
+
+		// TODO Render the select
 	}
 
 	private void addOriginReferencePoint() {

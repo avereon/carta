@@ -35,6 +35,7 @@
 	</pluginRepositories>
 
 	<properties>
+		<marea.version>[0.1-SNAPSHOT,)</marea.version>
 		<curve.version>[0.3-SNAPSHOT,)</curve.version>
 		<xenon.version>[1.6-SNAPSHOT,)</xenon.version>
 		<zerra.version>[0.8-SNAPSHOT,)</zerra.version>
@@ -45,6 +46,12 @@
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>com.avereon</groupId>
+			<artifactId>marea</artifactId>
+			<version>${marea.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.avereon</groupId>
