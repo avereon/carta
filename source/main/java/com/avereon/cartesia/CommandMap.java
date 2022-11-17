@@ -81,6 +81,9 @@ public class CommandMap {
 		//add( product, "camera-spin", CameraSpinCommand.class );
 		add( product, "camera-view-point", CameraViewPoint.class );
 		//add( product, "camera-view-previous", CameraViewPrevious.class );
+		add( product, "camera-view-left", CameraViewLeft.class );
+		add( product, "camera-view-right", CameraViewRight.class );
+		add( product, "camera-view-top", CameraViewTop.class );
 		add( product, "camera-view-rotate-left", CameraViewRotateLeft.class );
 		add( product, "camera-view-rotate-right", CameraViewRotateRight.class );
 		//add( product, "camera-walk", CameraWalkCommand.class );
