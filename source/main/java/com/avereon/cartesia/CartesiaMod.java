@@ -9,20 +9,26 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
+import com.avereon.util.TemplateReader;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
+import com.avereon.xenon.asset.type.ProgramHelpType;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zarra.image.BrokenIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
 
-import java.io.Reader;
-import java.io.StringReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 
 @CustomLog
 public class CartesiaMod extends Mod {
@@ -214,15 +220,35 @@ public class CartesiaMod extends Mod {
 	}
 
 	private void registerIndexes() {
+		String modKey = getCard().getProductKey();
 		Map<String, CommandMetadata> commands = CommandMap.getAll();
 		for( CommandMetadata command : commands.values() ) {
 			ActionProxy action = getProgram().getActionLibrary().getAction( command.getAction() );
-			URI uri = URI.create( "program:help:/cartesia/" + command.getAction() );
-			String icon = action.getIcon();
-			String title = command.getName();
-			Reader content = new StringReader( title.toLowerCase() );
-			Document document = new Document( uri, icon, title, content ).tags( command.getTags() );
-			getProgram().getIndexService().submit( INDEX_ID, document );
+			String resourcePath = "/docs/manual/commands/" + command.getAction();
+
+			URL url = getClass().getResource( resourcePath + ".html" );
+			if( url == null ) {
+				log.atWarn().log( "Resource not found: url=%s", resourcePath );
+				continue;
+			}
+
+			try( InputStream input = url.openStream() ) {
+				InputStreamReader reader = new InputStreamReader( input, StandardCharsets.UTF_8 );
+
+				// Set up the template reader
+				String actionName = Objects.requireNonNullElse( command.getName(), "" );
+				String actionCommand = Objects.requireNonNullElse( command.getShortcut(), "" );
+				Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
+				TemplateReader tReader = new TemplateReader( reader, values );
+
+				URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+				String icon = action.getIcon();
+				String title = command.getName();
+				Document document = new Document( uri, icon, title, tReader ).tags( command.getTags() ).store( true );
+				getProgram().getIndexService().submit( INDEX_ID, document );
+			} catch( IOException exception ) {
+				log.atError( exception );
+			}
 		}
 	}
 
