@@ -9,7 +9,7 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
-import com.avereon.util.TemplateReader;
+import com.avereon.util.TokenReplacingReader;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
@@ -239,7 +239,7 @@ public class CartesiaMod extends Mod {
 				String actionName = Objects.requireNonNullElse( command.getName(), "" );
 				String actionCommand = Objects.requireNonNullElse( command.getShortcut(), "" );
 				Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
-				TemplateReader tReader = new TemplateReader( reader, values );
+				TokenReplacingReader tReader = new TokenReplacingReader( reader, values );
 
 				URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
 				String icon = action.getIcon();
