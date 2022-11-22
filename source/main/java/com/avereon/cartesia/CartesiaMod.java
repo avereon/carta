@@ -4,12 +4,12 @@ import com.avereon.cartesia.data.DesignLayerOptionProvider;
 import com.avereon.cartesia.data.DesignUnitOptionProvider;
 import com.avereon.cartesia.data.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
+import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
-import com.avereon.util.TokenReplacingReader;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
@@ -21,14 +21,9 @@ import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @CustomLog
 public class CartesiaMod extends Mod {
@@ -139,7 +134,7 @@ public class CartesiaMod extends Mod {
 		CommandMap.load( this );
 
 		// Index the help pages
-		registerIndexes();
+		registerHelpPages();
 
 		log.atInfo().log( "%s started.", LazyEval.of( () -> getCard().getName() ) );
 	}
@@ -219,36 +214,45 @@ public class CartesiaMod extends Mod {
 		log.atInfo().log( "%s stopped.", LazyEval.of( () -> getCard().getName() ) );
 	}
 
-	private void registerIndexes() {
-		String modKey = getCard().getProductKey();
+	private void registerHelpPages() {
+		getProgram()
+			.getIndexService()
+			.submit( INDEX_ID, createIndexableDocument( "document", "", "/docs/manual/relative-coordinates", Map.of(), List.of( "coordinates", "relative" ) ) );
+
+		registerCommandHelpPages();
+	}
+
+	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
+		try {
+			// Create the document URI
+			String modKey = getCard().getProductKey();
+			URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+
+			// Create the content URL
+			ResourceBundle bundle = ResourceBundle.getBundle( CartesiaHelp.class.getName() );
+			URL url = (URL)bundle.getObject( resourcePath );
+
+			return new Document( uri, icon, title ).url( url ).values( values ).tags( tags ).store( true );
+		} catch( MissingResourceException exception ) {
+			log.atWarn().log( "Resource not found: path=%s", resourcePath );
+			return null;
+		}
+	}
+
+	private void registerCommandHelpPages() {
 		Map<String, CommandMetadata> commands = CommandMap.getAll();
 		for( CommandMetadata command : commands.values() ) {
 			ActionProxy action = getProgram().getActionLibrary().getAction( command.getAction() );
 			String resourcePath = "/docs/manual/commands/" + command.getAction();
+			String icon = action.getIcon();
+			String title = command.getName();
 
-			URL url = getClass().getResource( resourcePath + ".html" );
-			if( url == null ) {
-				log.atWarn().log( "Resource not found: url=%s", resourcePath );
-				continue;
-			}
+			String actionName = Objects.requireNonNullElse( command.getName(), "" );
+			String actionCommand = Objects.requireNonNullElse( command.getShortcut(), "" );
+			Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
 
-			try( InputStream input = url.openStream() ) {
-				InputStreamReader reader = new InputStreamReader( input, StandardCharsets.UTF_8 );
-
-				// Set up the template reader
-				String actionName = Objects.requireNonNullElse( command.getName(), "" );
-				String actionCommand = Objects.requireNonNullElse( command.getShortcut(), "" );
-				Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
-				TokenReplacingReader tReader = new TokenReplacingReader( reader, values );
-
-				URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
-				String icon = action.getIcon();
-				String title = command.getName();
-				Document document = new Document( uri, icon, title, tReader ).tags( command.getTags() ).store( true );
-				getProgram().getIndexService().submit( INDEX_ID, document );
-			} catch( IOException exception ) {
-				log.atError( exception );
-			}
+			Document document = createIndexableDocument( icon, title, resourcePath, values, command.getTags() );
+			if( document != null ) getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}
 

@@ -27,6 +27,7 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
+	exports com.avereon.cartesia.rb to com.avereon.xenon;
 
 	provides com.avereon.xenon.Mod with CartesiaMod;
 
