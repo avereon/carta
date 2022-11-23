@@ -780,6 +780,7 @@ public abstract class DesignTool extends GuidedTool {
 		pushCommandAction( "draw-arc-3" );
 		pushCommandAction( "draw-circle-2" );
 		pushCommandAction( "draw-circle-3" );
+		pushCommandAction( "draw-circle-diameter-2" );
 		//pushCommandAction( "draw-curve-3" );
 		pushCommandAction( "draw-curve-4" );
 		pushCommandAction( "draw-ellipse-3" );
@@ -803,7 +804,7 @@ public abstract class DesignTool extends GuidedTool {
 		String viewActions = "grid-toggle snap-grid-toggle";
 		String drawMarkerActions = "marker[draw-marker]";
 		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
-		String drawCircleActions = "circle[draw-circle-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
+		String drawCircleActions = "circle[draw-circle-2 draw-circle-diameter-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
 		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
 		String drawCurveActions = "curve[draw-curve-4 draw-path]";
 
@@ -842,6 +843,7 @@ public abstract class DesignTool extends GuidedTool {
 		pullCommandAction( "draw-ellipse-3" );
 		pullCommandAction( "draw-curve-4" );
 		//pullCommandAction( "draw-curve-3" );
+		pullCommandAction( "draw-circle-diameter-2" );
 		pullCommandAction( "draw-circle-3" );
 		pullCommandAction( "draw-circle-2" );
 		pullCommandAction( "draw-arc-3" );

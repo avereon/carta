@@ -49,6 +49,7 @@ public class CartesiaMod extends Mod {
 		registerIcon( "arc-3", new Arc3Icon() );
 		registerIcon( "circle-2", new Circle2Icon() );
 		registerIcon( "circle-3", new Circle3Icon() );
+		registerIcon( "circle-diameter-2", new CircleDiameter2Icon() );
 		registerIcon( "curve-3", new Curve3Icon() );
 		registerIcon( "curve-4", new Curve4Icon() );
 		registerIcon( "ellipse-3", new Ellipse3Icon() );
@@ -202,6 +203,7 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "ellipse-3", new Ellipse3Icon() );
 		unregisterIcon( "curve-4", new Curve4Icon() );
 		unregisterIcon( "curve-3", new Curve3Icon() );
+		unregisterIcon( "circle-diameter-2", new CircleDiameter2Icon() );
 		unregisterIcon( "circle-3", new Circle3Icon() );
 		unregisterIcon( "circle-2", new Circle2Icon() );
 		unregisterIcon( "arc-3", new Arc3Icon() );

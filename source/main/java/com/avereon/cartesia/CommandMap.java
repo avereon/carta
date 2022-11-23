@@ -103,6 +103,7 @@ public class CommandMap {
 		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
 		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
+		add( product, "draw-circle-diameter-2", DrawCircleDiameter2.class ); // point-diameter
 		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
 		//add( product, "draw-conic-5", DrawConic5.class ); // point-point-point-point-point
