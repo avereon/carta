@@ -215,19 +215,21 @@ public class CartesiaMod extends Mod {
 	}
 
 	private void registerHelpPages() {
-		getProgram()
-			.getIndexService()
-			.submit( INDEX_ID, createIndexableDocument( "document", "", "/docs/manual/relative-coordinates", Map.of(), List.of( "coordinates", "relative" ) ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "", "/docs/manual/relative-coordinates", Map.of(), List.of( "coordinates", "relative" ) ) );
 
 		registerCommandHelpPages();
 	}
 
 	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
-		try {
-			// Create the document URI
-			String modKey = getCard().getProductKey();
-			URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+		return createIndexableDocument( icon, title, resourcePath, values, tags, null );
+	}
 
+	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags, String defaultContent ) {
+		// Create the document URI
+		String modKey = getCard().getProductKey();
+		URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+
+		try {
 			// Create the content URL
 			ResourceBundle bundle = ResourceBundle.getBundle( CartesiaHelp.class.getName() );
 			URL url = (URL)bundle.getObject( resourcePath );
@@ -235,8 +237,10 @@ public class CartesiaMod extends Mod {
 			return new Document( uri, icon, title ).url( url ).values( values ).tags( tags ).store( true );
 		} catch( MissingResourceException exception ) {
 			log.atWarn().log( "Resource not found: path=%s", resourcePath );
-			return null;
+			if( defaultContent != null ) return new Document( uri, icon, title ).content( defaultContent ).values( values ).tags( tags ).store( true );
 		}
+
+		return null;
 	}
 
 	private void registerCommandHelpPages() {
@@ -248,10 +252,18 @@ public class CartesiaMod extends Mod {
 			String title = command.getName();
 
 			String actionName = Objects.requireNonNullElse( command.getName(), "" );
-			String actionCommand = Objects.requireNonNullElse( command.getShortcut(), "" );
+			String actionCommand = Objects.requireNonNullElse( command.getCommand(), "no command" );
 			Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
 
-			Document document = createIndexableDocument( icon, title, resourcePath, values, command.getTags() );
+			StringBuilder defaultContent = new StringBuilder( "<html>" );
+			defaultContent.append( "<head>" );
+			defaultContent.append( "<title>" ).append( actionName ).append( "</title>" );
+			defaultContent.append( "</head>" );
+			defaultContent.append( "<h1>" ).append( actionName ).append( "</h1>" );
+			defaultContent.append( "<h2>" ).append( actionCommand ).append( "</h2>" );
+			defaultContent.append( "</body></html>" );
+
+			Document document = createIndexableDocument( icon, title, resourcePath, values, command.getTags(), defaultContent.toString() );
 			if( document != null ) getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}
