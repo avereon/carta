@@ -41,7 +41,7 @@ public class CadPoints {
 	}
 
 	static Point3D fromPolar( Point3D point ) {
-		return toFxPoint( Geometry.polarToCartesian( Point.of( point.getX(), point.getY() ) ) );
+		return toFxPoint( Geometry.polarDegreesToCartesian( Point.of( point.getX(), point.getY() ) ) );
 	}
 
 	static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, Point3D... points ) {
