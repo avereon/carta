@@ -26,8 +26,7 @@ public class Select extends Command {
 		if( parameters.length < 1 ) return COMPLETE;
 
 		// For this command the incoming parameter is the mouse event that triggered it
-		if( parameters[ 0 ] instanceof MouseEvent ) {
-			MouseEvent event = (MouseEvent)parameters[ 0 ];
+		if( parameters[ 0 ] instanceof MouseEvent event ) {
 			if( event.getClickCount() > 1 ) return COMPLETE;
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 				return mousePressed( context, event );
