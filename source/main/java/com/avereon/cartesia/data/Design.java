@@ -103,7 +103,7 @@ public abstract class Design extends IdNode {
 	}
 
 	public synchronized DesignContext getDesignContext( ProgramProduct product ) {
-		if( context == null ) context = new DesignContext( product, this );
+		if( context == null ) context = new DesignContext( product );
 		return context;
 	}
 

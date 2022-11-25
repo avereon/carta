@@ -1,33 +1,20 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.Design;
 import com.avereon.xenon.ProgramProduct;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
 public class DesignContext {
 
-	private final ProgramProduct product;
-
-	private final Design design;
+//	private final Design design;
 
 	private final CommandContext commandContext;
 
 	private final CoordinateStatus coordinates;
 
-	public DesignContext( ProgramProduct product, Design design ) {
-		this.product = product;
-		this.design = design;
+	public DesignContext( ProgramProduct product ) {
 		this.commandContext = new CommandContext( product );
 		this.coordinates = new CoordinateStatus( product );
-	}
-
-	public final ProgramProduct getProduct() {
-		return product;
-	}
-
-	public final Design getDesign() {
-		return design;
 	}
 
 	public final CommandContext getCommandContext() {
