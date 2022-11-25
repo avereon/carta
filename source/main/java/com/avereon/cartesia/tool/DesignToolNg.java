@@ -1,10 +1,10 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.data.NodeEvent;
 import com.avereon.marea.Pen;
@@ -19,11 +19,35 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
+import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 
 public class DesignToolNg extends GuidedTool {
+
+	public static final String RETICLE = "reticle";
+
+	public static final String SELECT_APERTURE_SIZE = "select-aperture-size";
+
+	public static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
+
+	public static final String REFERENCE_POINT_SIZE = "reference-point-size";
+
+	public static final String REFERENCE_POINT_TYPE = "reference-point-type";
+
+	public static final String REFERENCE_POINT_PAINT = "reference-point-paint";
+
+	public static final boolean DEFAULT_GRID_VISIBLE = true;
+
+	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
+
+	private static final String SETTINGS_VIEW_ZOOM = "view-zoom";
+
+	private static final String SETTINGS_VIEW_POINT = "view-point";
+
+	private static final String SETTINGS_VIEW_ROTATE = "view-rotate";
 
 	// Need the design model
 	private Design design;
@@ -80,7 +104,10 @@ public class DesignToolNg extends GuidedTool {
 		design = request.getAsset().getModel();
 		design.register( NodeEvent.MODIFIED, ( e ) -> rerender() );
 
+		configureSettingsFromProduct();
+		configureSettingsFromTool();
 		configureWorkplane();
+
 		rerender();
 	}
 
@@ -144,23 +171,67 @@ public class DesignToolNg extends GuidedTool {
 		settings.register( DesignWorkplane.GRID_MAJOR_VISIBLE, e -> workplane.setMajorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_X, e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_Y, e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
-		//settings.register( DesignWorkplane.GRID_MAJOR_Z, e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_MAJOR_Z, e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_PAINT, e -> workplane.setMajorGridPaint( Paints.parse( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_WIDTH, e -> workplane.setMajorGridWidth( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( DesignWorkplane.GRID_MINOR_VISIBLE, e -> workplane.setMinorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_X, e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_Y, e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
-		//settings.register( DesignWorkplane.GRID_MINOR_Z, e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_MINOR_Z, e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_PAINT, e -> workplane.setMinorGridPaint( Paints.parse( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_WIDTH, e -> workplane.setMinorGridWidth( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( DesignWorkplane.GRID_SNAP_X, e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_SNAP_Y, e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
-		//settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
+		settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
 
 		// Rebuild the grid if any workplane values change
-		//workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.update() );
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rerender() );
+	}
+
+	private void configureSettingsFromProduct() {
+		Settings productSettings = getProduct().getSettings();
+
+		String defaultSelectSize = "2";
+		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
+		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
+		String defaultReferencePointSize = "10";
+		String defaultReferencePointPaint = "#808080";
+		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
+
+		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
+		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
+		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
+		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
+
+		//		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ) ) );
+		//		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
+		//		designPane.setReferencePointType( referencePointType );
+		//		designPane.setReferencePointSize( referencePointSize );
+		//		designPane.setReferencePointPaint( referencePointPaint );
+
+		//		// Settings listeners
+		//		productSettings.register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		//		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
+		//		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		//		productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		//		productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
+		//		productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+	}
+
+	private void configureSettingsFromTool() {
+		Settings settings = getSettings();
+
+		Point3D viewpoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
+		double rotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
+		double zoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
+
+		renderer.setViewpoint( viewpoint.getX(), viewpoint.getY() );
+		//renderer.setRotate( rotate );
+		renderer.setZoom( zoom, zoom );
+
 	}
 
 }
