@@ -229,9 +229,8 @@ public class DesignToolNg extends GuidedTool {
 		double zoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
 
 		renderer.setViewpoint( viewpoint.getX(), viewpoint.getY() );
-		//renderer.setRotate( rotate );
+		renderer.setViewRotate( rotate );
 		renderer.setZoom( zoom, zoom );
-
 	}
 
 }
