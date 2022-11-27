@@ -77,6 +77,7 @@ public abstract class DesignShape extends DesignDrawable {
 		return Map.of();
 	}
 
+	@Override
 	@SuppressWarnings( "MethodDoesntCallSuperMethod" )
 	public DesignShape clone() {
 		// NOTE Immediately adding the cloned shape to the layer will trigger the modified flag

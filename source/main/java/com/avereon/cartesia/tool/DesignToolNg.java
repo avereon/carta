@@ -10,7 +10,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.marea.Pen;
 import com.avereon.marea.Renderer2d;
 import com.avereon.marea.fx.FxRenderer2d;
-import com.avereon.marea.geom.Line;
+import com.avereon.marea.geom.*;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -21,10 +21,16 @@ import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
+import lombok.CustomLog;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+@CustomLog
 public class DesignToolNg extends GuidedTool {
 
 	public static final String RETICLE = "reticle";
@@ -49,19 +55,33 @@ public class DesignToolNg extends GuidedTool {
 
 	private static final String SETTINGS_VIEW_ROTATE = "view-rotate";
 
-	// Need the design model
-	private Design design;
-
-	// Need a place to render the model
+	// The renderer
 	private final Renderer2d renderer;
 
+	// The workplane
 	private final DesignWorkplane workplane;
+
+	private final Map<Class<?>, Consumer<DesignShape>> shapeRenderers;
+
+	// The design model
+	private Design design;
 
 	public DesignToolNg( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 		getStyleClass().add( "design-tool" );
 
 		addStylesheet( CartesiaMod.STYLESHEET );
+
+		Map<Class<?>, Consumer<DesignShape>> renderers = new HashMap<>();
+		renderers.put( DesignArc.class, s -> renderArc( (DesignArc)s ) );
+		renderers.put( DesignCurve.class, s -> renderCurve( (DesignCurve)s ) );
+		renderers.put( DesignEllipse.class, s -> renderEllipse( (DesignEllipse)s ) );
+		renderers.put( DesignLine.class, s -> renderLine( (DesignLine)s ) );
+		renderers.put( DesignMarker.class, s -> renderMarker( (DesignMarker)s ) );
+		renderers.put( DesignPath.class, s -> renderPath( (DesignPath)s ) );
+		renderers.put( DesignTextLine.class, s -> renderTextLine( (DesignTextLine)s ) );
+		renderers.put( DesignTextArea.class, s -> renderTextArea( (DesignTextArea)s ) );
+		shapeRenderers = Collections.unmodifiableMap( renderers );
 
 		// Create and configure the renderer
 		this.workplane = new DesignWorkplane();
@@ -116,18 +136,68 @@ public class DesignToolNg extends GuidedTool {
 	}
 
 	private void render() {
-		if( this.design == null ) return;
 		Fx.checkFxThread();
 
 		renderer.clear();
-		for( DesignLayer layer : design.getAllLayers() ) {
-			for( DesignShape shape : layer.getShapes() ) {
-				if( shape instanceof DesignLine line ) {
-					renderer.draw( new Line( CadPoints.asPoint( line.getOrigin() ), CadPoints.asPoint( line.getPoint() ) ), new Pen( Color.RED ) );
-				}
-			}
+		if( design != null ) {
+			design.getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> shapeRenderers.get( s.getClass() ).accept( s ) );
 		}
 	}
+
+	private Pen getPen( DesignShape shape ) {
+		// FIXME If the pen values change then this cache should be cleared
+		// TODO Move this to the shape calcPen method
+		Pen pen = shape.getValue( "pen" );
+		if( pen == null ) {
+			pen = new Pen( shape.calcDrawPaint(), shape.calcDrawWidth() );
+			shape.setValue( "pen", pen );
+		}
+		return pen;
+	}
+
+	private void renderArc( DesignArc arc ) {
+		log.atConfig().log( "arc=%s", arc );
+
+		renderer.draw( new Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcRotate(), arc.getStart(), arc.getExtent() ), getPen( arc ) );
+	}
+
+	private void renderCurve( DesignCurve curve ) {
+		renderer.draw( new Curve(
+			curve.getOrigin().getX(),
+			curve.getOrigin().getY(),
+			curve.getOriginControl().getX(),
+			curve.getOriginControl().getY(),
+			curve.getPointControl().getX(),
+			curve.getPointControl().getY(),
+			curve.getPoint().getX(),
+			curve.getPoint().getY()
+		), getPen( curve ) );
+	}
+
+	private void renderEllipse( DesignEllipse ellipse ) {
+		renderer.draw( new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.calcRotate() ), getPen( ellipse ) );
+	}
+
+	private void renderLine( DesignLine line ) {
+		renderer.draw( new Line( CadPoints.asPoint( line.getOrigin() ), CadPoints.asPoint( line.getPoint() ) ), getPen( line ) );
+	}
+
+	private void renderMarker( DesignMarker marker ) {
+		DesignPath path = marker.calcType().getPath();
+		//		Path path = marker.calcType().getFxPath();
+		//		path.setLayoutX( marker.getOrigin().getX() );
+		//		path.setLayoutY( marker.getOrigin().getY() );
+		//		path.setScaleX( marker.calcSize() );
+		//		path.setScaleY( marker.calcSize() );
+		// FIXME Markers should also have rotate
+		renderer.draw( new Path( marker.getOrigin().getX(), marker.getOrigin().getY(), 0 ), getPen( marker ) );
+	}
+
+	private void renderPath( DesignPath path ) {}
+
+	private void renderTextLine( DesignTextLine line ) {}
+
+	private void renderTextArea( DesignTextArea area ) {}
 
 	private void configureWorkplane() {
 		// The workplane values are stored in the tool settings
@@ -186,7 +256,7 @@ public class DesignToolNg extends GuidedTool {
 		settings.register( DesignWorkplane.GRID_SNAP_Y, e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
 
-		// Rebuild the grid if any workplane values change
+		// Rerender if any workplane values change
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> rerender() );
 	}
 

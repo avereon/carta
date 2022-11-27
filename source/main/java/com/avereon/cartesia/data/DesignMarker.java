@@ -20,12 +20,12 @@ public class DesignMarker extends DesignShape {
 	public enum Type {
 
 		DEFAULT {
-			public Path getPath() {
-				return CROSS.getPath();
+			public Path getFxPath() {
+				return CROSS.getFxPath();
 			}
 		},
 		CG {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = 0.5 * HALF_WIDTH * r;
 				double t = r - 2 * s;
@@ -50,7 +50,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		CIRCLE {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( 0, -r ) );
@@ -59,9 +59,18 @@ public class DesignMarker extends DesignShape {
 				path.getElements().add( new ClosePath() );
 				return path;
 			}
+
+			@Override
+			public DesignPath getPath() {
+				double r = HALF_SIZE;
+				DesignPath path = new DesignPath();
+				path.add( new DesignArc( new Point3D( 0, 0, 0 ), r, 0.0, Math.PI, DesignArc.Type.OPEN ) );
+				path.add( new DesignArc( new Point3D( 0, 0, 0 ), r, 0.0, -Math.PI, DesignArc.Type.OPEN ) );
+				return path;
+			}
 		},
 		CROSS {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = HALF_WIDTH * r;
 				Path path = new Path( new MoveTo( -s, -r ) );
@@ -85,7 +94,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		DIAMOND {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( -r, 0 ) );
@@ -97,12 +106,12 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		REFERENCE {
-			public Path getPath() {
-				return STAR.getPath();
+			public Path getFxPath() {
+				return STAR.getFxPath();
 			}
 		},
 		SQUARE {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double z = r * Constants.SQRT_ONE_HALF;
 				Path path = new Path();
@@ -115,7 +124,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		STAR {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = r * 0.5 * (3 - Math.sqrt( 5 ));
 
@@ -134,7 +143,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		X {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = Constants.SQRT_ONE_HALF * r;
 				double t = HALF_WIDTH * s;
@@ -168,7 +177,12 @@ public class DesignMarker extends DesignShape {
 
 		private static final double HALF_WIDTH = 0.5 * LINE_WIDTH;
 
-		public abstract Path getPath();
+		@Deprecated
+		public abstract Path getFxPath();
+
+		public DesignPath getPath() {
+			return new DesignPath();
+		}
 	}
 
 	public static final String MARKER = "marker";
@@ -177,11 +191,15 @@ public class DesignMarker extends DesignShape {
 
 	public static final String TYPE = "type";
 
+	public static final String ROTATE = "rotate";
+
 	public static final Type DEFAULT_TYPE = Type.CROSS;
 
 	public static final double DEFAULT_SIZE = 1.0;
 
 	private static final double ZERO_DRAW_WIDTH = 0.0;
+
+	private static final double DEFAULT_ROTATE = 0.0;
 
 	public DesignMarker() {
 		this( null );
@@ -222,6 +240,21 @@ public class DesignMarker extends DesignShape {
 		return this;
 	}
 
+	public double calcRotate() {
+		String rotate = getRotate();
+		if( rotate != null ) return CadMath.evalNoException( rotate );
+		return DEFAULT_ROTATE;
+	}
+
+	public String getRotate() {
+		return getValue( ROTATE );
+	}
+
+	public DesignMarker setRotate( String rotate ) {
+		setValue( ROTATE, rotate );
+		return this;
+	}
+
 	@Override
 	public double calcDrawWidth() {
 		return ZERO_DRAW_WIDTH;
@@ -232,8 +265,20 @@ public class DesignMarker extends DesignShape {
 		return calcDrawPaint();
 	}
 
+	public DesignPath getPath() {
+		DesignPath path = calcType().getPath();
+
+		CadTransform transform = CadTransform.rotation( Point3D.ZERO, calcRotate() );
+		transform = transform.combine( CadTransform.translation( getOrigin() ) );
+		transform = transform.combine( CadTransform.scale( calcSize() ) );
+		path.apply( transform );
+
+		return path;
+	}
+
 	@Override
 	public double distanceTo( Point3D point ) {
+		// TODO Go through each path shape and find the closest distance
 		double[] o = CadPoints.asPoint( getOrigin() );
 		double[] p = CadPoints.asPoint( point );
 		return Geometry.distance( o, p );
@@ -241,11 +286,13 @@ public class DesignMarker extends DesignShape {
 
 	@Override
 	public double pathLength() {
+		// TODO Sum all the path lengths
 		return 0.0;
 	}
 
 	@Override
 	public Map<String, Object> getInformation() {
+		// TODO Add more information like number or elements, path length, etc.
 		return Map.of( ORIGIN, getOrigin() );
 	}
 
@@ -258,6 +305,7 @@ public class DesignMarker extends DesignShape {
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
+			// TODO Calculate new rotation from the transform
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
@@ -266,7 +314,7 @@ public class DesignMarker extends DesignShape {
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, MARKER );
-		map.putAll( asMap( SIZE, TYPE ) );
+		map.putAll( asMap( SIZE, TYPE, ROTATE ) );
 		return map;
 	}
 
@@ -274,11 +322,13 @@ public class DesignMarker extends DesignShape {
 		super.updateFrom( map );
 		setSize( (String)map.get( SIZE ) );
 		setType( (String)map.get( TYPE ) );
+		setRotate( (String)map.get( ROTATE ) );
 		return this;
 	}
 
 	@Override
 	public String toString() {
+		// TODO Create a better string representation of the path
 		return super.toString( ORIGIN );
 	}
 
