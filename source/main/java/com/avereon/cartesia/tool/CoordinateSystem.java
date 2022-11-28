@@ -21,9 +21,21 @@ public interface CoordinateSystem {
 
 	Point3D getNearest( DesignWorkplane workplane, Point3D point );
 
-	List<Shape> getGridDots( DesignWorkplane workplane ) throws Exception;
+	/**
+	 * @param workplane
+	 * @return
+	 * @deprecated Unfortunately this method return FX shapes instead of something
+	 * simpler
+	 */
+	List<Shape> getGridDots( DesignWorkplane workplane );
 
-	List<Shape> getGridLines( DesignWorkplane workplane ) throws Exception;
+	/**
+	 * @param workplane
+	 * @return
+	 * @deprecated Unfortunately this method return FX shapes instead of something
+	 * simpler
+	 */
+	List<Shape> getGridLines( DesignWorkplane workplane );
 
 	static CoordinateSystem valueOf( String name ) {
 		return switch( name ) {

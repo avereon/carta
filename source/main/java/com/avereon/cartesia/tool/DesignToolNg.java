@@ -148,6 +148,10 @@ public class DesignToolNg extends GuidedTool {
 	}
 
 	private void renderGrid() {
+		// From the old design tool >
+		// List<Shape> grid = getWorkplane().getCoordinateSystem().getGridLines( getWorkplane() );
+		//getWorkplane().getCoordinateSystem().getGridLines( getWorkplane() );
+
 		renderer.draw( new Line( -5, 0, 5, 0 ), new Pen( Color.GRAY ).width( 0.05 ) );
 		renderer.draw( new Line( 0, -5, 0, 5 ), new Pen( Color.GRAY ).width( 0.05 ) );
 	}
