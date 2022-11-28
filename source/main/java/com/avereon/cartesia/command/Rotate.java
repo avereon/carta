@@ -9,9 +9,11 @@ import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
+@CustomLog
 public class Rotate extends EditCommand {
 
 	private DesignLine referenceLine;
@@ -32,7 +34,7 @@ public class Rotate extends EditCommand {
 		// Ask for a center point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "center" );
+			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
@@ -40,7 +42,7 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 2 ) {
 			center = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( center ).setOrigin( center );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
@@ -57,8 +59,17 @@ public class Rotate extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
+			Point3D a = asPoint( context, parameters[ 0 ] );
+			Point3D s = asPoint( context, parameters[ 1 ] );
+			Point3D t = asPoint( a, parameters[ 2 ] );
+
+			// FIXME Why does t appear to be relative to s, instead of a?
+			// Furthermore, why, when using a relative coordinate, is a line not made?
+
+			log.atConfig().log( "a=%s s=%s t=%s", a, s, t );
+
 			// Start an undo multi-change
-			rotateShapes( tool, asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			rotateShapes( tool, a, s, t );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
