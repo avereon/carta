@@ -7,6 +7,8 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.data.NodeEvent;
+import com.avereon.marea.LineCap;
+import com.avereon.marea.LineJoin;
 import com.avereon.marea.Pen;
 import com.avereon.marea.Renderer2d;
 import com.avereon.marea.fx.FxRenderer2d;
@@ -21,6 +23,7 @@ import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Screen;
 import lombok.CustomLog;
@@ -139,9 +142,19 @@ public class DesignToolNg extends GuidedTool {
 		Fx.checkFxThread();
 
 		renderer.clear();
-		if( design != null ) {
-			design.getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> shapeRenderers.get( s.getClass() ).accept( s ) );
-		}
+
+		renderGrid();
+		renderShapes();
+	}
+
+	private void renderGrid() {
+		renderer.draw( new Line( -5, 0, 5, 0 ), new Pen( Color.GRAY ).width( 0.05 ) );
+		renderer.draw( new Line( 0, -5, 0, 5 ), new Pen( Color.GRAY ).width( 0.05 ) );
+	}
+
+	private void renderShapes() {
+		if( design == null ) return;
+		design.getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> shapeRenderers.get( s.getClass() ).accept( s ) );
 	}
 
 	private Pen getPen( DesignShape shape ) {
@@ -149,16 +162,21 @@ public class DesignToolNg extends GuidedTool {
 		// TODO Move this to the shape calcPen method
 		Pen pen = shape.getValue( "pen" );
 		if( pen == null ) {
-			pen = new Pen( shape.calcDrawPaint(), shape.calcDrawWidth() );
+			pen = new Pen();
+			pen.paint( shape.calcDrawPaint() );
+			pen.width( shape.calcDrawWidth() );
+			pen.cap( LineCap.valueOf( shape.calcDrawCap().name() ) );
+			pen.join( LineJoin.ROUND );
+			pen.dashes( shape.calcDrawPattern().stream().mapToDouble( d -> d ).toArray() );
+			pen.offset( 0.0 );
+
 			shape.setValue( "pen", pen );
 		}
 		return pen;
 	}
 
 	private void renderArc( DesignArc arc ) {
-		log.atConfig().log( "arc=%s", arc );
-
-		renderer.draw( new Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcRotate(), arc.getStart(), arc.getExtent() ), getPen( arc ) );
+		renderer.draw( new Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcRotate(), -arc.getStart(), arc.getExtent() ), getPen( arc ) );
 	}
 
 	private void renderCurve( DesignCurve curve ) {

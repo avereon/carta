@@ -17,6 +17,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
@@ -94,6 +95,7 @@ public class DesignShapeView extends DesignDrawableView {
 		shape.getStrokeDashArray().setAll( getDesignShape().calcDrawPattern() );
 		shape.setStrokeDashOffset( 0.0 );
 		shape.setStrokeLineCap( getDesignShape().calcDrawCap() );
+		shape.setStrokeLineJoin( StrokeLineJoin.ROUND );
 		shape.setFill( getDesignShape().calcFillPaint() );
 	}
 
