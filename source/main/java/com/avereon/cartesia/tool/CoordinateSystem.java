@@ -27,7 +27,10 @@ public interface CoordinateSystem {
 	 * @deprecated Unfortunately this method return FX shapes instead of something
 	 * simpler
 	 */
+	@Deprecated
 	List<Shape> getGridDots( DesignWorkplane workplane );
+
+	double[][] getGridDotsNew();
 
 	/**
 	 * @param workplane
@@ -35,6 +38,7 @@ public interface CoordinateSystem {
 	 * @deprecated Unfortunately this method return FX shapes instead of something
 	 * simpler
 	 */
+	@Deprecated
 	List<Shape> getGridLines( DesignWorkplane workplane );
 
 	static CoordinateSystem valueOf( String name ) {
