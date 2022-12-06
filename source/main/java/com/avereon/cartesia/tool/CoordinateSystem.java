@@ -23,7 +23,16 @@ public interface CoordinateSystem {
 
 	List<Shape> getGridDots( DesignWorkplane workplane ) throws Exception;
 
-	List<Shape> getGridLines( DesignWorkplane workplane ) throws Exception;
+//	double[][] getGridDotsNew();
+
+	/**
+	 * @param workplane
+	 * @return
+	 * @deprecated Unfortunately this method return FX shapes instead of something
+	 * simpler
+	 */
+	@Deprecated
+	List<Shape> getGridLines( DesignWorkplane workplane );
 
 	static CoordinateSystem valueOf( String name ) {
 		return switch( name ) {

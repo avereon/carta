@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.cursor.ReticleCursorIcon;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
@@ -562,7 +563,7 @@ public abstract class DesignTool extends GuidedTool {
 		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
 		String defaultReferencePointSize = "10";
 		String defaultReferencePointPaint = "#808080";
-		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
+		String defaultReticle = ReticleCursor.DUPLEX.name().toLowerCase();
 
 		// Get tool settings
 		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
@@ -574,7 +575,7 @@ public abstract class DesignTool extends GuidedTool {
 		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
 		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
 		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
-		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ) ) );
+		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
 		designPane.setReferencePointSize( referencePointSize );
@@ -880,7 +881,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
-		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
+		if( getCursor() instanceof ReticleCursorIcon ) setCursor( ReticleCursorIcon.get( reticle ) );
 	}
 
 	private CommandPrompt getCommandPrompt() {
