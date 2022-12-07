@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.cursor.ReticleCursorIcon;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
@@ -137,12 +136,14 @@ public class Command {
 	}
 
 	protected void promptForPoint( CommandContext context, String key ) {
-		context.getTool().setCursor( ReticleCursorIcon.get( context.getTool().getReticle() ) );
+		String stylesheet = context.getProgram().getWorkspaceManager().getThemeMetadata().getStylesheet();
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( stylesheet ) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 
 	protected void promptForWindow( CommandContext context, String key ) {
-		context.getTool().setCursor( ReticleCursorIcon.get( context.getTool().getReticle() ) );
+		String stylesheet = context.getProgram().getWorkspaceManager().getThemeMetadata().getStylesheet();
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( stylesheet) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 

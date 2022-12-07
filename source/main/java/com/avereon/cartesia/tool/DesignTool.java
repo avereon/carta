@@ -2,8 +2,8 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.*;
+import com.avereon.cartesia.cursor.IconCursor;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.cursor.ReticleCursorIcon;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
@@ -881,7 +881,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
-		if( getCursor() instanceof ReticleCursorIcon ) setCursor( ReticleCursorIcon.get( reticle ) );
+		String stylesheet = getProgram().getWorkspaceManager().getThemeMetadata().getStylesheet();
+		if( getCursor() instanceof IconCursor ) setCursor( reticle.getCursorIcon( stylesheet ) );
 	}
 
 	private CommandPrompt getCommandPrompt() {
