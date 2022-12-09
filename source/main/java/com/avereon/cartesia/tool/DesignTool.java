@@ -881,8 +881,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
-		String stylesheet = getProgram().getWorkspaceManager().getThemeMetadata().getStylesheet();
-		if( getCursor() instanceof IconCursor ) setCursor( reticle.getCursorIcon( stylesheet ) );
+		if( getCursor() instanceof IconCursor ) setCursor( reticle.getCursorIcon( getProgram() ) );
 	}
 
 	private CommandPrompt getCommandPrompt() {

@@ -136,14 +136,12 @@ public class Command {
 	}
 
 	protected void promptForPoint( CommandContext context, String key ) {
-		String stylesheet = context.getProgram().getWorkspaceManager().getThemeMetadata().getStylesheet();
-		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( stylesheet ) );
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( context.getProgram() ) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 
 	protected void promptForWindow( CommandContext context, String key ) {
-		String stylesheet = context.getProgram().getWorkspaceManager().getThemeMetadata().getStylesheet();
-		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( stylesheet) );
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( context.getProgram()) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 

@@ -7,15 +7,15 @@ import javafx.scene.image.Image;
 
 public class IconCursor extends ImageCursor {
 
-	public IconCursor( RenderedIcon icon, String stylesheet ) {
-		super( toImage( icon, stylesheet ), 0.5 * (icon.getWidth()) - 1, 0.5 * (icon.getHeight() - 1) );
+	public IconCursor( RenderedIcon icon ) {
+		super( toImage( icon ), 0.5 * (icon.getWidth()) - 1, 0.5 * (icon.getHeight() - 1) );
 	}
 
-	protected static Image toImage( RenderedIcon icon, String stylesheet ) {
+	protected static Image toImage( RenderedIcon icon ) {
 		Dimension2D size = ImageCursor.getBestSize( 64, 64 );
 		icon.regrid( size.getWidth(), size.getHeight() );
 		icon.resize( size.getWidth(), size.getHeight() );
-		return icon.getImage( stylesheet );
+		return icon.getImage();
 	}
 
 }
