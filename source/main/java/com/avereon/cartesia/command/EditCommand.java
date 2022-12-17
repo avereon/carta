@@ -59,18 +59,27 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void scaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
-		transformShapes( shapes, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ) );
+		double zX = (target.getX() - center.getX()) / (anchor.getX() - center.getX());
+		double zY = (target.getY() - center.getY()) / (anchor.getY() - center.getY());
+		double zZ = (target.getZ() - center.getZ()) / (anchor.getZ() - center.getZ());
+		transformShapes( shapes, CadTransform.scale( center, zX, zY, 1 ) );
 	}
 
-	protected void rescaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D lastPoint, Point3D target ) {
-		transformShapes(
-			shapes,
-			CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ).combine( CadTransform.scale( center, 1 / (lastPoint.distance( center ) / anchor.distance( center )) ) )
-		);
+	protected void rescaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D prior, Point3D target ) {
+		double zX = (target.getX() - center.getX()) / (anchor.getX() - center.getX());
+		double zY = (target.getY() - center.getY()) / (anchor.getY() - center.getY());
+		double zZ = (target.getZ() - center.getZ()) / (anchor.getZ() - center.getZ());
+		double izX = 1 / (prior.getX() - center.getX()) / (anchor.getX() - center.getX());
+		double izY = 1 / (prior.getY() - center.getY()) / (anchor.getY() - center.getY());
+		double izZ = 1 / (prior.getZ() - center.getZ()) / (anchor.getZ() - center.getZ());
+		transformShapes( shapes, CadTransform.scale( center, zX, zY, 1 ).combine( CadTransform.scale( center, izX, izY, 1 ) ) );
 	}
 
 	protected void scaleShapes( DesignTool tool, Point3D center, Point3D anchor, Point3D target ) {
-		apply( tool, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ) );
+		double zX = (target.getX() - center.getX()) / (anchor.getX() - center.getX());
+		double zY = (target.getY() - center.getY()) / (anchor.getY() - center.getY());
+		double zZ = (target.getZ() - center.getZ()) / (anchor.getZ() - center.getZ());
+		apply( tool, CadTransform.scale( center, zX, zY, 1 ) );
 	}
 
 	protected void deleteShapes( DesignTool tool ) {
