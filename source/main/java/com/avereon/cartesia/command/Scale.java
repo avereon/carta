@@ -16,11 +16,11 @@ public class Scale extends EditCommand {
 
 	private DesignLine referenceLine;
 
-	private Point3D center;
-
 	private Point3D anchor;
 
-	private Point3D lastPoint;
+	private Point3D source;
+
+	private Point3D prior;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -39,16 +39,16 @@ public class Scale extends EditCommand {
 
 		// Ask for a start point
 		if( parameters.length < 2 ) {
-			center = asPoint( context, parameters[ 0 ] );
-			referenceLine.setPoint( center ).setOrigin( center );
+			anchor = asPoint( context, parameters[ 0 ] );
+			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
-			anchor = asPoint( context, parameters[ 1 ] );
-			referenceLine.setPoint( anchor ).setOrigin( anchor );
+			source = asPoint( context, parameters[ 1 ] );
+			referenceLine.setPoint( source ).setOrigin( source );
 			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
@@ -74,20 +74,20 @@ public class Scale extends EditCommand {
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
-			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D target = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
-				case 2 -> referenceLine.setPoint( point ).setOrigin( center );
+				case 1 -> referenceLine.setPoint( target ).setOrigin( target );
+				case 2 -> referenceLine.setPoint( target ).setOrigin( anchor );
 				case 3 -> {
-					referenceLine.setPoint( point ).setOrigin( center );
+					referenceLine.setPoint( target ).setOrigin( anchor );
 
-					if( !CadGeometry.areSamePoint( center, point ) ) {
-						if( lastPoint != null ) {
-							rescaleShapes( getPreview(), center, anchor, lastPoint, point );
+					if( !CadGeometry.areSamePoint( anchor, target ) ) {
+						if( prior != null ) {
+							rescaleShapes( getPreview(), anchor, source, prior, target );
 						} else {
-							scaleShapes( getPreview(), center, anchor, point );
+							scaleShapes( getPreview(), anchor, source, target );
 						}
-						lastPoint = point;
+						prior = target;
 					}
 				}
 			}
