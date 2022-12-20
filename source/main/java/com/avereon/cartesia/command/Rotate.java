@@ -89,6 +89,7 @@ public class Rotate extends EditCommand {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
+					// FIXME Need to handle preview geometry without the need for prior data
 					double oldAngle = angle;
 					referenceLine.setPoint( point );
 					angle = CadGeometry.pointAngle360( anchor, center, point );

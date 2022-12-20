@@ -66,6 +66,7 @@ public class Move extends EditCommand {
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> {
+					// FIXME Need to handle preview geometry without the need for prior data
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
 					if( lastPoint == null ) lastPoint = anchor;

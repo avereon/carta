@@ -2,7 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -11,6 +11,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
+import java.util.Collection;
 
 public class Scale extends EditCommand {
 
@@ -21,6 +22,10 @@ public class Scale extends EditCommand {
 	private Point3D source;
 
 	private Point3D prior;
+
+	private Collection<DesignShape> selected;
+
+	private Collection<DesignShape> preview;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -49,12 +54,14 @@ public class Scale extends EditCommand {
 		if( parameters.length < 3 ) {
 			source = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( source ).setOrigin( source );
-			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedGeometry() ) );
+			selected = tool.getSelectedGeometry();
+			preview = cloneAndAddReferenceShapes( selected );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}
 
 		clearReferenceAndPreview( context );
+		removePreview( tool.getCommandContext(), preview );
 		setCaptureUndoChanges( context, true );
 
 		try {
@@ -81,14 +88,21 @@ public class Scale extends EditCommand {
 				case 3 -> {
 					referenceLine.setPoint( target ).setOrigin( anchor );
 
-					if( !CadGeometry.areSamePoint( anchor, target ) ) {
-						if( prior != null ) {
-							rescaleShapes( getPreview(), anchor, source, prior, target );
-						} else {
-							scaleShapes( getPreview(), anchor, source, target );
-						}
-						prior = target;
-					}
+					// FIXME Not only does this strategy not work (not sure why) but it is also rather CPU intensive
+					// Remove prior preview shapes
+					removePreview( tool.getCommandContext(), preview );
+					// Create new preview shapes
+					scaleShapes( preview = cloneAndAddReferenceShapes( selected ), anchor, source, target );
+
+					// FIXME Need to handle preview geometry without the need for prior data
+//					if( !CadGeometry.areSamePoint( anchor, target ) ) {
+//						if( prior != null ) {
+//							rescaleShapes( getPreview(), anchor, source, prior, target );
+//						} else {
+//							scaleShapes( getPreview(), anchor, source, target );
+//						}
+//						prior = target;
+//					}
 				}
 			}
 		}

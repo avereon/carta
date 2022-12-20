@@ -173,11 +173,11 @@ public class Command {
 		return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 	}
 
-	protected List<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {
+	protected Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {
 		return cloneAndAddShapes( shapes, false );
 	}
 
-	protected List<DesignShape> cloneAndAddReferenceShapes( Collection<DesignShape> shapes ) {
+	protected Collection<DesignShape> cloneAndAddReferenceShapes( Collection<DesignShape> shapes ) {
 		return cloneAndAddShapes( shapes, true );
 	}
 
@@ -219,6 +219,8 @@ public class Command {
 		reference.clear();
 	}
 
+	@Deprecated
+	// FIXME This is usually used in a way that causes resetting the preview shapes with an inverse transform
 	protected Collection<DesignShape> getPreview() {
 		return this.preview;
 	}
@@ -227,6 +229,8 @@ public class Command {
 		addPreview( context, List.of( shapes ) );
 	}
 
+	@Deprecated
+	// FIXME This is usually used in a way that causes resetting the preview shapes with an inverse transform
 	protected void addPreview( CommandContext context, Collection<DesignShape> shapes ) {
 		this.preview.addAll( shapes );
 		this.preview.forEach( s -> {
@@ -239,9 +243,10 @@ public class Command {
 		removePreview( context, List.of( shapes ) );
 	}
 
-	protected void removePreview( CommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
-		preview.removeAll( shapeList );
+	protected void removePreview( CommandContext context, Collection<DesignShape> shapes ) {
+		if( shapes == null ) return;
+		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		preview.removeAll( shapes );
 	}
 
 	protected void clearPreview( CommandContext context ) {
@@ -377,7 +382,7 @@ public class Command {
 		} ).collect( Collectors.toList() );
 	}
 
-	private List<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
+	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
 			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag

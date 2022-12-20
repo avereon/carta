@@ -69,6 +69,7 @@ public class Flip extends EditCommand {
 				case 2 -> {
 					referenceLine.setPoint( point );
 
+					// FIXME Need to handle preview geometry without the need for prior data
 					if( !CadGeometry.areSamePoint( anchor, point ) ) {
 						if( lastPoint != null ) {
 							reflipShapes( getPreview(), anchor, lastPoint, point );

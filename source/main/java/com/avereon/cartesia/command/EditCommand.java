@@ -34,6 +34,7 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, CadTransform.mirror( origin, point ) );
 	}
 
+	@Deprecated
 	protected void reflipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D lastPoint, Point3D point ) {
 		transformShapes( shapes, CadTransform.mirror( origin, point ).combine( CadTransform.mirror( origin, lastPoint ) ) );
 	}
@@ -63,8 +64,9 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, getScaleTransform( anchor, source, target ) );
 	}
 
+	@Deprecated
 	protected void rescaleShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D prior, Point3D target ) {
-		// FIXME Almost there! The inverse transform has a problem when the scale was zero.
+		// FIXME Almost there! The inverse transform has a problem when the scale is zero.
 		transformShapes( shapes, getScaleTransform( anchor, source, target ).combine( getScaleTransform( anchor, source, prior ).inverse() ) );
 	}
 
