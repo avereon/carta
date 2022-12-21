@@ -1,0 +1,48 @@
+<html lang="html">
+<head>
+	<title>${action.name}</title>
+</head>
+<body>
+<h1>${action.name}</h1>
+<h2>${action.command}</h2>
+<p>This command changes the scale of design geometry.</p>
+<h2>Steps</h2>
+<ol>
+	<li>Select objects to scale</li>
+	<li>Type ${action.command}</li>
+	<li>Select an anchor point</li>
+	<li>Select a reference point</li>
+	<li>Move the reference point to choose a new scale</li>
+	<li>Select the target point</li>
+	<li>The objects are modified to the new scale</li>
+</ol>
+<h2>Details</h2>
+<p>
+	This command changes the scale of selected design geometry. The command
+	requires that geometry be selected before starting the command. Please refer
+	to <a href="">selecting geometry</a> for more information.
+</p>
+<p>
+	Once you have selected the design geometry you want to scale, start the
+	command by typing ${action.command}.
+</p>
+<p>
+	You are then prompted to enter an anchor point. The anchor point will stay
+	stationary while the geometry is scaled around it. For example, if you want to
+	scale a rectangle and keep the lower left anchored where it is, select the
+	lower left point on the rectangle as the anchor.
+</p>
+<p>
+	You are then prompted to enter a reference point. The reference point is used
+	to determine both the new scale value and direction of the scale will be
+	applied. Moving the reference point toward the anchor will make the geometry
+	smaller and moving the reference point away from the anchor will make the
+	geometry larger. It is even possible to mirror the geometry by moving the
+	reference point past the anchor point.
+</p>
+<p>
+	Once the reference point is selected then the design geometry is resized
+	according to the new scale.
+</p>
+</body>
+</html>

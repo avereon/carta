@@ -26,7 +26,7 @@ public class Move extends EditCommand {
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "reference" );
 			return INCOMPLETE;
 		}
 

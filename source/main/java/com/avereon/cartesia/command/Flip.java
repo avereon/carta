@@ -26,7 +26,7 @@ public class Flip extends EditCommand {
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "axis-anchor" );
 			return INCOMPLETE;
 		}
 
@@ -35,7 +35,7 @@ public class Flip extends EditCommand {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			addPreview( context, cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() ) );
-			promptForPoint( context, "target" );
+			promptForPoint( context, "axis-point" );
 			return INCOMPLETE;
 		}
 

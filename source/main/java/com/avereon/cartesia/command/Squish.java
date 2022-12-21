@@ -30,7 +30,7 @@ public class Squish extends EditCommand {
 		// Ask for a center point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "center" );
+			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
@@ -38,7 +38,7 @@ public class Squish extends EditCommand {
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "reference" );
 			return INCOMPLETE;
 		}
 
