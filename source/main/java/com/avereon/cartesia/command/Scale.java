@@ -52,7 +52,6 @@ public class Scale extends EditCommand {
 		}
 
 		clearReferenceAndPreview( context );
-		//removePreview( tool.getCommandContext(), preview );
 		setCaptureUndoChanges( context, true );
 
 		try {

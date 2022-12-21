@@ -5,6 +5,12 @@ import javafx.geometry.Point3D;
 
 public class CadOrientation {
 
+	public static final Point3D X_UNIT = new Point3D( 1, 0, 0 );
+
+	public static final Point3D Y_UNIT = new Point3D( 0, 1, 0 );
+
+	public static final Point3D Z_UNIT = new Point3D( 0, 0, 1 );
+
 	private final Orientation orientation;
 
 	public CadOrientation() {

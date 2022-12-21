@@ -68,6 +68,27 @@ public abstract class EditCommand extends Command {
 		Point3D base = source.subtract( anchor );
 		Point3D stretch = target.subtract( anchor );
 
+		// Create an orientation such that the x-axis is aligned with the base
+		CadOrientation orientation = new CadOrientation( anchor, CadOrientation.Z_UNIT, base );
+
+		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
+
+		return orientation.getLocalToTargetTransform().combine( CadTransform.scale( scale, scale, 1 ) ).combine( orientation.getTargetToLocalTransform() );
+	}
+
+	protected void squishShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
+		transformShapes( shapes, getSquishTransform( anchor, source, target ) );
+	}
+
+	protected void squishShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
+		apply( tool, getSquishTransform( anchor, source, target ) );
+	}
+
+	private CadTransform getSquishTransform( Point3D anchor, Point3D source, Point3D target ) {
+		// This implementation uses a rotate/scale/-rotate transform
+		Point3D base = source.subtract( anchor );
+		Point3D stretch = target.subtract( anchor );
+
 		// Create an orientation such that the z-axis is aligned with the base
 		CadOrientation orientation = new CadOrientation( anchor, base );
 

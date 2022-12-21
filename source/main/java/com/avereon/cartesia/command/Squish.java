@@ -2,29 +2,27 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
-import lombok.CustomLog;
 
 import java.text.ParseException;
 
-@CustomLog
-public class Rotate extends EditCommand {
+public class Squish extends EditCommand {
 
 	private DesignLine referenceLine;
 
-	private Point3D center;
-
 	private Point3D anchor;
+
+	private Point3D source;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		DesignTool tool = context.getTool();
+
 		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
 
 		setCaptureUndoChanges( context, false );
@@ -32,22 +30,22 @@ public class Rotate extends EditCommand {
 		// Ask for a center point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "center" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a start point
 		if( parameters.length < 2 ) {
-			center = asPoint( context, parameters[ 0 ] );
-			referenceLine.setPoint( center ).setOrigin( center );
-			promptForPoint( context, "start-point" );
+			anchor = asPoint( context, parameters[ 0 ] );
+			referenceLine.setPoint( anchor ).setOrigin( anchor );
+			promptForPoint( context, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
 		if( parameters.length < 3 ) {
-			anchor = asPoint( context, parameters[ 1 ] );
-			referenceLine.setPoint( anchor ).setOrigin( center );
+			source = asPoint( context, parameters[ 1 ] );
+			referenceLine.setPoint( source ).setOrigin( source );
 			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedGeometry() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
@@ -57,18 +55,8 @@ public class Rotate extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			Point3D a = asPoint( context, parameters[ 0 ] );
-			Point3D s = asPoint( context, parameters[ 1 ] );
-
-			// FIXME Why does t appear to be relative to s, instead of a?
-			Point3D t = asPoint( a, parameters[ 2 ] );
-
-			// Furthermore, why, when using a relative coordinate, is a line not made?
-
-			log.atConfig().log( "a=%s s=%s t=%s", a, s, t );
-
 			// Start an undo multi-change
-			rotateShapes( tool, a, s, t );
+			squishShapes( tool, asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
@@ -83,15 +71,15 @@ public class Rotate extends EditCommand {
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
-			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D target = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
-				case 2 -> referenceLine.setPoint( point );
+				case 1 -> referenceLine.setPoint( target ).setOrigin( target );
+				case 2 -> referenceLine.setPoint( target ).setOrigin( anchor );
 				case 3 -> {
-					referenceLine.setPoint( point );
+					referenceLine.setPoint( target ).setOrigin( anchor );
 
 					resetPreviewGeometry();
-					rotateShapes( getPreview(), center, CadGeometry.pointAngle360( anchor, center, point ) );
+					squishShapes( getPreview(), anchor, source, target );
 				}
 			}
 		}
