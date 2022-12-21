@@ -17,8 +17,6 @@ public class Move extends EditCommand {
 
 	private Point3D anchor;
 
-	private Point3D lastPoint;
-
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
@@ -66,12 +64,10 @@ public class Move extends EditCommand {
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> {
-					// FIXME Need to handle preview geometry without the need for prior data
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
-					if( lastPoint == null ) lastPoint = anchor;
-					moveShapes( getPreview(), lastPoint, point );
-					lastPoint = point;
+					resetPreviewGeometry();
+					moveShapes( getPreview(), anchor, point );
 				}
 			}
 		}

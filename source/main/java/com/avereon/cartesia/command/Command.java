@@ -21,7 +21,10 @@ import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,17 +39,20 @@ public class Command {
 
 	public static final Object FAIL = new Object();
 
-	private final List<DesignShape> reference;
+	private final Collection<DesignShape> reference;
 
-	private final List<DesignShape> preview;
+	private final Collection<DesignShape> preview;
+
+	private final Map<DesignShape, DesignShape> previewMap;
 
 	private int step;
 
 	private boolean stepExecuted;
 
 	protected Command() {
-		this.reference = new CopyOnWriteArrayList<>();
-		this.preview = new CopyOnWriteArrayList<>();
+		this.reference = new CopyOnWriteArraySet<>();
+		this.preview = new CopyOnWriteArraySet<>();
+		this.previewMap = new ConcurrentHashMap<>();
 	}
 
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -141,7 +147,7 @@ public class Command {
 	}
 
 	protected void promptForWindow( CommandContext context, String key ) {
-		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( context.getProgram()) );
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( context.getProgram() ) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 
@@ -219,8 +225,6 @@ public class Command {
 		reference.clear();
 	}
 
-	@Deprecated
-	// FIXME This is usually used in a way that causes resetting the preview shapes with an inverse transform
 	protected Collection<DesignShape> getPreview() {
 		return this.preview;
 	}
@@ -229,8 +233,6 @@ public class Command {
 		addPreview( context, List.of( shapes ) );
 	}
 
-	@Deprecated
-	// FIXME This is usually used in a way that causes resetting the preview shapes with an inverse transform
 	protected void addPreview( CommandContext context, Collection<DesignShape> shapes ) {
 		this.preview.addAll( shapes );
 		this.preview.forEach( s -> {
@@ -239,8 +241,12 @@ public class Command {
 		} );
 	}
 
+	protected void resetPreviewGeometry() {
+		previewMap.keySet().forEach( s -> previewMap.get( s ).updateFrom( s ) );
+	}
+
 	protected void removePreview( CommandContext context, DesignShape... shapes ) {
-		removePreview( context, List.of( shapes ) );
+		removePreview( context, Set.of( shapes ) );
 	}
 
 	protected void removePreview( CommandContext context, Collection<DesignShape> shapes ) {
@@ -373,18 +379,10 @@ public class Command {
 		return angle;
 	}
 
-	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
-		return shapes.stream().map( s -> {
-			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
-			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
-			//if( s.getLayer() != null ) s.getLayer().addShape( clone );
-			return clone;
-		} ).collect( Collectors.toList() );
-	}
-
 	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
+			previewMap.put( s, clone );
 			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
 			if( s.getLayer() != null ) s.getLayer().addShape( clone );
 			return clone;

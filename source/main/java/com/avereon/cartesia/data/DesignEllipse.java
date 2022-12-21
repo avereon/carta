@@ -238,6 +238,22 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	@Override
+	public DesignShape updateFrom( DesignShape shape ) {
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignEllipse ellipse) ) return this;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setXRadius( ellipse.getXRadius() );
+			this.setYRadius( ellipse.getYRadius() );
+			this.setRotate( ellipse.getRotate() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
+		return this;
+	}
+
+	@Override
 	public String toString() {
 		return super.toString( ORIGIN, X_RADIUS, Y_RADIUS, ROTATE );
 	}

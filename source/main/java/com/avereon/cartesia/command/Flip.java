@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -17,8 +16,6 @@ public class Flip extends EditCommand {
 	private DesignLine referenceLine;
 
 	private Point3D anchor;
-
-	private Point3D lastPoint;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -69,15 +66,8 @@ public class Flip extends EditCommand {
 				case 2 -> {
 					referenceLine.setPoint( point );
 
-					// FIXME Need to handle preview geometry without the need for prior data
-					if( !CadGeometry.areSamePoint( anchor, point ) ) {
-						if( lastPoint != null ) {
-							reflipShapes( getPreview(), anchor, lastPoint, point );
-						} else {
-							flipShapes( getPreview(), anchor, point );
-						}
-						lastPoint = point;
-					}
+					resetPreviewGeometry();
+					flipShapes( getPreview(), anchor, point );
 				}
 			}
 		}

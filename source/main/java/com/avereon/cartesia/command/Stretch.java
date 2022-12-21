@@ -29,8 +29,6 @@ public class Stretch extends EditCommand {
 
 	private Point3D anchor;
 
-	private Point3D lastPoint;
-
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
@@ -89,9 +87,8 @@ public class Stretch extends EditCommand {
 				case 3 -> {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
-					if( lastPoint == null ) lastPoint = anchor;
-					stretchShapes( pointsToMove, lastPoint, point );
-					lastPoint = point;
+					resetPreviewGeometry();
+					stretchShapes( pointsToMove, anchor, point );
 				}
 			}
 		}

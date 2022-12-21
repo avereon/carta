@@ -278,6 +278,21 @@ public class DesignMarker extends DesignShape {
 	}
 
 	@Override
+	public DesignMarker updateFrom( DesignShape shape ) {
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignMarker marker) ) return this;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setSize( marker.getSize() );
+			this.setType( marker.getType() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
+		return this;
+	}
+
+	@Override
 	public String toString() {
 		return super.toString( ORIGIN );
 	}

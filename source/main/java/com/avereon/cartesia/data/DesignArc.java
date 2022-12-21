@@ -180,6 +180,25 @@ public class DesignArc extends DesignEllipse {
 		return this;
 	}
 
+	@Override
+	public DesignShape updateFrom( DesignShape shape ) {
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignArc arc) ) return this;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setXRadius( arc.getXRadius() );
+			this.setYRadius( arc.getYRadius() );
+			this.setRotate( arc.getRotate() );
+			this.setStart( arc.getStart() );
+			this.setExtent( arc.getExtent() );
+			this.setType( arc.getType() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
+		return this;
+	}
+
 	public void moveEndpoint( Point3D source, Point3D target ) {
 		if( source == null ) return;
 

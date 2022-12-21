@@ -4,6 +4,7 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -75,6 +76,19 @@ public class DesignLine extends DesignShape {
 	public DesignLine updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
+		return this;
+	}
+
+	public DesignShape updateFrom( DesignShape shape ) {
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignLine line) ) return this;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setPoint( line.getPoint() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
 		return this;
 	}
 
