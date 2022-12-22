@@ -1,5 +1,6 @@
-package com.avereon.cartesia.data;
+package com.avereon.cartesia.data.util;
 
+import com.avereon.cartesia.data.DesignShape;
 import javafx.geometry.Point3D;
 
 import java.util.Comparator;

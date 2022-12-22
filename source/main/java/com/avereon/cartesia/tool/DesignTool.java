@@ -5,6 +5,7 @@ import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.IconCursor;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;

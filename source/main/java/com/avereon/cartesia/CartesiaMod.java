@@ -1,8 +1,8 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.DesignLayerOptionProvider;
-import com.avereon.cartesia.data.DesignUnitOptionProvider;
-import com.avereon.cartesia.data.MarkerTypeOptionProvider;
+import com.avereon.cartesia.data.util.DesignLayerOptionProvider;
+import com.avereon.cartesia.data.util.DesignUnitOptionProvider;
+import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.tool.Design2dEditor;
