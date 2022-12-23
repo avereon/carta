@@ -216,10 +216,7 @@ public class DesignArc extends DesignEllipse {
 			} else {
 				extent = theta - getStart();
 			}
-			extent %= 360;
-			if( extent < -180 ) extent += 360;
-			if( extent > 180 ) extent -= 360;
-			setExtent( extent );
+			setExtent( CadGeometry.clampAngle360( extent ) );
 		} catch( TxnException exception ) {
 			log.atSevere().log( "Unable to trim arc" );
 		}
