@@ -5,6 +5,8 @@ import javafx.scene.text.Font;
 
 public abstract class DesignText extends DesignShape {
 
+	public static final String TEXT = "text";
+
 	public static final String FONT = "font";
 
 	public static final String ROTATE = "rotate";
@@ -29,8 +31,19 @@ public abstract class DesignText extends DesignShape {
 		super( origin );
 		addModifyingKeys( FONT, ROTATE );
 
+		setText( text );
 		setFont( font );
 		setRotate( rotate );
+	}
+
+	public String getText() {
+		return getValue( TEXT );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignText> T setText( String value ) {
+		setValue( TEXT, value );
+		return (T)this;
 	}
 
 	public Font calcFont() {
