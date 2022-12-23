@@ -29,7 +29,7 @@ public abstract class DesignText extends DesignShape {
 
 	public DesignText( Point3D origin, String text, Font font, Double rotate ) {
 		super( origin );
-		addModifyingKeys( FONT, ROTATE );
+		addModifyingKeys( TEXT, FONT, ROTATE );
 
 		setText( text );
 		setFont( font );

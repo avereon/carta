@@ -9,6 +9,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DesignTextAreaTest {
 
 	@Test
+	void testModify() {
+		DesignTextArea textarea = new DesignTextArea( new Point3D( 0, 0, 0 ), "Test", Font.getDefault(), 0.0 );
+		assertThat( textarea.isModified() ).isTrue();
+		textarea.setModified( false );
+		assertThat( textarea.isModified() ).isFalse();
+
+		textarea.setOrigin( new Point3D( 0, 0, 0 ) );
+		textarea.setText( "Test" );
+		textarea.setFont( Font.getDefault() );
+		textarea.setRotate( 0.0 );
+		assertThat( textarea.isModified() ).isFalse();
+
+		textarea.setOrigin( new Point3D( 1, 1, 0 ) );
+		assertThat( textarea.isModified() ).isTrue();
+		textarea.setModified( false );
+		assertThat( textarea.isModified() ).isFalse();
+
+		textarea.setText( "Modify" );
+		assertThat( textarea.isModified() ).isTrue();
+		textarea.setModified( false );
+		assertThat( textarea.isModified() ).isFalse();
+
+		textarea.setFont( Font.font( "Serif", 24 ) );
+		assertThat( textarea.isModified() ).isTrue();
+		textarea.setModified( false );
+		assertThat( textarea.isModified() ).isFalse();
+
+		textarea.setRotate( 25.0 );
+		assertThat( textarea.isModified() ).isTrue();
+		textarea.setModified( false );
+		assertThat( textarea.isModified() ).isFalse();
+	}
+
+	@Test
 	void testOrigin() {
 		DesignTextArea textarea = new DesignTextArea( new Point3D( 0, 0, 0 ) );
 		assertThat( textarea.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
