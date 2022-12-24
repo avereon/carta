@@ -3,6 +3,7 @@ package com.avereon.cartesia.math;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
 // C | ✓ | ✓ | ✓ |   |
 // P |   |   |   |   |
 
+@CustomLog
 public class Trim extends CadEdit{
 
 	public static void trim( DesignTool tool, DesignShape trim, DesignShape edge, Point3D trimPoint, Point3D edgePoint ) {

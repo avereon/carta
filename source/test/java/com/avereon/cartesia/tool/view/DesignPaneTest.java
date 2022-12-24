@@ -1,6 +1,7 @@
 package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.Point2DAssert;
 import com.avereon.cartesia.PointAssert;
 import com.avereon.cartesia.TestTimeouts;
 import com.avereon.cartesia.data.Design;
@@ -9,6 +10,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.zarra.javafx.Fx;
 import com.avereon.zarra.javafx.JavaFxStarter;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
 import javafx.scene.layout.StackPane;
@@ -31,6 +33,8 @@ public class DesignPaneTest implements TestTimeouts {
 	private static final double PARENT_HALF_HEIGHT = 0.5 * PARENT_HEIGHT;
 
 	private static final double SCALE = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, DesignUnit.CENTIMETER );
+
+	private static final double POINT_TOLERANCE = 1e-4;
 
 	private Design design;
 
@@ -288,6 +292,50 @@ public class DesignPaneTest implements TestTimeouts {
 		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.calcDesignUnit() );
 		assertThat( pane.getScaleX() ).isCloseTo( 1.0 * scale, TOLERANCE );
 		assertThat( pane.getScaleY() ).isCloseTo( -1.0 * scale, TOLERANCE );
+	}
+
+	@Test
+	void testLocalToParent() {
+		double width = PARENT_WIDTH;
+		double height = PARENT_HEIGHT;
+
+		double offset = DesignUnit.CENTIMETER.to( pane.getDpi() * pane.getZoom(), DesignUnit.INCH );
+
+		assertThat( pane.localToParent( 0, 0 ) ).isEqualTo( new Point2D( 0.5 * width, 0.5 * height ) );
+		Point2DAssert.assertThat( pane.localToParent( 1, 1 ) ).isCloseTo( new Point2D( 0.5 * width + offset, 0.5 * height - offset ), POINT_TOLERANCE );
+		Point2DAssert.assertThat( pane.localToParent( -1, 1 ) ).isCloseTo( new Point2D( 0.5 * width - offset, 0.5 * height - offset ), POINT_TOLERANCE );
+		Point2DAssert.assertThat( pane.localToParent( -1, -1 ) ).isCloseTo( new Point2D( 0.5 * width - offset, 0.5 * height + offset ), POINT_TOLERANCE );
+		Point2DAssert.assertThat( pane.localToParent( 1, -1 ) ).isCloseTo( new Point2D( 0.5 * width + offset, 0.5 * height + offset ), POINT_TOLERANCE );
+	}
+
+	@Test
+	void testLocalToParentWithViewpoint() {
+		double width = PARENT_WIDTH;
+		double height = PARENT_HEIGHT;
+		pane.setView( new Point3D( 1, 0, 0 ), 2, 90 );
+
+		double offset = DesignUnit.CENTIMETER.to( pane.getDpi() * 2, DesignUnit.INCH );
+
+		Point2DAssert.assertThat( pane.localToParent( 0, 0 ) ).isCloseTo( new Point2D( 0.5 * width, 0.5 * height + offset ), POINT_TOLERANCE );
+
+		Point2DAssert.assertThat( pane.localToParent( 1, 1 ) ).isCloseTo( new Point2D( 0.5 * width - offset, 0.5 * height ), POINT_TOLERANCE );
+		Point2DAssert.assertThat( pane.localToParent( -1, 1 ) ).isCloseTo( new Point2D( 0.5 * width - offset, 0.5 * height + 2 * offset ), POINT_TOLERANCE );
+		Point2DAssert.assertThat( pane.localToParent( -1, -1 ) ).isCloseTo( new Point2D( 0.5 * width + offset, 0.5 * height + 2 * offset ), POINT_TOLERANCE );
+		Point2DAssert.assertThat( pane.localToParent( 1, -1 ) ).isCloseTo( new Point2D( 0.5 * width + offset, 0.5 * height ), POINT_TOLERANCE );
+	}
+
+	@Test
+	void testParentToLocal() {
+		double width = PARENT_WIDTH;
+		double height = PARENT_HEIGHT;
+
+		double offset = DesignUnit.CENTIMETER.to( pane.getDpi() * pane.getZoom(), DesignUnit.INCH );
+
+		assertThat( pane.parentToLocal( 0.5 * width, 0.5 * height ) ).isEqualTo( new Point2D( 0, 0 ) );
+		Point2DAssert.assertThat( pane.parentToLocal( 0.5 * width + offset, 0.5 * height - offset ) ).isCloseTo( new Point2D( 1, 1 ) );
+		Point2DAssert.assertThat( pane.parentToLocal( 0.5 * width - offset, 0.5 * height - offset ) ).isCloseTo( new Point2D( -1, 1 ) );
+		Point2DAssert.assertThat( pane.parentToLocal( 0.5 * width - offset, 0.5 * height + offset ) ).isCloseTo( new Point2D( -1, -1 ) );
+		Point2DAssert.assertThat( pane.parentToLocal( 0.5 * width + offset, 0.5 * height + offset ) ).isCloseTo( new Point2D( 1, -1 ) );
 	}
 
 }

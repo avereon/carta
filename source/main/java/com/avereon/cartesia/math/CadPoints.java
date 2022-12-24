@@ -5,12 +5,14 @@ import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
 import javafx.geometry.Point3D;
+import lombok.CustomLog;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CustomLog
 public class CadPoints {
 
 	public static final Point3D NONE = new Point3D( Double.NaN, Double.NaN, Double.NaN );
@@ -48,15 +50,15 @@ public class CadPoints {
 		return getNearestOnScreen( tool, screenPoint, Arrays.asList( points ) );
 	}
 
-	static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, Collection<Point3D> intersections ) {
+	static Point3D getNearestOnScreen( DesignTool tool, Point3D screenPoint, Collection<Point3D> points ) {
 		double delta;
 		double distance = Double.MAX_VALUE;
 		Point3D nearest = null;
-		for( Point3D test : intersections ) {
-			delta = CadGeometry.distance( tool.worldToScreen( test ), screenPoint );
+		for( Point3D point : points ) {
+			delta = CadGeometry.distance( screenPoint, tool.worldToScreen( point ) );
 			if( delta < distance ) {
+				nearest = point;
 				distance = delta;
-				nearest = test;
 			}
 		}
 		return nearest;

@@ -205,7 +205,7 @@ public class DesignArc extends DesignEllipse {
 		// Determine the start point
 		Point3D startPoint = CadGeometry.ellipsePoint360( this, getStart() );
 
-		// Determine the point angle
+		// Determine the target angle
 		double theta = CadGeometry.ellipseAngle360( this, target );
 
 		try( Txn ignore = Txn.create() ) {
