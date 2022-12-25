@@ -136,6 +136,10 @@ public class Command {
 		return null;
 	}
 
+	protected String asText( CommandContext context, Object value ) throws Exception {
+		return String.valueOf( value );
+	}
+
 	protected void promptForNumber( CommandContext context, String key ) {
 		context.getTool().setCursor( null );
 		promptForValue( context, key, CommandContext.Input.NUMBER );
