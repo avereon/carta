@@ -322,5 +322,4 @@ public abstract class DesignDrawable extends DesignNode {
 		}
 		return newValue;
 	}
-
 }

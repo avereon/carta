@@ -41,6 +41,8 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_FILL_PAINT = null;
 
+	static final String DEFAULT_TEXT_FONT = "System|12";
+
 	public DesignLayer() {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, UNIT, LAYERS, SHAPES );

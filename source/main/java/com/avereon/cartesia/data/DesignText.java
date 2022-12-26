@@ -4,6 +4,7 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.zarra.font.FontUtil;
@@ -21,6 +22,13 @@ public class DesignText extends DesignShape {
 	public static final String FONT = "font";
 
 	public static final String ROTATE = "rotate";
+
+	// TODO Add horizontal alignment
+	// TODO Add vertical alignment
+	// How about justification?
+	// How about rich text support?
+
+	private static final String VIRTUAL_TEXT_FONT_MODE = "text-font-mode";
 
 	public DesignText() {
 		this( null );
@@ -166,6 +174,35 @@ public class DesignText extends DesignShape {
 	@Override
 	public String toString() {
 		return super.toString( ORIGIN, TEXT, FONT, ROTATE );
+	}
+
+	// NEXT If font is a per element attribute then I don't need the following methods:
+
+	@Override
+	public <T> T setValue( String key, T newValue ) {
+		if( key.equals( VIRTUAL_TEXT_FONT_MODE ) ) changeDrawPaintMode( newValue );
+		return super.setValue( key, newValue );
+	}
+
+	//	public String getTextFontWithInheritance() {
+	//		String paint = ((DesignText)this).getFont();
+	//		if( paint == null || isCustomValue( paint ) ) return paint;
+	//
+	//		DesignLayer layer = getLayer();
+	//		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : layer.getTextFont();
+	//	}
+
+	<T> T changeTextFontMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_TEXT_FONT_MODE );
+		try( Txn ignored = Txn.create() ) {
+			//((DesignText)this).setFont( isCustom ? getTextFontWithInheritance() : String.valueOf( newValue ).toLowerCase() );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FONT_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting text font" );
+		}
+		return newValue;
 	}
 
 }
