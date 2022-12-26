@@ -156,8 +156,7 @@ public class DesignPane extends StackPane {
 		addActions.put( DesignEllipse.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignArc.class, ( o ) -> doAddShape( (DesignShape)o ) );
 		addActions.put( DesignCurve.class, ( o ) -> doAddShape( (DesignShape)o ) );
-		addActions.put( DesignTextArea.class, ( o ) -> doAddShape( (DesignShape)o ) );
-		addActions.put( DesignTextLine.class, ( o ) -> doAddShape( (DesignShape)o ) );
+		addActions.put( DesignText.class, ( o ) -> doAddShape( (DesignShape)o ) );
 
 		Map<Class<?>, Consumer<Object>> removeActions = designActions.computeIfAbsent( NodeEvent.CHILD_REMOVED, ( k ) -> new HashMap<>() );
 		removeActions.put( DesignLayer.class, ( o ) -> doRemoveLayer( (DesignLayer)o ) );
@@ -166,8 +165,7 @@ public class DesignPane extends StackPane {
 		removeActions.put( DesignEllipse.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 		removeActions.put( DesignArc.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 		removeActions.put( DesignCurve.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
-		removeActions.put( DesignTextArea.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
-		removeActions.put( DesignTextLine.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
+		removeActions.put( DesignText.class, ( o ) -> doRemoveShape( (DesignShape)o ) );
 	}
 
 	public Design getDesign() {

@@ -1,16 +1,19 @@
 package com.avereon.cartesia.tool.view;
 
-import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.DesignText;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.zarra.font.FontMetrics;
 import com.avereon.zarra.javafx.Fx;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import lombok.CustomLog;
 
 import java.util.List;
 
+@CustomLog
 public class DesignTextView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> originHandler;
@@ -33,6 +36,13 @@ public class DesignTextView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		DesignText line = getDesignText();
 		Text shape = new Text( line.getOrigin().getX(), line.getOrigin().getY(), line.getText() );
+
+		FontMetrics metrics= new FontMetrics( line.getFont() );
+		log.atConfig().log( "ascent=%s decent=%s spacing=%s", metrics.getAscent(), metrics.getDescent(), metrics.getSpacing() );
+		log.atConfig().log( "blOffset=%s spacing=%s", shape.getBaselineOffset(), shape.getLineSpacing() );
+
+		shape.setScaleY( -1 );
+		shape.setLayoutY( metrics.getAscent() + metrics.getDescent() );
 		return List.of( shape );
 	}
 
@@ -47,8 +57,8 @@ public class DesignTextView extends DesignShapeView {
 	void registerListeners() {
 		super.registerListeners();
 		getDesignShape().register( DesignText.ORIGIN, originHandler = e -> Fx.run( () -> {
-			((Line)getShape()).setStartX( getDesignText().getOrigin().getX() );
-			((Line)getShape()).setStartY( getDesignText().getOrigin().getY() );
+			((Text)getShape()).setX( getDesignText().getOrigin().getX() );
+			((Text)getShape()).setY( getDesignText().getOrigin().getY() );
 		} ) );
 		getDesignShape().register( DesignText.TEXT, textHandler = e -> Fx.run( () -> {
 			((Text)getShape()).setText( getDesignText().getText() );

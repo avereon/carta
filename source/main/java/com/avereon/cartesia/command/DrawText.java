@@ -1,24 +1,23 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.DesignTextLine;
+import com.avereon.cartesia.data.DesignText;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+import javafx.scene.text.Font;
 
 import java.text.ParseException;
 
-public class TextLineCommand extends TextCommand {
+public class DrawText extends DrawCommand {
 
 	private Point3D anchor;
 
-	private DesignTextLine previewText;
+	private DesignText previewText;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
-
 		setCaptureUndoChanges( context, false );
 
 		// Ask for an anchor point
@@ -30,7 +29,7 @@ public class TextLineCommand extends TextCommand {
 		// Ask for a target point
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
-			addPreview( context, previewText = new DesignTextLine( context.getWorldMouse(), "" ) );
+			addPreview( context, previewText = new DesignText( context.getWorldMouse(), "" ) );
 			promptForText( context, "text" );
 			return INCOMPLETE;
 		}
@@ -41,7 +40,7 @@ public class TextLineCommand extends TextCommand {
 		try {
 			final Point3D anchor = asPoint( context, parameters[ 0 ] );
 			final String text = asText( context, parameters[ 1 ] );
-			context.getTool().getCurrentLayer().addShape( new DesignTextLine( anchor, text ) );
+			context.getTool().getCurrentLayer().addShape( new DesignText( anchor, text, Font.getDefault(), 0.0 ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-move-shapes", exception );

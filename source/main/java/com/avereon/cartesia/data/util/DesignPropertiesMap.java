@@ -30,8 +30,7 @@ public class DesignPropertiesMap {
 		pages.put( DesignLine.class, loadPage( product, "line" ) );
 		pages.put( DesignMarker.class, loadPage( product, "point" ) );
 		pages.put( DesignCurve.class, loadPage( product, "curve" ) );
-		pages.put( DesignTextArea.class, loadPage( product, "textarea" ) );
-		pages.put( DesignTextLine.class, loadPage( product, "textline" ) );
+		pages.put( DesignText.class, loadPage( product, "text" ) );
 		propertiesPages = Collections.unmodifiableMap( pages );
 	}
 

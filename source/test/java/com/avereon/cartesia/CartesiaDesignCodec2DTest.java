@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,9 +61,9 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	@Test
 	void testMapper() throws Exception {
 		ObjectWriter writer = MAPPER.writer();
-		assertThat( writer.writeValueAsString( new Point2D( 1, 2 ) )).isEqualTo( "\"1.0,2.0\""  );
-		assertThat( writer.writeValueAsString( new Point3D( 3, 2, 1 ) )).isEqualTo( "\"3.0,2.0,1.0\""  );
-		assertThat( writer.writeValueAsString( Color.web( "0x20608080" ) )).isEqualTo( "\"0x20608080\""  );
+		assertThat( writer.writeValueAsString( new Point2D( 1, 2 ) ) ).isEqualTo( "\"1.0,2.0\"" );
+		assertThat( writer.writeValueAsString( new Point3D( 3, 2, 1 ) ) ).isEqualTo( "\"3.0,2.0,1.0\"" );
+		assertThat( writer.writeValueAsString( Color.web( "0x20608080" ) ) ).isEqualTo( "\"0x20608080\"" );
 	}
 
 	@Test
@@ -80,7 +81,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		codec.load( asset, new ByteArrayInputStream( buffer ) );
 
 		// Check the result
-		assertThat( ((Design)asset.getModel()).asDeepMap()).isEqualTo( deepMap  );
+		assertThat( ((Design)asset.getModel()).asDeepMap() ).isEqualTo( deepMap );
 	}
 
 	@Test
@@ -113,7 +114,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 			} );
 
 		Map<String, Object> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
-		assertThat( actual).isEqualTo( expected );
+		assertThat( actual ).isEqualTo( expected );
 	}
 
 	private Design createTestDesign( Design design ) {
@@ -123,16 +124,18 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		design.setDesignUnit( DesignUnit.METER );
 		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (Empty layer)" );
 		design.getLayers().addLayer( layer0 );
-		DesignLayer layer1 = new DesignLayer().setName( "Layer 1" );
+		DesignLayer layer1 = new DesignLayer().setName( "Layer 1 (Marker)" );
 		design.getLayers().addLayer( layer1 );
-		DesignLayer layer2 = new DesignLayer().setName( "Layer 2" );
+		DesignLayer layer2 = new DesignLayer().setName( "Layer 2 (Line)" );
 		layer1.addLayer( layer2 );
-		DesignLayer layer3 = new DesignLayer().setName( "Layer 3" );
+		DesignLayer layer3 = new DesignLayer().setName( "Layer 3 (Ellipse)" );
 		layer1.addLayer( layer3 );
-		DesignLayer layer4 = new DesignLayer().setName( "Layer 4" );
+		DesignLayer layer4 = new DesignLayer().setName( "Layer 4 (Arc)" );
 		layer1.addLayer( layer4 );
-		DesignLayer layer5 = new DesignLayer().setName( "Layer 5" );
+		DesignLayer layer5 = new DesignLayer().setName( "Layer 5 (Curve)" );
 		layer1.addLayer( layer5 );
+		DesignLayer layer6 = new DesignLayer().setName( "Layer 6 (Text)" );
+		layer1.addLayer( layer6 );
 
 		DesignView view0 = new DesignView().setName( "View 0" );
 		view0.setOrigin( Point3D.ZERO );
@@ -172,6 +175,9 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 
 		DesignCurve curve1 = new DesignCurve( new Point3D( -5, 0, 0 ), new Point3D( 1, 5, 0 ), new Point3D( -1, -5, 0 ), new Point3D( 5, 0, 0 ) );
 		layer5.addShape( curve1 );
+
+		DesignText text1 = new DesignText( new Point3D( 2, 1, 0 ), "Test Text", Font.getDefault(), 0.0 );
+		layer6.addShape( text1 );
 
 		return design;
 	}

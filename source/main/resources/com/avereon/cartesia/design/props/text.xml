@@ -2,8 +2,8 @@
 
 <pages version="1.0">
 
-	<page id="textline">
-		<group id="textline-title">
+	<page id="text">
+		<group id="text-title">
 			<setting id="layer" key="layer" editor="combobox" provider="design-shape-layers"/>
 
 			<setting id="text-font" key="text-font-mode" editor="combobox">

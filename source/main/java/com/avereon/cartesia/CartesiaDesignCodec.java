@@ -9,6 +9,7 @@ import com.avereon.product.Product;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
+import com.avereon.zarra.font.FontUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -75,6 +76,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		geometryMappers.put( DesignEllipse.class, m -> mapEllipse( (DesignEllipse)m ) );
 		geometryMappers.put( DesignArc.class, m -> mapArc( (DesignArc)m ) );
 		geometryMappers.put( DesignCurve.class, m -> mapCurve( (DesignCurve)m ) );
+		geometryMappers.put( DesignText.class, m -> mapText( (DesignText)m ) );
 	}
 
 	protected Product getProduct() {
@@ -147,6 +149,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 				case DesignEllipse.CIRCLE, DesignEllipse.ELLIPSE -> loadDesignEllipse( g );
 				case DesignArc.ARC -> loadDesignArc( g );
 				case DesignCurve.CURVE -> loadDesignCurve( g );
+				case DesignText.TEXT -> loadDesignText( g );
 				default -> null;
 			};
 			layer.addShape( shape );
@@ -237,6 +240,15 @@ public abstract class CartesiaDesignCodec extends Codec {
 		curve.setPointControl( ParseUtil.parsePoint3D( (String)map.get( DesignCurve.POINT_CONTROL ) ) );
 		curve.setPoint( ParseUtil.parsePoint3D( (String)map.get( DesignCurve.POINT ) ) );
 		return curve;
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private DesignText loadDesignText( Map<String, Object> map ) {
+		DesignText text = loadDesignShape( map, new DesignText() );
+		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
+		if( map.containsKey( DesignText.FONT ) ) text.setFont( FontUtil.fromMap( (Map<String, Object>)map.get( DesignText.FONT ) ) );
+		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( ((Number)map.get( DesignText.ROTATE )).doubleValue() );
+		return text;
 	}
 
 	private void moveKey( Map<String, Object> map, String oldKey, String newKey ) {
@@ -333,6 +345,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private Map<String, Object> mapCurve( DesignCurve curve ) {
 		return asMap( curve, mapShape( curve, DesignCurve.CURVE ), DesignCurve.ORIGIN_CONTROL, DesignCurve.POINT_CONTROL, DesignCurve.POINT );
+	}
+
+	private Map<String, Object> mapText( DesignText text ) {
+		return asMap( text, mapShape( text, DesignText.TEXT ), DesignText.TEXT, DesignText.FONT, DesignText.ROTATE );
 	}
 
 	private void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {

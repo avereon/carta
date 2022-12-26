@@ -113,6 +113,7 @@ public class CommandMap {
 		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
 		add( product, "draw-marker", DrawMarker.class ); // point
 		add( product, "draw-path", Path.class );
+		add( product, "draw-text", DrawText.class );
 
 		// Measure commands
 		add( product, "measure-angle", MeasureAngle.class );
