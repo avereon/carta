@@ -99,7 +99,7 @@ public class Command {
 		return true;
 	}
 
-	public void handle( KeyEvent event ) {}
+	public void handle( CommandContext context, KeyEvent event ) {}
 
 	public void handle( MouseEvent event ) {}
 

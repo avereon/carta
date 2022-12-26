@@ -6,15 +6,18 @@ import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.text.Font;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
+@CustomLog
 public class DrawText extends DrawCommand {
 
 	private Point3D anchor;
 
-	private DesignText previewText;
+	private DesignText preview;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -29,7 +32,7 @@ public class DrawText extends DrawCommand {
 		// Ask for a target point
 		if( parameters.length < 2 ) {
 			anchor = asPoint( context, parameters[ 0 ] );
-			addPreview( context, previewText = new DesignText( context.getWorldMouse(), "" ) );
+			addPreview( context, preview = new DesignText( context.getWorldMouse() ) );
 			promptForText( context, "text" );
 			return INCOMPLETE;
 		}
@@ -50,6 +53,9 @@ public class DrawText extends DrawCommand {
 		return COMPLETE;
 	}
 
-	// TODO As the user types text, put it in the preview text
-
+	@Override
+	public void handle( CommandContext context, KeyEvent event ) {
+		super.handle( context, event );
+		if( this.preview != null ) preview.setText( context.getCommandPrompt().getCommand() );
+	}
 }

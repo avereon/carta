@@ -34,12 +34,9 @@ public class DesignTextView extends DesignShapeView {
 
 	@Override
 	protected List<Shape> generateGeometry() {
-		DesignText line = getDesignText();
-		Text shape = new Text( line.getOrigin().getX(), line.getOrigin().getY(), line.getText() );
-
-		FontMetrics metrics= new FontMetrics( line.getFont() );
-		log.atConfig().log( "ascent=%s decent=%s spacing=%s", metrics.getAscent(), metrics.getDescent(), metrics.getSpacing() );
-		log.atConfig().log( "blOffset=%s spacing=%s", shape.getBaselineOffset(), shape.getLineSpacing() );
+		DesignText text = getDesignText();
+		Text shape = new Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
+		FontMetrics metrics= new FontMetrics( text.getFont() );
 
 		shape.setScaleY( -1 );
 		shape.setLayoutY( metrics.getAscent() + metrics.getDescent() );
