@@ -51,7 +51,7 @@ public class DesignText extends DesignShape {
 		addModifyingKeys( TEXT, FONT, ROTATE );
 
 		setText( text );
-		setFont( font );
+		setFont( font == null ? null : FontUtil.encode( font ) );
 		setRotate( rotate );
 	}
 
@@ -66,15 +66,24 @@ public class DesignText extends DesignShape {
 	}
 
 	public Font calcFont() {
-		return hasKey( FONT ) ? getFont() : Font.getDefault();
+		return FontUtil.decode( getFontWithInheritance() );
 	}
 
-	public Font getFont() {
+	public String getFontWithInheritance() {
+		String font = getFont();
+		if( isCustomValue( font ) ) return font;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : FontUtil.encode(Font.getDefault());
+	}
+
+	public String getFont() {
 		return getValue( FONT );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T extends DesignText> T setFont( Font value ) {
+	public <T extends DesignText> T setFont( String value ) {
+		log.atConfig().log( "Setting text font=" + value );
 		setValue( FONT, value );
 		return (T)this;
 	}
@@ -146,11 +155,10 @@ public class DesignText extends DesignShape {
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
 	public DesignText updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( TEXT ) ) setText( (String)map.get( TEXT ) );
-		if( map.containsKey( FONT ) ) setFont( FontUtil.fromMap( (Map<String, Object>)map.get( FONT ) ) );
+		if( map.containsKey( FONT ) ) setFont( (String)map.get( FONT ) );
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
 	}
@@ -180,24 +188,17 @@ public class DesignText extends DesignShape {
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
-		if( key.equals( VIRTUAL_TEXT_FONT_MODE ) ) changeDrawPaintMode( newValue );
+		if( key.equals( VIRTUAL_TEXT_FONT_MODE ) ) changeTextFontMode( newValue );
 		return super.setValue( key, newValue );
 	}
-
-	//	public String getTextFontWithInheritance() {
-	//		String paint = ((DesignText)this).getFont();
-	//		if( paint == null || isCustomValue( paint ) ) return paint;
-	//
-	//		DesignLayer layer = getLayer();
-	//		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : layer.getTextFont();
-	//	}
 
 	<T> T changeTextFontMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
 		String oldValue = getValue( VIRTUAL_TEXT_FONT_MODE );
 		try( Txn ignored = Txn.create() ) {
-			//((DesignText)this).setFont( isCustom ? getTextFontWithInheritance() : String.valueOf( newValue ).toLowerCase() );
+			setFont( String.valueOf( newValue ) );
+			setFont( isCustom ? getFontWithInheritance() : String.valueOf( newValue ) );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FONT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting text font" );

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.io.ByteArrayOutputStream;
@@ -57,9 +58,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	static {
 		JSON_MAPPER = new ObjectMapper();
+		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Color.class, new ColorSerializer() ) );
+		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Font.class, new FontSerializer() ) );
 		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Point2D.class, new Point2DSerializer() ) );
 		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Point3D.class, new Point3DSerializer() ) );
-		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Color.class, new ColorSerializer() ) );
 
 		savePaintMapping = Map.of( DesignDrawable.MODE_LAYER, "null", "null", "none" );
 		loadPaintMapping = Map.of( "none", "null", "null", DesignDrawable.MODE_LAYER );
@@ -242,11 +244,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return curve;
 	}
 
-	@SuppressWarnings( "unchecked" )
 	private DesignText loadDesignText( Map<String, Object> map ) {
 		DesignText text = loadDesignShape( map, new DesignText() );
 		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
-		if( map.containsKey( DesignText.FONT ) ) text.setFont( FontUtil.fromMap( (Map<String, Object>)map.get( DesignText.FONT ) ) );
+		if( map.containsKey( DesignText.FONT ) ) text.setFont( (String)map.get( DesignText.FONT ) );
 		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( ((Number)map.get( DesignText.ROTATE )).doubleValue() );
 		return text;
 	}
@@ -406,6 +407,15 @@ public abstract class CartesiaDesignCodec extends Codec {
 		@Override
 		public void serialize( Point3D value, JsonGenerator generator, SerializerProvider provider ) throws IOException {
 			generator.writeString( value.getX() + "," + value.getY() + "," + value.getZ() );
+		}
+
+	}
+
+	public static class FontSerializer extends JsonSerializer<Font> {
+
+		@Override
+		public void serialize( Font value, JsonGenerator generator, SerializerProvider provider ) throws IOException {
+			generator.writeString( FontUtil.encode( value ) );
 		}
 
 	}

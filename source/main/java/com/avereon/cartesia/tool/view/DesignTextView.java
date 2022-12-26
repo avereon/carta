@@ -6,8 +6,10 @@ import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zarra.font.FontMetrics;
+import com.avereon.zarra.font.FontUtil;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import lombok.CustomLog;
 
@@ -36,10 +38,12 @@ public class DesignTextView extends DesignShapeView {
 	protected List<Shape> generateGeometry() {
 		DesignText text = getDesignText();
 		Text shape = new Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
-		FontMetrics metrics= new FontMetrics( text.getFont() );
-
+		shape.setFont( FontUtil.decode( text.getFont() ) );
 		shape.setScaleY( -1 );
+
+		FontMetrics metrics = new FontMetrics( shape.getFont() );
 		shape.setLayoutY( metrics.getAscent() + metrics.getDescent() );
+
 		return List.of( shape );
 	}
 
@@ -59,10 +63,13 @@ public class DesignTextView extends DesignShapeView {
 		} ) );
 		getDesignShape().register( DesignText.TEXT, textHandler = e -> Fx.run( () -> {
 			((Text)getShape()).setText( getDesignText().getText() );
-		}) );
+		} ) );
 		getDesignShape().register( DesignText.FONT, fontHandler = e -> Fx.run( () -> {
-			((Text)getShape()).setFont( getDesignText().getFont() );
-		}) );
+			Font font = getDesignText().calcFont();
+			((Text)getShape()).setFont( font );
+			FontMetrics metrics = new FontMetrics( font );
+			getShape().setLayoutY( metrics.getAscent() + metrics.getDescent() );
+		} ) );
 		getDesignShape().register( DesignText.ROTATE, rotateHandler = e -> Fx.run( () -> {
 			updateRotate( getDesignText(), getShape() );
 		} ) );

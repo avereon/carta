@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.text.Font;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,7 @@ public class DesignTextTest {
 
 		textline.setOrigin( new Point3D( 0, 0, 0 ) );
 		textline.setText( "Test" );
-		textline.setFont( Font.getDefault() );
+		textline.setFont( FontUtil.encode( Font.getDefault() ) );
 		textline.setRotate( 0.0 );
 		assertThat( textline.isModified() ).isFalse();
 
@@ -31,7 +32,7 @@ public class DesignTextTest {
 		textline.setModified( false );
 		assertThat( textline.isModified() ).isFalse();
 
-		textline.setFont( Font.font( "Serif", 24 ) );
+		textline.setFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
 		assertThat( textline.isModified() ).isTrue();
 		textline.setModified( false );
 		assertThat( textline.isModified() ).isFalse();
@@ -63,10 +64,10 @@ public class DesignTextTest {
 	@Test
 	void testFont() {
 		DesignText textline = new DesignText( new Point3D( 0, 0, 0 ), "Empty", Font.font( "Sans-Serif", 24 ) );
-		assertThat( textline.getFont() ).isEqualTo( Font.font( "Sans-Serif", 24 ) );
+		assertThat( textline.getFont() ).isEqualTo( FontUtil.encode(Font.font( "Sans-Serif", 24 ) ) );
 
-		textline.setFont( Font.font( "Serif", 24 ) );
-		assertThat( textline.getFont() ).isEqualTo( Font.font( "Serif", 24 ) );
+		textline.setFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
+		assertThat( textline.getFont() ).isEqualTo( FontUtil.encode(Font.font( "Serif", 24 ) ) );
 	}
 
 	@Test

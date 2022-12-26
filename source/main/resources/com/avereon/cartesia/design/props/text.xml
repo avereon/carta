@@ -10,7 +10,7 @@
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="text-font-custom" key="text-font" editor="font">
+			<setting id="text-font-custom" key="font" editor="font">
 				<dependency key="text-font-mode" value="custom"/>
 			</setting>
 
