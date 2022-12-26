@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.view;
 import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.DesignText;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
@@ -131,6 +132,12 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
 		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
 		getDesignShape().unregister( NodeEvent.PARENT_CHANGED, parentChangedHandler );
+	}
+
+	void updateRotate( DesignText text, Shape shape ) {
+		shape.getTransforms().remove( this.rotate );
+		this.rotate = Transform.rotate( text.calcRotate(), text.getOrigin().getX(), text.getOrigin().getY() );
+		shape.getTransforms().add( this.rotate );
 	}
 
 	void updateRotate( DesignEllipse ellipse, Shape shape ) {
