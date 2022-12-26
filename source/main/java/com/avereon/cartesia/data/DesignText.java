@@ -4,7 +4,6 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.zarra.font.FontUtil;
@@ -19,16 +18,12 @@ public class DesignText extends DesignShape {
 
 	public static final String TEXT = "text";
 
-	public static final String FONT = "font";
-
 	public static final String ROTATE = "rotate";
 
 	// TODO Add horizontal alignment
 	// TODO Add vertical alignment
 	// How about justification?
 	// How about rich text support?
-
-	private static final String VIRTUAL_TEXT_FONT_MODE = "text-font-mode";
 
 	public DesignText() {
 		this( null );
@@ -48,10 +43,10 @@ public class DesignText extends DesignShape {
 
 	public DesignText( Point3D origin, String text, Font font, Double rotate ) {
 		super( origin );
-		addModifyingKeys( TEXT, FONT, ROTATE );
+		addModifyingKeys( TEXT, ROTATE );
 
 		setText( text );
-		setFont( font == null ? null : FontUtil.encode( font ) );
+		setTextFont( font == null ? null : FontUtil.encode( font ) );
 		setRotate( rotate );
 	}
 
@@ -62,29 +57,6 @@ public class DesignText extends DesignShape {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignText> T setText( String value ) {
 		setValue( TEXT, value );
-		return (T)this;
-	}
-
-	public Font calcFont() {
-		return FontUtil.decode( getFontWithInheritance() );
-	}
-
-	public String getFontWithInheritance() {
-		String font = getFont();
-		if( isCustomValue( font ) ) return font;
-
-		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : FontUtil.encode(Font.getDefault());
-	}
-
-	public String getFont() {
-		return getValue( FONT );
-	}
-
-	@SuppressWarnings( "unchecked" )
-	public <T extends DesignText> T setFont( String value ) {
-		log.atConfig().log( "Setting text font=" + value );
-		setValue( FONT, value );
 		return (T)this;
 	}
 
@@ -123,7 +95,7 @@ public class DesignText extends DesignShape {
 
 	@Override
 	public Map<String, Object> getInformation() {
-		return Map.of( ORIGIN, getOrigin(), TEXT, getText(), FONT, getFont(), ROTATE, getRotate() );
+		return Map.of( ORIGIN, getOrigin(), TEXT, getText(), TEXT_FONT, getTextFont(), ROTATE, getRotate() );
 	}
 
 	@Override
@@ -150,7 +122,7 @@ public class DesignText extends DesignShape {
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, TEXT );
-		map.putAll( asMap( TEXT, FONT, ROTATE ) );
+		map.putAll( asMap( TEXT, ROTATE ) );
 		return map;
 	}
 
@@ -158,7 +130,6 @@ public class DesignText extends DesignShape {
 	public DesignText updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( TEXT ) ) setText( (String)map.get( TEXT ) );
-		if( map.containsKey( FONT ) ) setFont( (String)map.get( FONT ) );
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
 	}
@@ -169,8 +140,6 @@ public class DesignText extends DesignShape {
 		if( !(shape instanceof DesignText text) ) return this;
 
 		try( Txn ignore = Txn.create() ) {
-			this.setText( text.getText() );
-			this.setFont( text.getFont() );
 			this.setRotate( text.getRotate() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );
@@ -181,29 +150,7 @@ public class DesignText extends DesignShape {
 
 	@Override
 	public String toString() {
-		return super.toString( ORIGIN, TEXT, FONT, ROTATE );
-	}
-
-	// NEXT If font is a per element attribute then I don't need the following methods:
-
-	@Override
-	public <T> T setValue( String key, T newValue ) {
-		if( key.equals( VIRTUAL_TEXT_FONT_MODE ) ) changeTextFontMode( newValue );
-		return super.setValue( key, newValue );
-	}
-
-	<T> T changeTextFontMode( T newValue ) {
-		boolean isCustom = MODE_CUSTOM.equals( newValue );
-
-		String oldValue = getValue( VIRTUAL_TEXT_FONT_MODE );
-		try( Txn ignored = Txn.create() ) {
-			setFont( String.valueOf( newValue ) );
-			setFont( isCustom ? getFontWithInheritance() : String.valueOf( newValue ) );
-			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FONT_MODE, oldValue, newValue ) ) );
-		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting text font" );
-		}
-		return newValue;
+		return super.toString( ORIGIN, TEXT, TEXT_FONT, ROTATE );
 	}
 
 }

@@ -10,7 +10,7 @@
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="text-font-custom" key="font" editor="font">
+			<setting id="text-font-custom" key="text-font" editor="font">
 				<dependency key="text-font-mode" value="custom"/>
 			</setting>
 
@@ -36,6 +36,17 @@
 			</setting>
 			<setting id="draw-pattern-custom" key="draw-pattern" type="csv" editor="textline">
 				<dependency key="draw-pattern-mode" value="custom"/>
+			</setting>
+
+			<setting id="draw-cap" key="draw-cap-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="draw-cap-custom" key="draw-cap" editor="combobox">
+				<dependency key="draw-cap-mode" value="custom"/>
+				<option key="square"/>
+				<option key="round"/>
+				<option key="butt"/>
 			</setting>
 
 			<setting id="fill-paint" key="fill-paint-mode" editor="combobox">

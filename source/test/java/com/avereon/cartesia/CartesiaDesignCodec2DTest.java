@@ -203,6 +203,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		remapValue( map, DesignDrawable.DRAW_CAP, loadNullToLayerMapping );
 		remapValue( map, DesignDrawable.DRAW_PATTERN, loadNullToLayerMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, loadPaintMapping );
+		remapValue( map, DesignDrawable.TEXT_FONT, loadNullToLayerMapping );
 	}
 
 	private void remapShapeForSave( Map<String, Object> map ) {
@@ -211,6 +212,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		remapValue( map, DesignDrawable.DRAW_CAP, saveLayerToNullMapping );
 		remapValue( map, DesignDrawable.DRAW_PATTERN, saveLayerToNullMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, savePaintMapping );
+		remapValue( map, DesignDrawable.TEXT_FONT, saveLayerToNullMapping );
 	}
 
 	private void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {

@@ -143,6 +143,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 			remapValue( g, DesignDrawable.DRAW_CAP, loadNullToLayerMapping );
 			remapValue( g, DesignDrawable.DRAW_PATTERN, loadNullToLayerMapping );
 			remapValue( g, DesignDrawable.FILL_PAINT, loadPaintMapping );
+			remapValue( g, DesignDrawable.TEXT_FONT, loadNullToLayerMapping );
 
 			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
 			DesignShape shape = switch( type ) {
@@ -247,7 +248,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private DesignText loadDesignText( Map<String, Object> map ) {
 		DesignText text = loadDesignShape( map, new DesignText() );
 		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
-		if( map.containsKey( DesignText.FONT ) ) text.setFont( (String)map.get( DesignText.FONT ) );
+		if( map.containsKey( DesignText.TEXT_FONT ) ) text.setTextFont( (String)map.get( DesignText.TEXT_FONT ) );
 		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( ((Number)map.get( DesignText.ROTATE )).doubleValue() );
 		return text;
 	}
@@ -291,7 +292,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 			DesignDrawable.DRAW_WIDTH,
 			DesignDrawable.DRAW_PATTERN,
 			DesignDrawable.DRAW_CAP,
-			DesignDrawable.FILL_PAINT
+			DesignDrawable.FILL_PAINT,
+			DesignDrawable.TEXT_FONT
 		);
 	}
 
@@ -309,6 +311,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		remapValue( map, DesignDrawable.DRAW_CAP, saveLayerToNullMapping );
 		remapValue( map, DesignDrawable.DRAW_PATTERN, saveLayerToNullMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, savePaintMapping );
+		remapValue( map, DesignDrawable.TEXT_FONT, saveLayerToNullMapping );
 
 		return map;
 	}
@@ -349,7 +352,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapText( DesignText text ) {
-		return asMap( text, mapShape( text, DesignText.TEXT ), DesignText.TEXT, DesignText.FONT, DesignText.ROTATE );
+		return asMap( text, mapShape( text, DesignText.TEXT ), DesignText.TEXT, DesignText.TEXT_FONT, DesignText.ROTATE );
 	}
 
 	private void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {
