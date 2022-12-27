@@ -3,8 +3,10 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.zarra.color.Paints;
+import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,6 +38,8 @@ public class DesignDrawableTest {
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( drawable.getFillPaint() ).isEqualTo( DesignDrawable.MODE_LAYER );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
+		assertThat( drawable.getTextFont() ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
 	}
 
 	@Test
@@ -52,6 +56,7 @@ public class DesignDrawableTest {
 		assertThat( layer.getDrawCap() ).isEqualTo( DesignLayer.DEFAULT_DRAW_CAP );
 		assertThat( layer.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
 		assertThat( layer.getFillPaint() ).isEqualTo( DesignLayer.DEFAULT_FILL_PAINT );
+		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
 	}
 
 	@Test
@@ -61,6 +66,7 @@ public class DesignDrawableTest {
 		assertThat( layer.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 		assertThat( layer.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( layer.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
+		assertThat( layer.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
 	}
 
 	@Test
@@ -294,6 +300,58 @@ public class DesignDrawableTest {
 		assertThat( drawable.getValueMode( drawable.getFillPaint() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getFillPaint() ).isEqualTo( Paints.toString( Color.RED ) );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Color.RED );
+	}
+
+	@Test
+	void testChangeTextFontModeFromDefaultToCustom() {
+		// Change mode to custom to copy current getTextFontWithInheritance value
+		drawable.changeTextFontMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the pattern is a copy of the layer pattern value
+		assertThat( drawable.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+
+		// Change the layer pattern to ensure that pattern value is still the custom value
+		layer.setTextFont( "Serif|Regular|12.0" );
+		assertThat( drawable.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+	}
+
+	@Test
+	void testChangeTextFontModeFromLayerToCustom() {
+		String layerPattern = FontUtil.encode( Font.getDefault() );
+		layer.setTextFont( layerPattern );
+
+		// Change mode to custom to copy current getTextFontWithInheritance value
+		drawable.changeTextFontMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the pattern value is a copy of the layer pattern value
+		assertThat( drawable.getTextFont() ).isEqualTo( layerPattern );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( layerPattern ) );
+
+		// Change the layer pattern to ensure that pattern value is still the custom value
+		layer.setTextFont( "Serif|Regular|12.0" );
+		assertThat( drawable.getTextFont() ).isEqualTo( layerPattern );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( layerPattern ) );
+	}
+
+	@Test
+	void testSetTextFontWhenTextFontModeIsLayer() {
+		assertThat( drawable.getValueMode( drawable.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+
+		layer.setTextFont( "Serif|Regular|12.0" );
+		assertThat( drawable.getValueMode( drawable.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( "Serif|Regular|12.0" ) );
+
+		drawable.setTextFont( "SansSerif|Regular|16.0" );
+		assertThat( drawable.getValueMode( drawable.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getTextFont() ).isEqualTo( "SansSerif|Regular|16.0" );
+		assertThat( drawable.calcTextFont() ).isEqualTo( FontUtil.decode( "SansSerif|Regular|16.0" ) );
 	}
 
 	@Test

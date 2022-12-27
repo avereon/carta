@@ -21,7 +21,10 @@ import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -36,17 +39,20 @@ public class Command {
 
 	public static final Object FAIL = new Object();
 
-	private final List<DesignShape> reference;
+	private final Collection<DesignShape> reference;
 
-	private final List<DesignShape> preview;
+	private final Collection<DesignShape> preview;
+
+	private final Map<DesignShape, DesignShape> previewMap;
 
 	private int step;
 
 	private boolean stepExecuted;
 
 	protected Command() {
-		this.reference = new CopyOnWriteArrayList<>();
-		this.preview = new CopyOnWriteArrayList<>();
+		this.reference = new CopyOnWriteArraySet<>();
+		this.preview = new CopyOnWriteArraySet<>();
+		this.previewMap = new ConcurrentHashMap<>();
 	}
 
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -93,7 +99,7 @@ public class Command {
 		return true;
 	}
 
-	public void handle( KeyEvent event ) {}
+	public void handle( CommandContext context, KeyEvent event ) {}
 
 	public void handle( MouseEvent event ) {}
 
@@ -130,18 +136,22 @@ public class Command {
 		return null;
 	}
 
+	protected String asText( CommandContext context, Object value ) throws Exception {
+		return String.valueOf( value );
+	}
+
 	protected void promptForNumber( CommandContext context, String key ) {
 		context.getTool().setCursor( null );
 		promptForValue( context, key, CommandContext.Input.NUMBER );
 	}
 
 	protected void promptForPoint( CommandContext context, String key ) {
-		context.getTool().setCursor( context.getTool().getReticle() );
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( context.getProgram() ) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 
 	protected void promptForWindow( CommandContext context, String key ) {
-		context.getTool().setCursor( context.getTool().getReticle() );
+		context.getTool().setCursor( context.getTool().getReticle().getCursorIcon( context.getProgram() ) );
 		promptForValue( context, key, CommandContext.Input.POINT );
 	}
 
@@ -173,11 +183,11 @@ public class Command {
 		return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 	}
 
-	protected List<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {
+	protected Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {
 		return cloneAndAddShapes( shapes, false );
 	}
 
-	protected List<DesignShape> cloneAndAddReferenceShapes( Collection<DesignShape> shapes ) {
+	protected Collection<DesignShape> cloneAndAddReferenceShapes( Collection<DesignShape> shapes ) {
 		return cloneAndAddShapes( shapes, true );
 	}
 
@@ -235,13 +245,18 @@ public class Command {
 		} );
 	}
 
-	protected void removePreview( CommandContext context, DesignShape... shapes ) {
-		removePreview( context, List.of( shapes ) );
+	protected void resetPreviewGeometry() {
+		previewMap.keySet().forEach( s -> previewMap.get( s ).updateFrom( s ) );
 	}
 
-	protected void removePreview( CommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
-		preview.removeAll( shapeList );
+	protected void removePreview( CommandContext context, DesignShape... shapes ) {
+		removePreview( context, Set.of( shapes ) );
+	}
+
+	protected void removePreview( CommandContext context, Collection<DesignShape> shapes ) {
+		if( shapes == null ) return;
+		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		preview.removeAll( shapes );
 	}
 
 	protected void clearPreview( CommandContext context ) {
@@ -368,18 +383,10 @@ public class Command {
 		return angle;
 	}
 
-	private List<DesignShape> cloneShapes( Collection<DesignShape> shapes, boolean reference ) {
+	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
-			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
-			//if( s.getLayer() != null ) s.getLayer().addShape( clone );
-			return clone;
-		} ).collect( Collectors.toList() );
-	}
-
-	private List<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
-		return shapes.stream().map( s -> {
-			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
+			previewMap.put( s, clone );
 			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
 			if( s.getLayer() != null ) s.getLayer().addShape( clone );
 			return clone;

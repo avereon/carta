@@ -29,13 +29,13 @@ public class CadEdit {
 		line.moveEndpoint( source, target );
 	}
 
-	protected static void updateArc( DesignTool tool, DesignArc arc, Point3D trimPoint, Point3D target ) {
+	protected static void updateArc( DesignTool tool, DesignArc arc, Point3D mousePoint, Point3D target ) {
 		// Determine the start point
 		Point3D startPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() );
 		// Determine the extent point
 		Point3D extentPoint = CadGeometry.ellipsePoint360( arc, arc.getStart() + arc.getExtent() );
 		// Determine if we are moving the start point or the extent point
-		Point3D source = CadPoints.getNearestOnScreen( tool, trimPoint, startPoint, extentPoint );
+		Point3D source = CadPoints.getNearestOnScreen( tool, mousePoint, startPoint, extentPoint );
 
 		arc.moveEndpoint( source, target );
 	}

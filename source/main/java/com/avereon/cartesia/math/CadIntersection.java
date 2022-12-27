@@ -117,8 +117,9 @@ public class CadIntersection {
 		Point3D o = ellipse.getOrigin();
 		double rx = ellipse.getXRadius();
 		double ry = ellipse.getYRadius();
+		double rotate = Math.toRadians( CadGeometry.clampAngle360( ellipse.calcRotate() ) );
 
-		return toFxPoints( Intersection2D.intersectLineEllipse( asPoint( p1 ), asPoint( p2 ), asPoint( o ), rx, ry ).getPoints() );
+		return toFxPoints( Intersection2D.intersectLineEllipse( asPoint( p1 ), asPoint( p2 ), asPoint( o ), rx, ry, rotate ).getPoints() );
 	}
 
 	public static List<Point3D> intersectLineCurve( DesignLine a, DesignCurve b ) {

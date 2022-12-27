@@ -1,6 +1,7 @@
-package com.avereon.cartesia.data;
+package com.avereon.cartesia.data.util;
 
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.data.*;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
@@ -29,6 +30,7 @@ public class DesignPropertiesMap {
 		pages.put( DesignLine.class, loadPage( product, "line" ) );
 		pages.put( DesignMarker.class, loadPage( product, "point" ) );
 		pages.put( DesignCurve.class, loadPage( product, "curve" ) );
+		pages.put( DesignText.class, loadPage( product, "text" ) );
 		propertiesPages = Collections.unmodifiableMap( pages );
 	}
 

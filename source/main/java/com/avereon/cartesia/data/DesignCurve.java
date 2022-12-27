@@ -121,11 +121,10 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public DesignShape updateFrom( DesignShape shape ) {
-		if( !(shape instanceof DesignCurve) ) return this;
-		DesignCurve curve = (DesignCurve)shape;
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignCurve curve) ) return this;
 
 		try( Txn ignore = Txn.create() ) {
-			this.setOrigin( curve.getOrigin() );
 			this.setOriginControl( curve.getOriginControl() );
 			this.setPointControl( curve.getPointControl() );
 			this.setPoint( curve.getPoint() );

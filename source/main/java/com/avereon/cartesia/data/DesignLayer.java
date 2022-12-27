@@ -7,8 +7,10 @@ import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
 import com.avereon.zarra.color.Paints;
+import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.util.*;
@@ -41,6 +43,8 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_FILL_PAINT = null;
 
+	static final String DEFAULT_TEXT_FONT = "System|Regular|1.0";
+
 	public DesignLayer() {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, UNIT, LAYERS, SHAPES );
@@ -50,6 +54,7 @@ public class DesignLayer extends DesignDrawable {
 		setDrawPattern( DEFAULT_DRAW_PATTERN );
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
+		setTextFont( DEFAULT_TEXT_FONT );
 
 		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
 	}
@@ -76,9 +81,7 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public boolean isRootLayer() {
-		Optional<Design> optional = getDesign();
-		if( optional.isEmpty() ) return false;
-		return this == optional.get().getLayers();
+		return getDesign().filter( design -> this == design.getLayers() ).isPresent();
 	}
 
 	public String getFullName() {
@@ -180,15 +183,6 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
-	//	public boolean isVisible() {
-	//		return getValue( VISIBLE, false );
-	//	}
-
-	//	public DesignLayer setVisible( boolean visible ) {
-	//		setValue( VISIBLE, visible );
-	//		return this;
-	//	}
-
 	@SuppressWarnings( "UnusedReturnValue" )
 	public <T extends DesignDrawable> T addDrawable( T drawable ) {
 		if( drawable instanceof DesignShape ) {
@@ -256,6 +250,16 @@ public class DesignLayer extends DesignDrawable {
 	@Override
 	public Paint calcFillPaint() {
 		return Paints.parseWithNullOnException( getFillPaint() );
+	}
+
+	@Override
+	public String getTextFont() {
+		return getValue( TEXT_FONT, DEFAULT_TEXT_FONT );
+	}
+
+	@Override
+	public Font calcTextFont() {
+		return FontUtil.decode( getTextFont() );
 	}
 
 	@Override

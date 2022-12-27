@@ -44,7 +44,11 @@ public class CommandPrompt extends BorderPane {
 		} );
 	}
 
-	public String getText() {
+	public String getPrompt() {
+		return prompt.getText().trim();
+	}
+
+	public String getCommand() {
 		return command.getText().trim();
 	}
 

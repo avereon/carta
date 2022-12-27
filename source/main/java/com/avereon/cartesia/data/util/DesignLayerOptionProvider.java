@@ -1,5 +1,7 @@
-package com.avereon.cartesia.data;
+package com.avereon.cartesia.data.util;
 
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.data.IdNode;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ProgramProduct;

@@ -180,25 +180,43 @@ public class DesignArc extends DesignEllipse {
 		return this;
 	}
 
+	@Override
+	public DesignShape updateFrom( DesignShape shape ) {
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignArc arc) ) return this;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setXRadius( arc.getXRadius() );
+			this.setYRadius( arc.getYRadius() );
+			this.setRotate( arc.getRotate() );
+			this.setStart( arc.getStart() );
+			this.setExtent( arc.getExtent() );
+			this.setType( arc.getType() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
+		return this;
+	}
+
 	public void moveEndpoint( Point3D source, Point3D target ) {
 		if( source == null ) return;
 
 		// Determine the start point
 		Point3D startPoint = CadGeometry.ellipsePoint360( this, getStart() );
 
-		// Determine the point angle
+		// Determine the target angle
 		double theta = CadGeometry.ellipseAngle360( this, target );
 
 		try( Txn ignore = Txn.create() ) {
+			double extent;
 			if( CadGeometry.areSamePoint( startPoint, source ) ) {
 				setStart( theta );
-				setExtent( getExtent() + getStart() - theta );
+				extent = getExtent() + getStart() - theta;
 			} else {
-				double extent = (theta - getStart()) % 360;
-				if( extent < -180 ) extent += 360;
-				if( extent > 180 ) extent -= 360;
-				setExtent( extent );
+				extent = theta - getStart();
 			}
+			setExtent( CadGeometry.clampAngle360( extent ) );
 		} catch( TxnException exception ) {
 			log.atSevere().log( "Unable to trim arc" );
 		}

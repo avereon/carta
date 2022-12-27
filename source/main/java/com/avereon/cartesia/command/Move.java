@@ -17,8 +17,6 @@ public class Move extends EditCommand {
 
 	private Point3D anchor;
 
-	private Point3D lastPoint;
-
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
@@ -28,7 +26,7 @@ public class Move extends EditCommand {
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "reference" );
 			return INCOMPLETE;
 		}
 
@@ -68,9 +66,8 @@ public class Move extends EditCommand {
 				case 2 -> {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
-					if( lastPoint == null ) lastPoint = anchor;
-					moveShapes( getPreview(), lastPoint, point );
-					lastPoint = point;
+					resetPreviewGeometry();
+					moveShapes( getPreview(), anchor, point );
 				}
 			}
 		}

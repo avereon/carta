@@ -1,41 +1,44 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
-public class Flip extends EditCommand {
+@CustomLog
+public class DrawCircleDiameter2 extends DrawCommand {
 
-	private DesignLine referenceLine;
+	private DesignEllipse previewEllipse;
 
-	private Point3D anchor;
+	private DesignLine previewLine;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
-
 		setCaptureUndoChanges( context, false );
 
-		// Ask for an anchor point
+		// Step 1
 		if( parameters.length < 1 ) {
-			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "axis-anchor" );
+			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
+			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
 
-		// Ask for a target point
+		// Step 2
 		if( parameters.length < 2 ) {
-			anchor = asPoint( context, parameters[ 0 ] );
-			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() ) );
-			promptForPoint( context, "axis-point" );
+			Point3D origin = asPoint( context, parameters[ 0 ] );
+			addPreview( context, previewEllipse = new DesignEllipse( origin, 0.0 ) );
+			previewLine.setOrigin( origin );
+			previewLine.setPoint( origin );
+			promptForNumber( context, "diameter" );
 			return INCOMPLETE;
 		}
 
@@ -43,10 +46,11 @@ public class Flip extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			final Point3D anchor = asPoint( context, parameters[ 0 ] );
-			final Point3D point = asPoint( context, parameters[ 1 ] );
-
-			flipShapes( context.getTool(), anchor, point );
+			Point3D a = asPoint( context, parameters[ 0 ] );
+			Point3D b = asPoint( context, parameters[ 1 ] );
+			Point3D origin = CadGeometry.midpoint( a, b );
+			double radius = 0.5 * CadGeometry.distance( a, b );
+			context.getTool().getCurrentLayer().addShape( new DesignEllipse( origin, radius ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
@@ -62,12 +66,14 @@ public class Flip extends EditCommand {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
-				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
+				case 1 -> {
+					previewLine.setOrigin( point );
+					previewLine.setPoint( point );
+				}
 				case 2 -> {
-					referenceLine.setPoint( point );
-
-					resetPreviewGeometry();
-					flipShapes( getPreview(), anchor, point );
+					previewLine.setPoint( point );
+					previewEllipse.setOrigin( CadGeometry.midpoint( previewLine.getOrigin(), point ) );
+					previewEllipse.setRadius( point.distance( previewEllipse.getOrigin() ) );
 				}
 			}
 		}

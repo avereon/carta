@@ -10,6 +10,7 @@ import java.nio.DoubleBuffer;
 
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 
 public class CadTransformTest extends BaseCartesiaTest {
 
@@ -214,6 +215,39 @@ public class CadTransformTest extends BaseCartesiaTest {
 		CadTransform transform = CadTransform.scale( 1, 2, 3 );
 		transform = transform.inverse();
 		assertThat( transform.apply( new Point3D( 1, 1, 1 ) ) ).isEqualTo( new Point3D( 1, 1 / 2.0, 1 / 3.0 ) );
+	}
+
+	@Test
+	void testInverseScaleWithZeroX() {
+		try {
+			// Cannot invert from zero scale because there is no information from zero
+			CadTransform.scale( 0, 1, 1 ).inverse();
+			fail( "Should cause an ArithmeticException" );
+		} catch( ArithmeticException exception ) {
+			//
+		}
+	}
+
+	@Test
+	void testInverseScaleWithZeroY() {
+		try {
+			// Cannot invert from zero scale because there is no information from zero
+			CadTransform.scale( 1, 0, 1 ).inverse();
+			fail( "Should cause an ArithmeticException" );
+		} catch( ArithmeticException exception ) {
+			//
+		}
+	}
+
+	@Test
+	void testInverseScaleWithZeroZ() {
+		try {
+			// Cannot invert from zero scale because there is no information from zero
+			CadTransform.scale( 1, 1, 0 ).inverse();
+			fail( "Should cause an ArithmeticException" );
+		} catch( ArithmeticException exception ) {
+			//
+		}
 	}
 
 	@Test

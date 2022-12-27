@@ -1,31 +1,39 @@
 <html>
 <head>
 	<title>Relative Coordinates</title>
+	<meta name="keywords" content="coordinates, relative">
 </head>
 <body>
-<h1>Relative Coordinates</h1>
 
+<h1>Relative Coordinates</h1>
 <p>
 	There are several ways to enter relative coordinates. This can be a simpler
 	way to specify points rather than entering absolute coordinates. Relative
 	coordinates always require that a prior point be available as the reference
 	point. This is usually accomplished by entering the first point in a command.
-</p>
-<h2>Orthographic Coordinates</h2>
-<p>
 	Relative coordinates are always specified by using the '@' symbol.
 </p>
+
+<h2>Examples</h2>
+<table>
+	<tr><td>Orthographic Coordinates:</td><td>@4,5</td></tr>
+	<tr><td>Polar Coordinates:</td><td>@4,&lt;30</td></tr>
+	<tr><td>Simplified Angle:</td><td>@2&lt;15</td></tr>
+	<tr><td>Angle First:</td><td>@&lt;270,4</td></tr>
+</table>
+
+<h2>Orthographic Coordinates</h2>
+<p>
+	For orthographic coordinates, coordinates are specified as normal with the
+	x and y coordinates separated by a comma.
+</p>
+
 <h2>Polar Coordinates</h2>
 <p>
-	For polar coordinates, angles are denoted by the '<' symbol. The angle
-	coordinate may be entered before or after the radius coordinate. A further
-	simplification is that the angle symbol may be used in place of the comma
-	between the coordinates.
-</p>
-<p>
-	Polar Coordinate Example: @4,<30<br/>
-	Simplified Angle Example: @2<-15<br/>
-	Angle First Example: @<270,4
+	For polar coordinates, angles are denoted by the '<' symbol and entered in
+	degrees. The angle coordinate may be entered before or after the radius
+	coordinate. A further simplification is that the angle symbol may be used in
+	place of the comma between the coordinates.
 </p>
 
 </body>

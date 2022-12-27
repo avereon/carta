@@ -103,6 +103,7 @@ public class CommandMap {
 		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
 		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
+		add( product, "draw-circle-diameter-2", DrawCircleDiameter2.class ); // point-diameter
 		add( product, "draw-curve-4", DrawCurve4.class ); // endpoint-midpoint-midpoint-endpoint
 		add( product, "draw-ellipse-3", DrawEllipse3.class ); // center-radius-radius
 		//add( product, "draw-conic-5", DrawConic5.class ); // point-point-point-point-point
@@ -112,6 +113,7 @@ public class CommandMap {
 		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
 		add( product, "draw-marker", DrawMarker.class ); // point
 		add( product, "draw-path", Path.class );
+		add( product, "draw-text", DrawText.class );
 
 		// Measure commands
 		add( product, "measure-angle", MeasureAngle.class );
@@ -136,6 +138,7 @@ public class CommandMap {
 		add( product, "rotate", Rotate.class );
 		add( product, "scale", Scale.class );
 		add( product, "split", Split.class );
+		add( product, "squish", Squish.class );
 		add( product, "stretch", Stretch.class );
 		add( product, "trim", Trim.class );
 		add( product, "undo", Undo.class );

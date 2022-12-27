@@ -28,7 +28,7 @@ public class CadGeometry {
 		return Math.toDegrees( Geometry.pointAngle( asPoint( a ), asPoint( b ), asPoint( c ) ) );
 	}
 
-	public static double normalizeAngle180( double angle ) {
+	public static double clampAngle360( double angle ) {
 		angle %= 360;
 		if( angle < -180 ) angle += 360;
 		if( angle > 180 ) angle -= 360;

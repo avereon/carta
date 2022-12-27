@@ -11,7 +11,7 @@ import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
 
-public class Scale extends EditCommand {
+public class Squish extends EditCommand {
 
 	private DesignLine referenceLine;
 
@@ -56,7 +56,7 @@ public class Scale extends EditCommand {
 
 		try {
 			// Start an undo multi-change
-			scaleShapes( tool, asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			squishShapes( tool, asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
 			// Done with undo multi-change
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
@@ -79,7 +79,7 @@ public class Scale extends EditCommand {
 					referenceLine.setPoint( target ).setOrigin( anchor );
 
 					resetPreviewGeometry();
-					scaleShapes( getPreview(), anchor, source, target );
+					squishShapes( getPreview(), anchor, source, target );
 				}
 			}
 		}

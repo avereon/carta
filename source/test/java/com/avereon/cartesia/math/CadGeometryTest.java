@@ -138,14 +138,14 @@ public class CadGeometryTest {
 	}
 
 	@Test
-	void testNormalizeAngle180() {
-		assertThat( CadGeometry.normalizeAngle180( 0 ) ).isEqualTo( 0.0 );
-		assertThat( CadGeometry.normalizeAngle180( 180 ) ).isEqualTo( 180.0 );
-		assertThat( CadGeometry.normalizeAngle180( -180 ) ).isEqualTo( -180.0 );
-		assertThat( CadGeometry.normalizeAngle180( 315 ) ).isEqualTo( -45.0 );
-		assertThat( CadGeometry.normalizeAngle180( -315 ) ).isEqualTo( 45.0 );
-		assertThat( CadGeometry.normalizeAngle180( 675 ) ).isEqualTo( -45.0 );
-		assertThat( CadGeometry.normalizeAngle180( -675 ) ).isEqualTo( 45.0 );
+	void testClampAngle() {
+		assertThat( CadGeometry.clampAngle360( 0 ) ).isEqualTo( 0.0 );
+		assertThat( CadGeometry.clampAngle360( 180 ) ).isEqualTo( 180.0 );
+		assertThat( CadGeometry.clampAngle360( -180 ) ).isEqualTo( -180.0 );
+		assertThat( CadGeometry.clampAngle360( 315 ) ).isEqualTo( -45.0 );
+		assertThat( CadGeometry.clampAngle360( -315 ) ).isEqualTo( 45.0 );
+		assertThat( CadGeometry.clampAngle360( 675 ) ).isEqualTo( -45.0 );
+		assertThat( CadGeometry.clampAngle360( -675 ) ).isEqualTo( 45.0 );
 	}
 
 	@Test

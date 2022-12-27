@@ -1,4 +1,4 @@
-package com.avereon.cartesia.data;
+package com.avereon.cartesia.data.util;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.DesignUnit;

@@ -1,8 +1,8 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.DesignLayerOptionProvider;
-import com.avereon.cartesia.data.DesignUnitOptionProvider;
-import com.avereon.cartesia.data.MarkerTypeOptionProvider;
+import com.avereon.cartesia.data.util.DesignLayerOptionProvider;
+import com.avereon.cartesia.data.util.DesignUnitOptionProvider;
+import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.tool.Design2dEditor;
@@ -49,6 +49,7 @@ public class CartesiaMod extends Mod {
 		registerIcon( "arc-3", new Arc3Icon() );
 		registerIcon( "circle-2", new Circle2Icon() );
 		registerIcon( "circle-3", new Circle3Icon() );
+		registerIcon( "circle-diameter-2", new CircleDiameter2Icon() );
 		registerIcon( "curve-3", new Curve3Icon() );
 		registerIcon( "curve-4", new Curve4Icon() );
 		registerIcon( "ellipse-3", new Ellipse3Icon() );
@@ -202,6 +203,7 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "ellipse-3", new Ellipse3Icon() );
 		unregisterIcon( "curve-4", new Curve4Icon() );
 		unregisterIcon( "curve-3", new Curve3Icon() );
+		unregisterIcon( "circle-diameter-2", new CircleDiameter2Icon() );
 		unregisterIcon( "circle-3", new Circle3Icon() );
 		unregisterIcon( "circle-2", new Circle2Icon() );
 		unregisterIcon( "arc-3", new Arc3Icon() );
@@ -215,28 +217,43 @@ public class CartesiaMod extends Mod {
 	}
 
 	private void registerHelpPages() {
-		getProgram()
-			.getIndexService()
-			.submit( INDEX_ID, createIndexableDocument( "document", "", "/docs/manual/relative-coordinates", Map.of(), List.of( "coordinates", "relative" ) ) );
+		// FIXME Tag names are language specific
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/introduction", Map.of() ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/relative-coordinates", Map.of() ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/selecting-geometry", Map.of() ) );
 
 		registerCommandHelpPages();
 	}
 
+	private Document createIndexableDocument( String icon, String resourcePath, Map<String, String> values ) {
+		return createIndexableDocument( icon, "", resourcePath, values, List.of(), "" );
+	}
+
 	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
+		return createIndexableDocument( icon, title, resourcePath, values, tags, "" );
+	}
+
+	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags, String defaultContent ) {
+		// Create the document URI
+		String modKey = getCard().getProductKey();
+		URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+
+		Map<String, String> replacementValues = new HashMap<>(values);
+		replacementValues.put( "module.name", getCard().getName() );
+		replacementValues.put( "module.version", getCard().getVersion() );
+		replacementValues.put( "module.release", getCard().getRelease().toHumanString() );
+
 		try {
-			// Create the document URI
-			String modKey = getCard().getProductKey();
-			URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+			// Create the resource content URL
+			URL url = (URL)ResourceBundle.getBundle( CartesiaHelp.class.getName() ).getObject( resourcePath );
 
-			// Create the content URL
-			ResourceBundle bundle = ResourceBundle.getBundle( CartesiaHelp.class.getName() );
-			URL url = (URL)bundle.getObject( resourcePath );
-
-			return new Document( uri, icon, title ).url( url ).values( values ).tags( tags ).store( true );
+			return new Document( uri, icon, title ).url( url ).values( replacementValues ).tags( tags ).store( true );
 		} catch( MissingResourceException exception ) {
 			log.atWarn().log( "Resource not found: path=%s", resourcePath );
-			return null;
+			if( defaultContent != null ) return new Document( uri, icon, title ).content( defaultContent ).values( replacementValues ).tags( tags ).store( true );
 		}
+
+		return null;
 	}
 
 	private void registerCommandHelpPages() {
@@ -248,10 +265,18 @@ public class CartesiaMod extends Mod {
 			String title = command.getName();
 
 			String actionName = Objects.requireNonNullElse( command.getName(), "" );
-			String actionCommand = Objects.requireNonNullElse( command.getShortcut(), "" );
+			String actionCommand = Objects.requireNonNullElse( command.getCommand(), "--" ).toUpperCase();
 			Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
 
-			Document document = createIndexableDocument( icon, title, resourcePath, values, command.getTags() );
+			StringBuilder defaultContent = new StringBuilder( "<html>" );
+			defaultContent.append( "<head>" );
+			defaultContent.append( "<title>" ).append( actionName ).append( "</title>" );
+			defaultContent.append( "</head>" );
+			defaultContent.append( "<h1>" ).append( actionName ).append( "</h1>" );
+			defaultContent.append( "<h2>" ).append( actionCommand ).append( "</h2>" );
+			defaultContent.append( "</body></html>" );
+
+			Document document = createIndexableDocument( icon, title, resourcePath, values, command.getTags(), defaultContent.toString() );
 			if( document != null ) getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}
