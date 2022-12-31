@@ -19,6 +19,7 @@ import javafx.scene.shape.Arc;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
@@ -54,6 +55,8 @@ public class DesignShapeView extends DesignDrawableView {
 	private EventHandler<NodeEvent> selectedHandler;
 
 	private Rotate rotate;
+
+	private Scale scale;
 
 	public DesignShapeView( DesignPane pane, DesignShape designShape ) {
 		super( pane, designShape );
@@ -134,6 +137,12 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( DesignShape.DRAW_WIDTH, drawWidthHandler );
 		getDesignShape().unregister( DesignShape.DRAW_PAINT, drawPaintHandler );
 		getDesignShape().unregister( NodeEvent.PARENT_CHANGED, parentChangedHandler );
+	}
+
+	void updateScale( DesignText text, Shape shape ) {
+		shape.getTransforms().remove( this.scale );
+		this.scale = Transform.scale( 1, 1 );
+		shape.getTransforms().add( this.scale );
 	}
 
 	void updateRotate( DesignText text, Shape shape ) {
