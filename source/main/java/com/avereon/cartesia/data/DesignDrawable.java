@@ -8,10 +8,8 @@ import com.avereon.transaction.TxnException;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zarra.color.Paints;
-import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
-import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.util.List;
@@ -19,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 @CustomLog
+@SuppressWarnings( "UnusedReturnValue" )
 public abstract class DesignDrawable extends DesignNode {
 
 	public static final String ORDER = "order";
@@ -33,8 +32,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String FILL_PAINT = "fill-paint";
 
-	public static final String TEXT_FONT = "text-font";
-
 	private static final String VIRTUAL_LAYER = "layer";
 
 	private static final String VIRTUAL_DRAW_PAINT_MODE = "draw-paint-mode";
@@ -47,8 +44,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private static final String VIRTUAL_FILL_PAINT_MODE = "fill-paint-mode";
 
-	private static final String VIRTUAL_TEXT_FONT_MODE = "text-font-mode";
-
 	static final String MODE_CUSTOM = "custom";
 
 	public static final String MODE_LAYER = "layer";
@@ -60,14 +55,13 @@ public abstract class DesignDrawable extends DesignNode {
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
-		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT, TEXT_FONT );
+		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 
 		setDrawPaint( MODE_LAYER );
 		setDrawWidth( MODE_LAYER );
 		setDrawCap( MODE_LAYER );
 		setDrawPattern( MODE_LAYER );
 		setFillPaint( MODE_LAYER );
-		setTextFont( MODE_LAYER );
 	}
 
 	public DesignLayer getLayer() {
@@ -191,28 +185,6 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
-	public Font calcTextFont() {
-		return FontUtil.decode( getTextFontWithInheritance() );
-	}
-
-	public String getTextFontWithInheritance() {
-		String font = getTextFont();
-		if( isCustomValue( font ) ) return font;
-
-		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : layer.getTextFont();
-	}
-
-	public String getTextFont() {
-		return getValue( TEXT_FONT, MODE_LAYER );
-	}
-
-	@SuppressWarnings( "unchecked" )
-	public <T extends DesignDrawable> T setTextFont( String value ) {
-		setValue( TEXT_FONT, value );
-		return (T)this;
-	}
-
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public <T> T getValue( String key ) {
@@ -223,7 +195,6 @@ public abstract class DesignDrawable extends DesignNode {
 			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
 			case VIRTUAL_DRAW_CAP_MODE -> (T)(getValueMode( getDrawCap() ));
 			case VIRTUAL_FILL_PAINT_MODE -> (T)(getValueMode( getFillPaint() ));
-			case VIRTUAL_TEXT_FONT_MODE -> (T)(getValueMode( getTextFont() ));
 			default -> super.getValue( key );
 		};
 	}
@@ -239,41 +210,39 @@ public abstract class DesignDrawable extends DesignNode {
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
-		if( TextUtil.areEqual( key, VIRTUAL_LAYER ) ) return changeLayer( newValue );
-
-		switch( key ) {
+		return switch( key ) {
+			case VIRTUAL_LAYER -> changeLayer( newValue );
 			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
 			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidthMode( newValue );
 			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPatternMode( newValue );
 			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCapMode( newValue );
 			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaintMode( newValue );
-			case VIRTUAL_TEXT_FONT_MODE -> changeTextFontMode( newValue );
-		}
-
-		return super.setValue( key, newValue );
+			default -> super.setValue( key, newValue );
+		};
 	}
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT, TEXT_FONT ) );
+		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
 		return map;
 	}
 
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 
-		// Fix bad data
+		// Fix pattern data
 		String drawPattern = (String)map.get( DRAW_PATTERN );
 		if( "0".equals( drawPattern ) ) drawPattern = null;
 		if( "".equals( drawPattern ) ) drawPattern = null;
 
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
+
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
 		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( drawPattern );
 		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );
-		if( map.containsKey( TEXT_FONT ) ) setTextFont( (String)map.get( TEXT_FONT ) );
+
 		return this;
 	}
 
@@ -337,7 +306,7 @@ public abstract class DesignDrawable extends DesignNode {
 			setDrawPattern( isCustom ? getDrawPatternWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting draw patter" );
+			log.atError().withCause( exception ).log( "Error setting draw pattern" );
 		}
 		return newValue;
 	}
@@ -350,21 +319,7 @@ public abstract class DesignDrawable extends DesignNode {
 			setFillPaint( isCustom ? getFillPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting draw width" );
-		}
-		return newValue;
-	}
-
-	<T> T changeTextFontMode( T newValue ) {
-		boolean isCustom = MODE_CUSTOM.equals( newValue );
-
-		String oldValue = getValue( VIRTUAL_TEXT_FONT_MODE );
-		try( Txn ignored = Txn.create() ) {
-			setTextFont( String.valueOf( newValue ) );
-			setTextFont( isCustom ? getTextFontWithInheritance() : String.valueOf( newValue ) );
-			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FONT_MODE, oldValue, newValue ) ) );
-		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting text font" );
+			log.atError().withCause( exception ).log( "Error setting fill paint" );
 		}
 		return newValue;
 	}

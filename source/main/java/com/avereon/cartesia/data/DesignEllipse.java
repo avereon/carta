@@ -101,6 +101,7 @@ public class DesignEllipse extends DesignShape {
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setRotate( Double value ) {
+		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) ) value = null;
 		setValue( ROTATE, value );
 		return (T)this;
 	}
@@ -171,7 +172,7 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public Map<String, Object> getInformation() {
-		Map<String,Object> info = new HashMap<>();
+		Map<String, Object> info = new HashMap<>();
 		info.put( ORIGIN, getOrigin() );
 		if( isCircle() ) {
 			info.put( RADIUS, getRadius() );

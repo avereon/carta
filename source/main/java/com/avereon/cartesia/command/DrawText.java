@@ -7,7 +7,6 @@ import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.text.ParseException;
@@ -43,7 +42,7 @@ public class DrawText extends DrawCommand {
 		try {
 			final Point3D anchor = asPoint( context, parameters[ 0 ] );
 			final String text = asText( context, parameters[ 1 ] );
-			context.getTool().getCurrentLayer().addShape( new DesignText( anchor, text, Font.getDefault(), 0.0 ) );
+			context.getTool().getCurrentLayer().addShape( new DesignText( anchor, text ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-move-shapes", exception );

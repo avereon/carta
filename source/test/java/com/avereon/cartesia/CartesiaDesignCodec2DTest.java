@@ -1,28 +1,26 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.*;
-import com.avereon.util.MapUtil;
 import com.avereon.xenon.asset.Asset;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static com.avereon.cartesia.CartesiaDesignCodec.remapValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
@@ -32,21 +30,6 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	private CartesiaDesignCodec codec;
 
 	private Asset asset;
-
-	private static final Map<String, String> savePaintMapping;
-
-	private static final Map<String, String> loadPaintMapping;
-
-	private static final Map<String, String> saveLayerToNullMapping;
-
-	private static final Map<String, String> loadNullToLayerMapping;
-
-	static {
-		savePaintMapping = Map.of( "null", "none", DesignDrawable.MODE_LAYER, "null" );
-		loadPaintMapping = Map.of( "none", "null", "null", DesignDrawable.MODE_LAYER );
-		saveLayerToNullMapping = Map.of( DesignDrawable.MODE_LAYER, "null" );
-		loadNullToLayerMapping = Map.of( "null", DesignDrawable.MODE_LAYER );
-	}
 
 	@BeforeEach
 	protected void setup() throws Exception {
@@ -70,50 +53,40 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	void testLoad() throws Exception {
 		// Generate a test design
 		Design design = createTestDesign( new Design2D() );
-		Map<String, Object> deepMap = design.asDeepMap();
-
-		Map<String, Object> map = new HashMap<>( deepMap );
-		map.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
-		remapLayers( map, this::remapShapeForLoad );
+		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
+		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
+		remapLayersForLoad( expectedMap, this::remapShapeForLoad );
 
 		// Load the design from a stream
-		byte[] buffer = MAPPER.writer().writeValueAsBytes( map );
+		byte[] buffer = MAPPER.writer().writeValueAsBytes( expectedMap );
 		codec.load( asset, new ByteArrayInputStream( buffer ) );
+		Map<String, Object> actualMap = ((Design)asset.getModel()).asDeepMap();
+		actualMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 
-		// Check the result
-		assertThat( ((Design)asset.getModel()).asDeepMap() ).isEqualTo( deepMap );
+		// Convert the results to strings for comparison
+		String expected = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( expectedMap );
+		String actual = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( actualMap );
+
+		assertThat( actual ).isEqualTo( expected );
 	}
 
 	@Test
 	@SuppressWarnings( "unchecked" )
 	void testSave() throws Exception {
-		// Generate a test design
+		// Create the expected result
 		Design design = createTestDesign( asset.getModel() );
+		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
+		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
+		remapLayersForSave( expectedMap, this::remapShapeForSave );
 
-		// Save the design to a stream
+		// Create the actual result
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		codec.save( asset, output );
-		//System.out.println( prettyPrint( output.toByteArray() ) );
 
-		// Check the result
-		Map<String, Object> expected = MAPPER.readValue( MAPPER.writeValueAsBytes( design.asDeepMap() ), new TypeReference<>() {} );
-		expected.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
-		remapLayers( expected, this::remapShapeForSave );
+		// Convert the results to strings for comparison
+		String expected = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( expectedMap );
+		String actual = output.toString( StandardCharsets.UTF_8 );
 
-		// Any shape property that has the value "layer" is removed
-		MapUtil
-			.flatten( expected, "layers", "shapes" )
-			.map( o -> (Map<String, Object>)o )
-			.filter( shapes -> !shapes.isEmpty() )
-			.flatMap( shapes -> shapes.values().parallelStream() )
-			.map( o -> (Map<String, Object>)o )
-			.forEach( shape -> {
-				for( String key : new HashSet<>( shape.keySet() ) ) {
-					shape.computeIfPresent( key, ( k, v ) -> "layer".equals( v ) ? null : v );
-				}
-			} );
-
-		Map<String, Object> actual = MAPPER.readValue( output.toByteArray(), new TypeReference<>() {} );
 		assertThat( actual ).isEqualTo( expected );
 	}
 
@@ -166,6 +139,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		DesignEllipse ellipse1 = new DesignEllipse( new Point3D( -2, 4, 0 ), 5.0 );
 		layer3.addShape( ellipse1 );
 		DesignEllipse ellipse2 = new DesignEllipse( new Point3D( -2, -4, 0 ), 5.0, 3.0, 73.0 );
+		ellipse2.setDrawWidth( "1/50" );
 		layer3.addShape( ellipse2 );
 
 		DesignArc arc1 = new DesignArc( new Point3D( -2, 4, 0 ), 5.0, 90.0, 135.0, DesignArc.Type.OPEN );
@@ -176,57 +150,77 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		DesignCurve curve1 = new DesignCurve( new Point3D( -5, 0, 0 ), new Point3D( 1, 5, 0 ), new Point3D( -1, -5, 0 ), new Point3D( 5, 0, 0 ) );
 		layer5.addShape( curve1 );
 
-		DesignText text1 = new DesignText( new Point3D( 2, 1, 0 ), "Test Text", Font.getDefault(), 0.0 );
+		DesignText text1 = new DesignText( new Point3D( 2, 1, 0 ), "Test Text" );
 		layer6.addShape( text1 );
 
 		return design;
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void remapLayers( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
+	private void remapLayersForLoad( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
 		Map<String, Object> layers = (Map<String, Object>)map.get( "layers" );
 		layers.values().parallelStream().map( o -> (Map<String, Object>)o ).forEach( m -> {
-			remapLayer( m, shapeMapper );
-			remapLayers( m, shapeMapper );
+			remapLayerForLoad( m, shapeMapper );
+			remapLayersForLoad( m, shapeMapper );
 		} );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void remapLayer( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
+	private void remapLayerForLoad( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
 		Map<String, Map<String, Object>> shapes = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
+
+		remapValue( map, DesignLayer.TEXT_FONT, CartesiaDesignCodec.loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_FILL_PAINT, CartesiaDesignCodec.loadLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, CartesiaDesignCodec.loadLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, CartesiaDesignCodec.loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_CAP, CartesiaDesignCodec.loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, CartesiaDesignCodec.loadLayerPropertyMapping );
+
 		shapes.values().forEach( shapeMapper );
 	}
 
 	private void remapShapeForLoad( Map<String, Object> map ) {
-		remapValue( map, DesignDrawable.DRAW_PAINT, loadPaintMapping );
-		remapValue( map, DesignDrawable.DRAW_WIDTH, loadNullToLayerMapping );
-		remapValue( map, DesignDrawable.DRAW_CAP, loadNullToLayerMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, loadNullToLayerMapping );
-		remapValue( map, DesignDrawable.FILL_PAINT, loadPaintMapping );
-		remapValue( map, DesignDrawable.TEXT_FONT, loadNullToLayerMapping );
+		remapValue( map, DesignDrawable.DRAW_PAINT, CartesiaDesignCodec.loadPaintMapping );
+		remapValue( map, DesignDrawable.DRAW_WIDTH, CartesiaDesignCodec.loadPropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_CAP, CartesiaDesignCodec.loadPropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_PATTERN, CartesiaDesignCodec.loadPropertyMapping );
+		remapValue( map, DesignDrawable.FILL_PAINT, CartesiaDesignCodec.loadPaintMapping );
+
+		if( DesignText.TEXT.equals( map.get( DesignShape.SHAPE ) ) ) {
+			remapValue( map, DesignText.TEXT_FONT, CartesiaDesignCodec.loadPropertyMapping );
+		}
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private void remapLayersForSave( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
+		Map<String, Object> layers = (Map<String, Object>)map.get( "layers" );
+		layers.values().parallelStream().map( o -> (Map<String, Object>)o ).forEach( m -> {
+			remapLayerForSave( m, shapeMapper );
+			remapLayersForSave( m, shapeMapper );
+		} );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	private void remapLayerForSave( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
+		Map<String, Map<String, Object>> shapes = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
+
+		remapValue( map, DesignLayer.TEXT_FONT, CartesiaDesignCodec.saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_FILL_PAINT, CartesiaDesignCodec.saveLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, CartesiaDesignCodec.saveLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, CartesiaDesignCodec.saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_CAP, CartesiaDesignCodec.saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, CartesiaDesignCodec.saveLayerPropertyMapping );
+
+		shapes.values().forEach( shapeMapper );
 	}
 
 	private void remapShapeForSave( Map<String, Object> map ) {
-		remapValue( map, DesignDrawable.DRAW_PAINT, savePaintMapping );
-		remapValue( map, DesignDrawable.DRAW_WIDTH, saveLayerToNullMapping );
-		remapValue( map, DesignDrawable.DRAW_CAP, saveLayerToNullMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, saveLayerToNullMapping );
-		remapValue( map, DesignDrawable.FILL_PAINT, savePaintMapping );
-		remapValue( map, DesignDrawable.TEXT_FONT, saveLayerToNullMapping );
-	}
-
-	private void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {
-		Object currentValue = map.get( key );
-		if( currentValue == null ) currentValue = "null";
-
-		Object newValue = values.get( currentValue );
-		if( newValue == null ) return;
-
-		if( "null".equals( newValue ) ) {
-			map.remove( key );
-		} else {
-			map.put( key, newValue );
-		}
+		remapValue( map, DesignDrawable.DRAW_PAINT, CartesiaDesignCodec.savePaintMapping );
+		remapValue( map, DesignDrawable.DRAW_WIDTH, CartesiaDesignCodec.savePropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_CAP, CartesiaDesignCodec.savePropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_PATTERN, CartesiaDesignCodec.savePropertyMapping );
+		remapValue( map, DesignDrawable.FILL_PAINT, CartesiaDesignCodec.savePaintMapping );
+		remapValue( map, DesignText.TEXT_FONT, CartesiaDesignCodec.savePropertyMapping );
 	}
 
 }

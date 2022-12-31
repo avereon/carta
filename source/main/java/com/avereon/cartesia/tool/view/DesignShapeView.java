@@ -25,6 +25,7 @@ import lombok.CustomLog;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+@SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
 public class DesignShapeView extends DesignDrawableView {
 
@@ -40,9 +41,9 @@ public class DesignShapeView extends DesignDrawableView {
 
 	private EventHandler<NodeEvent> parentChangedHandler;
 
-	private EventHandler<NodeEvent> drawWidthHandler;
-
 	private EventHandler<NodeEvent> drawPaintHandler;
+
+	private EventHandler<NodeEvent> drawWidthHandler;
 
 	private EventHandler<NodeEvent> drawCapHandler;
 
@@ -115,12 +116,13 @@ public class DesignShapeView extends DesignDrawableView {
 	@Override
 	void registerListeners() {
 		getDesignShape().register( NodeEvent.PARENT_CHANGED, parentChangedHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() != null && (Boolean)e.getNewValue() ) ) );
+
 		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_CAP, drawCapHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_PATTERN, drawPatternHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( this::updateShapeValues ) );
-		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() != null && (Boolean)e.getNewValue() ) ) );
 	}
 
 	@Override
@@ -147,12 +149,12 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	Point3D getArcPoint( Arc arc, double angle ) {
-		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
+		// NOTE The ellipse rotate angle does not come from the shape rotate property, but from the rotate transform
 		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), calcRotate(), angle );
 	}
 
 	Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
-		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
+		// NOTE The ellipse rotate angle does not come from the shape rotate property, but from the rotate transform
 		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), calcRotate(), angle );
 	}
 

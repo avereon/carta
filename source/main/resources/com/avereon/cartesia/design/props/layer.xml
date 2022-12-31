@@ -6,6 +6,8 @@
 		<group id="layer-title">
 			<setting key="name" editor="textline"/>
 			<setting key="layer" editor="combobox" provider="design-layer-layers"/>
+
+			<!-- Geometry settings -->
 			<setting key="draw-paint" editor="paint">
 				<option key="none"/>
 				<option key="solid"/>
@@ -22,6 +24,21 @@
 				<option key="solid"/>
 				<option key="linear"/>
 				<option key="radial"/>
+			</setting>
+
+			<!-- Text settings -->
+			<setting key="text-fill-paint" editor="paint">
+				<option key="none"/>
+				<option key="solid"/>
+				<option key="linear"/>
+				<option key="radial"/>
+			</setting>
+			<setting key="text-draw-width" editor="textline" type="math-expression"/>
+			<setting key="text-draw-pattern" editor="textline"/>
+			<setting key="text-draw-cap" editor="combobox">
+				<option key="square"/>
+				<option key="round"/>
+				<option key="butt"/>
 			</setting>
 		</group>
 	</page>
