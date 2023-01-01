@@ -9,6 +9,7 @@ import com.avereon.zarra.font.FontMetrics;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextBoundsType;
 import lombok.CustomLog;
 
 import java.util.List;
@@ -45,19 +46,21 @@ public class DesignTextView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Text text = (Text)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, text.xProperty(), text.yProperty() );
-		ConstructionPoint ow = cp( pane, text.xProperty().add( text.layoutBoundsProperty().get().getWidth() ), text.yProperty() );
-		ConstructionPoint oh = cp( pane, text.xProperty(), text.yProperty().add( text.layoutBoundsProperty().get().getHeight() ) );
-		ConstructionPoint wh = cp( pane, text.xProperty().add( text.layoutBoundsProperty().get().getWidth() ), text.yProperty().add( text.layoutBoundsProperty().get().getHeight() ) );
+		ConstructionPoint o = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), ()-> text.getY() );
+		ConstructionPoint ow = cp( pane, text.layoutBoundsProperty(), () -> text.getX() + text.getLayoutBounds().getWidth(), text.layoutBoundsProperty(), ()-> text.getY() );
+		ConstructionPoint oh = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), ()-> text.getY() + text.getLayoutBounds().getHeight() );
+		ConstructionPoint wh = cp( pane, text.layoutBoundsProperty(), () -> text.getX() + text.getLayoutBounds().getWidth(), text.layoutBoundsProperty(), ()-> text.getY() + text.getLayoutBounds().getHeight() );
 		return setConstructionPoints( text, List.of( o, ow, oh, wh ) );
 	}
 
 	@Override
 	protected void configureShape( Shape shape ) {
 		super.configureShape( shape );
+		Text text = (Text)shape;
+		text.setBoundsType( TextBoundsType.LOGICAL );
 
-		shape.setScaleX( 0.25 );
-		shape.setScaleY( -0.25 );
+		//shape.setScaleX( 0.25 );
+		shape.setScaleY( -1 );
 
 		//updateScale( getDesignText(), shape );
 		updateFont( getDesignText(), shape );

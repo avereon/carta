@@ -232,7 +232,7 @@ public class DesignShapeView extends DesignDrawableView {
 		return (List<ConstructionPoint>)shape.getProperties().getOrDefault( CONSTRUCTION_POINTS, List.of() );
 	}
 
-	static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xProperty, Callable<Double> xAction, ObservableValue<Number> yProperty, Callable<Double> yAction ) {
+	static ConstructionPoint cp( DesignPane pane, ObservableValue<?> xProperty, Callable<Double> xAction, ObservableValue<?> yProperty, Callable<Double> yAction ) {
 		return cp( pane, Bindings.createDoubleBinding( xAction, xProperty ), Bindings.createDoubleBinding( yAction, yProperty ) );
 	}
 
