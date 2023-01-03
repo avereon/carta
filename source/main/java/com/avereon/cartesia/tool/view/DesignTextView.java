@@ -46,10 +46,16 @@ public class DesignTextView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Text text = (Text)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), ()-> text.getY() );
-		ConstructionPoint ow = cp( pane, text.layoutBoundsProperty(), () -> text.getX() + text.getLayoutBounds().getWidth(), text.layoutBoundsProperty(), ()-> text.getY() );
-		ConstructionPoint oh = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), ()-> text.getY() + text.getLayoutBounds().getHeight() );
-		ConstructionPoint wh = cp( pane, text.layoutBoundsProperty(), () -> text.getX() + text.getLayoutBounds().getWidth(), text.layoutBoundsProperty(), ()-> text.getY() + text.getLayoutBounds().getHeight() );
+		ConstructionPoint o = cp( pane, text.boundsInLocalProperty(), () -> text.getX(), text.boundsInLocalProperty(), () -> text.getY() );
+		ConstructionPoint ow = cp( pane, text.boundsInLocalProperty(), () -> text.getX() + text.boundsInLocalProperty().get().getWidth(), text.boundsInLocalProperty(), () -> text.getY() );
+		ConstructionPoint oh = cp( pane, text.boundsInLocalProperty(), () -> text.getX(), text.boundsInLocalProperty(), () -> text.getY() + text.boundsInLocalProperty().get().getHeight() );
+		ConstructionPoint wh = cp(
+			pane,
+			text.boundsInLocalProperty(),
+			() -> text.getX() + text.boundsInLocalProperty().get().getWidth(),
+			text.boundsInLocalProperty(),
+			() -> text.getY() + text.boundsInLocalProperty().get().getHeight()
+		);
 		return setConstructionPoints( text, List.of( o, ow, oh, wh ) );
 	}
 
@@ -59,11 +65,13 @@ public class DesignTextView extends DesignShapeView {
 		Text text = (Text)shape;
 		text.setBoundsType( TextBoundsType.LOGICAL );
 
+		text.layoutBoundsProperty().addListener( ( p, o, n ) -> log.atConfig().log( "origin=%s,%s", text.getX(), text.getY() ) );
+
 		//shape.setScaleX( 0.25 );
-		shape.setScaleY( -1 );
+		//shape.setScaleY( -1 );
 
 		//updateScale( getDesignText(), shape );
-		updateFont( getDesignText(), shape );
+		//updateFont( getDesignText(), shape );
 		updateRotate( getDesignText(), shape );
 
 		//log.atConfig().log( "text position=%s", shape.localToParent( new Point2D( 0, 0 ) ) );
@@ -100,7 +108,7 @@ public class DesignTextView extends DesignShapeView {
 
 	void updateFont( DesignText text, Shape shape ) {
 		FontMetrics metrics = new FontMetrics( ((Text)shape).getFont() );
-		shape.setTranslateY( metrics.getAscent() + metrics.getDescent() );
+		//shape.setTranslateY( metrics.getAscent() + metrics.getDescent() );
 	}
 
 }
