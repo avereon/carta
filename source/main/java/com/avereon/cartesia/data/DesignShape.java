@@ -4,6 +4,8 @@ import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
+import com.avereon.transaction.Txn;
+import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -105,6 +107,12 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public DesignShape updateFrom( DesignShape shape ) {
+		try( Txn ignore = Txn.create() ) {
+			this.setOrigin( shape.getOrigin() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
 		return this;
 	}
 

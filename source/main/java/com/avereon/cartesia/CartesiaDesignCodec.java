@@ -9,16 +9,15 @@ import com.avereon.product.Product;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
+import com.avereon.zarra.font.FontUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.io.ByteArrayOutputStream;
@@ -42,13 +41,21 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private static final String RADIUS = "radius";
 
-	private static final Map<String, String> savePaintMapping;
+	static final Map<String, String> saveLayerPaintMapping;
 
-	private static final Map<String, String> loadPaintMapping;
+	static final Map<String, String> loadLayerPaintMapping;
 
-	private static final Map<String, String> saveLayerToNullMapping;
+	static final Map<String, String> saveLayerPropertyMapping;
 
-	private static final Map<String, String> loadNullToLayerMapping;
+	static final Map<String, String> loadLayerPropertyMapping;
+
+	static final Map<String, String> savePaintMapping;
+
+	static final Map<String, String> loadPaintMapping;
+
+	static final Map<String, String> savePropertyMapping;
+
+	static final Map<String, String> loadPropertyMapping;
 
 	private final Product product;
 
@@ -56,14 +63,21 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	static {
 		JSON_MAPPER = new ObjectMapper();
+		JSON_MAPPER.configure( SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true );
+		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Color.class, new ColorSerializer() ) );
+		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Font.class, new FontSerializer() ) );
 		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Point2D.class, new Point2DSerializer() ) );
 		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Point3D.class, new Point3DSerializer() ) );
-		JSON_MAPPER.registerModule( new SimpleModule().addSerializer( Color.class, new ColorSerializer() ) );
 
-		savePaintMapping = Map.of( DesignDrawable.MODE_LAYER, "null", "null", "none" );
+		saveLayerPaintMapping = Map.of( "none", "null" );
+		loadLayerPaintMapping = Map.of();
+		saveLayerPropertyMapping = Map.of();
+		loadLayerPropertyMapping = Map.of( "null", "null" );
+
+		savePaintMapping = Map.of( "null", "none", DesignDrawable.MODE_LAYER, "null" );
 		loadPaintMapping = Map.of( "none", "null", "null", DesignDrawable.MODE_LAYER );
-		saveLayerToNullMapping = Map.of( DesignDrawable.MODE_LAYER, "null", "null", "none" );
-		loadNullToLayerMapping = Map.of( "none", "null", "null", DesignDrawable.MODE_LAYER );
+		savePropertyMapping = Map.of( DesignDrawable.MODE_LAYER, "null" );
+		loadPropertyMapping = Map.of( "null", DesignDrawable.MODE_LAYER );
 	}
 
 	public CartesiaDesignCodec( Product product ) {
@@ -75,6 +89,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		geometryMappers.put( DesignEllipse.class, m -> mapEllipse( (DesignEllipse)m ) );
 		geometryMappers.put( DesignArc.class, m -> mapArc( (DesignArc)m ) );
 		geometryMappers.put( DesignCurve.class, m -> mapCurve( (DesignCurve)m ) );
+		geometryMappers.put( DesignText.class, m -> mapText( (DesignText)m ) );
 	}
 
 	protected Product getProduct() {
@@ -126,19 +141,34 @@ public abstract class CartesiaDesignCodec extends Codec {
 		DesignLayer layer = new DesignLayer().updateFrom( map );
 		parent.addLayer( layer );
 
-		// Add the shapes found in the layer
+		remapValue( map, DesignLayer.FILL_PAINT, loadLayerPaintMapping );
+		remapValue( map, DesignLayer.DRAW_PAINT, loadLayerPaintMapping );
+
+		// Text value mapping
+		remapValue( map, DesignLayer.TEXT_FONT, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_FILL_PAINT, loadLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, loadLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_CAP, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, loadLayerPropertyMapping );
+
+		// Clean values
+		cleanPatternValue( map, DesignLayer.TEXT_DRAW_PATTERN );
+
+		// Load text values
+		layer.setTextFont( map.containsKey( DesignLayer.TEXT_FONT ) ? (String)map.get( DesignLayer.TEXT_FONT ) : null );
+		layer.setTextFillPaint( map.containsKey( DesignLayer.TEXT_FILL_PAINT ) ? (String)map.get( DesignLayer.TEXT_FILL_PAINT ) : null );
+		layer.setTextDrawPaint( map.containsKey( DesignLayer.TEXT_DRAW_PAINT ) ? (String)map.get( DesignLayer.TEXT_DRAW_PAINT ) : null );
+		if( map.containsKey( DesignLayer.TEXT_DRAW_WIDTH ) ) layer.setTextDrawWidth( (String)map.get( DesignLayer.TEXT_DRAW_WIDTH ) );
+		if( map.containsKey( DesignLayer.TEXT_DRAW_CAP ) ) layer.setTextDrawCap( (String)map.get( DesignLayer.TEXT_DRAW_CAP ) );
+		if( map.containsKey( DesignLayer.TEXT_DRAW_PATTERN ) ) layer.setTextDrawPattern( (String)map.get( DesignLayer.TEXT_DRAW_PATTERN ) );
+
+		// Load layer geometry
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
 		geometry.values().forEach( g -> {
 			// Old keys
 			moveKey( g, "draw-color", DesignDrawable.DRAW_PAINT );
 			moveKey( g, "fill-color", DesignDrawable.FILL_PAINT );
-
-			// Value mapping
-			remapValue( g, DesignDrawable.DRAW_PAINT, loadPaintMapping );
-			remapValue( g, DesignDrawable.DRAW_WIDTH, loadNullToLayerMapping );
-			remapValue( g, DesignDrawable.DRAW_CAP, loadNullToLayerMapping );
-			remapValue( g, DesignDrawable.DRAW_PATTERN, loadNullToLayerMapping );
-			remapValue( g, DesignDrawable.FILL_PAINT, loadPaintMapping );
 
 			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
 			DesignShape shape = switch( type ) {
@@ -147,13 +177,22 @@ public abstract class CartesiaDesignCodec extends Codec {
 				case DesignEllipse.CIRCLE, DesignEllipse.ELLIPSE -> loadDesignEllipse( g );
 				case DesignArc.ARC -> loadDesignArc( g );
 				case DesignCurve.CURVE -> loadDesignCurve( g );
+				case DesignText.TEXT -> loadDesignText( g );
 				default -> null;
 			};
 			layer.addShape( shape );
 		} );
 
+		// Load child layers
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
 		layers.values().forEach( l -> loadLayer( layer, l ) );
+	}
+
+	private void cleanPatternValue( Map<String, Object> map, String key ) {
+		String value = (String)map.get( key );
+		if( "0".equals( value ) ) value = null;
+		if( "".equals( value ) ) value = null;
+		map.put( key, value );
 	}
 
 	private void loadDesignNode( Map<String, Object> map, DesignNode node ) {
@@ -178,16 +217,21 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private void loadDesignDrawable( Map<String, Object> map, DesignDrawable drawable ) {
 		loadDesignNode( map, drawable );
 
-		// Fix bad data
-		String drawPattern = (String)map.get( DesignDrawable.DRAW_PATTERN );
-		if( "0".equals( drawPattern ) ) drawPattern = null;
-		if( "".equals( drawPattern ) ) drawPattern = null;
+		// Clean values
+		cleanPatternValue( map, DesignLayer.DRAW_PATTERN );
+
+		// Geometry value mapping
+		remapValue( map, DesignDrawable.DRAW_PAINT, loadPaintMapping );
+		remapValue( map, DesignDrawable.DRAW_WIDTH, loadPropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_CAP, loadPropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_PATTERN, loadPropertyMapping );
+		remapValue( map, DesignDrawable.FILL_PAINT, loadPaintMapping );
 
 		if( map.containsKey( DesignDrawable.ORDER ) ) drawable.setOrder( (Integer)map.get( DesignDrawable.ORDER ) );
 		drawable.setDrawPaint( map.containsKey( DesignDrawable.DRAW_PAINT ) ? (String)map.get( DesignDrawable.DRAW_PAINT ) : null );
 		if( map.containsKey( DesignDrawable.DRAW_WIDTH ) ) drawable.setDrawWidth( (String)map.get( DesignDrawable.DRAW_WIDTH ) );
 		if( map.containsKey( DesignDrawable.DRAW_CAP ) ) drawable.setDrawCap( (String)map.get( DesignDrawable.DRAW_CAP ) );
-		if( map.containsKey( DesignDrawable.DRAW_PATTERN ) ) drawable.setDrawPattern( drawPattern );
+		if( map.containsKey( DesignDrawable.DRAW_PATTERN ) ) drawable.setDrawPattern( String.valueOf( map.get( DesignDrawable.DRAW_PATTERN ) ) );
 		drawable.setFillPaint( map.containsKey( DesignDrawable.FILL_PAINT ) ? (String)map.get( DesignDrawable.FILL_PAINT ) : null );
 	}
 
@@ -239,6 +283,19 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return curve;
 	}
 
+	private DesignText loadDesignText( Map<String, Object> map ) {
+		DesignText text = loadDesignShape( map, new DesignText() );
+
+		// Geometry value mapping
+		remapValue( map, DesignText.TEXT_FONT, CartesiaDesignCodec.loadPropertyMapping );
+
+		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
+		if( map.containsKey( DesignText.TEXT_FONT ) ) text.setTextFont( (String)map.get( DesignText.TEXT_FONT ) );
+		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( ((Number)map.get( DesignText.ROTATE )).doubleValue() );
+
+		return text;
+	}
+
 	private void moveKey( Map<String, Object> map, String oldKey, String newKey ) {
 		if( !map.containsKey( oldKey ) ) return;
 		map.put( newKey, map.get( oldKey ) );
@@ -253,7 +310,28 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapLayer( DesignLayer layer ) {
-		Map<String, Object> map = new HashMap<>( asMap( layer, mapDrawable( layer ), Design.NAME ) );
+		Map<String, Object> map = new HashMap<>( asMap(
+			layer,
+			mapDrawable( layer ),
+			Design.NAME,
+			DesignLayer.TEXT_FONT,
+			DesignLayer.TEXT_FILL_PAINT,
+			DesignLayer.TEXT_DRAW_PAINT,
+			DesignLayer.TEXT_DRAW_WIDTH,
+			DesignLayer.TEXT_DRAW_PATTERN,
+			DesignLayer.TEXT_DRAW_CAP
+		) );
+
+		remapValue( map, DesignLayer.DRAW_PAINT, saveLayerPaintMapping );
+		remapValue( map, DesignLayer.FILL_PAINT, saveLayerPaintMapping );
+
+		remapValue( map, DesignLayer.TEXT_FONT, saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_FILL_PAINT, saveLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, saveLayerPaintMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_CAP, saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, saveLayerPropertyMapping );
+
 		map.put( DesignLayer.LAYERS, layer.getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
 		map.put( DesignLayer.SHAPES, layer.getShapes().stream().filter( s -> !s.isReference() ).collect( Collectors.toMap( IdNode::getId, this::mapGeometry ) ) );
 		return map;
@@ -270,7 +348,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapDrawable( DesignDrawable drawable ) {
-		return asMap(
+		Map<String, Object> map = new HashMap<>( asMap(
 			drawable,
 			mapDesignNode( drawable ),
 			DesignDrawable.ORDER,
@@ -279,7 +357,16 @@ public abstract class CartesiaDesignCodec extends Codec {
 			DesignDrawable.DRAW_PATTERN,
 			DesignDrawable.DRAW_CAP,
 			DesignDrawable.FILL_PAINT
-		);
+		) );
+
+		// Remap geometry values as needed
+		remapValue( map, DesignDrawable.DRAW_PAINT, savePaintMapping );
+		remapValue( map, DesignDrawable.DRAW_WIDTH, savePropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_CAP, savePropertyMapping );
+		remapValue( map, DesignDrawable.DRAW_PATTERN, savePropertyMapping );
+		remapValue( map, DesignDrawable.FILL_PAINT, savePaintMapping );
+
+		return map;
 	}
 
 	private Map<String, Object> mapGeometry( DesignShape shape ) {
@@ -289,14 +376,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private Map<String, Object> mapShape( DesignShape shape, String type ) {
 		Map<String, Object> map = asMap( shape, mapDrawable( shape ), DesignShape.ORIGIN );
 		map.put( DesignShape.SHAPE, type );
-
-		// Value mapping
-		remapValue( map, DesignDrawable.DRAW_PAINT, savePaintMapping );
-		remapValue( map, DesignDrawable.DRAW_WIDTH, saveLayerToNullMapping );
-		remapValue( map, DesignDrawable.DRAW_CAP, saveLayerToNullMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, saveLayerToNullMapping );
-		remapValue( map, DesignDrawable.FILL_PAINT, savePaintMapping );
-
 		return map;
 	}
 
@@ -335,11 +414,22 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return asMap( curve, mapShape( curve, DesignCurve.CURVE ), DesignCurve.ORIGIN_CONTROL, DesignCurve.POINT_CONTROL, DesignCurve.POINT );
 	}
 
-	private void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {
+	private Map<String, Object> mapText( DesignText text ) {
+		Map<String, Object> map = asMap( text, mapShape( text, DesignText.TEXT ), DesignText.TEXT, DesignText.TEXT_FONT, DesignText.ROTATE );
+
+		remapValue( map, DesignText.TEXT_FONT, savePropertyMapping );
+
+		return map;
+	}
+
+	static void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {
 		Object currentValue = map.get( key );
 		if( currentValue == null ) currentValue = "null";
 
+		// The currentValue becomes the key for the values map
 		Object newValue = values.get( currentValue );
+
+		// If there is not a new value there is nothing to do
 		if( newValue == null ) return;
 
 		if( "null".equals( newValue ) ) {
@@ -390,6 +480,15 @@ public abstract class CartesiaDesignCodec extends Codec {
 		@Override
 		public void serialize( Point3D value, JsonGenerator generator, SerializerProvider provider ) throws IOException {
 			generator.writeString( value.getX() + "," + value.getY() + "," + value.getZ() );
+		}
+
+	}
+
+	public static class FontSerializer extends JsonSerializer<Font> {
+
+		@Override
+		public void serialize( Font value, JsonGenerator generator, SerializerProvider provider ) throws IOException {
+			generator.writeString( FontUtil.encode( value ) );
 		}
 
 	}

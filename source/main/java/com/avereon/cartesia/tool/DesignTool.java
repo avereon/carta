@@ -2,8 +2,10 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.*;
+import com.avereon.cartesia.cursor.IconCursor;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
@@ -562,7 +564,7 @@ public abstract class DesignTool extends GuidedTool {
 		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
 		String defaultReferencePointSize = "10";
 		String defaultReferencePointPaint = "#808080";
-		String defaultReticle = ReticleCursor.DUPLEX.getClass().getSimpleName().toLowerCase();
+		String defaultReticle = ReticleCursor.DUPLEX.name().toLowerCase();
 
 		// Get tool settings
 		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
@@ -571,7 +573,10 @@ public abstract class DesignTool extends GuidedTool {
 		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
 		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
 
-		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ) ) );
+		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
+		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
+		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
+		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
 		designPane.setReferencePointSize( referencePointSize );
@@ -653,6 +658,8 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+
+		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -881,7 +888,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void setReticle( ReticleCursor reticle ) {
 		this.reticle = reticle;
-		if( getCursor() instanceof ReticleCursor ) setCursor( reticle );
+		if( getCursor() instanceof IconCursor ) setCursor( reticle.getCursorIcon( getProgram() ) );
 	}
 
 	private CommandPrompt getCommandPrompt() {

@@ -1,8 +1,8 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.DesignLayerOptionProvider;
-import com.avereon.cartesia.data.DesignUnitOptionProvider;
-import com.avereon.cartesia.data.MarkerTypeOptionProvider;
+import com.avereon.cartesia.data.util.DesignLayerOptionProvider;
+import com.avereon.cartesia.data.util.DesignUnitOptionProvider;
+import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.tool.Design2dEditor;
@@ -219,13 +219,20 @@ public class CartesiaMod extends Mod {
 	}
 
 	private void registerHelpPages() {
-		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "", "/docs/manual/relative-coordinates", Map.of(), List.of( "coordinates", "relative" ) ) );
+		// FIXME Tag names are language specific
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/introduction", Map.of() ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/relative-coordinates", Map.of() ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/selecting-geometry", Map.of() ) );
 
 		registerCommandHelpPages();
 	}
 
+	private Document createIndexableDocument( String icon, String resourcePath, Map<String, String> values ) {
+		return createIndexableDocument( icon, "", resourcePath, values, List.of(), "" );
+	}
+
 	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
-		return createIndexableDocument( icon, title, resourcePath, values, tags, null );
+		return createIndexableDocument( icon, title, resourcePath, values, tags, "" );
 	}
 
 	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags, String defaultContent ) {
@@ -233,15 +240,19 @@ public class CartesiaMod extends Mod {
 		String modKey = getCard().getProductKey();
 		URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
 
-		try {
-			// Create the content URL
-			ResourceBundle bundle = ResourceBundle.getBundle( CartesiaHelp.class.getName() );
-			URL url = (URL)bundle.getObject( resourcePath );
+		Map<String, String> replacementValues = new HashMap<>(values);
+		replacementValues.put( "module.name", getCard().getName() );
+		replacementValues.put( "module.version", getCard().getVersion() );
+		replacementValues.put( "module.release", getCard().getRelease().toHumanString() );
 
-			return new Document( uri, icon, title ).url( url ).values( values ).tags( tags ).store( true );
+		try {
+			// Create the resource content URL
+			URL url = (URL)ResourceBundle.getBundle( CartesiaHelp.class.getName() ).getObject( resourcePath );
+
+			return new Document( uri, icon, title ).url( url ).values( replacementValues ).tags( tags ).store( true );
 		} catch( MissingResourceException exception ) {
 			log.atWarn().log( "Resource not found: path=%s", resourcePath );
-			if( defaultContent != null ) return new Document( uri, icon, title ).content( defaultContent ).values( values ).tags( tags ).store( true );
+			if( defaultContent != null ) return new Document( uri, icon, title ).content( defaultContent ).values( replacementValues ).tags( tags ).store( true );
 		}
 
 		return null;
@@ -256,7 +267,7 @@ public class CartesiaMod extends Mod {
 			String title = command.getName();
 
 			String actionName = Objects.requireNonNullElse( command.getName(), "" );
-			String actionCommand = Objects.requireNonNullElse( command.getCommand(), "no command" );
+			String actionCommand = Objects.requireNonNullElse( command.getCommand(), "--" ).toUpperCase();
 			Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
 
 			StringBuilder defaultContent = new StringBuilder( "<html>" );

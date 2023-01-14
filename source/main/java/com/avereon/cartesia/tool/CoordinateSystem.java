@@ -30,7 +30,7 @@ public interface CoordinateSystem {
 	@Deprecated
 	List<Shape> getGridDots( DesignWorkplane workplane );
 
-	double[][] getGridDotsNew();
+//	double[][] getGridDotsNew();
 
 	/**
 	 * @param workplane

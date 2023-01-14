@@ -100,7 +100,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	public void enter( KeyEvent event ) {
 		event.consume();
-		String input = getCommandPrompt().getText();
+		String input = getCommandPrompt().getCommand();
 		if( input.isEmpty() ) {
 			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
@@ -137,7 +137,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	public void repeat( KeyEvent event ) {
 		event.consume();
-		if( TextUtil.isEmpty( getCommandPrompt().getText() ) ) {
+		if( TextUtil.isEmpty( getCommandPrompt().getCommand() ) ) {
 			pushCommand( mapCommand( getPriorCommand() ) );
 			reset();
 		}
@@ -199,6 +199,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 				case SPACE -> repeat( event );
 			}
 		}
+
+		commandStack.forEach( r -> r.getCommand().handle( this, event ) );
 
 		// If the event is not consumed here, it will bubble up to the event
 		// handling of the scene which should trigger the appropriate action.

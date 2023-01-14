@@ -1,43 +1,54 @@
 package com.avereon.cartesia.cursor;
 
+import com.avereon.xenon.Program;
 import com.avereon.zarra.image.RenderedIcon;
+import com.avereon.zarra.javafx.Fx;
+import com.avereon.zarra.style.Theme;
 
-public class ReticleCursor extends IconCursor {
+import java.util.concurrent.CompletableFuture;
 
-	public static final ReticleCursor DUPLEX = new ReticleCursor( new DuplexReticle( 0.8 ) );
+public enum ReticleCursor {
 
-	public static final ReticleCursor DUPLEX_WIDE = new ReticleCursor( new DuplexReticle( 0.7 ) );
+	DUPLEX( new DuplexReticle( 0.8 ) ),
+	DUPLEX_WIDE( new DuplexReticle( 0.7 ) ),
+	DUPLEX_60( new DuplexReticle( 0.6 ) ),
+	DUPLEX_40( new DuplexReticle( 0.4 ) ),
+	DUPLEX_20( new DuplexReticle( 0.2 ) ),
+	DUPLEX_PIXEL( new DuplexPixelReticle( 0.7 ) ),
+	DUPLEX_DOT( new DuplexDotReticle( 0.7 ) ),
+	DUPLEX_CIRCLE( new DuplexCircleReticle( 0.8 ) ),
+	CROSSHAIR( new CrosshairReticle() );
 
-	public static final ReticleCursor DUPLEX_60 = new ReticleCursor( new DuplexReticle( 0.6 ) );
+	private final RenderedIcon icon;
 
-	public static final ReticleCursor DUPLEX_40 = new ReticleCursor( new DuplexReticle( 0.4 ) );
-
-	public static final ReticleCursor DUPLEX_20 = new ReticleCursor( new DuplexReticle( 0.2 ) );
-
-	public static final ReticleCursor DUPLEX_PIXEL = new ReticleCursor( new DuplexPixelReticle( 0.7 ) );
-
-	public static final ReticleCursor DUPLEX_DOT = new ReticleCursor( new DuplexDotReticle( 0.7 ) );
-
-	public static final ReticleCursor DUPLEX_CIRCLE = new ReticleCursor( new DuplexCircleReticle( 0.8 ) );
-
-	public static final ReticleCursor CROSSHAIR = new ReticleCursor( new CrosshairReticle() );
-
-	protected ReticleCursor( RenderedIcon icon ) {
-		super( icon );
+	ReticleCursor( RenderedIcon icon ) {
+		this.icon = icon;
 	}
 
-	public static ReticleCursor valueOf( String string ) {
-		return switch( string.toUpperCase() ) {
-			case "DUPLEX_WIDE" -> DUPLEX_WIDE;
-			case "CROSSHAIR" -> CROSSHAIR;
-			case "DUPLEX_60" -> DUPLEX_60;
-			case "DUPLEX_40" -> DUPLEX_40;
-			case "DUPLEX_20" -> DUPLEX_20;
-			case "DUPLEX_PIXEL" -> DUPLEX_PIXEL;
-			case "DUPLEX_DOT" -> DUPLEX_DOT;
-			case "DUPLEX_CIRCLE" -> DUPLEX_CIRCLE;
-			default -> DUPLEX;
-		};
+	public IconCursor getCursorIcon( Program program ) {
+		// NEXT Get the cursor color to change with the theme
+
+		/*
+		I think I have figured out how I planned the cursor color to
+		change. Because the cursor is rendered in its own scene it does
+		not get any information from the workspace theme. There is,
+		however, a setTheme() method to force light or dark. I just
+		need to figure out how to link the workspace theme to the cursor
+		theme.
+
+		This also means that all the work that I put in to passing in
+		a stylesheet may not be needed or desired. There is a conflict
+		with setting the CSS directly with setTheme() and indirectly
+		with getStylesheets().add()
+		 */
+		icon.setTheme( program.getWorkspaceManager().getThemeMetadata().isDark() ? Theme.DARK : Theme.LIGHT );
+		CompletableFuture<IconCursor> future = new CompletableFuture<>();
+		Fx.run( () -> future.complete( new IconCursor( icon ) ) );
+		try {
+			return future.get();
+		} catch( Exception exception ) {
+			throw new RuntimeException( exception );
+		}
 	}
 
 }

@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.view;
 import com.avereon.cartesia.data.DesignDrawable;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.DesignText;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
@@ -19,12 +20,14 @@ import javafx.scene.shape.Ellipse;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.List;
 import java.util.concurrent.Callable;
 
+@SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
 public class DesignShapeView extends DesignDrawableView {
 
@@ -40,9 +43,9 @@ public class DesignShapeView extends DesignDrawableView {
 
 	private EventHandler<NodeEvent> parentChangedHandler;
 
-	private EventHandler<NodeEvent> drawWidthHandler;
-
 	private EventHandler<NodeEvent> drawPaintHandler;
+
+	private EventHandler<NodeEvent> drawWidthHandler;
 
 	private EventHandler<NodeEvent> drawCapHandler;
 
@@ -53,6 +56,8 @@ public class DesignShapeView extends DesignDrawableView {
 	private EventHandler<NodeEvent> selectedHandler;
 
 	private Rotate rotate;
+
+	private Scale scale;
 
 	public DesignShapeView( DesignPane pane, DesignShape designShape ) {
 		super( pane, designShape );
@@ -116,12 +121,13 @@ public class DesignShapeView extends DesignDrawableView {
 	@Override
 	void registerListeners() {
 		getDesignShape().register( NodeEvent.PARENT_CHANGED, parentChangedHandler = e -> Fx.run( this::updateShapeValues ) );
+		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() != null && (Boolean)e.getNewValue() ) ) );
+
 		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_CAP, drawCapHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_PATTERN, drawPatternHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.FILL_PAINT, fillPaintHandler = e -> Fx.run( this::updateShapeValues ) );
-		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() != null && (Boolean)e.getNewValue() ) ) );
 	}
 
 	@Override
@@ -135,6 +141,18 @@ public class DesignShapeView extends DesignDrawableView {
 		getDesignShape().unregister( NodeEvent.PARENT_CHANGED, parentChangedHandler );
 	}
 
+	void updateScale( DesignText text, Shape shape ) {
+		shape.getTransforms().remove( this.scale );
+		this.scale = Transform.scale( 1, 1 );
+		shape.getTransforms().add( this.scale );
+	}
+
+	void updateRotate( DesignText text, Shape shape ) {
+		shape.getTransforms().remove( this.rotate );
+		this.rotate = Transform.rotate( text.calcRotate(), text.getOrigin().getX(), text.getOrigin().getY() );
+		shape.getTransforms().add( this.rotate );
+	}
+
 	void updateRotate( DesignEllipse ellipse, Shape shape ) {
 		shape.getTransforms().remove( this.rotate );
 		this.rotate = Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() );
@@ -142,12 +160,12 @@ public class DesignShapeView extends DesignDrawableView {
 	}
 
 	Point3D getArcPoint( Arc arc, double angle ) {
-		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
+		// NOTE The ellipse rotate angle does not come from the shape rotate property, but from the rotate transform
 		return CadGeometry.ellipsePoint360( new Point3D( arc.getCenterX(), arc.getCenterY(), 0 ), arc.getRadiusX(), -arc.getRadiusY(), calcRotate(), angle );
 	}
 
 	Point3D getEllipsePoint( Ellipse ellipse, double angle ) {
-		// NOTE The rotate angle does not come from the shape rotate property, but from the rotate transform
+		// NOTE The ellipse rotate angle does not come from the shape rotate property, but from the rotate transform
 		return CadGeometry.ellipsePoint360( new Point3D( ellipse.getCenterX(), ellipse.getCenterY(), 0 ), ellipse.getRadiusX(), -ellipse.getRadiusY(), calcRotate(), angle );
 	}
 
@@ -216,7 +234,7 @@ public class DesignShapeView extends DesignDrawableView {
 		return (List<ConstructionPoint>)shape.getProperties().getOrDefault( CONSTRUCTION_POINTS, List.of() );
 	}
 
-	static ConstructionPoint cp( DesignPane pane, ObservableValue<Number> xProperty, Callable<Double> xAction, ObservableValue<Number> yProperty, Callable<Double> yAction ) {
+	static ConstructionPoint cp( DesignPane pane, ObservableValue<?> xProperty, Callable<Double> xAction, ObservableValue<?> yProperty, Callable<Double> yAction ) {
 		return cp( pane, Bindings.createDoubleBinding( xAction, xProperty ), Bindings.createDoubleBinding( yAction, yProperty ) );
 	}
 

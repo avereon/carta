@@ -101,6 +101,7 @@ public class DesignEllipse extends DesignShape {
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setRotate( Double value ) {
+		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) ) value = null;
 		setValue( ROTATE, value );
 		return (T)this;
 	}
@@ -171,7 +172,7 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public Map<String, Object> getInformation() {
-		Map<String,Object> info = new HashMap<>();
+		Map<String, Object> info = new HashMap<>();
 		info.put( ORIGIN, getOrigin() );
 		if( isCircle() ) {
 			info.put( RADIUS, getRadius() );
@@ -234,6 +235,22 @@ public class DesignEllipse extends DesignShape {
 		if( map.containsKey( X_RADIUS ) ) setXRadius( (Double)map.get( X_RADIUS ) );
 		if( map.containsKey( Y_RADIUS ) ) setYRadius( (Double)map.get( Y_RADIUS ) );
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
+		return this;
+	}
+
+	@Override
+	public DesignShape updateFrom( DesignShape shape ) {
+		super.updateFrom( shape );
+		if( !(shape instanceof DesignEllipse ellipse) ) return this;
+
+		try( Txn ignore = Txn.create() ) {
+			this.setXRadius( ellipse.getXRadius() );
+			this.setYRadius( ellipse.getYRadius() );
+			this.setRotate( ellipse.getRotate() );
+		} catch( TxnException exception ) {
+			log.atWarn().log( "Unable to update curve" );
+		}
+
 		return this;
 	}
 

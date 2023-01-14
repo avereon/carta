@@ -7,20 +7,35 @@ import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.data.NodeComparator;
 import com.avereon.zarra.color.Paints;
+import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+@SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
 public class DesignLayer extends DesignDrawable {
 
 	public static final String NAME = "name";
 
 	public static final String UNIT = "unit";
+
+	public static final String TEXT_FONT = "text-font";
+
+	public static final String TEXT_FILL_PAINT = "text-fill-paint";
+
+	public static final String TEXT_DRAW_PAINT = "text-draw-paint";
+
+	public static final String TEXT_DRAW_WIDTH = "text-draw-width";
+
+	public static final String TEXT_DRAW_CAP = "text-draw-cap";
+
+	public static final String TEXT_DRAW_PATTERN = "text-draw-pattern";
 
 	// NOTE Visibility state is stored in the design tool,
 	// instead of here in the data model so that each tool can have different
@@ -41,15 +56,34 @@ public class DesignLayer extends DesignDrawable {
 
 	static final String DEFAULT_FILL_PAINT = null;
 
+	static final String DEFAULT_TEXT_FONT = "System|Regular|1.0";
+
+	static final String DEFAULT_TEXT_FILL_PAINT = "#000000ff";
+
+	static final String DEFAULT_TEXT_DRAW_PAINT = null;
+
+	static final String DEFAULT_TEXT_DRAW_WIDTH = "0.05";
+
+	static final String DEFAULT_TEXT_DRAW_CAP = StrokeLineCap.ROUND.name().toLowerCase();
+
+	static final String DEFAULT_TEXT_DRAW_PATTERN = null;
+
 	public DesignLayer() {
 		defineNaturalKey( NAME );
-		addModifyingKeys( NAME, UNIT, LAYERS, SHAPES );
+		addModifyingKeys( NAME, UNIT, TEXT_FONT, TEXT_FILL_PAINT, TEXT_DRAW_PAINT, TEXT_DRAW_WIDTH, TEXT_DRAW_CAP, TEXT_DRAW_PATTERN, LAYERS, SHAPES );
 
 		setDrawPaint( DEFAULT_DRAW_PAINT );
 		setDrawWidth( DEFAULT_DRAW_WIDTH );
 		setDrawPattern( DEFAULT_DRAW_PATTERN );
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
+
+		setTextFont( DEFAULT_TEXT_FONT );
+		setTextFillPaint( DEFAULT_TEXT_FILL_PAINT );
+		setTextDrawPaint( DEFAULT_TEXT_DRAW_PAINT );
+		setTextDrawWidth( DEFAULT_TEXT_DRAW_WIDTH );
+		setTextDrawPattern( DEFAULT_TEXT_DRAW_PATTERN );
+		setTextDrawCap( DEFAULT_TEXT_DRAW_CAP );
 
 		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
 	}
@@ -76,9 +110,7 @@ public class DesignLayer extends DesignDrawable {
 	}
 
 	public boolean isRootLayer() {
-		Optional<Design> optional = getDesign();
-		if( optional.isEmpty() ) return false;
-		return this == optional.get().getLayers();
+		return getDesign().filter( design -> this == design.getLayers() ).isPresent();
 	}
 
 	public String getFullName() {
@@ -180,15 +212,6 @@ public class DesignLayer extends DesignDrawable {
 		return this;
 	}
 
-	//	public boolean isVisible() {
-	//		return getValue( VISIBLE, false );
-	//	}
-
-	//	public DesignLayer setVisible( boolean visible ) {
-	//		setValue( VISIBLE, visible );
-	//		return this;
-	//	}
-
 	@SuppressWarnings( "UnusedReturnValue" )
 	public <T extends DesignDrawable> T addDrawable( T drawable ) {
 		if( drawable instanceof DesignShape ) {
@@ -210,7 +233,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public String getDrawPaint() {
-		return getValue( DRAW_PAINT );
+		return getValue( DRAW_PAINT, DEFAULT_DRAW_PAINT );
 	}
 
 	@Override
@@ -250,7 +273,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public String getFillPaint() {
-		return getValue( FILL_PAINT );
+		return getValue( FILL_PAINT, DEFAULT_FILL_PAINT );
 	}
 
 	@Override
@@ -258,10 +281,101 @@ public class DesignLayer extends DesignDrawable {
 		return Paints.parseWithNullOnException( getFillPaint() );
 	}
 
+	public String getTextFont() {
+		return getValue( TEXT_FONT, DEFAULT_TEXT_FONT );
+	}
+
+	public Font calcTextFont() {
+		return FontUtil.decode( getTextFont() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setTextFont( String value ) {
+		setValue( TEXT_FONT, value );
+		return (T)this;
+	}
+
+	public String getTextFillPaint() {
+		return getValue( TEXT_FILL_PAINT, DEFAULT_TEXT_FILL_PAINT );
+	}
+
+	public Paint calcTextFillPaint() {
+		return Paints.parseWithNullOnException( getTextFillPaint() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setTextFillPaint( String value ) {
+		setValue( TEXT_FILL_PAINT, value );
+		return (T)this;
+	}
+
+	public String getTextDrawPaint() {
+		return getValue( TEXT_DRAW_PAINT, DEFAULT_TEXT_DRAW_PAINT );
+	}
+
+	public Paint calcTextDrawPaint() {
+		return Paints.parseWithNullOnException( getTextDrawPaint() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setTextDrawPaint( String value ) {
+		setValue( TEXT_DRAW_PAINT, value );
+		return (T)this;
+	}
+
+	public String getTextDrawWidth() {
+		return getValue( TEXT_DRAW_WIDTH, DEFAULT_TEXT_DRAW_WIDTH );
+	}
+
+	public double calcTextDrawWidth() {
+		return CadMath.evalNoException( getTextDrawWidth() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setTextDrawWidth( String value ) {
+		setValue( TEXT_DRAW_WIDTH, value );
+		return (T)this;
+	}
+
+	public String getTextDrawPattern() {
+		return getValue( TEXT_DRAW_PATTERN, DEFAULT_TEXT_DRAW_PATTERN );
+	}
+
+	public List<Double> calcTextDrawPattern() {
+		return CadShapes.parseDashPattern( getTextDrawPattern() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setTextDrawPattern( String value ) {
+		setValue( TEXT_DRAW_PATTERN, value );
+		return (T)this;
+	}
+
+	public String getTextDrawCap() {
+		return getValue( TEXT_DRAW_CAP, DEFAULT_TEXT_DRAW_CAP );
+	}
+
+	public StrokeLineCap calcTextDrawCap() {
+		return StrokeLineCap.valueOf( getTextDrawCap().toUpperCase() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setTextDrawCap( String value ) {
+		setValue( TEXT_DRAW_CAP, value );
+		return (T)this;
+	}
+
 	@Override
 	public Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( NAME ) );
+		map.putAll( asMap( NAME, TEXT_FONT, TEXT_FILL_PAINT, TEXT_DRAW_PAINT, TEXT_DRAW_WIDTH, TEXT_DRAW_CAP, TEXT_DRAW_PATTERN ) );
+
+//		if( Objects.equals( getTextDrawPaint(), "none" ) ) map.remove( TEXT_DRAW_PAINT ); // This one
+//		if( Objects.equals( getTextDrawPattern(), "null" ) ) map.remove( TEXT_DRAW_PATTERN ); // This one
+
+//		if( Objects.equals( getTextFillPaint(), "none" ) ) map.remove( TEXT_FILL_PAINT );
+//		if( Objects.equals( getTextDrawPaint(), "none" ) ) map.remove( TEXT_DRAW_PAINT );
+
 		return map;
 	}
 
@@ -274,7 +388,22 @@ public class DesignLayer extends DesignDrawable {
 
 	public DesignLayer updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
+
+		// Fix pattern data
+		String textDrawPattern = (String)map.get( TEXT_DRAW_PATTERN );
+		if( "0".equals( textDrawPattern ) ) textDrawPattern = null;
+		if( "".equals( textDrawPattern ) ) textDrawPattern = null;
+
 		if( map.containsKey( NAME ) ) setName( (String)map.get( NAME ) );
+
+		// Text
+		if( map.containsKey( TEXT_FONT ) ) setTextFont( (String)map.get( TEXT_FONT ) );
+		setTextFillPaint( map.containsKey( TEXT_FILL_PAINT ) ? (String)map.get( TEXT_FILL_PAINT ) : null );
+		setTextDrawPaint( map.containsKey( TEXT_DRAW_PAINT ) ? (String)map.get( TEXT_DRAW_PAINT ) : null );
+		if( map.containsKey( TEXT_DRAW_WIDTH ) ) setTextDrawWidth( (String)map.get( TEXT_DRAW_WIDTH ) );
+		if( map.containsKey( TEXT_DRAW_CAP ) ) setTextDrawCap( (String)map.get( TEXT_DRAW_CAP ) );
+		if( map.containsKey( TEXT_DRAW_PATTERN ) ) setTextDrawPattern( textDrawPattern );
+
 		return this;
 	}
 

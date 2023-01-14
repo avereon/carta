@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<pages version="1.0">
+
+	<page id="text">
+		<group id="text-title">
+			<setting id="layer" key="layer" editor="combobox" provider="design-shape-layers"/>
+
+			<setting id="text-font" key="text-font-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="text-font-custom" key="text-font" editor="font">
+				<dependency key="text-font-mode" value="custom"/>
+			</setting>
+
+			<setting id="text-draw-paint" key="text-draw-paint-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="text-draw-paint-custom" key="text-draw-paint" editor="paint">
+				<dependency key="text-draw-paint-mode" value="custom"/>
+			</setting>
+
+			<setting id="text-draw-width" key="text-draw-width-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="text-draw-width-custom" key="text-draw-width" type="math-expression" editor="textline">
+				<dependency key="text-draw-width-mode" value="custom"/>
+			</setting>
+
+			<setting id="text-draw-pattern" key="text-draw-pattern-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="text-draw-pattern-custom" key="text-draw-pattern" type="csv" editor="textline">
+				<dependency key="text-draw-pattern-mode" value="custom"/>
+			</setting>
+
+			<setting id="text-draw-cap" key="text-draw-cap-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="text-draw-cap-custom" key="text-draw-cap" editor="combobox">
+				<dependency key="text-draw-cap-mode" value="custom"/>
+				<option key="square"/>
+				<option key="round"/>
+				<option key="butt"/>
+			</setting>
+
+			<setting id="text-fill-paint" key="text-fill-paint-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+				<option key="none"/>
+			</setting>
+			<setting id="text-fill-paint-custom" key="text-fill-paint" editor="paint">
+				<dependency key="text-fill-paint-mode" value="custom"/>
+			</setting>
+		</group>
+	</page>
+
+</pages>

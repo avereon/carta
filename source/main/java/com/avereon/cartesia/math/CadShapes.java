@@ -1,7 +1,7 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.data.DesignShapeDistanceComparator;
+import com.avereon.cartesia.data.util.DesignShapeDistanceComparator;
 import com.avereon.curve.math.Geometry;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;

@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -18,8 +17,6 @@ public class Flip extends EditCommand {
 
 	private Point3D anchor;
 
-	private Point3D lastPoint;
-
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
@@ -29,7 +26,7 @@ public class Flip extends EditCommand {
 		// Ask for an anchor point
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
+			promptForPoint( context, "axis-anchor" );
 			return INCOMPLETE;
 		}
 
@@ -38,7 +35,7 @@ public class Flip extends EditCommand {
 			anchor = asPoint( context, parameters[ 0 ] );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			addPreview( context, cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() ) );
-			promptForPoint( context, "target" );
+			promptForPoint( context, "axis-point" );
 			return INCOMPLETE;
 		}
 
@@ -69,14 +66,8 @@ public class Flip extends EditCommand {
 				case 2 -> {
 					referenceLine.setPoint( point );
 
-					if( !CadGeometry.areSamePoint( anchor, point ) ) {
-						if( lastPoint != null ) {
-							reflipShapes( getPreview(), anchor, lastPoint, point );
-						} else {
-							flipShapes( getPreview(), anchor, point );
-						}
-						lastPoint = point;
-					}
+					resetPreviewGeometry();
+					flipShapes( getPreview(), anchor, point );
 				}
 			}
 		}

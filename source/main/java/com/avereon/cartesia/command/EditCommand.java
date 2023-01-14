@@ -3,6 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignTool;
@@ -33,10 +34,6 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, CadTransform.mirror( origin, point ) );
 	}
 
-	protected void reflipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D lastPoint, Point3D point ) {
-		transformShapes( shapes, CadTransform.mirror( origin, point ).combine( CadTransform.mirror( origin, lastPoint ) ) );
-	}
-
 	protected void flipShapes( DesignTool tool, Point3D origin, Point3D point ) {
 		if( CadGeometry.areSamePoint( origin, point ) ) return;
 		apply( tool, CadTransform.mirror( origin, point ) );
@@ -58,19 +55,46 @@ public abstract class EditCommand extends Command {
 		apply( tool, CadTransform.rotation( center, CadPoints.UNIT_Z, CadGeometry.pointAngle360( anchor, center, target ) ) );
 	}
 
-	protected void scaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D target ) {
-		transformShapes( shapes, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ) );
+	protected void scaleShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
+		transformShapes( shapes, getScaleTransform( anchor, source, target ) );
 	}
 
-	protected void rescaleShapes( Collection<DesignShape> shapes, Point3D center, Point3D anchor, Point3D lastPoint, Point3D target ) {
-		transformShapes(
-			shapes,
-			CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ).combine( CadTransform.scale( center, 1 / (lastPoint.distance( center ) / anchor.distance( center )) ) )
-		);
+	protected void scaleShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
+		apply( tool, getScaleTransform( anchor, source, target ) );
 	}
 
-	protected void scaleShapes( DesignTool tool, Point3D center, Point3D anchor, Point3D target ) {
-		apply( tool, CadTransform.scale( center, target.distance( center ) / anchor.distance( center ) ) );
+	private CadTransform getScaleTransform( Point3D anchor, Point3D source, Point3D target ) {
+		// This implementation uses a rotate/scale/-rotate transform
+		Point3D base = source.subtract( anchor );
+		Point3D stretch = target.subtract( anchor );
+
+		// Create an orientation such that the x-axis is aligned with the base
+		CadOrientation orientation = new CadOrientation( anchor, CadOrientation.Z_UNIT, base );
+
+		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
+
+		return orientation.getLocalToTargetTransform().combine( CadTransform.scale( scale, scale, 1 ) ).combine( orientation.getTargetToLocalTransform() );
+	}
+
+	protected void squishShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
+		transformShapes( shapes, getSquishTransform( anchor, source, target ) );
+	}
+
+	protected void squishShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
+		apply( tool, getSquishTransform( anchor, source, target ) );
+	}
+
+	private CadTransform getSquishTransform( Point3D anchor, Point3D source, Point3D target ) {
+		// This implementation uses a rotate/scale/-rotate transform
+		Point3D base = source.subtract( anchor );
+		Point3D stretch = target.subtract( anchor );
+
+		// Create an orientation such that the z-axis is aligned with the base
+		CadOrientation orientation = new CadOrientation( anchor, base );
+
+		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
+
+		return orientation.getLocalToTargetTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getTargetToLocalTransform() );
 	}
 
 	protected void deleteShapes( DesignTool tool ) {

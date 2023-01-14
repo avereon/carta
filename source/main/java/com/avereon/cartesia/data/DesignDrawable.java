@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 
 @CustomLog
+@SuppressWarnings( "UnusedReturnValue" )
 public abstract class DesignDrawable extends DesignNode {
 
 	public static final String ORDER = "order";
@@ -209,17 +210,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
-		if( TextUtil.areEqual( key, VIRTUAL_LAYER ) ) return changeLayer( newValue );
-
-		switch( key ) {
+		return switch( key ) {
+			case VIRTUAL_LAYER -> changeLayer( newValue );
 			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
 			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidthMode( newValue );
 			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPatternMode( newValue );
 			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCapMode( newValue );
 			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaintMode( newValue );
-		}
-
-		return super.setValue( key, newValue );
+			default -> super.setValue( key, newValue );
+		};
 	}
 
 	protected Map<String, Object> asMap() {
@@ -231,17 +230,19 @@ public abstract class DesignDrawable extends DesignNode {
 	public DesignDrawable updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 
-		// Fix bad data
+		// Fix pattern data
 		String drawPattern = (String)map.get( DRAW_PATTERN );
 		if( "0".equals( drawPattern ) ) drawPattern = null;
 		if( "".equals( drawPattern ) ) drawPattern = null;
 
 		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
+
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
 		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( drawPattern );
 		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );
+
 		return this;
 	}
 
@@ -305,7 +306,7 @@ public abstract class DesignDrawable extends DesignNode {
 			setDrawPattern( isCustom ? getDrawPatternWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting draw patter" );
+			log.atError().withCause( exception ).log( "Error setting draw pattern" );
 		}
 		return newValue;
 	}
@@ -318,7 +319,7 @@ public abstract class DesignDrawable extends DesignNode {
 			setFillPaint( isCustom ? getFillPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting draw width" );
+			log.atError().withCause( exception ).log( "Error setting fill paint" );
 		}
 		return newValue;
 	}

@@ -1,5 +1,6 @@
-package com.avereon.cartesia.data;
+package com.avereon.cartesia.data.util;
 
+import com.avereon.cartesia.data.DesignMarker;
 import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;

@@ -28,7 +28,7 @@ public class CadGeometry {
 		return Math.toDegrees( Geometry.pointAngle( asPoint( a ), asPoint( b ), asPoint( c ) ) );
 	}
 
-	public static double normalizeAngle180( double angle ) {
+	public static double clampAngle360( double angle ) {
 		angle %= 360;
 		if( angle < -180 ) angle += 360;
 		if( angle > 180 ) angle -= 360;
@@ -141,6 +141,10 @@ public class CadGeometry {
 
 	public static boolean areSameSize( double a, double b ) {
 		return Geometry.areSameSize( a, b );
+	}
+
+	public static boolean areSameAngle360( double a, double b ) {
+		return Geometry.areSameAngle( Math.toRadians( a ), Math.toRadians( b ) );
 	}
 
 	public static boolean areSamePoint( Point3D a, Point3D b ) {

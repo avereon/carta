@@ -16,8 +16,8 @@ import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @CustomLog
@@ -28,8 +28,6 @@ public class Stretch extends EditCommand {
 	private DesignLine referenceLine;
 
 	private Point3D anchor;
-
-	private Point3D lastPoint;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -44,7 +42,7 @@ public class Stretch extends EditCommand {
 
 		// Ask for an anchor point
 		if( parameters.length < 2 ) {
-			List<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() );
+			Collection<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() );
 			addPreview( context, preview );
 
 			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, parameters[ 0 ] ) );
@@ -89,15 +87,14 @@ public class Stretch extends EditCommand {
 				case 3 -> {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
-					if( lastPoint == null ) lastPoint = anchor;
-					stretchShapes( pointsToMove, lastPoint, point );
-					lastPoint = point;
+					resetPreviewGeometry();
+					stretchShapes( pointsToMove, anchor, point );
 				}
 			}
 		}
 	}
 
-	private static Set<PointCoordinate> computePointsToMove( DesignTool tool, List<DesignShape> shapes, Bounds bounds ) {
+	private static Set<PointCoordinate> computePointsToMove( DesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
 		Set<PointCoordinate> points = new HashSet<>();
 
 		for( DesignShape shape : shapes ) {

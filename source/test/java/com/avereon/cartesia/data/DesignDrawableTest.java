@@ -3,6 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.zarra.color.Paints;
+import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,6 +37,8 @@ public class DesignDrawableTest {
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( drawable.getFillPaint() ).isEqualTo( DesignDrawable.MODE_LAYER );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
+		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
+		assertThat( layer.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
 	}
 
 	@Test
@@ -52,6 +55,7 @@ public class DesignDrawableTest {
 		assertThat( layer.getDrawCap() ).isEqualTo( DesignLayer.DEFAULT_DRAW_CAP );
 		assertThat( layer.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
 		assertThat( layer.getFillPaint() ).isEqualTo( DesignLayer.DEFAULT_FILL_PAINT );
+		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
 	}
 
 	@Test
@@ -61,6 +65,7 @@ public class DesignDrawableTest {
 		assertThat( layer.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 		assertThat( layer.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( layer.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
+		assertThat( layer.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
 	}
 
 	@Test
