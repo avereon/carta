@@ -155,7 +155,7 @@ public class DesignLayer extends DesignDrawable {
 	 * @return The child layers of this layer
 	 */
 	public List<DesignLayer> getLayers() {
-		return getValueList( LAYERS, new NodeComparator<>( DesignLayer.ORDER, DesignLayer.NAME ) );
+		return getValueList( LAYERS, getComparator() );
 	}
 
 	public DesignLayer addLayer( DesignLayer layer ) {
@@ -370,11 +370,11 @@ public class DesignLayer extends DesignDrawable {
 		Map<String, Object> map = super.asMap();
 		map.putAll( asMap( NAME, TEXT_FONT, TEXT_FILL_PAINT, TEXT_DRAW_PAINT, TEXT_DRAW_WIDTH, TEXT_DRAW_CAP, TEXT_DRAW_PATTERN ) );
 
-//		if( Objects.equals( getTextDrawPaint(), "none" ) ) map.remove( TEXT_DRAW_PAINT ); // This one
-//		if( Objects.equals( getTextDrawPattern(), "null" ) ) map.remove( TEXT_DRAW_PATTERN ); // This one
+		//		if( Objects.equals( getTextDrawPaint(), "none" ) ) map.remove( TEXT_DRAW_PAINT ); // This one
+		//		if( Objects.equals( getTextDrawPattern(), "null" ) ) map.remove( TEXT_DRAW_PATTERN ); // This one
 
-//		if( Objects.equals( getTextFillPaint(), "none" ) ) map.remove( TEXT_FILL_PAINT );
-//		if( Objects.equals( getTextDrawPaint(), "none" ) ) map.remove( TEXT_DRAW_PAINT );
+		//		if( Objects.equals( getTextFillPaint(), "none" ) ) map.remove( TEXT_FILL_PAINT );
+		//		if( Objects.equals( getTextDrawPaint(), "none" ) ) map.remove( TEXT_DRAW_PAINT );
 
 		return map;
 	}
@@ -409,7 +409,9 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public <T extends Node> Comparator<T> getComparator() {
-		return new NodeComparator<>( ORDER, NAME );
+		Comparator<T> byOrder = Comparator.comparingInt( o ->  o.getValue( ORDER ) );
+		Comparator<T> byName = Comparator.comparing( o -> o.getValue( NAME ) );
+		return byOrder.thenComparing( byName );
 	}
 
 	@Override
