@@ -5,7 +5,7 @@ import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
-import com.avereon.data.NodeComparator;
+import com.avereon.xenon.NodeOrderNameComparator;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Paint;
@@ -409,9 +409,7 @@ public class DesignLayer extends DesignDrawable {
 
 	@Override
 	public <T extends Node> Comparator<T> getComparator() {
-		Comparator<T> byOrder = Comparator.comparingInt( o ->  o.getValue( ORDER ) );
-		Comparator<T> byName = Comparator.comparing( o -> o.getValue( NAME ) );
-		return byOrder.thenComparing( byName );
+		return new NodeOrderNameComparator<>();
 	}
 
 	@Override
