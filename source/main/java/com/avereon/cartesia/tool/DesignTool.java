@@ -233,6 +233,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewPoint( Point3D point ) {
+		getCommandContext().setPreviousViewpoint( getViewPoint() );
 		if( designPane != null ) designPane.setViewPoint( point );
 	}
 
@@ -241,6 +242,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewRotate( double angle ) {
+		getCommandContext().setPreviousRotate( getViewRotate() );
 		if( designPane != null ) Fx.run( () -> designPane.setViewRotate( angle ) );
 	}
 
@@ -249,6 +251,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setZoom( double zoom ) {
+		getCommandContext().setPreviousZoom( getZoom() );
 		if( designPane != null ) designPane.setZoom( zoom );
 	}
 
