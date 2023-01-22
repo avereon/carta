@@ -104,12 +104,14 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public double pathLength() {
+		// If the arc is circular then use the circle formula
+		if( isCircle() ) return getRadius() * Math.abs( Math.toRadians( getExtent() ) );
+
+		// TODO Improve DesignArc.pathLength()
 		// TODO Calc the t of the start
 		// TODO Calc the t of the start+extent
 		// TODO Calc the parametric path length
 
-		// TODO Improve DesignArc.pathLength()
-		// This implementation is a simple estimate based on the origin and radius
 		return Double.NaN;
 	}
 

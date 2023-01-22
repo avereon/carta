@@ -240,7 +240,7 @@ public class CartesiaMod extends Mod {
 		String modKey = getCard().getProductKey();
 		URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
 
-		Map<String, String> replacementValues = new HashMap<>(values);
+		Map<String, String> replacementValues = new HashMap<>( values );
 		replacementValues.put( "module.name", getCard().getName() );
 		replacementValues.put( "module.version", getCard().getVersion() );
 		replacementValues.put( "module.release", getCard().getRelease().toHumanString() );
@@ -278,7 +278,8 @@ public class CartesiaMod extends Mod {
 			defaultContent.append( "<h2>" ).append( actionCommand ).append( "</h2>" );
 			defaultContent.append( "</body></html>" );
 
-			Document document = createIndexableDocument( icon, title, resourcePath, values, command.getTags(), defaultContent.toString() );
+			String documentTitle = actionCommand + " - " + title;
+			Document document = createIndexableDocument( icon, documentTitle, resourcePath, values, command.getTags(), defaultContent.toString() );
 			if( document != null ) getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}

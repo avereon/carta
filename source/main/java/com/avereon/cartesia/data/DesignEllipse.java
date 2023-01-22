@@ -138,9 +138,7 @@ public class DesignEllipse extends DesignShape {
 	public double distanceTo( Point3D point ) {
 		// TODO Improve DesignEllipse.distanceTo()
 		// This implementation is a simple estimate based on the origin and radius
-		double[] o = CadPoints.asPoint( getOrigin() );
-		double[] p = CadPoints.asPoint( point );
-		return isCircle() ? Math.abs( Geometry.distance( o, p ) - getRadius() ) : Double.NaN;
+		return isCircle() ? Math.abs( CadGeometry.distance( getOrigin(), point ) - getRadius() ) : Double.NaN;
 	}
 
 	boolean isCircle() {
@@ -149,6 +147,9 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public double pathLength() {
+		// If the ellipse is circular then use the circle formula
+		if( isCircle() ) return 2 * Math.PI * getRadius();
+
 		double a = getXRadius();
 		double b = getYRadius();
 		double h = ((a - b) * (a - b)) / ((a + b) * (a + b));

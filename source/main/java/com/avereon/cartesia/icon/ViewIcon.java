@@ -39,13 +39,11 @@ public class ViewIcon extends SvgIcon {
 		String eye = "M 4,16 A 16 16 0 0 0 28,16 A 16 16 0 0 0 4,16 Z";
 		String bLid = "M 2,16 A 17 17 0 0 0 30,16 A 15 15 0 0 1 2,16 Z";
 
-		clip( eye );
-		fill( circle( Px, Py, 7 ) + " " + circle( Px, Py, 2 ) );
-
-		//restore();
-		clip(null);
 		fill( tLid );
 		fill( bLid );
+
+		clip( eye );
+		fill( circle( Px, Py, 7 ) + " " + circle( Px, Py, 2 ) );
 	}
 
 	protected void doRenderOld() {

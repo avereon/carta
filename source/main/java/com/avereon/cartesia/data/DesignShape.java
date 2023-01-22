@@ -3,7 +3,6 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
-import com.avereon.data.NodeComparator;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
@@ -75,7 +74,7 @@ public abstract class DesignShape extends DesignDrawable {
 	 *
 	 * @return the map of the shape information
 	 */
-	public Map<String,Object> getInformation() {
+	public Map<String, Object> getInformation() {
 		return Map.of();
 	}
 
@@ -118,7 +117,7 @@ public abstract class DesignShape extends DesignDrawable {
 
 	@Override
 	public <T extends Node> Comparator<T> getComparator() {
-		return new NodeComparator<>( ORDER );
+		return Comparator.comparingInt( o -> o.getValue( ORDER ) );
 	}
 
 }
