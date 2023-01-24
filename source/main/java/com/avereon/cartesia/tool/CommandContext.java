@@ -56,12 +56,6 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private Point3D anchor;
 
-	private Point3D previousViewpoint;
-
-	private double previousZoom;
-
-	private double previousRotate;
-
 	private DesignTool tool;
 
 	public CommandContext( ProgramProduct product ) {
@@ -263,30 +257,6 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	void setAnchor( Point3D anchor ) {
 		this.anchor = anchor;
-	}
-
-	public Point3D getPreviousViewpoint() {
-		return previousViewpoint;
-	}
-
-	public void setPreviousViewpoint( Point3D previousViewpoint ) {
-		this.previousViewpoint = previousViewpoint;
-	}
-
-	public double getPreviousZoom() {
-		return previousZoom;
-	}
-
-	public void setPreviousZoom( double previousZoom ) {
-		this.previousZoom = previousZoom;
-	}
-
-	public double getPreviousRotate() {
-		return previousRotate;
-	}
-
-	public void setPreviousRotate( double previousRotate ) {
-		this.previousRotate = previousRotate;
 	}
 
 	private void reset() {

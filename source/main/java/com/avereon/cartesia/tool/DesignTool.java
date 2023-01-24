@@ -143,9 +143,13 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final RedoAction redoAction;
 
+	private final DelayedAction rebuildGridAction;
+
+	private final DelayedAction storePreviousViewAction;
+
 	private final DesignWorkplane workplane;
 
-	private final DelayedAction rebuildGridAction;
+	private final Stack<DesignPortal> portalStack;
 
 	private ReticleCursor reticle;
 
@@ -183,11 +187,16 @@ public abstract class DesignTool extends GuidedTool {
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
 
-		this.workplane = new DesignWorkplane();
-
 		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
-		this.rebuildGridAction.setMaxTriggerLimit( 500 );
 		this.rebuildGridAction.setMinTriggerLimit( 100 );
+		this.rebuildGridAction.setMaxTriggerLimit( 500 );
+
+		this.storePreviousViewAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::capturePreviousPortal );
+		this.storePreviousViewAction.setMinTriggerLimit( 1000 );
+		this.storePreviousViewAction.setMaxTriggerLimit( 5000 );
+
+		this.workplane = new DesignWorkplane();
+		this.portalStack = new Stack<>();
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectedShapesChanged );
@@ -233,8 +242,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewPoint( Point3D point ) {
-		getCommandContext().setPreviousViewpoint( getViewPoint() );
-		if( designPane != null ) designPane.setViewPoint( point );
+		setView( point, getZoom() );
 	}
 
 	public double getViewRotate() {
@@ -242,8 +250,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewRotate( double angle ) {
-		getCommandContext().setPreviousRotate( getViewRotate() );
-		if( designPane != null ) Fx.run( () -> designPane.setViewRotate( angle ) );
+		setView( getViewPoint(), getZoom(), angle );
 	}
 
 	public double getZoom() {
@@ -251,8 +258,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setZoom( double zoom ) {
-		getCommandContext().setPreviousZoom( getZoom() );
-		if( designPane != null ) designPane.setZoom( zoom );
+		setView( getViewPoint(), zoom );
 	}
 
 	public ReticleCursor getReticle() {
@@ -260,11 +266,15 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setView( Point3D center, double zoom ) {
-		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom ) );
+		setView( center, zoom, getRotate() );
 	}
 
 	public void setView( Point3D center, double zoom, double rotate ) {
 		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom, rotate ) );
+	}
+
+	public void setView( DesignPortal portal ) {
+		setView( portal.getViewpoint(), portal.getZoom(), portal.getRotate() );
 	}
 
 	/**
@@ -496,7 +506,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setGridVisible( boolean visible ) {
 		getDesignPane().setGridVisible( visible );
-		if( visible ) rebuildGridAction.update();
+		if( visible ) rebuildGridAction.request();
 	}
 
 	public BooleanProperty gridVisible() {
@@ -618,18 +628,21 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
 			settings.set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
 			doUpdateGridBounds();
 		} );
 
 		// Add view rotate property listener
 		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
 			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
 			doUpdateGridBounds();
 		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
 			doUpdateGridBounds();
@@ -1049,7 +1062,7 @@ public abstract class DesignTool extends GuidedTool {
 		//settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
 
 		// Rebuild the grid if any workplane values change
-		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.update() );
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.request() );
 	}
 
 	private void doUpdateGridBounds() {
@@ -1159,6 +1172,15 @@ public abstract class DesignTool extends GuidedTool {
 
 	private void hidePropertiesPage() {
 		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
+	}
+
+	public DesignPortal getPriorPortal() {
+		if( !portalStack.isEmpty() ) portalStack.pop();
+		return portalStack.isEmpty() ? DesignPortal.DEFAULT : portalStack.pop();
+	}
+
+	private void capturePreviousPortal() {
+		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getRotate() ) );
 	}
 
 	static DesignLayer getDesignData( DesignLayerPane l ) {

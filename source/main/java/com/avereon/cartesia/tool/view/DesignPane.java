@@ -194,7 +194,7 @@ public class DesignPane extends StackPane {
 	 *
 	 * @param point The world point to move to the center of the view
 	 */
-	public final void  setViewPoint( Point3D point ) {
+	public final void setViewPoint( Point3D point ) {
 		viewPointProperty().set( point );
 	}
 
