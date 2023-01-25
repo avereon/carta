@@ -21,7 +21,7 @@ Cartesia provides the following features:
 | Release                                             | Feature Goals                                    |      Status |
 |-----------------------------------------------------|--------------------------------------------------|------------:|
 | [1.4](https://github.com/avereon/xenon/milestone/5) |                                                  |    Planning |
-| [1.3](https://github.com/avereon/xenon/milestone/4) |                                                  | In Progress |
+| [1.3](https://github.com/avereon/xenon/milestone/4) | Further implement prints                         | In Progress |
 | [1.2](https://github.com/avereon/xenon/milestone/3) | More design commands, bug fixes                  | 01 Jan 2023 |
 | [1.1](https://github.com/avereon/xenon/milestone/2) | Design properties, paths, views, prints          | 09 Oct 2021 |
 | [1.0](https://github.com/avereon/xenon/milestone/1) | Primitives, layers, snaps, modifiers, transforms | 28 May 2021 |
