@@ -265,16 +265,17 @@ public abstract class DesignTool extends GuidedTool {
 		return reticle;
 	}
 
+	public void setView( DesignPortal portal ) {
+		setView( portal.getViewpoint(), portal.getZoom(), portal.getRotate() );
+	}
+
 	public void setView( Point3D center, double zoom ) {
-		setView( center, zoom, getRotate() );
+		setView( center, zoom, getViewRotate() );
 	}
 
 	public void setView( Point3D center, double zoom, double rotate ) {
+		// NOTE Running this on the FX thread can cause race conditions when used together with the single value set methods.
 		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom, rotate ) );
-	}
-
-	public void setView( DesignPortal portal ) {
-		setView( portal.getViewpoint(), portal.getZoom(), portal.getRotate() );
 	}
 
 	/**
@@ -586,9 +587,10 @@ public abstract class DesignTool extends GuidedTool {
 		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
 		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
 
-		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
-		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
-		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
+		Point3D viewPoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
+		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
+		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
+		setView( viewPoint, viewZoom, viewRotate );
 		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
@@ -1180,7 +1182,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	private void capturePreviousPortal() {
-		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getRotate() ) );
+		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getViewRotate() ) );
 	}
 
 	static DesignLayer getDesignData( DesignLayerPane l ) {
