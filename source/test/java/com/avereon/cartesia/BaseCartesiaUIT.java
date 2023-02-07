@@ -25,7 +25,9 @@ public class BaseCartesiaUIT extends BaseModUiTestCase {
 
 		List<Class<? extends ProgramTool>> tools = getProgram().getToolManager().getRegisteredTools( assetType );
 		assertThat( tools).withFailMessage( Design2dEditor.class.getSimpleName() + " not registered for " + Design2dAssetType.class.getName() ).contains( Design2dEditor.class );
-		assertThat( tools.size() ).isEqualTo( 1 );
+
+		// Check how many tools are registered to the asset type
+		assertThat( tools.size() ).isEqualTo( 2 );
 	}
 
 }
