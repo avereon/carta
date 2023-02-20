@@ -21,6 +21,7 @@ import com.avereon.settings.Settings;
 import com.avereon.transaction.Txn;
 import com.avereon.util.DelayedAction;
 import com.avereon.util.TypeReference;
+import com.avereon.util.UriUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
@@ -163,9 +164,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
-		getStyleClass().add( "design-tool" );
-
 		addStylesheet( CartesiaMod.STYLESHEET );
+		getStyleClass().add( "design-tool" );
 
 		this.designPropertiesMap = new DesignPropertiesMap( product );
 		this.commandActions = new ConcurrentHashMap<>();
@@ -210,7 +210,17 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.prefWidthProperty().bind( widthProperty() );
 		designPane.prefHeightProperty().bind( heightProperty() );
 
-		// Settings and settings listeners should go in the ready() method
+		// NOTE Settings and settings listeners should go in the ready() method
+
+		// NEXT If the fragment of the URI is "print" more components need to be added
+		String fragment = UriUtil.parseFragment( asset.getUri() );
+		if( fragment != null && fragment.startsWith( "print") ) {
+			// Should be in the format 'print=<uuid>'
+
+			// Get the print identifier
+			Map<String,String> parameters = UriUtil.parseQuery( fragment );
+			String identifier = parameters.get( "print" );
+		}
 	}
 
 	public final Design getDesign() {
@@ -824,6 +834,7 @@ public abstract class DesignTool extends GuidedTool {
 		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 
 		String viewActions = "grid-toggle snap-grid-toggle";
+		String layerActions = "layer[layer-create layer-sublayer | layer-delete]";
 		String drawMarkerActions = "marker[draw-marker]";
 		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
 		String drawCircleActions = "circle[draw-circle-2 draw-circle-diameter-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
@@ -833,6 +844,7 @@ public abstract class DesignTool extends GuidedTool {
 		String measurementActions = "measure[shape-information measure-angle measure-distance measure-point measure-length]";
 
 		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder menus = new StringBuilder( viewActions );
+		menus.append( " " ).append( layerActions );
 		menus.append( "|" ).append( drawMarkerActions );
 		menus.append( " " ).append( drawLineActions );
 		menus.append( " " ).append( drawCircleActions );

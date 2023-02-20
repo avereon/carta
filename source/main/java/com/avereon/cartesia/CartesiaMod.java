@@ -158,6 +158,7 @@ public class CartesiaMod extends Mod {
 
 	private void registerActions() {
 		registerAction( this, "tool" );
+		registerAction( this, "layer" );
 		registerAction( this, "draw" );
 		registerAction( this, "marker" );
 		registerAction( this, "line" );
@@ -206,6 +207,7 @@ public class CartesiaMod extends Mod {
 		unregisterAction( "line" );
 		unregisterAction( "marker" );
 		unregisterAction( "draw" );
+		unregisterAction( "layer" );
 		unregisterAction( "tool" );
 	}
 
