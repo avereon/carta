@@ -1,16 +1,26 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.data.IdNode;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @CustomLog
 public class DesignPrint extends DesignView {
+
+	/**
+	 * This corresponds to the JavaFX PageOrientation enum.
+ 	 */
+	private static final String PAGE_ORIENTATION = "page-orientation";
+
+	/**
+	 * This is the requested page size. When it comes to actually printing,
+	 * this page size must be reconciled with the available page sizes supported
+	 * by the printer.
+	 */
+	private static final String REQUESTED_PAGE_SIZE = "page-size-requested";
 
 	/**
 	 * Overridden to return the specific type of this class.
@@ -24,27 +34,27 @@ public class DesignPrint extends DesignView {
 	}
 
 	public DesignPrint setOrder( int order ) {
-		setValue( ORDER, order );
+		super.setOrder( order );
 		return this;
 	}
 
 	public DesignPrint setName( String name ) {
-		setValue( NAME, name );
+		super.setName( name );
 		return this;
 	}
 
 	public DesignPrint setOrigin( Point3D origin ) {
-		setValue( ORIGIN, origin );
+		super.setOrigin(origin);
 		return this;
 	}
 
 	public DesignPrint setZoom( Double value ) {
-		setValue( ZOOM, value );
+		super.setZoom(value);
 		return this;
 	}
 
 	public DesignPrint setRotate( Double value ) {
-		setValue( ROTATE, value );
+		super.setRotate( value);
 		return this;
 	}
 
@@ -60,19 +70,19 @@ public class DesignPrint extends DesignView {
 		return map;
 	}
 
-	public Map<String,Object> asDeepMap() {
-		Map<String, Object> map = new HashMap<>( asMap() );
-		if( getLayers().size() > 0 ) map.put( LAYERS, getLayers().stream().map( IdNode::getId ).collect( Collectors.toSet()) );
+	public Map<String, Object> asDeepMap() {
+		Map<String, Object> map = new HashMap<>( super.asDeepMap() );
+		//if( getLayers().size() > 0 ) map.put( LAYERS, getLayers().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
 		return map;
 	}
 
 	public DesignPrint updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-//		if( map.containsKey( NAME ) ) setName( (String)map.get( NAME ) );
-//		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
-//		if( map.containsKey( ORIGIN ) ) setOrigin( (Point3D)map.get( ORDER ) );
-//		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
-//		if( map.containsKey( ZOOM ) ) setZoom( (Double)map.get( ZOOM ) );
+		//		if( map.containsKey( NAME ) ) setName( (String)map.get( NAME ) );
+		//		if( map.containsKey( ORDER ) ) setOrder( (Integer)map.get( ORDER ) );
+		//		if( map.containsKey( ORIGIN ) ) setOrigin( (Point3D)map.get( ORDER ) );
+		//		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
+		//		if( map.containsKey( ZOOM ) ) setZoom( (Double)map.get( ZOOM ) );
 		return this;
 	}
 

@@ -22,6 +22,7 @@ import com.avereon.settings.Settings;
 import com.avereon.transaction.Txn;
 import com.avereon.util.DelayedAction;
 import com.avereon.util.TypeReference;
+import com.avereon.util.UriUtil;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
@@ -144,9 +145,13 @@ public abstract class DesignTool extends GuidedTool {
 
 	private final RedoAction redoAction;
 
+	private final DelayedAction rebuildGridAction;
+
+	private final DelayedAction storePreviousViewAction;
+
 	private final DesignWorkplane workplane;
 
-	private final DelayedAction rebuildGridAction;
+	private final Stack<DesignPortal> portalStack;
 
 	private ReticleCursor reticle;
 
@@ -160,9 +165,8 @@ public abstract class DesignTool extends GuidedTool {
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
-		getStyleClass().add( "design-tool" );
-
 		addStylesheet( CartesiaMod.STYLESHEET );
+		getStyleClass().add( "design-tool" );
 
 		this.designPropertiesMap = new DesignPropertiesMap( product );
 		this.commandActions = new ConcurrentHashMap<>();
@@ -184,11 +188,16 @@ public abstract class DesignTool extends GuidedTool {
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
 
-		this.workplane = new DesignWorkplane();
-
 		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
-		this.rebuildGridAction.setMaxTriggerLimit( 500 );
 		this.rebuildGridAction.setMinTriggerLimit( 100 );
+		this.rebuildGridAction.setMaxTriggerLimit( 500 );
+
+		this.storePreviousViewAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::capturePreviousPortal );
+		this.storePreviousViewAction.setMinTriggerLimit( 1000 );
+		this.storePreviousViewAction.setMaxTriggerLimit( 5000 );
+
+		this.workplane = new DesignWorkplane();
+		this.portalStack = new Stack<>();
 
 		this.selectedShapes = FXCollections.observableArrayList();
 		this.selectedShapes.addListener( (ListChangeListener<? super Shape>)this::doSelectedShapesChanged );
@@ -202,7 +211,17 @@ public abstract class DesignTool extends GuidedTool {
 		designPane.prefWidthProperty().bind( widthProperty() );
 		designPane.prefHeightProperty().bind( heightProperty() );
 
-		// Settings and settings listeners should go in the ready() method
+		// NOTE Settings and settings listeners should go in the ready() method
+
+		// NEXT If the fragment of the URI is "print" more components need to be added
+		String fragment = UriUtil.parseFragment( asset.getUri() );
+		if( fragment != null && fragment.startsWith( "print") ) {
+			// Should be in the format 'print=<uuid>'
+
+			// Get the print identifier
+			Map<String,String> parameters = UriUtil.parseQuery( fragment );
+			String identifier = parameters.get( "print" );
+		}
 	}
 
 	public final Design getDesign() {
@@ -234,7 +253,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewPoint( Point3D point ) {
-		if( designPane != null ) designPane.setViewPoint( point );
+		setView( point, getZoom() );
 	}
 
 	public double getViewRotate() {
@@ -242,7 +261,7 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setViewRotate( double angle ) {
-		if( designPane != null ) Fx.run( () -> designPane.setViewRotate( angle ) );
+		setView( getViewPoint(), getZoom(), angle );
 	}
 
 	public double getZoom() {
@@ -250,18 +269,23 @@ public abstract class DesignTool extends GuidedTool {
 	}
 
 	public void setZoom( double zoom ) {
-		if( designPane != null ) designPane.setZoom( zoom );
+		setView( getViewPoint(), zoom );
 	}
 
 	public ReticleCursor getReticle() {
 		return reticle;
 	}
 
+	public void setView( DesignPortal portal ) {
+		setView( portal.getViewpoint(), portal.getZoom(), portal.getRotate() );
+	}
+
 	public void setView( Point3D center, double zoom ) {
-		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom ) );
+		setView( center, zoom, getViewRotate() );
 	}
 
 	public void setView( Point3D center, double zoom, double rotate ) {
+		// NOTE Running this on the FX thread can cause race conditions when used together with the single value set methods.
 		if( designPane != null ) Fx.run( () -> designPane.setView( center, zoom, rotate ) );
 	}
 
@@ -574,9 +598,10 @@ public abstract class DesignTool extends GuidedTool {
 		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
 		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
 
-		setViewPoint( ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) ) );
-		setViewRotate( Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) ) );
-		setZoom( Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) ) );
+		Point3D viewPoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
+		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
+		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
+		setView( viewPoint, viewZoom, viewRotate );
 		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
@@ -616,18 +641,21 @@ public abstract class DesignTool extends GuidedTool {
 
 		// Add view point property listener
 		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
 			settings.set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
 			doUpdateGridBounds();
 		} );
 
 		// Add view rotate property listener
 		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
 			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
 			doUpdateGridBounds();
 		} );
 
 		// Add view zoom property listener
 		designPane.zoomProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
 			doUpdateGridBounds();
@@ -807,6 +835,7 @@ public abstract class DesignTool extends GuidedTool {
 		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
 
 		String viewActions = "grid-toggle snap-grid-toggle";
+		String layerActions = "layer[layer-create layer-sublayer | layer-delete]";
 		String drawMarkerActions = "marker[draw-marker]";
 		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
 		String drawCircleActions = "circle[draw-circle-2 draw-circle-diameter-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
@@ -816,6 +845,7 @@ public abstract class DesignTool extends GuidedTool {
 		String measurementActions = "measure[shape-information measure-angle measure-distance measure-point measure-length]";
 
 		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder menus = new StringBuilder( viewActions );
+		menus.append( " " ).append( layerActions );
 		menus.append( "|" ).append( drawMarkerActions );
 		menus.append( " " ).append( drawLineActions );
 		menus.append( " " ).append( drawCircleActions );
@@ -1159,6 +1189,15 @@ public abstract class DesignTool extends GuidedTool {
 		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
+	public DesignPortal getPriorPortal() {
+		if( !portalStack.isEmpty() ) portalStack.pop();
+		return portalStack.isEmpty() ? DesignPortal.DEFAULT : portalStack.pop();
+	}
+
+	private void capturePreviousPortal() {
+		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getViewRotate() ) );
+	}
+
 	static DesignLayer getDesignData( DesignLayerPane l ) {
 		return (DesignLayer)DesignShapeView.getDesignData( l );
 	}
@@ -1256,14 +1295,17 @@ public abstract class DesignTool extends GuidedTool {
 				designPane.setView( getVisibleLayers(), getViewPoint(), getZoom(), getViewRotate() );
 
 				// Create an encapsulating pane to represent the paper
-				final Pane paperPane = new Pane( designPane );
+				final Pane paperPane = new Pane();
 
 				// Move the center of the paper pane to the center of the printable area
 				paperPane.getTransforms().add( new Translate( 0.5 * printableWidth, 0.5 * printableHeight ) );
 
+				// Add the design pane last
+				paperPane.getChildren().add( designPane );
+
 				// NOTE DesignPane uses the FX thread for a lot of its work
 				// Need to wait for it to complete
-				Fx.waitFor( 1000 );
+				Fx.waitFor( 10000 );
 
 				boolean successful = job.printPage( paperPane ) && job.endJob();
 				if( !successful ) getProgram().getNoticeManager().addNotice( new Notice( taskName, job.getJobStatus() ) );

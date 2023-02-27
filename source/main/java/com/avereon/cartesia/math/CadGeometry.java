@@ -143,6 +143,10 @@ public class CadGeometry {
 		return Geometry.areSameSize( a, b );
 	}
 
+	public static boolean areSameAngle360( double a, double b ) {
+		return Geometry.areSameAngle( Math.toRadians( a ), Math.toRadians( b ) );
+	}
+
 	public static boolean areSamePoint( Point3D a, Point3D b ) {
 		return Geometry.areSamePoint( asPoint( a ), asPoint( b ) );
 	}

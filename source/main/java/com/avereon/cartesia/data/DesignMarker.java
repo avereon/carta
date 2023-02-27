@@ -101,6 +101,56 @@ public class DesignMarker extends DesignShape {
 				return STAR.getPath();
 			}
 		},
+		RETICLE {
+			public Path getPath() {
+				double s = 0.1 * LINE_WIDTH;
+				double r = HALF_SIZE;
+				double r1 = 0.5 * r + s;
+				double r2 = 0.5 * r - s;
+
+				Path path = new Path();
+
+				path.getElements().add( new MoveTo( -s, -r ) );
+				path.getElements().add( new LineTo( s, -r ) );
+				path.getElements().add( new LineTo( s, -s ) );
+
+				path.getElements().add( new LineTo( r, -s ) );
+				path.getElements().add( new LineTo( r, s ) );
+				path.getElements().add( new LineTo( s, s ) );
+
+				path.getElements().add( new LineTo( s, r ) );
+				path.getElements().add( new LineTo( -s, r ) );
+				path.getElements().add( new LineTo( -s, s ) );
+
+				path.getElements().add( new LineTo( -r, s ) );
+				path.getElements().add( new LineTo( -r, -s ) );
+				path.getElements().add( new LineTo( -s, -s ) );
+
+				path.getElements().add( new MoveTo( 0, -r1 ) );
+				path.getElements().add( new ArcTo( r1, r1, 0, 0, r1, false, false ) );
+				path.getElements().add( new ArcTo( r1, r1, 0, 0, -r1, false, false ) );
+
+				path.getElements().add( new MoveTo( 0, -r2 ) );
+				path.getElements().add( new ArcTo( r2, r2, 0, 0, r2, false, true ) );
+				path.getElements().add( new ArcTo( r2, r2, 0, 0, -r2, false, true ) );
+
+				path.getElements().add( new ClosePath() );
+
+				return path;
+			}
+		},
+		RING {
+			public Path getPath() {
+				double r = HALF_SIZE * 0.8;
+				Path path = new Path();
+				path.getElements().addAll( CIRCLE.getPath().getElements() );
+				path.getElements().add( new MoveTo( 0, -r ) );
+				path.getElements().add( new ArcTo( r, r, 0, 0, r, false, true ) );
+				path.getElements().add( new ArcTo( r, r, 0, 0, -r, false, true ) );
+				path.getElements().add( new ClosePath() );
+				return path;
+			}
+		},
 		SQUARE {
 			public Path getPath() {
 				double r = HALF_SIZE;

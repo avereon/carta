@@ -193,7 +193,7 @@ public class DesignArcTest {
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( -45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
@@ -201,7 +201,7 @@ public class DesignArcTest {
 		// This ends up as 255 normalized to -135
 		assertThat( arc.getStart() ).isCloseTo( -135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -213,14 +213,14 @@ public class DesignArcTest {
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 135, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -230,17 +230,17 @@ public class DesignArcTest {
 
 		arc.apply( transform );
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
-		// The sum of the start and the rotate should be -135
+		// The sum of the start and the arc rotate should be -135
 		assertThat( arc.getStart() ).isCloseTo( -45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( -90.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( -135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -252,14 +252,14 @@ public class DesignArcTest {
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test
@@ -269,17 +269,17 @@ public class DesignArcTest {
 
 		arc.apply( transform );
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
-		// The sum of the start and the rotate should be -135
+		// The sum of the start and the arc rotate should be -135
 		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( -90.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( -90.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
 		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
-		assertThat( arc.getRotate() ).isCloseTo( 0.0, TOLERANCE );
+		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 	}
 
 	@Test

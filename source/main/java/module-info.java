@@ -7,6 +7,7 @@ module com.avereon.cartesia {
 
 	// Both compile-time and run-time
 	requires com.avereon.curve;
+	requires com.avereon.marea;
 	requires com.avereon.xenon;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;
@@ -23,6 +24,7 @@ module com.avereon.cartesia {
 	exports com.avereon.cartesia.cursor to com.avereon.zarra;
 	exports com.avereon.cartesia.icon to com.avereon.zarra;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
+	exports com.avereon.cartesia.tool2 to com.avereon.xenon;
 
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.design.props;

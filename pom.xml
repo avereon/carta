@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>com.avereon.pom</groupId>
 		<artifactId>mod</artifactId>
-		<version>3.3.3</version>
+		<version>3.3.4</version>
 	</parent>
 
 	<groupId>com.avereon</groupId>
 	<artifactId>carta</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Cartesia</name>
@@ -35,10 +35,10 @@
 	</pluginRepositories>
 
 	<properties>
-		<marea.version>[0.1-SNAPSHOT,)</marea.version>
-		<curve.version>[0.3-SNAPSHOT,)</curve.version>
-		<xenon.version>[1.6-SNAPSHOT,)</xenon.version>
-		<zerra.version>[0.8-SNAPSHOT,)</zerra.version>
+		<curve.version>[0.3,)</curve.version>
+		<marea.version>[0.1,)</marea.version>
+		<xenon.version>[1.6,)</xenon.version>
+		<zerra.version>[0.8,)</zerra.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>jdk-12.0.1+2</monocle.version>
 		<cameo.version>2.9</cameo.version>
@@ -49,35 +49,27 @@
 
 		<dependency>
 			<groupId>com.avereon</groupId>
+			<artifactId>curve</artifactId>
+			<version>${curve.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.avereon</groupId>
 			<artifactId>marea</artifactId>
 			<version>${marea.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.avereon</groupId>
-			<artifactId>curve</artifactId>
-			<version>${curve.version}</version>
+			<artifactId>zerra</artifactId>
+			<version>${zerra.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>jep</groupId>
 			<artifactId>jep</artifactId>
 			<version>${jep.version}</version>
-		</dependency>
-
-<!--		<dependency>-->
-<!--			<groupId>com.avereon</groupId>-->
-<!--			<artifactId>xenon</artifactId>-->
-<!--			<classifier>tests</classifier>-->
-<!--			<version>${xenon.version}</version>-->
-<!--			<scope>test</scope>-->
-<!--		</dependency>-->
-
-		<dependency>
-			<groupId>com.avereon</groupId>
-			<artifactId>zerra</artifactId>
-			<version>${zerra.version}</version>
-			<scope>test</scope>
 		</dependency>
 
 		<dependency>

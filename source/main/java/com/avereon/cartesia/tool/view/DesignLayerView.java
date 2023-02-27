@@ -19,7 +19,7 @@ public class DesignLayerView extends DesignDrawableMeta {
 		layerPane.setVisible( true );
 	}
 
-	public  DesignLayer getDesignLayer() {
+	public DesignLayer getDesignLayer() {
 		return (DesignLayer)getDesignNode();
 	}
 
