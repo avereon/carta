@@ -279,7 +279,7 @@ public class DesignPaneMareaTest implements TestTimeouts {
 
 	@Test
 	void testChangeDesignUnitCausesRescale() {
-		design.setDesignUnit( DesignUnit.MILLIMETER );
+		design.setDesignUnit( DesignUnit.CENTIMETER );
 		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.calcDesignUnit() );
 		assertThat( pane.getScaleX() ).isCloseTo( 1.0 * scale, TOLERANCE );
 		assertThat( pane.getScaleY() ).isCloseTo( -1.0 * scale, TOLERANCE );

@@ -494,7 +494,7 @@ public abstract class DesignTool extends GuidedTool {
 
 	public void setGridVisible( boolean visible ) {
 		getDesignPane().setGridVisible( visible );
-		if( visible ) rebuildGridAction.update();
+		if( visible ) rebuildGridAction.request();
 	}
 
 	public BooleanProperty gridVisible() {
@@ -1047,7 +1047,7 @@ public abstract class DesignTool extends GuidedTool {
 		//settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
 
 		// Rebuild the grid if any workplane values change
-		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.update() );
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> rebuildGridAction.request() );
 	}
 
 	private void doUpdateGridBounds() {
