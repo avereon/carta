@@ -1301,7 +1301,7 @@ public abstract class DesignTool extends GuidedTool {
 
 				// NOTE DesignPane uses the FX thread for a lot of its work
 				// Need to wait for it to complete
-				Fx.waitFor( 1000 );
+				Fx.waitFor( 10000 );
 
 				boolean successful = job.printPage( paperPane ) && job.endJob();
 				if( !successful ) getProgram().getNoticeManager().addNotice( new Notice( taskName, job.getJobStatus() ) );
