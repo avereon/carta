@@ -7,6 +7,7 @@ module com.avereon.cartesia {
 
 	// Both compile-time and run-time
 	requires com.avereon.curve;
+	requires com.avereon.marea;
 	requires com.avereon.xenon;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;

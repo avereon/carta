@@ -36,6 +36,7 @@
 
 	<properties>
 		<curve.version>[0.3,)</curve.version>
+		<marea.version>[0.1,)</marea.version>
 		<xenon.version>[1.6,)</xenon.version>
 		<zerra.version>[0.8,)</zerra.version>
 		<jep.version>2.24</jep.version>
@@ -53,9 +54,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jep</groupId>
-			<artifactId>jep</artifactId>
-			<version>${jep.version}</version>
+			<groupId>com.avereon</groupId>
+			<artifactId>marea</artifactId>
+			<version>${marea.version}</version>
 		</dependency>
 
 		<dependency>
@@ -63,6 +64,12 @@
 			<artifactId>zerra</artifactId>
 			<version>${zerra.version}</version>
 			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>jep</groupId>
+			<artifactId>jep</artifactId>
+			<version>${jep.version}</version>
 		</dependency>
 
 		<dependency>

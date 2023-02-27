@@ -1294,10 +1294,13 @@ public abstract class DesignTool extends GuidedTool {
 				designPane.setView( getVisibleLayers(), getViewPoint(), getZoom(), getViewRotate() );
 
 				// Create an encapsulating pane to represent the paper
-				final Pane paperPane = new Pane( designPane );
+				final Pane paperPane = new Pane();
 
 				// Move the center of the paper pane to the center of the printable area
 				paperPane.getTransforms().add( new Translate( 0.5 * printableWidth, 0.5 * printableHeight ) );
+
+				// Add the design pane last
+				paperPane.getChildren().add( designPane );
 
 				// NOTE DesignPane uses the FX thread for a lot of its work
 				// Need to wait for it to complete
