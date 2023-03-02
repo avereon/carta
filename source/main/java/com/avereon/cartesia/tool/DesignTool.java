@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.IconCursor;
 import com.avereon.cartesia.cursor.ReticleCursor;
@@ -16,7 +15,6 @@ import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeEvent;
 import com.avereon.data.NodeSettings;
-import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.transaction.Txn;
 import com.avereon.util.DelayedAction;
@@ -27,7 +25,6 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.PropertiesType;
-import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.guide.GuidedTool;
@@ -52,13 +49,11 @@ import javafx.event.EventHandler;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.print.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Translate;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
@@ -1265,50 +1260,7 @@ public abstract class DesignTool extends GuidedTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			String label = Rb.textOr( RbKey.LABEL, "print", "Print" );
-			String taskName = label + " " + getAsset().getName();
-
-			getProgram().getTaskManager().submit( Task.of( taskName, () -> {
-				final PrinterJob job = PrinterJob.createPrinterJob();
-				final Printer printer = job.getPrinter();
-				job.getJobSettings().setPageLayout( printer.createPageLayout( Paper.NA_LETTER, PageOrientation.PORTRAIT, 0, 0, 0, 0 ) );
-				final PageLayout layout = job.getJobSettings().getPageLayout();
-
-				// NOTE This can be used to give feedback to the user. It can be bound to a text field
-				job.jobStatusProperty().asString();
-
-				// WIDTH and HEIGHT in printer points (1/72)
-				double printableWidth = layout.getPrintableWidth();
-				double printableHeight = layout.getPrintableHeight();
-
-				// NOTE This is a rather Swing looking dialog, maybe handle print properties separately
-				//				boolean print = job.showPageSetupDialog( getScene().getWindow() );
-				//				boolean print = job.showPrintDialog( getScene().getWindow() );
-				//				if( !print ) return;
-
-				// NOTE The print API uses 72 DPI regardless of the printer
-				final DesignPane designPane = new DesignPane();
-				designPane.setDpi( 72 );
-				designPane.setReferenceLayerVisible( false );
-				designPane.setDesign( getDesign() );
-				designPane.setView( getVisibleLayers(), getViewPoint(), getZoom(), getViewRotate() );
-
-				// Create an encapsulating pane to represent the paper
-				final Pane paperPane = new Pane();
-
-				// Move the center of the paper pane to the center of the printable area
-				paperPane.getTransforms().add( new Translate( 0.5 * printableWidth, 0.5 * printableHeight ) );
-
-				// Add the design pane last
-				paperPane.getChildren().add( designPane );
-
-				// NOTE DesignPane uses the FX thread for a lot of its work
-				// Need to wait for it to complete
-				Fx.waitFor( 10000 );
-
-				boolean successful = job.printPage( paperPane ) && job.endJob();
-				if( !successful ) getProgram().getNoticeManager().addNotice( new Notice( taskName, job.getJobStatus() ) );
-			} ) );
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), DesignTool.this, getAsset(), (DesignPrint)null ));
 		}
 
 	}
