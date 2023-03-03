@@ -104,7 +104,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		if( input.isEmpty() ) {
 			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
-			Point2D screen = tool.localToScreen( mouse );
+			Point3D screen = tool.worldToScreen( mouse );
 			MouseEvent mouseEvent = new MouseEvent(
 				tool,
 				null,

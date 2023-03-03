@@ -6,6 +6,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.view.DesignLayerEvent;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
 import com.avereon.cartesia.tool.view.DesignPane;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -30,13 +31,13 @@ public class DesignToolLayersGuide extends Guide {
 
 	private final ProgramProduct product;
 
-	private final DesignTool tool;
+	private final FxShapeDesignTool tool;
 
 	private final Map<DesignLayer, GuideNode> layerGuideNodes;
 
 	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
-	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
+	public DesignToolLayersGuide( ProgramProduct product, FxShapeDesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.layerGuideNodes = new ConcurrentHashMap<>();
@@ -86,11 +87,11 @@ public class DesignToolLayersGuide extends Guide {
 		// Add listeners for changes
 		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
 			DesignLayerPane l = e.getLayer();
-			addLayer( DesignTool.getDesignData( l ), l );
+			addLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
 		} );
 		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
 			DesignLayerPane l = e.getLayer();
-			removeLayer( DesignTool.getDesignData( l ), l );
+			removeLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
 		} );
 	}
 
