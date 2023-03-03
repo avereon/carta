@@ -24,16 +24,38 @@ import javafx.scene.shape.Shape;
 import java.util.Collection;
 import java.util.List;
 
-public abstract class DesignTool  extends GuidedTool implements EventTarget, Styleable, WritableIdentity {
+public abstract class DesignTool extends GuidedTool implements EventTarget, WritableIdentity {
 
 	String RETICLE = "reticle";
+
 	String SELECT_APERTURE_SIZE = "select-aperture-size";
+
 	String SELECT_APERTURE_UNIT = "select-aperture-unit";
+
 	String REFERENCE_POINT_SIZE = "reference-point-size";
+
 	String REFERENCE_POINT_TYPE = "reference-point-type";
+
 	String REFERENCE_POINT_PAINT = "reference-point-paint";
+
 	boolean DEFAULT_GRID_VISIBLE = true;
+
 	boolean DEFAULT_GRID_SNAP_ENABLED = true;
+
+	// FX properties (what others should be here?)
+
+	// NOTE Current
+	// aperture
+	// currentLayer
+	// currentView
+	// gridVisible
+	// gridSnapEnabled
+
+	// NOTE Proposed
+	// reticle
+	// selectedShapes
+	// visibleShapes
+	// priorPortal
 
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -203,4 +225,5 @@ public abstract class DesignTool  extends GuidedTool implements EventTarget, Sty
 	public abstract DesignPortal getPriorPortal();
 
 	protected abstract void showCommandPrompt();
+
 }

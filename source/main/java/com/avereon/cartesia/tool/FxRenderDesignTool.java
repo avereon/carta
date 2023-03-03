@@ -6,7 +6,6 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.*;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
