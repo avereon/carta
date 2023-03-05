@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
@@ -36,11 +35,6 @@ public class FxRenderDesignTool extends DesignTool {
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
 
-	}
-
-	@Override
-	public Design getDesign() {
-		return null;
 	}
 
 	@Override

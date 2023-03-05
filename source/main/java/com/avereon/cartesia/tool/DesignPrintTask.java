@@ -81,9 +81,9 @@ public class DesignPrintTask extends Task<Void> {
 		//		renderer.setDpi( 72, 72 );
 
 		final DesignPane designPane = new DesignPane();
+		designPane.setDesign( asset.getModel() );
 		designPane.setDpi( 72 );
 		designPane.setReferenceLayerVisible( false );
-		designPane.setDesign( asset.getModel() );
 		designPane.setView( tool.getVisibleLayers(), tool.getViewPoint(), tool.getZoom(), tool.getViewRotate() );
 
 		// Create an encapsulating pane to represent the paper

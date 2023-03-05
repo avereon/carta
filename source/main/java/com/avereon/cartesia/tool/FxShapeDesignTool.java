@@ -203,11 +203,6 @@ public abstract class FxShapeDesignTool extends DesignTool {
 	}
 
 	@Override
-	public final Design getDesign() {
-		return getAssetModel();
-	}
-
-	@Override
 	public final DesignContext getDesignContext() {
 		return getDesign().getDesignContext( getProduct() );
 	}
