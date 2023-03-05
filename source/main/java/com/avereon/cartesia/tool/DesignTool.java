@@ -14,7 +14,6 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
-import javafx.css.Styleable;
 import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -24,6 +23,9 @@ import javafx.scene.shape.Shape;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * The design tool is the base class for all design tools.
+ */
 public abstract class DesignTool extends GuidedTool implements EventTarget, WritableIdentity {
 
 	String RETICLE = "reticle";
@@ -44,28 +46,35 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 
 	// FX properties (what others should be here?)
 
-	// NOTE Current
-	// aperture
+	// Current:
+	// selectAperture
 	// currentLayer
 	// currentView
 	// gridVisible
 	// gridSnapEnabled
 
-	// NOTE Proposed
+	// Proposed:
+	// viewpoint
+	// rotate
+	// zoom
 	// reticle
 	// selectedShapes
 	// visibleShapes
 	// priorPortal
 
+	// LAYERS
+	// Reference points
+	// Preview
+	// Design layers
+	// Grid
+
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
 	}
 
-	static DesignShape getDesignData( Shape s ) {
-		return DesignShapeView.getDesignData( s );
+	public final Design getDesign() {
+		return getAssetModel();
 	}
-
-	public abstract Design getDesign();
 
 	public abstract DesignContext getDesignContext();
 
@@ -73,6 +82,7 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 
 	public abstract CoordinateSystem getCoordinateSystem();
 
+	// NOTE Coordinate system is part of the DesignWorkplane
 	public abstract void setCoordinateSystem( CoordinateSystem system );
 
 	public abstract DesignWorkplane getWorkplane();
@@ -105,10 +115,17 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 	 */
 	public abstract void setViewport( Bounds viewport );
 
-	public abstract void setSelectAperture( DesignValue aperture );
-
 	public abstract DesignValue getSelectAperture();
 
+	public abstract void setSelectAperture( DesignValue aperture );
+
+	/**
+	 * The select aperture is a design value (unit and value) for the selection
+	 * aperture size. The value is the aperture size as measured on the screen.
+	 * The aperture size is generally bound to the mod setting.
+	 *
+	 * @return The select aperture property
+	 */
 	public abstract ObjectProperty<DesignValue> selectApertureProperty();
 
 	public abstract ObservableList<Shape> selectedShapes();
@@ -225,5 +242,9 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 	public abstract DesignPortal getPriorPortal();
 
 	protected abstract void showCommandPrompt();
+
+	static DesignShape getDesignData( Shape s ) {
+		return DesignShapeView.getDesignData( s );
+	}
 
 }
