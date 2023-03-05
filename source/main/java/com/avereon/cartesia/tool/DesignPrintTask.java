@@ -55,9 +55,15 @@ public class DesignPrintTask extends Task<Void> {
 
 		final PrinterJob job = PrinterJob.createPrinterJob();
 		final Printer printer = job.getPrinter();
+		final PageLayout layout = printer.createPageLayout( paper, orientation, leftMargin, rightMargin, topMargin, bottomMargin );
+
+		// WIDTH and HEIGHT in printer points (1/72)
+		double printableWidth = layout.getPrintableWidth();
+		double printableHeight = layout.getPrintableHeight();
+
 		JobSettings settings = job.getJobSettings();
+		settings.setPageLayout( layout );
 		settings.setPaperSource( PaperSource.AUTOMATIC );
-		printer.createPageLayout( paper, orientation, leftMargin, rightMargin, topMargin, bottomMargin );
 
 		// NOTE This can be used to give feedback to the user. It can be bound to a text field
 		job.jobStatusProperty().asString();
@@ -67,11 +73,7 @@ public class DesignPrintTask extends Task<Void> {
 		//				boolean print = job.showPrintDialog( getScene().getWindow() );
 		//				if( !print ) return;
 
-		final PageLayout layout = job.getJobSettings().getPageLayout();
-
-		// WIDTH and HEIGHT in printer points (1/72)
-		double printableWidth = layout.getPrintableWidth();
-		double printableHeight = layout.getPrintableHeight();
+		//final PageLayout layout = job.getJobSettings().getPageLayout();
 
 		// FIXME Can I use the marea FxRenderer2d renderer for printing?
 		// NOTE The print API uses 72 DPI regardless of the printer
