@@ -1,7 +1,8 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -60,7 +61,7 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 	// reticle
 	// selectedShapes
 	// visibleShapes
-	// priorPortal
+	// portal (viewport)
 
 	// LAYERS
 	// Reference points
@@ -68,24 +69,59 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 	// Design layers
 	// Grid
 
+	private final DesignWorkplane workplane;
+
 	public DesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
+		addStylesheet( CartesiaMod.STYLESHEET );
+		getStyleClass().add( "design-tool" );
+
+		this.workplane = new DesignWorkplane();
 	}
 
 	public final Design getDesign() {
 		return getAssetModel();
 	}
 
-	public abstract DesignContext getDesignContext();
+	/**
+	 * A convenience method to get the design context.
+	 *
+	 * @return The design context
+	 */
+	public final DesignContext getDesignContext() {
+		return getDesign().getDesignContext( getProduct() );
+	}
 
-	public abstract CommandContext getCommandContext();
+	/**
+	 * A convenience method to get the command context.
+	 *
+	 * @return The command context
+	 */
+	public final CommandContext getCommandContext() {
+		return getDesignContext().getCommandContext();
+	}
 
-	public abstract CoordinateSystem getCoordinateSystem();
+	public final DesignWorkplane getWorkplane() {
+		return workplane;
+	}
 
-	// NOTE Coordinate system is part of the DesignWorkplane
-	public abstract void setCoordinateSystem( CoordinateSystem system );
+	/**
+	 * A convenience method to get the workplane coordinate system.
+	 *
+	 * @return The workplane coordinate system
+	 */
+	public final CoordinateSystem getCoordinateSystem() {
+		return getWorkplane().getCoordinateSystem();
+	}
 
-	public abstract DesignWorkplane getWorkplane();
+	/**
+	 * A convenience method to set the workplane coordinate system.
+	 *
+	 * @param system The coordinate system
+	 */
+	public final void setCoordinateSystem( CoordinateSystem system ) {
+		getWorkplane().setCoordinateSystem( system );
+	}
 
 	public abstract Point3D getViewPoint();
 
@@ -99,7 +135,7 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 
 	public abstract void setZoom( double zoom );
 
-	public abstract ReticleCursor getReticle();
+	public abstract Reticle getReticle();
 
 	public abstract void setView( DesignPortal portal );
 

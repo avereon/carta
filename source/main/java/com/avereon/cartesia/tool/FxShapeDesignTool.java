@@ -1,8 +1,8 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.*;
-import com.avereon.cartesia.cursor.IconCursor;
 import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
@@ -131,7 +131,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private final Stack<DesignPortal> portalStack;
 
-	private ReticleCursor reticle;
+	private Reticle reticle;
 
 	private BooleanProperty gridSnapEnabled;
 
@@ -203,31 +203,6 @@ public abstract class FxShapeDesignTool extends DesignTool {
 	}
 
 	@Override
-	public final DesignContext getDesignContext() {
-		return getDesign().getDesignContext( getProduct() );
-	}
-
-	@Override
-	public final CommandContext getCommandContext() {
-		return getDesignContext().getCommandContext();
-	}
-
-	@Override
-	public final CoordinateSystem getCoordinateSystem() {
-		return getWorkplane().getCoordinateSystem();
-	}
-
-	@Override
-	public final void setCoordinateSystem( CoordinateSystem system ) {
-		getWorkplane().setCoordinateSystem( system );
-	}
-
-	@Override
-	public final DesignWorkplane getWorkplane() {
-		return workplane;
-	}
-
-	@Override
 	public Point3D getViewPoint() {
 		return designPane == null ? Point3D.ZERO : designPane.getViewPoint();
 	}
@@ -258,7 +233,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 	}
 
 	@Override
-	public ReticleCursor getReticle() {
+	public Reticle getReticle() {
 		return reticle;
 	}
 
@@ -597,7 +572,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
 		String defaultReferencePointSize = "10";
 		String defaultReferencePointPaint = "#808080";
-		String defaultReticle = ReticleCursor.DUPLEX.name().toLowerCase();
+		String defaultReticle = Reticle.DUPLEX.name().toLowerCase();
 
 		// Get tool settings
 		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
@@ -610,7 +585,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
 		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
 		setView( viewPoint, viewZoom, viewRotate );
-		setReticle( ReticleCursor.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
+		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
 		designPane.setReferencePointSize( referencePointSize );
@@ -637,7 +612,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
 
 		// Settings listeners
-		productSettings.register( RETICLE, e -> setReticle( ReticleCursor.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
 		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 		productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
@@ -921,9 +896,9 @@ public abstract class FxShapeDesignTool extends DesignTool {
 		pullAction( key, commandActions.get( key ) );
 	}
 
-	private void setReticle( ReticleCursor reticle ) {
+	private void setReticle( Reticle reticle ) {
 		this.reticle = reticle;
-		if( getCursor() instanceof IconCursor ) setCursor( reticle.getCursorIcon( getProgram() ) );
+		if( getCursor() instanceof ReticleCursor ) setCursor( reticle.getCursor( getProgram() ) );
 	}
 
 	private CommandPrompt getCommandPrompt() {

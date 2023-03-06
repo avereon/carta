@@ -19,7 +19,7 @@ public class DesignContext {
 		this.product = product;
 		this.design = design;
 		this.commandContext = new CommandContext( product );
-		this.coordinates = new CoordinateStatus( product );
+		this.coordinates = new CoordinateStatus();
 	}
 
 	public final ProgramProduct getProduct() {

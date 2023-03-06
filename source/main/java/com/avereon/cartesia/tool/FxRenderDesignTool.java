@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
@@ -9,8 +10,7 @@ import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -22,8 +22,30 @@ import java.util.List;
 
 public class FxRenderDesignTool extends DesignTool {
 
+	// FIXME Possibly rename this to aim?
+	public static final Point3D DEFAULT_VIEWPOINT = Point3D.ZERO;
+
+	public static final double DEFAULT_ZOOM = 1.0;
+
+	public static final double DEFAULT_ROTATE = 0.0;
+
+	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
+
+	private final ObjectProperty<Point3D> viewpointProperty;
+
+	private final DoubleProperty viewZoomProperty;
+
+	private final DoubleProperty viewRotateProperty;
+
+	private final ObjectProperty<Reticle> reticleProperty;
+
 	public FxRenderDesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
+
+		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
+		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		viewRotateProperty = new SimpleDoubleProperty( DEFAULT_ROTATE );
+		reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 
 		// Settings and settings listeners should go in the ready() method
 	}
@@ -34,67 +56,64 @@ public class FxRenderDesignTool extends DesignTool {
 
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
-
-	}
-
-	@Override
-	public DesignContext getDesignContext() {
-		return null;
-	}
-
-	@Override
-	public CommandContext getCommandContext() {
-		return null;
-	}
-
-	@Override
-	public CoordinateSystem getCoordinateSystem() {
-		return null;
-	}
-
-	@Override
-	public void setCoordinateSystem( CoordinateSystem system ) {
-
-	}
-
-	@Override
-	public DesignWorkplane getWorkplane() {
-		return null;
 	}
 
 	@Override
 	public Point3D getViewPoint() {
-		return null;
+		return viewpointProperty.get();
 	}
 
 	@Override
 	public void setViewPoint( Point3D point ) {
-
+		viewpointProperty.set( point );
 	}
 
-	@Override
-	public double getViewRotate() {
-		return 0;
-	}
-
-	@Override
-	public void setViewRotate( double angle ) {
-
+	public ObjectProperty<Point3D> viewpointProperty() {
+		return viewpointProperty;
 	}
 
 	@Override
 	public double getZoom() {
-		return 0;
+		return viewZoomProperty.get();
 	}
 
 	@Override
 	public void setZoom( double zoom ) {
+		viewZoomProperty.set( zoom );
+	}
 
+	public DoubleProperty viewZoomProperty() {
+		return viewZoomProperty;
 	}
 
 	@Override
-	public ReticleCursor getReticle() {
-		return null;
+	public double getViewRotate() {
+		return viewRotateProperty.get();
+	}
+
+	@Override
+	public void setViewRotate( double angle ) {
+		viewRotateProperty.set( angle );
+	}
+
+	public DoubleProperty viewRotateProperty() {
+		return viewRotateProperty;
+	}
+
+	// The reticle is the "crosshair" cursor used in the tool. However, we need to
+	// store which type of crosshair to use.
+	@Override
+	public Reticle getReticle() {
+		return reticleProperty.get();
+	}
+
+	private void setReticle( Reticle reticle ) {
+		// FIXME Do we care about the reticle or only the cursor
+		reticleProperty.set( reticle );
+
+		// FIXME This should probably be a listener on the reticle property
+		// If the cursor is already a reticle, change to the new reticle
+		if( getCursor() instanceof ReticleCursor ) setCursor( reticle.getCursor( getProgram() ) );
 	}
 
 	@Override
