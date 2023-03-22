@@ -152,7 +152,7 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 		registerIcon( "shape-properties", new PreferencesIcon() );
 		registerIcon( "views", new ViewIcon() );
-		registerIcon( "view", new ViewIcon() );
+		//registerIcon( "view", new ViewIcon() );
 		registerIcon( "prints", new PrinterIcon() );
 	}
 
@@ -213,7 +213,7 @@ public class CartesiaMod extends Mod {
 
 	private void unregisterIcons() {
 		unregisterIcon( "prints", new PrinterIcon() );
-		unregisterIcon( "view", new ViewIcon() );
+		//unregisterIcon( "view", new ViewIcon() );
 		unregisterIcon( "views", new ViewIcon() );
 		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
