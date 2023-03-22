@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.BaseCartesiaUIT;
 import com.avereon.xenon.asset.Asset;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 // NEXT Well, time to make some choices. Either tool tests really require the
 // program to be running, or we need to simplify how tool tests are run.
 
+@Disabled
 public class FxRenderDesignToolTest extends BaseCartesiaUIT {
 
 	private FxRenderDesignTool tool;
