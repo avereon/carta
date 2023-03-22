@@ -233,8 +233,8 @@ public abstract class FxShapeDesignTool extends DesignTool {
 	}
 
 	@Override
-	public Reticle getReticle() {
-		return reticle;
+	public final ReticleCursor getReticleCursor() {
+		return reticle.getCursor( getProgram() );
 	}
 
 	@Override

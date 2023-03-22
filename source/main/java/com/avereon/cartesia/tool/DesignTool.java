@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.cursor.Reticle;
+import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -135,13 +135,13 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 
 	public abstract void setZoom( double zoom );
 
-	public abstract Reticle getReticle();
-
 	public abstract void setView( DesignPortal portal );
 
 	public abstract void setView( Point3D center, double zoom );
 
 	public abstract void setView( Point3D center, double zoom, double rotate );
+
+	public abstract ReticleCursor getReticleCursor();
 
 	/**
 	 * Set the camera viewport using a screen-based rectangular viewport. The

@@ -1,25 +1,38 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.cursor.Reticle;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.data.DesignView;
+import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.data.*;
+import com.avereon.data.NodeSettings;
+import com.avereon.settings.Settings;
+import com.avereon.xenon.Program;
+import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.asset.type.PropertiesType;
+import com.avereon.xenon.task.Task;
+import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
+import com.avereon.xenon.workspace.Workspace;
+import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
 
+@CustomLog
 public class FxRenderDesignTool extends DesignTool {
 
 	// FIXME Possibly rename this to aim?
@@ -31,6 +44,8 @@ public class FxRenderDesignTool extends DesignTool {
 
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
 
+	// PROPERTIES
+
 	private final ObjectProperty<Point3D> viewpointProperty;
 
 	private final DoubleProperty viewZoomProperty;
@@ -39,15 +54,35 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private final ObjectProperty<Reticle> reticleProperty;
 
+	// ACTIONS
+
+	private final PrintAction printAction;
+
+	private final PropertiesAction propertiesAction;
+
+	private final DeleteAction deleteAction;
+
+	private final UndoAction undoAction;
+
+	private final RedoAction redoAction;
+
 	public FxRenderDesignTool( ProgramProduct product, Asset asset ) {
 		super( product, asset );
+		addStylesheet( CartesiaMod.STYLESHEET );
+		getStyleClass().add( "design-tool" );
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
 		viewRotateProperty = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 
-		// Settings and settings listeners should go in the ready() method
+		this.printAction = new PrintAction( product.getProgram() );
+		this.propertiesAction = new PropertiesAction( product.getProgram() );
+		this.deleteAction = new DeleteAction( product.getProgram() );
+		this.undoAction = new UndoAction( product.getProgram() );
+		this.redoAction = new RedoAction( product.getProgram() );
+
+		// NOTE Settings and settings listeners should go in the ready() method
 	}
 
 	@Override
@@ -56,6 +91,163 @@ public class FxRenderDesignTool extends DesignTool {
 
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
+
+//		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
+//		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
+		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
+		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
+
+		Design design = request.getAsset().getModel();
+		// FIXME Is this correct? Or should this be in display()
+		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
+
+//		// Link the guides before loading the design
+//		layersGuide.link();
+//		viewsGuide.link();
+//		printsGuide.link();
+//
+//		Fx.run( () -> {
+//			designPane.setDpi( Screen.getPrimary().getDpi() );
+//			designPane.setDesign( design );
+//		} );
+//
+//		// Keep the design pane centered when resizing
+//		// These should be added before updating the pan and zoom
+//		widthProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
+//		heightProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
+//
+//		// NOTE What listeners should be registered before configuring things???
+//		// There are two ways of handing the initialization of properties that change
+//		// 1. Initialize the properties from settings, then add listeners afterward.
+//		//    This is safer, but does not allow the listener logic to be triggered.
+//		// 2. Add listeners, then initialize the properties. This approach has the
+//		//    benefit of triggering the listeners, but, depending on the listener,
+//		//    that could be problematic if the listener gets caught in a loop.
+//		//    Another downside to this approach is that several listeners might call
+//		//    the same logic (possibly expensive logic) causing an unnecessary
+//		//    delay.
+//
+//		// Workplane settings
+//		configureWorkplane();
+//
+//		Settings productSettings = getProduct().getSettings();
+//		Settings settings = getSettings();
+//		String defaultSelectSize = "2";
+//		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
+//		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
+//		String defaultReferencePointSize = "10";
+//		String defaultReferencePointPaint = "#808080";
+//		String defaultReticle = Reticle.DUPLEX.name().toLowerCase();
+//
+//		// Get tool settings
+//		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
+//		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
+//		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
+//		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
+//		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
+//
+//		Point3D viewPoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
+//		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
+//		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
+//		setView( viewPoint, viewZoom, viewRotate );
+//		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
+//		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
+//		designPane.setReferencePointType( referencePointType );
+//		designPane.setReferencePointSize( referencePointSize );
+//		designPane.setReferencePointPaint( referencePointPaint );
+//
+//		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+//		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
+//
+//		// Restore the list of enabled layers
+//		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
+//		design.getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
+//
+//		// Restore the list of visible layers
+//		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
+//		design.getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+//
+//		// Restore the grid visible flag
+//		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
+//
+//		// Restore the grid snap enabled flag
+//		setGridSnapEnabled( Boolean.parseBoolean( settings.get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
+//
+//		// Restore the reference view visibility
+//		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
+//
+//		// Settings listeners
+//		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+//		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
+//		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+//		productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+//		productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
+//		productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+//
+//		// Add layout bounds property listener
+//		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
+//
+//		// Add view point property listener
+//		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
+//			storePreviousViewAction.request();
+//			settings.set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
+//			doUpdateGridBounds();
+//		} );
+//
+//		// Add view rotate property listener
+//		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
+//			storePreviousViewAction.request();
+//			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
+//			doUpdateGridBounds();
+//		} );
+//
+//		// Add view zoom property listener
+//		designPane.zoomProperty().addListener( ( p, o, n ) -> {
+//			storePreviousViewAction.request();
+//			getCoordinateStatus().updateZoom( n.doubleValue() );
+//			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
+//			doUpdateGridBounds();
+//		} );
+//
+//		// Add visible layers listener
+//		designPane.enabledLayersProperty().addListener( this::doStoreEnabledLayers );
+//
+//		// Add visible layers listener
+//		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
+//
+//		// Add current layer property listener
+//		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
+//
+//		// Add current view property listener
+//		currentViewProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_VIEW, n.getId() ) );
+//
+//		// Add grid visible property listener
+//		gridVisible().addListener( ( p, o, n ) -> settings.set( GRID_VISIBLE, String.valueOf( n ) ) );
+//
+//		// Add grid visible property listener
+//		gridSnapEnabled().addListener( ( p, o, n ) -> settings.set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
+//
+//		// Add reference points visible property listener
+//		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
+//
+//		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+//
+//		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
+//		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+//		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
+//		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
+//		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
+//
+//		getCoordinateStatus().updateZoom( getZoom() );
+//		designPane.updateView();
+//		doUpdateGridBounds();
+
+		// Get the reticle setting and bind the setting to the reticleProperty
+
+		// Update the cursor if the reticle changes and cursor is currently a reticle
+		reticleProperty.addListener( (p,o,n) -> {
+			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
+		} );
 	}
 
 	@Override
@@ -100,20 +292,17 @@ public class FxRenderDesignTool extends DesignTool {
 		return viewRotateProperty;
 	}
 
-	// The reticle is the "crosshair" cursor used in the tool. However, we need to
-	// store which type of crosshair to use.
 	@Override
-	public Reticle getReticle() {
+	public final ReticleCursor getReticleCursor() {
+		return getReticle().getCursor( getProgram() );
+	}
+
+	private Reticle getReticle() {
 		return reticleProperty.get();
 	}
 
 	private void setReticle( Reticle reticle ) {
-		// FIXME Do we care about the reticle or only the cursor
 		reticleProperty.set( reticle );
-
-		// FIXME This should probably be a listener on the reticle property
-		// If the cursor is already a reticle, change to the new reticle
-		if( getCursor() instanceof ReticleCursor ) setCursor( reticle.getCursor( getProgram() ) );
 	}
 
 	@Override
@@ -398,6 +587,120 @@ public class FxRenderDesignTool extends DesignTool {
 
 	@Override
 	protected void showCommandPrompt() {
+
+	}
+
+	private class PrintAction extends ProgramAction {
+
+		protected PrintAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ));
+		}
+
+	}
+
+	private class PropertiesAction extends ProgramAction {
+
+		protected PropertiesAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			// Get the settings pages for the asset type
+			Asset asset = getAsset();
+			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
+			SettingsPage assetSettingsPage = asset.getType().getSettingsPages().get( "grid" );
+
+			Settings designSettings = new NodeSettings( getAsset().getModel() );
+			Settings assetSettings = getAssetSettings();
+
+			// Set the settings for the pages
+			designSettingsPage.setSettings( designSettings );
+			assetSettingsPage.setSettings( assetSettings );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Show the properties tool
+					getProgram().getAssetManager().openAsset( PropertiesType.URI ).get();
+
+					// Fire the event on the FX thread
+					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
+					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage ) ) );
+				} catch( Exception exception ) {
+					log.atError( exception ).log();
+				}
+			} ) );
+		}
+
+	}
+
+	private class DeleteAction extends ProgramAction {
+
+		protected DeleteAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return !selectedShapes().isEmpty();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getCommandContext().command( CommandMap.getActionCommand( "delete" ).getCommand() );
+		}
+
+	}
+
+	private class UndoAction extends ProgramAction {
+
+		protected UndoAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getAsset().getUndoManager().isUndoAvailable();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getAsset().getUndoManager().undo();
+		}
+
+	}
+
+	private class RedoAction extends ProgramAction {
+
+		protected RedoAction( Program program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getAsset().getUndoManager().isRedoAvailable();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getAsset().getUndoManager().redo();
+		}
 
 	}
 

@@ -12,6 +12,7 @@ public abstract class BaseCartesiaTest extends BaseModTestCase {
 
 	@BeforeEach
 	protected void setup() throws Exception {
+		super.setup();
 		mod = new CartesiaMod();
 		mod.init( getProgram(), ProductCard.card( mod ) );
 		Rb.init(mod);
