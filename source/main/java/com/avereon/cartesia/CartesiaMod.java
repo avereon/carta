@@ -6,8 +6,8 @@ import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.tool.Design2dEditor;
-import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.cartesia.tool.FxRenderDesignTool;
+import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
@@ -18,6 +18,7 @@ import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.asset.type.ProgramHelpType;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zarra.image.BrokenIcon;
+import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
@@ -151,8 +152,7 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 		registerIcon( "shape-properties", new PreferencesIcon() );
-		registerIcon( "views", new ViewIcon() );
-		//registerIcon( "view", new ViewIcon() );
+		registerIcon( "views", new EyeIcon() );
 		registerIcon( "prints", new PrinterIcon() );
 	}
 
@@ -213,8 +213,7 @@ public class CartesiaMod extends Mod {
 
 	private void unregisterIcons() {
 		unregisterIcon( "prints", new PrinterIcon() );
-		//unregisterIcon( "view", new ViewIcon() );
-		unregisterIcon( "views", new ViewIcon() );
+		unregisterIcon( "views", new EyeIcon() );
 		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
