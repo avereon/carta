@@ -45,6 +45,12 @@ public class DesignArc extends DesignEllipse {
 
 	private static final String LENGTH = "length";
 
+	private static final String START_POINT = "start-point";
+
+	private static final String MID_POINT = "mid-point";
+
+	private static final String END_POINT = "end-point";
+
 	public DesignArc() {
 		this( null, null, null, null, null );
 	}
@@ -82,6 +88,26 @@ public class DesignArc extends DesignEllipse {
 	public DesignArc setExtent( Double value ) {
 		setValue( EXTENT, value );
 		return this;
+	}
+
+	public Double calcMid() {
+		return getStart() + 0.5 * getExtent();
+	}
+
+	public Double calcEnd() {
+		return getStart() + getExtent();
+	}
+
+	public Point3D calcStartPoint() {
+		return CadGeometry.ellipsePoint360( this, getStart() );
+	}
+
+	public Point3D calcMidPoint() {
+		return CadGeometry.ellipsePoint360( this, calcMid() );
+	}
+
+	public Point3D calcEndPoint() {
+		return CadGeometry.ellipsePoint360( this, calcEnd() );
 	}
 
 	public DesignArc.Type getType() {
@@ -136,8 +162,12 @@ public class DesignArc extends DesignEllipse {
 		if( getRotate() != null ) info.put( ROTATE, getRotate() );
 		info.put( START, getStart() );
 		info.put( EXTENT, getExtent() );
-		info.put( END, getStart() + getExtent() );
+		info.put( END, calcEnd() );
 		info.put( LENGTH, pathLength() );
+
+		info.put( START_POINT, calcStartPoint() );
+		info.put( MID_POINT, calcMidPoint() );
+		info.put( END_POINT, calcEndPoint() );
 		return info;
 	}
 
