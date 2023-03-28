@@ -17,7 +17,6 @@ import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.asset.type.ProgramHelpType;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
-import com.avereon.zarra.image.BrokenIcon;
 import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
@@ -129,7 +128,6 @@ public class CartesiaMod extends Mod {
 
 	private void registerIcons() {
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
-		registerIcon( "tool", new BrokenIcon() );
 		registerIcon( "draw", new PencilIcon() );
 		registerIcon( "arc-2", new Arc2Icon() );
 		registerIcon( "arc-3", new Arc3Icon() );
@@ -157,7 +155,6 @@ public class CartesiaMod extends Mod {
 	}
 
 	private void registerActions() {
-		registerAction( this, "tool" );
 		registerAction( this, "layer" );
 		registerAction( this, "draw" );
 		registerAction( this, "marker" );
@@ -208,7 +205,6 @@ public class CartesiaMod extends Mod {
 		unregisterAction( "marker" );
 		unregisterAction( "draw" );
 		unregisterAction( "layer" );
-		unregisterAction( "tool" );
 	}
 
 	private void unregisterIcons() {
@@ -236,7 +232,6 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "arc-3", new Arc3Icon() );
 		unregisterIcon( "arc-2", new Arc2Icon() );
 		unregisterIcon( "draw", new PencilIcon() );
-		unregisterIcon( "tool", new BrokenIcon() );
 		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
 	}
 
