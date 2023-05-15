@@ -92,8 +92,9 @@ public class DesignPrintTask extends Task<Void> {
 		// Move the center of the paper pane to the center of the printable area
 		paperPane.getTransforms().add( new Translate( 0.5 * printableWidth, 0.5 * printableHeight ) );
 
-		// Add the design pane last
+		// Last, add the design pane to the paper pane to render the geometry
 		paperPane.getChildren().add( designPane );
+		// Wait for all the geometry to be rendered
 		Fx.waitFor( 10000 );
 
 		boolean successful = job.printPage( paperPane ) && job.endJob();
