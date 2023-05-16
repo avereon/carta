@@ -4,7 +4,6 @@ import com.avereon.product.ProductCard;
 import com.avereon.settings.MapSettings;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.Xenon;
-import com.avereon.xenon.ProgramProduct;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

@@ -2,7 +2,6 @@ package com.avereon.cartesia;
 
 import com.avereon.product.ProductCard;
 import com.avereon.product.Rb;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.zerra.BaseModTestCase;
 import org.junit.jupiter.api.BeforeEach;
 

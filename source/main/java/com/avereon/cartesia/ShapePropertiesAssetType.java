@@ -1,6 +1,5 @@
 package com.avereon.cartesia;
 
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.AssetType;
 import com.avereon.xenon.asset.Codec;
 import com.avereon.xenon.asset.PlaceholderCodec;

@@ -9,7 +9,6 @@ import com.avereon.log.LazyEval;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ActionLibrary;
 import com.avereon.xenon.ActionProxy;
-import com.avereon.xenon.ProgramProduct;
 import javafx.scene.input.*;
 import lombok.CustomLog;
 

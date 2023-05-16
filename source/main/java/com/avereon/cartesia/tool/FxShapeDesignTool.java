@@ -141,7 +141,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
-	public FxShapeDesignTool( ProgramProduct product, Asset asset ) {
+	public FxShapeDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );

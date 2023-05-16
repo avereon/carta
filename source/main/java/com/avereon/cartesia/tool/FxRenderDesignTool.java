@@ -10,7 +10,6 @@ import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramAction;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;

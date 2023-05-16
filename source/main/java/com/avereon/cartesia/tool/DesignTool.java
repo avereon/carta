@@ -9,7 +9,6 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.skill.WritableIdentity;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import javafx.beans.property.BooleanProperty;

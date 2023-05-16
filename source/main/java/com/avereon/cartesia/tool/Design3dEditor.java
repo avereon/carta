@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 
 public class Design3dEditor extends FxShapeDesignTool {

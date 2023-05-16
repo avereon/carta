@@ -11,7 +11,6 @@ import com.avereon.log.LazyEval;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Xenon;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.zarra.javafx.Fx;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;

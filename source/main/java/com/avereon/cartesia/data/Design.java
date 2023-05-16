@@ -3,7 +3,6 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
-import com.avereon.xenon.ProgramProduct;
 import lombok.CustomLog;
 
 import java.util.*;
