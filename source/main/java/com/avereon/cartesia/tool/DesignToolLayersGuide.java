@@ -10,7 +10,7 @@ import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
@@ -73,7 +73,7 @@ public class DesignToolLayersGuide extends Guide {
 		return product;
 	}
 
-	Program getProgram() {
+	Xenon getProgram() {
 		return product.getProgram();
 	}
 

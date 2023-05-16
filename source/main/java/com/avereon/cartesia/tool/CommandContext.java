@@ -10,11 +10,10 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.log.LazyEval;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.zarra.javafx.Fx;
 import javafx.event.EventHandler;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
 import lombok.CustomLog;
@@ -65,7 +64,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		this.inputMode = CommandContext.Input.NONE;
 	}
 
-	public final Program getProgram() {
+	public final Xenon getProgram() {
 		return product.getProgram();
 	}
 

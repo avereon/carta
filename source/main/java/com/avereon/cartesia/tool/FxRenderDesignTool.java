@@ -8,7 +8,7 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.PropertiesToolEvent;
@@ -592,7 +592,7 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private class PrintAction extends ProgramAction {
 
-		protected PrintAction( Program program ) {
+		protected PrintAction( Xenon program ) {
 			super( program );
 		}
 
@@ -610,7 +610,7 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private class PropertiesAction extends ProgramAction {
 
-		protected PropertiesAction( Program program ) {
+		protected PropertiesAction( Xenon program ) {
 			super( program );
 		}
 
@@ -652,7 +652,7 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private class DeleteAction extends ProgramAction {
 
-		protected DeleteAction( Program program ) {
+		protected DeleteAction( Xenon program ) {
 			super( program );
 		}
 
@@ -670,7 +670,7 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private class UndoAction extends ProgramAction {
 
-		protected UndoAction( Program program ) {
+		protected UndoAction( Xenon program ) {
 			super( program );
 		}
 
@@ -688,7 +688,7 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private class RedoAction extends ProgramAction {
 
-		protected RedoAction( Program program ) {
+		protected RedoAction( Xenon program ) {
 			super( program );
 		}
 

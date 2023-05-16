@@ -1,6 +1,6 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.zarra.image.RenderedIcon;
 import com.avereon.zarra.javafx.Fx;
 
@@ -24,7 +24,7 @@ public enum Reticle {
 		this.icon = icon;
 	}
 
-	public ReticleCursor getCursor( Program program ) {
+	public ReticleCursor getCursor( Xenon program ) {
 		// Change the cursor color according to the theme
 		icon.setTheme( program.getWorkspaceManager().getThemeMetadata().getMotif() );
 

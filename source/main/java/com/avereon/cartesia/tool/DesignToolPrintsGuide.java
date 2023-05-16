@@ -6,7 +6,7 @@ import com.avereon.cartesia.data.DesignNode;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.data.NodeEvent;
 import com.avereon.product.Rb;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
@@ -40,7 +40,7 @@ public class DesignToolPrintsGuide extends Guide {
 		return product;
 	}
 
-	Program getProgram() {
+	Xenon getProgram() {
 		return product.getProgram();
 	}
 

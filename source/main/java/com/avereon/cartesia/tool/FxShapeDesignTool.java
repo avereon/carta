@@ -1225,7 +1225,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 		private final String shortcut;
 
-		protected CommandAction( Program program, String shortcut ) {
+		protected CommandAction( Xenon program, String shortcut ) {
 			super( program );
 			this.shortcut = shortcut;
 		}
@@ -1244,7 +1244,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private class PrintAction extends ProgramAction {
 
-		protected PrintAction( Program program ) {
+		protected PrintAction( Xenon program ) {
 			super( program );
 		}
 
@@ -1262,7 +1262,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private class PropertiesAction extends ProgramAction {
 
-		protected PropertiesAction( Program program ) {
+		protected PropertiesAction( Xenon program ) {
 			super( program );
 		}
 
@@ -1304,7 +1304,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private class DeleteAction extends ProgramAction {
 
-		protected DeleteAction( Program program ) {
+		protected DeleteAction( Xenon program ) {
 			super( program );
 		}
 
@@ -1322,7 +1322,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private class UndoAction extends ProgramAction {
 
-		protected UndoAction( Program program ) {
+		protected UndoAction( Xenon program ) {
 			super( program );
 		}
 
@@ -1340,7 +1340,7 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private class RedoAction extends ProgramAction {
 
-		protected RedoAction( Program program ) {
+		protected RedoAction( Xenon program ) {
 			super( program );
 		}
 

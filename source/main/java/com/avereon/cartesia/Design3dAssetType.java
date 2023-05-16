@@ -4,7 +4,7 @@ import com.avereon.cartesia.data.Design3D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetException;
@@ -20,7 +20,7 @@ public class Design3dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetNew( Program program, Asset asset ) throws AssetException {
+	public boolean assetNew( Xenon program, Asset asset ) throws AssetException {
 		// There might already be a model from assetNew()
 		Design3D design = asset.getModel();
 
@@ -38,7 +38,7 @@ public class Design3dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
+	public boolean assetOpen( Xenon program, Asset asset ) throws AssetException {
 		asset.setCaptureUndoChanges( true );
 		return true;
 	}

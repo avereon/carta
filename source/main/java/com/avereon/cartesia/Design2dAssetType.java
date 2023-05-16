@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.RbKey;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetException;
@@ -21,7 +21,7 @@ public class Design2dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetNew( Program program, Asset asset ) throws AssetException {
+	public boolean assetNew( Xenon program, Asset asset ) throws AssetException {
 		Design2D design = initModel( asset );
 
 		// Create the default layer
@@ -42,7 +42,7 @@ public class Design2dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetOpen( Program program, Asset asset ) throws AssetException {
+	public boolean assetOpen( Xenon program, Asset asset ) throws AssetException {
 		Design2D design = initModel( asset );
 
 		asset.setCaptureUndoChanges( true );

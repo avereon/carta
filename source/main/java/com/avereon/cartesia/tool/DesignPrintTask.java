@@ -4,7 +4,7 @@ import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.product.Rb;
-import com.avereon.xenon.Program;
+import com.avereon.xenon.Xenon;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
@@ -19,7 +19,7 @@ import lombok.Getter;
 @CustomLog
 public class DesignPrintTask extends Task<Void> {
 
-	private final Program program;
+	private final Xenon program;
 
 	private final DesignTool tool;
 
@@ -27,7 +27,7 @@ public class DesignPrintTask extends Task<Void> {
 
 	private final DesignPrint print;
 
-	public DesignPrintTask( Program program, DesignTool tool, Asset asset, DesignPrint print ) {
+	public DesignPrintTask( Xenon program, DesignTool tool, Asset asset, DesignPrint print ) {
 		this.program = program;
 		this.tool = tool;
 		this.asset = asset;
