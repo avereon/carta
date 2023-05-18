@@ -11,6 +11,7 @@ import com.avereon.log.LazyEval;
 import com.avereon.util.ArrayUtil;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Xenon;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.zarra.javafx.Fx;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
@@ -36,7 +37,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private static final Level COMMAND_STACK_LOG_LEVEL = Level.FINE;
 
-	private final ProgramProduct product;
+	private final XenonProgramProduct product;
 
 	private final BlockingDeque<CommandExecuteRequest> commandStack;
 
@@ -56,7 +57,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private DesignTool tool;
 
-	public CommandContext( ProgramProduct product ) {
+	public CommandContext( XenonProgramProduct product ) {
 		this.product = product;
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorCommand = TextUtil.EMPTY;
@@ -67,7 +68,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return product.getProgram();
 	}
 
-	public final ProgramProduct getProduct() {
+	public final XenonProgramProduct getProduct() {
 		return product;
 	}
 

@@ -9,6 +9,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.skill.WritableIdentity;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import javafx.beans.property.BooleanProperty;
@@ -70,7 +71,7 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 
 	private final DesignWorkplane workplane;
 
-	public DesignTool( ProgramProduct product, Asset asset ) {
+	public DesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );

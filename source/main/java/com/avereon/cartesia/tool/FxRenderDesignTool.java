@@ -11,6 +11,7 @@ import com.avereon.settings.Settings;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.PropertiesToolEvent;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.PropertiesType;
@@ -65,7 +66,7 @@ public class FxRenderDesignTool extends DesignTool {
 
 	private final RedoAction redoAction;
 
-	public FxRenderDesignTool( ProgramProduct product, Asset asset ) {
+	public FxRenderDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );

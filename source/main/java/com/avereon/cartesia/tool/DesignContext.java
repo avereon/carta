@@ -1,12 +1,13 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.Design;
+import com.avereon.xenon.XenonProgramProduct;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
 public class DesignContext {
 
-	private final ProgramProduct product;
+	private final XenonProgramProduct product;
 
 	private final Design design;
 
@@ -14,14 +15,14 @@ public class DesignContext {
 
 	private final CoordinateStatus coordinates;
 
-	public DesignContext( ProgramProduct product, Design design ) {
+	public DesignContext( XenonProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
 		this.commandContext = new CommandContext( product );
 		this.coordinates = new CoordinateStatus();
 	}
 
-	public final ProgramProduct getProduct() {
+	public final XenonProgramProduct getProduct() {
 		return product;
 	}
 

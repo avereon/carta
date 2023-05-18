@@ -7,6 +7,7 @@ import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.data.NodeEvent;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.zarra.javafx.Fx;
@@ -18,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @CustomLog
 public class DesignToolPrintsGuide extends Guide {
 
-	private final ProgramProduct product;
+	private final XenonProgramProduct product;
 
 	private final DesignTool tool;
 
@@ -26,7 +27,7 @@ public class DesignToolPrintsGuide extends Guide {
 
 	private final Map<GuideNode, DesignNode> nodePrints;
 
-	public DesignToolPrintsGuide( ProgramProduct product, DesignTool tool ) {
+	public DesignToolPrintsGuide( XenonProgramProduct product, DesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.printNodes = new ConcurrentHashMap<>();
@@ -35,7 +36,7 @@ public class DesignToolPrintsGuide extends Guide {
 		setIcon( "prints" );
 	}
 
-	ProgramProduct getProduct() {
+	XenonProgramProduct getProduct() {
 		return product;
 	}
 

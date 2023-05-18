@@ -11,6 +11,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import javafx.beans.value.ChangeListener;
@@ -28,7 +29,7 @@ public class DesignToolLayersGuide extends Guide {
 
 	private static final String ENABLED_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
 
-	private final ProgramProduct product;
+	private final XenonProgramProduct product;
 
 	private final FxShapeDesignTool tool;
 
@@ -36,7 +37,7 @@ public class DesignToolLayersGuide extends Guide {
 
 	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
-	public DesignToolLayersGuide( ProgramProduct product, FxShapeDesignTool tool ) {
+	public DesignToolLayersGuide( XenonProgramProduct product, FxShapeDesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.layerGuideNodes = new ConcurrentHashMap<>();
@@ -68,7 +69,7 @@ public class DesignToolLayersGuide extends Guide {
 		}
 	}
 
-	ProgramProduct getProduct() {
+	XenonProgramProduct getProduct() {
 		return product;
 	}
 

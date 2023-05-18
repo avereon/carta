@@ -4,6 +4,7 @@ import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.ProgramTool;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -20,7 +21,7 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	private final EventHandler<ShapePropertiesToolEvent> hideHandler;
 
-	public ShapePropertiesTool( ProgramProduct product, Asset asset ) {
+	public ShapePropertiesTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		setId( "tool-properties" );
 

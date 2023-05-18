@@ -4,12 +4,13 @@ import com.avereon.product.ProductCard;
 import com.avereon.settings.MapSettings;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.Xenon;
+import com.avereon.xenon.XenonProgramProduct;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.Callable;
 
-public class MockCartesiaMod implements ProgramProduct {
+public class MockCartesiaMod implements XenonProgramProduct {
 
 	@Override
 	public ProductCard getCard() {

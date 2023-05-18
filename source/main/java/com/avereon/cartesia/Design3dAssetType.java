@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetException;
 import com.avereon.xenon.asset.AssetType;
@@ -13,7 +14,7 @@ public class Design3dAssetType extends AssetType {
 
 	public static final String KEY = "design3d";
 
-	public Design3dAssetType( ProgramProduct product ) {
+	public Design3dAssetType( XenonProgramProduct product ) {
 		super( product, KEY );
 		setDefaultCodec( new CartesiaDesignCodec3D( product ) );
 	}
