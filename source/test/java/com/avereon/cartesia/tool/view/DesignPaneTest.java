@@ -1,11 +1,15 @@
 package com.avereon.cartesia.tool.view;
 
-import com.avereon.cartesia.*;
+import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.Point2DAssert;
+import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.TestTimeouts;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.zarra.javafx.Fx;
+import com.avereon.zerra.BaseFxPlatformTestCase;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Group;
@@ -15,12 +19,10 @@ import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.logging.Level;
-
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignPaneTest extends BaseCartesiaTest implements TestTimeouts {
+public class DesignPaneTest extends BaseFxPlatformTestCase implements TestTimeouts {
 
 	private static final double PARENT_WIDTH = 1600.0;
 
@@ -40,13 +42,7 @@ public class DesignPaneTest extends BaseCartesiaTest implements TestTimeouts {
 
 	@BeforeEach
 	public void setup() throws Exception {
-		System.out.println( "Before super.setup()" );
 		super.setup();
-		System.out.println( "After super.setup()" );
-
-
-		java.util.logging.Logger.getLogger( "" ).setLevel( Level.INFO );
-
 
 		design = new Design2D();
 		pane = new DesignPane().setDesign( design );
