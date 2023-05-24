@@ -12,7 +12,7 @@ import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
 
-public class CadTransformTest extends BaseCartesiaTest {
+public class CadTransformTest {
 
 	@Test
 	void testConstructorWithArrays() {
