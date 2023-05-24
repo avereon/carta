@@ -23,11 +23,17 @@ module com.avereon.cartesia {
 	exports com.avereon.cartesia.cursor to com.avereon.zarra;
 	exports com.avereon.cartesia.icon to com.avereon.zarra;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
+	exports com.avereon.cartesia.rb to com.avereon.xenon;
 
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
-	exports com.avereon.cartesia.rb to com.avereon.xenon;
+
+	opens com.avereon.cartesia to org.testfx.junit5;
+	opens com.avereon.cartesia.command to org.testfx.junit5;
+	opens com.avereon.cartesia.math to org.testfx.junit5;
+	opens com.avereon.cartesia.tool to org.testfx.junit5;
+	opens com.avereon.cartesia.tool.view to org.testfx.junit5;
 
 	provides com.avereon.xenon.Mod with CartesiaMod;
 

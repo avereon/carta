@@ -1,21 +1,16 @@
 package com.avereon.cartesia;
 
 import com.avereon.product.ProductCard;
-import com.avereon.product.Rb;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.zerra.BaseModTestCase;
+import com.avereon.zerra.BaseFullModTestCase;
 import org.junit.jupiter.api.BeforeEach;
 
-public abstract class BaseCartesiaTest extends BaseModTestCase {
-
-	private CartesiaMod mod;
+public abstract class BaseCartesiaTest extends BaseFullModTestCase {
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		mod = new CartesiaMod();
-		mod.init( getProgram(), ProductCard.card( mod ) );
-		Rb.init(mod);
+		initMod( ProductCard.card( CartesiaMod.class ) );
 	}
 
 	protected XenonProgramProduct getProduct() {
@@ -23,7 +18,7 @@ public abstract class BaseCartesiaTest extends BaseModTestCase {
 	}
 
 	protected CartesiaMod getMod() {
-		return mod;
+		return (CartesiaMod)super.getMod();
 	}
 
 }
