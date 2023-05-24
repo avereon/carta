@@ -30,6 +30,10 @@ public class CommandMap {
 	private static final Map<CommandEventKey, String> eventActions = new ConcurrentHashMap<>();
 
 	public static void load( XenonProgramProduct product ) {
+		actionCommands.clear();
+		commandActions.clear();
+		eventActions.clear();
+
 		// High level letters
 		// a - arc
 		// c - circle
