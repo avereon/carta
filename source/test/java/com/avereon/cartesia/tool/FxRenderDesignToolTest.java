@@ -5,7 +5,7 @@ import com.avereon.xenon.ProgramTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -37,10 +37,8 @@ public class FxRenderDesignToolTest extends BaseCartesiaTest {
 	protected void setup() throws Exception {
 		super.setup();
 
-		URL url = getClass().getResource( "/design-tool-test.cartesia2d" );
-		//Asset asset = getProgram().getAssetManager().createAsset( url );
-		//tool = new FxRenderDesignTool( getMod(), asset );
-		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( url.toURI() );
+		URI uri = getClass().getResource( "/design-tool-test.cartesia2d" ).toURI();
+		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( uri, FxRenderDesignTool.class );
 		tool = (FxRenderDesignTool)future.get();
 	}
 
