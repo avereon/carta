@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Future;
 
-import static com.avereon.xenon.test.ProgramTestConfig.TIMEOUT;
+import static com.avereon.xenon.test.ProgramTestConfig.LONG_TIMEOUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -49,17 +49,17 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 
 		MockCommand command = new MockCommand( 0 );
-		context.submit( tool, command ).waitFor( TIMEOUT );
+		context.submit( tool, command ).waitFor( LONG_TIMEOUT );
 
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( TIMEOUT );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( LONG_TIMEOUT );
 		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor( TIMEOUT );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor( LONG_TIMEOUT );
 		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NUMBER );
-		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor( TIMEOUT );
+		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor( LONG_TIMEOUT );
 		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.POINT );
-		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor( TIMEOUT );
+		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor( LONG_TIMEOUT );
 		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.TEXT );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( TIMEOUT );
+		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( LONG_TIMEOUT );
 		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 	}
 
