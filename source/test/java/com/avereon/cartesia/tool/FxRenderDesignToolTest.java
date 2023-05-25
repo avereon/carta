@@ -1,10 +1,12 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.BaseCartesiaUIT;
+import com.avereon.cartesia.BaseCartesiaTest;
 import com.avereon.xenon.asset.Asset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+
+import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -27,23 +29,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 // should not be used for Xenon.
 
 @Disabled
-public class FxRenderDesignToolTest extends BaseCartesiaUIT {
+public class FxRenderDesignToolTest extends BaseCartesiaTest {
 
 	private FxRenderDesignTool tool;
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		//Fx.startup();
 
-		//getProgram().init();
-		//AssetManager manager = new AssetManager( getProgram() );
-
-		//Path path = Paths.get( "target", "design-tool-test.cartesia2d" );
-		//Asset asset = new Asset( new Design2dAssetType( getMod() ), path.toUri() );
-
-		//Asset asset = getProgram().getAssetManager().createAsset( getClass().getResource( "/design-tool-test.cartesia2d" ) );
-		Asset asset = new Asset( getClass().getResource( "/design-tool-test.cartesia2d" ).toURI() );
+		URL url = getClass().getResource( "/design-tool-test.cartesia2d" );
+		Asset asset = getProgram().getAssetManager().createAsset( url );
 		tool = new FxRenderDesignTool( getMod(), asset );
 	}
 
