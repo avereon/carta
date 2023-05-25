@@ -1,0 +1,31 @@
+{
+  "codec-version" : "1",
+  "id" : "0958d926-34c6-4731-bd43-278eb88df19a",
+  "layers" : {
+    "a56cede9-ee12-40d0-a86c-b3701146c0e7" : {
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e7",
+      "layers" : { },
+      "name" : "construction",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-6e936be5cab2" : {
+          "id" : "5724d788-e5d5-4e78-a947-6e936be5cab2",
+          "origin" : "-2.0,2.0,0.0",
+          "point" : "2.0,-2.0,0.0",
+          "shape" : "line"
+        },
+        "73717fa4-08bc-4720-9edc-ff274379f732" : {
+          "id" : "73717fa4-08bc-4720-9edc-ff274379f732",
+          "origin" : "-2.0,-2.0,0.0",
+          "point" : "2.0,2.0,0.0",
+          "shape" : "line"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
+    }
+  },
+  "unit" : "centimeter"
+}

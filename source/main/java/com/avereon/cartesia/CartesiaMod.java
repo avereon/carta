@@ -6,8 +6,8 @@ import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.tool.Design2dEditor;
+import com.avereon.cartesia.tool.FxRenderDesignTool;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
-import com.avereon.cartesia.tool2.DesignTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
@@ -17,7 +17,7 @@ import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.asset.type.ProgramHelpType;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
-import com.avereon.zarra.image.BrokenIcon;
+import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
@@ -59,7 +59,7 @@ public class CartesiaMod extends Mod {
 		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, design2dEditorRegistration );
 		// Other tool registrations
-		ToolRegistration designToolRegistration = new ToolRegistration( this, DesignTool.class );
+		ToolRegistration designToolRegistration = new ToolRegistration( this, FxRenderDesignTool.class );
 		designToolRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, designToolRegistration );
 
@@ -128,7 +128,6 @@ public class CartesiaMod extends Mod {
 
 	private void registerIcons() {
 		registerIcon( getCard().getArtifact(), new CartesiaIcon() );
-		registerIcon( "tool", new BrokenIcon() );
 		registerIcon( "draw", new PencilIcon() );
 		registerIcon( "arc-2", new Arc2Icon() );
 		registerIcon( "arc-3", new Arc3Icon() );
@@ -151,13 +150,11 @@ public class CartesiaMod extends Mod {
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridIcon( true ) );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridIcon( false ) );
 		registerIcon( "shape-properties", new PreferencesIcon() );
-		registerIcon( "views", new ViewIcon() );
-		registerIcon( "view", new ViewIcon() );
+		registerIcon( "views", new EyeIcon() );
 		registerIcon( "prints", new PrinterIcon() );
 	}
 
 	private void registerActions() {
-		registerAction( this, "tool" );
 		registerAction( this, "layer" );
 		registerAction( this, "draw" );
 		registerAction( this, "marker" );
@@ -208,13 +205,11 @@ public class CartesiaMod extends Mod {
 		unregisterAction( "marker" );
 		unregisterAction( "draw" );
 		unregisterAction( "layer" );
-		unregisterAction( "tool" );
 	}
 
 	private void unregisterIcons() {
 		unregisterIcon( "prints", new PrinterIcon() );
-		unregisterIcon( "view", new ViewIcon() );
-		unregisterIcon( "views", new ViewIcon() );
+		unregisterIcon( "views", new EyeIcon() );
 		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridIcon() );
@@ -237,7 +232,6 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "arc-3", new Arc3Icon() );
 		unregisterIcon( "arc-2", new Arc2Icon() );
 		unregisterIcon( "draw", new PencilIcon() );
-		unregisterIcon( "tool", new BrokenIcon() );
 		unregisterIcon( getCard().getArtifact(), new CartesiaIcon() );
 	}
 

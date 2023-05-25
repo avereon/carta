@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.AssetType;
 import com.avereon.xenon.asset.Codec;
 import com.avereon.xenon.asset.PlaceholderCodec;
@@ -11,7 +11,7 @@ public class ShapePropertiesAssetType extends AssetType {
 
 	public static final java.net.URI URI = java.net.URI.create( uriPattern );
 
-	public ShapePropertiesAssetType( ProgramProduct product ) {
+	public ShapePropertiesAssetType( XenonProgramProduct product ) {
 		super( product, "shape-properties" );
 
 		PlaceholderCodec codec = new PlaceholderCodec();

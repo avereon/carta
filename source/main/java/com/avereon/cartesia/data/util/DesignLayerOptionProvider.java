@@ -4,7 +4,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.data.IdNode;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
 
@@ -15,15 +15,15 @@ import java.util.stream.Stream;
 
 public class DesignLayerOptionProvider implements SettingOptionProvider {
 
-	private final ProgramProduct product;
+	private final XenonProgramProduct product;
 
 	private final boolean showRoot;
 
-	public DesignLayerOptionProvider( ProgramProduct product ) {
+	public DesignLayerOptionProvider( XenonProgramProduct product ) {
 		this( product, false );
 	}
 
-	public DesignLayerOptionProvider( ProgramProduct product, boolean showRoot ) {
+	public DesignLayerOptionProvider( XenonProgramProduct product, boolean showRoot ) {
 		this.product = product;
 		this.showRoot = showRoot;
 	}

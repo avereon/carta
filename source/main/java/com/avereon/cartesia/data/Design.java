@@ -3,7 +3,7 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.XenonProgramProduct;
 import lombok.CustomLog;
 
 import java.util.*;
@@ -102,7 +102,7 @@ public abstract class Design extends IdNode {
 		return super.isModifiedByChild();
 	}
 
-	public synchronized DesignContext getDesignContext( ProgramProduct product ) {
+	public synchronized DesignContext getDesignContext( XenonProgramProduct product ) {
 		if( context == null ) context = new DesignContext( product, this );
 		return context;
 	}

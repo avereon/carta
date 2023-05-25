@@ -9,7 +9,7 @@ import com.avereon.log.LazyEval;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.ActionLibrary;
 import com.avereon.xenon.ActionProxy;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.XenonProgramProduct;
 import javafx.scene.input.*;
 import lombok.CustomLog;
 
@@ -29,7 +29,11 @@ public class CommandMap {
 
 	private static final Map<CommandEventKey, String> eventActions = new ConcurrentHashMap<>();
 
-	public static void load( ProgramProduct product ) {
+	public static void load( XenonProgramProduct product ) {
+		actionCommands.clear();
+		commandActions.clear();
+		eventActions.clear();
+
 		// High level letters
 		// a - arc
 		// c - circle
@@ -237,7 +241,7 @@ public class CommandMap {
 		eventActions.put( key, action );
 	}
 
-	private static void add( ProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
+	private static void add( XenonProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
 		ActionLibrary library = product.getProgram().getActionLibrary();
 		library.register( product, action );
 		ActionProxy proxy = library.getAction( action );

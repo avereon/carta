@@ -5,12 +5,13 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.view.DesignLayerEvent;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
-import com.avereon.cartesia.tool.view.DesignPaneMarea;
+import com.avereon.cartesia.tool.view.DesignPane;
+import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
-import com.avereon.xenon.Program;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.Xenon;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import javafx.beans.value.ChangeListener;
@@ -28,15 +29,15 @@ public class DesignToolLayersGuide extends Guide {
 
 	private static final String ENABLED_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
 
-	private final ProgramProduct product;
+	private final XenonProgramProduct product;
 
-	private final DesignTool tool;
+	private final FxShapeDesignTool tool;
 
 	private final Map<DesignLayer, GuideNode> layerGuideNodes;
 
 	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
-	public DesignToolLayersGuide( ProgramProduct product, DesignTool tool ) {
+	public DesignToolLayersGuide( XenonProgramProduct product, FxShapeDesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.layerGuideNodes = new ConcurrentHashMap<>();
@@ -68,17 +69,17 @@ public class DesignToolLayersGuide extends Guide {
 		}
 	}
 
-	ProgramProduct getProduct() {
+	XenonProgramProduct getProduct() {
 		return product;
 	}
 
-	Program getProgram() {
+	Xenon getProgram() {
 		return product.getProgram();
 	}
 
 	public void link() {
 		Design design = tool.getDesign();
-		DesignPaneMarea pane = tool.getDesignPane();
+		DesignPane pane = tool.getDesignPane();
 
 		// Populate the guide
 		design.getAllLayers().forEach( l -> addLayer( l, null ) );
@@ -86,11 +87,11 @@ public class DesignToolLayersGuide extends Guide {
 		// Add listeners for changes
 		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
 			DesignLayerPane l = e.getLayer();
-			addLayer( DesignTool.getDesignData( l ), l );
+			addLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
 		} );
 		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
 			DesignLayerPane l = e.getLayer();
-			removeLayer( DesignTool.getDesignData( l ), l );
+			removeLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
 		} );
 	}
 

@@ -2,7 +2,7 @@ package com.avereon.cartesia.data.util;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.*;
-import com.avereon.xenon.ProgramProduct;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import lombok.CustomLog;
@@ -21,7 +21,7 @@ public class DesignPropertiesMap {
 
 	private final Map<Class<? extends DesignDrawable>, SettingsPage> propertiesPages;
 
-	public DesignPropertiesMap( ProgramProduct product ) {
+	public DesignPropertiesMap( XenonProgramProduct product ) {
 		Map<Class<? extends DesignDrawable>, SettingsPage> pages = new HashMap<>();
 		pages.put( DesignLayer.class, loadPage( product, "layer" ) );
 		pages.put( DesignShape.class, loadPage( product, "shape" ) );
@@ -38,7 +38,7 @@ public class DesignPropertiesMap {
 		return propertiesPages.get( type );
 	}
 
-	private static SettingsPage loadPage( ProgramProduct product, String key ) {
+	private static SettingsPage loadPage( XenonProgramProduct product, String key ) {
 		try {
 			return loadSettingsPage( product, key );
 		} catch( IOException exception ) {
@@ -47,7 +47,7 @@ public class DesignPropertiesMap {
 		return null;
 	}
 
-	private static SettingsPage loadSettingsPage( ProgramProduct product, String key ) throws IOException {
+	private static SettingsPage loadSettingsPage( XenonProgramProduct product, String key ) throws IOException {
 		String pagePath = propertiesPagePath + key + propertiesPageExt;
 		return SettingsPageParser.parse( product, pagePath, RbKey.PROPS ).get( key );
 	}

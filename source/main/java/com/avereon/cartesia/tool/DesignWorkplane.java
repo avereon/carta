@@ -95,34 +95,73 @@ public class DesignWorkplane extends Node {
 
 	private CoordinateSystem coordinateSystem;
 
+	/**
+	 * The cached grid axis paint.
+ 	 */
 	private Paint gridAxisPaint;
 
+	/**
+	 * The cached grid axis width.
+	 */
 	private double gridAxisWidth;
 
+	/**
+	 * The cached major grid X spacing.
+	 */
 	private double majorGridX;
 
+	/**
+	 * The cached major grid Y spacing.
+	 */
 	private double majorGridY;
 
+	/**
+	 * The cached major grid Z spacing.
+	 */
 	private double majorGridZ;
 
+	/**
+	 * The cached major grid paint.
+	 */
 	private Paint majorGridPaint;
 
+	/**
+	 * The cached major grid width.
+	 */
 	private double majorGridWidth;
 
+	/**
+	 * The cached minor grid X spacing.
+	 */
 	private double minorGridX;
 
+	/**
+	 * The cached minor grid Y spacing.
+	 */
 	private double minorGridY;
 
+	/**
+	 * The cached minor grid Z spacing.
+	 */
 	private double minorGridZ;
 
 	private Paint minorGridPaint;
 
 	private double minorGridWidth;
 
+	/**
+	 * The cached snap grid X spacing.
+	 */
 	private double snapGridX;
 
+	/**
+	 * The cached snap grid Y spacing.
+	 */
 	private double snapGridY;
 
+	/**
+	 * The cached snap grid Z spacing.
+	 */
 	private double snapGridZ;
 
 	private boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBILE;

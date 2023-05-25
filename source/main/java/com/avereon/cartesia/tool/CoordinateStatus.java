@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.ProgramProduct;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.control.Label;
@@ -30,7 +29,7 @@ public class CoordinateStatus extends HBox {
 	private NumberFormat format;
 
 	@SuppressWarnings( "SuspiciousNameCombination" )
-	public CoordinateStatus( ProgramProduct product ) {
+	public CoordinateStatus() {
 		setPrecision( 4 );
 
 		String xPrompt = Rb.textOr(  "prompt", "x", "X:" );
