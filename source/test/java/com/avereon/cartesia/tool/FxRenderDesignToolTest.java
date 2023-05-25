@@ -1,12 +1,12 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BaseCartesiaTest;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.ProgramTool;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.net.URL;
+import java.util.concurrent.Future;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 // library. Really, it looks like the Zerra library should be for mods and
 // should not be used for Xenon.
 
-@Disabled
+//@Disabled
 public class FxRenderDesignToolTest extends BaseCartesiaTest {
 
 	private FxRenderDesignTool tool;
@@ -38,8 +38,10 @@ public class FxRenderDesignToolTest extends BaseCartesiaTest {
 		super.setup();
 
 		URL url = getClass().getResource( "/design-tool-test.cartesia2d" );
-		Asset asset = getProgram().getAssetManager().createAsset( url );
-		tool = new FxRenderDesignTool( getMod(), asset );
+		//Asset asset = getProgram().getAssetManager().createAsset( url );
+		//tool = new FxRenderDesignTool( getMod(), asset );
+		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( url.toURI() );
+		tool = (FxRenderDesignTool)future.get();
 	}
 
 	@Test
