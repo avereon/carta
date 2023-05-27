@@ -43,7 +43,7 @@ public class DesignContext {
 	}
 
 	public final void setMouse( MouseEvent event ) {
-		DesignTool tool = (DesignTool)event.getSource();
+		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		Point3D screenMouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 		getCommandContext().setScreenMouse( screenMouse );
 

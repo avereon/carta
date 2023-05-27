@@ -3,7 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.view.DesignPane;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -50,7 +50,7 @@ public class CameraZoom extends CameraCommand {
 		return COMPLETE;
 	}
 
-	protected void zoomByFactor( DesignTool tool, Point3D point, double factor ) {
+	protected void zoomByFactor( BaseDesignTool tool, Point3D point, double factor ) {
 		tool.zoom( point, factor );
 	}
 

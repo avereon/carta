@@ -2,7 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandEventKey;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -45,7 +45,7 @@ public class Select extends Command {
 	}
 
 	private Object mouseReleased( CommandContext context, MouseEvent event ) {
-		DesignTool tool = context.getTool();
+		BaseDesignTool tool = context.getTool();
 		Point3D point = new Point3D( event.getX(), event.getY(), event.getZ() );
 		if( context.isSelectMode() ) {
 			if( event.isStillSincePress() ) {
@@ -75,7 +75,7 @@ public class Select extends Command {
 
 	@Override
 	public void handle( MouseEvent event ) {
-		DesignTool tool = (DesignTool)event.getSource();
+		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED && event.getButton() == eventKey.getButton() ) {
 				tool.updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );

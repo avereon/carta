@@ -21,13 +21,13 @@ public class DesignPrintTask extends Task<Void> {
 
 	private final Xenon program;
 
-	private final DesignTool tool;
+	private final BaseDesignTool tool;
 
 	private final Asset asset;
 
 	private final DesignPrint print;
 
-	public DesignPrintTask( Xenon program, DesignTool tool, Asset asset, DesignPrint print ) {
+	public DesignPrintTask( Xenon program, BaseDesignTool tool, Asset asset, DesignPrint print ) {
 		this.program = program;
 		this.tool = tool;
 		this.asset = asset;

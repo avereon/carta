@@ -21,13 +21,13 @@ public class DesignToolViewsGuide extends Guide {
 
 	private final XenonProgramProduct product;
 
-	private final DesignTool tool;
+	private final BaseDesignTool tool;
 
 	private final Map<DesignNode, GuideNode> viewNodes;
 
 	private final Map<GuideNode, DesignNode> nodeViews;
 
-	public DesignToolViewsGuide( XenonProgramProduct product, DesignTool tool ) {
+	public DesignToolViewsGuide( XenonProgramProduct product, BaseDesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.viewNodes = new ConcurrentHashMap<>();

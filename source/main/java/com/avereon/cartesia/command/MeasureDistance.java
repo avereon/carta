@@ -3,7 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
@@ -68,7 +68,7 @@ public class MeasureDistance extends MeasureCommand {
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			if( referenceLine != null ) {
-				DesignTool tool = (DesignTool)event.getSource();
+				BaseDesignTool tool = (BaseDesignTool)event.getSource();
 				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 				switch( getStep() ) {
 					case 1 -> {

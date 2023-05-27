@@ -6,7 +6,7 @@ import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.product.Rb;
 import com.avereon.transaction.Txn;
 import com.avereon.xenon.notice.Notice;
@@ -80,7 +80,7 @@ public class Stretch extends EditCommand {
 	@Override
 	public void handle( MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			DesignTool tool = (DesignTool)event.getSource();
+			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 2 -> referenceLine.setPoint( point ).setOrigin( point );
@@ -94,7 +94,7 @@ public class Stretch extends EditCommand {
 		}
 	}
 
-	private static Set<PointCoordinate> computePointsToMove( DesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
+	private static Set<PointCoordinate> computePointsToMove( BaseDesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
 		Set<PointCoordinate> points = new HashSet<>();
 
 		for( DesignShape shape : shapes ) {

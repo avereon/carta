@@ -6,7 +6,7 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.data.NodeLink;
 import com.avereon.transaction.Txn;
 import javafx.geometry.Point3D;
@@ -25,7 +25,7 @@ public abstract class EditCommand extends Command {
 		this.copy = true;
 	}
 
-	protected Collection<DesignShape> getCommandShapes( DesignTool tool ) {
+	protected Collection<DesignShape> getCommandShapes( BaseDesignTool tool ) {
 		return copy ? cloneAndAddShapes( tool.getSelectedGeometry() ) : tool.getSelectedGeometry();
 	}
 
@@ -34,7 +34,7 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, CadTransform.mirror( origin, point ) );
 	}
 
-	protected void flipShapes( DesignTool tool, Point3D origin, Point3D point ) {
+	protected void flipShapes( BaseDesignTool tool, Point3D origin, Point3D point ) {
 		if( CadGeometry.areSamePoint( origin, point ) ) return;
 		apply( tool, CadTransform.mirror( origin, point ) );
 	}
@@ -43,7 +43,7 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, CadTransform.translation( target.subtract( anchor ) ) );
 	}
 
-	protected void moveShapes( DesignTool tool, Point3D anchor, Point3D target ) {
+	protected void moveShapes( BaseDesignTool tool, Point3D anchor, Point3D target ) {
 		apply( tool, CadTransform.translation( target.subtract( anchor ) ) );
 	}
 
@@ -51,7 +51,7 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, CadTransform.rotation( center, CadPoints.UNIT_Z, angle ) );
 	}
 
-	protected void rotateShapes( DesignTool tool, Point3D center, Point3D anchor, Point3D target ) {
+	protected void rotateShapes( BaseDesignTool tool, Point3D center, Point3D anchor, Point3D target ) {
 		apply( tool, CadTransform.rotation( center, CadPoints.UNIT_Z, CadGeometry.pointAngle360( anchor, center, target ) ) );
 	}
 
@@ -59,7 +59,7 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, getScaleTransform( anchor, source, target ) );
 	}
 
-	protected void scaleShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
+	protected void scaleShapes( BaseDesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
 		apply( tool, getScaleTransform( anchor, source, target ) );
 	}
 
@@ -80,7 +80,7 @@ public abstract class EditCommand extends Command {
 		transformShapes( shapes, getSquishTransform( anchor, source, target ) );
 	}
 
-	protected void squishShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
+	protected void squishShapes( BaseDesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
 		apply( tool, getSquishTransform( anchor, source, target ) );
 	}
 
@@ -97,7 +97,7 @@ public abstract class EditCommand extends Command {
 		return orientation.getLocalToTargetTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getTargetToLocalTransform() );
 	}
 
-	protected void deleteShapes( DesignTool tool ) {
+	protected void deleteShapes( BaseDesignTool tool ) {
 		Txn.run( () -> tool.getSelectedGeometry().stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) ) );
 	}
 
@@ -105,7 +105,7 @@ public abstract class EditCommand extends Command {
 		Txn.run( () -> shapes.forEach( s -> s.apply( transform ) ) );
 	}
 
-	protected void apply( DesignTool tool, CadTransform transform ) {
+	protected void apply( BaseDesignTool tool, CadTransform transform ) {
 		Collection<DesignShape> originalShapes = tool.getSelectedGeometry();
 
 		// Clone

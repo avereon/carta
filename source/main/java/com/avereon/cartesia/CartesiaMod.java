@@ -54,10 +54,11 @@ public class CartesiaMod extends Mod {
 		// Settings pages
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
+
 		// Default tool registration
-		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
-		registerTool( design2dAssetType, design2dEditorRegistration );
+//		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
+//		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
+//		registerTool( design2dAssetType, design2dEditorRegistration );
 		// Other tool registrations
 		ToolRegistration designToolRegistration = new ToolRegistration( this, FxRenderDesignTool.class );
 		designToolRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
@@ -114,6 +115,10 @@ public class CartesiaMod extends Mod {
 		// Unregister Design3D
 		//unregisterTool( design3dAssetType, Design3dEditor.class );
 		//unregisterAssetType( design3dAssetType );
+
+		// Unregister Design2D
+		unregisterTool( design2dAssetType, FxRenderDesignTool.class );
+		unregisterAssetType( design2dAssetType );
 
 		// Unregister Design2D
 		unregisterTool( design2dAssetType, Design2dEditor.class );

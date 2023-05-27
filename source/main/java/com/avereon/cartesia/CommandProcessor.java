@@ -1,21 +1,21 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
 
 public interface CommandProcessor {
 
 	String getPriorCommand();
 
-	void cancel( DesignTool tool );
+	void cancel( BaseDesignTool tool );
 
 	void mouse( Point3D point );
 
-	void evaluate( DesignTool tool, Point3D point );
+	void evaluate( BaseDesignTool tool, Point3D point );
 
-	void evaluate( DesignTool tool, String input ) throws CommandException;
+	void evaluate( BaseDesignTool tool, String input ) throws CommandException;
 
-	void pushValue( DesignTool tool, Object object );
+	void pushValue( BaseDesignTool tool, Object object );
 
 	Object pullValue();
 

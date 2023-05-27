@@ -27,7 +27,7 @@ import java.util.List;
 /**
  * The design tool is the base class for all design tools.
  */
-public abstract class DesignTool extends GuidedTool implements EventTarget, WritableIdentity {
+public abstract class BaseDesignTool extends GuidedTool implements EventTarget, WritableIdentity {
 
 	String RETICLE = "reticle";
 
@@ -71,7 +71,7 @@ public abstract class DesignTool extends GuidedTool implements EventTarget, Writ
 
 	private final DesignWorkplane workplane;
 
-	public DesignTool( XenonProgramProduct product, Asset asset ) {
+	public BaseDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );

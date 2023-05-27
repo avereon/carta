@@ -25,7 +25,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 
 	private CommandContext context;
 
-	private DesignTool tool;
+	private BaseDesignTool tool;
 
 	@BeforeEach
 	protected void setup() throws Exception {
@@ -39,7 +39,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 
 		assertThat( getProgram().getTaskManager().isRunning() ).isTrue();
 		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( asset );
-		this.tool = (DesignTool)future.get();
+		this.tool = (BaseDesignTool)future.get();
 
 		context.setLastActiveDesignTool( tool );
 	}

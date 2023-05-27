@@ -37,7 +37,7 @@ public class CommandPrompt extends BorderPane {
 
 	public void setPrompt( String prompt ) {
 		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
-		final DesignTool tool = context.getTool();
+		final BaseDesignTool tool = context.getTool();
 		Fx.run( () -> {
 			if( tool != null ) tool.showCommandPrompt();
 			this.prompt.setText( effectivePrompt );
@@ -76,7 +76,7 @@ public class CommandPrompt extends BorderPane {
 
 	/**
 	 * Capture special keys, except for the SPACE key. Also consume the events
-	 * so thy are not propagated to the key capture logic in {@link DesignTool}.
+	 * so thy are not propagated to the key capture logic in {@link BaseDesignTool}.
 	 *
 	 * @param event The key event
 	 */

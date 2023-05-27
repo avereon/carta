@@ -1,7 +1,7 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.transaction.Txn;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -12,7 +12,7 @@ import java.util.Set;
 @CustomLog
 public class Split {
 
-	public static void split( DesignTool tool, DesignShape shape, Point3D mousePoint ) {
+	public static void split( BaseDesignTool tool, DesignShape shape, Point3D mousePoint ) {
 		Set<DesignShape> shapes = Set.of();
 
 		if( shape instanceof DesignLine ) {
@@ -38,7 +38,7 @@ public class Split {
 		}
 	}
 
-	static Set<DesignShape> splitLine( DesignTool tool, DesignLine line, Point3D point ) {
+	static Set<DesignShape> splitLine( BaseDesignTool tool, DesignLine line, Point3D point ) {
 		// Find the point "on the line"
 		Point3D nearest = CadGeometry.nearestBoundLinePoint( line.getOrigin(), line.getPoint(), point );
 		if( nearest == null ) return Set.of();
@@ -52,7 +52,7 @@ public class Split {
 		return Set.of( a, b );
 	}
 
-	 static Set<DesignShape> splitEllipse( DesignTool tool, DesignEllipse ellipse, Point3D point ) {
+	 static Set<DesignShape> splitEllipse( BaseDesignTool tool, DesignEllipse ellipse, Point3D point ) {
 		// Find the angle "on the ellipse"
 		double theta = CadGeometry.ellipseAngle360( ellipse, point );
 
@@ -62,7 +62,7 @@ public class Split {
 		return Set.of( arc );
 	}
 
-	 static Set<DesignShape> splitArc( DesignTool tool, DesignArc arc, Point3D point ) {
+	 static Set<DesignShape> splitArc( BaseDesignTool tool, DesignArc arc, Point3D point ) {
 		// Find the point "on the arc" and make to new arcs
 		List<Point3D> xns = CadIntersection.getIntersections( arc, new DesignLine( arc.getOrigin(), point ) );
 		Point3D nearest = CadPoints.getNearest( point, xns );
@@ -77,7 +77,7 @@ public class Split {
 		return Set.of( a, b );
 	}
 
-	 static Set<DesignShape> splitCurve( DesignTool tool, DesignCurve curve, Point3D point ) {
+	 static Set<DesignShape> splitCurve( BaseDesignTool tool, DesignCurve curve, Point3D point ) {
 		// Fine the parametric value "on the curve"
 		double t = CadGeometry.getCurveParametricValueNear( curve, point );
 		if( Double.isNaN( t ) ) return Set.of();

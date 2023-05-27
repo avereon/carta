@@ -3,7 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.CommandEventKey;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -52,7 +52,7 @@ public class CameraMove extends CameraCommand {
 
 	@Override
 	public void handle( MouseEvent event ) {
-		DesignTool tool = (DesignTool)event.getSource();
+		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
 			if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {
 				tool.pan( viewAnchor, dragAnchor, event.getX(), event.getY() );

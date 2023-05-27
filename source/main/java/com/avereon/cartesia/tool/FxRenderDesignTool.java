@@ -7,7 +7,6 @@ import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeSettings;
-import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.PropertiesToolEvent;
@@ -26,6 +25,8 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
@@ -34,7 +35,7 @@ import java.util.Collection;
 import java.util.List;
 
 @CustomLog
-public class FxRenderDesignTool extends DesignTool {
+public class FxRenderDesignTool extends BaseDesignTool {
 
 	// FIXME Possibly rename this to aim?
 	public static final Point3D DEFAULT_VIEWPOINT = Point3D.ZERO;
@@ -69,12 +70,17 @@ public class FxRenderDesignTool extends DesignTool {
 
 	// RENDERER
 
-	private FxRenderer2d renderer;
+	// FIXME Should there be a wrapper around the renderer so I can use it elsewhere?
+	private DesignRenderer renderer;
 
 	public FxRenderDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
+
+		this.renderer = new DesignRenderer();
+		BorderPane layout = new BorderPane(renderer, new Label( "Loading..." ), null, null, null );
+		getChildren().addAll( layout );
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
@@ -87,7 +93,6 @@ public class FxRenderDesignTool extends DesignTool {
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
 
-		this.renderer = new FxRenderer2d();
 		// NOTE Settings and settings listeners should go in the ready() method
 	}
 
@@ -104,6 +109,8 @@ public class FxRenderDesignTool extends DesignTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = request.getAsset().getModel();
+		renderer.setDesign( design );
+
 		// FIXME Is this correct? Or should this be in display()
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
@@ -215,7 +222,7 @@ public class FxRenderDesignTool extends DesignTool {
 		//			doUpdateGridBounds();
 		//		} );
 		//
-		//		// Add visible layers listener
+		//		// Add enabled layers listener
 		//		designPane.enabledLayersProperty().addListener( this::doStoreEnabledLayers );
 		//
 		//		// Add visible layers listener
@@ -254,6 +261,8 @@ public class FxRenderDesignTool extends DesignTool {
 		reticleProperty.addListener( ( p, o, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
+
+		Fx.run( () -> renderer.render() );
 	}
 
 	@Override

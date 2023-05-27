@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
 
 @Deprecated
 @CustomLog
-public abstract class FxShapeDesignTool extends DesignTool {
+public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 	private static final String SETTINGS_VIEW_ZOOM = "view-zoom";
 
@@ -1137,18 +1137,18 @@ public abstract class FxShapeDesignTool extends DesignTool {
 
 	private void doSelectedShapesChanged( ListChangeListener.Change<? extends Shape> c ) {
 		while( c.next() ) {
-			c.getRemoved().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
-			c.getAddedSubList().stream().map( DesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
+			c.getRemoved().stream().map( BaseDesignTool::getDesignData ).forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().stream().map( BaseDesignTool::getDesignData ).forEach( s -> s.setSelected( true ) );
 
 			int size = c.getList().size();
 
 			if( size == 0 ) {
 				showPropertiesPage( getCurrentLayer() );
 			} else if( size == 1 ) {
-				c.getList().stream().findFirst().map( DesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
+				c.getList().stream().findFirst().map( BaseDesignTool::getDesignData ).ifPresent( this::showPropertiesPage );
 			} else {
 				// Show a combined properties page
-				Set<DesignDrawable> designData = c.getList().parallelStream().map( DesignTool::getDesignData ).collect( Collectors.toSet() );
+				Set<DesignDrawable> designData = c.getList().parallelStream().map( BaseDesignTool::getDesignData ).collect( Collectors.toSet() );
 				showPropertiesPage( new MultiNodeSettings( designData ), DesignShape.class );
 			}
 		}

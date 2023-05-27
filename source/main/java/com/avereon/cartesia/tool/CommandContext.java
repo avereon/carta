@@ -45,7 +45,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private String priorCommand;
 
-	private DesignTool lastActiveDesignTool;
+	private BaseDesignTool lastActiveDesignTool;
 
 	private Input inputMode;
 
@@ -55,7 +55,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private Point3D anchor;
 
-	private DesignTool tool;
+	private BaseDesignTool tool;
 
 	public CommandContext( XenonProgramProduct product ) {
 		this.product = product;
@@ -77,11 +77,11 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return commandPrompt;
 	}
 
-	public Command submit( DesignTool tool, Command command, Object... parameters ) {
+	public Command submit( BaseDesignTool tool, Command command, Object... parameters ) {
 		return pushCommand( tool, command, parameters );
 	}
 
-	public Command resubmit( DesignTool tool, Command command, Object... parameters ) {
+	public Command resubmit( BaseDesignTool tool, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
 		return submit( tool, command, parameters );
 	}
@@ -101,7 +101,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		event.consume();
 		String input = getCommandPrompt().getCommand();
 		if( input.isEmpty() ) {
-			DesignTool tool = getLastActiveDesignTool();
+			BaseDesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point3D screen = tool.worldToScreen( mouse );
 			MouseEvent mouseEvent = new MouseEvent(
@@ -218,19 +218,19 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		doEventCommand( event );
 	}
 
-	DesignTool getLastActiveDesignTool() {
+	BaseDesignTool getLastActiveDesignTool() {
 		return lastActiveDesignTool;
 	}
 
-	void setLastActiveDesignTool( DesignTool tool ) {
+	void setLastActiveDesignTool( BaseDesignTool tool ) {
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
 
-	public final DesignTool getTool() {
+	public final BaseDesignTool getTool() {
 		return tool;
 	}
 
-	void setTool( DesignTool tool ) {
+	void setTool( BaseDesignTool tool ) {
 		this.tool = Objects.requireNonNull( tool );
 	}
 
@@ -296,14 +296,14 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Command pushCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
-		return pushCommand( (DesignTool)event.getSource(), commandClass, ArrayUtil.concat( parameters, event ) );
+		return pushCommand( (BaseDesignTool)event.getSource(), commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
 	private Command pushCommand( Command command, Object... parameters ) {
 		return pushCommand( getLastActiveDesignTool(), command, parameters );
 	}
 
-	private Command pushCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command pushCommand( BaseDesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
 			return pushCommand( tool, commandClass.getConstructor().newInstance(), parameters );
@@ -313,7 +313,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return null;
 	}
 
-	private Command pushCommand( DesignTool tool, Command command, Object... parameters ) {
+	private Command pushCommand( BaseDesignTool tool, Command command, Object... parameters ) {
 		checkForCommonProblems( tool, command, parameters );
 
 		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
@@ -331,7 +331,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return command;
 	}
 
-	private void checkForCommonProblems( DesignTool tool, Command command, Object... parameters ) {
+	private void checkForCommonProblems( BaseDesignTool tool, Command command, Object... parameters ) {
 		if( command instanceof Value && commandStack.isEmpty() ) {
 			log.atWarning().log( "There is not a command waiting for the value: %s", LazyEval.of( () -> Arrays.toString( parameters ) ) );
 		}
@@ -380,7 +380,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		private final CommandContext context;
 
-		private final DesignTool tool;
+		private final BaseDesignTool tool;
 
 		private final Command command;
 
@@ -388,14 +388,14 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		private Object result;
 
-		public CommandExecuteRequest( CommandContext context, DesignTool tool, Command command, Object... parameters ) {
+		public CommandExecuteRequest( CommandContext context, BaseDesignTool tool, Command command, Object... parameters ) {
 			this.context = Objects.requireNonNull( context );
 			this.tool = Objects.requireNonNull( tool );
 			this.command = Objects.requireNonNull( command );
 			this.parameters = parameters;
 		}
 
-		public DesignTool getTool() {
+		public BaseDesignTool getTool() {
 			return tool;
 		}
 

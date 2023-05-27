@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 
 public class Prompt extends Command {
 
@@ -26,7 +26,7 @@ public class Prompt extends Command {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		DesignTool tool = context.getTool();
+		BaseDesignTool tool = context.getTool();
 
 		if( tool == null ) return INVALID;
 

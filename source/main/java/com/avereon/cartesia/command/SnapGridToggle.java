@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.BaseDesignTool;
 
 public class SnapGridToggle extends Command {
 
@@ -12,7 +12,7 @@ public class SnapGridToggle extends Command {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		DesignTool tool = context.getTool();
+		BaseDesignTool tool = context.getTool();
 		tool.setGridSnapEnabled( !tool.isGridSnapEnabled() );
 		return COMPLETE;
 	}
