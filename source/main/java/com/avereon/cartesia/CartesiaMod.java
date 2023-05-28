@@ -56,9 +56,9 @@ public class CartesiaMod extends Mod {
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
 
 		// Default tool registration
-//		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-//		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
-//		registerTool( design2dAssetType, design2dEditorRegistration );
+		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
+		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
+		registerTool( design2dAssetType, design2dEditorRegistration );
 		// Other tool registrations
 		ToolRegistration designToolRegistration = new ToolRegistration( this, FxRenderDesignTool.class );
 		designToolRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
