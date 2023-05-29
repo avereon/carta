@@ -72,6 +72,10 @@ public class DesignArc extends DesignEllipse {
 		if( type == Type.OPEN ) setFillPaint( null );
 	}
 
+	public double calcStart() {
+		return hasKey( START ) ? getStart() : 0.0;
+	}
+
 	public Double getStart() {
 		return getValue( START );
 	}
@@ -79,6 +83,10 @@ public class DesignArc extends DesignEllipse {
 	public DesignArc setStart( Double value ) {
 		setValue( START, value );
 		return this;
+	}
+
+	public double calcExtent() {
+		return hasKey( EXTENT ) ? getExtent() : 0.0;
 	}
 
 	public Double getExtent() {
