@@ -1,20 +1,58 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.curve.math.Point;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @CustomLog
 public class DesignPath extends DesignShape {
+
+	public enum Command {
+		ARC,
+		CLOSE,
+		CURVE,
+		LINE,
+		MOVE,
+		QUAD,
+	}
 
 	public static final String PATH = "path";
 
 	public static final String CLOSED = "closed";
 
+	private final List<Element> elements = new ArrayList<>();
+
 	public DesignPath() {
 		super( null );
+		addModifyingKeys( PATH, CLOSED );
+	}
+
+	public DesignPath( Point3D origin ) {
+		this();
+		if( origin != null ) move( origin.getX(), origin.getY() );
+	}
+
+	public DesignPath( DesignPath path ) {
+		this();
+
+		List<Element> source = path.getElements();
+		Element element = source.get( 0 );
+		if( element.command() == Command.MOVE ) {
+			setOrigin( new Point3D( element.data()[ 0 ], element.data()[ 1 ], 0 ) );
+			elements.addAll( path.getElements() );
+		} else {
+			throw new IllegalArgumentException( "DesignPath does not start with a move command" );
+		}
+	}
+
+	public List<Element> getElements() {
+		return new ArrayList<>( elements );
 	}
 
 	@Override
@@ -43,5 +81,47 @@ public class DesignPath extends DesignShape {
 			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
+
+	public DesignPath add( DesignPath path ) {
+		elements.addAll( path.getElements() );
+		return this;
+	}
+
+	public DesignPath line( double x, double y ) {
+		return line( Point.of( x, y ) );
+	}
+
+	public DesignPath line( double[] point ) {
+		elements.add( new Element( Command.LINE, point ) );
+		return this;
+	}
+
+	public DesignPath arc( double x, double y, double rx, double ry, double start, double extent ) {
+		elements.add( new Element( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
+		return this;
+	}
+
+	public DesignPath quad( double bx, double by, double cx, double cy ) {
+		elements.add( new Element( Command.QUAD, new double[]{ bx, by, cx, cy } ) );
+		return this;
+	}
+
+	public DesignPath close() {
+		elements.add( new Element( Command.CLOSE, new double[]{} ) );
+		return this;
+	}
+
+	public DesignPath curve( double bx, double by, double cx, double cy, double dx, double dy ) {
+		elements.add( new Element( Command.CURVE, new double[]{ bx, by, cx, cy, dx, dy } ) );
+		return this;
+	}
+
+	public DesignPath move( double x, double y ) {
+		if( elements.isEmpty() ) setOrigin( new Point3D( x, y, 0.0 ) );
+		elements.add( new Element( Command.MOVE, new double[]{ x, y } ) );
+		return this;
+	}
+
+	public record Element(DesignPath.Command command, double[] data) {}
 
 }

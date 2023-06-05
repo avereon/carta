@@ -12,6 +12,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 
 @CustomLog
@@ -22,6 +23,10 @@ public class DesignMarker extends DesignShape {
 		DEFAULT {
 			public Path getPath() {
 				return CROSS.getPath();
+			}
+
+			public DesignPath getDesignPath() {
+				return CROSS.getDesignPath();
 			}
 		},
 		CG {
@@ -48,6 +53,31 @@ public class DesignMarker extends DesignShape {
 
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double r = HALF_SIZE;
+				double s = 0.5 * HALF_WIDTH * r;
+				double t = r - 2 * s;
+
+				DesignPath path = new DesignPath( new Point3D( 0, -r, 0 ) );
+				path.move( 0, -r );
+				path.arc( 0, r, r, r, -90, 180 );
+				path.arc( 0, -r, r, r, 90, 180 );
+				path.close();
+
+				path.move( 0, 0 );
+				path.line( 0, -r + 2 * s );
+				path.arc( t, 0, t, t, 0, 180 );
+				path.close();
+
+				path.move( 0, 0 );
+				path.line( 0, r - 2 * s );
+				path.arc( -t, 0, t, t, 180, 180 );
+				path.close();
+
+				return path;
+			}
+
 		},
 		CIRCLE {
 			public Path getPath() {
@@ -57,6 +87,15 @@ public class DesignMarker extends DesignShape {
 				path.getElements().add( new ArcTo( r, r, 0, 0, r, false, false ) );
 				path.getElements().add( new ArcTo( r, r, 0, 0, -r, false, false ) );
 				path.getElements().add( new ClosePath() );
+				return path;
+			}
+
+			public DesignPath getDesignPath() {
+				double r = HALF_SIZE;
+				DesignPath path = new DesignPath( new Point3D( 0, -r, 0 ) );
+				path.arc( 0, r, r, r, -90, 180 );
+				path.arc( 0, -r, r, r, 90, 180 );
+				path.close();
 				return path;
 			}
 		},
@@ -83,6 +122,31 @@ public class DesignMarker extends DesignShape {
 				path.getElements().add( new ClosePath() );
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double r = HALF_SIZE;
+				double s = HALF_WIDTH * r;
+				DesignPath path = new DesignPath( new Point3D( -s, -r, 0 ) );
+
+				path.line( s, -r );
+				path.line( s, -s );
+
+				path.line( r, -s );
+				path.line( r, s );
+				path.line( s, s );
+
+				path.line( s, r );
+				path.line( -s, r );
+				path.line( -s, s );
+
+				path.line( -r, s );
+				path.line( -r, -s );
+				path.line( -s, -s );
+
+				path.close();
+
+				return path;
+			}
 		},
 		DIAMOND {
 			public Path getPath() {
@@ -95,10 +159,24 @@ public class DesignMarker extends DesignShape {
 				path.getElements().add( new ClosePath() );
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double r = HALF_SIZE;
+				DesignPath path = new DesignPath( new Point3D( -r, 0, 0 ) );
+				path.line( 0, r );
+				path.line( r, 0 );
+				path.line( 0, -r );
+				path.close();
+				return path;
+			}
 		},
 		REFERENCE {
 			public Path getPath() {
 				return STAR.getPath();
+			}
+
+			public DesignPath getDesignPath() {
+				return STAR.getDesignPath();
 			}
 		},
 		RETICLE {
@@ -138,6 +216,42 @@ public class DesignMarker extends DesignShape {
 
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double s = 0.1 * LINE_WIDTH;
+				double r = HALF_SIZE;
+				double r1 = 0.5 * r + s;
+				double r2 = 0.5 * r - s;
+
+				DesignPath path = new DesignPath( new Point3D( -s, -r, 0 ) );
+
+				path.line( s, -r );
+				path.line( s, -s );
+
+				path.line( r, -s );
+				path.line( r, s );
+				path.line( s, s );
+
+				path.line( s, r );
+				path.line( -s, r );
+				path.line( -s, s );
+
+				path.line( -r, s );
+				path.line( -r, -s );
+				path.line( -s, -s );
+
+				path.move( 0, -r1 );
+				path.arc( 0, r1, r1, r1, -90, 180 );
+				path.arc( 0, -r1, r1, r1, 90, 180 );
+
+				path.move( 0, -r2 );
+				path.arc( 0, r2, r2, r2, -90, 180 );
+				path.arc( 0, -r2, r2, r2, 90, 180 );
+
+				path.close();
+
+				return path;
+			}
 		},
 		RING {
 			public Path getPath() {
@@ -150,17 +264,36 @@ public class DesignMarker extends DesignShape {
 				path.getElements().add( new ClosePath() );
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double r = HALF_SIZE * 0.8;
+				DesignPath path = new DesignPath( CIRCLE.getDesignPath() );
+				path.move( 0, -r );
+				path.arc( 0, r, r, r, -90, 180 );
+				path.arc( 0, r, r, r, 90, 180 );
+				path.close();
+				return path;
+			}
 		},
 		SQUARE {
 			public Path getPath() {
-				double r = HALF_SIZE;
-				double z = r * Constants.SQRT_ONE_HALF;
+				double z = HALF_SIZE * Constants.SQRT_ONE_HALF;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( -z, -z ) );
 				path.getElements().add( new LineTo( -z, z ) );
 				path.getElements().add( new LineTo( z, z ) );
 				path.getElements().add( new LineTo( z, -z ) );
 				path.getElements().add( new ClosePath() );
+				return path;
+			}
+
+			public DesignPath getDesignPath() {
+				double z = HALF_SIZE * Constants.SQRT_ONE_HALF;
+				DesignPath path = new DesignPath( new Point3D( -z, -z, 0 ) );
+				path.line( -z, z );
+				path.line( z, z );
+				path.line( z, -z );
+				path.close();
 				return path;
 			}
 		},
@@ -182,11 +315,32 @@ public class DesignMarker extends DesignShape {
 
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double r = HALF_SIZE;
+				double s = r * 0.5 * (3 - Math.sqrt( 5 ));
+
+				DesignPath path = new DesignPath((Point3D)null);
+				for( int index = 0; index < 10; index++ ) {
+					boolean point = index % 2 == 0;
+					double alpha = 2 * Math.PI * (index / 10.0) + 0.5 * Math.PI;
+					double z = point ? r : s;
+					double a = z * Math.cos( alpha );
+					double b = z * Math.sin( alpha );
+					if( index == 0 ) {
+						path.move( a, b );
+					} else {
+						path.line( a, b );
+					}
+				}
+				path.close();
+
+				return path;
+			}
 		},
 		X {
 			public Path getPath() {
-				double r = HALF_SIZE;
-				double s = Constants.SQRT_ONE_HALF * r;
+				double s = Constants.SQRT_ONE_HALF * HALF_SIZE;
 				double t = HALF_WIDTH * s;
 
 				Path path = new Path( new MoveTo( 0, -2 * t ) );
@@ -208,6 +362,31 @@ public class DesignMarker extends DesignShape {
 
 				return path;
 			}
+
+			public DesignPath getDesignPath() {
+				double s = Constants.SQRT_ONE_HALF * HALF_SIZE;
+				double t = HALF_WIDTH * s;
+
+				DesignPath path = new DesignPath();
+				path.move( 0, -2 * t );
+				path.line( s - t, -s - t );
+				path.line( s + t, -s + t );
+
+				path.line( 2 * t, 0 );
+				path.line( s + t, s - t );
+				path.line( s - t, s + t );
+
+				path.line( 0, 2 * t );
+				path.line( -s + t, s + t );
+				path.line( -s - t, s - t );
+
+				path.line( -2 * t, 0 );
+				path.line( -s - t, -s + t );
+				path.line( -s + t, -s - t );
+				path.close();
+
+				return path;
+			}
 		};
 
 		private static final double SIZE = 1.0;
@@ -218,7 +397,19 @@ public class DesignMarker extends DesignShape {
 
 		private static final double HALF_WIDTH = 0.5 * LINE_WIDTH;
 
+		/**
+		 * @return The JavaFX path of the marker
+		 * @deprecated In favor of {@link #getDesignPath}
+		 */
+		@Deprecated
 		public abstract Path getPath();
+
+		/**
+		 * Get the path of the marker.
+		 *
+		 * @return The {@link DesignPath} of the marker
+		 */
+		public abstract DesignPath getDesignPath();
 	}
 
 	public static final String MARKER = "marker";
@@ -242,6 +433,11 @@ public class DesignMarker extends DesignShape {
 		addModifyingKeys( ORIGIN, SIZE, TYPE );
 	}
 
+	public List<DesignPath.Element> getElements() {
+		Type type = calcType();
+		return type != null ? type.getDesignPath().getElements() : List.of();
+	}
+
 	public double calcSize() {
 		String size = getSize();
 		if( size != null ) return CadMath.evalNoException( size );
@@ -263,11 +459,24 @@ public class DesignMarker extends DesignShape {
 		return DesignMarker.Type.valueOf( type.toUpperCase() );
 	}
 
+	/**
+	 * Get the marker type. This string should correspond to a known marker type.
+	 *
+	 * @return The lower case string value of the marker type
+	 */
 	public String getType() {
 		return getValue( TYPE );
 	}
 
+	/**
+	 * Set the marker type. This string must correspond to a known marker type.
+	 * The value is converted to lower case.
+	 *
+	 * @param type The marker type
+	 * @return The marker
+	 */
 	public DesignMarker setType( String type ) {
+		if( type != null ) type = type.toLowerCase();
 		setValue( TYPE, type );
 		return this;
 	}

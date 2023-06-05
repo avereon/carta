@@ -5,13 +5,17 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.curve.math.Point;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.Pen;
+import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
-import com.avereon.marea.geom.Arc;
-import com.avereon.marea.geom.Ellipse;
-import com.avereon.marea.geom.Line;
-import com.avereon.marea.geom.Text;
+import com.avereon.marea.geom.*;
 import javafx.scene.layout.BorderPane;
+import lombok.CustomLog;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
+
+@CustomLog
 public class DesignRenderer extends BorderPane {
 
 	private final FxRenderer2d renderer;
@@ -20,7 +24,19 @@ public class DesignRenderer extends BorderPane {
 
 	private Design design;
 
+	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
+
 	public DesignRenderer() {
+		designCreateMap = new ConcurrentHashMap<>();
+		designCreateMap.put( DesignArc.class, s -> createArc( (DesignArc)s ) );
+		designCreateMap.put( DesignCurve.class, s -> createCurve( (DesignCurve)s ) );
+		designCreateMap.put( DesignLine.class, s -> createLine( (DesignLine)s ) );
+		designCreateMap.put( DesignEllipse.class, s -> createEllipse( (DesignEllipse)s ) );
+		designCreateMap.put( DesignMarker.class, s -> createMarker( (DesignMarker)s ) );
+		designCreateMap.put( DesignPath.class, s -> createPath( (DesignPath)s ) );
+		// ?? designCreateMap.put( DesignQuad.class, s -> createQuad( (DesignQuad)s ) );
+		designCreateMap.put( DesignText.class, s -> createText( (DesignText)s ) );
+
 		// Create and add the renderer to the center
 		setCenter( this.renderer = new FxRenderer2d() );
 
@@ -70,15 +86,19 @@ public class DesignRenderer extends BorderPane {
 			for( DesignShape shape : layer.getShapes() ) {
 				Pen pen = createPen( shape );
 
-				if( shape instanceof DesignLine ) {
-					renderer.draw( createLine( (DesignLine)shape ), pen );
-				} else if( shape instanceof DesignArc ) {
-					renderer.draw( createArc( (DesignArc)shape ), pen );
-				} else if( shape instanceof DesignEllipse ) {
-					renderer.draw( createEllipse( (DesignEllipse)shape ), pen );
-				} else if( shape instanceof DesignText ) {
-					renderer.draw( createText( (DesignText)shape ), pen );
+				// Draw the geometry
+				Function<DesignShape, Shape2d> converter = designCreateMap.get( shape.getClass() );
+				if( converter != null ) {
+					Shape2d drawable = designCreateMap.get( shape.getClass() ).apply( shape );
+					if( shape instanceof DesignMarker ) {
+						renderer.fill( drawable, pen );
+					} else {
+						renderer.draw( drawable, pen );
+					}
+				} else {
+					log.atWarn().log( "Geometry not supported yet: {0}", shape.getClass().getSimpleName() );
 				}
+
 			}
 		}
 	}
@@ -95,12 +115,6 @@ public class DesignRenderer extends BorderPane {
 		return pen;
 	}
 
-	private Line createLine( DesignLine shape ) {
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] point = CadPoints.asPoint( shape.getPoint() );
-		return new Line( origin, point );
-	}
-
 	private Arc createArc( DesignArc shape ) {
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
 		double[] radius = Point.of( shape.getXRadius(), shape.getYRadius() );
@@ -110,11 +124,50 @@ public class DesignRenderer extends BorderPane {
 		return new Arc( origin, radius, rotate, start, extent );
 	}
 
+	private Line createLine( DesignLine shape ) {
+		double[] origin = CadPoints.asPoint( shape.getOrigin() );
+		double[] point = CadPoints.asPoint( shape.getPoint() );
+		return new Line( origin, point );
+	}
+
+	private Curve createCurve( DesignCurve shape ) {
+		double[] origin = CadPoints.asPoint( shape.getOrigin() );
+		double[] originControl = CadPoints.asPoint( shape.getOriginControl() );
+		double[] pointControl = CadPoints.asPoint( shape.getPointControl() );
+		double[] point = CadPoints.asPoint( shape.getPoint() );
+		return new Curve( origin, originControl, pointControl, point );
+	}
+
 	private Ellipse createEllipse( DesignEllipse shape ) {
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
 		double[] radius = Point.of( shape.getXRadius(), shape.getYRadius() );
 		double rotate = shape.calcRotate();
 		return new Ellipse( origin, radius, rotate );
+	}
+
+	private com.avereon.marea.geom.Path createMarker( DesignMarker shape ) {
+		DesignPath path = shape.calcType().getDesignPath();
+		if( path == null ) log.atError().log( "Undefined marker path: {0}", shape.getType() );
+		return createPath( shape.calcType().getDesignPath() );
+	}
+
+	private Path createPath( DesignPath shape ) {
+		double[] origin = CadPoints.asPoint( shape.getOrigin() );
+
+		com.avereon.marea.geom.Path path = new com.avereon.marea.geom.Path( origin, 0.0 );
+		for( DesignPath.Element element : shape.getElements() ) {
+			double[] data = element.data();
+			switch( element.command() ) {
+				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case CURVE -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case CLOSE -> path.close();
+				case LINE -> path.line( data[ 0 ], data[ 1] );
+				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
+				case QUAD -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+			}
+		}
+
+		return path;
 	}
 
 	private Text createText( DesignText shape ) {
