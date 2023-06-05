@@ -9,16 +9,16 @@ public class DesignPathTest {
 
 	@Test
 	void constructor() {
-		DesignPath path = new DesignPath( Point3D.ZERO );
+		DesignPath path = new DesignPath();
 		assertThat( path.isModified() ).isTrue();
+		assertThat( path.getOrigin() ).isNull();
 	}
 
 	@Test
 	void constructorWithOrigin() {
 		DesignPath path = new DesignPath( Point3D.ZERO );
 		assertThat( path.isModified() ).isTrue();
-
-		// NEXT Continue testing
+		assertThat( path.getOrigin() ).isEqualTo( Point3D.ZERO );
 	}
 
 	@Test
