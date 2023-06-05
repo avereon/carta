@@ -57,7 +57,7 @@ public class DesignMarkerTest {
 		List<DesignPath.Element> elements = marker.getElements();
 		DesignPath.Element e0 = elements.get( 0 );
 		assertThat( e0.command() ).isEqualTo( DesignPath.Command.MOVE );
-		assertThat( e0.data() ).isEqualTo( new double[]{ 0.0, -0.5, 0.0 } );
+		assertThat( e0.data() ).isEqualTo( new double[]{ 0.0, -0.5 } );
 		DesignPath.Element e1 = elements.get( 1 );
 		assertThat( e1.command() ).isEqualTo( DesignPath.Command.ARC );
 		assertThat( e1.data() ).isEqualTo( new double[]{ 0.0, 0.5, 0.5, 0.5, -90, 180 } );
