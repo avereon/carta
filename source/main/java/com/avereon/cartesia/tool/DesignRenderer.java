@@ -75,7 +75,7 @@ public class DesignRenderer extends BorderPane {
 	private void renderWorkplane() {
 		if( workplane == null ) return;
 
-		// Render grid
+		// NEXT Render grid
 	}
 
 	private void renderVisibleLayers() {
@@ -145,7 +145,7 @@ public class DesignRenderer extends BorderPane {
 		return new Ellipse( origin, radius, rotate );
 	}
 
-	private com.avereon.marea.geom.Path createMarker( DesignMarker shape ) {
+	private Path createMarker( DesignMarker shape ) {
 		DesignPath path = shape.calcType().getDesignPath();
 		if( path == null ) log.atError().log( "Undefined marker path: {0}", shape.getType() );
 		return createPath( shape.calcType().getDesignPath() );
