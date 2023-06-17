@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
-import com.avereon.curve.math.Point;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.Pen;
 import com.avereon.marea.Shape2d;
@@ -57,7 +56,12 @@ public class DesignRenderer extends BorderPane {
 		this.design = design;
 	}
 
+	private long nextRenderTime = 0;
+
 	public void render() {
+		if( System.currentTimeMillis() < nextRenderTime ) return;
+
+		long start = System.currentTimeMillis();
 		renderer.clear();
 
 		renderWorkplane();
@@ -70,6 +74,10 @@ public class DesignRenderer extends BorderPane {
 
 		// Render selection geometry - mainly the selection window
 
+		nextRenderTime = System.currentTimeMillis() + 10;
+		long end = System.currentTimeMillis();
+
+		log.atConfig().log( "Render time: {0}", (end - start) );
 	}
 
 	private void renderWorkplane() {
@@ -84,19 +92,34 @@ public class DesignRenderer extends BorderPane {
 		for( DesignLayer layer : design.getAllLayers() ) {
 			//if(!isLayerVisible( layer )) continue;
 			for( DesignShape shape : layer.getShapes() ) {
-				Pen pen = createPen( shape );
 
-				// Draw the geometry
-				Function<DesignShape, Shape2d> converter = designCreateMap.get( shape.getClass() );
-				if( converter != null ) {
-					Shape2d drawable = designCreateMap.get( shape.getClass() ).apply( shape );
+				// NOTE Caching the pen really helped
+				Pen pen = shape.getValue( "cache.marea.pen" );
+				if( pen == null ) {
+					pen = createPen( shape );
+					shape.setValue( "cache.marea.pen", pen );
+				}
+
+				// NOTE Caching the shape helped a bunch also
+				Shape2d drawable = shape.getValue( "cache.marea.shape" );
+				//Shape2d drawable = null;
+				if( drawable == null ) {
+					// Draw the geometry
+					Function<DesignShape, Shape2d> converter = designCreateMap.get( shape.getClass() );
+					if( converter != null ) {
+						drawable = designCreateMap.get( shape.getClass() ).apply( shape );
+						shape.setValue( "cache.marea.shape", drawable );
+					} else {
+						log.atWarn().log( "Geometry not supported yet: {0}", shape.getClass().getSimpleName() );
+					}
+				}
+
+				if( drawable != null ) {
 					if( shape instanceof DesignMarker ) {
 						renderer.fill( drawable, pen );
 					} else {
 						renderer.draw( drawable, pen );
 					}
-				} else {
-					log.atWarn().log( "Geometry not supported yet: {0}", shape.getClass().getSimpleName() );
 				}
 
 			}
@@ -117,7 +140,7 @@ public class DesignRenderer extends BorderPane {
 
 	private Arc createArc( DesignArc shape ) {
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] radius = Point.of( shape.getXRadius(), shape.getYRadius() );
+		double[] radius = CadPoints.asPoint( shape.getRadii() );
 		double rotate = shape.calcRotate();
 		double start = shape.calcStart();
 		double extent = shape.calcExtent();
@@ -140,7 +163,7 @@ public class DesignRenderer extends BorderPane {
 
 	private Ellipse createEllipse( DesignEllipse shape ) {
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] radius = Point.of( shape.getXRadius(), shape.getYRadius() );
+		double[] radius = CadPoints.asPoint( shape.getRadii() );
 		double rotate = shape.calcRotate();
 		return new Ellipse( origin, radius, rotate );
 	}
@@ -161,7 +184,7 @@ public class DesignRenderer extends BorderPane {
 				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case CURVE -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case CLOSE -> path.close();
-				case LINE -> path.line( data[ 0 ], data[ 1] );
+				case LINE -> path.line( data[ 0 ], data[ 1 ] );
 				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
 				case QUAD -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
 			}

@@ -46,6 +46,16 @@ public class DesignEllipseTest {
 	}
 
 	@Test
+	void testRadii() {
+		Point3D radii = new Point3D( 7, 5, 0.0 );
+		DesignEllipse arc = new DesignEllipse( new Point3D( 0, 0, 0 ), radii );
+		assertThat( arc.getRadii() ).isEqualTo( radii );
+
+		arc.setRadii( new Point3D( 13, 11, 0 ) );
+		assertThat( arc.getRadii() ).isEqualTo( new Point3D( 13, 11, 0 ) );
+	}
+
+	@Test
 	void testRadius() {
 		DesignEllipse arc = new DesignEllipse( new Point3D( 0, 0, 0 ), 3.0 );
 		assertThat( arc.getRadius() ).isEqualTo( 3.0 );
@@ -61,9 +71,10 @@ public class DesignEllipseTest {
 
 		assertThat( map.get( DesignEllipse.SHAPE ) ).isEqualTo( DesignEllipse.CIRCLE );
 		assertThat( map.get( DesignEllipse.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
-		assertThat( map.get( DesignEllipse.RADIUS ) ).isEqualTo( 4.0 );
-		assertThat( map.get( DesignEllipse.X_RADIUS ) ).isNull();
-		assertThat( map.get( DesignEllipse.Y_RADIUS ) ).isNull();
+		assertThat( map.get( DesignEllipse.RADII ) ).isEqualTo( new Point3D( 4, 4, 0 ) );
+//		assertThat( map.get( DesignEllipse.RADIUS ) ).isEqualTo( 4.0 );
+//		assertThat( map.get( DesignEllipse.X_RADIUS ) ).isNull();
+//		assertThat( map.get( DesignEllipse.Y_RADIUS ) ).isNull();
 		assertThat( map.get( DesignEllipse.ROTATE ) ).isNull();
 	}
 
@@ -74,8 +85,7 @@ public class DesignEllipseTest {
 
 		assertThat( map.get( DesignEllipse.SHAPE ) ).isEqualTo( DesignEllipse.ELLIPSE );
 		assertThat( map.get( DesignEllipse.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
-		assertThat( map.get( DesignEllipse.X_RADIUS ) ).isEqualTo( 4.0 );
-		assertThat( map.get( DesignEllipse.Y_RADIUS ) ).isEqualTo( 5.0 );
+		assertThat( map.get( DesignEllipse.RADII ) ).isEqualTo( new Point3D( 4, 5, 0 ) );
 		assertThat( map.get( DesignEllipse.ROTATE ) ).isNull();
 	}
 
@@ -86,13 +96,30 @@ public class DesignEllipseTest {
 
 		assertThat( map.get( DesignEllipse.SHAPE ) ).isEqualTo( DesignEllipse.ELLIPSE );
 		assertThat( map.get( DesignEllipse.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
-		assertThat( map.get( DesignEllipse.X_RADIUS ) ).isEqualTo( 6.0 );
-		assertThat( map.get( DesignEllipse.Y_RADIUS ) ).isEqualTo( 7.0 );
+		assertThat( map.get( DesignEllipse.RADII ) ).isEqualTo( new Point3D( 6, 7, 0 ) );
 		assertThat( map.get( DesignEllipse.ROTATE ) ).isEqualTo( 8.0 );
 	}
 
 	@Test
 	void testUpdateFromCircle() {
+		Map<String, Object> map = new HashMap<>();
+		map.put( DesignEllipse.SHAPE, DesignEllipse.CIRCLE );
+		map.put( DesignEllipse.ORIGIN, "0,0,0" );
+		map.put( DesignEllipse.RADII, "4,4,0" );
+
+		DesignEllipse arc = new DesignEllipse();
+		arc.updateFrom( map );
+
+		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getRotate() ).isNull();
+	}
+
+	@Test
+	void testUpdateFromCircleWithDeprecatedRadius() {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignEllipse.SHAPE, DesignEllipse.CIRCLE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
@@ -114,6 +141,24 @@ public class DesignEllipseTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
+		map.put( DesignEllipse.RADII, "4,5,0" );
+
+		DesignEllipse arc = new DesignEllipse();
+		arc.updateFrom( map );
+
+		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 5.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getRotate() ).isNull();
+	}
+
+	@Test
+	void testUpdateFromEllipseWithDeprecatedRadius() {
+		Map<String, Object> map = new HashMap<>();
+		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
+		map.put( DesignEllipse.ORIGIN, "0,0,0" );
 		map.put( DesignEllipse.X_RADIUS, 4.0 );
 		map.put( DesignEllipse.Y_RADIUS, 5.0 );
 
@@ -130,6 +175,25 @@ public class DesignEllipseTest {
 
 	@Test
 	void testUpdateFromRotatedEllipse() {
+		Map<String, Object> map = new HashMap<>();
+		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
+		map.put( DesignEllipse.ORIGIN, "0,0,0" );
+		map.put( DesignEllipse.RADII, "6,7,0" );
+		map.put( DesignEllipse.ROTATE, 8.0 );
+
+		DesignEllipse arc = new DesignEllipse();
+		arc.updateFrom( map );
+
+		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadius() ).isEqualTo( 6.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 6.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 7.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 8.0 );
+		assertThat( arc.getRotate() ).isEqualTo( 8.0 );
+	}
+
+	@Test
+	void testUpdateFromRotatedEllipseWithDeprecatedRadius() {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );

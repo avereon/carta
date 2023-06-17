@@ -1,7 +1,6 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.log.LazyEval;
@@ -39,6 +38,9 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private static final String POINT = "point";
 
+	private static final String RADII = "radii";
+
+	@Deprecated
 	private static final String RADIUS = "radius";
 
 	static final Map<String, String> saveLayerPaintMapping;
@@ -255,10 +257,16 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private <T extends DesignEllipse> T loadDesignEllipse( Map<String, Object> map, T ellipse ) {
-		if( map.containsKey( RADIUS ) ) ellipse.setXRadius( ((Number)map.get( RADIUS )).doubleValue() );
-		if( map.containsKey( RADIUS ) ) ellipse.setYRadius( ((Number)map.get( RADIUS )).doubleValue() );
-		if( map.containsKey( DesignEllipse.X_RADIUS ) ) ellipse.setXRadius( ((Number)map.get( DesignEllipse.X_RADIUS )).doubleValue() );
-		if( map.containsKey( DesignEllipse.Y_RADIUS ) ) ellipse.setYRadius( ((Number)map.get( DesignEllipse.Y_RADIUS )).doubleValue() );
+		if( map.containsKey( DesignEllipse.RADII ) ) {
+			ellipse.setRadii( ParseUtil.parsePoint3D( (String)map.get( DesignEllipse.RADII ) ) );
+		} else if( map.containsKey( RADIUS ) ) {
+			if( map.containsKey( RADIUS ) ) ellipse.setXRadius( ((Number)map.get( RADIUS )).doubleValue() );
+			if( map.containsKey( RADIUS ) ) ellipse.setYRadius( ((Number)map.get( RADIUS )).doubleValue() );
+		} else {
+			if( map.containsKey( DesignEllipse.X_RADIUS ) ) ellipse.setXRadius( ((Number)map.get( DesignEllipse.X_RADIUS )).doubleValue() );
+			if( map.containsKey( DesignEllipse.Y_RADIUS ) ) ellipse.setYRadius( ((Number)map.get( DesignEllipse.Y_RADIUS )).doubleValue() );
+		}
+
 		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( ((Number)map.get( DesignEllipse.ROTATE )).doubleValue() );
 		return ellipse;
 	}
@@ -387,26 +395,30 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return asMap( line, mapShape( line, DesignLine.LINE ), DesignLine.POINT );
 	}
 
-	private Map<String, Object> mapRadius( DesignEllipse ellipse ) {
-		Map<String, Object> map = new HashMap<>();
-		if( CadGeometry.areSameSize( ellipse.getXRadius(), ellipse.getYRadius() ) ) {
-			map.put( RADIUS, ellipse.getValue( DesignEllipse.X_RADIUS ) );
-		} else {
-			map.putAll( asMap( ellipse, DesignEllipse.X_RADIUS, DesignEllipse.Y_RADIUS ) );
-		}
+	private Map<String, Object> mapRadii( DesignEllipse ellipse ) {
+		Map<String, Object> map = asMap( ellipse, DesignEllipse.RADII );
+
+//		if( CadGeometry.areSameSize( ellipse.getXRadius(), ellipse.getYRadius() ) ) {
+//			map.put( RADIUS, ellipse.getRadius() );
+//		} else {
+//			map.put(  DesignEllipse.X_RADIUS, ellipse.getXRadius() );
+//			map.put(  DesignEllipse.Y_RADIUS, ellipse.getYRadius() );
+//			//map.putAll( asMap( ellipse, DesignEllipse.X_RADIUS, DesignEllipse.Y_RADIUS ) );
+//		}
+
 		return map;
 	}
 
 	private Map<String, Object> mapEllipse( DesignEllipse ellipse ) {
 		String shape = Objects.equals( ellipse.getXRadius(), ellipse.getYRadius() ) ? DesignEllipse.CIRCLE : DesignEllipse.ELLIPSE;
-		Map<String, Object> map = asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.ROTATE );
-		map.putAll( mapRadius( ellipse ) );
+		Map<String, Object> map = asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.RADII, DesignEllipse.ROTATE );
+		map.putAll( mapRadii( ellipse ) );
 		return map;
 	}
 
 	private Map<String, Object> mapArc( DesignArc arc ) {
 		Map<String, Object> map = asMap( arc, mapShape( arc, DesignArc.ARC ), DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT, DesignArc.TYPE );
-		map.putAll( mapRadius( arc ) );
+		map.putAll( mapRadii( arc ) );
 		return map;
 	}
 

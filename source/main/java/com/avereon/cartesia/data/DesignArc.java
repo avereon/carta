@@ -52,7 +52,7 @@ public class DesignArc extends DesignEllipse {
 	private static final String END_POINT = "end-point";
 
 	public DesignArc() {
-		this( null, null, null, null, null );
+		this( null, 0.0, 0.0, null, null );
 	}
 
 	public DesignArc( Point3D origin, Double radius, Double start, Double extent, Type type ) {
@@ -64,7 +64,11 @@ public class DesignArc extends DesignEllipse {
 	}
 
 	public DesignArc( Point3D origin, Double xRadius, Double yRadius, Double rotate, Double start, Double extent, Type type ) {
-		super( origin, xRadius, yRadius, rotate );
+		this( origin, new Point3D( xRadius, yRadius, 0 ), rotate, start, extent, type );
+	}
+
+	public DesignArc( Point3D origin, Point3D radii, Double rotate, Double start, Double extent, Type type ) {
+		super( origin, radii, rotate );
 		addModifyingKeys( START, EXTENT, TYPE );
 		setStart( start );
 		setExtent( extent );
@@ -129,7 +133,7 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		// TODO Improve DesignArc.distanceTo()
+		// FIXME Improve DesignArc.distanceTo()
 		// This implementation is a simple estimate based on the origin and radius
 		double[] o = CadPoints.asPoint( getOrigin() );
 		double[] p = CadPoints.asPoint( point );
@@ -141,10 +145,10 @@ public class DesignArc extends DesignEllipse {
 		// If the arc is circular then use the circle formula
 		if( isCircle() ) return getRadius() * Math.abs( Math.toRadians( getExtent() ) );
 
-		// TODO Improve DesignArc.pathLength()
-		// TODO Calc the t of the start
-		// TODO Calc the t of the start+extent
-		// TODO Calc the parametric path length
+		// FIXME Improve DesignArc.pathLength()
+		// FIXME Calc the t of the start
+		// FIXME Calc the t of the start+extent
+		// FIXME Calc the parametric path length
 
 		return Double.NaN;
 	}
@@ -161,15 +165,10 @@ public class DesignArc extends DesignEllipse {
 	public Map<String, Object> getInformation() {
 		Map<String, Object> info = new HashMap<>();
 		info.put( ORIGIN, getOrigin() );
-		if( isCircle() ) {
-			info.put( RADIUS, getRadius() );
-		} else {
-			info.put( X_RADIUS, getXRadius() );
-			info.put( Y_RADIUS, getYRadius() );
-		}
+		info.put( RADII, getRadii() );
 		if( getRotate() != null ) info.put( ROTATE, getRotate() );
-		info.put( START, getStart() );
-		info.put( EXTENT, getExtent() );
+		info.put( START, calcStart() );
+		info.put( EXTENT, calcExtent() );
 		info.put( END, calcEnd() );
 		info.put( LENGTH, pathLength() );
 

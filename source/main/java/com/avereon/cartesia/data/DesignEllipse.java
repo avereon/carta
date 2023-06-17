@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
@@ -23,23 +24,32 @@ public class DesignEllipse extends DesignShape {
 
 	public static final String ELLIPSE = "ellipse";
 
+	public static final String RADII = "radii";
+
+	@Deprecated
 	public static final String X_RADIUS = "x-radius";
 
+	@Deprecated
 	public static final String Y_RADIUS = "y-radius";
 
 	public static final String ROTATE = "rotate";
 
 	private static final String PERIMETER = "perimeter";
 
+	@Deprecated
 	// This is not to be used publicly
 	static final String RADIUS = "radius";
 
 	public DesignEllipse() {
-		this( null, null );
+		this( null, 0.0 );
 	}
 
 	public DesignEllipse( Point3D origin, Double radius ) {
 		this( origin, radius, radius );
+	}
+
+	public DesignEllipse( Point3D origin, Point3D radii ) {
+		this( origin, radii, null );
 	}
 
 	public DesignEllipse( Point3D origin, Double xRadius, Double yRadius ) {
@@ -47,47 +57,55 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	public DesignEllipse( Point3D origin, Double xRadius, Double yRadius, Double rotate ) {
-		super( origin );
-		addModifyingKeys( X_RADIUS, Y_RADIUS, ROTATE );
+		this( origin, new Point3D( xRadius, yRadius, 0.0 ), rotate );
+	}
 
-		if( Objects.equals( xRadius, yRadius ) ) setRadius( xRadius );
-		setXRadius( xRadius );
-		setYRadius( yRadius );
+	public DesignEllipse( Point3D origin, Point3D radii, Double rotate ) {
+		super( origin );
+		addModifyingKeys( RADII, ROTATE );
+		setRadii( radii );
 		setRotate( rotate );
 	}
 
+	public Point3D getRadii() {
+		return getValue( RADII );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignEllipse> T setRadii( Point3D radii ) {
+		setValue( RADII, radii );
+		return (T)this;
+	}
+
 	public Double getRadius() {
-		return getValue( X_RADIUS );
+		return getRadii().getX();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setRadius( Double value ) {
-		try( Txn ignore = Txn.create() ) {
-			setValue( X_RADIUS, value );
-			setValue( Y_RADIUS, value );
-		} catch( TxnException e ) {
-			log.atError().withCause( e );
-		}
+		setRadii( new Point3D( value, value, 0 ) );
 		return (T)this;
 	}
 
 	public Double getXRadius() {
-		return getValue( X_RADIUS );
+		return getRadii().getX();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setXRadius( Double value ) {
-		setValue( X_RADIUS, value );
+		//setValue( X_RADIUS, value );
+		setRadii( new Point3D( value, getRadii().getY(), getRadii().getZ() ) );
 		return (T)this;
 	}
 
 	public Double getYRadius() {
-		return getValue( Y_RADIUS );
+		return getRadii().getY();
 	}
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignEllipse> T setYRadius( Double value ) {
-		setValue( Y_RADIUS, value );
+		//setValue( Y_RADIUS, value );
+		setRadii( new Point3D( getRadii().getX(), value, getRadii().getZ() ) );
 		return (T)this;
 	}
 
@@ -216,25 +234,37 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	protected Map<String, Object> asMap() {
+		Double xRadius = getXRadius();
+		Double yRadius = getYRadius();
+
 		Map<String, Object> map = super.asMap();
-		map.put( SHAPE, Objects.equals( getXRadius(), getYRadius() ) ? CIRCLE : ELLIPSE );
-		if( CadGeometry.areSameSize( getXRadius(), getYRadius() ) ) {
-			map.put( RADIUS, getValue( X_RADIUS ) );
-		} else {
-			//map.putAll( asMap( X_RADIUS, Y_RADIUS ) );
-			map.put( X_RADIUS, getValue( X_RADIUS ) );
-			map.put( Y_RADIUS, getValue( Y_RADIUS ) );
-		}
+		map.put( SHAPE, Objects.equals( xRadius, yRadius ) ? CIRCLE : ELLIPSE );
+		map.putAll( asMap( RADII ) );
 		map.putAll( asMap( ROTATE ) );
+
+		// Deprecated values
+//		if( CadGeometry.areSameSize( xRadius, yRadius ) ) {
+//			map.put( RADIUS, xRadius );
+//		} else {
+//			//map.putAll( asMap( X_RADIUS, Y_RADIUS ) );
+//			map.put( X_RADIUS, xRadius );
+//			map.put( Y_RADIUS, yRadius );
+//		}
+
 		return map;
 	}
 
 	public DesignEllipse updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		if( map.containsKey( RADIUS ) ) setXRadius( (Double)map.get( RADIUS ) );
-		if( map.containsKey( RADIUS ) ) setYRadius( (Double)map.get( RADIUS ) );
-		if( map.containsKey( X_RADIUS ) ) setXRadius( (Double)map.get( X_RADIUS ) );
-		if( map.containsKey( Y_RADIUS ) ) setYRadius( (Double)map.get( Y_RADIUS ) );
+		if( map.containsKey( RADII ) ) {
+			setRadii( ParseUtil.parsePoint3D( (String)map.get( RADII ) ) );
+		} else if( map.containsKey( RADIUS ) ) {
+			double radius = (Double)map.get( RADIUS );
+			setRadii( new Point3D( radius, radius, 0.0 ) );
+		} else {
+			if( map.containsKey( X_RADIUS ) ) setXRadius( (Double)map.get( X_RADIUS ) );
+			if( map.containsKey( Y_RADIUS ) ) setYRadius( (Double)map.get( Y_RADIUS ) );
+		}
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
 	}
@@ -245,8 +275,9 @@ public class DesignEllipse extends DesignShape {
 		if( !(shape instanceof DesignEllipse ellipse) ) return this;
 
 		try( Txn ignore = Txn.create() ) {
-			this.setXRadius( ellipse.getXRadius() );
-			this.setYRadius( ellipse.getYRadius() );
+			this.setRadii( ellipse.getRadii() );
+			//			this.setXRadius( ellipse.getXRadius() );
+			//			this.setYRadius( ellipse.getYRadius() );
 			this.setRotate( ellipse.getRotate() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );
@@ -257,7 +288,7 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public String toString() {
-		return super.toString( ORIGIN, X_RADIUS, Y_RADIUS, ROTATE );
+		return super.toString( ORIGIN, RADII, ROTATE );
 	}
 
 }

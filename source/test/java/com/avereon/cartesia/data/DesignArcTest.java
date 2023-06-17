@@ -60,9 +60,7 @@ public class DesignArcTest {
 
 		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
 		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
-		assertThat( map.get( DesignArc.RADIUS ) ).isEqualTo( 4.0 );
-		assertThat( map.get( DesignArc.X_RADIUS ) ).isNull();
-		assertThat( map.get( DesignArc.Y_RADIUS ) ).isNull();
+		assertThat( map.get( DesignArc.RADII ) ).isEqualTo( new Point3D( 4, 4, 0 ) );
 		assertThat( map.get( DesignArc.START ) ).isEqualTo( 0.0 );
 		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 90.0 );
 		assertThat( map.get( DesignArc.ROTATE ) ).isNull();
@@ -76,8 +74,7 @@ public class DesignArcTest {
 
 		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
 		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
-		assertThat( map.get( DesignArc.X_RADIUS ) ).isEqualTo( 4.0 );
-		assertThat( map.get( DesignArc.Y_RADIUS ) ).isEqualTo( 5.0 );
+		assertThat( map.get( DesignArc.RADII ) ).isEqualTo( new Point3D( 4, 5, 0 ) );
 		assertThat( map.get( DesignArc.START ) ).isEqualTo( 0.0 );
 		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 360.0 );
 		assertThat( map.get( DesignArc.ROTATE ) ).isNull();
@@ -91,8 +88,7 @@ public class DesignArcTest {
 
 		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
 		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
-		assertThat( map.get( DesignArc.X_RADIUS ) ).isEqualTo( 4.0 );
-		assertThat( map.get( DesignArc.Y_RADIUS ) ).isEqualTo( 5.0 );
+		assertThat( map.get( DesignArc.RADII ) ).isEqualTo( new Point3D( 4, 5, 0 ) );
 		assertThat( map.get( DesignArc.ROTATE ) ).isEqualTo( 6.0 );
 		assertThat( map.get( DesignArc.START ) ).isEqualTo( 7.0 );
 		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 8.0 );
@@ -104,7 +100,7 @@ public class DesignArcTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignArc.SHAPE, DesignArc.ARC );
 		map.put( DesignArc.ORIGIN, "0,0,0" );
-		map.put( DesignArc.RADIUS, 4.0 );
+		map.put( DesignArc.RADII, "4,4,0" );
 		map.put( DesignArc.START, 180.0 );
 		map.put( DesignArc.EXTENT, 17.0 );
 
@@ -112,6 +108,7 @@ public class DesignArcTest {
 		arc.updateFrom( map );
 
 		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadii() ).isEqualTo( new Point3D( 4, 4, 0 ) );
 		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
 		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
 		assertThat( arc.getYRadius() ).isEqualTo( 4.0 );
@@ -124,6 +121,29 @@ public class DesignArcTest {
 
 	@Test
 	void testUpdateFromEllipseArc() {
+		Map<String, Object> map = new HashMap<>();
+		map.put( DesignArc.SHAPE, DesignArc.ELLIPSE );
+		map.put( DesignArc.ORIGIN, "0,0,0" );
+		map.put( DesignArc.RADII, "4,5,0" );
+		map.put( DesignArc.START, 6.0 );
+		map.put( DesignArc.EXTENT, 7.0 );
+
+		DesignArc arc = new DesignArc();
+		arc.updateFrom( map );
+
+		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( arc.getYRadius() ).isEqualTo( 5.0 );
+		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( arc.getRotate() ).isNull();
+		assertThat( arc.getStart() ).isEqualTo( 6.0 );
+		assertThat( arc.getExtent() ).isEqualTo( 7.0 );
+		assertThat( arc.getType() ).isNull();
+	}
+
+	@Test
+	void testUpdateFromEllipseArcWithDeprecatedRadius() {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignArc.SHAPE, DesignArc.ELLIPSE );
 		map.put( DesignArc.ORIGIN, "0,0,0" );
