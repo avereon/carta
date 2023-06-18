@@ -43,6 +43,8 @@ public class DesignRenderer extends BorderPane {
 		renderer.widthProperty().bind( this.widthProperty() );
 		renderer.heightProperty().bind( this.heightProperty() );
 
+		// FIXME Instead of watching these properties, which causes a lot of extra
+		// render requests, watch something else that triggers a render.
 		// Add listeners for properties that should update the render
 		renderer.zoomXProperty().addListener( ( p, o, n ) -> render() );
 		renderer.zoomYProperty().addListener( ( p, o, n ) -> render() );
