@@ -533,7 +533,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
-		Design design = request.getAsset().getModel();
+		Design design = getDesign();
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
 		// Link the guides before loading the design

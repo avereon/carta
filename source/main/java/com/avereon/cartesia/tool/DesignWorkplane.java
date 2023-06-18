@@ -97,7 +97,7 @@ public class DesignWorkplane extends Node {
 
 	/**
 	 * The cached grid axis paint.
- 	 */
+	 */
 	private Paint gridAxisPaint;
 
 	/**

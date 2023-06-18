@@ -373,6 +373,7 @@ public class DesignPane extends StackPane {
 		// Create the root layer view
 		layerMap.put( design.getLayers(), new DesignLayerView( this, design.getLayers(), layers ) );
 
+		// Go through all the layers and build the design view
 		design.getLayers().getAllLayers().forEach( this::doAddNode );
 
 		updateView();
