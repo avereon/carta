@@ -7,6 +7,7 @@ import com.avereon.marea.Pen;
 import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
+import com.avereon.zarra.javafx.Fx;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
@@ -43,8 +44,6 @@ public class DesignRenderer extends BorderPane {
 		renderer.widthProperty().bind( this.widthProperty() );
 		renderer.heightProperty().bind( this.heightProperty() );
 
-		// FIXME Instead of watching these properties, which causes a lot of extra
-		// render requests, watch something else that triggers a render.
 		// Add listeners for properties that should update the render
 		renderer.zoomXProperty().addListener( ( p, o, n ) -> render() );
 		renderer.zoomYProperty().addListener( ( p, o, n ) -> render() );
@@ -58,12 +57,17 @@ public class DesignRenderer extends BorderPane {
 		this.design = design;
 	}
 
-	private long nextRenderTime = 0;
-
+	/**
+	 * Request that geometry be rendered. This method collapses multiple
+	 * sequential render requests to improve performance. This method is safe to
+	 * call from any thread.
+	 */
 	public void render() {
-		if( System.currentTimeMillis() < nextRenderTime ) return;
+		Fx.run( new RenderTrigger() );
+	}
 
-		long start = System.currentTimeMillis();
+	private void doRender() {
+		//long startNs = System.nanoTime();
 		renderer.clear();
 
 		renderWorkplane();
@@ -76,10 +80,9 @@ public class DesignRenderer extends BorderPane {
 
 		// Render selection geometry - mainly the selection window
 
-		nextRenderTime = System.currentTimeMillis() + 10;
-		long end = System.currentTimeMillis();
+		//long endNs = System.nanoTime();
 
-		log.atConfig().log( "Render time: {0}", (end - start) );
+		//log.atConfig().log( "Render time: {0} ns", (endNs - startNs) );
 	}
 
 	private void renderWorkplane() {
@@ -200,6 +203,44 @@ public class DesignRenderer extends BorderPane {
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
 		double height = shape.calcTextFont().getSize();
 		return new Text( string, origin, height );
+	}
+
+	/**
+	 * This class is used to collapse multiple render requests. As requests are
+	 * made this class links requests together. Then, when the first of multiple
+	 * requests is executed it marks subsequent requests as cancelled and proceeds
+	 * to render. As cancelled requests are executed they simply exit.
+	 */
+	private class RenderTrigger implements Runnable {
+
+		private static RenderTrigger latest;
+
+		private RenderTrigger next;
+
+		private boolean cancelled;
+
+		public RenderTrigger() {
+			if( latest != null ) latest.next = this;
+			latest = this;
+		}
+
+		public void run() {
+			// If this trigger is already cancelled just skip it
+			if( cancelled ) return;
+
+			// Ensure that we are on the FX application thread
+			Fx.affirmOnFxThread();
+
+			// Cancel all triggers that are currently waiting
+			while( next != null ) {
+				next.cancelled = true;
+				next = next.next;
+			}
+
+			// Now actually draw the geometry
+			doRender();
+		}
+
 	}
 
 }

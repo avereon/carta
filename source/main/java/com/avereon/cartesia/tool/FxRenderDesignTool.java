@@ -262,7 +262,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
 
-		Fx.run( () -> renderer.render() );
+		// Request the initial geometry render
+		renderer.render();
 	}
 
 	@Override
