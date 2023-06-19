@@ -726,7 +726,7 @@ public class DesignPaneMarea extends StackPane {
 
 	// THREAD JavaFX Application Thread
 	private List<Shape> fxSelectByShape( final Shape selector, final boolean contains ) {
-		Fx.checkFxThread();
+		Fx.affirmOnFxThread();
 
 		// The shape must have a fill but no stroke. The selector color is not
 		// important since the selector shape is not shown, is just needs to be set.
