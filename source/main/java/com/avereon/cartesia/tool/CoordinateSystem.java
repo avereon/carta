@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
@@ -21,6 +22,9 @@ public interface CoordinateSystem {
 
 	Point3D getNearest( DesignWorkplane workplane, Point3D point );
 
+	List<DesignShape> generateGrid( DesignWorkplane workplane, GridStyle style );
+
+	@Deprecated
 	List<Shape> getGridDots( DesignWorkplane workplane ) throws Exception;
 
 //	double[][] getGridDotsNew();

@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.data.NodeEvent;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.Pen;
 import com.avereon.marea.Shape2d;
@@ -11,6 +12,7 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -20,13 +22,14 @@ public class DesignRenderer extends BorderPane {
 
 	private final FxRenderer2d renderer;
 
-	private DesignWorkplane workplane;
-
 	private Design design;
+
+	private DesignWorkplane workplane;
 
 	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
 
 	public DesignRenderer() {
+		// FIXME Would an enum and switch be faster?
 		designCreateMap = new ConcurrentHashMap<>();
 		designCreateMap.put( DesignArc.class, s -> createArc( (DesignArc)s ) );
 		designCreateMap.put( DesignCurve.class, s -> createCurve( (DesignCurve)s ) );
@@ -44,6 +47,7 @@ public class DesignRenderer extends BorderPane {
 		renderer.widthProperty().bind( this.widthProperty() );
 		renderer.heightProperty().bind( this.heightProperty() );
 
+		// TEMPORARY
 		// Add listeners for properties that should update the render
 		renderer.zoomXProperty().addListener( ( p, o, n ) -> render() );
 		renderer.zoomYProperty().addListener( ( p, o, n ) -> render() );
@@ -54,7 +58,40 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public void setDesign( Design design ) {
+		// TODO Disconnect listeners
+
 		this.design = design;
+
+		// TODO Connect listeners
+		design.register( NodeEvent.VALUE_CHANGED, e -> {
+			log.atConfig().log( "Something changed in the design: " + e.getKey() );
+		} );
+	}
+
+	public void setWorkplane( DesignWorkplane workplane ) {
+		// TODO Disconnect listeners
+
+		this.workplane = workplane;
+
+		// TODO Connect listeners
+		workplane.register( NodeEvent.VALUE_CHANGED, e -> {
+			log.atConfig().log( "Something changed in the workplane: " + e.getKey() );
+		} );
+	}
+
+	private List<Shape2d> doRebuildGrid() {
+		//		if( !isGridVisible() ) return;
+		//
+		//		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
+		//			try {
+		//				//List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
+		//				List<Shape2d> grid = List.of();
+		//				Fx.run( () -> renderer.setGrid( grid ) );
+		//			} catch( Exception exception ) {
+		//				log.atError().withCause( exception ).log( "Error creating grid" );
+		//			}
+		//		} ) );
+		return List.of();
 	}
 
 	/**
@@ -88,6 +125,8 @@ public class DesignRenderer extends BorderPane {
 	private void renderWorkplane() {
 		if( workplane == null ) return;
 
+		workplane.getCoordinateSystem();
+
 		// NEXT Render grid
 	}
 
@@ -109,9 +148,9 @@ public class DesignRenderer extends BorderPane {
 				Shape2d drawable = shape.getValue( "cache.marea.shape" );
 				//Shape2d drawable = null;
 				if( drawable == null ) {
-					// Draw the geometry
 					Function<DesignShape, Shape2d> converter = designCreateMap.get( shape.getClass() );
 					if( converter != null ) {
+
 						drawable = designCreateMap.get( shape.getClass() ).apply( shape );
 						shape.setValue( "cache.marea.shape", drawable );
 					} else {
@@ -119,6 +158,7 @@ public class DesignRenderer extends BorderPane {
 					}
 				}
 
+				// Draw the geometry
 				if( drawable != null ) {
 					if( shape instanceof DesignMarker ) {
 						renderer.fill( drawable, pen );

@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
@@ -37,6 +38,11 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		point = point.add( origin );
 
 		return point;
+	}
+
+	@Override
+	public List<DesignShape> generateGrid( DesignWorkplane workplane, GridStyle style ) {
+		return List.of();
 	}
 
 	@Override

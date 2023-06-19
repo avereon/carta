@@ -8,6 +8,7 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
+import com.avereon.util.DelayedAction;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.PropertiesToolEvent;
 import com.avereon.xenon.Xenon;
@@ -46,6 +47,14 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
 
+	// RENDERER
+
+	private final Label toast;
+
+	private final DesignRenderer renderer;
+
+	private final DesignWorkplane workplane;
+
 	// PROPERTIES
 
 	private final ObjectProperty<Point3D> viewpointProperty;
@@ -68,10 +77,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final RedoAction redoAction;
 
-	// RENDERER
-
-	// FIXME Should there be a wrapper around the renderer so I can use it elsewhere?
-	private DesignRenderer renderer;
+	private final DelayedAction rebuildGridAction;
 
 	public FxRenderDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -79,8 +85,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		getStyleClass().add( "design-tool" );
 
 		this.renderer = new DesignRenderer();
-		BorderPane layout = new BorderPane(renderer, new Label( "Loading..." ), null, null, null );
-		getChildren().addAll( layout );
+		this.workplane = new DesignWorkplane();
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
@@ -92,6 +97,16 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
+
+		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
+		this.rebuildGridAction.setMinTriggerLimit( 100 );
+		this.rebuildGridAction.setMaxTriggerLimit( 500 );
+
+		// Create the toast label
+		this.toast = new Label( "Loading..." );
+
+		// Add the components to the parent
+		getChildren().addAll( new BorderPane( renderer, toast, null, null, null ) );
 
 		// NOTE Settings and settings listeners should go in the ready() method
 	}
@@ -604,6 +619,20 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	@Override
 	protected void showCommandPrompt() {
 
+	}
+
+	private void doRebuildGrid() {
+		if( !isGridVisible() ) return;
+
+//		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
+//			try {
+//				//List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
+//				List<Shape2d> grid = List.of();
+//				Fx.run( () -> renderer.setGrid( grid ) );
+//			} catch( Exception exception ) {
+//				log.atError().withCause( exception ).log( "Error creating grid" );
+//			}
+//		} ) );
 	}
 
 	private class PrintAction extends ProgramAction {

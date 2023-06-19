@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.DesignShape;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 
@@ -15,6 +16,11 @@ public class CoordinateSystemIsometric implements CoordinateSystem {
 	@Override
 	public Point3D getNearest( DesignWorkplane workplane, Point3D point) {
 		return null;
+	}
+
+	@Override
+	public List<DesignShape> generateGrid( DesignWorkplane workplane, GridStyle style ) {
+		return List.of();
 	}
 
 	@Override
