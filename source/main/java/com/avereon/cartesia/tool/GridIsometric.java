@@ -6,7 +6,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
-public class CoordinateSystemIsometric implements CoordinateSystem {
+public class GridIsometric implements Grid {
 
 	@Override
 	public String name() {

@@ -1,7 +1,7 @@
 package com.avereon.cartesia.snap;
 
 import com.avereon.cartesia.math.CadPoints;
-import com.avereon.cartesia.tool.CoordinateSystem;
+import com.avereon.cartesia.tool.Grid;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
 
@@ -17,7 +17,7 @@ public class SnapGrid implements Snap {
 		if( mouse == null ) return CadPoints.NONE;
 
 		// NOTE The mouse point is in world coordinates
-		CoordinateSystem system = tool.getCoordinateSystem();
+		Grid system = tool.getCoordinateSystem();
 		return system.getNearest( tool.getWorkplane(), mouse );
 	}
 

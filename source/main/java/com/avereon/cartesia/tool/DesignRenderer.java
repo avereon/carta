@@ -10,10 +10,12 @@ import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -125,9 +127,52 @@ public class DesignRenderer extends BorderPane {
 	private void renderWorkplane() {
 		if( workplane == null ) return;
 
-		workplane.getCoordinateSystem();
+		Grid grid = workplane.getCoordinateSystem();
 
-		// NEXT Render grid
+		// Render axes
+		if(  workplane.isGridAxisVisible() ) {
+			Paint paint = workplane.calcGridAxisPaint();
+			double width = workplane.calcGridAxisWidth();
+			Pen pen = new Pen( paint, width );
+
+			// FIXME Can the grid be cached?
+			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
+				case DOT -> grid.createAxisDots( workplane );
+				case LINE -> grid.createAxisLines( workplane );
+			};
+
+			renderer.draw( shapes, pen );
+		}
+
+		// Render major grid
+		if( workplane.isMajorGridVisible() ) {
+			Paint paint = workplane.calcMajorGridPaint();
+			double width = workplane.calcMajorGridWidth();
+			Pen pen = new Pen( paint, width );
+
+			// FIXME Can the grid be cached?
+			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
+				case DOT -> grid.createMajorDots( workplane );
+				case LINE -> grid.createMajorLines( workplane );
+			};
+
+			renderer.draw( shapes, pen );
+		}
+
+		// Render minor grid
+		if( workplane.isMinorGridVisible() ) {
+			Paint paint = workplane.calcMinorGridPaint();
+			double width = workplane.calcMinorGridWidth();
+			Pen pen = new Pen( paint, width );
+
+			// FIXME Can the grid be cached?
+			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
+				case DOT -> grid.createMinorDots( workplane );
+				case LINE -> grid.createMinorLines( workplane );
+			};
+
+			renderer.draw( shapes, pen );
+		}
 	}
 
 	private void renderVisibleLayers() {

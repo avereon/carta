@@ -13,11 +13,13 @@ import lombok.CustomLog;
 @SuppressWarnings( "UnusedReturnValue" )
 public class DesignWorkplane extends Node {
 
+	public static final GridStyle DEFAULT_GRID_STYLE = GridStyle.LINE;
+
 	public static final double DEFAULT_BOUNDARY_X = 0.0;
 
 	public static final double DEFAULT_BOUNDARY_Y = 0.0;
 
-	public static final CoordinateSystem DEFAULT_COORDINATE_SYSTEM = CoordinateSystem.ORTHO;
+	public static final Grid DEFAULT_COORDINATE_SYSTEM = Grid.ORTHO;
 
 	public static final String DEFAULT_GRID_ORIGIN = "0,0,0";
 
@@ -44,6 +46,8 @@ public class DesignWorkplane extends Node {
 	public static final String DEFAULT_GRID_MINOR_WIDTH = "0.05";
 
 	public static final String DEFAULT_GRID_SNAP_SIZE = "0.1";
+
+	public static final String GRID_STYLE = "grid-style";
 
 	public static final String BOUNDARY_X1 = "boundary-x1";
 
@@ -93,7 +97,7 @@ public class DesignWorkplane extends Node {
 
 	public static final String GRID_SNAP_Z = "grid-snap-z";
 
-	private CoordinateSystem coordinateSystem;
+	private Grid grid;
 
 	/**
 	 * The cached grid axis paint.
@@ -175,7 +179,8 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid
 	) {
-		this( DEFAULT_COORDINATE_SYSTEM,
+		this(
+			DEFAULT_COORDINATE_SYSTEM,
 			DEFAULT_GRID_ORIGIN,
 			boundaryX1,
 			boundaryY1,
@@ -189,14 +194,16 @@ public class DesignWorkplane extends Node {
 			minorGrid,
 			snapGrid,
 			snapGrid,
-			snapGrid
+			snapGrid,
+			DEFAULT_GRID_STYLE
 		);
 	}
 
 	public DesignWorkplane(
 		double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGridX, String majorGridY, String minorGridX, String minorGridY, String snapGridX, String snapGridY
 	) {
-		this( DEFAULT_COORDINATE_SYSTEM,
+		this(
+			DEFAULT_COORDINATE_SYSTEM,
 			DEFAULT_GRID_ORIGIN,
 			boundaryX1,
 			boundaryY1,
@@ -210,12 +217,13 @@ public class DesignWorkplane extends Node {
 			DEFAULT_GRID_MINOR_SIZE,
 			snapGridX,
 			snapGridY,
-			DEFAULT_GRID_SNAP_SIZE
+			DEFAULT_GRID_SNAP_SIZE,
+			DEFAULT_GRID_STYLE
 		);
 	}
 
 	public DesignWorkplane(
-		CoordinateSystem coordinateSystem,
+		Grid grid,
 		String origin,
 		double boundaryX1,
 		double boundaryY1,
@@ -229,10 +237,11 @@ public class DesignWorkplane extends Node {
 		String minorGridZ,
 		String snapGridX,
 		String snapGridY,
-		String snapGridZ
+		String snapGridZ,
+		GridStyle style
 	) {
 		Txn.run( () -> {
-			setCoordinateSystem( coordinateSystem );
+			setCoordinateSystem( grid );
 			setOrigin( origin );
 			setBoundaryX1( boundaryX1 );
 			setBoundaryY1( boundaryY1 );
@@ -247,15 +256,16 @@ public class DesignWorkplane extends Node {
 			setSnapGridX( snapGridX );
 			setSnapGridY( snapGridY );
 			setSnapGridZ( snapGridZ );
+			setGridStyle( style );
 		} );
 	}
 
-	public CoordinateSystem getCoordinateSystem() {
+	public Grid getCoordinateSystem() {
 		return getValue( COORDINATE_SYSTEM );
 	}
 
-	public void setCoordinateSystem( CoordinateSystem coordinateSystem ) {
-		setValue( COORDINATE_SYSTEM, coordinateSystem == null ? CoordinateSystem.ORTHO : coordinateSystem );
+	public void setCoordinateSystem( Grid grid ) {
+		setValue( COORDINATE_SYSTEM, grid == null ? Grid.ORTHO : grid );
 	}
 
 	public String getOrigin() {
@@ -567,6 +577,15 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
 		this.snapGridZ = CadMath.evalNoException( snapGridZ );
 		setValue( GRID_SNAP_Z, snapGridZ );
+		return this;
+	}
+
+	public GridStyle getGridStyle() {
+		return getValue( GRID_STYLE );
+	}
+
+	public DesignWorkplane setGridStyle( GridStyle style ) {
+		setValue( GRID_STYLE, style );
 		return this;
 	}
 

@@ -110,7 +110,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 *
 	 * @return The workplane coordinate system
 	 */
-	public final CoordinateSystem getCoordinateSystem() {
+	public final Grid getCoordinateSystem() {
 		return getWorkplane().getCoordinateSystem();
 	}
 
@@ -119,7 +119,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 *
 	 * @param system The coordinate system
 	 */
-	public final void setCoordinateSystem( CoordinateSystem system ) {
+	public final void setCoordinateSystem( Grid system ) {
 		getWorkplane().setCoordinateSystem( system );
 	}
 

@@ -7,12 +7,12 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CoordinateSystemIsometricTest {
+public class GridIsometricTest {
 
 	@Test
 	void testGetGridDots() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "1", "1", "1", "1", "1" );
-		List<Shape> dots = CoordinateSystem.ISO.getGridDots( workplane );
+		List<Shape> dots = Grid.ISO.getGridDots( workplane );
 		assertThat( dots.size()).isEqualTo( 0 );
 	}
 

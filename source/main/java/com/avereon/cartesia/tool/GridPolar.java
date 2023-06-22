@@ -14,7 +14,7 @@ import javafx.scene.shape.Shape;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CoordinateSystemPolar implements CoordinateSystem {
+public class GridPolar implements Grid {
 
 	@Override
 	public String name() {
@@ -93,20 +93,20 @@ public class CoordinateSystemPolar implements CoordinateSystem {
 		double minorIntervalA = workplane.calcMinorGridY();
 
 		// Get all offsets
-		List<Double> majorOffsetsR = CoordinateSystem.getOffsets( 0, majorIntervalR, boundaryRmin, boundaryRmax );
-		List<Double> minorOffsetsR = CoordinateSystem.getOffsets( 0, minorIntervalR, boundaryRmin, boundaryRmax );
+		List<Double> majorOffsetsR = Grid.getOffsets( 0, majorIntervalR, boundaryRmin, boundaryRmax );
+		List<Double> minorOffsetsR = Grid.getOffsets( 0, minorIntervalR, boundaryRmin, boundaryRmax );
 		List<Double> axisOffsetsA = List.of( 0.0, 90.0, 180.0, 270.0 );
-		List<Double> majorOffsetsA = CoordinateSystem.getOffsets( 0, majorIntervalA, 0, 360, true );
-		List<Double> minorOffsetsA = CoordinateSystem.getOffsets( 0, minorIntervalA, 0, 360, true );
+		List<Double> majorOffsetsA = Grid.getOffsets( 0, majorIntervalA, 0, 360, true );
+		List<Double> minorOffsetsA = Grid.getOffsets( 0, minorIntervalA, 0, 360, true );
 
 		// Check for conflicts
 		if( majorVisible ) {
-			minorOffsetsR.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsR ) );
-			minorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, majorOffsetsA ) );
+			minorOffsetsR.removeIf( value -> Grid.isNearAny( value, majorOffsetsR ) );
+			minorOffsetsA.removeIf( value -> Grid.isNearAny( value, majorOffsetsA ) );
 		}
 		if( axisVisible ) {
 			majorOffsetsR.removeIf( value -> value < Constants.RESOLUTION_LENGTH );
-			majorOffsetsA.removeIf( value -> CoordinateSystem.isNearAny( value, axisOffsetsA ) );
+			majorOffsetsA.removeIf( value -> Grid.isNearAny( value, axisOffsetsA ) );
 		}
 
 		// Circles (radius) need to be centered at origin
