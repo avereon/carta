@@ -240,6 +240,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private <T extends DesignShape> T loadDesignShape( Map<String, Object> map, T shape ) {
 		loadDesignDrawable( map, shape );
 		if( map.containsKey( DesignShape.ORIGIN ) ) shape.setOrigin( ParseUtil.parsePoint3D( (String)map.get( DesignShape.ORIGIN ) ) );
+		if( shape.getOrigin() == null ) throw new RuntimeException("Shape missing origin: " + shape.getId() );
 		return shape;
 	}
 
