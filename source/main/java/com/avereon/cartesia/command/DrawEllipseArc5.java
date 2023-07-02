@@ -4,8 +4,8 @@ import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -53,7 +53,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 3 - Get the x-point and rotate angle, prompt for the y-radius
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
-			referenceArc.setXRadius( CadGeometry.distance( origin, xPoint ) );
+			referenceArc.setRadii( new Point3D( CadGeometry.distance( origin, xPoint ), 0, 0 ) );
 			referenceArc.setRotate( deriveRotate( origin, xPoint ) );
 			promptForNumber( context, "radius" );
 			return INCOMPLETE;
@@ -62,7 +62,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		// Step 4 - Get the second radius, prompt for the start angle
 		if( parameters.length < 4 ) {
 			yPoint = asPoint( context, parameters[ 2 ] );
-			referenceArc.setYRadius( deriveYRadius( origin, xPoint, yPoint ) );
+			referenceArc.setRadii( new Point3D( referenceArc.getXRadius(), deriveYRadius( origin, xPoint, yPoint ), 0 ) );
 			addPreview( context, referenceArc );
 			promptForPoint( context, "start" );
 			return INCOMPLETE;
@@ -87,7 +87,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 			Point3D yPoint = asPoint( context, parameters[ 2 ] );
 			Point3D startPoint = asPoint( context, parameters[ 3 ] );
 			Point3D extentPoint = asPoint( context, parameters[ 4 ] );
-			if( parameters.length > 5 ) spin = asDouble( parameters[5] );
+			if( parameters.length > 5 ) spin = asDouble( parameters[ 5 ] );
 
 			double xRadius = asDouble( origin, xPoint );
 			double yRadius = deriveYRadius( origin, xPoint, yPoint );
@@ -120,13 +120,13 @@ public class DrawEllipseArc5 extends DrawCommand {
 				case 2 -> {
 					// Arc X radius and rotate
 					previewLine.setPoint( point );
-					referenceArc.setXRadius( point.distance( referenceArc.getOrigin() ) );
+					referenceArc.setRadii( new Point3D( point.distance( referenceArc.getOrigin() ), 0, 0 ) );
 					referenceArc.setRotate( deriveRotate( origin, point ) );
 				}
 				case 3 -> {
 					// Arc Y radius
 					previewLine.setPoint( point );
-					referenceArc.setYRadius( deriveYRadius( origin, xPoint, point ) );
+					referenceArc.setRadii( new Point3D( referenceArc.getXRadius(), deriveYRadius( origin, xPoint, point ), 0 ) );
 				}
 				case 4 -> {
 					// Arc start

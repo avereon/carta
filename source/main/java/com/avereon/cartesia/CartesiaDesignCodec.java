@@ -240,7 +240,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private <T extends DesignShape> T loadDesignShape( Map<String, Object> map, T shape ) {
 		loadDesignDrawable( map, shape );
 		if( map.containsKey( DesignShape.ORIGIN ) ) shape.setOrigin( ParseUtil.parsePoint3D( (String)map.get( DesignShape.ORIGIN ) ) );
-		if( shape.getOrigin() == null ) throw new RuntimeException("Shape missing origin: " + shape.getId() );
+		if( shape.getOrigin() == null ) throw new RuntimeException( "Shape missing origin: " + shape.getId() );
 		return shape;
 	}
 
@@ -261,11 +261,13 @@ public abstract class CartesiaDesignCodec extends Codec {
 		if( map.containsKey( DesignEllipse.RADII ) ) {
 			ellipse.setRadii( ParseUtil.parsePoint3D( (String)map.get( DesignEllipse.RADII ) ) );
 		} else if( map.containsKey( RADIUS ) ) {
-			if( map.containsKey( RADIUS ) ) ellipse.setXRadius( ((Number)map.get( RADIUS )).doubleValue() );
-			if( map.containsKey( RADIUS ) ) ellipse.setYRadius( ((Number)map.get( RADIUS )).doubleValue() );
-		} else {
-			if( map.containsKey( DesignEllipse.X_RADIUS ) ) ellipse.setXRadius( ((Number)map.get( DesignEllipse.X_RADIUS )).doubleValue() );
-			if( map.containsKey( DesignEllipse.Y_RADIUS ) ) ellipse.setYRadius( ((Number)map.get( DesignEllipse.Y_RADIUS )).doubleValue() );
+			double radius = ((Number)map.get( RADIUS )).doubleValue();
+			ellipse.setRadii( new Point3D( radius, radius, 0 ) );
+		} else if( map.containsKey( DesignEllipse.X_RADIUS ) && map.containsKey( DesignEllipse.Y_RADIUS ) ) {
+			// For backward compatibility
+			double xRadius = ((Number)map.get( DesignEllipse.X_RADIUS )).doubleValue();
+			double yRadius = ((Number)map.get( DesignEllipse.Y_RADIUS )).doubleValue();
+			ellipse.setRadii( new Point3D( xRadius, yRadius, 0 ) );
 		}
 
 		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( ((Number)map.get( DesignEllipse.ROTATE )).doubleValue() );
@@ -399,13 +401,13 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private Map<String, Object> mapRadii( DesignEllipse ellipse ) {
 		Map<String, Object> map = asMap( ellipse, DesignEllipse.RADII );
 
-//		if( CadGeometry.areSameSize( ellipse.getXRadius(), ellipse.getYRadius() ) ) {
-//			map.put( RADIUS, ellipse.getRadius() );
-//		} else {
-//			map.put(  DesignEllipse.X_RADIUS, ellipse.getXRadius() );
-//			map.put(  DesignEllipse.Y_RADIUS, ellipse.getYRadius() );
-//			//map.putAll( asMap( ellipse, DesignEllipse.X_RADIUS, DesignEllipse.Y_RADIUS ) );
-//		}
+		//		if( CadGeometry.areSameSize( ellipse.getXRadius(), ellipse.getYRadius() ) ) {
+		//			map.put( RADIUS, ellipse.getRadius() );
+		//		} else {
+		//			map.put(  DesignEllipse.X_RADIUS, ellipse.getXRadius() );
+		//			map.put(  DesignEllipse.Y_RADIUS, ellipse.getYRadius() );
+		//			//map.putAll( asMap( ellipse, DesignEllipse.X_RADIUS, DesignEllipse.Y_RADIUS ) );
+		//		}
 
 		return map;
 	}

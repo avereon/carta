@@ -26,9 +26,15 @@ public class DesignEllipse extends DesignShape {
 
 	public static final String RADII = "radii";
 
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
 	@Deprecated
 	public static final String X_RADIUS = "x-radius";
 
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
 	@Deprecated
 	public static final String Y_RADIUS = "y-radius";
 
@@ -91,24 +97,11 @@ public class DesignEllipse extends DesignShape {
 		return getRadii().getX();
 	}
 
-	@SuppressWarnings( "unchecked" )
-	public <T extends DesignEllipse> T setXRadius( Double value ) {
-		//setValue( X_RADIUS, value );
-		setRadii( new Point3D( value, getRadii().getY(), getRadii().getZ() ) );
-		return (T)this;
-	}
-
 	public Double getYRadius() {
 		return getRadii().getY();
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T extends DesignEllipse> T setYRadius( Double value ) {
-		//setValue( Y_RADIUS, value );
-		setRadii( new Point3D( getRadii().getX(), value, getRadii().getZ() ) );
-		return (T)this;
-	}
-
 	public double calcRotate() {
 		return hasKey( ROTATE ) ? getRotate() : 0.0;
 	}
@@ -196,8 +189,7 @@ public class DesignEllipse extends DesignShape {
 		if( isCircle() ) {
 			info.put( RADIUS, getRadius() );
 		} else {
-			info.put( X_RADIUS, getXRadius() );
-			info.put( Y_RADIUS, getYRadius() );
+			info.put( RADII, getRadii() );
 		}
 		if( getRotate() != null ) info.put( ROTATE, getRotate() );
 		info.put( PERIMETER, pathLength() );
@@ -211,22 +203,18 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		CadTransform original = getOrientation().getLocalToTargetTransform();
 		double oldRotate = CadGeometry.angle360( getOrientation().getRotate() );
 		CadOrientation newPose = getOrientation().clone().transform( transform );
 		double newRotate = CadGeometry.angle360( newPose.getRotate() );
-		CadTransform combined = newPose.getTargetToLocalTransform().combine( transform.combine( original ) );
 		double dRotate = newRotate - oldRotate;
 
 		Point3D origin = transform.apply( getOrigin() );
-		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
-		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
+		Point3D radii = transform.apply( getRadii() );
 		double rotate = calcRotate() + dRotate;
 
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( origin );
-			setXRadius( xRadius );
-			setYRadius( yRadius );
+			setRadii( radii );
 			setRotate( rotate );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
@@ -242,15 +230,6 @@ public class DesignEllipse extends DesignShape {
 		map.putAll( asMap( RADII ) );
 		map.putAll( asMap( ROTATE ) );
 
-		// Deprecated values
-//		if( CadGeometry.areSameSize( xRadius, yRadius ) ) {
-//			map.put( RADIUS, xRadius );
-//		} else {
-//			//map.putAll( asMap( X_RADIUS, Y_RADIUS ) );
-//			map.put( X_RADIUS, xRadius );
-//			map.put( Y_RADIUS, yRadius );
-//		}
-
 		return map;
 	}
 
@@ -259,12 +238,14 @@ public class DesignEllipse extends DesignShape {
 		if( map.containsKey( RADII ) ) {
 			setRadii( ParseUtil.parsePoint3D( (String)map.get( RADII ) ) );
 		} else if( map.containsKey( RADIUS ) ) {
+			// For backward compatibility
 			double radius = (Double)map.get( RADIUS );
 			setRadii( new Point3D( radius, radius, 0.0 ) );
-		} else {
-			if( map.containsKey( X_RADIUS ) ) setXRadius( (Double)map.get( X_RADIUS ) );
-			if( map.containsKey( Y_RADIUS ) ) setYRadius( (Double)map.get( Y_RADIUS ) );
+		} else if( map.containsKey( X_RADIUS ) && map.containsKey( Y_RADIUS ) ) {
+			// For backward compatibility
+			setRadii( new Point3D( (Double)map.get( X_RADIUS ), (Double)map.get( Y_RADIUS ), 0 ) );
 		}
+
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
 	}
@@ -276,8 +257,6 @@ public class DesignEllipse extends DesignShape {
 
 		try( Txn ignore = Txn.create() ) {
 			this.setRadii( ellipse.getRadii() );
-			//			this.setXRadius( ellipse.getXRadius() );
-			//			this.setYRadius( ellipse.getYRadius() );
 			this.setRotate( ellipse.getRotate() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );

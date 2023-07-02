@@ -72,9 +72,6 @@ public class DesignEllipseTest {
 		assertThat( map.get( DesignEllipse.SHAPE ) ).isEqualTo( DesignEllipse.CIRCLE );
 		assertThat( map.get( DesignEllipse.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
 		assertThat( map.get( DesignEllipse.RADII ) ).isEqualTo( new Point3D( 4, 4, 0 ) );
-//		assertThat( map.get( DesignEllipse.RADIUS ) ).isEqualTo( 4.0 );
-//		assertThat( map.get( DesignEllipse.X_RADIUS ) ).isNull();
-//		assertThat( map.get( DesignEllipse.Y_RADIUS ) ).isNull();
 		assertThat( map.get( DesignEllipse.ROTATE ) ).isNull();
 	}
 
@@ -123,7 +120,7 @@ public class DesignEllipseTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignEllipse.SHAPE, DesignEllipse.CIRCLE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
-		map.put( DesignEllipse.RADIUS, 4.0 );
+		map.put( DesignEllipse.RADII, "4,4,0" );
 
 		DesignEllipse arc = new DesignEllipse();
 		arc.updateFrom( map );
@@ -159,18 +156,17 @@ public class DesignEllipseTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
-		map.put( DesignEllipse.X_RADIUS, 4.0 );
-		map.put( DesignEllipse.Y_RADIUS, 5.0 );
+		map.put( DesignArc.RADII, "4,5,0" );
 
-		DesignEllipse arc = new DesignEllipse();
-		arc.updateFrom( map );
+		DesignEllipse ellipse = new DesignEllipse();
+		ellipse.updateFrom( map );
 
-		assertThat( arc.getOrigin() ).isEqualTo( Point3D.ZERO );
-		assertThat( arc.getRadius() ).isEqualTo( 4.0 );
-		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
-		assertThat( arc.getYRadius() ).isEqualTo( 5.0 );
-		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
-		assertThat( arc.getRotate() ).isNull();
+		assertThat( ellipse.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( ellipse.getRadius() ).isEqualTo( 4.0 );
+		assertThat( ellipse.getXRadius() ).isEqualTo( 4.0 );
+		assertThat( ellipse.getYRadius() ).isEqualTo( 5.0 );
+		assertThat( ellipse.calcRotate() ).isEqualTo( 0.0 );
+		assertThat( ellipse.getRotate() ).isNull();
 	}
 
 	@Test
@@ -197,8 +193,7 @@ public class DesignEllipseTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
-		map.put( DesignEllipse.X_RADIUS, 6.0 );
-		map.put( DesignEllipse.Y_RADIUS, 7.0 );
+		map.put( DesignEllipse.RADII, "6,7,0" );
 		map.put( DesignEllipse.ROTATE, 8.0 );
 
 		DesignEllipse arc = new DesignEllipse();

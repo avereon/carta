@@ -225,8 +225,7 @@ public class DesignArc extends DesignEllipse {
 		if( !(shape instanceof DesignArc arc) ) return this;
 
 		try( Txn ignore = Txn.create() ) {
-			this.setXRadius( arc.getXRadius() );
-			this.setYRadius( arc.getYRadius() );
+			this.setRadii( arc.getRadii() );
 			this.setRotate( arc.getRotate() );
 			this.setStart( arc.getStart() );
 			this.setExtent( arc.getExtent() );
@@ -263,7 +262,7 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public String toString() {
-		return super.toString( ORIGIN, X_RADIUS, Y_RADIUS, ROTATE, START, EXTENT, TYPE );
+		return super.toString( ORIGIN, RADII, ROTATE, START, EXTENT, TYPE );
 	}
 
 }

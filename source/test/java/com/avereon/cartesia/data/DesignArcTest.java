@@ -147,8 +147,7 @@ public class DesignArcTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignArc.SHAPE, DesignArc.ELLIPSE );
 		map.put( DesignArc.ORIGIN, "0,0,0" );
-		map.put( DesignArc.X_RADIUS, 4.0 );
-		map.put( DesignArc.Y_RADIUS, 5.0 );
+		map.put( DesignArc.RADII, "4,5,0" );
 		map.put( DesignArc.START, 6.0 );
 		map.put( DesignArc.EXTENT, 7.0 );
 
@@ -171,8 +170,7 @@ public class DesignArcTest {
 		Map<String, Object> map = new HashMap<>();
 		map.put( DesignArc.SHAPE, DesignArc.ARC );
 		map.put( DesignArc.ORIGIN, "1,2,3" );
-		map.put( DesignArc.X_RADIUS, 4.0 );
-		map.put( DesignArc.Y_RADIUS, 5.0 );
+		map.put( DesignArc.RADII, "4,5,0" );
 		map.put( DesignArc.ROTATE, 6.0 );
 		map.put( DesignArc.START, 7.0 );
 		map.put( DesignArc.EXTENT, 8.0 );

@@ -71,7 +71,7 @@ public class SplitTest {
 
 	private static boolean containsArc( Set<DesignShape> shapes, DesignShape shape ) {
 		for( DesignShape test : shapes ) {
-			if( test.equals( shape, DesignArc.ORIGIN, DesignArc.X_RADIUS, DesignArc.Y_RADIUS, DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT ) ) return true;
+			if( test.equals( shape, DesignArc.ORIGIN, DesignArc.RADII, DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT ) ) return true;
 		}
 		return false;
 	}

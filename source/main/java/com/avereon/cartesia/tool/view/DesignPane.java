@@ -123,10 +123,10 @@ public class DesignPane extends StackPane {
 	private Transform rotate;
 
 	public DesignPane() {
-		select = new Pane();
-		reference = new Pane();
-		layers = new DesignLayerPane();
 		grid = new Pane();
+		layers = new DesignLayerPane();
+		reference = new Pane();
+		select = new Pane();
 		getChildren().addAll( grid, layers, reference, select );
 
 		addOriginReferencePoint();
