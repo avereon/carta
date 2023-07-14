@@ -575,10 +575,10 @@ public class DesignPane extends StackPane {
 		reference.getChildren().add( cp.setType( DesignMarker.Type.REFERENCE ) );
 	}
 
-	private List<DesignLayerPane> getLayers( DesignLayerPane root ) {
+	private List<DesignLayerPane> getLayers( DesignLayerPane pane ) {
 		List<DesignLayerPane> layers = new ArrayList<>();
 
-		root.getChildren().stream().filter( c -> c instanceof DesignLayerPane ).map( c -> (DesignLayerPane)c ).forEach( l -> {
+		pane.getChildren().stream().filter( c -> c instanceof DesignLayerPane ).map( c -> (DesignLayerPane)c ).forEach( l -> {
 			layers.add( l );
 			layers.addAll( getLayers( l ) );
 		} );

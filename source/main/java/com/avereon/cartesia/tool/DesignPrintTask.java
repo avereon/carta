@@ -8,9 +8,12 @@ import com.avereon.xenon.Xenon;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
+import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.javafx.Fx;
 import javafx.print.*;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.transform.Translate;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -27,7 +30,7 @@ public class DesignPrintTask extends Task<Void> {
 
 	private final DesignPrint print;
 
-	public DesignPrintTask( Xenon program, BaseDesignTool tool, Asset asset, DesignPrint print ) {
+	public DesignPrintTask( final Xenon program, final BaseDesignTool tool, final Asset asset, final DesignPrint print ) {
 		this.program = program;
 		this.tool = tool;
 		this.asset = asset;
@@ -37,7 +40,7 @@ public class DesignPrintTask extends Task<Void> {
 
 	@Override
 	public Void call() throws Exception {
-		log.atConfig().log( "Starting design print task..." );
+		log.atDebug().log( "Starting design print task..." );
 		// TODO This should come from the DesignPrint setup
 		// According to FX the authoritative size for paper is from the printer itself
 		// However, the Paper class has common sizes that can be used for convenience.
@@ -81,10 +84,21 @@ public class DesignPrintTask extends Task<Void> {
 		//		renderer.setDpi( 72, 72 );
 
 		final DesignPane designPane = new DesignPane();
-		designPane.setDesign( asset.getModel() );
 		designPane.setDpi( 72 );
+		designPane.setDesign( asset.getModel() );
 		designPane.setReferenceLayerVisible( false );
 		designPane.setView( tool.getVisibleLayers(), tool.getViewPoint(), tool.getZoom(), tool.getViewRotate() );
+
+		// Let the FX thread catch up before moving on
+		Fx.splitWaitFor( 10000, 10 );
+
+		// Invert the colors if using a dark theme
+		if( getProgram().getWorkspaceManager().getThemeMetadata().isDark() ) {
+			designPane.getVisibleShapes().forEach( s -> {
+				Paint stroke = s.getStroke();
+				if( stroke instanceof Color ) s.setStroke( Colors.invertLuminance( (Color)stroke ) );
+			} );
+		}
 
 		// Create an encapsulating pane to represent the paper
 		final Pane paperPane = new Pane();
