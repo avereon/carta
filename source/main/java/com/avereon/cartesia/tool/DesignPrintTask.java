@@ -93,6 +93,7 @@ public class DesignPrintTask extends Task<Void> {
 		Fx.splitWaitFor( 10000, 10 );
 
 		// Invert the colors if using a dark theme
+		// TODO This should eventually be a user preference
 		if( getProgram().getWorkspaceManager().getThemeMetadata().isDark() ) {
 			designPane.getVisibleShapes().forEach( s -> {
 				Paint stroke = s.getStroke();
