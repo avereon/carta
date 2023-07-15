@@ -89,16 +89,13 @@ public class DesignPrintTask extends Task<Void> {
 		designPane.setReferenceLayerVisible( false );
 		designPane.setView( tool.getVisibleLayers(), tool.getViewPoint(), tool.getZoom(), tool.getViewRotate() );
 
-		// Let the FX thread catch up before moving on
-		Fx.splitWaitFor( 10000, 10 );
-
 		// Invert the colors if using a dark theme
 		// TODO This should eventually be a user preference
 		if( getProgram().getWorkspaceManager().getThemeMetadata().isDark() ) {
-			designPane.getVisibleShapes().forEach( s -> {
+			Fx.run( () -> designPane.getVisibleShapes().forEach( s -> {
 				Paint stroke = s.getStroke();
 				if( stroke instanceof Color ) s.setStroke( Colors.invertLuminance( (Color)stroke ) );
-			} );
+			} ) );
 		}
 
 		// Create an encapsulating pane to represent the paper
