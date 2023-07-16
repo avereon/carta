@@ -5,7 +5,6 @@ import com.avereon.cartesia.data.DesignText;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
-import com.avereon.zarra.font.FontMetrics;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
@@ -37,24 +36,24 @@ public class DesignTextView extends DesignShapeView {
 
 	@Override
 	protected List<Shape> generateGeometry() {
-		DesignText text = getDesignText();
-		Text shape = new Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
-		configureShape( shape );
-		return List.of( shape );
+		DesignText designText = getDesignText();
+		Text text = new Text( designText.getOrigin().getX(), designText.getOrigin().getY(), designText.getText() );
+		configureShape( text );
+		return List.of( text );
 	}
 
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Text text = (Text)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, text.boundsInLocalProperty(), () -> text.getX(), text.boundsInLocalProperty(), () -> text.getY() );
-		ConstructionPoint ow = cp( pane, text.boundsInLocalProperty(), () -> text.getX() + text.boundsInLocalProperty().get().getWidth(), text.boundsInLocalProperty(), () -> text.getY() );
-		ConstructionPoint oh = cp( pane, text.boundsInLocalProperty(), () -> text.getX(), text.boundsInLocalProperty(), () -> text.getY() + text.boundsInLocalProperty().get().getHeight() );
+		ConstructionPoint o = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), () -> text.getY() );
+		ConstructionPoint ow = cp( pane, text.layoutBoundsProperty(), () -> text.getX() + text.layoutBoundsProperty().get().getWidth(), text.layoutBoundsProperty(), () -> text.getY() );
+		ConstructionPoint oh = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), () -> text.getY() + text.layoutBoundsProperty().get().getHeight() );
 		ConstructionPoint wh = cp(
 			pane,
-			text.boundsInLocalProperty(),
-			() -> text.getX() + text.boundsInLocalProperty().get().getWidth(),
-			text.boundsInLocalProperty(),
-			() -> text.getY() + text.boundsInLocalProperty().get().getHeight()
+			text.layoutBoundsProperty(),
+			() -> text.getX() + text.layoutBoundsProperty().get().getWidth(),
+			text.layoutBoundsProperty(),
+			() -> text.getY() + text.layoutBoundsProperty().get().getHeight()
 		);
 		return setConstructionPoints( text, List.of( o, ow, oh, wh ) );
 	}
@@ -63,18 +62,12 @@ public class DesignTextView extends DesignShapeView {
 	protected void configureShape( Shape shape ) {
 		super.configureShape( shape );
 		Text text = (Text)shape;
-		text.setBoundsType( TextBoundsType.LOGICAL );
+		text.setBoundsType( TextBoundsType.VISUAL );
 
-		text.layoutBoundsProperty().addListener( ( p, o, n ) -> log.atConfig().log( "origin=%s,%s", text.getX(), text.getY() ) );
-
-		//shape.setScaleX( 0.25 );
-		//shape.setScaleY( -1 );
-
-		//updateScale( getDesignText(), shape );
-		//updateFont( getDesignText(), shape );
+		updateFont( getDesignText(), shape );
+		updateScale( getDesignText(), shape );
+		updateTranslate( getDesignText(), shape );
 		updateRotate( getDesignText(), shape );
-
-		//log.atConfig().log( "text position=%s", shape.localToParent( new Point2D( 0, 0 ) ) );
 	}
 
 	@Override
@@ -106,9 +99,18 @@ public class DesignTextView extends DesignShapeView {
 		super.unregisterListeners();
 	}
 
-	void updateFont( DesignText text, Shape shape ) {
-		FontMetrics metrics = new FontMetrics( ((Text)shape).getFont() );
-		//shape.setTranslateY( metrics.getAscent() + metrics.getDescent() );
+	void updateFont( DesignText designText, Shape shape ) {
+		Text text = (Text)shape;
+		text.setFont( designText.calcTextFont() );
+		text.setFill( designText.calcFillPaint() );
+		text.setStroke( designText.calcDrawPaint() );
+		updateTranslate( designText, shape );
+	}
+
+	void updateTranslate( DesignText designText, Shape shape ) {
+		TextMetrics metrics = new TextMetrics( (Text)shape );
+		shape.setTranslateX( metrics.getLead() );
+		shape.setTranslateY( metrics.getAscent() + metrics.getDescent() );
 	}
 
 }

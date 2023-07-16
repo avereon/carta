@@ -141,14 +141,13 @@ public class DesignShapeView extends DesignDrawableMeta {
 	}
 
 	void updateScale( DesignText text, Shape shape ) {
-		shape.getTransforms().remove( this.scale );
-		this.scale = Transform.scale( 1, 1 );
-		shape.getTransforms().add( this.scale );
+		shape.setScaleX( 1 );
+		shape.setScaleY( -1 );
 	}
 
 	void updateRotate( DesignText text, Shape shape ) {
 		shape.getTransforms().remove( this.rotate );
-		this.rotate = Transform.rotate( text.calcRotate(), text.getOrigin().getX(), text.getOrigin().getY() );
+		this.rotate = Transform.rotate( -text.calcRotate(), text.getOrigin().getX(), text.getOrigin().getY() );
 		shape.getTransforms().add( this.rotate );
 	}
 

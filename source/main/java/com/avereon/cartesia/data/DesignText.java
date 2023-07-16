@@ -7,8 +7,10 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import lombok.CustomLog;
 
@@ -70,6 +72,18 @@ public class DesignText extends DesignShape {
 
 	public Font calcTextFont() {
 		return FontUtil.decode( getTextFontWithInheritance() );
+	}
+
+	@Override
+	public Paint calcDrawPaint() {
+		// FIXME Allow user to override
+		return Paints.parseWithNullOnException( getLayer().getTextDrawPaint() );
+	}
+
+	@Override
+	public Paint calcFillPaint() {
+		// FIXME Allow user to override
+		return Paints.parseWithNullOnException( getLayer().getTextFillPaint() );
 	}
 
 	public String getTextFontWithInheritance() {
