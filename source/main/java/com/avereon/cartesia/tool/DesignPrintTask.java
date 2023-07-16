@@ -95,6 +95,9 @@ public class DesignPrintTask extends Task<Void> {
 			Fx.run( () -> designPane.getVisibleShapes().forEach( s -> {
 				Paint stroke = s.getStroke();
 				if( stroke instanceof Color ) s.setStroke( Colors.invertLuminance( (Color)stroke ) );
+
+				Paint fill = s.getFill();
+				if( fill instanceof Color ) s.setFill( Colors.invertLuminance( (Color)fill ) );
 			} ) );
 		}
 
