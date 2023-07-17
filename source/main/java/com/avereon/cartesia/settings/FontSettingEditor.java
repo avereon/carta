@@ -1,17 +1,18 @@
 package com.avereon.cartesia.settings;
 
+import com.avereon.cartesia.ui.FontPicker;
 import com.avereon.product.Rb;
 import com.avereon.settings.SettingsEvent;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.tool.settings.SettingData;
 import com.avereon.xenon.tool.settings.SettingEditor;
-import com.avereon.zarra.font.FontUtil;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
-import javafx.scene.text.Font;
 import lombok.CustomLog;
 
 import java.util.Collection;
@@ -22,12 +23,14 @@ public class FontSettingEditor extends SettingEditor {
 
 	private Label label;
 
-	private Button button;
+	private final FontPicker fontPicker;
 
 	private List<Node> nodes;
 
 	public FontSettingEditor( XenonProgramProduct product, String rbKey, SettingData setting ) {
 		super( product, rbKey, setting );
+		label = new Label();
+		fontPicker = new FontPicker();
 	}
 
 	@Override
@@ -38,18 +41,22 @@ public class FontSettingEditor extends SettingEditor {
 		label = new Label( Rb.text( getProduct(), getRbKey(), rbKey ) );
 		label.setMinWidth( Region.USE_PREF_SIZE );
 
-		button = new Button();
-		button.setMaxWidth( Double.MAX_VALUE );
-		updateFont( value );
+		fontPicker.setId( rbKey );
+		fontPicker.setFontAsString( value );
+		fontPicker.setMaxWidth( Double.MAX_VALUE );
+		HBox.setHgrow( fontPicker, Priority.ALWAYS );
 
-		nodes = List.of( label, button );
+		nodes = List.of( label, fontPicker );
+
+		// Add the event handlers
+		fontPicker.fontAsStringProperty().addListener( this::doPickerValueChanged );
 
 		// Set component state
 		setDisable( setting.isDisable() );
 		setVisible( setting.isVisible() );
 
 		// Add the components
-		pane.addRow( row, label, button );
+		pane.addRow( row, label, fontPicker );
 	}
 
 	@Override
@@ -59,22 +66,15 @@ public class FontSettingEditor extends SettingEditor {
 
 	@Override
 	protected void doSettingValueChanged( SettingsEvent event ) {
-		if( event.getEventType() == SettingsEvent.CHANGED && getKey().equals( event.getKey() ) ) updateFont( event.getNewValue().toString() );
+		if( event.getEventType() != SettingsEvent.CHANGED || !getKey().equals( event.getKey() ) ) return;
+
+		Object value = event.getNewValue();
+		String paint = value == null ? null : String.valueOf( value );
+		fontPicker.setFontAsString( paint );
 	}
 
-	private void updateFont( String value ) {
-		Font font = FontUtil.decode( value );
-		log.atFine().log( "Setting font updated: %s", font );
-		button.setText( font.getName() + " " + font.getSize() );
-		button.setFont( Font.font( font.getFamily(), FontUtil.getFontWeight( font.getStyle() ), FontUtil.getFontPosture( font.getStyle() ), -1 ) );
-		button.setOnAction( ( event ) -> {
-//			FontSelectorDialog dialog = new FontSelectorDialog( font );
-//			Optional<Font> optional = dialog.showAndWait();
-//			optional.ifPresent( selected -> {
-//				log.atDebug().log( "Setting font selected: " + selected );
-//				setting.getSettings().set( setting.getKey(), FontUtil.encode( selected ) );
-//			} );
-		} );
+	private void doPickerValueChanged( ObservableValue<? extends String> property, String oldValue, String newValue ) {
+		setting.getSettings().set( setting.getKey(), newValue );
 	}
 
 }

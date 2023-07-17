@@ -38,7 +38,7 @@ public class PaintPickerPane extends VBox {
 		getStyleClass().add( "cartesia-paint-picker-pane" );
 		// How about a combo for the mode: none, solid, linear[] and radial()
 		// To the right of the combo a component to define gradient stops
-		// Below that, the tabs for palette, RGB, HSB an WEB
+		// Below that, the tabs for palette, RGB, HSB and WEB
 		// Opacity can be a slider on the right or the bottom
 		// Below that the OK and Cancel buttons
 

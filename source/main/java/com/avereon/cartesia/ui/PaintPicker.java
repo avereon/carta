@@ -41,6 +41,7 @@ public class PaintPicker extends Button {
 		};
 		pane.setContent( pickerPane = new PaintPickerPane() );
 		pane.getButtonTypes().addAll( ButtonType.OK, ButtonType.CANCEL );
+		pane.minWidthProperty().bind( this.widthProperty() );
 
 		popup = new Popup();
 		popup.setAutoHide( true );
