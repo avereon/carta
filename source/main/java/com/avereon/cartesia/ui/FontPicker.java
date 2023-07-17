@@ -80,7 +80,7 @@ public class FontPicker extends Button {
 
 	private void doUpdateText( String text ) {
 		Font font = FontUtil.decode( text );
-		setText( font == null ? null : font.getName() + " " + font.getSize() );
+		setText( font == null ? null : font.getFamily() );
 		setFont( font == null ? null : Font.font( font.getFamily(), FontUtil.getFontWeight( font.getStyle() ), FontUtil.getFontPosture( font.getStyle() ), -1 ) );
 	}
 
