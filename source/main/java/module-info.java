@@ -14,21 +14,26 @@ module com.avereon.cartesia {
 	requires java.logging;
 	requires jep;
 
+	// Public APIs
 	exports com.avereon.cartesia.command;
 	exports com.avereon.cartesia.data;
 	exports com.avereon.cartesia.math;
 	exports com.avereon.cartesia.snap;
 
+	// Private APIs
 	exports com.avereon.cartesia to com.avereon.xenon;
 	exports com.avereon.cartesia.cursor to com.avereon.zarra;
 	exports com.avereon.cartesia.icon to com.avereon.zarra;
+	exports com.avereon.cartesia.settings to com.avereon.xenon;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
 	exports com.avereon.cartesia.rb to com.avereon.xenon;
 
+	// Public resources
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
 
+	// Private APIs for testing
 	opens com.avereon.cartesia to org.testfx.junit5;
 	opens com.avereon.cartesia.command to org.testfx.junit5;
 	opens com.avereon.cartesia.math to org.testfx.junit5;

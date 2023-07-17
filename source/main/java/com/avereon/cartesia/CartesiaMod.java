@@ -5,6 +5,8 @@ import com.avereon.cartesia.data.util.DesignUnitOptionProvider;
 import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
 import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
+import com.avereon.cartesia.settings.FontSettingEditor;
+import com.avereon.cartesia.settings.PaintSettingEditor;
 import com.avereon.cartesia.tool.Design2dEditor;
 import com.avereon.cartesia.tool.FxRenderDesignTool;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
@@ -77,6 +79,9 @@ public class CartesiaMod extends Mod {
 		shapePropertiesRegistration.setName( Rb.text( RbKey.LABEL, "shape-properties-tool" ) );
 		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );
 		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
+
+		getProgram().getSettingsManager().putSettingEditor( "font-cartesia", FontSettingEditor.class );
+		getProgram().getSettingsManager().putSettingEditor( "paint-cartesia", PaintSettingEditor.class );
 
 		getProgram().getSettingsManager().putOptionProvider( "marker-type-option-provider", new MarkerTypeOptionProvider() );
 		getProgram().getSettingsManager().putOptionProvider( "design-layer-layers", new DesignLayerOptionProvider( this, true ) );

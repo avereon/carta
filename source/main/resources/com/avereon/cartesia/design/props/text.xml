@@ -18,7 +18,7 @@
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="text-draw-paint-custom" key="text-draw-paint" editor="paint">
+			<setting id="text-draw-paint-custom" key="text-draw-paint" editor="paint-cartesia">
 				<dependency key="text-draw-paint-mode" value="custom"/>
 			</setting>
 
@@ -54,7 +54,7 @@
 				<option key="custom"/>
 				<option key="none"/>
 			</setting>
-			<setting id="text-fill-paint-custom" key="text-fill-paint" editor="paint">
+			<setting id="text-fill-paint-custom" key="text-fill-paint" editor="paint-cartesia">
 				<dependency key="text-fill-paint-mode" value="custom"/>
 			</setting>
 		</group>

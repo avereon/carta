@@ -18,7 +18,7 @@
 		<group id="reference-points">
 			<setting key="reference-point-type" editor="combobox" provider="marker-type-option-provider"/>
 			<setting key="reference-point-size" editor="textfield" type="math-expression"/>
-			<setting key="reference-point-paint" editor="paint"/>
+			<setting key="reference-point-paint" editor="paint-cartesia"/>
 		</group>
 	</page>
 

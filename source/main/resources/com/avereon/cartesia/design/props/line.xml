@@ -10,7 +10,7 @@
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="draw-paint-custom" key="draw-paint" editor="paint">
+			<setting id="draw-paint-custom" key="draw-paint" editor="paint-cartesia">
 				<dependency key="draw-paint-mode" value="custom"/>
 			</setting>
 

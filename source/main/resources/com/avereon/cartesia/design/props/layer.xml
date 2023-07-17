@@ -8,7 +8,7 @@
 			<setting key="layer" editor="combobox" provider="design-layer-layers"/>
 
 			<!-- Geometry settings -->
-			<setting key="draw-paint" editor="paint">
+			<setting key="draw-paint" editor="paint-cartesia">
 				<option key="none"/>
 				<option key="solid"/>
 			</setting>
@@ -19,7 +19,7 @@
 				<option key="round"/>
 				<option key="butt"/>
 			</setting>
-			<setting key="fill-paint" editor="paint">
+			<setting key="fill-paint" editor="paint-cartesia">
 				<option key="none"/>
 				<option key="solid"/>
 				<option key="linear"/>
@@ -29,13 +29,14 @@
 
 		<!-- Text settings -->
 		<group id="text-title">
-			<setting key="text-fill-paint" editor="paint">
+			<setting key="text-font" editor="font-cartesia"/>
+			<setting key="text-fill-paint" editor="paint-cartesia">
 				<option key="none"/>
 				<option key="solid"/>
 				<option key="linear"/>
 				<option key="radial"/>
 			</setting>
-			<setting key="text-draw-paint" editor="paint">
+			<setting key="text-draw-paint" editor="paint-cartesia">
 				<option key="none"/>
 				<option key="solid"/>
 				<option key="linear"/>
