@@ -147,23 +147,43 @@ public abstract class CartesiaDesignCodec extends Codec {
 		remapValue( map, DesignLayer.DRAW_PAINT, loadLayerPaintMapping );
 
 		// Text value mapping
-		remapValue( map, DesignLayer.TEXT_FONT, loadLayerPropertyMapping );
+
+		remapValue( map, DesignLayer.TEXT_SIZE, loadLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_FILL_PAINT, loadLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, loadLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, loadLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_CAP, loadLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, loadLayerPropertyMapping );
 
+		remapValue( map, DesignLayer.FONT_NAME, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.FONT_WEIGHT, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.FONT_POSTURE, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.FONT_UNDERLINE, loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.FONT_STRIKETHROUGH, loadLayerPropertyMapping );
+
+		// Backward compatibility
+		remapValue( map, DesignLayer.TEXT_FONT, loadLayerPropertyMapping );
+
 		// Clean values
 		cleanPatternValue( map, DesignLayer.TEXT_DRAW_PATTERN );
 
 		// Load text values
-		layer.setTextFont( map.containsKey( DesignLayer.TEXT_FONT ) ? (String)map.get( DesignLayer.TEXT_FONT ) : null );
+		if( map.containsKey( DesignLayer.TEXT_SIZE ) ) layer.setTextSize( (String)map.get( DesignLayer.TEXT_SIZE ) );
 		layer.setTextFillPaint( map.containsKey( DesignLayer.TEXT_FILL_PAINT ) ? (String)map.get( DesignLayer.TEXT_FILL_PAINT ) : null );
 		layer.setTextDrawPaint( map.containsKey( DesignLayer.TEXT_DRAW_PAINT ) ? (String)map.get( DesignLayer.TEXT_DRAW_PAINT ) : null );
 		if( map.containsKey( DesignLayer.TEXT_DRAW_WIDTH ) ) layer.setTextDrawWidth( (String)map.get( DesignLayer.TEXT_DRAW_WIDTH ) );
 		if( map.containsKey( DesignLayer.TEXT_DRAW_CAP ) ) layer.setTextDrawCap( (String)map.get( DesignLayer.TEXT_DRAW_CAP ) );
 		if( map.containsKey( DesignLayer.TEXT_DRAW_PATTERN ) ) layer.setTextDrawPattern( (String)map.get( DesignLayer.TEXT_DRAW_PATTERN ) );
+
+		// TODO if( map.containsKey( DesignLayer.FONT_NAME ) ) layer.setFontName( (String)map.get( DesignLayer.FONT_NAME ) );
+		// TODO if( map.containsKey( DesignLayer.FONT_WEIGHT ) ) layer.setFontWeight( (String)map.get( DesignLayer.FONT_WEIGHT ) );
+		// TODO if( map.containsKey( DesignLayer.FONT_POSTURE ) ) layer.setFontPosture( (String)map.get( DesignLayer.FONT_POSTURE ) );
+		// TODO if( map.containsKey( DesignLayer.FONT_UNDERLINE ) ) layer.setFontUnderline( (String)map.get( DesignLayer.FONT_UNDERLINE ) );
+		// TODO if( map.containsKey( DesignLayer.FONT_STRIKETHROUGH ) ) layer.setFontStrikethrough( (String)map.get( DesignLayer.FONT_STRIKETHROUGH ) );
+
+
+		// Backward compatibility
+		layer.setTextFont( map.containsKey( DesignLayer.TEXT_FONT ) ? (String)map.get( DesignLayer.TEXT_FONT ) : null );
 
 		// Load layer geometry
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );

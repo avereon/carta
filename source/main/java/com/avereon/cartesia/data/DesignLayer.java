@@ -19,23 +19,11 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
-public class DesignLayer extends DesignDrawable {
+public class DesignLayer extends DesignDrawable implements DesignTextAttributes {
 
 	public static final String NAME = "name";
 
 	public static final String UNIT = "unit";
-
-	public static final String TEXT_FONT = "text-font";
-
-	public static final String TEXT_FILL_PAINT = "text-fill-paint";
-
-	public static final String TEXT_DRAW_PAINT = "text-draw-paint";
-
-	public static final String TEXT_DRAW_WIDTH = "text-draw-width";
-
-	public static final String TEXT_DRAW_CAP = "text-draw-cap";
-
-	public static final String TEXT_DRAW_PATTERN = "text-draw-pattern";
 
 	// NOTE Visibility state is stored in the design tool,
 	// instead of here in the data model so that each tool can have different
@@ -55,18 +43,6 @@ public class DesignLayer extends DesignDrawable {
 	static final String DEFAULT_DRAW_PATTERN = null;
 
 	static final String DEFAULT_FILL_PAINT = null;
-
-	static final String DEFAULT_TEXT_FONT = "System|Regular|1.0";
-
-	static final String DEFAULT_TEXT_FILL_PAINT = "#000000ff";
-
-	static final String DEFAULT_TEXT_DRAW_PAINT = null;
-
-	static final String DEFAULT_TEXT_DRAW_WIDTH = "0.05";
-
-	static final String DEFAULT_TEXT_DRAW_CAP = StrokeLineCap.ROUND.name().toLowerCase();
-
-	static final String DEFAULT_TEXT_DRAW_PATTERN = null;
 
 	public DesignLayer() {
 		defineNaturalKey( NAME );
@@ -281,15 +257,36 @@ public class DesignLayer extends DesignDrawable {
 		return Paints.parseWithNullOnException( getFillPaint() );
 	}
 
+	public double calcTextSize() {
+		return CadMath.evalNoException( getTextSize() );
+	}
+
+	public String getTextSize() {
+		return getValue( TEXT_SIZE );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignLayer> T setTextSize( String value ) {
+		setValue( TEXT_SIZE, value );
+		return (T)this;
+	}
+
+	public Font calcTextFont() {
+		// FIXME Use the font attributes to calculate a font
+		return FontUtil.decode( getTextFont() );
+	}
+
+	public String getFontName() {
+		return getValue( TEXT_FONT, DEFAULT_TEXT_FONT );
+	}
+
+	@Deprecated
 	public String getTextFont() {
 		return getValue( TEXT_FONT, DEFAULT_TEXT_FONT );
 	}
 
-	public Font calcTextFont() {
-		return FontUtil.decode( getTextFont() );
-	}
-
 	@SuppressWarnings( "unchecked" )
+	@Deprecated
 	public <T extends DesignDrawable> T setTextFont( String value ) {
 		setValue( TEXT_FONT, value );
 		return (T)this;

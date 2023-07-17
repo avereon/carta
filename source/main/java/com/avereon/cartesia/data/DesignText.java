@@ -1,9 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadOrientation;
-import com.avereon.cartesia.math.CadPoints;
-import com.avereon.cartesia.math.CadTransform;
+import com.avereon.cartesia.math.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
@@ -18,11 +15,9 @@ import java.util.Map;
 
 @SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
-public class DesignText extends DesignShape {
+public class DesignText extends DesignShape implements DesignTextAttributes {
 
 	public static final String TEXT = "text";
-
-	public static final String TEXT_FONT = "text-font";
 
 	public static final String ROTATE = "rotate";
 
@@ -70,8 +65,26 @@ public class DesignText extends DesignShape {
 		return (T)this;
 	}
 
-	public Font calcTextFont() {
-		return FontUtil.decode( getTextFontWithInheritance() );
+	public double calcTextSize() {
+		return CadMath.evalNoException( getTextSizeWithInheritance() );
+	}
+
+	public String getTextSizeWithInheritance() {
+		String width = getTextSize();
+		if( isCustomValue( width ) ) return width;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DEFAULT_TEXT_SIZE : layer.getTextSize();
+	}
+
+	public String getTextSize() {
+		return getValue (TEXT_SIZE, MODE_LAYER );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignText> T setTextSize( String value ) {
+		setValue( TEXT_SIZE, value );
+		return (T)this;
 	}
 
 	@Override
@@ -86,6 +99,12 @@ public class DesignText extends DesignShape {
 		return Paints.parseWithNullOnException( getLayer().getTextFillPaint() );
 	}
 
+	public Font calcTextFont() {
+		// FIXME Use the font attributes to calculate a font
+		return FontUtil.decode( getTextFontWithInheritance() );
+	}
+
+	@Deprecated
 	public String getTextFontWithInheritance() {
 		String font = getTextFont();
 		if( isCustomValue( font ) ) return font;
@@ -94,11 +113,13 @@ public class DesignText extends DesignShape {
 		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : layer.getTextFont();
 	}
 
+	@Deprecated
 	public String getTextFont() {
 		return getValue( TEXT_FONT, DesignLayer.DEFAULT_TEXT_FONT );
 	}
 
 	@SuppressWarnings( "unchecked" )
+	@Deprecated
 	public <T extends DesignDrawable> T setTextFont( String value ) {
 		setValue( TEXT_FONT, value );
 		return (T)this;
@@ -221,7 +242,7 @@ public class DesignText extends DesignShape {
 
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignText> T setRotate( Double value ) {
-		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) )  value = null;
+		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) ) value = null;
 		setValue( ROTATE, value );
 		return (T)this;
 	}

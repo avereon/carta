@@ -29,7 +29,7 @@
 
 		<!-- Text settings -->
 		<group id="text-title">
-			<setting key="text-font" editor="font-cartesia"/>
+			<setting key="text-font-size" editor="textline" type="math-expression"/>
 			<setting key="text-fill-paint" editor="paint-cartesia">
 				<option key="none"/>
 				<option key="solid"/>
@@ -49,6 +49,15 @@
 				<option key="round"/>
 				<option key="butt"/>
 			</setting>
+		</group>
+
+		<!-- Font settings -->
+		<group id="text-font" collapsible="true" expanded="false">
+			<setting key="text-font-family" editor="combobox" provider="font-family-provider"/>
+			<setting key="text-font-weight"/>
+			<setting key="text-font-posture"/>
+			<setting key="text-font-underline"/>
+			<setting key="text-font-strikethrough"/>
 		</group>
 	</page>
 
