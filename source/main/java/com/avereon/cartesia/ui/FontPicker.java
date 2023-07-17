@@ -1,5 +1,6 @@
 package com.avereon.cartesia.ui;
 
+import com.avereon.zarra.font.FontUtil;
 import javafx.beans.property.StringProperty;
 import javafx.event.ActionEvent;
 import javafx.geometry.Point2D;
@@ -8,6 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
+import javafx.scene.text.Font;
 import javafx.stage.Popup;
 import lombok.CustomLog;
 
@@ -22,8 +24,6 @@ public class FontPicker extends Button {
 
 	public FontPicker() {
 		getStyleClass().add( "cartesia-font-picker" );
-
-		//setGraphic( swatch = new PaintSwatch() );
 
 		DialogPane pane = new DialogPane() {
 
@@ -44,7 +44,6 @@ public class FontPicker extends Button {
 
 		doUpdateText( null );
 		pickerPane.fontProperty().addListener( ( p, o, n ) -> {
-			//swatch.setPaint( Paints.parseWithNullOnException( n ) );
 			doUpdateText( n );
 		} );
 	}
@@ -79,13 +78,10 @@ public class FontPicker extends Button {
 		return button;
 	}
 
-	private void doUpdateText( String font ) {
-//		String text = font == null ? FontPickerPane.FontMode.NONE.getKey() : font.trim();
-//
-//		if( FontPickerPane.FontMode.LAYER.getKey().equals( text ) ) text = Rb.text( RbKey.LABEL, "layer" ).toLowerCase();
-//		if( FontPickerPane.FontMode.NONE.getKey().equals( text ) ) text = Rb.text( RbKey.LABEL, "none" ).toLowerCase();
-
-		setText( font );
+	private void doUpdateText( String text ) {
+		Font font = FontUtil.decode( text );
+		setText( font == null ? null : font.getName() + " " + font.getSize() );
+		setFont( font == null ? null : Font.font( font.getFamily(), FontUtil.getFontWeight( font.getStyle() ), FontUtil.getFontPosture( font.getStyle() ), -1 ) );
 	}
 
 	private void doToggleFontDialog() {
