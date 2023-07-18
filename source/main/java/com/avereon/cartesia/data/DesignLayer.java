@@ -11,6 +11,8 @@ import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import lombok.CustomLog;
 
 import java.util.*;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
-public class DesignLayer extends DesignDrawable implements DesignTextAttributes {
+public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	public static final String NAME = "name";
 
@@ -48,18 +50,23 @@ public class DesignLayer extends DesignDrawable implements DesignTextAttributes 
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, UNIT, TEXT_FONT, TEXT_FILL_PAINT, TEXT_DRAW_PAINT, TEXT_DRAW_WIDTH, TEXT_DRAW_CAP, TEXT_DRAW_PATTERN, LAYERS, SHAPES );
 
+		// FIXME Do not set all these defaults here
 		setDrawPaint( DEFAULT_DRAW_PAINT );
 		setDrawWidth( DEFAULT_DRAW_WIDTH );
 		setDrawPattern( DEFAULT_DRAW_PATTERN );
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
-		setTextFont( DEFAULT_TEXT_FONT );
+		// FIXME Do not set all these defaults here
 		setTextFillPaint( DEFAULT_TEXT_FILL_PAINT );
 		setTextDrawPaint( DEFAULT_TEXT_DRAW_PAINT );
 		setTextDrawWidth( DEFAULT_TEXT_DRAW_WIDTH );
 		setTextDrawPattern( DEFAULT_TEXT_DRAW_PATTERN );
 		setTextDrawCap( DEFAULT_TEXT_DRAW_CAP );
+
+		// Backward compatibility
+		// FIXME Do not set all these defaults here
+		setTextFont( DEFAULT_TEXT_FONT );
 
 		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
 	}
@@ -257,8 +264,10 @@ public class DesignLayer extends DesignDrawable implements DesignTextAttributes 
 		return Paints.parseWithNullOnException( getFillPaint() );
 	}
 
+	// Text size
 	public double calcTextSize() {
-		return CadMath.evalNoException( getTextSize() );
+		String value = getTextSize();
+		return CadMath.evalNoException( value == null ? DEFAULT_TEXT_SIZE : value );
 	}
 
 	public String getTextSize() {
@@ -266,18 +275,92 @@ public class DesignLayer extends DesignDrawable implements DesignTextAttributes 
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T extends DesignLayer> T setTextSize( String value ) {
+	public <T extends DesignDrawable> T setTextSize( String value ) {
 		setValue( TEXT_SIZE, value );
+		return (T)this;
+	}
+
+	// Font name
+	public String calcFontName() {
+		String value = getFontName();
+		return value == null ? DEFAULT_FONT_NAME : value;
+	}
+
+	public String getFontName() {
+		return getValue( FONT_NAME );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontName( String value ) {
+		setValue( FONT_NAME, value );
+		return (T)this;
+	}
+
+	// Font weight
+	public FontWeight calcFontWeight() {
+		String value = getFontWeight();
+		return FontWeight.valueOf( (value == null ? DEFAULT_FONT_WEIGHT : value).toUpperCase() );
+	}
+
+	public String getFontWeight() {
+		return getValue( FONT_WEIGHT );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontWeight( String value ) {
+		setValue( FONT_WEIGHT, value );
+		return (T)this;
+	}
+
+	// Font posture
+	public FontPosture calcFontPosture() {
+		String value = getFontPosture();
+		return FontPosture.valueOf( (value == null ? DEFAULT_FONT_POSTURE : value).toUpperCase() );
+	}
+
+	public String getFontPosture() {
+		return getValue( FONT_POSTURE );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontPosture( String value ) {
+		setValue( FONT_POSTURE, value );
+		return (T)this;
+	}
+
+	// Font underline
+	public boolean calcFontUnderline() {
+		return Boolean.parseBoolean( getFontUnderline() );
+	}
+
+	public String getFontUnderline() {
+		return getValue( FONT_UNDERLINE );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontUnderline( String value ) {
+		setValue( FONT_UNDERLINE, value );
+		return (T)this;
+	}
+
+	// Font strikethrough
+	public boolean calcFontStrikethrough() {
+		return Boolean.parseBoolean( getFontStrikethrough() );
+	}
+
+	public String getFontStrikethrough() {
+		return getValue( FONT_STRIKETHROUGH );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontStrikethrough( String value ) {
+		setValue( FONT_STRIKETHROUGH, value );
 		return (T)this;
 	}
 
 	public Font calcTextFont() {
 		// FIXME Use the font attributes to calculate a font
 		return FontUtil.decode( getTextFont() );
-	}
-
-	public String getFontName() {
-		return getValue( TEXT_FONT, DEFAULT_TEXT_FONT );
 	}
 
 	@Deprecated

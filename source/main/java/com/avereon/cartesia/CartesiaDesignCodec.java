@@ -143,11 +143,14 @@ public abstract class CartesiaDesignCodec extends Codec {
 		DesignLayer layer = new DesignLayer().updateFrom( map );
 		parent.addLayer( layer );
 
-		remapValue( map, DesignLayer.FILL_PAINT, loadLayerPaintMapping );
-		remapValue( map, DesignLayer.DRAW_PAINT, loadLayerPaintMapping );
+		// Geometry value mapping
+		remapValue( map, DesignLayer.DRAW_PAINT, loadPaintMapping );
+		remapValue( map, DesignLayer.DRAW_WIDTH, loadPropertyMapping );
+		remapValue( map, DesignLayer.DRAW_CAP, loadPropertyMapping );
+		remapValue( map, DesignLayer.DRAW_PATTERN, loadPropertyMapping );
+		remapValue( map, DesignLayer.FILL_PAINT, loadPaintMapping );
 
 		// Text value mapping
-
 		remapValue( map, DesignLayer.TEXT_SIZE, loadLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_FILL_PAINT, loadLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, loadLayerPaintMapping );
@@ -180,7 +183,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 		// TODO if( map.containsKey( DesignLayer.FONT_POSTURE ) ) layer.setFontPosture( (String)map.get( DesignLayer.FONT_POSTURE ) );
 		// TODO if( map.containsKey( DesignLayer.FONT_UNDERLINE ) ) layer.setFontUnderline( (String)map.get( DesignLayer.FONT_UNDERLINE ) );
 		// TODO if( map.containsKey( DesignLayer.FONT_STRIKETHROUGH ) ) layer.setFontStrikethrough( (String)map.get( DesignLayer.FONT_STRIKETHROUGH ) );
-
 
 		// Backward compatibility
 		layer.setTextFont( map.containsKey( DesignLayer.TEXT_FONT ) ? (String)map.get( DesignLayer.TEXT_FONT ) : null );

@@ -57,6 +57,7 @@ public abstract class DesignDrawable extends DesignNode {
 	protected DesignDrawable() {
 		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 
+		// FIXME Do not set all these defaults here
 		setDrawPaint( MODE_LAYER );
 		setDrawWidth( MODE_LAYER );
 		setDrawCap( MODE_LAYER );

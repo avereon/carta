@@ -1,21 +1,72 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadShapes;
+import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignTextTest {
 
+	private DesignText text;
+
+	@BeforeEach
+	void setup() {
+		text = new DesignText();
+	}
+
 	@Test
-	void testDefaults() {
-		DesignText text = new DesignText();
+	void testInitialValues() {
+		// Initial values should generally be null, so they don't have to be saved
 		assertThat( text.getOrigin() ).isNull();
 		assertThat( text.getText() ).isNull();
-		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
 		assertThat( text.getRotate() ).isNull();
+
+		assertThat( text.getTextSize() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getFillPaint() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getDrawPaint() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getDrawWidth() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getDrawPattern() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getDrawCap() ).isEqualTo( DesignText.MODE_LAYER );
+
+		assertThat( text.getFontName() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getFontWeight() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getFontPosture() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getFontUnderline() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getFontStrikethrough() ).isEqualTo( DesignText.MODE_LAYER );
+
+		// Backward compatibility
+		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
+	}
+
+	@Test
+	void testCalcWithInitialValues() throws Exception {
+		// Calculated values should not be null, except for strings, and use the default values for initial values
+		//assertThat( text.calcOrigin() ).isNull();
+		//assertThat( text.calcText() ).isNull();
+		assertThat( text.calcRotate() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_ROTATE ) );
+
+		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_TEXT_SIZE ) );
+		assertThat( text.calcDrawPaint() ).isEqualTo( Paints.parse( DesignText.DEFAULT_TEXT_DRAW_PAINT ) );
+		assertThat( text.calcDrawWidth() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_TEXT_DRAW_WIDTH ) );
+		assertThat( text.calcDrawPattern() ).containsExactlyElementsOf( CadShapes.parseDashPattern( DesignText.DEFAULT_TEXT_DRAW_PATTERN ) );
+		assertThat( text.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignText.DEFAULT_TEXT_DRAW_CAP.toUpperCase() ) );
+		assertThat( text.calcFillPaint() ).isEqualTo( Paints.parse( DesignText.DEFAULT_TEXT_FILL_PAINT ) );
+
+		assertThat( text.calcFontName() ).isEqualTo( DesignText.DEFAULT_FONT_NAME );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignText.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignText.DEFAULT_FONT_POSTURE.toUpperCase() ) );
+		assertThat( text.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignText.DEFAULT_FONT_UNDERLINE ) );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignText.DEFAULT_FONT_STRIKETHROUGH ) );
+
+		assertThat( text.calcTextFont() ).isEqualTo( Font.font( DesignText.DEFAULT_FONT_NAME, Double.parseDouble( DesignText.DEFAULT_TEXT_SIZE ) ) );
 	}
 
 	@Test

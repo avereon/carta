@@ -9,17 +9,21 @@ import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import lombok.CustomLog;
 
 import java.util.Map;
 
 @SuppressWarnings( "UnusedReturnValue" )
 @CustomLog
-public class DesignText extends DesignShape implements DesignTextAttributes {
+public class DesignText extends DesignShape implements DesignTextSupport {
 
 	public static final String TEXT = "text";
 
 	public static final String ROTATE = "rotate";
+
+	public static final String DEFAULT_ROTATE = String.valueOf( 0.0 );
 
 	// TODO Add horizontal alignment
 	// TODO Add vertical alignment
@@ -47,12 +51,21 @@ public class DesignText extends DesignShape implements DesignTextAttributes {
 		setText( text );
 		setRotate( rotate );
 
-		setTextFont( MODE_LAYER );
+		setTextSize( MODE_LAYER );
 		setFillPaint( MODE_LAYER );
 		setDrawPaint( MODE_LAYER );
 		setDrawWidth( MODE_LAYER );
-		setDrawCap( MODE_LAYER );
 		setDrawPattern( MODE_LAYER );
+		setDrawCap( MODE_LAYER );
+
+		setFontName( MODE_LAYER );
+		setFontWeight( MODE_LAYER );
+		setFontPosture( MODE_LAYER );
+		setFontUnderline( MODE_LAYER );
+		setFontStrikethrough( MODE_LAYER );
+
+		// Backward compatibility
+		setTextFont( MODE_LAYER );
 	}
 
 	public String getText() {
@@ -65,43 +78,191 @@ public class DesignText extends DesignShape implements DesignTextAttributes {
 		return (T)this;
 	}
 
+	// Text size
+
 	public double calcTextSize() {
 		return CadMath.evalNoException( getTextSizeWithInheritance() );
 	}
 
 	public String getTextSizeWithInheritance() {
-		String width = getTextSize();
-		if( isCustomValue( width ) ) return width;
+		String value = getTextSize();
+		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
 		return layer == null ? DEFAULT_TEXT_SIZE : layer.getTextSize();
 	}
 
 	public String getTextSize() {
-		return getValue (TEXT_SIZE, MODE_LAYER );
+		return getValue( TEXT_SIZE );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T extends DesignText> T setTextSize( String value ) {
+	public <T extends DesignDrawable> T setTextSize( String value ) {
 		setValue( TEXT_SIZE, value );
+		return (T)this;
+	}
+
+	// Font name
+	public String calcFontName() {
+		return getFontNameWithInheritance();
+	}
+
+	public String getFontNameWithInheritance() {
+		String value = getFontName();
+		if( isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DEFAULT_FONT_NAME : layer.getFontName();
+	}
+
+	public String getFontName() {
+		return getValue( FONT_NAME );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontName( String value ) {
+		setValue( FONT_NAME, value );
+		return (T)this;
+	}
+
+	// Font weight
+	public FontWeight calcFontWeight() {
+		return FontWeight.valueOf( getFontWeightWithInheritance().toUpperCase() );
+	}
+
+	public String getFontWeightWithInheritance() {
+		String value = getFontWeight();
+		if( isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DEFAULT_FONT_WEIGHT : layer.getFontWeight();
+	}
+
+	public String getFontWeight() {
+		return getValue( FONT_WEIGHT );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontWeight( String value ) {
+		setValue( FONT_WEIGHT, value );
+		return (T)this;
+	}
+
+	// Font posture
+	public FontPosture calcFontPosture() {
+		return FontPosture.valueOf( getFontPostureWithInheritance().toUpperCase() );
+	}
+
+	public String getFontPostureWithInheritance() {
+		String value = getFontPosture();
+		if( isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DEFAULT_FONT_POSTURE : layer.getFontPosture();
+	}
+
+	public String getFontPosture() {
+		return getValue( FONT_POSTURE );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontPosture( String value ) {
+		setValue( FONT_POSTURE, value );
+		return (T)this;
+	}
+
+	// Font underline
+	public boolean calcFontUnderline() {
+		return Boolean.parseBoolean( getFontUnderlineWithInheritance() );
+	}
+
+	public String getFontUnderlineWithInheritance() {
+		String value = getFontUnderline();
+		if( isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DEFAULT_FONT_UNDERLINE : layer.getFontUnderline();
+	}
+
+	public String getFontUnderline() {
+		return getValue( FONT_UNDERLINE );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontUnderline( String value ) {
+		setValue( FONT_UNDERLINE, value );
+		return (T)this;
+	}
+
+	// Font strikethrough
+	public boolean calcFontStrikethrough() {
+		return Boolean.parseBoolean( getFontStrikethroughWithInheritance() );
+	}
+
+	public String getFontStrikethroughWithInheritance() {
+		String value = getFontStrikethrough();
+		if( isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DEFAULT_FONT_STRIKETHROUGH : layer.getFontStrikethrough();
+	}
+
+	public String getFontStrikethrough() {
+		return getValue( FONT_STRIKETHROUGH );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignDrawable> T setFontStrikethrough( String value ) {
+		setValue( FONT_STRIKETHROUGH, value );
 		return (T)this;
 	}
 
 	@Override
 	public Paint calcDrawPaint() {
-		// FIXME Allow user to override
-		return Paints.parseWithNullOnException( getLayer().getTextDrawPaint() );
+		String value = getDrawPaintWithInheritance();
+		return Paints.parseWithNullOnException( value == null ? DEFAULT_TEXT_DRAW_PAINT : value );
+	}
+
+	@Override
+	public String getDrawPaintWithInheritance() {
+		String value = getDrawPaint();
+		if( value == null || isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_PAINT : layer.getTextDrawPaint();
 	}
 
 	@Override
 	public Paint calcFillPaint() {
-		// FIXME Allow user to override
-		return Paints.parseWithNullOnException( getLayer().getTextFillPaint() );
+		String value = getFillPaintWithInheritance();
+		return Paints.parseWithNullOnException( value == null ? DEFAULT_TEXT_FILL_PAINT : value );
+	}
+
+	@Override
+	public String getFillPaintWithInheritance() {
+		String value = getFillPaint();
+		if( value == null || isCustomValue( value ) ) return value;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_FILL_PAINT : layer.getTextFillPaint();
 	}
 
 	public Font calcTextFont() {
-		// FIXME Use the font attributes to calculate a font
 		return FontUtil.decode( getTextFontWithInheritance() );
+
+		// FIXME Use this implementation eventually
+
+		//		String name = getFontNameWithInheritance();
+		//		String size = getTextSizeWithInheritance();
+		//		String weight = getFontWeightWithInheritance();
+		//		String posture = getFontPostureWithInheritance();
+		//
+		//		if( name == null ) name = DesignText.DEFAULT_FONT_NAME;
+		//		if( size == null ) size = DesignText.DEFAULT_TEXT_SIZE;
+		//		if( weight == null ) weight = DesignText.DEFAULT_FONT_WEIGHT;
+		//		if( posture == null ) posture = DesignText.DEFAULT_FONT_POSTURE;
+		//
+		//		return Font.font( name, FontWeight.valueOf( weight.toUpperCase() ), FontPosture.valueOf( posture.toUpperCase() ), CadMath.evalNoException( size ) );
 	}
 
 	@Deprecated
