@@ -51,13 +51,15 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		setText( text );
 		setRotate( rotate );
 
-		setTextSize( MODE_LAYER );
-		setFillPaint( MODE_LAYER );
+		// FIXME Do not set all these defaults here
+		//setTextSize( MODE_LAYER );
+		//setFillPaint( MODE_LAYER );
 		setDrawPaint( MODE_LAYER );
 		setDrawWidth( MODE_LAYER );
 		setDrawPattern( MODE_LAYER );
 		setDrawCap( MODE_LAYER );
 
+		// FIXME Do not set all these defaults here
 		setFontName( MODE_LAYER );
 		setFontWeight( MODE_LAYER );
 		setFontPosture( MODE_LAYER );
@@ -65,6 +67,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		setFontStrikethrough( MODE_LAYER );
 
 		// Backward compatibility
+		// FIXME Do not set all these defaults here
 		setTextFont( MODE_LAYER );
 	}
 
@@ -81,7 +84,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	// Text size
 
 	public double calcTextSize() {
-		return CadMath.evalNoException( getTextSizeWithInheritance() );
+		String value = getTextSizeWithInheritance();
+		return CadMath.evalNoException( value == null ? DesignLayer.DEFAULT_TEXT_SIZE : getTextSizeWithInheritance() );
 	}
 
 	public String getTextSizeWithInheritance() {
@@ -89,7 +93,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DEFAULT_TEXT_SIZE : layer.getTextSize();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_SIZE : layer.getTextSize();
 	}
 
 	public String getTextSize() {
@@ -112,7 +116,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DEFAULT_FONT_NAME : layer.getFontName();
+		return layer == null ? DesignLayer.DEFAULT_FONT_NAME : layer.getFontName();
 	}
 
 	public String getFontName() {
@@ -135,7 +139,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DEFAULT_FONT_WEIGHT : layer.getFontWeight();
+		return layer == null ? DesignLayer.DEFAULT_FONT_WEIGHT : layer.getFontWeight();
 	}
 
 	public String getFontWeight() {
@@ -158,7 +162,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DEFAULT_FONT_POSTURE : layer.getFontPosture();
+		return layer == null ? DesignLayer.DEFAULT_FONT_POSTURE : layer.getFontPosture();
 	}
 
 	public String getFontPosture() {
@@ -181,7 +185,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DEFAULT_FONT_UNDERLINE : layer.getFontUnderline();
+		return layer == null ? DesignLayer.DEFAULT_FONT_UNDERLINE : layer.getFontUnderline();
 	}
 
 	public String getFontUnderline() {
@@ -204,7 +208,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DEFAULT_FONT_STRIKETHROUGH : layer.getFontStrikethrough();
+		return layer == null ? DesignLayer.DEFAULT_FONT_STRIKETHROUGH : layer.getFontStrikethrough();
 	}
 
 	public String getFontStrikethrough() {
@@ -220,7 +224,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@Override
 	public Paint calcDrawPaint() {
 		String value = getDrawPaintWithInheritance();
-		return Paints.parseWithNullOnException( value == null ? DEFAULT_TEXT_DRAW_PAINT : value );
+		return Paints.parseWithNullOnException( value == null ? DesignLayer.DEFAULT_TEXT_DRAW_PAINT : value );
 	}
 
 	@Override
@@ -235,7 +239,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@Override
 	public Paint calcFillPaint() {
 		String value = getFillPaintWithInheritance();
-		return Paints.parseWithNullOnException( value == null ? DEFAULT_TEXT_FILL_PAINT : value );
+		return Paints.parseWithNullOnException( value == null ? DesignLayer.DEFAULT_TEXT_FILL_PAINT : value );
 	}
 
 	@Override

@@ -62,7 +62,7 @@ public abstract class DesignDrawable extends DesignNode {
 		setDrawWidth( MODE_LAYER );
 		setDrawCap( MODE_LAYER );
 		setDrawPattern( MODE_LAYER );
-		setFillPaint( MODE_LAYER );
+		//setFillPaint( MODE_LAYER );
 	}
 
 	public DesignLayer getLayer() {
@@ -165,12 +165,14 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Paint calcFillPaint() {
-		return Paints.parseWithNullOnException( getFillPaintWithInheritance() );
+		String value = getFillPaintWithInheritance();
+		return Paints.parseWithNullOnException( value == null ? DesignLayer.DEFAULT_FILL_PAINT : value );
 	}
 
 	public String getFillPaintWithInheritance() {
 		String paint = getFillPaint();
-		if( paint == null || isCustomValue( paint ) ) return paint;
+		System.out.println( "isCustom?=" + isCustomValue( paint ) );
+		if( isCustomValue( paint ) ) return paint;
 
 		DesignLayer layer = getLayer();
 		return layer == null ? DesignLayer.DEFAULT_FILL_PAINT : layer.getFillPaint();
@@ -205,7 +207,15 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	String getValueMode( String value ) {
-		if( value != null && nonCustomModes.contains( value ) ) return value;
+		// FIXME The big, massive question is, is null a custom value?
+		// Answer, no! Null means the value does not exist.
+		// Either a default can be used or null can be returned if no default specified.
+
+		// Here, however, we are choosing what value mode the value has, custom or layer.
+		// Maybe the right answer is to return MODE_NONE for null values.
+
+		if( value == null ) return MODE_LAYER;
+		if( nonCustomModes.contains( value ) ) return value;
 		return MODE_CUSTOM;
 	}
 

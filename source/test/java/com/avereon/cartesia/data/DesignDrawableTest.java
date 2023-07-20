@@ -35,7 +35,7 @@ public class DesignDrawableTest {
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 		assertThat( drawable.getDrawPattern() ).isEqualTo( DesignDrawable.MODE_LAYER );
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.getFillPaint() ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getFillPaint() ).isNull();
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
 		assertThat( layer.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
@@ -43,7 +43,7 @@ public class DesignDrawableTest {
 
 	@Test
 	void testGetValueMode() {
-		assertThat( drawable.getValueMode( null ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( null ) ).isEqualTo( DesignDrawable.MODE_LAYER );
 		assertThat( drawable.getValueMode( "" ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
 		assertThat( drawable.getValueMode( DesignDrawable.MODE_LAYER ) ).isEqualTo( DesignDrawable.MODE_LAYER );
 	}

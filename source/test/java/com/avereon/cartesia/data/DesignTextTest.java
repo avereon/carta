@@ -24,13 +24,13 @@ public class DesignTextTest {
 
 	@Test
 	void testInitialValues() {
-		// Initial values should generally be null, so they don't have to be saved
 		assertThat( text.getOrigin() ).isNull();
 		assertThat( text.getText() ).isNull();
 		assertThat( text.getRotate() ).isNull();
 
-		assertThat( text.getTextSize() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getFillPaint() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getTextSize() ).isNull();
+		// NEXT Initial values should generally be null, so they don't have to be saved
+		assertThat( text.getFillPaint() ).isNull();
 		assertThat( text.getDrawPaint() ).isEqualTo( DesignText.MODE_LAYER );
 		assertThat( text.getDrawWidth() ).isEqualTo( DesignText.MODE_LAYER );
 		assertThat( text.getDrawPattern() ).isEqualTo( DesignText.MODE_LAYER );
@@ -53,20 +53,20 @@ public class DesignTextTest {
 		//assertThat( text.calcText() ).isNull();
 		assertThat( text.calcRotate() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_ROTATE ) );
 
-		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_TEXT_SIZE ) );
-		assertThat( text.calcDrawPaint() ).isEqualTo( Paints.parse( DesignText.DEFAULT_TEXT_DRAW_PAINT ) );
-		assertThat( text.calcDrawWidth() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_TEXT_DRAW_WIDTH ) );
-		assertThat( text.calcDrawPattern() ).containsExactlyElementsOf( CadShapes.parseDashPattern( DesignText.DEFAULT_TEXT_DRAW_PATTERN ) );
-		assertThat( text.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignText.DEFAULT_TEXT_DRAW_CAP.toUpperCase() ) );
-		assertThat( text.calcFillPaint() ).isEqualTo( Paints.parse( DesignText.DEFAULT_TEXT_FILL_PAINT ) );
+		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) );
+		assertThat( text.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_DRAW_PAINT ) );
+		assertThat( text.calcDrawWidth() ).isEqualTo( Double.parseDouble( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH ) );
+		assertThat( text.calcDrawPattern() ).containsExactlyElementsOf( CadShapes.parseDashPattern( DesignLayer.DEFAULT_TEXT_DRAW_PATTERN ) );
+		assertThat( text.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_TEXT_DRAW_CAP.toUpperCase() ) );
+		assertThat( text.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_FILL_PAINT ) );
 
-		assertThat( text.calcFontName() ).isEqualTo( DesignText.DEFAULT_FONT_NAME );
-		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignText.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
-		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignText.DEFAULT_FONT_POSTURE.toUpperCase() ) );
-		assertThat( text.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignText.DEFAULT_FONT_UNDERLINE ) );
-		assertThat( text.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignText.DEFAULT_FONT_STRIKETHROUGH ) );
+		assertThat( text.calcFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignLayer.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignLayer.DEFAULT_FONT_POSTURE.toUpperCase() ) );
+		assertThat( text.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_UNDERLINE ) );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_STRIKETHROUGH ) );
 
-		assertThat( text.calcTextFont() ).isEqualTo( Font.font( DesignText.DEFAULT_FONT_NAME, Double.parseDouble( DesignText.DEFAULT_TEXT_SIZE ) ) );
+		assertThat( text.calcTextFont() ).isEqualTo( Font.font( DesignLayer.DEFAULT_FONT_NAME, Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) ) );
 	}
 
 	@Test
