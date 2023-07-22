@@ -1,8 +1,8 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.*;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.cursor.Reticle;
+import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
@@ -193,11 +193,11 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		// NEXT If the fragment of the URI is "print" more components need to be added
 		String fragment = UriUtil.parseFragment( asset.getUri() );
-		if( fragment != null && fragment.startsWith( "print") ) {
+		if( fragment != null && fragment.startsWith( "print" ) ) {
 			// Should be in the format 'print=<uuid>'
 
 			// Get the print identifier
-			Map<String,String> parameters = UriUtil.parseQuery( fragment );
+			Map<String, String> parameters = UriUtil.parseQuery( fragment );
 			String identifier = parameters.get( "print" );
 		}
 	}
@@ -534,16 +534,19 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		Design design = getDesign();
-		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
+		if( design != null ) {
+			// Link the command context to this tool
+			design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
 
-		// Link the guides before loading the design
-		layersGuide.link();
-		viewsGuide.link();
-		printsGuide.link();
+			// Link the guides before loading the design
+			layersGuide.link();
+			viewsGuide.link();
+			printsGuide.link();
+		}
 
 		Fx.run( () -> {
 			designPane.setDpi( Screen.getPrimary().getDpi() );
-			designPane.setDesign( design );
+			if( design != null ) designPane.setDesign( design );
 		} );
 
 		// Keep the design pane centered when resizing
@@ -591,16 +594,18 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		designPane.setReferencePointSize( referencePointSize );
 		designPane.setReferencePointPaint( referencePointPaint );
 
-		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
-		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
+		if( design != null ) {
+			design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+			design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
-		// Restore the list of enabled layers
-		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
-		design.getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
+			// Restore the list of enabled layers
+			Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
+			design.getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
 
-		// Restore the list of visible layers
-		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
-		design.getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+			// Restore the list of visible layers
+			Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
+			design.getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+		}
 
 		// Restore the grid visible flag
 		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
@@ -673,7 +678,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
-		getCoordinateStatus().updateZoom( getZoom() );
+		if( design != null ) getCoordinateStatus().updateZoom( getZoom() );
 		designPane.updateView();
 		doUpdateGridBounds();
 	}
@@ -1255,7 +1260,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxShapeDesignTool.this, getAsset(), (DesignPrint)null ));
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxShapeDesignTool.this, getAsset(), (DesignPrint)null ) );
 		}
 
 	}
