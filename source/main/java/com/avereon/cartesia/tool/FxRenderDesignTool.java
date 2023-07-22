@@ -684,7 +684,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 					// Show the properties tool
 					getProgram().getAssetManager().openAsset( PropertiesType.URI ).get();
 
-					// Fire the event on the FX thread
+					// Fire the show request on the workspace event bus
 					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
 					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage ) ) );
 				} catch( Exception exception ) {
