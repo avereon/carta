@@ -72,14 +72,12 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, UNIT, TEXT_FONT, TEXT_FILL_PAINT, TEXT_DRAW_PAINT, TEXT_DRAW_WIDTH, TEXT_DRAW_CAP, TEXT_DRAW_PATTERN, LAYERS, SHAPES );
 
-		// FIXME Do not set all these defaults here
 		setDrawPaint( DEFAULT_DRAW_PAINT );
 		setDrawWidth( DEFAULT_DRAW_WIDTH );
 		setDrawPattern( DEFAULT_DRAW_PATTERN );
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
-		// FIXME Do not set all these defaults here
 		setTextFillPaint( DEFAULT_TEXT_FILL_PAINT );
 		setTextDrawPaint( DEFAULT_TEXT_DRAW_PAINT );
 		setTextDrawWidth( DEFAULT_TEXT_DRAW_WIDTH );
@@ -87,7 +85,6 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		setTextDrawCap( DEFAULT_TEXT_DRAW_CAP );
 
 		// Backward compatibility
-		// FIXME Do not set all these defaults here
 		setTextFont( DEFAULT_TEXT_FONT );
 
 		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
@@ -258,7 +255,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	@Override
 	public String getDrawPattern() {
-		return getValue( DRAW_PATTERN, DEFAULT_DRAW_PATTERN );
+		return getValue( DRAW_PATTERN );
 	}
 
 	@Override

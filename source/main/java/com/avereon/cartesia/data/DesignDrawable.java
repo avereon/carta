@@ -61,7 +61,7 @@ public abstract class DesignDrawable extends DesignNode {
 		setDrawPaint( MODE_LAYER );
 		setDrawWidth( MODE_LAYER );
 		setDrawCap( MODE_LAYER );
-		setDrawPattern( MODE_LAYER );
+		//setDrawPattern( MODE_LAYER );
 		//setFillPaint( MODE_LAYER );
 	}
 
@@ -171,7 +171,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public String getFillPaintWithInheritance() {
 		String paint = getFillPaint();
-		System.out.println( "isCustom?=" + isCustomValue( paint ) );
 		if( isCustomValue( paint ) ) return paint;
 
 		DesignLayer layer = getLayer();
@@ -202,20 +201,14 @@ public abstract class DesignDrawable extends DesignNode {
 		};
 	}
 
-	boolean isCustomValue( String value ) {
+	<T> boolean isCustomValue( T value ) {
 		return getValueMode( value ).equals( MODE_CUSTOM );
 	}
 
-	String getValueMode( String value ) {
-		// FIXME The big, massive question is, is null a custom value?
-		// Answer, no! Null means the value does not exist.
-		// Either a default can be used or null can be returned if no default specified.
-
-		// Here, however, we are choosing what value mode the value has, custom or layer.
-		// Maybe the right answer is to return MODE_NONE for null values.
-
+	<T> String getValueMode( T value ) {
 		if( value == null ) return MODE_LAYER;
-		if( nonCustomModes.contains( value ) ) return value;
+		String mode = String.valueOf( value ).toLowerCase();
+		if( nonCustomModes.contains( mode ) ) return mode;
 		return MODE_CUSTOM;
 	}
 
@@ -310,12 +303,11 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	<T> T changeDrawPatternMode( T newValue ) {
-		// NEXT Going to need new logic to handle 'null' not being custom value
-		boolean isCustom = isCustomValue( String.valueOf( newValue ) );
+		boolean isCustom = isCustomValue( newValue );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawPattern( isCustom ? getDrawPatternWithInheritance() : String.valueOf( newValue ).toLowerCase() );
+			setDrawPattern( isCustom ? getDrawPatternWithInheritance() : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw pattern" );
@@ -324,11 +316,11 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	<T> T changeFillPaintMode( T newValue ) {
-		boolean isCustom = MODE_CUSTOM.equals( newValue );
+		boolean isCustom =isCustomValue( newValue );
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setFillPaint( isCustom ? getFillPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
+			setFillPaint( isCustom ? getFillPaintWithInheritance() : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FILL_PAINT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting fill paint" );
