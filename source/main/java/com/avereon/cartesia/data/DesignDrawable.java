@@ -310,7 +310,8 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	<T> T changeDrawPatternMode( T newValue ) {
-		boolean isCustom = MODE_CUSTOM.equals( newValue );
+		// NEXT Going to need new logic to handle 'null' not being custom value
+		boolean isCustom = isCustomValue( String.valueOf( newValue ) );
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try( Txn ignored = Txn.create() ) {
