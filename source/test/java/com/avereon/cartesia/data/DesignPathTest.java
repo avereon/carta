@@ -10,7 +10,7 @@ public class DesignPathTest {
 	@Test
 	void constructor() {
 		DesignPath path = new DesignPath();
-		assertThat( path.isModified() ).isTrue();
+		assertThat( path.isModified() ).isFalse();
 		assertThat( path.getOrigin() ).isNull();
 	}
 

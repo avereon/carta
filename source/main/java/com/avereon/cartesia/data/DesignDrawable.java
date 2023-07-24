@@ -56,13 +56,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected DesignDrawable() {
 		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
-
-		// FIXME Do not set all these defaults here
-		setDrawPaint( MODE_LAYER );
-		setDrawWidth( MODE_LAYER );
-		setDrawCap( MODE_LAYER );
-		//setDrawPattern( MODE_LAYER );
-		//setFillPaint( MODE_LAYER );
 	}
 
 	public DesignLayer getLayer() {
@@ -85,7 +78,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public String getDrawPaintWithInheritance() {
 		String paint = getDrawPaint();
-		if( paint == null || isCustomValue( paint ) ) return paint;
+		if( isCustomValue( paint ) ) return paint;
 
 		DesignLayer layer = getLayer();
 		return layer == null ? DesignLayer.DEFAULT_DRAW_PAINT : layer.getDrawPaint();
