@@ -29,7 +29,6 @@ public class DesignTextTest {
 		assertThat( text.getRotate() ).isNull();
 
 		assertThat( text.getTextSize() ).isNull();
-		// NEXT Initial values should generally be null, so they don't have to be saved
 		assertThat( text.getFillPaint() ).isNull();
 		assertThat( text.getDrawPaint() ).isNull();
 		assertThat( text.getDrawWidth() ).isNull();
@@ -49,8 +48,6 @@ public class DesignTextTest {
 	@Test
 	void testCalcWithInitialValues() throws Exception {
 		// Calculated values should not be null, except for strings, and use the default values for initial values
-		//assertThat( text.calcOrigin() ).isNull();
-		//assertThat( text.calcText() ).isNull();
 		assertThat( text.calcRotate() ).isEqualTo( Double.parseDouble( DesignText.DEFAULT_ROTATE ) );
 
 		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) );
@@ -92,12 +89,43 @@ public class DesignTextTest {
 		text.setModified( false );
 		assertThat( text.isModified() ).isFalse();
 
-		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
+		text.setRotate( 25.0 );
 		assertThat( text.isModified() ).isTrue();
 		text.setModified( false );
 		assertThat( text.isModified() ).isFalse();
 
-		text.setRotate( 25.0 );
+		text.setTextSize( "2" );
+		assertThat( text.isModified() ).isTrue();
+		text.setModified( false );
+		assertThat( text.isModified() ).isFalse();
+
+		text.setFontName( "Andromeda" );
+		assertThat( text.isModified() ).isTrue();
+		text.setModified( false );
+		assertThat( text.isModified() ).isFalse();
+
+		text.setFontWeight( "light" );
+		assertThat( text.isModified() ).isTrue();
+		text.setModified( false );
+		assertThat( text.isModified() ).isFalse();
+
+		text.setFontPosture( "italic" );
+		assertThat( text.isModified() ).isTrue();
+		text.setModified( false );
+		assertThat( text.isModified() ).isFalse();
+
+		text.setFontUnderline( "true" );
+		assertThat( text.isModified() ).isTrue();
+		text.setModified( false );
+		assertThat( text.isModified() ).isFalse();
+
+		text.setFontStrikethrough( "true" );
+		assertThat( text.isModified() ).isTrue();
+		text.setModified( false );
+		assertThat( text.isModified() ).isFalse();
+
+		// Backward compatibility
+		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
 		assertThat( text.isModified() ).isTrue();
 		text.setModified( false );
 		assertThat( text.isModified() ).isFalse();
@@ -122,21 +150,91 @@ public class DesignTextTest {
 	}
 
 	@Test
-	void testFont() {
-		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
-		assertThat( text.getTextFont() ).isNull();
-
-		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
-		assertThat( text.getTextFont() ).isEqualTo( FontUtil.encode( Font.font( "Serif", 24 ) ) );
-	}
-
-	@Test
 	void testRotate() {
 		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty", 40.0 );
 		assertThat( text.getRotate() ).isEqualTo( 40.0 );
 
 		text.setRotate( 73.0 );
 		assertThat( text.getRotate() ).isEqualTo( 73.0 );
+	}
+
+	@Test
+	void testTextSize() {
+		DesignText text = new DesignText();
+		assertThat( text.getTextSize() ).isNull();
+
+		text.setTextSize( "73.0" );
+		assertThat( text.getTextSize() ).isEqualTo( "73.0" );
+		assertThat( text.calcTextSize() ).isEqualTo( 73.0 );
+	}
+
+	@Test
+	void testFontName() {
+		DesignText text = new DesignText();
+		assertThat( text.getFontName() ).isNull();
+
+		text.setFontName( "Andromeda" );
+		assertThat( text.getFontName() ).isEqualTo( "Andromeda" );
+		assertThat( text.calcFontName() ).isEqualTo( "Andromeda" );
+	}
+
+	@Test
+	void testFontWeight() {
+		DesignText text = new DesignText();
+		assertThat( text.getFontWeight() ).isNull();
+
+		text.setFontWeight( FontWeight.LIGHT.name().toLowerCase() );
+		assertThat( text.getFontWeight() ).isEqualTo( FontWeight.LIGHT.name().toLowerCase() );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.LIGHT );
+	}
+
+	@Test
+	void testFontPosture() {
+		DesignText text = new DesignText();
+		assertThat( text.getFontPosture() ).isNull();
+
+		text.setFontPosture( FontPosture.ITALIC.name().toLowerCase() );
+		assertThat( text.getFontPosture() ).isEqualTo( FontPosture.ITALIC.name().toLowerCase() );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.ITALIC );
+	}
+
+	@Test
+	void testFontUnderline() {
+		DesignText text = new DesignText();
+		assertThat( text.getFontUnderline() ).isNull();
+
+		text.setFontUnderline( "true" );
+		assertThat( text.getFontUnderline() ).isEqualTo( "true" );
+		assertThat( text.calcFontUnderline() ).isEqualTo( true );
+
+		text.setFontUnderline( "underline" );
+		assertThat( text.getFontUnderline() ).isEqualTo( "underline" );
+		assertThat( text.calcFontUnderline() ).isEqualTo( false );
+	}
+
+
+	@Test
+	void testFontStrikethrough() {
+		DesignText text = new DesignText();
+		assertThat( text.getFontStrikethrough() ).isNull();
+
+		text.setFontStrikethrough( "true" );
+		assertThat( text.getFontStrikethrough() ).isEqualTo( "true" );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( true );
+
+		text.setFontStrikethrough( "strikethrough" );
+		assertThat( text.getFontStrikethrough() ).isEqualTo( "strikethrough" );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( false );
+	}
+
+	@Test
+	@Deprecated
+	void testFont() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		assertThat( text.getTextFont() ).isNull();
+
+		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
+		assertThat( text.getTextFont() ).isEqualTo( FontUtil.encode( Font.font( "Serif", 24 ) ) );
 	}
 
 	@Test

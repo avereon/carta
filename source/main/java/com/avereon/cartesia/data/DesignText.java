@@ -4,10 +4,8 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -46,7 +44,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	public DesignText( Point3D origin, String text, Double rotate ) {
 		super( origin );
-		addModifyingKeys( TEXT, TEXT_FONT, ROTATE );
+		addModifyingKeys( TEXT, TEXT_SIZE, ROTATE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH, TEXT_FONT );
 
 		setText( text );
 		setRotate( rotate );
@@ -203,30 +201,45 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	}
 
 	@Override
-	public Paint calcDrawPaint() {
-		String value = getDrawPaintWithInheritance();
-		return Paints.parseWithNullOnException( value == null ? DesignLayer.DEFAULT_TEXT_DRAW_PAINT : value );
-	}
-
-	@Override
 	public String getDrawPaintWithInheritance() {
 		String value = getDrawPaint();
-		if( value == null || isCustomValue( value ) ) return value;
+		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
 		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_PAINT : layer.getTextDrawPaint();
 	}
 
 	@Override
-	public Paint calcFillPaint() {
-		String value = getFillPaintWithInheritance();
-		return Paints.parseWithNullOnException( value == null ? DesignLayer.DEFAULT_TEXT_FILL_PAINT : value );
+	public String getDrawWidthWithInheritance() {
+		String width = getDrawWidth();
+		if( isCustomValue( width ) ) return width;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_WIDTH : layer.getTextDrawWidth();
+	}
+
+	@Override
+	public String getDrawPatternWithInheritance() {
+		String pattern = getDrawPattern();
+		if( isCustomValue( pattern ) ) return pattern;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_PATTERN : layer.getTextDrawPattern();
+	}
+
+	@Override
+	public String getDrawCapWithInheritance() {
+		String cap = getDrawCap();
+		if( isCustomValue( cap ) ) return cap;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_CAP : layer.getTextDrawCap();
 	}
 
 	@Override
 	public String getFillPaintWithInheritance() {
 		String value = getFillPaint();
-		if( value == null || isCustomValue( value ) ) return value;
+		if( isCustomValue( value ) ) return value;
 
 		DesignLayer layer = getLayer();
 		return layer == null ? DesignLayer.DEFAULT_TEXT_FILL_PAINT : layer.getTextFillPaint();
@@ -406,6 +419,9 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public <T> T getValue( String key ) {
 		return switch( key ) {
 			case VIRTUAL_TEXT_FONT_MODE -> (T)(getValueMode( getTextFont() ));
+
+			// NEXT Handle custom text values
+
 			//			case VIRTUAL_TEXT_FONT_MODE -> (T)(getValueMode( getTextFont() ));
 			//			case VIRTUAL_TEXT_FILL_PAINT_MODE -> (T)(getValueMode( getTextFillPaint() ));
 			//			case VIRTUAL_TEXT_DRAW_PAINT_MODE -> (T)(getValueMode( getTextDrawPaint() ));
@@ -421,6 +437,9 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public <T> T setValue( String key, T newValue ) {
 		return switch( key ) {
 			case VIRTUAL_TEXT_FONT_MODE -> changeTextFontMode( newValue );
+
+			// NEXT Handle custom text values
+
 			//			case VIRTUAL_TEXT_FILL_PAINT_MODE -> changeTextFillPaintMode( newValue );
 			//			case VIRTUAL_TEXT_DRAW_PAINT_MODE -> changeTextDrawPaintMode( newValue );
 			//			case VIRTUAL_TEXT_DRAW_WIDTH_MODE -> changeTextDrawWidthMode( newValue );
@@ -444,6 +463,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	@Override
 	public Map<String, Object> getInformation() {
+		// NEXT Add new text values
 		return Map.of( ORIGIN, getOrigin(), TEXT, getText(), TEXT_FONT, getTextFont(), ROTATE, getRotate() );
 	}
 
@@ -471,6 +491,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, TEXT );
+		// NEXT Add new text values
 		map.putAll( asMap( TEXT, TEXT_FONT, ROTATE ) );
 		return map;
 	}
@@ -479,6 +500,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public DesignText updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( TEXT ) ) setText( (String)map.get( TEXT ) );
+
+		// NEXT Add new text values
 		if( map.containsKey( TEXT_FONT ) ) setTextFont( (String)map.get( TEXT_FONT ) );
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
@@ -500,9 +523,11 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	@Override
 	public String toString() {
+		// NEXT Add new text values
 		return super.toString( ORIGIN, TEXT, TEXT_FONT, ROTATE );
 	}
 
+	@Deprecated
 	<T> T changeTextFontMode( T newValue ) {
 		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
@@ -516,6 +541,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		}
 		return newValue;
 	}
+
+	// NEXT Finish these mode change methods
 
 	//	<T> T changeTextFillPaintMode( T newValue ) {
 	//		boolean isCustom = MODE_CUSTOM.equals( newValue );
