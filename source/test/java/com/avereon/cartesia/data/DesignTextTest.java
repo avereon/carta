@@ -43,7 +43,7 @@ public class DesignTextTest {
 		assertThat( text.getFontStrikethrough() ).isNull();
 
 		// Backward compatibility
-		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( text.getTextFont() ).isNull();
 	}
 
 	@Test
@@ -78,7 +78,7 @@ public class DesignTextTest {
 
 		text.setOrigin( new Point3D( 0, 0, 0 ) );
 		text.setText( "Test" );
-		text.setTextFont( DesignLayer.MODE_LAYER );
+		text.setTextFont( null );
 		text.setRotate( null );
 		assertThat( text.isModified() ).isFalse();
 
@@ -124,7 +124,7 @@ public class DesignTextTest {
 	@Test
 	void testFont() {
 		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
-		assertThat( text.getTextFont() ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getTextFont() ).isNull();
 
 		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
 		assertThat( text.getTextFont() ).isEqualTo( FontUtil.encode( Font.font( "Serif", 24 ) ) );
@@ -189,12 +189,12 @@ public class DesignTextTest {
 		layer.addShape( text );
 
 		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( text.getTextFont() ).isNull();
 		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
 
 		layer.setTextFont( "Serif|Regular|12.0" );
 		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( text.getTextFont() ).isNull();
 		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( "Serif|Regular|12.0" ) );
 
 		text.setTextFont( "SansSerif|Regular|16.0" );

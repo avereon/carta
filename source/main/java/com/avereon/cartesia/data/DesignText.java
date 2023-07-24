@@ -50,10 +50,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 		setText( text );
 		setRotate( rotate );
-
-		// Backward compatibility
-		// FIXME Do not set all these defaults here
-		setTextFont( MODE_LAYER );
 	}
 
 	public String getText() {
@@ -265,7 +261,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	@Deprecated
 	public String getTextFont() {
-		return getValue( TEXT_FONT, DesignLayer.DEFAULT_TEXT_FONT );
+		return getValue( TEXT_FONT );
 	}
 
 	@SuppressWarnings( "unchecked" )
