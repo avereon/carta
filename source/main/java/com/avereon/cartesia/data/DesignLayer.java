@@ -44,7 +44,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	static final String DEFAULT_DRAW_PATTERN = null;
 
-	static final String DEFAULT_FILL_PAINT = "#80808080";
+	static final String DEFAULT_FILL_PAINT = null;
 
 	static final String DEFAULT_TEXT_SIZE = "1";
 
