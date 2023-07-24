@@ -1,15 +1,11 @@
 package com.avereon.cartesia;
 
-import com.avereon.product.ProductCard;
-import com.avereon.zerra.BaseFullModTestCase;
-import org.junit.jupiter.api.BeforeEach;
+import com.avereon.zerra.BaseModTestCase;
 
-public abstract class BaseCartesiaTest extends BaseFullModTestCase {
+public abstract class BaseCartesiaTest extends BaseModTestCase<CartesiaMod> {
 
-	@BeforeEach
-	protected void setup() throws Exception {
-		super.setup();
-		initMod( ProductCard.card( CartesiaMod.class ) );
+	protected BaseCartesiaTest() {
+		super( CartesiaMod.class );
 	}
 
 	@Override
