@@ -29,9 +29,9 @@ public class DesignDrawableTest {
 		assertThat( drawable.getOrder() ).isEqualTo( -1 );
 		assertThat( drawable.getDrawPaint() ).isNull();
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
-		assertThat( drawable.getDrawWidth() ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getDrawWidth() ).isNull();
 		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
-		assertThat( drawable.getDrawCap() ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getDrawCap() ).isNull();
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 		assertThat( drawable.getDrawPattern() ).isNull();
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
@@ -75,13 +75,13 @@ public class DesignDrawableTest {
 		assertThat( drawable.getValueMode( drawable.getDrawPaint() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
 
 		// Check that the draw paint value is a copy of the layer draw paint value
-		assertThat( drawable.getDrawPaint() ).isEqualTo( Paints.toString( Color.BLACK ) );
-		assertThat( drawable.calcDrawPaint() ).isEqualTo( Color.BLACK );
+		assertThat( drawable.getDrawPaint() ).isEqualTo( "#808080ff" );
+		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( "#808080ff" ) );
 
 		// Change the layer draw paint to ensure that draw paint value is still the custom value
 		layer.setDrawPaint( Paints.toString( Color.WHITE ) );
-		assertThat( drawable.getDrawPaint() ).isEqualTo( Paints.toString( Color.BLACK ) );
-		assertThat( drawable.calcDrawPaint() ).isEqualTo( Color.BLACK );
+		assertThat( drawable.getDrawPaint() ).isEqualTo( "#808080ff" );
+		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( "#808080ff" ) );
 	}
 
 	@Test
@@ -191,13 +191,14 @@ public class DesignDrawableTest {
 
 	@Test
 	void testSetDrawCapWhenDrawCapModeIsLayer() {
-		assertThat( drawable.getDrawCap() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( drawable.getValueMode( drawable.getDrawCap() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getDrawCap() ).isNull();
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 
 		// Change the layer cap to ensure that the layer cap value is used
 		layer.setDrawCap( StrokeLineCap.SQUARE.name().toLowerCase() );
 		assertThat( drawable.getValueMode( drawable.getDrawCap() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-		assertThat( drawable.getDrawCap() ).isEqualTo( DesignLayer.MODE_LAYER );
+		assertThat( drawable.getDrawCap() ).isNull();
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.SQUARE );
 
 		drawable.setDrawCap( StrokeLineCap.ROUND.name().toLowerCase() );

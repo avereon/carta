@@ -31,16 +31,16 @@ public class DesignTextTest {
 		assertThat( text.getTextSize() ).isNull();
 		// NEXT Initial values should generally be null, so they don't have to be saved
 		assertThat( text.getFillPaint() ).isNull();
-		assertThat( text.getDrawPaint() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getDrawWidth() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getDrawPattern() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getDrawCap() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getDrawPaint() ).isNull();
+		assertThat( text.getDrawWidth() ).isNull();
+		assertThat( text.getDrawPattern() ).isNull();
+		assertThat( text.getDrawCap() ).isNull();
 
-		assertThat( text.getFontName() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getFontWeight() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getFontPosture() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getFontUnderline() ).isEqualTo( DesignText.MODE_LAYER );
-		assertThat( text.getFontStrikethrough() ).isEqualTo( DesignText.MODE_LAYER );
+		assertThat( text.getFontName() ).isNull();
+		assertThat( text.getFontWeight() ).isNull();
+		assertThat( text.getFontPosture() ).isNull();
+		assertThat( text.getFontUnderline() ).isNull();
+		assertThat( text.getFontStrikethrough() ).isNull();
 
 		// Backward compatibility
 		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.MODE_LAYER );

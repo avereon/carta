@@ -51,21 +51,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		setText( text );
 		setRotate( rotate );
 
-		// FIXME Do not set all these defaults here
-		//setTextSize( MODE_LAYER );
-		//setFillPaint( MODE_LAYER );
-		setDrawPaint( MODE_LAYER );
-		setDrawWidth( MODE_LAYER );
-		setDrawPattern( MODE_LAYER );
-		setDrawCap( MODE_LAYER );
-
-		// FIXME Do not set all these defaults here
-		setFontName( MODE_LAYER );
-		setFontWeight( MODE_LAYER );
-		setFontPosture( MODE_LAYER );
-		setFontUnderline( MODE_LAYER );
-		setFontStrikethrough( MODE_LAYER );
-
 		// Backward compatibility
 		// FIXME Do not set all these defaults here
 		setTextFont( MODE_LAYER );

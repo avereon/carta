@@ -106,7 +106,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawWidth() {
-		return getValue( DRAW_WIDTH, MODE_LAYER );
+		return getValue( DRAW_WIDTH );
 	}
 
 	public DesignDrawable setDrawWidth( String width ) {
@@ -149,7 +149,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public String getDrawCap() {
-		return getValue( DRAW_CAP, MODE_LAYER );
+		return getValue( DRAW_CAP );
 	}
 
 	public DesignDrawable setDrawCap( String cap ) {
