@@ -23,18 +23,18 @@ public class DesignLayerTest {
 	@Test
 	void testInitialValues() {
 		// Initial values should generally be null, so they don't have to be saved
-		assertThat( layer.getTextSize() ).isNull();
+		assertThat( layer.getTextSize() ).isEqualTo( DesignLayer.DEFAULT_TEXT_SIZE );
 		assertThat( layer.getTextFillPaint() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FILL_PAINT );
 		assertThat( layer.getTextDrawPaint() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_PAINT );
 		assertThat( layer.getTextDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH );
 		assertThat( layer.getTextDrawCap() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_CAP );
 		assertThat( layer.getTextDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_PATTERN );
 
-		assertThat( layer.getFontName() ).isNull();
-		assertThat( layer.getFontWeight() ).isNull();
-		assertThat( layer.getFontPosture() ).isNull();
-		assertThat( layer.getFontUnderline() ).isNull();
-		assertThat( layer.getFontStrikethrough() ).isNull();
+		assertThat( layer.getFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
+		assertThat( layer.getFontWeight() ).isEqualTo( DesignLayer.DEFAULT_FONT_WEIGHT );
+		assertThat( layer.getFontPosture() ).isEqualTo( DesignLayer.DEFAULT_FONT_POSTURE );
+		assertThat( layer.getFontUnderline() ).isEqualTo( DesignLayer.DEFAULT_FONT_UNDERLINE );
+		assertThat( layer.getFontStrikethrough() ).isEqualTo( DesignLayer.DEFAULT_FONT_STRIKETHROUGH );
 
 		// Backward compatibility
 		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );

@@ -28,6 +28,20 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	// How about justification?
 	// How about rich text support?
 
+	private static final String VIRTUAL_TEXT_SIZE_MODE = "text-size-mode";
+
+	private static final String VIRTUAL_FONT_NAME_MODE = "font-name-mode";
+
+	private static final String VIRTUAL_FONT_WEIGHT_MODE = "font-weight-mode";
+
+	private static final String VIRTUAL_FONT_POSTURE_MODE = "font-posture-mode";
+
+	private static final String VIRTUAL_FONT_UNDERLINE_MODE = "font-underline-mode";
+
+	private static final String VIRTUAL_FONT_STRIKETHROUGH_MODE = "font-strikethrough-mode";
+
+	// Backward compatibility
+	@Deprecated
 	private static final String VIRTUAL_TEXT_FONT_MODE = "text-font-mode";
 
 	public DesignText() {
@@ -63,8 +77,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	// Text size
 
 	public double calcTextSize() {
-		String value = getTextSizeWithInheritance();
-		return CadMath.evalNoException( value == null ? DesignLayer.DEFAULT_TEXT_SIZE : getTextSizeWithInheritance() );
+		return CadMath.evalNoException( getTextSizeWithInheritance() );
 	}
 
 	public String getTextSizeWithInheritance() {
@@ -418,16 +431,22 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T> T getValue( String key ) {
 		return switch( key ) {
+			case VIRTUAL_LAYER -> getLayer() == null ? null : (T)getLayer().getId();
+			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
+			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
+			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
+			case VIRTUAL_DRAW_CAP_MODE -> (T)(getValueMode( getDrawCap() ));
+			case VIRTUAL_FILL_PAINT_MODE -> (T)(getValueMode( getFillPaint() ));
+
+			case VIRTUAL_TEXT_SIZE_MODE -> (T)(getValueMode( getTextSize() ));
+			case VIRTUAL_FONT_NAME_MODE -> (T)(getValueMode( getFontName() ));
+			case VIRTUAL_FONT_WEIGHT_MODE -> (T)(getValueMode( getFontWeight() ));
+			case VIRTUAL_FONT_POSTURE_MODE -> (T)(getValueMode( getFontPosture() ));
+			case VIRTUAL_FONT_UNDERLINE_MODE -> (T)(getValueMode( getFontUnderline() ));
+			case VIRTUAL_FONT_STRIKETHROUGH_MODE -> (T)(getValueMode( getFontStrikethrough() ));
+
+			// Backward compatibility
 			case VIRTUAL_TEXT_FONT_MODE -> (T)(getValueMode( getTextFont() ));
-
-			// NEXT Handle custom text values
-
-			//			case VIRTUAL_TEXT_FONT_MODE -> (T)(getValueMode( getTextFont() ));
-			//			case VIRTUAL_TEXT_FILL_PAINT_MODE -> (T)(getValueMode( getTextFillPaint() ));
-			//			case VIRTUAL_TEXT_DRAW_PAINT_MODE -> (T)(getValueMode( getTextDrawPaint() ));
-			//			case VIRTUAL_TEXT_DRAW_WIDTH_MODE -> (T)(getValueMode( getTextDrawWidth() ));
-			//			case VIRTUAL_TEXT_DRAW_PATTERN_MODE -> (T)(getValueMode( getTextDrawPattern() ));
-			//			case VIRTUAL_TEXT_DRAW_CAP_MODE -> (T)(getValueMode( getTextDrawCap() ));
 
 			default -> super.getValue( key );
 		};
@@ -438,13 +457,20 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		return switch( key ) {
 			case VIRTUAL_TEXT_FONT_MODE -> changeTextFontMode( newValue );
 
+			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaintMode( newValue );
+			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
+			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidthMode( newValue );
+			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPatternMode( newValue );
+			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCapMode( newValue );
+
 			// NEXT Handle custom text values
 
-			//			case VIRTUAL_TEXT_FILL_PAINT_MODE -> changeTextFillPaintMode( newValue );
-			//			case VIRTUAL_TEXT_DRAW_PAINT_MODE -> changeTextDrawPaintMode( newValue );
-			//			case VIRTUAL_TEXT_DRAW_WIDTH_MODE -> changeTextDrawWidthMode( newValue );
-			//			case VIRTUAL_TEXT_DRAW_PATTERN_MODE -> changeTextDrawPatternMode( newValue );
-			//			case VIRTUAL_TEXT_DRAW_CAP_MODE -> changeTextDrawCapMode( newValue );
+			case VIRTUAL_TEXT_SIZE_MODE -> changeTextSizeMode( newValue );
+						case VIRTUAL_FONT_NAME_MODE -> changeFontNameMode( newValue );
+			//			case VIRTUAL_FONT_WEIGHT_MODE -> changeFontWeightMode( newValue );
+			//			case VIRTUAL_FONT_POSTURE_MODE -> changeFontPostureMode( newValue )
+			//			case VIRTUAL_FONT_UNDERLINE_MODE -> changeFontUnderlineMode( newValue )
+			//			case VIRTUAL_FONT_STRIKETHROUGH_MODE -> changeFontStrikethroughMode( newValue )
 
 			default -> super.setValue( key, newValue );
 		};
@@ -538,6 +564,32 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FONT_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting text font" );
+		}
+		return newValue;
+	}
+
+	<T> T changeTextSizeMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_TEXT_SIZE_MODE );
+		try( Txn ignored = Txn.create() ) {
+			setTextSize( isCustom ? getTextSizeWithInheritance() : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_SIZE_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting text size" );
+		}
+		return newValue;
+	}
+
+	<T> T changeFontNameMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_FONT_NAME_MODE );
+		try( Txn ignored = Txn.create() ) {
+			setFontName( isCustom ? getFontNameWithInheritance() : String.valueOf( newValue ).toLowerCase() );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FONT_NAME_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting font name" );
 		}
 		return newValue;
 	}

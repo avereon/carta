@@ -212,7 +212,6 @@ public class DesignTextTest {
 		assertThat( text.calcFontUnderline() ).isEqualTo( false );
 	}
 
-
 	@Test
 	void testFontStrikethrough() {
 		DesignText text = new DesignText();
@@ -301,4 +300,139 @@ public class DesignTextTest {
 		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( "SansSerif|Regular|16.0" ) );
 	}
 
+	// ### Text size
+
+	@Test
+	void testChangeTextSizeModeFromDefaultToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Change mode to custom to copy current getTextSizeWithInheritance value
+		text.changeTextSizeMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getTextSize() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the size is a copy of the layer size value
+		assertThat( text.getTextSize() ).isEqualTo( DesignLayer.DEFAULT_TEXT_SIZE );
+		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) );
+
+		// Change the layer size to ensure that size value is still the custom value
+		layer.setTextSize( "8.0" );
+		assertThat( text.getTextSize() ).isEqualTo( DesignLayer.DEFAULT_TEXT_SIZE );
+		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) );
+	}
+
+	@Test
+	void testChangeTextSizeModeFromLayerToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Set a custom layer text size
+		layer.setTextSize( "1/8" );
+
+		// Change mode to custom to copy current getTextSizeWithInheritance value
+		text.changeTextSizeMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getTextSize() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the size value is a copy of the layer size value
+		assertThat( text.getTextSize() ).isEqualTo( "1/8" );
+		assertThat( text.calcTextSize() ).isEqualTo( 0.125 );
+
+		// Change the layer size to ensure that size value is still the custom value
+		layer.setTextSize( "5" );
+		assertThat( text.getTextSize() ).isEqualTo( "1/8" );
+		assertThat( text.calcTextSize() ).isEqualTo( 1.0 / 8.0 );
+	}
+
+	@Test
+	void testSetTextSizeWhenTextSizeModeIsLayer() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		assertThat( text.getValueMode( text.getTextSize() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getTextSize() ).isNull();
+		assertThat( text.calcTextSize() ).isEqualTo( Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) );
+
+		layer.setTextSize( "1/6" );
+		assertThat( text.getValueMode( text.getTextSize() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getTextSize() ).isNull();
+		assertThat( text.calcTextSize() ).isEqualTo( 1.0 / 6.0 );
+
+		text.setTextSize( "16.0" );
+		assertThat( text.getValueMode( text.getTextSize() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getTextSize() ).isEqualTo( "16.0" );
+		assertThat( text.calcTextSize() ).isEqualTo( 16.0 );
+	}
+
+	// ### Font name
+
+	@Test
+	void testChangeFontNameModeFromDefaultToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Change mode to custom to copy current getFontNameWithInheritance value
+		text.changeFontNameMode( DesignDrawable.MODE_CUSTOM );
+		// Because the default value is null the value mode is the layer mode
+		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+
+		// Check that the name is a copy of the layer name value
+		assertThat( text.getFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
+		assertThat( text.calcFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
+
+		// Change the layer name to ensure that size value is still the custom value
+		layer.setFontName( "Pinwheel" );
+		assertThat( text.getFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
+		// Because the default value is null the value mode is the layer mode
+		assertThat( text.calcFontName() ).isEqualTo( "Pinwheel" );
+	}
+
+	@Test
+	void testChangeFontNameModeFromLayerToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Set a custom layer text size
+		layer.setFontName( "Whirlpool" );
+
+		// Change mode to custom to copy current getFontNameWithInheritance value
+		text.changeFontNameMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the size value is a copy of the layer size value
+		assertThat( text.getFontName() ).isEqualTo( "Whirlpool" );
+		assertThat( text.calcFontName() ).isEqualTo( "Whirlpool" );
+
+		// Change the layer size to ensure that size value is still the custom value
+		layer.setFontName( "Andromeda" );
+		assertThat( text.getFontName() ).isEqualTo( "Whirlpool" );
+		assertThat( text.calcFontName() ).isEqualTo( "Whirlpool" );
+	}
+
+	@Test
+	void testSetFontNameWhenFontSizeModeIsLayer() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontName() ).isNull();
+		assertThat( text.calcFontName() ).isEqualTo(  DesignLayer.DEFAULT_FONT_NAME );
+
+		layer.setFontName( "Cartwheel" );
+		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontName() ).isNull();
+		assertThat( text.calcFontName() ).isEqualTo( "Cartwheel" );
+
+		text.setFontName( "Andromeda" );
+		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getFontName() ).isEqualTo( "Andromeda" );
+		assertThat( text.calcFontName() ).isEqualTo( "Andromeda" );
+	}
+
+	// NEXT Continue writing tests for remaining fields
 }

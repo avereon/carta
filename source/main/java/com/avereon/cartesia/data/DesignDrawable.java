@@ -32,17 +32,17 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String FILL_PAINT = "fill-paint";
 
-	private static final String VIRTUAL_LAYER = "layer";
+	static final String VIRTUAL_LAYER = "layer";
 
-	private static final String VIRTUAL_DRAW_PAINT_MODE = "draw-paint-mode";
+	static final String VIRTUAL_DRAW_PAINT_MODE = "draw-paint-mode";
 
-	private static final String VIRTUAL_DRAW_WIDTH_MODE = "draw-width-mode";
+	static final String VIRTUAL_DRAW_WIDTH_MODE = "draw-width-mode";
 
-	private static final String VIRTUAL_DRAW_PATTERN_MODE = "draw-pattern-mode";
+	static final String VIRTUAL_DRAW_PATTERN_MODE = "draw-pattern-mode";
 
-	private static final String VIRTUAL_DRAW_CAP_MODE = "draw-cap-mode";
+	static final String VIRTUAL_DRAW_CAP_MODE = "draw-cap-mode";
 
-	private static final String VIRTUAL_FILL_PAINT_MODE = "fill-paint-mode";
+	static final String VIRTUAL_FILL_PAINT_MODE = "fill-paint-mode";
 
 	static final String MODE_CUSTOM = "custom";
 
@@ -309,7 +309,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	<T> T changeFillPaintMode( T newValue ) {
-		boolean isCustom =isCustomValue( newValue );
+		boolean isCustom = isCustomValue( newValue );
 
 		String oldValue = getValue( VIRTUAL_FILL_PAINT_MODE );
 		try( Txn ignored = Txn.create() ) {

@@ -78,11 +78,18 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
+		setTextSize( DEFAULT_TEXT_SIZE );
 		setTextFillPaint( DEFAULT_TEXT_FILL_PAINT );
 		setTextDrawPaint( DEFAULT_TEXT_DRAW_PAINT );
 		setTextDrawWidth( DEFAULT_TEXT_DRAW_WIDTH );
 		setTextDrawPattern( DEFAULT_TEXT_DRAW_PATTERN );
 		setTextDrawCap( DEFAULT_TEXT_DRAW_CAP );
+
+		setFontName( DEFAULT_FONT_NAME );
+		setFontWeight( DEFAULT_FONT_WEIGHT );
+		setFontPosture( DEFAULT_FONT_POSTURE );
+		setFontUnderline( DEFAULT_FONT_UNDERLINE );
+		setFontStrikethrough( DEFAULT_FONT_STRIKETHROUGH );
 
 		// Backward compatibility
 		setTextFont( DEFAULT_TEXT_FONT );
