@@ -169,7 +169,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	private void remapLayerForLoad( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
 		Map<String, Map<String, Object>> shapes = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
 
-		remapValue( map, DesignLayer.TEXT_FONT, CartesiaDesignCodec.loadLayerPropertyMapping );
+		remapValue( map, DesignLayer.FONT_NAME, CartesiaDesignCodec.loadLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_FILL_PAINT, CartesiaDesignCodec.loadLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, CartesiaDesignCodec.loadLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, CartesiaDesignCodec.loadLayerPropertyMapping );
@@ -187,7 +187,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		remapValue( map, DesignDrawable.FILL_PAINT, CartesiaDesignCodec.loadPaintMapping );
 
 		if( DesignText.TEXT.equals( map.get( DesignShape.SHAPE ) ) ) {
-			remapValue( map, DesignText.TEXT_FONT, CartesiaDesignCodec.loadPropertyMapping );
+			remapValue( map, DesignLayer.FONT_NAME, CartesiaDesignCodec.loadPaintMapping );
 		}
 	}
 
@@ -204,12 +204,12 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 	private void remapLayerForSave( Map<String, Object> map, Consumer<Map<String, Object>> shapeMapper ) {
 		Map<String, Map<String, Object>> shapes = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
 
-		remapValue( map, DesignLayer.TEXT_FONT, CartesiaDesignCodec.saveLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_FILL_PAINT, CartesiaDesignCodec.saveLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, CartesiaDesignCodec.saveLayerPaintMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, CartesiaDesignCodec.saveLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_CAP, CartesiaDesignCodec.saveLayerPropertyMapping );
 		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, CartesiaDesignCodec.saveLayerPropertyMapping );
+		remapValue( map, DesignLayer.FONT_NAME, CartesiaDesignCodec.savePropertyMapping );
 
 		shapes.values().forEach( shapeMapper );
 	}
@@ -220,7 +220,6 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaTest {
 		remapValue( map, DesignDrawable.DRAW_CAP, CartesiaDesignCodec.savePropertyMapping );
 		remapValue( map, DesignDrawable.DRAW_PATTERN, CartesiaDesignCodec.savePropertyMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, CartesiaDesignCodec.savePaintMapping );
-		remapValue( map, DesignText.TEXT_FONT, CartesiaDesignCodec.savePropertyMapping );
 	}
 
 }

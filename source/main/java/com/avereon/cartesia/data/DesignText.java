@@ -4,7 +4,6 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -40,10 +39,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	private static final String VIRTUAL_FONT_STRIKETHROUGH_MODE = "font-strikethrough-mode";
 
-	// Backward compatibility
-	@Deprecated
-	private static final String VIRTUAL_TEXT_FONT_MODE = "text-font-mode";
-
 	public DesignText() {
 		this( null );
 	}
@@ -58,7 +53,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	public DesignText( Point3D origin, String text, Double rotate ) {
 		super( origin );
-		addModifyingKeys( TEXT, TEXT_SIZE, ROTATE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH, TEXT_FONT );
+		addModifyingKeys( TEXT, TEXT_SIZE, ROTATE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH );
 
 		setText( text );
 		setRotate( rotate );
@@ -259,150 +254,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	}
 
 	public Font calcTextFont() {
-		return FontUtil.decode( getTextFontWithInheritance() );
-
-		// FIXME Use this implementation eventually
-
-		//		String name = getFontNameWithInheritance();
-		//		String size = getTextSizeWithInheritance();
-		//		String weight = getFontWeightWithInheritance();
-		//		String posture = getFontPostureWithInheritance();
-		//
-		//		if( name == null ) name = DesignText.DEFAULT_FONT_NAME;
-		//		if( size == null ) size = DesignText.DEFAULT_TEXT_SIZE;
-		//		if( weight == null ) weight = DesignText.DEFAULT_FONT_WEIGHT;
-		//		if( posture == null ) posture = DesignText.DEFAULT_FONT_POSTURE;
-		//
-		//		return Font.font( name, FontWeight.valueOf( weight.toUpperCase() ), FontPosture.valueOf( posture.toUpperCase() ), CadMath.evalNoException( size ) );
+		return Font.font( calcFontName(), calcFontWeight(), calcFontPosture(), calcTextSize() );
 	}
-
-	@Deprecated
-	public String getTextFontWithInheritance() {
-		String font = getTextFont();
-		if( isCustomValue( font ) ) return font;
-
-		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_TEXT_FONT : layer.getTextFont();
-	}
-
-	@Deprecated
-	public String getTextFont() {
-		return getValue( TEXT_FONT );
-	}
-
-	@SuppressWarnings( "unchecked" )
-	@Deprecated
-	public <T extends DesignDrawable> T setTextFont( String value ) {
-		setValue( TEXT_FONT, value );
-		return (T)this;
-	}
-
-	//	public Paint calcTextFillPaint() {
-	//		return Paints.parseWithNullOnException( getTextFillPaintWithInheritance() );
-	//	}
-	//
-	//	public String getTextFillPaintWithInheritance() {
-	//		String paint = getTextFillPaint();
-	//		if( paint == null || isCustomValue( paint ) ) return paint;
-	//
-	//		DesignLayer layer = getLayer();
-	//		return layer == null ? DesignLayer.DEFAULT_TEXT_FILL_PAINT : layer.getTextFillPaint();
-	//	}
-	//
-	//	public String getTextFillPaint() {
-	//		// Do not default to layer for this property
-	//		return getValue( TEXT_FILL_PAINT );
-	//	}
-	//
-	//	public DesignDrawable setTextFillPaint( String paint ) {
-	//		setValue( TEXT_FILL_PAINT, paint );
-	//		return this;
-	//	}
-	//
-	//	public Paint calcTextDrawPaint() {
-	//		return Paints.parseWithNullOnException( getTextDrawPaintWithInheritance() );
-	//	}
-	//
-	//	public String getTextDrawPaintWithInheritance() {
-	//		String paint = getTextDrawPaint();
-	//		if( paint == null || isCustomValue( paint ) ) return paint;
-	//
-	//		DesignLayer layer = getLayer();
-	//		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_PAINT : layer.getTextDrawPaint();
-	//	}
-	//
-	//	public String getTextDrawPaint() {
-	//		return getValue( TEXT_DRAW_PAINT );
-	//	}
-	//
-	//	public DesignDrawable setTextDrawPaint( String paint ) {
-	//		setValue( TEXT_DRAW_PAINT, paint );
-	//		return this;
-	//	}
-	//
-	//	public double calcTextDrawWidth() {
-	//		return CadMath.evalNoException( getTextDrawWidthWithInheritance() );
-	//	}
-	//
-	//	public String getTextDrawWidthWithInheritance() {
-	//		String width = getTextDrawWidth();
-	//		if( isCustomValue( width ) ) return width;
-	//
-	//		DesignLayer layer = getLayer();
-	//		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_WIDTH : layer.getTextDrawWidth();
-	//	}
-	//
-	//	public String getTextDrawWidth() {
-	//		return getValue( TEXT_DRAW_WIDTH, MODE_LAYER );
-	//	}
-	//
-	//	public DesignDrawable setTextDrawWidth( String width ) {
-	//		setValue( TEXT_DRAW_WIDTH, width );
-	//		return this;
-	//	}
-	//
-	//	public List<Double> calcTextDrawPattern() {
-	//		return CadShapes.parseDashPattern( getTextDrawPatternWithInheritance() );
-	//	}
-	//
-	//	public String getTextDrawPatternWithInheritance() {
-	//		String pattern = getTextDrawPattern();
-	//		if( isCustomValue( pattern ) ) return pattern;
-	//
-	//		DesignLayer layer = getLayer();
-	//		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_PATTERN : layer.getTextDrawPattern();
-	//	}
-	//
-	//	public String getTextDrawPattern() {
-	//		// Do not default to layer for this property
-	//		return getValue( TEXT_DRAW_PATTERN );
-	//	}
-	//
-	//	public DesignDrawable setTextDrawPattern( String pattern ) {
-	//		setValue( TEXT_DRAW_PATTERN, TextUtil.isEmpty( pattern ) ? null : pattern );
-	//		return this;
-	//	}
-	//
-	//	public StrokeLineCap calcTextDrawCap() {
-	//		return StrokeLineCap.valueOf( getTextDrawCapWithInheritance().toUpperCase() );
-	//	}
-	//
-	//	public String getTextDrawCapWithInheritance() {
-	//		String cap = getTextDrawCap();
-	//		if( isCustomValue( cap ) ) return cap;
-	//
-	//		DesignLayer layer = getLayer();
-	//		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_CAP : layer.getTextDrawCap();
-	//	}
-	//
-	//	public String getTextDrawCap() {
-	//		return getValue( TEXT_DRAW_CAP, MODE_LAYER );
-	//	}
-	//
-	//	public DesignDrawable setTextDrawCap( String cap ) {
-	//		setValue( TEXT_DRAW_CAP, cap );
-	//		return this;
-	//	}
 
 	public double calcRotate() {
 		return hasKey( ROTATE ) ? getRotate() : 0.0;
@@ -432,6 +285,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public <T> T getValue( String key ) {
 		return switch( key ) {
 			case VIRTUAL_LAYER -> getLayer() == null ? null : (T)getLayer().getId();
+
 			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
 			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
 			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
@@ -445,9 +299,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 			case VIRTUAL_FONT_UNDERLINE_MODE -> (T)(getValueMode( getFontUnderline() ));
 			case VIRTUAL_FONT_STRIKETHROUGH_MODE -> (T)(getValueMode( getFontStrikethrough() ));
 
-			// Backward compatibility
-			case VIRTUAL_TEXT_FONT_MODE -> (T)(getValueMode( getTextFont() ));
-
 			default -> super.getValue( key );
 		};
 	}
@@ -455,8 +306,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@Override
 	public <T> T setValue( String key, T newValue ) {
 		return switch( key ) {
-			case VIRTUAL_TEXT_FONT_MODE -> changeTextFontMode( newValue );
-
 			case VIRTUAL_FILL_PAINT_MODE -> changeFillPaintMode( newValue );
 			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
 			case VIRTUAL_DRAW_WIDTH_MODE -> changeDrawWidthMode( newValue );
@@ -487,8 +336,26 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	@Override
 	public Map<String, Object> getInformation() {
-		// NEXT Add new text values
-		return Map.of( ORIGIN, getOrigin(), TEXT, getText(), TEXT_FONT, getTextFont(), ROTATE, getRotate() );
+		return Map.of(
+			ORIGIN,
+			getOrigin(),
+			TEXT,
+			getText(),
+			ROTATE,
+			getRotate(),
+			TEXT_SIZE,
+			getTextSize(),
+			FONT_NAME,
+			getFontName(),
+			FONT_WEIGHT,
+			getFontName(),
+			FONT_POSTURE,
+			getFontName(),
+			FONT_UNDERLINE,
+			getFontName(),
+			FONT_STRIKETHROUGH,
+			getFontName()
+		);
 	}
 
 	@Override
@@ -515,8 +382,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, TEXT );
-		// NEXT Add new text values
-		map.putAll( asMap( TEXT, TEXT_FONT, ROTATE ) );
+		map.putAll( asMap( TEXT, ROTATE, TEXT_SIZE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH ) );
 		return map;
 	}
 
@@ -524,10 +390,15 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public DesignText updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( TEXT ) ) setText( (String)map.get( TEXT ) );
-
-		// NEXT Add new text values
-		if( map.containsKey( TEXT_FONT ) ) setTextFont( (String)map.get( TEXT_FONT ) );
 		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
+
+		if( map.containsKey( TEXT_SIZE ) ) setTextSize( (String)map.get( TEXT_SIZE ) );
+		if( map.containsKey( FONT_NAME ) ) setFontName( (String)map.get( FONT_NAME ) );
+		if( map.containsKey( FONT_WEIGHT ) ) setTextSize( (String)map.get( FONT_WEIGHT ) );
+		if( map.containsKey( FONT_POSTURE ) ) setTextSize( (String)map.get( FONT_POSTURE ) );
+		if( map.containsKey( FONT_UNDERLINE ) ) setTextSize( (String)map.get( FONT_UNDERLINE ) );
+		if( map.containsKey( FONT_STRIKETHROUGH ) ) setTextSize( (String)map.get( FONT_STRIKETHROUGH ) );
+
 		return this;
 	}
 
@@ -547,23 +418,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	@Override
 	public String toString() {
-		// NEXT Add new text values
-		return super.toString( ORIGIN, TEXT, TEXT_FONT, ROTATE );
-	}
-
-	@Deprecated
-	<T> T changeTextFontMode( T newValue ) {
-		boolean isCustom = MODE_CUSTOM.equals( newValue );
-
-		String oldValue = getValue( VIRTUAL_TEXT_FONT_MODE );
-		try( Txn ignored = Txn.create() ) {
-			setTextFont( String.valueOf( newValue ) );
-			setTextFont( isCustom ? getTextFontWithInheritance() : String.valueOf( newValue ) );
-			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FONT_MODE, oldValue, newValue ) ) );
-		} catch( TxnException exception ) {
-			log.atError().withCause( exception ).log( "Error setting text font" );
-		}
-		return newValue;
+		return super.toString( ORIGIN, TEXT, ROTATE, TEXT_SIZE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH );
 	}
 
 	<T> T changeTextSizeMode( T newValue ) {

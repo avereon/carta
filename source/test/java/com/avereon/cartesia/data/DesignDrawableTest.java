@@ -3,9 +3,10 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.zarra.color.Paints;
-import com.avereon.zarra.font.FontUtil;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,21 +25,6 @@ public class DesignDrawableTest {
 		drawable = new DesignLine();
 		layer = new DesignLayer();
 		layer.addDrawable( drawable );
-
-		// Check the default values
-		assertThat( drawable.getOrder() ).isEqualTo( -1 );
-		assertThat( drawable.getDrawPaint() ).isNull();
-		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
-		assertThat( drawable.getDrawWidth() ).isNull();
-		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
-		assertThat( drawable.getDrawCap() ).isNull();
-		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
-		assertThat( drawable.getDrawPattern() ).isNull();
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
-		assertThat( drawable.getFillPaint() ).isNull();
-		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
-		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
-		assertThat( layer.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
 	}
 
 	@Test
@@ -55,7 +41,18 @@ public class DesignDrawableTest {
 		assertThat( layer.getDrawCap() ).isEqualTo( DesignLayer.DEFAULT_DRAW_CAP );
 		assertThat( layer.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
 		assertThat( layer.getFillPaint() ).isEqualTo( DesignLayer.DEFAULT_FILL_PAINT );
-		assertThat( layer.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
+
+		assertThat( layer.getTextDrawPaint() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_PAINT );
+		assertThat( layer.getTextDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH );
+		assertThat( layer.getTextDrawCap() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_CAP );
+		assertThat( layer.getTextDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_PATTERN );
+		assertThat( layer.getTextFillPaint() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FILL_PAINT );
+
+		assertThat( layer.getFontName() ).isNull();
+		assertThat( layer.getFontWeight() ).isEqualTo( DesignLayer.DEFAULT_FONT_WEIGHT );
+		assertThat( layer.getFontPosture() ).isEqualTo( DesignLayer.DEFAULT_FONT_POSTURE );
+		assertThat( layer.getFontUnderline() ).isEqualTo( DesignLayer.DEFAULT_FONT_UNDERLINE );
+		assertThat( layer.getFontStrikethrough() ).isEqualTo( DesignLayer.DEFAULT_FONT_STRIKETHROUGH );
 	}
 
 	@Test
@@ -65,7 +62,37 @@ public class DesignDrawableTest {
 		assertThat( layer.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 		assertThat( layer.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
 		assertThat( layer.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
-		assertThat( layer.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+
+		assertThat( layer.calcTextDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_DRAW_PAINT ) );
+		assertThat( layer.calcTextDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH ) );
+		assertThat( layer.calcTextDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_TEXT_DRAW_CAP.toUpperCase() ) );
+		assertThat( layer.calcTextDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_TEXT_DRAW_PATTERN ) );
+		assertThat( layer.calcTextFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_FILL_PAINT ) );
+
+		assertThat( layer.calcFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
+		assertThat( layer.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignLayer.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
+		assertThat( layer.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignLayer.DEFAULT_FONT_POSTURE.toUpperCase() ) );
+		assertThat( layer.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_UNDERLINE ) );
+		assertThat( layer.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_STRIKETHROUGH ) );
+	}
+
+	@Test
+	void testDrawableDefaults() {
+		assertThat( drawable.getOrder() ).isEqualTo( -1 );
+		assertThat( drawable.getDrawPaint() ).isNull();
+		assertThat( drawable.getDrawWidth() ).isNull();
+		assertThat( drawable.getDrawCap() ).isNull();
+		assertThat( drawable.getDrawPattern() ).isNull();
+		assertThat( drawable.getFillPaint() ).isNull();
+	}
+
+	@Test
+	void testDrawableCalcDefaults() {
+		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
+		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 	}
 
 	@Test

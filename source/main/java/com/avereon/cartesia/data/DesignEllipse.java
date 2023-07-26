@@ -26,19 +26,21 @@ public class DesignEllipse extends DesignShape {
 
 	public static final String RADII = "radii";
 
-	/**
-	 * @deprecated Maintained for backward compatibility only
-	 */
-	@Deprecated
-	public static final String X_RADIUS = "x-radius";
-
-	/**
-	 * @deprecated Maintained for backward compatibility only
-	 */
-	@Deprecated
-	public static final String Y_RADIUS = "y-radius";
-
 	public static final String ROTATE = "rotate";
+
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
+	@Deprecated
+	@SuppressWarnings( "DeprecatedIsStillUsed" )
+	private static final String X_RADIUS = "x-radius";
+
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
+	@Deprecated
+	@SuppressWarnings( "DeprecatedIsStillUsed" )
+	private static final String Y_RADIUS = "y-radius";
 
 	private static final String PERIMETER = "perimeter";
 

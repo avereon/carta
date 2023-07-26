@@ -5,15 +5,6 @@ import javafx.scene.text.FontWeight;
 
 public interface DesignTextSupport {
 
-	/**
-	 * @deprecated in favor of FONT_NAME, FONT_WEIGHT, FONT_POSTURE, TEXT_SIZE, FONT_UNDERLINE, FONT_STRIKETHROUGH
-	 */
-	@Deprecated
-	String TEXT_FONT = "text-font";
-
-	@Deprecated
-	String DEFAULT_TEXT_FONT = "System|Regular|1.0";
-
 	String TEXT_SIZE = "text-size";
 
 	String TEXT_FILL_PAINT = "text-fill-paint";

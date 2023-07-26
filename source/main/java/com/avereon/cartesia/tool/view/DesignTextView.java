@@ -16,13 +16,27 @@ import java.util.List;
 @CustomLog
 public class DesignTextView extends DesignShapeView {
 
+	/**
+	 * This constant is "points per inch". This is the size of a font point:
+	 * <a href="https://fonts.google.com/knowledge/glossary/point_size">...</a>
+	 */
 	private static final double PPI = 1.0 / 72.0;
 
 	private EventHandler<NodeEvent> originHandler;
 
 	private EventHandler<NodeEvent> textHandler;
 
-	private EventHandler<NodeEvent> fontHandler;
+	private EventHandler<NodeEvent> textSizeHandler;
+
+	private EventHandler<NodeEvent> fontNameHandler;
+
+	private EventHandler<NodeEvent> fontWeightHandler;
+
+	private EventHandler<NodeEvent> fontPostureHandler;
+
+	private EventHandler<NodeEvent> fontUnderlineHandler;
+
+	private EventHandler<NodeEvent> fontStrikethroughHandler;
 
 	private EventHandler<NodeEvent> rotateHandler;
 
@@ -81,19 +95,40 @@ public class DesignTextView extends DesignShapeView {
 		getDesignShape().register( DesignText.TEXT, textHandler = e -> Fx.run( () -> {
 			((Text)getShape()).setText( designText.getText() );
 		} ) );
-		getDesignShape().register( DesignText.TEXT_FONT, fontHandler = e -> Fx.run( () -> {
-			((Text)getShape()).setFont( getDesignText().calcTextFont() );
-			updateFont( designText, getShape() );
-		} ) );
 		getDesignShape().register( DesignText.ROTATE, rotateHandler = e -> Fx.run( () -> {
 			updateRotate( designText, getShape() );
+		} ) );
+
+		getDesignShape().register( DesignText.TEXT_SIZE, textSizeHandler = e -> Fx.run( () -> {
+			updateFont( designText, getShape() );
+		} ) );
+		getDesignShape().register( DesignText.FONT_NAME, fontNameHandler = e -> Fx.run( () -> {
+			updateFont( designText, getShape() );
+		} ) );
+		getDesignShape().register( DesignText.FONT_WEIGHT, fontWeightHandler = e -> Fx.run( () -> {
+			updateFont( designText, getShape() );
+		} ) );
+		getDesignShape().register( DesignText.FONT_POSTURE, fontPostureHandler = e -> Fx.run( () -> {
+			updateFont( designText, getShape() );
+		} ) );
+		getDesignShape().register( DesignText.FONT_UNDERLINE, fontUnderlineHandler = e -> Fx.run( () -> {
+			updateFont( designText, getShape() );
+		} ) );
+		getDesignShape().register( DesignText.FONT_STRIKETHROUGH, fontStrikethroughHandler = e -> Fx.run( () -> {
+			updateFont( designText, getShape() );
 		} ) );
 	}
 
 	@Override
 	void unregisterListeners() {
+		getDesignShape().unregister( DesignText.FONT_STRIKETHROUGH, fontStrikethroughHandler );
+		getDesignShape().unregister( DesignText.FONT_UNDERLINE, fontUnderlineHandler );
+		getDesignShape().unregister( DesignText.FONT_POSTURE, fontPostureHandler );
+		getDesignShape().unregister( DesignText.FONT_WEIGHT, fontWeightHandler );
+		getDesignShape().unregister( DesignText.FONT_NAME, fontNameHandler );
+		getDesignShape().unregister( DesignText.TEXT_SIZE, textSizeHandler );
+
 		getDesignShape().unregister( DesignText.ROTATE, rotateHandler );
-		getDesignShape().unregister( DesignText.TEXT_FONT, fontHandler );
 		getDesignShape().unregister( DesignText.TEXT, textHandler );
 		getDesignShape().unregister( DesignText.ORIGIN, originHandler );
 		super.unregisterListeners();
@@ -102,8 +137,9 @@ public class DesignTextView extends DesignShapeView {
 	void updateFont( DesignText designText, Shape shape ) {
 		Text text = (Text)shape;
 		text.setFont( designText.calcTextFont() );
-		text.setFill( designText.calcFillPaint() );
-		text.setStroke( designText.calcDrawPaint() );
+		text.setUnderline( designText.calcFontUnderline() );
+		text.setStrikethrough( designText.calcFontStrikethrough() );
+
 		updateTranslate( designText, shape );
 	}
 

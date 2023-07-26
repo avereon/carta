@@ -38,10 +38,26 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private static final String POINT = "point";
 
-	private static final String RADII = "radii";
-
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
 	@Deprecated
+	@SuppressWarnings( "DeprecatedIsStillUsed" )
 	private static final String RADIUS = "radius";
+
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
+	@Deprecated
+	@SuppressWarnings( "DeprecatedIsStillUsed" )
+	private static final String X_RADIUS = "x-radius";
+
+	/**
+	 * @deprecated Maintained for backward compatibility only
+	 */
+	@Deprecated
+	@SuppressWarnings( "DeprecatedIsStillUsed" )
+	private static final String Y_RADIUS = "y-radius";
 
 	static final Map<String, String> saveLayerPaintMapping;
 
@@ -164,28 +180,22 @@ public abstract class CartesiaDesignCodec extends Codec {
 		remapValue( map, DesignLayer.FONT_UNDERLINE, loadLayerPropertyMapping );
 		remapValue( map, DesignLayer.FONT_STRIKETHROUGH, loadLayerPropertyMapping );
 
-		// Backward compatibility
-		remapValue( map, DesignLayer.TEXT_FONT, loadLayerPropertyMapping );
-
 		// Clean values
 		cleanPatternValue( map, DesignLayer.TEXT_DRAW_PATTERN );
 
 		// Load text values
-		if( map.containsKey( DesignLayer.TEXT_SIZE ) ) layer.setTextSize( (String)map.get( DesignLayer.TEXT_SIZE ) );
 		layer.setTextFillPaint( map.containsKey( DesignLayer.TEXT_FILL_PAINT ) ? (String)map.get( DesignLayer.TEXT_FILL_PAINT ) : null );
 		layer.setTextDrawPaint( map.containsKey( DesignLayer.TEXT_DRAW_PAINT ) ? (String)map.get( DesignLayer.TEXT_DRAW_PAINT ) : null );
 		if( map.containsKey( DesignLayer.TEXT_DRAW_WIDTH ) ) layer.setTextDrawWidth( (String)map.get( DesignLayer.TEXT_DRAW_WIDTH ) );
 		if( map.containsKey( DesignLayer.TEXT_DRAW_CAP ) ) layer.setTextDrawCap( (String)map.get( DesignLayer.TEXT_DRAW_CAP ) );
 		if( map.containsKey( DesignLayer.TEXT_DRAW_PATTERN ) ) layer.setTextDrawPattern( (String)map.get( DesignLayer.TEXT_DRAW_PATTERN ) );
 
-		// TODO if( map.containsKey( DesignLayer.FONT_NAME ) ) layer.setFontName( (String)map.get( DesignLayer.FONT_NAME ) );
-		// TODO if( map.containsKey( DesignLayer.FONT_WEIGHT ) ) layer.setFontWeight( (String)map.get( DesignLayer.FONT_WEIGHT ) );
-		// TODO if( map.containsKey( DesignLayer.FONT_POSTURE ) ) layer.setFontPosture( (String)map.get( DesignLayer.FONT_POSTURE ) );
-		// TODO if( map.containsKey( DesignLayer.FONT_UNDERLINE ) ) layer.setFontUnderline( (String)map.get( DesignLayer.FONT_UNDERLINE ) );
-		// TODO if( map.containsKey( DesignLayer.FONT_STRIKETHROUGH ) ) layer.setFontStrikethrough( (String)map.get( DesignLayer.FONT_STRIKETHROUGH ) );
-
-		// Backward compatibility
-		layer.setTextFont( map.containsKey( DesignLayer.TEXT_FONT ) ? (String)map.get( DesignLayer.TEXT_FONT ) : null );
+		if( map.containsKey( DesignLayer.TEXT_SIZE ) ) layer.setTextSize( (String)map.get( DesignLayer.TEXT_SIZE ) );
+		if( map.containsKey( DesignLayer.FONT_NAME ) ) layer.setFontName( (String)map.get( DesignLayer.FONT_NAME ) );
+		if( map.containsKey( DesignLayer.FONT_WEIGHT ) ) layer.setFontWeight( (String)map.get( DesignLayer.FONT_WEIGHT ) );
+		if( map.containsKey( DesignLayer.FONT_POSTURE ) ) layer.setFontPosture( (String)map.get( DesignLayer.FONT_POSTURE ) );
+		if( map.containsKey( DesignLayer.FONT_UNDERLINE ) ) layer.setFontUnderline( (String)map.get( DesignLayer.FONT_UNDERLINE ) );
+		if( map.containsKey( DesignLayer.FONT_STRIKETHROUGH ) ) layer.setFontStrikethrough( (String)map.get( DesignLayer.FONT_STRIKETHROUGH ) );
 
 		// Load layer geometry
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );
@@ -285,10 +295,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		} else if( map.containsKey( RADIUS ) ) {
 			double radius = ((Number)map.get( RADIUS )).doubleValue();
 			ellipse.setRadii( new Point3D( radius, radius, 0 ) );
-		} else if( map.containsKey( DesignEllipse.X_RADIUS ) && map.containsKey( DesignEllipse.Y_RADIUS ) ) {
+		} else if( map.containsKey( X_RADIUS ) && map.containsKey( Y_RADIUS ) ) {
 			// For backward compatibility
-			double xRadius = ((Number)map.get( DesignEllipse.X_RADIUS )).doubleValue();
-			double yRadius = ((Number)map.get( DesignEllipse.Y_RADIUS )).doubleValue();
+			double xRadius = ((Number)map.get( X_RADIUS )).doubleValue();
+			double yRadius = ((Number)map.get( Y_RADIUS )).doubleValue();
 			ellipse.setRadii( new Point3D( xRadius, yRadius, 0 ) );
 		}
 
@@ -320,11 +330,15 @@ public abstract class CartesiaDesignCodec extends Codec {
 		DesignText text = loadDesignShape( map, new DesignText() );
 
 		// Geometry value mapping
-		remapValue( map, DesignText.TEXT_FONT, CartesiaDesignCodec.loadPropertyMapping );
-
 		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
-		if( map.containsKey( DesignText.TEXT_FONT ) ) text.setTextFont( (String)map.get( DesignText.TEXT_FONT ) );
 		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( ((Number)map.get( DesignText.ROTATE )).doubleValue() );
+
+		if( map.containsKey( DesignText.TEXT_SIZE ) ) text.setTextSize( (String)map.get( DesignText.TEXT_SIZE ) );
+		if( map.containsKey( DesignText.FONT_NAME ) ) text.setFontName( (String)map.get( DesignText.FONT_NAME ) );
+		if( map.containsKey( DesignText.FONT_WEIGHT ) ) text.setFontWeight( (String)map.get( DesignText.FONT_WEIGHT ) );
+		if( map.containsKey( DesignText.FONT_POSTURE ) ) text.setFontPosture( (String)map.get( DesignText.FONT_POSTURE ) );
+		if( map.containsKey( DesignText.FONT_UNDERLINE ) ) text.setFontUnderline( (String)map.get( DesignText.FONT_UNDERLINE ) );
+		if( map.containsKey( DesignText.FONT_STRIKETHROUGH ) ) text.setFontName( (String)map.get( DesignText.FONT_STRIKETHROUGH ) );
 
 		return text;
 	}
@@ -347,23 +361,27 @@ public abstract class CartesiaDesignCodec extends Codec {
 			layer,
 			mapDrawable( layer ),
 			Design.NAME,
-			DesignLayer.TEXT_FONT,
 			DesignLayer.TEXT_FILL_PAINT,
 			DesignLayer.TEXT_DRAW_PAINT,
 			DesignLayer.TEXT_DRAW_WIDTH,
 			DesignLayer.TEXT_DRAW_PATTERN,
-			DesignLayer.TEXT_DRAW_CAP
+			DesignLayer.TEXT_DRAW_CAP,
+			DesignLayer.TEXT_SIZE,
+			DesignLayer.FONT_NAME,
+			DesignLayer.FONT_WEIGHT,
+			DesignLayer.FONT_POSTURE,
+			DesignLayer.FONT_UNDERLINE,
+			DesignLayer.FONT_STRIKETHROUGH
 		) );
 
 		remapValue( map, DesignLayer.DRAW_PAINT, saveLayerPaintMapping );
 		remapValue( map, DesignLayer.FILL_PAINT, saveLayerPaintMapping );
 
-		remapValue( map, DesignLayer.TEXT_FONT, saveLayerPropertyMapping );
-		remapValue( map, DesignLayer.TEXT_FILL_PAINT, saveLayerPaintMapping );
-		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, saveLayerPaintMapping );
-		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, saveLayerPropertyMapping );
-		remapValue( map, DesignLayer.TEXT_DRAW_CAP, saveLayerPropertyMapping );
-		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, saveLayerPropertyMapping );
+//		remapValue( map, DesignLayer.TEXT_FILL_PAINT, saveLayerPaintMapping );
+//		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, saveLayerPaintMapping );
+//		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, saveLayerPropertyMapping );
+//		remapValue( map, DesignLayer.TEXT_DRAW_CAP, saveLayerPropertyMapping );
+//		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, saveLayerPropertyMapping );
 
 		map.put( DesignLayer.LAYERS, layer.getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
 		map.put( DesignLayer.SHAPES, layer.getShapes().stream().filter( s -> !s.isReference() ).collect( Collectors.toMap( IdNode::getId, this::mapGeometry ) ) );
@@ -421,17 +439,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapRadii( DesignEllipse ellipse ) {
-		Map<String, Object> map = asMap( ellipse, DesignEllipse.RADII );
-
-		//		if( CadGeometry.areSameSize( ellipse.getXRadius(), ellipse.getYRadius() ) ) {
-		//			map.put( RADIUS, ellipse.getRadius() );
-		//		} else {
-		//			map.put(  DesignEllipse.X_RADIUS, ellipse.getXRadius() );
-		//			map.put(  DesignEllipse.Y_RADIUS, ellipse.getYRadius() );
-		//			//map.putAll( asMap( ellipse, DesignEllipse.X_RADIUS, DesignEllipse.Y_RADIUS ) );
-		//		}
-
-		return map;
+		return asMap( ellipse, DesignEllipse.RADII );
 	}
 
 	private Map<String, Object> mapEllipse( DesignEllipse ellipse ) {
@@ -452,11 +460,18 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapText( DesignText text ) {
-		Map<String, Object> map = asMap( text, mapShape( text, DesignText.TEXT ), DesignText.TEXT, DesignText.TEXT_FONT, DesignText.ROTATE );
-
-		remapValue( map, DesignText.TEXT_FONT, savePropertyMapping );
-
-		return map;
+		return asMap(
+			text,
+			mapShape( text, DesignText.TEXT ),
+			DesignText.TEXT,
+			DesignText.ROTATE,
+			DesignText.TEXT_SIZE,
+			DesignText.FONT_NAME,
+			DesignText.FONT_WEIGHT,
+			DesignText.FONT_POSTURE,
+			DesignText.FONT_UNDERLINE,
+			DesignText.FONT_STRIKETHROUGH
+		);
 	}
 
 	static void remapValue( Map<String, Object> map, String key, Map<?, ?> values ) {
