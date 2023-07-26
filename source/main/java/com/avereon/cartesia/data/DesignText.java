@@ -463,14 +463,12 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 			case VIRTUAL_DRAW_PATTERN_MODE -> changeDrawPatternMode( newValue );
 			case VIRTUAL_DRAW_CAP_MODE -> changeDrawCapMode( newValue );
 
-			// NEXT Handle custom text values
-
 			case VIRTUAL_TEXT_SIZE_MODE -> changeTextSizeMode( newValue );
-						case VIRTUAL_FONT_NAME_MODE -> changeFontNameMode( newValue );
-			//			case VIRTUAL_FONT_WEIGHT_MODE -> changeFontWeightMode( newValue );
-			//			case VIRTUAL_FONT_POSTURE_MODE -> changeFontPostureMode( newValue )
-			//			case VIRTUAL_FONT_UNDERLINE_MODE -> changeFontUnderlineMode( newValue )
-			//			case VIRTUAL_FONT_STRIKETHROUGH_MODE -> changeFontStrikethroughMode( newValue )
+			case VIRTUAL_FONT_NAME_MODE -> changeFontNameMode( newValue );
+			case VIRTUAL_FONT_WEIGHT_MODE -> changeFontWeightMode( newValue );
+			case VIRTUAL_FONT_POSTURE_MODE -> changeFontPostureMode( newValue );
+			case VIRTUAL_FONT_UNDERLINE_MODE -> changeFontUnderlineMode( newValue );
+			case VIRTUAL_FONT_STRIKETHROUGH_MODE -> changeFontStrikethroughMode( newValue );
 
 			default -> super.setValue( key, newValue );
 		};
@@ -594,71 +592,56 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		return newValue;
 	}
 
-	// NEXT Finish these mode change methods
+	<T> T changeFontWeightMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
 
-	//	<T> T changeTextFillPaintMode( T newValue ) {
-	//		boolean isCustom = MODE_CUSTOM.equals( newValue );
-	//
-	//		String oldValue = getValue( VIRTUAL_TEXT_FILL_PAINT_MODE );
-	//		try( Txn ignored = Txn.create() ) {
-	//			setTextFillPaint( isCustom ? getTextFillPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
-	//			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_FILL_PAINT_MODE, oldValue, newValue ) ) );
-	//		} catch( TxnException exception ) {
-	//			log.atError().withCause( exception ).log( "Error setting text fill paint" );
-	//		}
-	//		return newValue;
-	//	}
-	//
-	//	<T> T changeTextDrawPaintMode( T newValue ) {
-	//		boolean isCustom = MODE_CUSTOM.equals( newValue );
-	//
-	//		String oldValue = getValue( VIRTUAL_TEXT_DRAW_PAINT_MODE );
-	//		try( Txn ignored = Txn.create() ) {
-	//			setTextDrawPaint( isCustom ? getTextDrawPaintWithInheritance() : String.valueOf( newValue ).toLowerCase() );
-	//			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_DRAW_PAINT_MODE, oldValue, newValue ) ) );
-	//		} catch( TxnException exception ) {
-	//			log.atError().withCause( exception ).log( "Error changing text draw paint" );
-	//		}
-	//		return newValue;
-	//	}
-	//
-	//	<T> T changeTextDrawWidthMode( T newValue ) {
-	//		boolean isCustom = MODE_CUSTOM.equals( newValue );
-	//
-	//		String oldValue = getValue( VIRTUAL_TEXT_DRAW_WIDTH_MODE );
-	//		try( Txn ignored = Txn.create() ) {
-	//			setTextDrawWidth( isCustom ? getTextDrawWidthWithInheritance() : String.valueOf( newValue ).toLowerCase() );
-	//			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_DRAW_WIDTH_MODE, oldValue, newValue ) ) );
-	//		} catch( TxnException exception ) {
-	//			log.atError().withCause( exception ).log( "Error setting text draw width" );
-	//		}
-	//		return newValue;
-	//	}
-	//
-	//	<T> T changeTextDrawCapMode( final T newValue ) {
-	//		boolean isCustom = MODE_CUSTOM.equals( getValueMode( String.valueOf( newValue ) ) );
-	//
-	//		String oldValue = getValue( VIRTUAL_TEXT_DRAW_CAP_MODE );
-	//		try( Txn ignored = Txn.create() ) {
-	//			setTextDrawCap( isCustom ? getTextDrawCapWithInheritance() : String.valueOf( newValue ).toLowerCase() );
-	//			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_DRAW_CAP_MODE, oldValue, newValue ) ) );
-	//		} catch( TxnException exception ) {
-	//			log.atError().withCause( exception ).log( "Error setting text draw cap" );
-	//		}
-	//		return newValue;
-	//	}
-	//
-	//	<T> T changeTextDrawPatternMode( T newValue ) {
-	//		boolean isCustom = MODE_CUSTOM.equals( newValue );
-	//
-	//		String oldValue = getValue( VIRTUAL_TEXT_DRAW_PATTERN_MODE );
-	//		try( Txn ignored = Txn.create() ) {
-	//			setTextDrawPattern( isCustom ? getTextDrawPatternWithInheritance() : String.valueOf( newValue ).toLowerCase() );
-	//			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_TEXT_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
-	//		} catch( TxnException exception ) {
-	//			log.atError().withCause( exception ).log( "Error setting text draw pattern" );
-	//		}
-	//		return newValue;
-	//	}
+		String oldValue = getValue( VIRTUAL_FONT_WEIGHT_MODE );
+		try( Txn ignored = Txn.create() ) {
+			setFontWeight( isCustom ? getFontWeightWithInheritance() : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FONT_WEIGHT_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting font weight" );
+		}
+		return newValue;
+	}
+
+	<T> T changeFontPostureMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_FONT_POSTURE_MODE );
+		try( Txn ignored = Txn.create() ) {
+			setFontPosture( isCustom ? getFontPostureWithInheritance() : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FONT_POSTURE_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting font posture" );
+		}
+		return newValue;
+	}
+
+	<T> T changeFontUnderlineMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_FONT_UNDERLINE_MODE );
+		try( Txn ignored = Txn.create() ) {
+			setFontUnderline( isCustom ? getFontUnderlineWithInheritance() : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FONT_UNDERLINE_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting font underline" );
+		}
+		return newValue;
+	}
+
+	<T> T changeFontStrikethroughMode( T newValue ) {
+		boolean isCustom = MODE_CUSTOM.equals( newValue );
+
+		String oldValue = getValue( VIRTUAL_FONT_STRIKETHROUGH_MODE );
+		try( Txn ignored = Txn.create() ) {
+			setFontStrikethrough( isCustom ? getFontStrikethroughWithInheritance() : null );
+			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_FONT_STRIKETHROUGH_MODE, oldValue, newValue ) ) );
+		} catch( TxnException exception ) {
+			log.atError().withCause( exception ).log( "Error setting font strikethrough" );
+		}
+		return newValue;
+	}
 
 }

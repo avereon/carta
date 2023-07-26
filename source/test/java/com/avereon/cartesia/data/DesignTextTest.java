@@ -434,5 +434,268 @@ public class DesignTextTest {
 		assertThat( text.calcFontName() ).isEqualTo( "Andromeda" );
 	}
 
-	// NEXT Continue writing tests for remaining fields
+	// ### Font weight
+
+	@Test
+	void testChangeFontWeightModeFromDefaultToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Change mode to custom to copy current getFontWeightWithInheritance value
+		text.changeFontWeightMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontWeight() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the weight is a copy of the layer weight value
+		assertThat( text.getFontWeight() ).isEqualTo( DesignLayer.DEFAULT_FONT_WEIGHT );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignLayer.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
+
+		// Change the layer weight to ensure that weight value is still the custom value
+		layer.setFontWeight( "light" );
+		assertThat( text.getFontWeight() ).isEqualTo( DesignLayer.DEFAULT_FONT_WEIGHT );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignLayer.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
+	}
+
+	@Test
+	void testChangeFontWeightModeFromLayerToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Set a custom layer text size
+		layer.setFontWeight( "bold" );
+
+		// Change mode to custom to copy current getFontWeightWithInheritance value
+		text.changeFontWeightMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontWeight() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the weight value is a copy of the layer weight value
+		assertThat( text.getFontWeight() ).isEqualTo( "bold" );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.BOLD );
+
+		// Change the layer weight to ensure that weight value is still the custom value
+		layer.setFontWeight( "light" );
+		assertThat( text.getFontWeight() ).isEqualTo( "bold" );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.BOLD );
+	}
+
+	@Test
+	void testSetFontWeightWhenFontWeightModeIsLayer() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		assertThat( text.getValueMode( text.getFontWeight() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontWeight() ).isNull();
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.valueOf( DesignLayer.DEFAULT_FONT_WEIGHT.toUpperCase() ) );
+
+		layer.setFontWeight( "bold" );
+		assertThat( text.getValueMode( text.getFontWeight() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontWeight() ).isNull();
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.BOLD );
+
+		text.setFontWeight( "light" );
+		assertThat( text.getValueMode( text.getFontWeight() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getFontWeight() ).isEqualTo( "light" );
+		assertThat( text.calcFontWeight() ).isEqualTo( FontWeight.LIGHT );
+	}
+
+	// ### Font posture
+
+	@Test
+	void testChangeFontPostureModeFromDefaultToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Change mode to custom to copy current getFontPostureWithInheritance value
+		text.changeFontPostureMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontPosture() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the posture is a copy of the layer posture value
+		assertThat( text.getFontPosture() ).isEqualTo( DesignLayer.DEFAULT_FONT_POSTURE );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignLayer.DEFAULT_FONT_POSTURE.toUpperCase() ) );
+
+		// Change the layer posture to ensure that posture value is still the custom value
+		layer.setFontPosture( "italic" );
+		assertThat( text.getFontPosture() ).isEqualTo( DesignLayer.DEFAULT_FONT_POSTURE );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignLayer.DEFAULT_FONT_POSTURE.toUpperCase() ) );
+	}
+
+	@Test
+	void testChangeFontPostureModeFromLayerToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Set a custom layer text size
+		layer.setFontPosture( "italic" );
+
+		// Change mode to custom to copy current getFontPostureWithInheritance value
+		text.changeFontPostureMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontPosture() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the posture value is a copy of the layer posture value
+		assertThat( text.getFontPosture() ).isEqualTo( "italic" );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.ITALIC );
+
+		// Change the layer posture to ensure that posture value is still the custom value
+		layer.setFontPosture( "regular" );
+		assertThat( text.getFontPosture() ).isEqualTo( "italic" );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.ITALIC );
+	}
+
+	@Test
+	void testSetFontPostureWhenFontPostureModeIsLayer() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		assertThat( text.getValueMode( text.getFontPosture() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontPosture() ).isNull();
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.valueOf( DesignLayer.DEFAULT_FONT_POSTURE.toUpperCase() ) );
+
+		layer.setFontPosture( "italic" );
+		assertThat( text.getValueMode( text.getFontPosture() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontPosture() ).isNull();
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.ITALIC );
+
+		text.setFontPosture( "regular" );
+		assertThat( text.getValueMode( text.getFontPosture() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getFontPosture() ).isEqualTo( "regular" );
+		assertThat( text.calcFontPosture() ).isEqualTo( FontPosture.REGULAR );
+	}
+
+	// ### Font underline
+
+	@Test
+	void testChangeFontUnderlineModeFromDefaultToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Change mode to custom to copy current getFontUnderlineWithInheritance value
+		text.changeFontUnderlineMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontUnderline() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the underline is a copy of the layer underline value
+		assertThat( text.getFontUnderline() ).isEqualTo( DesignLayer.DEFAULT_FONT_UNDERLINE );
+		assertThat( text.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_UNDERLINE ) );
+
+		// Change the layer underline to ensure that underline value is still the custom value
+		layer.setFontUnderline( "true" );
+		assertThat( text.getFontUnderline() ).isEqualTo( DesignLayer.DEFAULT_FONT_UNDERLINE );
+		assertThat( text.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_UNDERLINE ) );
+	}
+
+	@Test
+	void testChangeFontUnderlineModeFromLayerToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Set a custom layer text size
+		layer.setFontUnderline( "true" );
+
+		// Change mode to custom to copy current getFontUnderlineWithInheritance value
+		text.changeFontUnderlineMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontUnderline() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the underline value is a copy of the layer underline value
+		assertThat( text.getFontUnderline() ).isEqualTo( "true" );
+		assertThat( text.calcFontUnderline() ).isEqualTo( true );
+
+		// Change the layer underline to ensure that underline value is still the custom value
+		layer.setFontUnderline( "false" );
+		assertThat( text.getFontUnderline() ).isEqualTo( "true" );
+		assertThat( text.calcFontUnderline() ).isEqualTo( true );
+	}
+
+	@Test
+	void testSetFontUnderlineWhenFontUnderlineModeIsLayer() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		assertThat( text.getValueMode( text.getFontUnderline() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontUnderline() ).isNull();
+		assertThat( text.calcFontUnderline() ).isEqualTo( false );
+
+		layer.setFontUnderline( "true" );
+		assertThat( text.getValueMode( text.getFontUnderline() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontUnderline() ).isNull();
+		assertThat( text.calcFontUnderline() ).isEqualTo( true );
+
+		text.setFontUnderline( "false" );
+		assertThat( text.getValueMode( text.getFontUnderline() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getFontUnderline() ).isEqualTo( "false" );
+		assertThat( text.calcFontUnderline() ).isEqualTo( false );
+	}
+
+	// ### Font strikethrough
+
+	@Test
+	void testChangeFontStrikethroughModeFromDefaultToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Change mode to custom to copy current getFontStrikethroughWithInheritance value
+		text.changeFontStrikethroughMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontStrikethrough() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the strikethrough is a copy of the layer strikethrough value
+		assertThat( text.getFontStrikethrough() ).isEqualTo( DesignLayer.DEFAULT_FONT_STRIKETHROUGH );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_STRIKETHROUGH ) );
+
+		// Change the layer strikethrough to ensure that strikethrough value is still the custom value
+		layer.setFontStrikethrough( "true" );
+		assertThat( text.getFontStrikethrough() ).isEqualTo( DesignLayer.DEFAULT_FONT_STRIKETHROUGH );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_STRIKETHROUGH ) );
+	}
+
+	@Test
+	void testChangeFontStrikethroughModeFromLayerToCustom() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		// Set a custom layer text size
+		layer.setFontStrikethrough( "true" );
+
+		// Change mode to custom to copy current getFontStrikethroughWithInheritance value
+		text.changeFontStrikethroughMode( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getValueMode( text.getFontStrikethrough() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+
+		// Check that the strikethrough value is a copy of the layer strikethrough value
+		assertThat( text.getFontStrikethrough() ).isEqualTo( "true" );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( true );
+
+		// Change the layer strikethrough to ensure that strikethrough value is still the custom value
+		layer.setFontStrikethrough( "false" );
+		assertThat( text.getFontStrikethrough() ).isEqualTo( "true" );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( true );
+	}
+
+	@Test
+	void testSetFontStrikethroughWhenFontStrikethroughModeIsLayer() {
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+		DesignLayer layer = new DesignLayer();
+		layer.addShape( text );
+
+		assertThat( text.getValueMode( text.getFontStrikethrough() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontStrikethrough() ).isNull();
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( false );
+
+		layer.setFontStrikethrough( "true" );
+		assertThat( text.getValueMode( text.getFontStrikethrough() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( text.getFontStrikethrough() ).isNull();
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( true );
+
+		text.setFontStrikethrough( "false" );
+		assertThat( text.getValueMode( text.getFontStrikethrough() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( text.getFontStrikethrough() ).isEqualTo( "false" );
+		assertThat( text.calcFontStrikethrough() ).isEqualTo( false );
+	}
+
 }
