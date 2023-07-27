@@ -140,6 +140,7 @@ public class DesignTextView extends DesignShapeView {
 		text.setUnderline( designText.calcFontUnderline() );
 		text.setStrikethrough( designText.calcFontStrikethrough() );
 
+		// Font settings can affect the translation
 		updateTranslate( designText, shape );
 	}
 
