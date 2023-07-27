@@ -194,8 +194,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 		if( map.containsKey( DesignLayer.FONT_NAME ) ) layer.setFontName( (String)map.get( DesignLayer.FONT_NAME ) );
 		if( map.containsKey( DesignLayer.FONT_WEIGHT ) ) layer.setFontWeight( (String)map.get( DesignLayer.FONT_WEIGHT ) );
 		if( map.containsKey( DesignLayer.FONT_POSTURE ) ) layer.setFontPosture( (String)map.get( DesignLayer.FONT_POSTURE ) );
-		if( map.containsKey( DesignLayer.FONT_UNDERLINE ) ) layer.setFontUnderline( (String)map.get( DesignLayer.FONT_UNDERLINE ) );
-		if( map.containsKey( DesignLayer.FONT_STRIKETHROUGH ) ) layer.setFontStrikethrough( (String)map.get( DesignLayer.FONT_STRIKETHROUGH ) );
+		if( map.containsKey( DesignLayer.FONT_UNDERLINE ) ) layer.setFontUnderline( String.valueOf( map.get( DesignLayer.FONT_UNDERLINE ) ) );
+		if( map.containsKey( DesignLayer.FONT_STRIKETHROUGH ) ) layer.setFontStrikethrough( String.valueOf( map.get( DesignLayer.FONT_STRIKETHROUGH ) ) );
 
 		// Load layer geometry
 		Map<String, Map<String, Object>> geometry = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.SHAPES, Map.of() );

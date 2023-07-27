@@ -517,8 +517,8 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		if( map.containsKey( FONT_NAME ) ) setFontName( (String)map.get( FONT_NAME ) );
 		if( map.containsKey( FONT_WEIGHT ) ) setFontWeight( (String)map.get( FONT_WEIGHT ) );
 		if( map.containsKey( FONT_POSTURE ) ) setFontPosture( (String)map.get( FONT_POSTURE ) );
-		if( map.containsKey( FONT_UNDERLINE ) ) setFontUnderline( (String)map.get( FONT_UNDERLINE ) );
-		if( map.containsKey( FONT_STRIKETHROUGH ) ) setFontStrikethrough( (String)map.get( FONT_STRIKETHROUGH ) );
+		if( map.containsKey( FONT_UNDERLINE ) ) setFontUnderline( String.valueOf( map.get( FONT_UNDERLINE ) ) );
+		if( map.containsKey( FONT_STRIKETHROUGH ) ) setFontStrikethrough( String.valueOf( map.get( FONT_STRIKETHROUGH ) ) );
 
 		return this;
 	}
