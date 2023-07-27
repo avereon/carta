@@ -2,10 +2,13 @@ package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignText;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zarra.javafx.Fx;
+import javafx.beans.binding.Bindings;
+import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextBoundsType;
@@ -59,17 +62,37 @@ public class DesignTextView extends DesignShapeView {
 	@Override
 	protected List<ConstructionPoint> generateConstructionPoints( DesignPane pane, List<Shape> shapes ) {
 		Text text = (Text)shapes.get( 0 );
-		ConstructionPoint o = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), () -> text.getY() );
-		ConstructionPoint ow = cp( pane, text.layoutBoundsProperty(), () -> text.getX() + text.layoutBoundsProperty().get().getWidth(), text.layoutBoundsProperty(), () -> text.getY() );
-		ConstructionPoint oh = cp( pane, text.layoutBoundsProperty(), () -> text.getX(), text.layoutBoundsProperty(), () -> text.getY() + text.layoutBoundsProperty().get().getHeight() );
-		ConstructionPoint wh = cp(
+		DesignText designText = getDesignText();
+		ConstructionPoint oo = cp( pane, Bindings.createDoubleBinding( text::getX, text.layoutBoundsProperty() ), Bindings.createDoubleBinding( text::getY, text.layoutBoundsProperty() ) );
+		ConstructionPoint ow = cp(
 			pane,
-			text.layoutBoundsProperty(),
-			() -> text.getX() + text.layoutBoundsProperty().get().getWidth(),
-			text.layoutBoundsProperty(),
-			() -> text.getY() + text.layoutBoundsProperty().get().getHeight()
+			Bindings.createDoubleBinding( () -> CadGeometry
+				.rotate360( new Point3D( text.getX(), text.getY(), 0 ), new Point3D( text.getX() + text.layoutBoundsProperty().get().getWidth(), text.getY(), 0 ), designText.calcRotate() )
+				.getX(), text.layoutBoundsProperty(), text.getTransforms() ),
+			Bindings.createDoubleBinding( () -> CadGeometry
+				.rotate360( new Point3D( text.getX(), text.getY(), 0 ), new Point3D( text.getX() + text.layoutBoundsProperty().get().getWidth(), text.getY(), 0 ), designText.calcRotate() )
+				.getY(), text.layoutBoundsProperty(), text.getTransforms() )
 		);
-		return setConstructionPoints( text, List.of( o, ow, oh, wh ) );
+		ConstructionPoint oh = cp(
+			pane,
+			Bindings.createDoubleBinding( () -> CadGeometry
+				.rotate360( new Point3D( text.getX(), text.getY(), 0 ), new Point3D( text.getX(), text.getY() + text.layoutBoundsProperty().get().getHeight(), 0 ), designText.calcRotate() )
+				.getX(), text.layoutBoundsProperty(), text.getTransforms() ),
+			Bindings.createDoubleBinding( () -> CadGeometry
+				.rotate360( new Point3D( text.getX(), text.getY(), 0 ), new Point3D( text.getX(), text.getY() + text.layoutBoundsProperty().get().getHeight(), 0 ), designText.calcRotate() )
+				.getY(), text.layoutBoundsProperty(), text.getTransforms() )
+		);
+		ConstructionPoint wh = cp( pane, Bindings.createDoubleBinding( () -> CadGeometry.rotate360(
+			new Point3D( text.getX(), text.getY(), 0 ),
+			new Point3D( text.getX() + text.layoutBoundsProperty().get().getWidth(), text.getY() + text.layoutBoundsProperty().get().getHeight(), 0 ),
+			designText.calcRotate()
+		).getX(), text.layoutBoundsProperty(), text.getTransforms() ), Bindings.createDoubleBinding( () -> CadGeometry.rotate360(
+			new Point3D( text.getX(), text.getY(), 0 ),
+			new Point3D( text.getX() + text.layoutBoundsProperty().get().getWidth(), text.getY() + text.layoutBoundsProperty().get().getHeight(), 0 ),
+			designText.calcRotate()
+		).getY(), text.layoutBoundsProperty(), text.getTransforms() ) );
+
+		return setConstructionPoints( text, List.of( oo, ow, oh, wh ) );
 	}
 
 	@Override
