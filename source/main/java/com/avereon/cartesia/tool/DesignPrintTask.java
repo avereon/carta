@@ -84,8 +84,10 @@ public class DesignPrintTask extends Task<Void> {
 		//		renderer.setDpi( 72, 72 );
 
 		final DesignPane designPane = new DesignPane();
-		designPane.setDpi( 72 );
 		designPane.setDesign( asset.getModel() );
+
+		// Set the design pane before doing any work
+		designPane.setDpi( 72 );
 		designPane.setReferenceLayerVisible( false );
 		designPane.setView( tool.getVisibleLayers(), tool.getViewPoint(), tool.getZoom(), tool.getViewRotate() );
 

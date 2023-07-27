@@ -1260,7 +1260,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxShapeDesignTool.this, getAsset(), (DesignPrint)null ) );
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxShapeDesignTool.this, getAsset(), null ) );
 		}
 
 	}
