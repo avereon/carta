@@ -43,6 +43,10 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Vector.rotate( asPoint( point ), Math.toRadians( angle ) ) );
 	}
 
+	public static Point3D rotate360( Point3D axis, Point3D point, double angle ) {
+		return CadPoints.toFxPoint( Vector.rotate( asPoint( axis ), asPoint( point ), Math.toRadians( angle ) ) );
+	}
+
 	public static double distance( Point3D a, Point3D b ) {
 		return Geometry.distance( asPoint( a ), asPoint( b ) );
 	}
