@@ -587,7 +587,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		Point3D viewPoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
 		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
 		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
-		setView( viewPoint, viewZoom, viewRotate );
+		if( design != null ) setView( viewPoint, viewZoom, viewRotate );
 		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
 		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
