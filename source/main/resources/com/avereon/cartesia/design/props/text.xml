@@ -6,12 +6,12 @@
 		<group id="text-title">
 			<setting id="layer" key="layer" editor="combobox" provider="design-shape-layers"/>
 
-			<setting id="text-font" key="text-font-mode" editor="combobox">
+			<setting id="text-size" key="text-size-mode" editor="combobox">
 				<option key="layer"/>
 				<option key="custom"/>
 			</setting>
-			<setting id="text-font-custom" key="text-font" editor="font">
-				<dependency key="text-font-mode" value="custom"/>
+			<setting id="text-size-custom" key="text-size" type="math-expression">
+				<dependency key="text-size-mode" value="custom"/>
 			</setting>
 
 			<setting id="text-draw-paint" key="text-draw-paint-mode" editor="combobox">
@@ -56,6 +56,53 @@
 			</setting>
 			<setting id="text-fill-paint-custom" key="text-fill-paint" editor="paint-cartesia">
 				<dependency key="text-fill-paint-mode" value="custom"/>
+			</setting>
+		</group>
+
+		<!-- Font settings -->
+		<group id="text-font" collapsible="true" expanded="false">
+			<setting id="font-name" key="font-name-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="font-name-custom" key="font-name" editor="combobox" provider="font-family-provider">
+				<dependency key="font-name-mode" value="custom"/>
+			</setting>
+
+			<setting id="font-weight" key="font-weight-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="font-weight-custom" key="font-weight" editor="combobox">
+				<dependency key="font-weight-mode" value="custom"/>
+				<option key="normal"/>
+				<option key="bold"/>
+			</setting>
+
+			<setting id="font-posture" key="font-posture-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="font-posture-custom" key="font-posture" editor="combobox">
+				<dependency key="font-posture-mode" value="custom"/>
+				<option key="regular"/>
+				<option key="italic"/>
+			</setting>
+
+			<setting id="font-underline" key="font-underline-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="font-underline-custom" key="font-underline" editor="checkbox">
+				<dependency key="font-underline-mode" value="custom"/>
+			</setting>
+
+			<setting id="font-strikethrough" key="font-strikethrough-mode" editor="combobox">
+				<option key="layer"/>
+				<option key="custom"/>
+			</setting>
+			<setting id="font-strikethrough-custom" key="font-strikethrough" editor="checkbox">
+				<dependency key="font-strikethrough-mode" value="custom"/>
 			</setting>
 		</group>
 	</page>

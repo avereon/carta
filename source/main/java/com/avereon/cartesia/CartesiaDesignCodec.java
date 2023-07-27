@@ -338,7 +338,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		if( map.containsKey( DesignText.FONT_WEIGHT ) ) text.setFontWeight( (String)map.get( DesignText.FONT_WEIGHT ) );
 		if( map.containsKey( DesignText.FONT_POSTURE ) ) text.setFontPosture( (String)map.get( DesignText.FONT_POSTURE ) );
 		if( map.containsKey( DesignText.FONT_UNDERLINE ) ) text.setFontUnderline( (String)map.get( DesignText.FONT_UNDERLINE ) );
-		if( map.containsKey( DesignText.FONT_STRIKETHROUGH ) ) text.setFontName( (String)map.get( DesignText.FONT_STRIKETHROUGH ) );
+		if( map.containsKey( DesignText.FONT_STRIKETHROUGH ) ) text.setFontStrikethrough( (String)map.get( DesignText.FONT_STRIKETHROUGH ) );
 
 		return text;
 	}

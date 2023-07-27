@@ -87,6 +87,7 @@ public class CartesiaMod extends Mod {
 		getProgram().getSettingsManager().putOptionProvider( "design-layer-layers", new DesignLayerOptionProvider( this, true ) );
 		getProgram().getSettingsManager().putOptionProvider( "design-shape-layers", new DesignLayerOptionProvider( this, false ) );
 		getProgram().getSettingsManager().putOptionProvider( "design-units", new DesignUnitOptionProvider() );
+		getProgram().getSettingsManager().putOptionProvider( "font-family-provider", new FontFamilyNameOptionProvider() );
 
 		// Load the default settings
 		loadDefaultSettings();
