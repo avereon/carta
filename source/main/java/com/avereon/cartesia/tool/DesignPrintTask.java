@@ -104,7 +104,7 @@ public class DesignPrintTask extends Task<Void> {
 		}
 
 		// Create an encapsulating pane to represent the paper
-		final Pane paperPane = new Pane();
+		Pane paperPane = new Pane();
 
 		// Move the center of the paper pane to the center of the printable area
 		paperPane.getTransforms().add( new Translate( 0.5 * printableWidth, 0.5 * printableHeight ) );
