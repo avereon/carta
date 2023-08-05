@@ -46,7 +46,7 @@ public class DesignPrintTask extends Task<Void> {
 		// However, the Paper class has common sizes that can be used for convenience.
 		// There is no concept of custom paper sizes in FX.
 		Paper paper = Paper.NA_LETTER;
-		paper = Paper.A1;
+		//paper = Paper.A1;
 
 		// TODO This should come from the DesignPrint setup
 		PageOrientation orientation = PageOrientation.PORTRAIT;
