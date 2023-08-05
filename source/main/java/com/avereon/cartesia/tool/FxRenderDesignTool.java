@@ -649,6 +649,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		@Override
 		public void handle( ActionEvent event ) {
 			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ) );
+			//getProgram().getTaskManager().submit( new DesignAwtPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ) );
 		}
 
 	}
