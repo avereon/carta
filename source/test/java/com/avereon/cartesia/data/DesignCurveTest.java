@@ -1,6 +1,8 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadConstants;
 import javafx.geometry.Point3D;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -48,6 +50,15 @@ public class DesignCurveTest {
 
 		curve.setPoint( new Point3D( 1, 2, 3 ) );
 		assertThat( curve.getPoint() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+	}
+
+	@Test
+	void testPathLength() {
+		DesignCurve curve = new DesignCurve( new Point3D( 0, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 1, 1, 0 ), new Point3D( 1, 0, 0 ) );
+		assertThat( curve.pathLength() ).isEqualTo( 2.0, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
+
+		curve = new DesignCurve( new Point3D( 0, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 1, 1, 0 ), new Point3D( 2, 1, 0 ) );
+		assertThat( curve.pathLength() ).isEqualTo( 2.550645, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
 	}
 
 	@Test
