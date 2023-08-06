@@ -132,7 +132,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public DesignDrawable setDrawPattern( String pattern ) {
-		setValue( DRAW_PATTERN, TextUtil.isEmpty( pattern ) ? null : pattern );
+		setValue( DRAW_PATTERN, pattern );
 		return this;
 	}
 
@@ -300,7 +300,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawPattern( isCustom ? getDrawPatternWithInheritance() : null );
+			setDrawPattern( isCustom ? TextUtil.nullToEmpty( getDrawPatternWithInheritance() ) : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw pattern" );
