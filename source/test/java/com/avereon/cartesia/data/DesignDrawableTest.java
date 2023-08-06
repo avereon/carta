@@ -247,19 +247,17 @@ public class DesignDrawableTest {
 	void testChangeDrawPatternModeFromDefaultToCustom() {
 		// Change mode to custom to copy current getDrawPatternWithInheritance value
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
-		assertThat( drawable.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
-		// Because the default value is null the value mode is the layer mode
-		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getDrawPattern() ).isEqualTo( "" );
+		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
 
 		// Check that the pattern is a copy of the layer pattern value
-		assertThat( drawable.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.getDrawPattern() ).isEqualTo( "" );
+		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( "" ) );
 
 		// Change the layer pattern to ensure that pattern value is still the custom value
 		layer.setDrawPattern( "1/8,1/4" );
-		assertThat( drawable.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
-		// Because the default value is null the pattern is the layer value
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( "1/8,1/4" ) );
+		assertThat( drawable.getDrawPattern() ).isEqualTo( "" );
+		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( "" ) );
 	}
 
 	@Test
