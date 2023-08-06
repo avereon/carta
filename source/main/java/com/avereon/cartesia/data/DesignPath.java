@@ -14,12 +14,12 @@ import java.util.List;
 public class DesignPath extends DesignShape {
 
 	public enum Command {
+		MOVE,
 		ARC,
-		CLOSE,
 		CURVE,
 		LINE,
-		MOVE,
 		QUAD,
+		CLOSE,
 	}
 
 	public static final String PATH = "path";

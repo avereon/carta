@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
@@ -75,10 +76,7 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public double pathLength() {
-		return Double.NaN;
-		// TODO Improve DesignCurve.pathLength()
-		// This implementation is a simple estimate based on the control points
-		//return getPoint().distance( getOrigin() );
+		return CadGeometry.curveArcLength( this );
 	}
 
 	@Override

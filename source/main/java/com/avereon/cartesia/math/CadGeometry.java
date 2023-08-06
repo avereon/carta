@@ -135,6 +135,10 @@ public class CadGeometry {
 		return List.of( c0, c1 );
 	}
 
+	public static double curveArcLength( DesignCurve curve ) {
+		return Geometry.curveArcLength( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), CadConstants.RESOLUTION_LENGTH );
+	}
+
 	public static double getSpin( Point3D a, Point3D b, Point3D c ) {
 		return Geometry.getSpin( asPoint( a ), asPoint( b ), asPoint( c ) );
 	}
