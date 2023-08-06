@@ -154,20 +154,19 @@ public class DesignEllipse extends DesignShape {
 		return isCircle() ? Math.abs( CadGeometry.distance( getOrigin(), point ) - getRadius() ) : Double.NaN;
 	}
 
-	boolean isCircle() {
+	public boolean isCircle() {
 		return Geometry.areSameSize( getXRadius(), getYRadius() );
 	}
 
 	@Override
 	public double pathLength() {
 		// If the ellipse is circular then use the circle formula
-		if( isCircle() ) return 2 * Math.PI * getRadius();
+		if( isCircle() ) return Constants.FULL_CIRCLE * getRadius();
 
 		double a = getXRadius();
 		double b = getYRadius();
 		double h = ((a - b) * (a - b)) / ((a + b) * (a + b));
 
-		if( Geometry.areSameSize( a, b ) ) return Constants.FULL_CIRCLE * a;
 		if( Geometry.areSameSize( a, 0.0 ) ) return 4 * b;
 		if( Geometry.areSameSize( b, 0.0 ) ) return 4 * a;
 

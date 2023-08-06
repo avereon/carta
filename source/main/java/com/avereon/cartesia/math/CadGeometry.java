@@ -100,11 +100,19 @@ public class CadGeometry {
 	}
 
 	public static Point3D ellipsePoint360( DesignEllipse ellipse, double angle ) {
-		return ellipsePoint360( ellipse.getOrigin(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.calcRotate(), angle );
+		return ellipsePoint360( ellipse.getOrigin(), ellipse.getRadii(), ellipse.calcRotate(), angle );
 	}
 
+	/**
+	 * @deprecated Use {@link #ellipsePoint360(Point3D, Point3D, double, double)} instead
+	 */
+	@Deprecated
 	public static Point3D ellipsePoint360( Point3D o, double xRadius, double yRadius, double rotate, double angle ) {
-		return CadPoints.toFxPoint( Geometry.ellipsePoint( asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), Math.toRadians( angle ) ) );
+		return ellipsePoint360( o, new Point3D( xRadius, yRadius, 0 ), rotate, angle );
+	}
+
+	public static Point3D ellipsePoint360( Point3D o, Point3D radii, double rotate, double angle ) {
+		return CadPoints.toFxPoint( Geometry.ellipsePoint( asPoint( o ), asPoint( radii ), Math.toRadians( rotate ), Math.toRadians( angle ) ) );
 	}
 
 	public static double ellipseAngle360( DesignEllipse ellipse, Point3D point ) {
@@ -113,6 +121,16 @@ public class CadGeometry {
 
 	public static double ellipseAngle360( Point3D o, double xRadius, double yRadius, double rotate, Point3D point ) {
 		return Math.toDegrees( Geometry.ellipseAngle( asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), asPoint( point ) ) );
+	}
+
+	public static double arcLength( DesignArc arc ) {
+		return Geometry.arcLength(
+			asPoint( arc.getOrigin() ),
+			asPoint( arc.getRadii() ),
+			Math.toRadians( arc.calcRotate() ),
+			Math.toRadians( arc.calcStart() ),
+			Math.toRadians( arc.calcExtent() )
+		);
 	}
 
 	public static double getCurveParametricValue( DesignCurve curve, Point3D point ) {
@@ -136,7 +154,12 @@ public class CadGeometry {
 	}
 
 	public static double curveArcLength( DesignCurve curve ) {
-		return Geometry.curveArcLength( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), CadConstants.RESOLUTION_LENGTH );
+		return Geometry.curveArcLength( asPoint( curve.getOrigin() ),
+			asPoint( curve.getOriginControl() ),
+			asPoint( curve.getPointControl() ),
+			asPoint( curve.getPoint() ),
+			CadConstants.RESOLUTION_LENGTH
+		);
 	}
 
 	public static double getSpin( Point3D a, Point3D b, Point3D c ) {

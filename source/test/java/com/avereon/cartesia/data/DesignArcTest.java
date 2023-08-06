@@ -1,8 +1,11 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.math.CadConstants;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -200,6 +203,23 @@ public class DesignArcTest {
 		// TODO Test circle arcs
 
 		// TODO Test ellipse arcs
+	}
+
+	@Test
+	void testPathLength() {
+		// Circle arcs
+		DesignArc arc = new DesignArc( new Point3D( 5, 0, 0 ), 1.0, 0.0, 45.0, DesignArc.Type.OPEN );
+		assertThat( arc.pathLength() ).isEqualTo( 0.125 * Constants.FULL_CIRCLE );
+
+		// Elliptic arcs
+		DesignArc ellipse = new DesignArc( new Point3D( 5, 0, 0 ), 2.0, 1.0, 0.0, 45.0, DesignArc.Type.OPEN );
+		assertThat( ellipse.pathLength() ).isEqualTo( 0.965664, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
+
+		ellipse = new DesignArc( new Point3D( 5, 0, 0 ), 2.0, 1.0, -45.0, 90.0, DesignArc.Type.OPEN );
+		assertThat( ellipse.pathLength() ).isEqualTo( 1.931327, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
+
+		ellipse = new DesignArc( new Point3D( 5, 0, 0 ), 2.0, 1.0, 45.0, 90.0, DesignArc.Type.OPEN );
+		assertThat( ellipse.pathLength() ).isEqualTo( 2.912897, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
 	}
 
 	@Test

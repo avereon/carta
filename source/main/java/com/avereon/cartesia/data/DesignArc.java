@@ -142,15 +142,7 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public double pathLength() {
-		// If the arc is circular then use the circle formula
-		if( isCircle() ) return getRadius() * Math.abs( Math.toRadians( getExtent() ) );
-
-		// FIXME Improve DesignArc.pathLength()
-		// FIXME Calc the t of the start
-		// FIXME Calc the t of the start+extent
-		// FIXME Calc the parametric path length
-
-		return Double.NaN;
+		return CadGeometry.arcLength( this );
 	}
 
 	private double t( double angle ) {
