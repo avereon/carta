@@ -13,6 +13,7 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
+import com.avereon.util.IoUtil;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
@@ -23,9 +24,14 @@ import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
+import org.jsoup.Jsoup;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @CustomLog
@@ -248,11 +254,30 @@ public class CartesiaMod extends Mod {
 
 	private void registerHelpPages() {
 		// FIXME Tag names are language specific
-		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/introduction", Map.of() ) );
-		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/relative-coordinates", Map.of() ) );
-		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "/docs/manual/selecting-geometry", Map.of() ) );
+//		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "Introduction", "/docs/manual/introduction", Map.of(), List.of() ) );
+//		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "Relative Coordinates", "/docs/manual/relative-coordinates", Map.of(), List.of() ) );
+//		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "Selecting Geometry", "/docs/manual/selecting-geometry", Map.of(), List.of() ) );
+
+		getProgram().getIndexService().submit( INDEX_ID, createDocument( "/docs/manual/selecting-geometry.html" ) );
 
 		registerCommandHelpPages();
+	}
+
+	private Document createDocument( String resourcePath ) {
+		try( InputStream input = getClass().getResourceAsStream( resourcePath ) ) {
+			String content = IoUtil.toString( input, StandardCharsets.UTF_8 );
+			org.jsoup.nodes.Document html = Jsoup.parse( content );
+			Elements titleElement = html.select( "html > header > title" );
+
+			String title = titleElement.text();
+			log.atConfig().log("title={0}", title);
+
+
+		} catch( IOException exception ) {
+			log.atWarn( exception );
+			return null;
+		}
+		return null;
 	}
 
 	private Document createIndexableDocument( String icon, String resourcePath, Map<String, String> values ) {

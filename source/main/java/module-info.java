@@ -13,6 +13,7 @@ module com.avereon.cartesia {
 	requires com.fasterxml.jackson.databind;
 	requires java.logging;
 	requires jep;
+	requires org.jsoup;
 
 	// Public APIs
 	exports com.avereon.cartesia.command;
