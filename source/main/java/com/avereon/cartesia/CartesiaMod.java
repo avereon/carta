@@ -263,23 +263,11 @@ public class CartesiaMod extends Mod {
 	 * @return The indexable document
 	 */
 	private Document createIndexableDocument( String resourcePath ) {
-		return createIndexableDocument( "document", null, null, resourcePath, Map.of(), List.of(), null );
-	}
-
-	//	private Document createIndexableDocument( String icon, String resourcePath, Map<String, String> values ) {
-	//		return createIndexableDocument( icon, null, null, resourcePath, values, List.of(), null );
-	//	}
-	//
-	//	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
-	//		return createIndexableDocument( icon, title, null, resourcePath, values, tags, null );
-	//	}
-
-	private Document createIndexableDocument( String icon, String title, String content, String resourcePath, Map<String, String> values, List<String> tags, String defaultContent ) {
-		return createIndexableDocument( icon, title, content, resourcePath, null, values, tags, defaultContent );
+		return createIndexableDocument( "document", resourcePath, Map.of(), List.of(), null );
 	}
 
 	private Document createIndexableDocument(
-		String icon, String title, String content, String resourcePath, Document.SupportedMediaType mediaType, Map<String, String> values, List<String> tags, String defaultContent
+		String icon, String resourcePath, Map<String, String> values, List<String> tags, String defaultContent
 	) {
 		// Create the document URI
 		String modKey = getCard().getProductKey();
@@ -290,9 +278,12 @@ public class CartesiaMod extends Mod {
 		replacementValues.put( "module.version", getCard().getVersion() );
 		replacementValues.put( "module.release", getCard().getRelease().toHumanString() );
 
-		Document document = new Document( uri, icon, title );
-		document.mediaType( mediaType );
-		document.content( content );
+		Document document = new Document();
+		document.uri( uri );
+		document.icon( icon );
+		document.mediaType( Document.SupportedMediaType.HTML );
+		document.title( null );
+		document.content( null );
 		document.values( replacementValues );
 		document.tags( tags );
 		document.store( true );
@@ -331,7 +322,7 @@ public class CartesiaMod extends Mod {
 			defaultContent.append( "<h2>" ).append( actionCommand ).append( "</h2>" );
 			defaultContent.append( "</body></html>" );
 
-			Document document = createIndexableDocument( icon, title, null, resourcePath, values, command.getTags(), defaultContent.toString() );
+			Document document = createIndexableDocument( icon, resourcePath, values, command.getTags(), defaultContent.toString() );
 			getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}
