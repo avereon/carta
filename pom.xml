@@ -41,7 +41,6 @@
 		<xenon.version>[1.7-SNAPSHOT,)</xenon.version>
 		<zerra.version>[0.9-SNAPSHOT,)</zerra.version>
 		<jep.version>2.24</jep.version>
-		<jsoup.version>1.15.3</jsoup.version>
 		<monocle.version>jdk-12.0.1+2</monocle.version>
 		<cameo.version>2.10</cameo.version>
 		<images-folder>target/main/images</images-folder>
@@ -72,12 +71,6 @@
 			<groupId>jep</groupId>
 			<artifactId>jep</artifactId>
 			<version>${jep.version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<version>${jsoup.version}</version>
 		</dependency>
 
 		<dependency>

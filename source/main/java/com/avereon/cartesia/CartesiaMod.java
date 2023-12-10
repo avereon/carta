@@ -13,8 +13,6 @@ import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
-import com.avereon.util.IoUtil;
-import com.avereon.util.TextUtil;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
@@ -25,13 +23,9 @@ import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
-import org.jsoup.Jsoup;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 @CustomLog
@@ -254,40 +248,39 @@ public class CartesiaMod extends Mod {
 
 	private void registerHelpPages() {
 		// FIXME Tag names are language specific
-//		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "Introduction", "/docs/manual/introduction", Map.of(), List.of() ) );
-//		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "Relative Coordinates", "/docs/manual/relative-coordinates", Map.of(), List.of() ) );
-//		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "document", "Selecting Geometry", "/docs/manual/selecting-geometry", Map.of(), List.of() ) );
 
-		// NEXT Keep improving indexing of these documents
-		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "/docs/manual/selecting-geometry.html" ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "/docs/manual/introduction" ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "/docs/manual/relative-coordinates" ) );
+		getProgram().getIndexService().submit( INDEX_ID, createIndexableDocument( "/docs/manual/selecting-geometry" ) );
 
 		registerCommandHelpPages();
 	}
 
+	/**
+	 * Create an indexable document from a resource path.
+	 *
+	 * @param resourcePath The resource path without language or suffix
+	 * @return The indexable document
+	 */
 	private Document createIndexableDocument( String resourcePath ) {
-		try( InputStream input = getClass().getResourceAsStream( resourcePath ) ) {
-			String content = IoUtil.toString( input, StandardCharsets.UTF_8 );
-			org.jsoup.nodes.Document html = Jsoup.parse( content );
-			String title = html.select( "html > head > title" ).text();
-
-			log.atConfig().log("title={0}", title);
-
-			return createIndexableDocument( "document", title, content, null, Map.of(), List.of(), TextUtil.EMPTY );
-		} catch( IOException exception ) {
-			log.atWarn( exception );
-			return null;
-		}
+		return createIndexableDocument( "document", null, null, resourcePath, Map.of(), List.of(), null );
 	}
 
-	private Document createIndexableDocument( String icon, String resourcePath, Map<String, String> values ) {
-		return createIndexableDocument( icon, "", null, resourcePath, values, List.of(), TextUtil.EMPTY );
-	}
-
-	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
-		return createIndexableDocument( icon, title, null, resourcePath, values, tags, TextUtil.EMPTY );
-	}
+	//	private Document createIndexableDocument( String icon, String resourcePath, Map<String, String> values ) {
+	//		return createIndexableDocument( icon, null, null, resourcePath, values, List.of(), null );
+	//	}
+	//
+	//	private Document createIndexableDocument( String icon, String title, String resourcePath, Map<String, String> values, List<String> tags ) {
+	//		return createIndexableDocument( icon, title, null, resourcePath, values, tags, null );
+	//	}
 
 	private Document createIndexableDocument( String icon, String title, String content, String resourcePath, Map<String, String> values, List<String> tags, String defaultContent ) {
+		return createIndexableDocument( icon, title, content, resourcePath, null, values, tags, defaultContent );
+	}
+
+	private Document createIndexableDocument(
+		String icon, String title, String content, String resourcePath, Document.SupportedMediaType mediaType, Map<String, String> values, List<String> tags, String defaultContent
+	) {
 		// Create the document URI
 		String modKey = getCard().getProductKey();
 		URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
@@ -297,17 +290,24 @@ public class CartesiaMod extends Mod {
 		replacementValues.put( "module.version", getCard().getVersion() );
 		replacementValues.put( "module.release", getCard().getRelease().toHumanString() );
 
+		Document document = new Document( uri, icon, title );
+		document.mediaType( mediaType );
+		document.content( content );
+		document.values( replacementValues );
+		document.tags( tags );
+		document.store( true );
+
 		try {
 			// Create the resource content URL
 			URL url = (URL)ResourceBundle.getBundle( CartesiaHelp.class.getName() ).getObject( resourcePath );
-
-			return new Document( uri, icon, title ).content(content).url( url ).values( replacementValues ).tags( tags ).store( true );
+			document.url( url );
+			log.atDebug().log( "Resource found: %s", url );
 		} catch( MissingResourceException exception ) {
-			log.atWarn().log( "Resource not found: path=%s", resourcePath );
-			if( defaultContent != null ) return new Document( uri, icon, title ).content( defaultContent ).values( replacementValues ).tags( tags ).store( true );
+			//log.atConfig().log( "Resource not found: %s", resourcePath );
+			if( defaultContent != null ) document.content( defaultContent );
 		}
 
-		return null;
+		return document;
 	}
 
 	private void registerCommandHelpPages() {
@@ -316,23 +316,23 @@ public class CartesiaMod extends Mod {
 			ActionProxy action = getProgram().getActionLibrary().getAction( command.getAction() );
 			String resourcePath = "/docs/manual/commands/" + command.getAction();
 			String icon = action.getIcon();
-			String title = command.getName();
 
 			String actionName = Objects.requireNonNullElse( command.getName(), "" );
 			String actionCommand = Objects.requireNonNullElse( command.getCommand(), "--" ).toUpperCase();
 			Map<String, String> values = Map.of( "action.name", actionName, "action.command", actionCommand );
 
+			String title = actionCommand + " - " + actionName;
+
 			StringBuilder defaultContent = new StringBuilder( "<html>" );
 			defaultContent.append( "<head>" );
-			defaultContent.append( "<title>" ).append( actionName ).append( "</title>" );
+			defaultContent.append( "<title>" ).append( title ).append( "</title>" );
 			defaultContent.append( "</head>" );
 			defaultContent.append( "<h1>" ).append( actionName ).append( "</h1>" );
 			defaultContent.append( "<h2>" ).append( actionCommand ).append( "</h2>" );
 			defaultContent.append( "</body></html>" );
 
-			String documentTitle = actionCommand + " - " + title;
-			Document document = createIndexableDocument( icon, documentTitle, TextUtil.EMPTY, resourcePath, values, command.getTags(), defaultContent.toString() );
-			if( document != null ) getProgram().getIndexService().submit( INDEX_ID, document );
+			Document document = createIndexableDocument( icon, title, null, resourcePath, values, command.getTags(), defaultContent.toString() );
+			getProgram().getIndexService().submit( INDEX_ID, document );
 		}
 	}
 
