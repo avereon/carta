@@ -279,9 +279,9 @@ public class CartesiaMod extends Mod {
 		replacementValues.put( "module.release", getCard().getRelease().toHumanString() );
 
 		Document document = new Document();
+		document.mediaType( Document.MediaType.HTML );
 		document.uri( uri );
 		document.icon( icon );
-		document.mediaType( Document.SupportedMediaType.HTML );
 		document.title( null );
 		document.content( null );
 		document.values( replacementValues );
