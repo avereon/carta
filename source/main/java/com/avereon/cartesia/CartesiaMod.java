@@ -18,6 +18,7 @@ import com.avereon.xenon.Mod;
 import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.asset.type.ProgramHelpType;
+import com.avereon.xenon.index.IndexService;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
@@ -286,7 +287,7 @@ public class CartesiaMod extends Mod {
 		document.content( null );
 		document.values( replacementValues );
 		document.tags( tags );
-		document.store( true );
+		document.properties().put( IndexService.STORE_CONTENT, true);
 
 		try {
 			// Create the resource content URL
