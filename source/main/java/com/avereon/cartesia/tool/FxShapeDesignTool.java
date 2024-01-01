@@ -191,7 +191,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		// NOTE Settings and settings listeners should go in the ready() method
 
-		// NEXT If the fragment of the URI is "print" more components need to be added
+		// TODO If the fragment of the URI is "print" more components need to be added
 		String fragment = UriUtil.parseFragment( asset.getUri() );
 		if( fragment != null && fragment.startsWith( "print" ) ) {
 			// Should be in the format 'print=<uuid>'
