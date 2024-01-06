@@ -8,7 +8,7 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.xenon.tool.settings.SettingsPanel;
+import com.avereon.xenon.tool.settings.SettingsPagePanel;
 import com.avereon.xenon.workpane.Workpane;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.control.ScrollPane;
@@ -73,7 +73,7 @@ public class ShapePropertiesTool extends ProgramTool {
 	private void showPage( SettingsPage page ) {
 		Fx.run( () -> {
 			page.setOptionProviders( getProgram().getSettingsManager().getOptionProviders() );
-			scroller.setContent( new SettingsPanel( page ) );
+			scroller.setContent( new SettingsPagePanel( page ) );
 		});
 	}
 
