@@ -72,8 +72,8 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	private void showPage( SettingsPage page ) {
 		Fx.run( () -> {
-			page.setOptionProviders( getProgram().getSettingsManager().getOptionProviders() );
-			scroller.setContent( new SettingsPagePanel( page ) );
+			SettingsPagePanel panel = new SettingsPagePanel( page, getProgram().getSettingsManager().getOptionProviders() );
+			scroller.setContent( panel );
 		});
 	}
 
