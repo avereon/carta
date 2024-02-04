@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.avereon.pom</groupId>
 		<artifactId>mod</artifactId>
-		<version>3.5.3</version>
+		<version>3.5.4</version>
 	</parent>
 
 	<groupId>com.avereon</groupId>
@@ -36,10 +36,10 @@
 
 	<properties>
 		<!-- Version numbers updated 07 Mar 2023 -->
-		<curve.version>[0.4-SNAPSHOT,)</curve.version>
-		<marea.version>[0.2-SNAPSHOT,)</marea.version>
-		<xenon.version>[1.7-SNAPSHOT,)</xenon.version>
-		<zerra.version>[0.9-SNAPSHOT,)</zerra.version>
+		<curve.version>[0.5-SNAPSHOT,)</curve.version>
+		<marea.version>[0.3-SNAPSHOT,)</marea.version>
+		<xenon.version>[1.8-SNAPSHOT,)</xenon.version>
+		<zerra.version>[0.10-SNAPSHOT,)</zerra.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>jdk-12.0.1+2</monocle.version>
 		<cameo.version>2.10</cameo.version>
