@@ -26,8 +26,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
@@ -106,7 +107,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.toast = new Label( "Loading..." );
 
 		// Add the components to the parent
-		getChildren().addAll( new BorderPane( renderer, toast, null, null, null ) );
+		StackPane stack = new StackPane( renderer, toast );
+		stack.setAlignment( Pos.CENTER );
+		getChildren().addAll( stack );
 
 		// NOTE Settings and settings listeners should go in the ready() method
 	}
@@ -122,6 +125,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
+
+		toast.setVisible( false );
 
 		Design design = request.getAsset().getModel();
 		renderer.setDesign( design );
@@ -624,15 +629,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private void doRebuildGrid() {
 		if( !isGridVisible() ) return;
 
-//		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
-//			try {
-//				//List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
-//				List<Shape2d> grid = List.of();
-//				Fx.run( () -> renderer.setGrid( grid ) );
-//			} catch( Exception exception ) {
-//				log.atError().withCause( exception ).log( "Error creating grid" );
-//			}
-//		} ) );
+		//		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
+		//			try {
+		//				//List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
+		//				List<Shape2d> grid = List.of();
+		//				Fx.run( () -> renderer.setGrid( grid ) );
+		//			} catch( Exception exception ) {
+		//				log.atError().withCause( exception ).log( "Error creating grid" );
+		//			}
+		//		} ) );
 	}
 
 	private class PrintAction extends ProgramAction {

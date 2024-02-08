@@ -9,6 +9,7 @@ module com.avereon.cartesia {
 	requires com.avereon.curve;
 	requires com.avereon.marea;
 	requires com.avereon.xenon;
+	requires com.avereon.zarra;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;
 	requires java.logging;
