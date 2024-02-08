@@ -135,6 +135,8 @@ public class DesignRenderer extends BorderPane {
 			double width = workplane.calcGridAxisWidth();
 			Pen pen = new Pen( paint, width );
 
+			log.atConfig().log( "Rendering axis with " + pen );
+
 			// FIXME Can the grid be cached?
 			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
 				case DOT -> grid.createAxisDots( workplane );

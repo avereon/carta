@@ -24,11 +24,13 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.*;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
@@ -87,6 +89,12 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		this.renderer = new DesignRenderer();
 		this.workplane = new DesignWorkplane();
+		this.renderer.setWorkplane( workplane );
+
+		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
+		this.workplane.setGridAxisPaint( Color.YELLOW );
+		this.workplane.setGridAxisVisible( true );
+		this.workplane.setGridAxisWidth( "0.05" );
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
@@ -121,8 +129,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
 
-		//		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
-		//		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
@@ -133,6 +139,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		// FIXME Is this correct? Or should this be in display()
 		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
+
+		//		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
+		//		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
 		//		// Link the guides before loading the design
 		//		layersGuide.link();
