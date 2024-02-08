@@ -91,10 +91,21 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.workplane = new DesignWorkplane();
 		this.renderer.setWorkplane( workplane );
 
+		// FIXME These need to be tied to the viewport bounds
 		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
+
 		this.workplane.setGridAxisPaint( Color.YELLOW );
-		this.workplane.setGridAxisVisible( true );
-		this.workplane.setGridAxisWidth( "0.05" );
+		this.workplane.setGridAxisWidth( "0.02" );
+
+		this.workplane.setMajorGridPaint( Color.GREEN );
+		this.workplane.setMajorGridWidth( "0.01" );
+		this.workplane.setMajorGridX( "1" );
+		this.workplane.setMajorGridY( "1" );
+
+		this.workplane.setMinorGridPaint( Color.BLUE );
+		this.workplane.setMinorGridWidth( "0.01" );
+		this.workplane.setMinorGridX( "0.5" );
+		this.workplane.setMinorGridY( "0.5" );
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );

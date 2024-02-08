@@ -1113,7 +1113,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
 			try {
-				List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
+				List<Shape> grid = getCoordinateSystem().createFxGeometryGrid( getWorkplane() );
 				Fx.run( () -> designPane.setGrid( grid ) );
 			} catch( Exception exception ) {
 				log.atError().withCause( exception ).log( "Error creating grid" );

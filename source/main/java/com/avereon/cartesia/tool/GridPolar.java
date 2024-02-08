@@ -1,9 +1,9 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
+import com.avereon.marea.Shape2d;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
@@ -41,17 +41,23 @@ public class GridPolar implements Grid {
 	}
 
 	@Override
-	public List<DesignShape> generateGrid( DesignWorkplane workplane, GridStyle style ) {
+	public List<Shape2d> createMareaGeometryGrid( DesignWorkplane workplane ) {
+		return switch( workplane.getGridStyle() ) {
+			case DOT -> generateMareaGridDots( workplane );
+			case LINE -> generateMareaGridLines( workplane );
+		};
+	}
+
+	private List<Shape2d> generateMareaGridDots( DesignWorkplane workplane ) {
+		return List.of();
+	}
+
+	private List<Shape2d> generateMareaGridLines( DesignWorkplane workplane ) {
 		return List.of();
 	}
 
 	@Override
-	public List<Shape> getGridDots( DesignWorkplane workplane ) {
-		return List.of();
-	}
-
-	@Override
-	public List<Shape> getGridLines( DesignWorkplane workplane ) {
+	public List<Shape> createFxGeometryGrid( DesignWorkplane workplane ) {
 		// The x spacing will be radius
 		// The y spacing will be angle in degrees
 

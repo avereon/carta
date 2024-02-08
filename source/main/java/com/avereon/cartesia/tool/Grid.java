@@ -1,17 +1,22 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.DesignShape;
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
 import com.avereon.marea.Shape2d;
+import com.avereon.marea.fx.FxRenderer2d;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
+/*
+NEXT - This class currently has three return types for grid geometry.
+Not sure if this is the approach I want to take. The other option is to generate
+design geometry and map it to native geometry for the renderer, but that "just"
+slows it down.
+ */
 public interface Grid {
 
 	Grid ORTHO = new GridOrthographic();
@@ -24,45 +29,26 @@ public interface Grid {
 
 	Point3D getNearest( DesignWorkplane workplane, Point3D point );
 
-	default Set<Shape2d> createAxisDots( DesignWorkplane workplane ) {
-		return Set.of();
+	/**
+	 * @param workplane The workplane that defines the users work plane
+	 * @return The grid geometry as Marea shapes
+	 */
+	default List<Shape2d> createMareaGeometryGrid( DesignWorkplane workplane ) {
+		return List.of();
 	}
 
-	default Set<Shape2d> createMajorDots( DesignWorkplane workplane ) {
-		return Set.of();
-	}
-
-	default Set<Shape2d> createMinorDots( DesignWorkplane workplane ) {
-		return Set.of();
-	}
-
-	default Set<Shape2d> createAxisLines( DesignWorkplane workplane ) {
-		return Set.of();
-	}
-
-	default Set<Shape2d> createMajorLines( DesignWorkplane workplane ) {
-		return Set.of();
-	}
-
-	default Set<Shape2d> createMinorLines( DesignWorkplane workplane ) {
-		return Set.of();
-	}
-
-	List<DesignShape> generateGrid( DesignWorkplane workplane, GridStyle style );
+	default void drawMareaGeometryGrid( FxRenderer2d renderer, DesignWorkplane workplane ) {}
 
 	@Deprecated
-	List<Shape> getGridDots( DesignWorkplane workplane ) throws Exception;
-
-	//	double[][] getGridDotsNew();
+	default List<Shape> getGridDots( DesignWorkplane workplane ) {
+		return List.of();
+	}
 
 	/**
-	 * @param workplane
-	 * @return
-	 * @deprecated Unfortunately this method return FX shapes instead of something
-	 * simpler
+	 * @param workplane The workplane that defines the users work plane
+	 * @return The grid geometry as FX shapes
 	 */
-	@Deprecated
-	List<Shape> getGridLines( DesignWorkplane workplane );
+	List<Shape> createFxGeometryGrid( DesignWorkplane workplane );
 
 	static Grid valueOf( String name ) {
 		return switch( name ) {

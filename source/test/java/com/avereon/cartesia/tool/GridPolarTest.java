@@ -54,7 +54,7 @@ public class GridPolarTest {
 	@Test
 	void testGetGridLines() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
-		List<Shape> lines = Grid.POLAR.getGridLines( workplane );
+		List<Shape> lines = Grid.POLAR.createFxGeometryGrid( workplane );
 		assertThat( lines.size() ).isEqualTo( 44 );
 	}
 

@@ -6,6 +6,7 @@ import com.avereon.transaction.Txn;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
@@ -595,6 +596,16 @@ public class DesignWorkplane extends Node {
 		double boundaryYmin = Math.min( getBoundaryY1(), getBoundaryY2() );
 		double boundaryYmax = Math.max( getBoundaryY1(), getBoundaryY2() );
 		return new BoundingBox( boundaryXmin, boundaryYmin, boundaryXmax - boundaryXmin, boundaryYmax - boundaryYmin );
+	}
+
+	public DesignWorkplane setBounds( Point2D min, Point2D max ) {
+		Txn.run( () -> {
+			setBoundaryX1( min.getX() );
+			setBoundaryY1( min.getY() );
+			setBoundaryX2( max.getX() );
+			setBoundaryY2( max.getY() );
+		} );
+		return this;
 	}
 
 	public DesignWorkplane setBounds( Bounds bounds ) {

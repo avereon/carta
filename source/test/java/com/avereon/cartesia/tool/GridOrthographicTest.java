@@ -59,7 +59,7 @@ public class GridOrthographicTest {
 	@Test
 	void getGridLinesCommon() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
-		List<Shape> lines = Grid.ORTHO.getGridLines( workplane );
+		List<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
 
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
 		// Y lines = 8 - -8 = 16 / 0.5 + 1 = 33
@@ -70,7 +70,7 @@ public class GridOrthographicTest {
 	@Test
 	void getGridLinesOffOrigin() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
-		List<Shape> lines = Grid.ORTHO.getGridLines( workplane );
+		List<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
 
 		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11
 		// Y lines = 8 - 4 = 4 / 0.5 + 1 = 9

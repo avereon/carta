@@ -9,13 +9,11 @@ import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
 import com.avereon.zarra.javafx.Fx;
+import javafx.geometry.Point2D;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -81,21 +79,6 @@ public class DesignRenderer extends BorderPane {
 		} );
 	}
 
-	private List<Shape2d> doRebuildGrid() {
-		//		if( !isGridVisible() ) return;
-		//
-		//		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
-		//			try {
-		//				//List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
-		//				List<Shape2d> grid = List.of();
-		//				Fx.run( () -> renderer.setGrid( grid ) );
-		//			} catch( Exception exception ) {
-		//				log.atError().withCause( exception ).log( "Error creating grid" );
-		//			}
-		//		} ) );
-		return List.of();
-	}
-
 	/**
 	 * Request that geometry be rendered. This method collapses multiple
 	 * sequential render requests to improve performance. This method is safe to
@@ -127,54 +110,11 @@ public class DesignRenderer extends BorderPane {
 	private void renderWorkplane() {
 		if( workplane == null ) return;
 
-		Grid grid = workplane.getCoordinateSystem();
+		// Update the workplane bounds to match this pane
+		workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
 
-		// Render axes
-		if(  workplane.isGridAxisVisible() ) {
-			Paint paint = workplane.calcGridAxisPaint();
-			double width = workplane.calcGridAxisWidth();
-			Pen pen = new Pen( paint, width );
-
-			log.atConfig().log( "Rendering axis with " + pen );
-
-			// FIXME Can the grid be cached?
-			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
-				case DOT -> grid.createAxisDots( workplane );
-				case LINE -> grid.createAxisLines( workplane );
-			};
-
-			renderer.draw( shapes, pen );
-		}
-
-		// Render major grid
-		if( workplane.isMajorGridVisible() ) {
-			Paint paint = workplane.calcMajorGridPaint();
-			double width = workplane.calcMajorGridWidth();
-			Pen pen = new Pen( paint, width );
-
-			// FIXME Can the grid be cached?
-			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
-				case DOT -> grid.createMajorDots( workplane );
-				case LINE -> grid.createMajorLines( workplane );
-			};
-
-			renderer.draw( shapes, pen );
-		}
-
-		// Render minor grid
-		if( workplane.isMinorGridVisible() ) {
-			Paint paint = workplane.calcMinorGridPaint();
-			double width = workplane.calcMinorGridWidth();
-			Pen pen = new Pen( paint, width );
-
-			// FIXME Can the grid be cached?
-			Set<Shape2d> shapes = switch( workplane.getGridStyle() ) {
-				case DOT -> grid.createMinorDots( workplane );
-				case LINE -> grid.createMinorLines( workplane );
-			};
-
-			renderer.draw( shapes, pen );
-		}
+		// Render grid
+		workplane.getCoordinateSystem().drawMareaGeometryGrid( renderer, workplane );
 	}
 
 	private void renderVisibleLayers() {
