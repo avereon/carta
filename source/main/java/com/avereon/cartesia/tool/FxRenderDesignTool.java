@@ -87,25 +87,30 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
 
+		// Create and associate the renderer and workplane
 		this.renderer = new DesignRenderer();
 		this.workplane = new DesignWorkplane();
 		this.renderer.setWorkplane( workplane );
 
-		// FIXME These need to be tied to the viewport bounds
+		// Workplane defaults
 		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
+		this.workplane.setGridStyle( GridStyle.DOT );
 
 		this.workplane.setGridAxisPaint( Color.YELLOW );
-		this.workplane.setGridAxisWidth( "0.02" );
+		this.workplane.setGridAxisWidth( "0.05" );
 
-		this.workplane.setMajorGridPaint( Color.GREEN );
-		this.workplane.setMajorGridWidth( "0.01" );
+		this.workplane.setMajorGridPaint( Color.CYAN );
+		this.workplane.setMajorGridWidth( "0.02" );
 		this.workplane.setMajorGridX( "1" );
 		this.workplane.setMajorGridY( "1" );
 
-		this.workplane.setMinorGridPaint( Color.BLUE );
+		this.workplane.setMinorGridPaint( Color.CYAN );
 		this.workplane.setMinorGridWidth( "0.01" );
 		this.workplane.setMinorGridX( "0.5" );
 		this.workplane.setMinorGridY( "0.5" );
+
+		this.workplane.setSnapGridX( "0.1" );
+		this.workplane.setSnapGridY( "0.1" );
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
