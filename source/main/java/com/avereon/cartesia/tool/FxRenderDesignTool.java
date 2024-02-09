@@ -94,10 +94,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		// Workplane defaults
 		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
-		this.workplane.setGridStyle( GridStyle.LINE );
+		this.workplane.setGridStyle( GridStyle.DOT );
 
 		this.workplane.setGridAxisPaint( Color.YELLOW );
-		this.workplane.setGridAxisWidth( "0.05" );
+		this.workplane.setGridAxisWidth( "0.04" );
 
 		this.workplane.setMajorGridPaint( Color.CYAN );
 		this.workplane.setMajorGridWidth( "0.02" );
