@@ -10,6 +10,7 @@ public class GridIcon extends SvgIcon implements GridIconConstants {
 		this( true );
 	}
 
+	// FIXME This class needs to be made abstract and new concrete classes created
 	public GridIcon( boolean enabled ) {
 		super( GRID, GRID );
 		for( int index = 0; index < 3; index++ ) {
