@@ -157,8 +157,8 @@ public class CartesiaMod extends Mod {
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
-		registerIcon( "grid-toggle-enabled", new GridIcon( true ) );
-		registerIcon( "grid-toggle-disabled", new GridIcon( false ) );
+		registerIcon( "grid-toggle-enabled", new GridVisibleIcon() );
+		registerIcon( "grid-toggle-disabled", new GridHiddenIcon() );
 		registerIcon( "snap-grid-toggle-enabled", new SnapGridEnabledIcon() );
 		registerIcon( "snap-grid-toggle-disabled", new SnapGridDisabledIcon() );
 		registerIcon( "shape-properties", new PreferencesIcon() );
@@ -225,8 +225,8 @@ public class CartesiaMod extends Mod {
 		unregisterIcon( "shape-properties", new PreferencesIcon() );
 		unregisterIcon( "snap-grid-toggle-disabled", new SnapGridDisabledIcon() );
 		unregisterIcon( "snap-grid-toggle-enabled", new SnapGridEnabledIcon() );
-		unregisterIcon( "grid-toggle-disabled", new GridIcon() );
-		unregisterIcon( "grid-toggle-enabled", new GridIcon() );
+		unregisterIcon( "grid-toggle-disabled", new GridHiddenIcon() );
+		unregisterIcon( "grid-toggle-enabled", new GridVisibleIcon() );
 		unregisterIcon( "layer-hidden", new LayerHiddenIcon() );
 		unregisterIcon( "layers", new LayersIcon() );
 		unregisterIcon( "layer", new LayerVisibleIcon() );

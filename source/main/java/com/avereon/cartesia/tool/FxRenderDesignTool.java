@@ -8,20 +8,19 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
-import com.avereon.util.DelayedAction;
-import com.avereon.xenon.ProgramAction;
-import com.avereon.xenon.PropertiesToolEvent;
-import com.avereon.xenon.Xenon;
-import com.avereon.xenon.XenonProgramProduct;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.PropertiesType;
 import com.avereon.xenon.task.Task;
+import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.*;
+import javafx.beans.value.ChangeListener;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.geometry.BoundingBox;
@@ -37,6 +36,9 @@ import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @CustomLog
 public class FxRenderDesignTool extends BaseDesignTool {
@@ -70,6 +72,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	// ACTIONS
 
+	private final Map<String, ProgramAction> commandActions;
+
 	private final PrintAction printAction;
 
 	private final PropertiesAction propertiesAction;
@@ -80,12 +84,18 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final RedoAction redoAction;
 
-	private final DelayedAction rebuildGridAction;
+	private BooleanProperty gridSnapEnabled;
+
+	private ChangeListener<Boolean> gridVisibleToggleHandler;
+
+	private ChangeListener<Boolean> snapGridToggleHandler;
 
 	public FxRenderDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
+
+		this.commandActions = new ConcurrentHashMap<>();
 
 		// Create and associate the renderer and workplane
 		this.renderer = new DesignRenderer();
@@ -122,10 +132,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
-
-		this.rebuildGridAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::doRebuildGrid );
-		this.rebuildGridAction.setMinTriggerLimit( 100 );
-		this.rebuildGridAction.setMaxTriggerLimit( 500 );
 
 		// Create the toast label
 		this.toast = new Label( "Loading..." );
@@ -312,6 +318,179 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	}
 
 	@Override
+	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
+		//		if( getCurrentGuide() == layersGuide ) {
+		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
+		//		} else if( getCurrentGuide() == viewsGuide ) {
+		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
+		//		} else if( getCurrentGuide() == printsGuide ) {
+		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentPrintById( n.getId() ) );
+		//		}
+	}
+
+	@Override
+	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
+		//		showPropertiesPage( getCurrentLayer() );
+	}
+
+	@Override
+	protected void allocate() throws ToolException {
+		super.allocate();
+
+		//		// Add asset switch listener to remove command prompt
+		//		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+		//			// FIXME #113 Design tool activate does not show coordinate status
+		//			if( isDisplayed() && e.getOldAsset() == this.getAsset() && e.getNewAsset() != this.getAsset() ) {
+		//				unregisterStatusBarItems();
+		//			}
+		//		} );
+	}
+
+	@Override
+	protected void activate() throws ToolException {
+		super.activate();
+
+		getCommandContext().setLastActiveDesignTool( this );
+		getCommandContext().setTool( this );
+
+		//		registerStatusBarItems();
+		//		registerCommandCapture();
+		registerActions();
+
+		requestFocus();
+	}
+
+	@Override
+	protected void conceal() throws ToolException {
+		//		unregisterCommandCapture();
+		unregisterActions();
+
+		super.conceal();
+	}
+
+	@Override
+	protected void deallocate() throws ToolException {
+		//		// Remove asset switch listener to unregister status bar items
+		//		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+
+		super.deallocate();
+	}
+
+	private void registerActions() {
+		pushAction( "print", printAction );
+		pushAction( "properties", propertiesAction );
+		pushAction( "delete", deleteAction );
+		pushAction( "undo", undoAction );
+		pushAction( "redo", redoAction );
+
+		pushCommandAction( "draw-arc-2" );
+		pushCommandAction( "draw-arc-3" );
+		pushCommandAction( "draw-circle-2" );
+		pushCommandAction( "draw-circle-3" );
+		pushCommandAction( "draw-circle-diameter-2" );
+		//pushCommandAction( "draw-curve-3" );
+		pushCommandAction( "draw-curve-4" );
+		pushCommandAction( "draw-ellipse-3" );
+		pushCommandAction( "draw-ellipse-arc-5" );
+		pushCommandAction( "draw-line-2" );
+		pushCommandAction( "draw-line-perpendicular" );
+		pushCommandAction( "draw-marker" );
+		pushCommandAction( "draw-path" );
+
+		pushCommandAction( "measure-angle" );
+		pushCommandAction( "measure-distance" );
+		pushCommandAction( "measure-length" );
+		pushCommandAction( "measure-point" );
+		pushCommandAction( "shape-information" );
+
+		ProgramAction gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
+		gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
+		ProgramAction snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
+		gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
+
+		String viewActions = "grid-toggle snap-grid-toggle";
+		String layerActions = "layer[layer-create layer-sublayer | layer-delete]";
+		String drawMarkerActions = "marker[draw-marker]";
+		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
+		String drawCircleActions = "circle[draw-circle-2 draw-circle-diameter-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
+		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
+		String drawCurveActions = "curve[draw-curve-4 draw-path]";
+
+		String measurementActions = "measure[shape-information measure-angle measure-distance measure-point measure-length]";
+
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder menus = new StringBuilder( viewActions );
+		menus.append( " " ).append( layerActions );
+		menus.append( "|" ).append( drawMarkerActions );
+		menus.append( " " ).append( drawLineActions );
+		menus.append( " " ).append( drawCircleActions );
+		menus.append( " " ).append( drawEllipseActions );
+		menus.append( " " ).append( drawCurveActions );
+		menus.append( "|" ).append( measurementActions );
+
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder tools = new StringBuilder( viewActions );
+		tools.append( " " ).append( drawMarkerActions );
+		tools.append( " " ).append( drawLineActions );
+		tools.append( " " ).append( drawCircleActions );
+		tools.append( " " ).append( drawEllipseActions );
+		tools.append( " " ).append( drawCurveActions );
+
+		pushMenus( menus.toString() );
+		pushTools( tools.toString() );
+	}
+
+	private void unregisterActions() {
+		pullMenus();
+		pullTools();
+
+		if( gridVisibleToggleHandler != null ) gridVisible().removeListener( gridVisibleToggleHandler );
+		pullCommandAction( "grid-toggle" );
+		if( snapGridToggleHandler != null ) gridSnapEnabled().removeListener( snapGridToggleHandler );
+		pullCommandAction( "snap-grid-toggle" );
+
+		pullCommandAction( "draw-path" );
+		pullCommandAction( "draw-marker" );
+		pullCommandAction( "draw-line-perpendicular" );
+		pullCommandAction( "draw-line-2" );
+		pullCommandAction( "draw-ellipse-arc-5" );
+		pullCommandAction( "draw-ellipse-3" );
+		pullCommandAction( "draw-curve-4" );
+		//pullCommandAction( "draw-curve-3" );
+		pullCommandAction( "draw-circle-diameter-2" );
+		pullCommandAction( "draw-circle-3" );
+		pullCommandAction( "draw-circle-2" );
+		pullCommandAction( "draw-arc-3" );
+		pullCommandAction( "draw-arc-2" );
+
+		pullCommandAction( "shape-information" );
+		pullCommandAction( "measure-point" );
+		pullCommandAction( "measure-length" );
+		pullCommandAction( "measure-distance" );
+		pullCommandAction( "measure-angle" );
+
+		pullAction( "print", printAction );
+		pullAction( "properties", propertiesAction );
+		pullAction( "delete", deleteAction );
+		pullAction( "undo", undoAction );
+		pullAction( "redo", redoAction );
+	}
+
+	private ProgramAction pushCommandAction( String key ) {
+		return pushCommandAction( key, null );
+	}
+
+	private ProgramAction pushCommandAction( String key, String initialActionState ) {
+		ActionProxy proxy = getProgram().getActionLibrary().getAction( key );
+		ProgramAction action = commandActions.computeIfAbsent( key, k -> new CommandAction( getProgram(), proxy.getCommand() ) );
+		if( initialActionState != null ) action.setState( initialActionState );
+		pushAction( key, action );
+		return action;
+	}
+
+	private void pullCommandAction( String key ) {
+		pullAction( key, commandActions.get( key ) );
+	}
+
+	@Override
 	public Point3D getViewPoint() {
 		return viewpointProperty.get();
 	}
@@ -403,7 +582,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public ObservableList<Shape> selectedShapes() {
-		return null;
+		return FXCollections.observableArrayList();
 	}
 
 	@Override
@@ -548,32 +727,33 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public boolean isGridVisible() {
-		return false;
+		return renderer.isGridVisible();
 	}
 
 	@Override
 	public void setGridVisible( boolean visible ) {
-
+		renderer.setGridVisible( visible );
 	}
 
 	@Override
 	public BooleanProperty gridVisible() {
-		return null;
+		return renderer.gridVisible();
 	}
 
 	@Override
 	public boolean isGridSnapEnabled() {
-		return false;
+		return gridSnapEnabled == null ? DEFAULT_GRID_SNAP_ENABLED : gridSnapEnabled().get();
 	}
 
 	@Override
 	public void setGridSnapEnabled( boolean enabled ) {
-
+		gridSnapEnabled().set( enabled );
 	}
 
 	@Override
 	public BooleanProperty gridSnapEnabled() {
-		return null;
+		if( gridSnapEnabled == null ) gridSnapEnabled = new SimpleBooleanProperty( DEFAULT_GRID_SNAP_ENABLED );
+		return gridSnapEnabled;
 	}
 
 	@Override
@@ -651,18 +831,25 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	}
 
-	private void doRebuildGrid() {
-		if( !isGridVisible() ) return;
+	private class CommandAction extends ProgramAction {
 
-		//		getProgram().getTaskManager().submit( Task.of( "Rebuild grid", () -> {
-		//			try {
-		//				//List<Shape> grid = getCoordinateSystem().getGridLines( getWorkplane() );
-		//				List<Shape2d> grid = List.of();
-		//				Fx.run( () -> renderer.setGrid( grid ) );
-		//			} catch( Exception exception ) {
-		//				log.atError().withCause( exception ).log( "Error creating grid" );
-		//			}
-		//		} ) );
+		private final String shortcut;
+
+		protected CommandAction( Xenon program, String shortcut ) {
+			super( program );
+			this.shortcut = shortcut;
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getCommandContext().command( shortcut );
+		}
+
 	}
 
 	private class PrintAction extends ProgramAction {

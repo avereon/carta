@@ -9,6 +9,7 @@ import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
 import com.avereon.zarra.javafx.Fx;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
@@ -25,6 +26,8 @@ public class DesignRenderer extends BorderPane {
 	private Design design;
 
 	private DesignWorkplane workplane;
+
+	private SimpleBooleanProperty gridVisible;
 
 	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
 
@@ -79,6 +82,20 @@ public class DesignRenderer extends BorderPane {
 		} );
 	}
 
+	public boolean isGridVisible() {
+		return gridVisible != null && gridVisible().get();
+	}
+
+	public void setGridVisible( boolean visible ) {
+		gridVisible.set( visible );
+		render();
+	}
+
+	public SimpleBooleanProperty gridVisible() {
+		if( gridVisible == null ) gridVisible = new SimpleBooleanProperty( false );
+		return gridVisible;
+	}
+
 	/**
 	 * Request that geometry be rendered. This method collapses multiple
 	 * sequential render requests to improve performance. This method is safe to
@@ -92,7 +109,7 @@ public class DesignRenderer extends BorderPane {
 		//long startNs = System.nanoTime();
 		renderer.clear();
 
-		renderWorkplane();
+		if( isGridVisible() ) renderWorkplane();
 
 		renderVisibleLayers();
 

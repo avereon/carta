@@ -4,7 +4,7 @@ import com.avereon.zarra.image.SvgIcon;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
-public class GridIcon extends SvgIcon implements GridIconConstants {
+public abstract class GridIcon extends SvgIcon implements GridIconConstants {
 
 	public GridIcon() {
 		this( true );
@@ -23,10 +23,6 @@ public class GridIcon extends SvgIcon implements GridIconConstants {
 				draw( "M" + MIN + " " + offset + " L" + MAX + " " + offset, null, 2, StrokeLineCap.ROUND, StrokeLineJoin.MITER, 0.5, 1, 4 );
 			}
 		}
-	}
-
-	public static void main( String[] parameters ) {
-		proof( new GridIcon( false ) );
 	}
 
 }
