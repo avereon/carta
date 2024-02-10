@@ -24,27 +24,27 @@ public class DesignWorkplane extends Node {
 
 	public static final String DEFAULT_GRID_ORIGIN = "0,0,0";
 
-	public static final boolean DEFAULT_GRID_AXIS_VISIBILE = true;
+	public static final boolean DEFAULT_GRID_AXIS_VISIBLE = true;
 
 	public static final String DEFAULT_GRID_AXIS_PAINT = "#80a0d060";
 
-	public static final String DEFAULT_GRID_AXIS_WIDTH = "0.1";
+	public static final String DEFAULT_GRID_AXIS_WIDTH = "0.05";
 
-	public static final boolean DEFAULT_GRID_MAJOR_VISIBILE = true;
+	public static final boolean DEFAULT_GRID_MAJOR_VISIBLE = true;
 
 	public static final String DEFAULT_GRID_MAJOR_SIZE = "1.0";
 
 	public static final String DEFAULT_GRID_MAJOR_PAINT = "#80a0d020";
 
-	public static final String DEFAULT_GRID_MAJOR_WIDTH = "0.1";
+	public static final String DEFAULT_GRID_MAJOR_WIDTH = "0.03";
 
-	public static final boolean DEFAULT_GRID_MINOR_VISIBILE = true;
+	public static final boolean DEFAULT_GRID_MINOR_VISIBLE = true;
 
 	public static final String DEFAULT_GRID_MINOR_SIZE = "0.5";
 
 	public static final String DEFAULT_GRID_MINOR_PAINT = "#80a0d010";
 
-	public static final String DEFAULT_GRID_MINOR_WIDTH = "0.05";
+	public static final String DEFAULT_GRID_MINOR_WIDTH = "0.02";
 
 	public static final String DEFAULT_GRID_SNAP_SIZE = "0.1";
 
@@ -169,9 +169,9 @@ public class DesignWorkplane extends Node {
 	 */
 	private double snapGridZ;
 
-	private boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBILE;
+	private boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBLE;
 
-	private boolean minorGridShowing = DEFAULT_GRID_MINOR_VISIBILE;
+	private boolean minorGridShowing = DEFAULT_GRID_MINOR_VISIBLE;
 
 	public DesignWorkplane() {
 		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
@@ -258,6 +258,13 @@ public class DesignWorkplane extends Node {
 			setSnapGridY( snapGridY );
 			setSnapGridZ( snapGridZ );
 			setGridStyle( style );
+
+			setGridAxisPaint( Paints.parse( DEFAULT_GRID_AXIS_PAINT ) );
+			setGridAxisWidth( DEFAULT_GRID_AXIS_WIDTH );
+			setMajorGridPaint( Paints.parse( DEFAULT_GRID_MAJOR_PAINT ) );
+			setMajorGridWidth( DEFAULT_GRID_MAJOR_WIDTH );
+			setMinorGridPaint( Paints.parse( DEFAULT_GRID_MINOR_PAINT ) );
+			setMinorGridWidth( DEFAULT_GRID_MINOR_WIDTH );
 		} );
 	}
 
@@ -318,7 +325,7 @@ public class DesignWorkplane extends Node {
 	// Grid Axis
 	// ******************************
 	public boolean isGridAxisVisible() {
-		return getValue( GRID_AXIS_VISIBLE, DEFAULT_GRID_AXIS_VISIBILE );
+		return getValue( GRID_AXIS_VISIBLE, DEFAULT_GRID_AXIS_VISIBLE );
 	}
 
 	public DesignWorkplane setGridAxisVisible( boolean visible ) {
@@ -358,7 +365,7 @@ public class DesignWorkplane extends Node {
 	// Grid Major Spacing
 	// ******************************
 	public boolean isMajorGridVisible() {
-		return getValue( GRID_MAJOR_VISIBLE, DEFAULT_GRID_MAJOR_VISIBILE );
+		return getValue( GRID_MAJOR_VISIBLE, DEFAULT_GRID_MAJOR_VISIBLE );
 	}
 
 	public DesignWorkplane setMajorGridVisible( boolean visible ) {
@@ -449,7 +456,7 @@ public class DesignWorkplane extends Node {
 	// Grid Minor Spacing
 	// ******************************
 	public boolean isMinorGridVisible() {
-		return getValue( GRID_MINOR_VISIBLE, DEFAULT_GRID_MINOR_VISIBILE );
+		return getValue( GRID_MINOR_VISIBLE, DEFAULT_GRID_MINOR_VISIBLE );
 	}
 
 	public DesignWorkplane setMinorGridVisible( boolean visible ) {
