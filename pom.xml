@@ -40,7 +40,7 @@
 		<marea.version>[0.3-SNAPSHOT,)</marea.version>
 		<zerra.version>[0.10-SNAPSHOT,)</zerra.version>
 		<jep.version>2.24</jep.version>
-		<monocle.version>17.0.10</monocle.version>
+		<monocle.version>21.0.2</monocle.version>
 		<cameo.version>2.10</cameo.version>
 		<images-folder>target/main/images</images-folder>
 	</properties>
