@@ -1,6 +1,5 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.BaseCartesiaTest;
 import com.avereon.cartesia.PointAssert;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.BaseCartesiaTest;
+import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.tool.CommandContext;
 import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SelectTest extends BaseCartesiaTest {
+public class SelectTest extends BaseCartesiaUiTest {
 
 	private CommandContext context;
 
