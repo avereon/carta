@@ -1,4 +1,5 @@
 import com.avereon.cartesia.CartesiaMod;
+import com.avereon.xenon.Module;
 
 module com.avereon.cartesia {
 
@@ -41,6 +42,6 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.tool to org.testfx.junit5;
 	opens com.avereon.cartesia.tool.view to org.testfx.junit5;
 
-	provides com.avereon.xenon.Mod with CartesiaMod;
+	provides Module with CartesiaMod;
 
 }

@@ -14,7 +14,7 @@ import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
 import com.avereon.xenon.ActionProxy;
-import com.avereon.xenon.Mod;
+import com.avereon.xenon.Module;
 import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
 import com.avereon.xenon.asset.type.ProgramHelpType;
@@ -30,7 +30,7 @@ import java.net.URL;
 import java.util.*;
 
 @CustomLog
-public class CartesiaMod extends Mod {
+public class CartesiaMod extends Module {
 
 	public static final String STYLESHEET = "cartesia.css";
 
