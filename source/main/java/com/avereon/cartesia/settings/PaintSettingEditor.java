@@ -1,7 +1,7 @@
 package com.avereon.cartesia.settings;
 
+import com.avereon.cartesia.ui.PaintMode;
 import com.avereon.cartesia.ui.PaintPicker;
-import com.avereon.cartesia.ui.PaintPickerPane;
 import com.avereon.product.Rb;
 import com.avereon.settings.SettingsEvent;
 import com.avereon.xenon.XenonProgramProduct;
@@ -33,11 +33,11 @@ public class PaintSettingEditor extends SettingEditor {
 		paintPicker = new PaintPicker();
 		if( !setting.getOptions().isEmpty() ) paintPicker.getOptions().clear();
 		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
-			case "solid" -> PaintPickerPane.PaintMode.SOLID;
-			case "linear" -> PaintPickerPane.PaintMode.LINEAR;
-			case "radial" -> PaintPickerPane.PaintMode.RADIAL;
-			case "none" -> PaintPickerPane.PaintMode.NONE;
-			default -> new PaintPickerPane.PaintMode( o.getKey(), o.getName() );
+			case "solid" -> PaintMode.SOLID;
+			case "linear" -> PaintMode.LINEAR;
+			case "radial" -> PaintMode.RADIAL;
+			case "none" -> PaintMode.NONE;
+			default -> new PaintMode( o.getKey(), o.getName() );
 		} ).toList() );
 	}
 

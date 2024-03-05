@@ -95,7 +95,7 @@ public class PaintPicker extends Button {
 		this.prior = paint;
 	}
 
-	public ObservableList<PaintPickerPane.PaintMode> getOptions() {
+	public ObservableList<PaintMode> getOptions() {
 		return pickerPane.getOptions();
 	}
 
@@ -120,10 +120,10 @@ public class PaintPicker extends Button {
 	}
 
 	private void doUpdateText( String paint ) {
-		String text = paint == null ? PaintPickerPane.PaintMode.NONE.getKey() : paint.trim();
+		String text = paint == null ? PaintMode.NONE.getKey() : paint.trim();
 
-		if( PaintPickerPane.PaintMode.LAYER.getKey().equals( text ) ) text = Rb.text( RbKey.LABEL, "layer" ).toLowerCase();
-		if( PaintPickerPane.PaintMode.NONE.getKey().equals( text ) ) text = Rb.text( RbKey.LABEL, "none" ).toLowerCase();
+		if( PaintMode.LAYER.getKey().equals( text ) ) text = Rb.text( RbKey.LABEL, "layer" ).toLowerCase();
+		if( PaintMode.NONE.getKey().equals( text ) ) text = Rb.text( RbKey.LABEL, "none" ).toLowerCase();
 
 		setText( text );
 	}

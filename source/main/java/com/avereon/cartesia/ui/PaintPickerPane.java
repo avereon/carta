@@ -1,10 +1,6 @@
 package com.avereon.cartesia.ui;
 
-import com.avereon.product.Rb;
-import com.avereon.util.TextUtil;
-import com.avereon.xenon.RbKey;
 import com.avereon.xenon.UiFactory;
-import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.color.PaintSwatch;
 import com.avereon.zarra.color.Paints;
 import javafx.beans.property.SimpleStringProperty;
@@ -13,14 +9,11 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-
-import java.util.List;
 
 public class PaintPickerPane extends VBox {
 
@@ -33,6 +26,8 @@ public class PaintPickerPane extends VBox {
 	private StringProperty paint;
 
 	private String prior;
+
+	private PaintPalette palette = new BasicPaintPalette();
 
 	public PaintPickerPane() {
 		getStyleClass().add( "cartesia-paint-picker-pane" );
@@ -51,7 +46,7 @@ public class PaintPickerPane extends VBox {
 		//RangeSlider paintStopEditor = new RangeSlider();
 
 		// The color palette
-		PaintPalette palette = new PaintPalette();
+		PaintPaletteBox paletteBox = new PaintPaletteBox( palette );
 
 		// The color selection tabs
 		// Apparently tab pane does not do well in a popup
@@ -62,7 +57,7 @@ public class PaintPickerPane extends VBox {
 		paintField = new TextField();
 
 		// Add the children
-		getChildren().addAll( mode, palette, paintField );
+		getChildren().addAll( mode, paletteBox, paintField );
 
 		getOptions().addListener( (ListChangeListener<PaintMode>)( e ) -> {
 			mode.getItems().clear();
@@ -118,35 +113,21 @@ public class PaintPickerPane extends VBox {
 		mode.getSelectionModel().select( PaintMode.getPaintMode( paint ) );
 	}
 
-	private class PaintPalette extends VBox {
+	private class PaintPaletteBox extends VBox {
 
-		public PaintPalette() {
-			setSpacing( UiFactory.PAD );
-
-			// Black, Red, Green Yellow, Blue, Magenta, Cyan, White
-			// X, R, G, RG, B, RB, GB, RGB
-			List<Color> bases = List.of( Color.GRAY, Color.RED, Color.GREEN, Color.YELLOW, Color.BLUE, Color.MAGENTA, Color.CYAN );
-
-			for( double factor = 1.0; factor > 0.0; factor -= 0.25 ) {
-				final double shadeFactor = factor;
-				HBox shades = new HBox( UiFactory.PAD );
-				shades.getChildren().addAll( bases.stream().map( base -> getSwatch( Colors.getShade( base, shadeFactor ) ) ).toList() );
-				getChildren().add( shades );
-			}
-
-			HBox hue = new HBox( UiFactory.PAD );
-			hue.getChildren().addAll( bases.stream().map( this::getSwatch ).toList() );
-			getChildren().add( hue );
-
-			for( double factor = 0.25; factor <= 1.0; factor += 0.25 ) {
-				final double tintFactor = factor;
-				HBox tints = new HBox( UiFactory.PAD );
-				tints.getChildren().addAll( bases.stream().map( base -> getSwatch( Colors.getTint( base, tintFactor ) ) ).toList() );
-				getChildren().add( tints );
+		public PaintPaletteBox( PaintPalette palette ) {
+			super( UiFactory.PAD );
+			for( int row = 0; row < palette.rowCount(); row++ ) {
+				HBox rowBox = new HBox( UiFactory.PAD );
+				rowBox.setAlignment( Pos.CENTER );
+				for( int column = 0; column < palette.columnCount(); column++ ) {
+					rowBox.getChildren().add( getSwatch( palette.getPaint( row, column ) ) );
+				}
+				getChildren().add( rowBox );
 			}
 		}
 
-		private Node getSwatch( Paint paint ) {
+		private PaintSwatch getSwatch( Paint paint ) {
 			PaintSwatch swatch = new PaintSwatch( paint );
 			swatch.onMouseClickedProperty().set( e -> doSetPaint( Paints.toString( paint ) ) );
 			return swatch;
@@ -154,61 +135,4 @@ public class PaintPickerPane extends VBox {
 
 	}
 
-	public static class PaintMode {
-
-		public static final PaintMode NONE;
-
-		public static final PaintMode LAYER;
-
-		public static final PaintMode SOLID;
-
-		public static final PaintMode LINEAR;
-
-		public static final PaintMode RADIAL;
-
-		private final String key;
-
-		private final String label;
-
-		static {
-			NONE = new PaintMode( "none", Rb.text( RbKey.LABEL, "none" ) );
-			LAYER = new PaintMode( "layer", Rb.text( RbKey.LABEL, "layer" ) );
-			SOLID = new PaintMode( "solid", Rb.text( RbKey.LABEL, "solid" ) );
-			LINEAR = new PaintMode( "linear", Rb.text( RbKey.LABEL, "linear" ) );
-			RADIAL = new PaintMode( "radial", Rb.text( RbKey.LABEL, "radial" ) );
-		}
-
-		public PaintMode( String key, String label ) {
-			this.key = key;
-			this.label = label;
-		}
-
-		public String getKey() {
-			return key;
-		}
-
-		public String getLabel() {
-			return label;
-		}
-
-		public static PaintMode getPaintMode( String paint ) {
-			if( TextUtil.isEmpty( paint ) ) return PaintMode.NONE;
-
-			if( PaintMode.LAYER.getKey().equals( paint ) ) return PaintMode.LAYER;
-			if( paint.startsWith( "0x" )) return PaintMode.SOLID;
-
-			return switch( paint.charAt( 0 ) ) {
-				case '#' -> PaintMode.SOLID;
-				case '[' -> PaintMode.LINEAR;
-				case '(' -> PaintMode.RADIAL;
-				default -> throw new IllegalStateException( "Unexpected paint mode: " + paint );
-			};
-		}
-
-		@Override
-		public String toString() {
-			return getLabel();
-		}
-
-	}
 }
