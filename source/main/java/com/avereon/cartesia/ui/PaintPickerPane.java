@@ -1,6 +1,5 @@
 package com.avereon.cartesia.ui;
 
-import com.avereon.xenon.UiFactory;
 import com.avereon.zarra.color.PaintSwatch;
 import com.avereon.zarra.color.Paints;
 import javafx.beans.property.SimpleStringProperty;
@@ -30,7 +29,7 @@ public class PaintPickerPane extends VBox {
 	private PaintPaletteBox paletteBox;
 
 	public PaintPickerPane() {
-		getStyleClass().add( "cartesia-paint-picker-pane" );
+		getStyleClass().add( "paint-picker-pane" );
 		// How about a combo for the mode: none, solid, linear[] and radial()
 		// To the right of the combo a component to define gradient stops
 		// Below that, the tabs for palette, RGB, HSB and WEB
@@ -98,17 +97,17 @@ public class PaintPickerPane extends VBox {
 
 	private void doModeChanged( ObservableValue<? extends PaintMode> p, PaintMode o, PaintMode n ) {
 		if( n == PaintMode.NONE ) {
+			if(paletteBox != null) paletteBox.setVisible( false );
 			prior = getPaint();
 			doSetPaint( null );
-		} else if( prior != null ) {
-			doSetPaint( prior );
-
+		} else {
 			// If n is a palette mode, set the paint to the first color in the palette
 			if( n.isPalette() ) {
 				// Change the palette box to the new palette
-				paletteBox = paletteBoxes.get( n );
-				getChildren().set( 1, paletteBox );
+				getChildren().set( 1, paletteBox = paletteBoxes.get( n ) );
+				paletteBox.setVisible( true );
 			}
+			if( prior != null ) doSetPaint( prior );
 		}
 	}
 
@@ -119,9 +118,13 @@ public class PaintPickerPane extends VBox {
 	private class PaintPaletteBox extends VBox {
 
 		public PaintPaletteBox( PaintPalette palette ) {
-			super( UiFactory.PAD );
+			//super( UiFactory.PAD );
+			getStyleClass().add( "paint-palette-box" );
+
+			// NEXT Switch this to a grid pane
+
 			for( int row = 0; row < palette.rowCount(); row++ ) {
-				HBox rowBox = new HBox( UiFactory.PAD );
+				HBox rowBox = new HBox();
 				rowBox.setAlignment( Pos.CENTER );
 				for( int column = 0; column < palette.columnCount(); column++ ) {
 					rowBox.getChildren().add( getSwatch( palette.getPaint( row, column ) ) );
