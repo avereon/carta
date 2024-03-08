@@ -23,8 +23,6 @@ public class PaintPickerPane extends VBox {
 
 	private final Map<PaintMode, PaintPaletteBox> paletteBoxes;
 
-	//private ObservableList<PaintMode> options;
-
 	private StringProperty paint;
 
 	private String prior;
@@ -63,12 +61,6 @@ public class PaintPickerPane extends VBox {
 		// Add the children
 		getChildren().addAll( mode, paletteBox, paintField );
 
-		// Not sure that we should pick up the options from a setting
-		//		getOptions().addListener( (ListChangeListener<PaintMode>)( e ) -> {
-		//			mode.getItems().clear();
-		//			mode.getItems().addAll( options );
-		//		} );
-
 		// The mode change handler
 		mode.valueProperty().addListener( this::doModeChanged );
 
@@ -83,8 +75,6 @@ public class PaintPickerPane extends VBox {
 
 	public ObservableList<PaintMode> getOptions() {
 		return mode.getItems();
-//		if( options == null ) options = FXCollections.observableArrayList();
-//		return options;
 	}
 
 	public String getPaint() {
