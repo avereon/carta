@@ -7,6 +7,7 @@ import com.avereon.settings.SettingsEvent;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.tool.settings.SettingData;
 import com.avereon.xenon.tool.settings.SettingEditor;
+import com.avereon.xenon.tool.settings.SettingOption;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -31,15 +32,18 @@ public class PaintSettingEditor extends SettingEditor {
 		super( product, rbKey, setting );
 		label = new Label();
 		paintPicker = new PaintPicker();
+
+		// If the settings page has options for the picker, use them
 		if( !setting.getOptions().isEmpty() ) paintPicker.getOptions().clear();
-		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
-			case "solid", "basic" -> PaintMode.PALETTE_BASIC;
-			case "material" -> PaintMode.PALETTE_MATERIAL;
-			case "linear" -> PaintMode.LINEAR;
-			case "radial" -> PaintMode.RADIAL;
-			case "none" -> PaintMode.NONE;
-			default -> new PaintMode( o.getKey(), o.getName(), false );
-		} ).toList() );
+		for( SettingOption option : setting.getOptions()  ) {
+			switch( option.getKey() ) {
+				case "solid" -> paintPicker.getOptions().addAll( PaintMode.PALETTE_MATERIAL, PaintMode.PALETTE_BASIC );
+				case "linear" -> paintPicker.getOptions().addAll( PaintMode.LINEAR );
+				case "radial" -> paintPicker.getOptions().addAll( PaintMode.RADIAL );
+				case "none" -> paintPicker.getOptions().addAll( PaintMode.NONE );
+				default -> log.atWarn().log( "Unknown paint mode: %s", setting.getOptions().get( 0 ).getKey() );
+			}
+		}
 	}
 
 	@Override

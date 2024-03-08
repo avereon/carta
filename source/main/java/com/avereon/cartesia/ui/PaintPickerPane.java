@@ -6,7 +6,6 @@ import com.avereon.zarra.color.Paints;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -24,7 +23,7 @@ public class PaintPickerPane extends VBox {
 
 	private final Map<PaintMode, PaintPaletteBox> paletteBoxes;
 
-	private ObservableList<PaintMode> options;
+	//private ObservableList<PaintMode> options;
 
 	private StringProperty paint;
 
@@ -83,8 +82,9 @@ public class PaintPickerPane extends VBox {
 	}
 
 	public ObservableList<PaintMode> getOptions() {
-		if( options == null ) options = FXCollections.observableArrayList();
-		return options;
+		return mode.getItems();
+//		if( options == null ) options = FXCollections.observableArrayList();
+//		return options;
 	}
 
 	public String getPaint() {
