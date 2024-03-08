@@ -33,11 +33,12 @@ public class PaintSettingEditor extends SettingEditor {
 		paintPicker = new PaintPicker();
 		if( !setting.getOptions().isEmpty() ) paintPicker.getOptions().clear();
 		paintPicker.getOptions().addAll( setting.getOptions().stream().map( o -> switch( o.getKey() ) {
-			case "solid" -> PaintMode.SOLID;
+			case "solid", "basic" -> PaintMode.PALETTE_BASIC;
+			case "material" -> PaintMode.PALETTE_MATERIAL;
 			case "linear" -> PaintMode.LINEAR;
 			case "radial" -> PaintMode.RADIAL;
 			case "none" -> PaintMode.NONE;
-			default -> new PaintMode( o.getKey(), o.getName() );
+			default -> new PaintMode( o.getKey(), o.getName(), false );
 		} ).toList() );
 	}
 

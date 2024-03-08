@@ -7,7 +7,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
@@ -15,19 +14,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
+import java.util.Map;
+
 public class PaintPickerPane extends VBox {
 
 	private final ComboBox<PaintMode> mode;
 
-	private ObservableList<PaintMode> options;
-
 	private final TextField paintField;
+
+	private final Map<PaintMode, PaintPaletteBox> paletteBoxes;
+
+	private ObservableList<PaintMode> options;
 
 	private StringProperty paint;
 
 	private String prior;
 
-	private PaintPalette palette = new BasicPaintPalette();
+	private PaintPaletteBox paletteBox;
 
 	public PaintPickerPane() {
 		getStyleClass().add( "cartesia-paint-picker-pane" );
@@ -37,16 +40,18 @@ public class PaintPickerPane extends VBox {
 		// Opacity can be a slider on the right or the bottom
 		// Below that the OK and Cancel buttons
 
+		this.paletteBoxes = Map.of( PaintMode.PALETTE_BASIC, new PaintPaletteBox( new BasicPaintPalette() ), PaintMode.PALETTE_MATERIAL, new PaintPaletteBox( new MaterialPaintPalette() ) );
+
 		// The paint mode chooser
 		mode = new ComboBox<>();
 		mode.setMaxWidth( Double.MAX_VALUE );
-		mode.getItems().addAll( PaintMode.SOLID, PaintMode.NONE );
+		mode.getItems().addAll( PaintMode.PALETTE_MATERIAL, PaintMode.PALETTE_BASIC, PaintMode.NONE );
 
 		// The paint stop editor
 		//RangeSlider paintStopEditor = new RangeSlider();
 
 		// The color palette
-		PaintPaletteBox paletteBox = new PaintPaletteBox( palette );
+		paletteBox = paletteBoxes.get( PaintMode.PALETTE_BASIC );
 
 		// The color selection tabs
 		// Apparently tab pane does not do well in a popup
@@ -59,10 +64,11 @@ public class PaintPickerPane extends VBox {
 		// Add the children
 		getChildren().addAll( mode, paletteBox, paintField );
 
-		getOptions().addListener( (ListChangeListener<PaintMode>)( e ) -> {
-			mode.getItems().clear();
-			mode.getItems().addAll( options );
-		} );
+		// Not sure that we should pick up the options from a setting
+		//		getOptions().addListener( (ListChangeListener<PaintMode>)( e ) -> {
+		//			mode.getItems().clear();
+		//			mode.getItems().addAll( options );
+		//		} );
 
 		// The mode change handler
 		mode.valueProperty().addListener( this::doModeChanged );
@@ -106,6 +112,13 @@ public class PaintPickerPane extends VBox {
 			doSetPaint( null );
 		} else if( prior != null ) {
 			doSetPaint( prior );
+
+			// If n is a palette mode, set the paint to the first color in the palette
+			if( n.isPalette() ) {
+				// Change the palette box to the new palette
+				paletteBox = paletteBoxes.get( n );
+				getChildren().set( 1, paletteBox );
+			}
 		}
 	}
 
