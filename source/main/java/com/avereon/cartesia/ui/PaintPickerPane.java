@@ -6,9 +6,8 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 
@@ -20,13 +19,13 @@ public class PaintPickerPane extends VBox {
 
 	private final TextField paintField;
 
-	private final Map<PaintMode, PaintPaletteBox> paletteBoxes;
+	private final Map<PaintMode, PaintPaletteBox2> paletteBoxes;
 
 	private StringProperty paint;
 
 	private String prior;
 
-	private PaintPaletteBox paletteBox;
+	private PaintPaletteBox2 paletteBox;
 
 	public PaintPickerPane() {
 		getStyleClass().add( "paint-picker-pane" );
@@ -36,7 +35,7 @@ public class PaintPickerPane extends VBox {
 		// Opacity can be a slider on the right or the bottom
 		// Below that the OK and Cancel buttons
 
-		this.paletteBoxes = Map.of( PaintMode.PALETTE_BASIC, new PaintPaletteBox( new BasicPaintPalette() ), PaintMode.PALETTE_MATERIAL, new PaintPaletteBox( new MaterialPaintPalette() ) );
+		this.paletteBoxes = Map.of( PaintMode.PALETTE_BASIC, new PaintPaletteBox2( new BasicPaintPalette() ), PaintMode.PALETTE_MATERIAL, new PaintPaletteBox2( new MaterialPaintPalette() ), PaintMode.NONE, new PaintPaletteBox2( new EmptyPaintPalette() ) );
 
 		// The paint mode chooser
 		mode = new ComboBox<>();
@@ -96,7 +95,7 @@ public class PaintPickerPane extends VBox {
 	}
 
 	private void doModeChanged( ObservableValue<? extends PaintMode> p, PaintMode o, PaintMode n ) {
-		if( n == PaintMode.NONE ) {
+		if( n == null || n == PaintMode.NONE ) {
 			if(paletteBox != null) paletteBox.setVisible( false );
 			prior = getPaint();
 			doSetPaint( null );
@@ -115,30 +114,22 @@ public class PaintPickerPane extends VBox {
 		mode.getSelectionModel().select( PaintMode.getPaintMode( paint ) );
 	}
 
-	private class PaintPaletteBox extends VBox {
+	private class PaintPaletteBox2 extends GridPane {
 
-		public PaintPaletteBox( PaintPalette palette ) {
-			//super( UiFactory.PAD );
-			getStyleClass().add( "paint-palette-box" );
-
-			// NEXT Switch this to a grid pane
-
+		public PaintPaletteBox2( PaintPalette palette ) {
+			getStyleClass().addAll( "paint-palette-box" );
 			for( int row = 0; row < palette.rowCount(); row++ ) {
-				HBox rowBox = new HBox();
-				rowBox.setAlignment( Pos.CENTER );
 				for( int column = 0; column < palette.columnCount(); column++ ) {
-					rowBox.getChildren().add( getSwatch( palette.getPaint( row, column ) ) );
+					add( getSwatch( palette.getPaint( row, column ) ), column, row );
 				}
-				getChildren().add( rowBox );
 			}
 		}
+	}
 
-		private PaintSwatch getSwatch( Paint paint ) {
-			PaintSwatch swatch = new PaintSwatch( paint );
-			swatch.onMouseClickedProperty().set( e -> doSetPaint( Paints.toString( paint ) ) );
-			return swatch;
-		}
-
+	private PaintSwatch getSwatch( Paint paint ) {
+		PaintSwatch swatch = new PaintSwatch( paint );
+		swatch.onMouseClickedProperty().set( e -> doSetPaint( Paints.toString( paint ) ) );
+		return swatch;
 	}
 
 }

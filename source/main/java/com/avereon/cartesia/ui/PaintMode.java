@@ -20,6 +20,8 @@ public class PaintMode {
 
 	public static final PaintMode PALETTE_MATERIAL;
 
+	public static final PaintMode DEFAULT_PALETTE_MODE;
+
 	private final String key;
 
 	private final String label;
@@ -33,6 +35,7 @@ public class PaintMode {
 		RADIAL = new PaintMode( "radial", Rb.text( RbKey.LABEL, "radial" ), false );
 		PALETTE_BASIC = new PaintMode( "basic", Rb.text( RbKey.LABEL, "palette-basic" ), true );
 		PALETTE_MATERIAL = new PaintMode( "material", Rb.text( RbKey.LABEL, "palette-material" ), true );
+		DEFAULT_PALETTE_MODE = PALETTE_MATERIAL;
 	}
 
 	public PaintMode( String key, String label, boolean palette ) {
@@ -45,10 +48,10 @@ public class PaintMode {
 		if( TextUtil.isEmpty( paint ) ) return PaintMode.NONE;
 
 		if( PaintMode.LAYER.getKey().equals( paint ) ) return PaintMode.LAYER;
-		if( paint.startsWith( "0x" ) ) return PaintMode.PALETTE_BASIC;
+		if( paint.startsWith( "0x" ) ) return DEFAULT_PALETTE_MODE;
 
 		return switch( paint.charAt( 0 ) ) {
-			case '#' -> PaintMode.PALETTE_BASIC;
+			case '#' -> PaintMode.DEFAULT_PALETTE_MODE;
 			case '[' -> PaintMode.LINEAR;
 			case '(' -> PaintMode.RADIAL;
 			default -> throw new IllegalStateException( "Unexpected paint mode: " + paint );

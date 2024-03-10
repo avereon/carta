@@ -41,8 +41,8 @@ public abstract class BasePaintPalette implements PaintPalette {
 
 			// Tints
 			double tintFactorOffset = 1.0 / tintCount;
-			for( int index = 0; index < tintCount; index++ ) {
-				paints[ row ][ column ] = Colors.getTint( base, (index + 1) * tintFactorOffset );
+			for( int index = 1; index <= tintCount; index++ ) {
+				paints[ row ][ column ] = Colors.getTint( base, index * tintFactorOffset );
 				row++;
 			}
 
