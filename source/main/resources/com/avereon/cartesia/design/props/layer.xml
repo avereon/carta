@@ -8,10 +8,7 @@
 			<setting key="layer" editor="combobox" provider="design-layer-layers"/>
 
 			<!-- Geometry settings -->
-			<setting key="draw-paint" editor="paint-cartesia">
-				<option key="solid"/>
-				<option key="none"/>
-			</setting>
+			<setting key="draw-paint" editor="paint-cartesia"/>
 			<setting key="draw-width" editor="textline" type="math-expression"/>
 			<setting key="draw-pattern" editor="textline"/>
 			<setting key="draw-cap" editor="combobox">
@@ -19,29 +16,14 @@
 				<option key="round"/>
 				<option key="butt"/>
 			</setting>
-			<setting key="fill-paint" editor="paint-cartesia">
-				<option key="solid"/>
-				<option key="linear"/>
-				<option key="radial"/>
-				<option key="none"/>
-			</setting>
+			<setting key="fill-paint" editor="paint-cartesia"/>
 		</group>
 
 		<!-- Text settings -->
 		<group id="text-title">
 			<setting key="text-size" type="math-expression"/>
-			<setting key="text-fill-paint" editor="paint-cartesia">
-				<option key="solid"/>
-				<option key="linear"/>
-				<option key="radial"/>
-				<option key="none"/>
-			</setting>
-			<setting key="text-draw-paint" editor="paint-cartesia">
-				<option key="solid"/>
-				<option key="linear"/>
-				<option key="radial"/>
-				<option key="none"/>
-			</setting>
+			<setting key="text-fill-paint" editor="paint-cartesia"/>
+			<setting key="text-draw-paint" editor="paint-cartesia"/>
 			<setting key="text-draw-width" editor="textline" type="math-expression"/>
 			<setting key="text-draw-pattern" editor="textline"/>
 			<setting key="text-draw-cap" editor="combobox">
