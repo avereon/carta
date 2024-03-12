@@ -57,6 +57,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
 
+	// GUIDES
+
+	private final LayersGuide layersGuide;
+
+//	private final ViewsGuide viewsGuide;
+
+//	private final PrintsGuide printsGuide;
+
+
 	// RENDERER
 
 	private final Label toast;
@@ -103,6 +112,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		getStyleClass().add( "design-tool" );
 
 		this.commandActions = new ConcurrentHashMap<>();
+
+		this.layersGuide = new LayersGuide( product, this );
 
 		// Create and associate the renderer and workplane
 		this.renderer = new DesignRenderer();
