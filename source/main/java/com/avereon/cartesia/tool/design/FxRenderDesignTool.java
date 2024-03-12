@@ -1,4 +1,4 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.CommandMap;
@@ -6,6 +6,7 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.tool.*;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.*;

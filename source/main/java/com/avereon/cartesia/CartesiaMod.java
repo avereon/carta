@@ -7,7 +7,7 @@ import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.settings.FontSettingEditor;
 import com.avereon.cartesia.tool.Design2dEditor;
-import com.avereon.cartesia.tool.FxRenderDesignTool;
+import com.avereon.cartesia.tool.design.FxRenderDesignTool;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
@@ -60,7 +60,7 @@ public class CartesiaMod extends Module {
 
 		// Default tool registration
 		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
+		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (Deprecated)" );
 		registerTool( design2dAssetType, design2dEditorRegistration );
 		// Other tool registrations
 		ToolRegistration designToolRegistration = new ToolRegistration( this, FxRenderDesignTool.class );

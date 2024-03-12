@@ -29,21 +29,21 @@ import java.util.List;
  */
 public abstract class BaseDesignTool extends GuidedTool implements EventTarget, WritableIdentity {
 
-	String RETICLE = "reticle";
+	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
 
-	String SELECT_APERTURE_SIZE = "select-aperture-size";
+	static final String RETICLE = "reticle";
 
-	String SELECT_APERTURE_UNIT = "select-aperture-unit";
+	static final String SELECT_APERTURE_SIZE = "select-aperture-size";
 
-	String REFERENCE_POINT_SIZE = "reference-point-size";
+	static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
 
-	String REFERENCE_POINT_TYPE = "reference-point-type";
+	static final String REFERENCE_POINT_SIZE = "reference-point-size";
 
-	String REFERENCE_POINT_PAINT = "reference-point-paint";
+	static final String REFERENCE_POINT_TYPE = "reference-point-type";
 
-	boolean DEFAULT_GRID_VISIBLE = true;
+	static final String REFERENCE_POINT_PAINT = "reference-point-paint";
 
-	boolean DEFAULT_GRID_SNAP_ENABLED = true;
+	static final boolean DEFAULT_GRID_VISIBLE = true;
 
 	// FX properties (what others should be here?)
 

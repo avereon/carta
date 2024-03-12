@@ -1,7 +1,8 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.Pen;

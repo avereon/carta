@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.Design2dAssetType;
+import com.avereon.cartesia.tool.design.FxRenderDesignTool;
 import com.avereon.xenon.ProgramTool;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

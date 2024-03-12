@@ -223,7 +223,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	// FIXME What is the difference between this method and setTool()?
-	void setLastActiveDesignTool( BaseDesignTool tool ) {
+	public void setLastActiveDesignTool( BaseDesignTool tool ) {
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
 
@@ -232,7 +232,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	// FIXME What is the difference between this method and setLastActiveDesignTool()?
-	void setTool( BaseDesignTool tool ) {
+	public void setTool( BaseDesignTool tool ) {
 		this.tool = Objects.requireNonNull( tool );
 	}
 
