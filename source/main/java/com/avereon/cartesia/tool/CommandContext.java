@@ -222,6 +222,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return lastActiveDesignTool;
 	}
 
+	// FIXME What is the difference between this method and setTool()?
 	void setLastActiveDesignTool( BaseDesignTool tool ) {
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
@@ -230,6 +231,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return tool;
 	}
 
+	// FIXME What is the difference between this method and setLastActiveDesignTool()?
 	void setTool( BaseDesignTool tool ) {
 		this.tool = Objects.requireNonNull( tool );
 	}

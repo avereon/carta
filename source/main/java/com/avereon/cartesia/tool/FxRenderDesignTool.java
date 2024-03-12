@@ -35,6 +35,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.stage.Screen;
 import lombok.CustomLog;
 
 import java.util.Collection;
@@ -108,24 +109,24 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.renderer.setWorkplane( workplane );
 
 		// Workplane defaults
-//		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
+		//		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
 		this.workplane.setGridStyle( GridStyle.DOT );
 
-//		this.workplane.setGridAxisPaint( Color.YELLOW );
-//		this.workplane.setGridAxisWidth( "0.04" );
-//
-//		this.workplane.setMajorGridPaint( Color.CYAN );
-//		this.workplane.setMajorGridWidth( "0.02" );
-//		this.workplane.setMajorGridX( "1" );
-//		this.workplane.setMajorGridY( "1" );
-//
-//		this.workplane.setMinorGridPaint( Color.CYAN );
-//		this.workplane.setMinorGridWidth( "0.01" );
-//		this.workplane.setMinorGridX( "0.5" );
-//		this.workplane.setMinorGridY( "0.5" );
-//
-//		this.workplane.setSnapGridX( "0.1" );
-//		this.workplane.setSnapGridY( "0.1" );
+		//		this.workplane.setGridAxisPaint( Color.YELLOW );
+		//		this.workplane.setGridAxisWidth( "0.04" );
+		//
+		//		this.workplane.setMajorGridPaint( Color.CYAN );
+		//		this.workplane.setMajorGridWidth( "0.02" );
+		//		this.workplane.setMajorGridX( "1" );
+		//		this.workplane.setMajorGridY( "1" );
+		//
+		//		this.workplane.setMinorGridPaint( Color.CYAN );
+		//		this.workplane.setMinorGridWidth( "0.01" );
+		//		this.workplane.setMinorGridX( "0.5" );
+		//		this.workplane.setMinorGridY( "0.5" );
+		//
+		//		this.workplane.setSnapGridX( "0.1" );
+		//		this.workplane.setSnapGridY( "0.1" );
 
 		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
@@ -164,22 +165,19 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		Design design = request.getAsset().getModel();
 		renderer.setDesign( design );
 
-		// FIXME Is this correct? Or should this be in display()
-		design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
+		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
+		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
-		//		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
-		//		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
-
-		//		// Link the guides before loading the design
+		// NEXT		// Link the guides before loading the design
 		//		layersGuide.link();
 		//		viewsGuide.link();
 		//		printsGuide.link();
-		//
-		//		Fx.run( () -> {
-		//			designPane.setDpi( Screen.getPrimary().getDpi() );
-		//			designPane.setDesign( design );
-		//		} );
-		//
+
+		Fx.run( () -> {
+			renderer.setDpi( Screen.getPrimary().getDpi() );
+			renderer.setDesign( design );
+		} );
+
 		//		// Keep the design pane centered when resizing
 		//		// These should be added before updating the pan and zoom
 		//		widthProperty().addListener( ( p, o, n ) -> Fx.run( designPane::updateView ) );
