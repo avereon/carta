@@ -111,12 +111,16 @@ public class LayersGuide extends Guide {
 		tool.visibleLayers().addListener( (SetChangeListener<DesignLayer>)( change ) -> {
 			if( change.wasAdded() ) {
 				DesignLayer layer = change.getElementAdded();
-				GuideNode node = layerGuideNodes.get( layer );
-				node.setIcon( GUIDE_LAYER_ICON );
+				if( layer != null ) {
+					GuideNode node = layerGuideNodes.get( layer );
+					if( node != null ) node.setIcon( GUIDE_LAYER_ICON );
+				}
 			} else if( change.wasRemoved() ) {
 				DesignLayer layer = change.getElementRemoved();
-				GuideNode node = layerGuideNodes.get( layer );
-				node.setIcon( GUIDE_LAYER_HIDDEN_ICON );
+				if( layer != null ) {
+					GuideNode node = layerGuideNodes.get( layer );
+					if( node != null ) node.setIcon( GUIDE_LAYER_HIDDEN_ICON );
+				}
 			}
 		} );
 

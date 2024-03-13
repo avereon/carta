@@ -457,6 +457,14 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		reticleProperty.set( reticle );
 	}
 
+	private CommandPrompt getCommandPrompt() {
+		return getDesignContext().getCommandPrompt();
+	}
+
+	private CoordinateStatus getCoordinateStatus() {
+		return getDesignContext().getCoordinateStatus();
+	}
+
 	@Override
 	public void setView( DesignPortal portal ) {
 
@@ -756,8 +764,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		if( getWorkspace() == null ) return;
 		Fx.run( () -> {
 			StatusBar bar = getWorkspace().getStatusBar();
-			//bar.setLeftToolItems( getCommandPrompt() );
-			//bar.setRightToolItems( getCoordinateStatus() );
+			bar.setLeftToolItems( getCommandPrompt() );
+			bar.setRightToolItems( getCoordinateStatus() );
 		} );
 	}
 
@@ -765,8 +773,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		if( getWorkspace() == null ) return;
 		Fx.run( () -> {
 			StatusBar bar = getWorkspace().getStatusBar();
-			//bar.removeLeftToolItems( getCommandPrompt() );
-			//bar.removeRightToolItems( getCoordinateStatus() );
+			bar.removeLeftToolItems( getCommandPrompt() );
+			bar.removeRightToolItems( getCoordinateStatus() );
 		} );
 	}
 
