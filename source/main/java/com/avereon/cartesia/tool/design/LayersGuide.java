@@ -13,6 +13,7 @@ import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
 import javafx.collections.SetChangeListener;
+import javafx.scene.input.KeyEvent;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -31,7 +32,7 @@ public class LayersGuide extends Guide {
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
 
-	private static final String VISIBLE_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
+	//private static final String VISIBLE_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
 
 	private final XenonProgramProduct product;
 
@@ -77,6 +78,12 @@ public class LayersGuide extends Guide {
 		} else if( drop == Drop.CHILD ) {
 			targetLayer.addLayer( sourceLayer );
 		}
+	}
+
+	@Override
+	protected void keyEvent( KeyEvent event ) {
+		log.atConfig().log( "Key event: %s", event );
+		tool.fireEvent( event );
 	}
 
 	/**
