@@ -28,6 +28,8 @@ public class LayersGuide extends Guide {
 
 	public static final String GUIDE_LAYER_HIDDEN_ICON = "layer-hidden";
 
+	public static final String GUIDE_LAYER_CURRENT_ICON = "layer-current";
+
 	private static final String NAME_HANDLER = DesignToolLayersGuide.class.getName() + ":name-handler";
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
@@ -92,18 +94,20 @@ public class LayersGuide extends Guide {
 	 * @param request The open asset request
 	 */
 	protected void ready( OpenAssetRequest request ) {
+		// NOTE Layer structure changes come from the design
+		// NOTE Layer name changes come from the design
+		// NOTE Layer order changes come from the design
+		// NOTE Layer visibility changes come from the tool
+		// NOTE Current layer changes come from the tool
+
 		// Create guide nodes for all the design layers
 		Design design = request.getAsset().getModel();
 		design.getAllLayers().forEach( this::addLayer );
 
-		// NOTE Layer structure changes come from the design
 		design.register( NodeEvent.CHILD_ADDED, e -> addLayer( e.getNewValue() ) );
 		design.register( NodeEvent.CHILD_REMOVED, e -> removeLayer( e.getOldValue() ) );
 
-		// NOTE Layer name changes come from the design
-		// NOTE Layer order changes come from the design
-
-		// NOTE Layer visibility changes come from the tool
+		// Add listener for visible layer changes
 		tool.visibleLayers().addListener( (SetChangeListener<DesignLayer>)( change ) -> {
 			if( change.wasAdded() ) {
 				DesignLayer layer = change.getElementAdded();
@@ -116,15 +120,21 @@ public class LayersGuide extends Guide {
 			}
 		} );
 
-		// NOTE Current layer changes come from the tool
+		// Add listener for current layer changes
 		tool.currentLayerProperty().addListener( ( observable, oldValue, newValue ) -> {
-			// TODO Change something about the guide node to indicate the current layer
-			//if( oldValue != null ) layerGuideNodes.get( oldValue ).setSelected( false );
-			//if( newValue != null ) layerGuideNodes.get( newValue ).setSelected( true );
+			if( oldValue != null ) {
+				GuideNode node = layerGuideNodes.get( oldValue );
+				node.setIcon( GUIDE_LAYER_ICON );
+			}
+			if( newValue != null ) {
+				GuideNode node = layerGuideNodes.get( newValue );
+				node.setIcon( GUIDE_LAYER_CURRENT_ICON );
+			}
 		} );
 	}
 
 	private void addLayer( DesignLayer layer ) {
+		// Create the guide node and add it to the guide
 		GuideNode node = new GuideNode( getProgram(), layer.getId(), layer.getName(), GUIDE_LAYER_ICON, layer.getOrder() );
 		layerGuideNodes.put( layer, node );
 		guideNodeLayers.put( node, layer );
