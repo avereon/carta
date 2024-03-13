@@ -11,6 +11,8 @@ import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableSet;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
@@ -24,13 +26,15 @@ public class DesignRenderer extends BorderPane {
 
 	private final FxRenderer2d renderer;
 
+	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
+
 	private Design design;
 
 	private DesignWorkplane workplane;
 
 	private SimpleBooleanProperty gridVisible;
 
-	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
+	private ObservableSet<DesignLayer> visibleLayers;
 
 	public DesignRenderer() {
 		// FIXME Would an enum and switch be faster?
@@ -127,6 +131,25 @@ public class DesignRenderer extends BorderPane {
 		return gridVisible;
 	}
 
+	public boolean isLayerVisible( DesignLayer layer ) {
+		return visibleLayers != null && visibleLayers.contains( layer );
+	}
+
+//	public Set<DesignLayer> getVisibleLayers() {
+//		return visibleLayers;
+//	}
+//
+//	public void setVisibleLayers( Set<DesignLayer> visibleLayers ) {
+//		visibleLayersProperty().clear();
+//		visibleLayersProperty().addAll( visibleLayers );
+//		render();
+//	}
+
+	public ObservableSet<DesignLayer> visibleLayers() {
+		if( visibleLayers == null ) visibleLayers = FXCollections.observableSet();
+		return visibleLayers;
+	}
+
 	/**
 	 * Request that geometry be rendered. This method collapses multiple
 	 * sequential render requests to improve performance. This method is safe to
@@ -169,8 +192,9 @@ public class DesignRenderer extends BorderPane {
 		if( design == null ) return;
 
 		for( DesignLayer layer : design.getAllLayers() ) {
-			//if(!isLayerVisible( layer )) continue;
+			if(!isLayerVisible( layer )) continue;
 			for( DesignShape shape : layer.getShapes() ) {
+				// FIXME To improve rendering performance, consider direct render methods on the renderer.
 
 				// NOTE Caching the pen really helped
 				Pen pen = shape.getValue( "cache.marea.pen" );

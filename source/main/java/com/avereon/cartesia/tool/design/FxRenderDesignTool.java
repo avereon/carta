@@ -26,6 +26,7 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -44,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @CustomLog
 public class FxRenderDesignTool extends BaseDesignTool {
@@ -61,10 +64,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final LayersGuide layersGuide;
 
-//	private final ViewsGuide viewsGuide;
+	//	private final ViewsGuide viewsGuide;
 
-//	private final PrintsGuide printsGuide;
-
+	//	private final PrintsGuide printsGuide;
 
 	// RENDERER
 
@@ -83,6 +85,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private final DoubleProperty viewRotateProperty;
 
 	private final ObjectProperty<Reticle> reticleProperty;
+
+	// OPTIONAL PROPERTIES
+
+	private ObjectProperty<DesignLayer> currentLayer;
 
 	// ACTIONS
 
@@ -114,6 +120,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.commandActions = new ConcurrentHashMap<>();
 
 		this.layersGuide = new LayersGuide( product, this );
+		//		this.viewsGuide = new ViewsGuide( product, this );
+		//		this.printsGuide = new PrintsGuide( product, this );
 
 		// Create and associate the renderer and workplane
 		this.renderer = new DesignRenderer();
@@ -176,14 +184,17 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		Design design = request.getAsset().getModel();
 		renderer.setDesign( design );
+		renderer.visibleLayers().addAll( design.getAllLayers() );
 
 		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
 		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
-		// NEXT		// Link the guides before loading the design
-		//		layersGuide.link();
-		//		viewsGuide.link();
-		//		printsGuide.link();
+		layersGuide.ready( request );
+		//		viewsGuide.ready( request );
+		//		printsGuide.ready( request );
+		//getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
+		getGuideContext().getGuides().addAll( layersGuide );
+		getGuideContext().setCurrentGuide( layersGuide );
 
 		Fx.run( () -> {
 			renderer.setDpi( Screen.getPrimary().getDpi() );
@@ -498,7 +509,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void setCurrentLayer( DesignLayer layer ) {
-
+		currentLayerProperty().set( layer );
 	}
 
 	@Override
@@ -508,22 +519,31 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
-		return null;
+		if( currentLayer == null ) currentLayer = new SimpleObjectProperty<>();
+		return currentLayer;
 	}
 
 	@Override
 	public boolean isLayerVisible( DesignLayer layer ) {
-		return false;
+		return renderer.isLayerVisible( layer );
 	}
 
 	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-
+		if( visible ) {
+			renderer.visibleLayers().add( layer );
+		} else {
+			renderer.visibleLayers().remove( layer );
+		}
 	}
 
 	@Override
 	public List<DesignLayer> getVisibleLayers() {
-		return null;
+		return getFilteredLayers( renderer::isLayerVisible );
+	}
+
+	public ObservableSet<DesignLayer> visibleLayers() {
+		return renderer.visibleLayers();
 	}
 
 	@Override
@@ -882,6 +902,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private void pullCommandAction( String key ) {
 		pullAction( key, commandActions.get( key ) );
+	}
+
+	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignLayer> filter ) {
+		return getDesign().getAllLayers().stream().filter( filter ).collect( Collectors.toList() );
 	}
 
 	private class CommandAction extends ProgramAction {

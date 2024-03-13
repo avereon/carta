@@ -180,8 +180,14 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract void setLayerVisible( DesignLayer layer, boolean visible );
 
+	/**
+	 * Get a list of the visible layers. The list is ordered the same as the layers in the design.
+	 *
+	 * @return A list of the visible layers
+	 */
 	public abstract List<DesignLayer> getVisibleLayers();
 
+	@Deprecated
 	// FIXME This really should return design shapes and not FX shapes
 	public abstract List<Shape> getVisibleShapes();
 
