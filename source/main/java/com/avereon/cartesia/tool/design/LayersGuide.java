@@ -30,6 +30,8 @@ public class LayersGuide extends Guide {
 
 	public static final String GUIDE_LAYER_CURRENT_ICON = "layer-current";
 
+	public static final String GUIDE_LAYER_CURRENT_HIDDEN_ICON = "layer-current-hidden";
+
 	private static final String NAME_HANDLER = DesignToolLayersGuide.class.getName() + ":name-handler";
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
@@ -112,14 +114,16 @@ public class LayersGuide extends Guide {
 			if( change.wasAdded() ) {
 				DesignLayer layer = change.getElementAdded();
 				if( layer != null ) {
+					boolean isCurrent = tool.isCurrentLayer( layer );
 					GuideNode node = layerGuideNodes.get( layer );
-					if( node != null ) node.setIcon( GUIDE_LAYER_ICON );
+					if( node != null ) node.setIcon( isCurrent ? GUIDE_LAYER_CURRENT_ICON : GUIDE_LAYER_ICON );
 				}
 			} else if( change.wasRemoved() ) {
 				DesignLayer layer = change.getElementRemoved();
 				if( layer != null ) {
+					boolean isCurrent = tool.isCurrentLayer( layer );
 					GuideNode node = layerGuideNodes.get( layer );
-					if( node != null ) node.setIcon( GUIDE_LAYER_HIDDEN_ICON );
+					if( node != null ) node.setIcon( isCurrent ? GUIDE_LAYER_CURRENT_HIDDEN_ICON : GUIDE_LAYER_HIDDEN_ICON );
 				}
 			}
 		} );

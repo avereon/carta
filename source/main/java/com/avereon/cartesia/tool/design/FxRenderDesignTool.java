@@ -559,7 +559,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		if( visible ) {
 			renderer.visibleLayers().add( layer );
 		} else {
-			if( isCurrentLayer( layer ) ) return;
 			renderer.visibleLayers().remove( layer );
 		}
 	}
