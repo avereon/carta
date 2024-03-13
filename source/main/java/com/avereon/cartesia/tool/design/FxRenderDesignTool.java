@@ -186,6 +186,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		renderer.setDesign( design );
 		renderer.visibleLayers().addAll( design.getAllLayers() );
 
+		// Fire the design ready event (should be done after renderer.setDesign)
+		fireEvent( new DesignToolEvent( this, DesignToolEvent.DESIGN_READY ) );
+
 		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
 		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
@@ -198,7 +201,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		Fx.run( () -> {
 			renderer.setDpi( Screen.getPrimary().getDpi() );
-			renderer.setDesign( design );
+			renderer.render();
 		} );
 
 		//		// Keep the design pane centered when resizing
