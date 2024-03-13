@@ -28,6 +28,7 @@ module com.avereon.cartesia {
 	exports com.avereon.cartesia.icon to com.avereon.zarra;
 	exports com.avereon.cartesia.settings to com.avereon.xenon;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
+	exports com.avereon.cartesia.tool.design to com.avereon.xenon;
 	exports com.avereon.cartesia.rb to com.avereon.xenon;
 
 	// Public resources
@@ -41,7 +42,6 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.math to org.testfx.junit5;
 	opens com.avereon.cartesia.tool to org.testfx.junit5;
 	opens com.avereon.cartesia.tool.view to org.testfx.junit5;
-	exports com.avereon.cartesia.tool.design to com.avereon.xenon;
 	opens com.avereon.cartesia.tool.design to org.testfx.junit5;
 
 	provides Module with CartesiaMod;
