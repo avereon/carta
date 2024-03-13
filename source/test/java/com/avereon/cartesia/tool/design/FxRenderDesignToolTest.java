@@ -2,7 +2,9 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.Design2dAssetType;
+import com.avereon.cartesia.data.Design;
 import com.avereon.xenon.ProgramTool;
+import com.avereon.xenon.ProgramToolEvent;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.zarra.event.FxEventWatcher;
 import lombok.CustomLog;
@@ -23,6 +25,8 @@ public class FxRenderDesignToolTest extends BaseCartesiaUiTest {
 
 	private Asset asset;
 
+	private Design design;
+
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
@@ -34,10 +38,12 @@ public class FxRenderDesignToolTest extends BaseCartesiaUiTest {
 		assertNotNull( tool );
 		assertNotNull( asset );
 
-		// Wait for the design to be ready
+		// Wait for the tool to be ready
 		FxEventWatcher eventWatcher = new FxEventWatcher();
-		tool.addEventHandler( DesignToolEvent.DESIGN_READY, eventWatcher );
-		eventWatcher.waitForEvent( DesignToolEvent.DESIGN_READY );
+		tool.addEventHandler( ProgramToolEvent.READY, eventWatcher );
+		eventWatcher.waitForEvent( ProgramToolEvent.READY );
+
+		design = tool.getDesign();
 	}
 
 	@Test
@@ -46,9 +52,7 @@ public class FxRenderDesignToolTest extends BaseCartesiaUiTest {
 	}
 
 	@Test
-//	@Disabled
 	void testVisibleLayers() {
-		// FIXME Why are there no layers?
 		assertThat( tool.getDesign().getAllLayers().size() ).isEqualTo( 1 );
 		assertThat( tool.getVisibleLayers().size() ).isEqualTo( 1 );
 	}
