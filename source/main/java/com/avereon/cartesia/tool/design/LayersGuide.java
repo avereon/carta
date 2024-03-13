@@ -138,8 +138,15 @@ public class LayersGuide extends Guide {
 	}
 
 	private void addLayer( DesignLayer layer ) {
+		boolean isCurrent = layer.equals( tool.getCurrentLayer() );
+		boolean isVisible = tool.isLayerVisible( layer );
+
+		String layerIcon = GUIDE_LAYER_ICON;
+		if( !isVisible ) layerIcon = GUIDE_LAYER_HIDDEN_ICON;
+		if( isCurrent ) layerIcon = GUIDE_LAYER_CURRENT_ICON;
+
 		// Create the guide node and add it to the guide
-		GuideNode node = new GuideNode( getProgram(), layer.getId(), layer.getName(), GUIDE_LAYER_ICON, layer.getOrder() );
+		GuideNode node = new GuideNode( getProgram(), layer.getId(), layer.getName(), layerIcon, layer.getOrder() );
 		layerGuideNodes.put( layer, node );
 		guideNodeLayers.put( node, layer );
 		addNode( layerGuideNodes.get( layer.getLayer() ), node );

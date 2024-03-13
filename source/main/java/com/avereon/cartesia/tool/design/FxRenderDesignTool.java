@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.CommandMap;
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
@@ -51,6 +52,8 @@ import java.util.stream.Collectors;
 @CustomLog
 public class FxRenderDesignTool extends BaseDesignTool {
 
+	// DEFAULTS
+
 	// FIXME Possibly rename this to aim?
 	public static final Point3D DEFAULT_VIEWPOINT = Point3D.ZERO;
 
@@ -59,6 +62,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	public static final double DEFAULT_ROTATE = 0.0;
 
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
+
+	// KEYS
+
+	private static final String CURRENT_LAYER = "current-layer";
 
 	// GUIDES
 
@@ -180,11 +187,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
+		// Hide the toast message
 		toast.setVisible( false );
 
-		Design design = request.getAsset().getModel();
-		renderer.setDesign( design );
-		renderer.visibleLayers().addAll( design.getAllLayers() );
+		// Set the renderer design
+		renderer.setDesign( getDesign() );
+		renderer.visibleLayers().addAll( getDesign().getAllLayers() );
+
+		// Set "so settings" defaults
+		setCurrentLayer( getDesign().getAllLayers().getFirst() );
 
 		// Fire the design ready event (should be done after renderer.setDesign)
 		fireEvent( new DesignToolEvent( this, DesignToolEvent.DESIGN_READY ) );
@@ -222,16 +233,16 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//
 		//		// Workplane settings
 		//		configureWorkplane();
-		//
-		//		Settings productSettings = getProduct().getSettings();
-		//		Settings settings = getSettings();
-		//		String defaultSelectSize = "2";
-		//		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
-		//		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
-		//		String defaultReferencePointSize = "10";
-		//		String defaultReferencePointPaint = "#808080";
-		//		String defaultReticle = Reticle.DUPLEX.name().toLowerCase();
-		//
+
+		Settings productSettings = getProduct().getSettings();
+		Settings settings = getSettings();
+		String defaultSelectSize = "2";
+		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
+		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
+		String defaultReferencePointSize = "10";
+		String defaultReferencePointPaint = "#808080";
+		String defaultReticle = Reticle.DUPLEX.name().toLowerCase();
+
 		//		// Get tool settings
 		//		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
 		//		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
@@ -248,17 +259,17 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//		designPane.setReferencePointType( referencePointType );
 		//		designPane.setReferencePointSize( referencePointSize );
 		//		designPane.setReferencePointPaint( referencePointPaint );
-		//
-		//		design.findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
-		//		design.findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
+
+		getDesign().findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
+		//		getDesign().findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 		//
 		//		// Restore the list of enabled layers
 		//		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
-		//		design.getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
+		//		getDesign().getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
 		//
 		//		// Restore the list of visible layers
 		//		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
-		//		design.getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+		//		getDesign().getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 		//
 		//		// Restore the grid visible flag
 		//		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
@@ -307,10 +318,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//
 		//		// Add visible layers listener
 		//		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
-		//
-		//		// Add current layer property listener
-		//		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
-		//
+
+		// Add current layer property listener
+		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
+
 		//		// Add current view property listener
 		//		currentViewProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_VIEW, n.getId() ) );
 		//
@@ -518,6 +529,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		return null;
 	}
 
+	public boolean isCurrentLayer( DesignLayer layer ) {
+		return getCurrentLayer() == layer;
+	}
+
 	@Override
 	public void setCurrentLayer( DesignLayer layer ) {
 		currentLayerProperty().set( layer );
@@ -525,7 +540,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public DesignLayer getCurrentLayer() {
-		return null;
+		return currentLayer == null ? null : currentLayer.get();
 	}
 
 	@Override
@@ -544,6 +559,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		if( visible ) {
 			renderer.visibleLayers().add( layer );
 		} else {
+			if( isCurrentLayer( layer ) ) return;
 			renderer.visibleLayers().remove( layer );
 		}
 	}

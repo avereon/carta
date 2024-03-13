@@ -2,13 +2,16 @@
   "codec-version" : "1",
   "id" : "0958d926-34c6-4731-bd43-278eb88df19a",
   "layers" : {
+    "a56cede9-ee12-40d0-a86c-b3701146c0e6" : {
+    	"name": "Layer 0 (empty)"
+    },
     "a56cede9-ee12-40d0-a86c-b3701146c0e7" : {
       "draw-cap" : "round",
       "draw-paint" : "#ff0000ff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e7",
       "layers" : { },
-      "name" : "construction",
+      "name" : "Layer 1 (line)",
       "shapes" : {
         "5724d788-e5d5-4e78-a947-6e936be5cab2" : {
           "id" : "5724d788-e5d5-4e78-a947-6e936be5cab2",
@@ -25,6 +28,30 @@
       },
       "text-draw-cap" : "round",
       "text-draw-width" : "0.05"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0e8" : {
+    	"name": "Layer 2 (arc)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0e9" : {
+    	"name": "Layer 3 (ellipse)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0ea" : {
+    	"name": "Layer 4 (curve)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0eb" : {
+    	"name": "Layer 5 (text)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0ec" : {
+    	"name": "Layer 6 (empty)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0ed" : {
+    	"name": "Layer 7 (empty)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0ee" : {
+    	"name": "Layer 8 (empty)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0ef" : {
+    	"name": "Layer 9 (empty)"
     }
   },
   "unit" : "centimeter"

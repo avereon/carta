@@ -43,17 +43,24 @@ public class FxRenderDesignToolTest extends BaseCartesiaUiTest {
 		assertNotNull( getTool() );
 		assertNotNull( getAsset() );
 		assertNotNull( getDesign() );
+
+		// Check the design state
+		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 10 );
 	}
 
 	@Test
-	void testAssetTypeResolvedCorrectly() {
+	void assetTypeResolvesCorrectly() {
 		assertThat( getAsset().getType() ).isInstanceOf( Design2dAssetType.class );
 	}
 
 	@Test
-	void testVisibleLayers() {
-		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 1 );
-		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 1 );
+	void getVisibleLayers() {
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 10 );
+	}
+
+	@Test
+	void getCurrentLayer() {
+		assertThat( getTool().getCurrentLayer() ).isEqualTo( getDesign().getAllLayers().getFirst() );
 	}
 
 	protected Asset getAsset() {
