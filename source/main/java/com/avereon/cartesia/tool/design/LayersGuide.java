@@ -47,7 +47,7 @@ public class LayersGuide extends Guide {
 		this.layerGuideNodes = new ConcurrentHashMap<>();
 		this.guideNodeLayers = new ConcurrentHashMap<>();
 		setIcon( GUIDE_BINDER_ICON );
-		setTitle( Rb.textOr( RbKey.LABEL, "layers", "Layers" ) );
+		setTitle( Rb.text( RbKey.LABEL, "layers" ) );
 		setDragAndDropEnabled( true );
 	}
 
