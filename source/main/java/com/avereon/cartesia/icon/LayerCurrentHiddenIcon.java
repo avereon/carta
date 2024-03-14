@@ -6,8 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class LayerCurrentHiddenIcon extends LayerHiddenIcon {
 
-	public LayerCurrentHiddenIcon() {
-		super();
+	protected void define() {
+		super.define();
 		draw( getCurrentPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER );
 	}
 

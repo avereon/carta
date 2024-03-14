@@ -6,7 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class Line2Icon extends DrawIcon {
 
-	public Line2Icon() {
+	protected void define() {
+		super.define();
 		draw( "M4,28L28,4", null, getLineWidth(), StrokeLineCap.BUTT, StrokeLineJoin.MITER );
 		fill( circle( 4, 28, getDotRadius() ) );
 		fill( circle( 28, 4, getDotRadius() ) );

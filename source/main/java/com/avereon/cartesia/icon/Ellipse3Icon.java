@@ -6,7 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class Ellipse3Icon extends DrawIcon {
 
-	public Ellipse3Icon() {
+	protected void define() {
+		super.define();
 		double r = 16;
 		double p = 10;
 		double g = Math.sqrt( 0.5 * (r * r) );

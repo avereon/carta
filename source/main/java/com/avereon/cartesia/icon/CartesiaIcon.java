@@ -17,8 +17,8 @@ public class CartesiaIcon extends SvgIcon {
 
 	private static final double ARM_WIDTH = 2.5;
 
-	public CartesiaIcon() {
-		super( 32, 32 );
+	protected void define() {
+		super.define();
 
 		// Slope of 0.5
 		double alpha = Math.atan2( 1, 2 );

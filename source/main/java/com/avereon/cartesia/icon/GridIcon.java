@@ -6,13 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public abstract class GridIcon extends SvgIcon implements GridIconConstants {
 
-	public GridIcon() {
-		this( true );
-	}
-
-	// FIXME This class needs to be made abstract and new concrete classes created
-	public GridIcon( boolean enabled ) {
-		super( GRID, GRID );
+	protected void define( boolean enabled ) {
+		super.define();
 		for( int index = 0; index < 3; index++ ) {
 			double offset = INDENT + SPACING * index;
 			if( enabled ) {

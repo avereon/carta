@@ -9,7 +9,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class PencilIcon extends SvgIcon {
 
-	public PencilIcon() {
+	protected void define() {
+		super.define();
 		fill( "M3,29L5,25L7,27Z" );
 		fill( "M24,4L28,8L26,10L22,6Z", Colors.mix( (Color)getStrokePaint(), Color.TRANSPARENT, 0.2 ) );
 		fill( "M24,4L25,3A2,1,45,0,1,29,7L28,8Z", Colors.mix( Color.HOTPINK, Color.TRANSPARENT, 0.2 ) );

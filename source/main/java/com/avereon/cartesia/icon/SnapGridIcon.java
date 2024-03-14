@@ -8,8 +8,8 @@ public abstract class SnapGridIcon extends SvgIcon implements GridIconConstants 
 
 	private static final double RADIUS = 4;
 
-	public SnapGridIcon( boolean enabled ) {
-		super( GRID, GRID );
+	protected void define( boolean enabled ) {
+		super.define();
 		double offset = C;
 		if( enabled ) {
 			draw( "M" + offset + " " + MIN + " L" + offset + " " + MAX, 2 );

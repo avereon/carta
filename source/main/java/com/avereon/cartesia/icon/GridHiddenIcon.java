@@ -2,8 +2,8 @@ package com.avereon.cartesia.icon;
 
 public class GridHiddenIcon extends GridIcon {
 
-	public GridHiddenIcon() {
-		super( false );
+	protected void define() {
+		super.define(false);
 	}
 
 	public static void main( String[] parameters ) {

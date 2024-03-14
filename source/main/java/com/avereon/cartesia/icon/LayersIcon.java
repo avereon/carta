@@ -29,8 +29,7 @@ public class LayersIcon extends SvgIcon {
 
 	private static final double E2 = E - OFFSET;
 
-	public LayersIcon() {
-		super( 32, 32 );
+	protected void define() {
 		fill( upperLayer( -6 ) );
 		fill( lowerLayer( 0 ) );
 		fill( lowerLayer( 6 ) );

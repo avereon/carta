@@ -6,8 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class LayerCurrentVisibleIcon extends LayerVisibleIcon {
 
-	public LayerCurrentVisibleIcon() {
-		super();
+	protected void define() {
+		super.define();
 		draw( getCurrentPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER );
 	}
 

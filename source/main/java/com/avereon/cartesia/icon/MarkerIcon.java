@@ -6,7 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class MarkerIcon extends DrawIcon {
 
-	public MarkerIcon() {
+	protected void define() {
+		super.define();
 		draw( "M8,16 L24,16 M16,8 L16,24", null, getStrokeWidth(), StrokeLineCap.BUTT, StrokeLineJoin.MITER );
 	}
 

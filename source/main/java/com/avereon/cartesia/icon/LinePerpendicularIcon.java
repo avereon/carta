@@ -6,11 +6,12 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class LinePerpendicularIcon extends DrawIcon {
 
-	public LinePerpendicularIcon() {
-		double r = 12;
-		double g = Math.sqrt( 0.5 * (r * r) );
+	private static final double R = 12;
+	private static final double G = Math.sqrt( 0.5 * (R * R) );
 
-		draw( "M4,28L28,4", null, getLineWidth(), StrokeLineCap.ROUND, StrokeLineJoin.MITER, g / 1.5, 0, g / 1.5 );
+	protected void define() {
+		super.define();
+		draw( "M4,28L28,4", null, getLineWidth(), StrokeLineCap.ROUND, StrokeLineJoin.MITER, G / 1.5, 0, G / 1.5 );
 		draw( "M16,16L28,28", null, getLineWidth(), StrokeLineCap.BUTT, StrokeLineJoin.MITER );
 		fill( circle( 4, 28, getDotRadius() ) );
 		fill( circle( 28, 4, getDotRadius() ) );

@@ -6,7 +6,8 @@ import javafx.scene.shape.StrokeLineJoin;
 
 public class Arc3Icon extends DrawIcon {
 
-	public Arc3Icon() {
+	protected void define() {
+		super.define();
 		double r = 24;
 		double g = Math.sqrt( 0.5 * (r * r) );
 
