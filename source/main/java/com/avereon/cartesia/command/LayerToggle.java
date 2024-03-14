@@ -9,7 +9,7 @@ public class LayerToggle extends LayerCommand {
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		BaseDesignTool tool = context.getTool();
-		DesignLayer layer = tool.getCurrentLayer();
+		DesignLayer layer = tool.getSelectedLayer();
 		tool.setLayerVisible( layer, !tool.isLayerVisible( layer ) );
 		return COMPLETE;
 	}

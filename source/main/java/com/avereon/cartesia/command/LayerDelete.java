@@ -9,7 +9,7 @@ public class LayerDelete extends LayerCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		DesignLayer layer = context.getTool().getCurrentLayer();
+		DesignLayer layer = context.getTool().getSelectedLayer();
 		DesignLayer nextLayer = getNextValidLayer( layer );
 
 		layer.getLayer().removeLayer( layer );

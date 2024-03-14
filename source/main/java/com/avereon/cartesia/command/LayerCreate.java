@@ -19,7 +19,7 @@ public class LayerCreate extends LayerCommand {
 
 		DesignLayer yy = new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) );
 
-		yy = addLayer( context.getTool().getCurrentLayer(), yy );
+		yy = addLayer( context.getTool().getSelectedLayer(), yy );
 		context.getTool().setLayerVisible( yy, true );
 
 		return yy;

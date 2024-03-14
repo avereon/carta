@@ -6,7 +6,7 @@ public class LayerShow extends LayerCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		context.getTool().setLayerVisible( context.getTool().getCurrentLayer(), true );
+		context.getTool().setLayerVisible( context.getTool().getSelectedLayer(), true );
 		return COMPLETE;
 	}
 

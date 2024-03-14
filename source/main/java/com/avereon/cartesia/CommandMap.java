@@ -154,6 +154,7 @@ public class CommandMap {
 		add( product, "layer-sublayer", LayerSubLayer.class );
 		add( product, "layer-delete", LayerDelete.class );
 		add( product, "layer-toggle", LayerToggle.class );
+		add( product, "layer-current", LayerCurrent.class );
 
 		// View Commands
 		add( product, "view-create", ViewCreate.class );
