@@ -249,7 +249,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		final DesignLayer oldLayer = getLayer();
 		Txn.run( () -> getDesign().ifPresent( d -> {
-			DesignLayer newLayer = d.findLayerById( newLayerId );
+			DesignLayer newLayer = d.getLayerById( newLayerId );
 			newLayer.addDrawable( oldLayer.removeDrawable( this ) );
 		} ) );
 

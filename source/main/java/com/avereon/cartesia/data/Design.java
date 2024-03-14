@@ -111,11 +111,15 @@ public abstract class Design extends IdNode {
 		return getValue( LAYERS );
 	}
 
-	public DesignLayer findLayerById( String id ) {
+	public DesignLayer getLayerById( String id ) {
 		for( DesignLayer layer : getAllLayersAndRoot() ) {
 			if( layer.getId().equals( id ) ) return layer;
 		}
 		return null;
+	}
+
+	public Optional<DesignLayer> findLayerById( String id ) {
+		return Optional.ofNullable( getLayerById( id ) );
 	}
 
 	public Set<DesignLayer> findLayers( String key, Object value ) {
@@ -145,6 +149,14 @@ public abstract class Design extends IdNode {
 	public Design removeView( DesignView view ) {
 		removeFromSet( VIEWS, view );
 		return this;
+	}
+
+	public DesignView getViewById( String id ) {
+		return getViews().stream().filter( v -> v.getId().equals( id ) ).findFirst().orElse( null );
+	}
+
+	public Optional<DesignView> findViewById( String id ) {
+		return Optional.ofNullable( getViewById( id ) );
 	}
 
 	public Set<DesignView> findViews( String key, Object value ) {

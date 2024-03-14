@@ -176,6 +176,18 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract ObjectProperty<DesignLayer> currentLayerProperty();
 
+	public DesignLayer getSelectedLayer() {
+		return getCurrentLayer();
+	}
+
+	public void setSelectedLayer( DesignLayer layer ) {
+		setCurrentLayer( layer );
+	}
+
+	public ObjectProperty<DesignLayer> selectedLayerProperty() {
+		return currentLayerProperty();
+	}
+
 	public abstract boolean isLayerVisible( DesignLayer layer );
 
 	public abstract void setLayerVisible( DesignLayer layer, boolean visible );

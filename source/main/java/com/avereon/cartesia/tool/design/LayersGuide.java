@@ -22,6 +22,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @CustomLog
 public class LayersGuide extends Guide {
 
+	// ICONS
+
 	public static final String GUIDE_BINDER_ICON = "layers";
 
 	public static final String GUIDE_LAYER_ICON = "layer";
@@ -32,11 +34,15 @@ public class LayersGuide extends Guide {
 
 	public static final String GUIDE_LAYER_CURRENT_HIDDEN_ICON = "layer-current-hidden";
 
+	// HANDLERS
+
 	private static final String NAME_HANDLER = DesignToolLayersGuide.class.getName() + ":name-handler";
 
 	private static final String ORDER_HANDLER = DesignToolLayersGuide.class.getName() + ":order-handler";
 
 	//private static final String VISIBLE_HANDLER = DesignToolLayersGuide.class.getName() + ":visible-handler";
+
+	// FIELDS
 
 	private final XenonProgramProduct product;
 
@@ -142,9 +148,9 @@ public class LayersGuide extends Guide {
 	}
 
 	private void addLayer( DesignLayer layer ) {
+		// Determine the layer icon
 		boolean isCurrent = layer.equals( tool.getCurrentLayer() );
 		boolean isVisible = tool.isLayerVisible( layer );
-
 		String layerIcon = GUIDE_LAYER_ICON;
 		if( !isVisible ) layerIcon = GUIDE_LAYER_HIDDEN_ICON;
 		if( isCurrent ) layerIcon = GUIDE_LAYER_CURRENT_ICON;

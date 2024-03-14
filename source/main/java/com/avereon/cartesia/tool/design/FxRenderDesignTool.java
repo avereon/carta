@@ -95,6 +95,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	// OPTIONAL PROPERTIES
 
+	private ObjectProperty<DesignLayer> selectedLayer;
+
 	private ObjectProperty<DesignLayer> currentLayer;
 
 	// ACTIONS
@@ -359,13 +361,13 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
-		//		if( getCurrentGuide() == layersGuide ) {
-		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentLayerById( n.getId() ) );
+				if( getCurrentGuide() == layersGuide ) {
+					newNodes.stream().findFirst().ifPresent( n -> doSetSelectedLayerById( n.getId() ) );
 		//		} else if( getCurrentGuide() == viewsGuide ) {
 		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
 		//		} else if( getCurrentGuide() == printsGuide ) {
 		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentPrintById( n.getId() ) );
-		//		}
+				}
 	}
 
 	@Override
@@ -527,6 +529,19 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	@Override
 	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
 		return null;
+	}
+
+	public DesignLayer getSelectedLayer() {
+		return selectedLayer == null ? null : selectedLayer.get();
+	}
+
+	public void setSelectedLayer( DesignLayer layer ) {
+		selectedLayerProperty().set( layer );
+	}
+
+	public ObjectProperty<DesignLayer> selectedLayerProperty() {
+		if( selectedLayer == null ) selectedLayer = new SimpleObjectProperty<>();
+		return selectedLayer;
 	}
 
 	public boolean isCurrentLayer( DesignLayer layer ) {
@@ -932,6 +947,30 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignLayer> filter ) {
 		return getDesign().getAllLayers().stream().filter( filter ).collect( Collectors.toList() );
+	}
+
+	private void doSetSelectedLayerById( String id ) {
+		getDesign().findLayerById( id ).ifPresent( this::setSelectedLayer );
+		log.atConfig().log( "Selected layer: %s", id );
+	}
+
+	private void doSetCurrentLayerById( String id ) {
+		getDesign().findLayerById( id ).ifPresent( y -> {
+			currentLayerProperty().set( y );
+			//showPropertiesPage( y );
+		} );
+	}
+
+	private void doSetCurrentViewById( String id ) {
+		getDesign().findViewById( id ).ifPresent( v -> {
+			currentViewProperty().set( v );
+			//getDesignPane().setView( v.getLayers(), v.getOrigin(), v.getZoom(), v.getRotate() );
+			//showPropertiesPage( v );
+		} );
+	}
+
+	private void doSetCurrentPrintById( String id ) {
+		// TODO Implement DesignTool.doSetCurrentPrintById()
 	}
 
 	private class CommandAction extends ProgramAction {
