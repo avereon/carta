@@ -156,6 +156,8 @@ public class CartesiaMod extends Module {
 		registerIcon( "path", new PathIcon() );
 		registerIcon( "layer", new LayerVisibleIcon() );
 		registerIcon( "layers", new LayersIcon() );
+		registerIcon( "layer-current", new LayerCurrentVisibleIcon() );
+		registerIcon( "layer-current-hidden", new LayerCurrentHiddenIcon() );
 		registerIcon( "layer-hidden", new LayerHiddenIcon() );
 		registerIcon( "grid-toggle-enabled", new GridVisibleIcon() );
 		registerIcon( "grid-toggle-disabled", new GridHiddenIcon() );

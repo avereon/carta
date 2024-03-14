@@ -13,8 +13,6 @@ public class LayerHiddenIcon extends LayerIcon {
 	protected void define() {
 		fill( getPath(), Colors.mix( (Color)getStrokePaint(), Color.TRANSPARENT, 0.2 ) );
 		draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 2 * r, 4 * r, 4 * r );
-		//draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 4 * r, 8 * r, 2 * r, 4 * r, 2 * r );
-		//draw( getPath(), null, 2, StrokeLineCap.BUTT, StrokeLineJoin.MITER, 3 * r, 6 * r, 3 * r, 4 * r, 3 * r );
 	}
 
 	public static void main( String[] commands ) {
