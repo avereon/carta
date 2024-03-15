@@ -92,7 +92,6 @@ public class LayersGuide extends Guide {
 
 	@Override
 	protected void keyEvent( KeyEvent event ) {
-		log.atConfig().log( "Key event: %s", event );
 		tool.fireEvent( event );
 	}
 

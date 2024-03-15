@@ -183,9 +183,9 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		// prompt. The command prompt consumes some key events that correspond to
 		// the text field, while the workpane will forward pretty much every event.
 
-		// If the event comes from the workpane a copy should be sent to the command
+		// If the event comes from the tool, a copy should be sent to the command
 		// prompt so that the command prompt displays the typed keys.
-		if( event.getSource() == getTool().getWorkpane() ) getCommandPrompt().fireEvent( event );
+		if( event.getSource() == getTool() ) getCommandPrompt().fireEvent( event );
 
 		// On each key event the situation needs to be evaluated...
 		// If ESC was pressed, then the whole command stack should be cancelled
