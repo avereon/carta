@@ -776,11 +776,9 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		unregisterCommandCapture();
 
 		// Add the design command capture handler. This captures all key events that
-		// make it to the workpane and forwards them to the command context which
+		// make it to the tool and forwards them to the command context which
 		// will help determine what to do.
-		Workpane workpane = getWorkpane();
-		workpane.getProperties().put( "design-tool-command-capture", getCommandContext() );
-		workpane.addEventHandler( KeyEvent.ANY, getCommandContext() );
+		addEventHandler( KeyEvent.ANY, getCommandContext() );
 	}
 
 	@SuppressWarnings( "unchecked" )
