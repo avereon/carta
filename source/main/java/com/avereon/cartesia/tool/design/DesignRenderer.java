@@ -13,6 +13,7 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
+import javafx.collections.SetChangeListener;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
@@ -28,16 +29,16 @@ public class DesignRenderer extends BorderPane {
 
 	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
 
+	private final ObservableSet<DesignLayer> visibleLayers;
+
 	private Design design;
 
 	private DesignWorkplane workplane;
 
 	private SimpleBooleanProperty gridVisible;
 
-	private ObservableSet<DesignLayer> visibleLayers;
-
 	public DesignRenderer() {
-		// FIXME Would an enum and switch be faster?
+		// FIXME Would an enum and switch be faster? Or maybe direct method calls?
 		designCreateMap = new ConcurrentHashMap<>();
 		designCreateMap.put( DesignArc.class, s -> createArc( (DesignArc)s ) );
 		designCreateMap.put( DesignCurve.class, s -> createCurve( (DesignCurve)s ) );
@@ -47,6 +48,8 @@ public class DesignRenderer extends BorderPane {
 		designCreateMap.put( DesignPath.class, s -> createPath( (DesignPath)s ) );
 		// ?? designCreateMap.put( DesignQuad.class, s -> createQuad( (DesignQuad)s ) );
 		designCreateMap.put( DesignText.class, s -> createText( (DesignText)s ) );
+
+		visibleLayers = FXCollections.observableSet();
 
 		// Create and add the renderer to the center
 		setCenter( this.renderer = new FxRenderer2d() );
@@ -63,6 +66,8 @@ public class DesignRenderer extends BorderPane {
 		renderer.viewpointYProperty().addListener( ( p, o, n ) -> render() );
 		renderer.widthProperty().addListener( ( p, o, n ) -> render() );
 		renderer.heightProperty().addListener( ( p, o, n ) -> render() );
+
+		visibleLayers.addListener( (SetChangeListener<? super DesignLayer>)( c ) -> render() );
 	}
 
 	public void setDesign( Design design ) {
@@ -146,7 +151,6 @@ public class DesignRenderer extends BorderPane {
 //	}
 
 	public ObservableSet<DesignLayer> visibleLayers() {
-		if( visibleLayers == null ) visibleLayers = FXCollections.observableSet();
 		return visibleLayers;
 	}
 
@@ -163,15 +167,16 @@ public class DesignRenderer extends BorderPane {
 		//long startNs = System.nanoTime();
 		renderer.clear();
 
-		if( isGridVisible() ) renderWorkplane();
+		renderWorkplane();
 
 		renderVisibleLayers();
 
 		// Render hint geometry
+		renderHintGeometry();
 
-		// Render reference geometry
+		// Render reference geometry (reference points, construction points, etc.)
 
-		// Render selection geometry - mainly the selection window
+		// Render selector geometry - mainly the selector window
 
 		//long endNs = System.nanoTime();
 
@@ -185,14 +190,17 @@ public class DesignRenderer extends BorderPane {
 		workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
 
 		// Render grid
-		workplane.getCoordinateSystem().drawMareaGeometryGrid( renderer, workplane );
+		if( isGridVisible() ) workplane.getCoordinateSystem().drawMareaGeometryGrid( renderer, workplane );
 	}
 
 	private void renderVisibleLayers() {
 		if( design == null ) return;
 
 		for( DesignLayer layer : design.getAllLayers() ) {
+			// Do not render hidden layers
 			if(!isLayerVisible( layer )) continue;
+
+			// Render the geometry for the layer
 			for( DesignShape shape : layer.getShapes() ) {
 				// FIXME To improve rendering performance, consider direct render methods on the renderer.
 
@@ -219,6 +227,7 @@ public class DesignRenderer extends BorderPane {
 
 				// Draw the geometry
 				if( drawable != null ) {
+					// TODO If the shape is selected, don't render here, render as a hint
 					if( shape instanceof DesignMarker ) {
 						renderer.fill( drawable, pen );
 					} else {
@@ -228,6 +237,16 @@ public class DesignRenderer extends BorderPane {
 
 			}
 		}
+	}
+
+	private void renderHintGeometry() {
+		// Render hint geometry
+
+		// Hint geometry are:
+		//  - temporary geometry that are not part of the design
+		//  - selected geometry
+
+		// TODO Render hint geometry
 	}
 
 	private Pen createPen( DesignShape shape ) {
