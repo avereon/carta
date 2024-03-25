@@ -165,18 +165,13 @@ public class DesignRenderer extends BorderPane {
 
 	private void doRender() {
 		//long startNs = System.nanoTime();
+
 		renderer.clear();
-
 		renderWorkplane();
-
 		renderVisibleLayers();
-
-		// Render hint geometry
 		renderHintGeometry();
-
-		// Render reference geometry (reference points, construction points, etc.)
-
-		// Render selector geometry - mainly the selector window
+		renderReferenceGeometry();
+		renderSelectorGeometry();
 
 		//long endNs = System.nanoTime();
 
@@ -243,10 +238,23 @@ public class DesignRenderer extends BorderPane {
 		// Render hint geometry
 
 		// Hint geometry are:
-		//  - temporary geometry that are not part of the design
+		//  - temporary geometry are things like preview geometry for commands
 		//  - selected geometry
 
-		// TODO Render hint geometry
+		// TODO Render temporary geometry
+
+		// TODO Render selected geometry
+	}
+
+	private void renderReferenceGeometry() {
+		// TODO Render reference geometry
+		// reference points, construction points, etc.
+	}
+
+	private void renderSelectorGeometry() {
+		// TODO Render selector geometry
+		// mainly the selector window
+
 	}
 
 	private Pen createPen( DesignShape shape ) {
