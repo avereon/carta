@@ -76,6 +76,8 @@ public class DesignRenderer extends BorderPane {
 		this.design = design;
 
 		// TODO Connect listeners
+
+		// Temporary listener for testing
 		design.register( NodeEvent.VALUE_CHANGED, e -> {
 			log.atConfig().log( "Something changed in the design: " + e.getKey() );
 		} );
@@ -87,6 +89,8 @@ public class DesignRenderer extends BorderPane {
 		this.workplane = workplane;
 
 		// TODO Connect listeners
+
+		// Temporary listener for testing
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> {
 			log.atConfig().log( "Something changed in the workplane: " + e.getKey() );
 		} );
