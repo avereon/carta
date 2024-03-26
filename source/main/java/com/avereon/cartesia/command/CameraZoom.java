@@ -1,9 +1,9 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -23,13 +23,12 @@ public class CameraZoom extends CameraCommand {
 			return INCOMPLETE;
 		}
 
-		if( parameters[ 0 ] instanceof GestureEvent ) {
-			GestureEvent event = (GestureEvent)parameters[ 0 ];
+		if( parameters[ 0 ] instanceof GestureEvent event ) {
 			Point3D point = context.getTool().mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 
 			if( event.getEventType() == ScrollEvent.SCROLL ) {
 				double deltaY = ((ScrollEvent)event).getDeltaY();
-				if( deltaY != 0.0 ) zoomByFactor( context.getTool(), point, deltaY > 0 ? DesignPane.ZOOM_IN_FACTOR : DesignPane.ZOOM_OUT_FACTOR );
+				if( deltaY != 0.0 ) zoomByFactor( context.getTool(), point, deltaY > 0 ? DesignPaneMarea.ZOOM_IN_FACTOR : DesignPaneMarea.ZOOM_OUT_FACTOR );
 			}
 
 			if( event.getEventType() == ZoomEvent.ZOOM ) {

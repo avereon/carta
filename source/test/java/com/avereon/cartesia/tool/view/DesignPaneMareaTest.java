@@ -25,7 +25,7 @@ public class DesignPaneMareaTest implements TestTimeouts {
 
 	private static final double PARENT_HALF_HEIGHT = 0.5 * PARENT_HEIGHT;
 
-	private static final double SCALE = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, DesignUnit.CENTIMETER );
+	private static final double SCALE = DesignUnit.INCH.from( DesignPaneMarea.DEFAULT_DPI, DesignUnit.CENTIMETER );
 
 	private Design design;
 
@@ -44,7 +44,7 @@ public class DesignPaneMareaTest implements TestTimeouts {
 
 		assertThat( parent.getWidth() ).isEqualTo( PARENT_WIDTH );
 		assertThat( parent.getHeight() ).isEqualTo( PARENT_HEIGHT );
-		assertThat( pane.getScaleX() ).isEqualTo( 1.0 * SCALE );
+		assertThat( pane.getScaleX() ).isEqualTo( SCALE );
 		assertThat( pane.getScaleY() ).isEqualTo( -1.0 * SCALE );
 		assertThat( pane.getTranslateX() ).isEqualTo( PARENT_HALF_WIDTH );
 		assertThat( pane.getTranslateY() ).isEqualTo( PARENT_HALF_HEIGHT );
@@ -210,27 +210,27 @@ public class DesignPaneMareaTest implements TestTimeouts {
 
 	@Test
 	void checkZoomFactor() {
-		assertThat( 1 * DesignPane.ZOOM_IN_FACTOR ).isEqualTo( 1.189207115002721 );
+		assertThat( 1 * DesignPaneMarea.ZOOM_IN_FACTOR ).isEqualTo( 1.189207115002721 );
 	}
 
 	@Test
 	void testZoomIn() {
 		Point3D point = pane.parentToLocal( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, 0 );
-		pane.zoom( point, DesignPane.ZOOM_IN_FACTOR );
+		pane.zoom( point, DesignPaneMarea.ZOOM_IN_FACTOR );
 		assertThat( pane.getTranslateX() ).isEqualTo( PARENT_HALF_WIDTH );
 		assertThat( pane.getTranslateY() ).isEqualTo( PARENT_HALF_HEIGHT );
-		assertThat( pane.getScaleX() ).isCloseTo( SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE );
-		assertThat( pane.getScaleY() ).isCloseTo( -SCALE * DesignPane.ZOOM_IN_FACTOR, TOLERANCE );
+		assertThat( pane.getScaleX() ).isCloseTo( SCALE * DesignPaneMarea.ZOOM_IN_FACTOR, TOLERANCE );
+		assertThat( pane.getScaleY() ).isCloseTo( -SCALE * DesignPaneMarea.ZOOM_IN_FACTOR, TOLERANCE );
 	}
 
 	@Test
 	void testZoomOut() {
 		Point3D point = pane.parentToLocal( PARENT_HALF_WIDTH, PARENT_HALF_HEIGHT, 0 );
-		pane.zoom( point, DesignPane.ZOOM_OUT_FACTOR );
+		pane.zoom( point, DesignPaneMarea.ZOOM_OUT_FACTOR );
 		assertThat( pane.getTranslateX() ).isEqualTo( PARENT_HALF_WIDTH );
 		assertThat( pane.getTranslateY() ).isEqualTo( PARENT_HALF_HEIGHT );
-		assertThat( pane.getScaleX() ).isCloseTo( 1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE );
-		assertThat( pane.getScaleY() ).isCloseTo( -1.0 * SCALE / DesignPane.ZOOM_IN_FACTOR, TOLERANCE );
+		assertThat( pane.getScaleX() ).isCloseTo( SCALE / DesignPaneMarea.ZOOM_IN_FACTOR, TOLERANCE );
+		assertThat( pane.getScaleY() ).isCloseTo( -1.0 * SCALE / DesignPaneMarea.ZOOM_IN_FACTOR, TOLERANCE );
 	}
 
 	@Test
@@ -242,9 +242,9 @@ public class DesignPaneMareaTest implements TestTimeouts {
 		assertThat( pane.localToParent( worldX, worldY, 0 ) ).isEqualTo( new Point3D( ex, ey, 0 ) );
 
 		Point3D point = pane.parentToLocal( ex, ey, 0 );
-		pane.zoom( point, DesignPane.ZOOM_IN_FACTOR );
+		pane.zoom( point, DesignPaneMarea.ZOOM_IN_FACTOR );
 
-		double newScale = SCALE * DesignPane.ZOOM_IN_FACTOR;
+		double newScale = SCALE * DesignPaneMarea.ZOOM_IN_FACTOR;
 		double offset = newScale - SCALE;
 		assertThat( pane.getScaleX() ).isCloseTo( newScale, TOLERANCE );
 		assertThat( -pane.getScaleY() ).isCloseTo( newScale, TOLERANCE );
@@ -264,9 +264,9 @@ public class DesignPaneMareaTest implements TestTimeouts {
 		assertThat( pane.localToParent( worldX, worldY, 0 ) ).isEqualTo( new Point3D( ex, ey, 0 ) );
 
 		Point3D point = pane.parentToLocal( ex, ey, 0 );
-		pane.zoom( point, DesignPane.ZOOM_OUT_FACTOR );
+		pane.zoom( point, DesignPaneMarea.ZOOM_OUT_FACTOR );
 
-		double newScale = SCALE * DesignPane.ZOOM_OUT_FACTOR;
+		double newScale = SCALE * DesignPaneMarea.ZOOM_OUT_FACTOR;
 		double offset = newScale - SCALE;
 		assertThat( pane.getScaleX() ).isCloseTo( newScale, TOLERANCE );
 		assertThat( -pane.getScaleY() ).isCloseTo( newScale, TOLERANCE );
@@ -280,8 +280,8 @@ public class DesignPaneMareaTest implements TestTimeouts {
 	@Test
 	void testChangeDesignUnitCausesRescale() {
 		design.setDesignUnit( DesignUnit.CENTIMETER );
-		double scale = DesignUnit.INCH.from( DesignPane.DEFAULT_DPI, design.calcDesignUnit() );
-		assertThat( pane.getScaleX() ).isCloseTo( 1.0 * scale, TOLERANCE );
+		double scale = DesignUnit.INCH.from( DesignPaneMarea.DEFAULT_DPI, design.calcDesignUnit() );
+		assertThat( pane.getScaleX() ).isCloseTo( scale, TOLERANCE );
 		assertThat( pane.getScaleY() ).isCloseTo( -1.0 * scale, TOLERANCE );
 	}
 

@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.view.DesignPane;
+import com.avereon.cartesia.tool.view.DesignPaneMarea;
 
 /**
  * Zoom out from the design. This has the effect of making the design smaller or
@@ -9,13 +9,13 @@ import com.avereon.cartesia.tool.view.DesignPane;
  *
  * <p>This command does not require any parameters. If no parameters are
  * provided it assumes the zoom will be centered around the current view point
- * and will use {@link DesignPane#ZOOM_OUT_FACTOR} as the zoom factor.</p>
+ * and will use {@link DesignPaneMarea#ZOOM_OUT_FACTOR} as the zoom factor.</p>
  */
 public class CameraZoomOut extends CameraZoom {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) {
-		zoomByFactor( context.getTool(), context.getTool().getViewPoint(), DesignPane.ZOOM_OUT_FACTOR );
+		zoomByFactor( context.getTool(), context.getTool().getViewPoint(), DesignPaneMarea.ZOOM_OUT_FACTOR );
 		return COMPLETE;
 	}
 

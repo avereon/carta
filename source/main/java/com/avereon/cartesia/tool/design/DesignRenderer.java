@@ -14,7 +14,9 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
@@ -53,6 +55,12 @@ public class DesignRenderer extends BorderPane {
 
 		// Create and add the renderer to the center
 		setCenter( this.renderer = new FxRenderer2d() );
+
+		// TODO Change the renderer mouse actions
+		renderer.setOnMousePressed( null );
+		renderer.setOnMouseDragged( null );
+		renderer.setOnMouseReleased( null );
+		renderer.setOnScroll( null );
 
 		// Bind the renderer width and height to the parent
 		renderer.widthProperty().bind( this.widthProperty() );
@@ -144,18 +152,35 @@ public class DesignRenderer extends BorderPane {
 		return visibleLayers != null && visibleLayers.contains( layer );
 	}
 
-//	public Set<DesignLayer> getVisibleLayers() {
-//		return visibleLayers;
-//	}
-//
-//	public void setVisibleLayers( Set<DesignLayer> visibleLayers ) {
-//		visibleLayersProperty().clear();
-//		visibleLayersProperty().addAll( visibleLayers );
-//		render();
-//	}
+	//	public Set<DesignLayer> getVisibleLayers() {
+	//		return visibleLayers;
+	//	}
+	//
+	//	public void setVisibleLayers( Set<DesignLayer> visibleLayers ) {
+	//		visibleLayersProperty().clear();
+	//		visibleLayersProperty().addAll( visibleLayers );
+	//		render();
+	//	}
 
 	public ObservableSet<DesignLayer> visibleLayers() {
 		return visibleLayers;
+	}
+
+	/**
+	 * Change the zoom by the zoom factor. The zoom is centered on the provided
+	 * anchor point in world coordinates. The current zoom is multiplied by the
+	 * zoom factor.
+	 *
+	 * @param anchor The anchor point in world coordinates
+	 * @param factor The zoom factor
+	 */
+	public void zoom( Point3D anchor, double factor ) {
+		Point2D anchor2d = new Point2D( anchor.getX(), anchor.getY() );
+		Point2D offset2d = renderer.getViewpoint().subtract( anchor2d );
+
+		// The zoom has to be set before the viewpoint
+		renderer.setZoom( renderer.getZoom().multiply( factor ) );
+		renderer.setViewpoint( anchor2d.add( offset2d.multiply( 1 / factor ) ) );
 	}
 
 	/**
@@ -165,6 +190,31 @@ public class DesignRenderer extends BorderPane {
 	 */
 	public void render() {
 		Fx.run( new RenderTrigger() );
+	}
+
+	@Override
+	public Point2D parentToLocal( double parentX, double parentY ) {
+		return renderer.parentToLocal( parentX, parentY );
+	}
+
+	@Override
+	public Point2D parentToLocal( Point2D parentPoint ) {
+		return renderer.parentToLocal( parentPoint );
+	}
+
+	@Override
+	public Point3D parentToLocal( Point3D parentPoint ) {
+		return renderer.parentToLocal( parentPoint );
+	}
+
+	@Override
+	public Point3D parentToLocal( double parentX, double parentY, double parentZ ) {
+		return renderer.parentToLocal( parentX, parentY, parentZ );
+	}
+
+	@Override
+	public Bounds parentToLocal( Bounds parentBounds ) {
+		return renderer.parentToLocal( parentBounds );
 	}
 
 	private void doRender() {
@@ -197,7 +247,7 @@ public class DesignRenderer extends BorderPane {
 
 		for( DesignLayer layer : design.getAllLayers() ) {
 			// Do not render hidden layers
-			if(!isLayerVisible( layer )) continue;
+			if( !isLayerVisible( layer ) ) continue;
 
 			// Render the geometry for the layer
 			for( DesignShape shape : layer.getShapes() ) {

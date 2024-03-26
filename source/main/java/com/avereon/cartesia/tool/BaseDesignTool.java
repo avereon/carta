@@ -220,7 +220,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	/**
 	 * Change the zoom value by a factor.
 	 *
-	 * @param anchor The zoom anchor
+	 * @param anchor The zoom anchor in world coordinates
 	 * @param factor The zoom factor
 	 */
 	public abstract void zoom( Point3D anchor, double factor );

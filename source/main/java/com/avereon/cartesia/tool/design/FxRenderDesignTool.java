@@ -7,6 +7,8 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.snap.Snap;
+import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.*;
 import com.avereon.data.NodeSettings;
 import com.avereon.settings.Settings;
@@ -34,17 +36,14 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -76,6 +75,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	//	private final PrintsGuide printsGuide;
 
 	// RENDERER
+
+	private static final Snap gridSnap = new SnapGrid();
 
 	private final Label toast;
 
@@ -335,15 +336,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//
 		//		// Add reference points visible property listener
 		//		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
-		//
-		//		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
-		//
-		//		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
-		//		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
-		//		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
-		//		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
-		//		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
-		//
+
+				addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+
+				//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
+				addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+				addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
+				addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
+				addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
+
 		//		getCoordinateStatus().updateZoom( getZoom() );
 		//		designPane.updateView();
 		//		doUpdateGridBounds();
@@ -629,7 +630,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void zoom( Point3D anchor, double factor ) {
-
+		log.atConfig().log( "Zooming factor=%s anchor=%s", factor, anchor );
+		Objects.requireNonNull( anchor );
+		Fx.run( () -> renderer.zoom( anchor, factor ) );
 	}
 
 	@Override
@@ -639,22 +642,23 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public Point3D mouseToWorld( Point3D point ) {
-		return null;
+		return mouseToWorld( point.getX(), point.getY(), point.getZ() );
 	}
 
 	@Override
 	public Point3D mouseToWorld( double x, double y, double z ) {
-		return null;
+		return renderer == null ? Point3D.ZERO : renderer.parentToLocal( x, y, z );
 	}
 
 	@Override
 	public Point3D mouseToWorkplane( Point3D point ) {
-		return null;
+		return mouseToWorkplane( point.getX(), point.getY(), point.getZ() );
 	}
 
 	@Override
 	public Point3D mouseToWorkplane( double x, double y, double z ) {
-		return null;
+		Point3D worldPoint = mouseToWorld( x, y, z );
+		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
 
 	@Override

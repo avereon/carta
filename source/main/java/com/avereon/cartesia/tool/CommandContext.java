@@ -205,16 +205,23 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		// handling of the scene which should trigger the appropriate action.
 	}
 
-	void handle( MouseEvent event ) {
+	public void handle( MouseEvent event ) {
 		doEventCommand( event );
-		commandStack.forEach( r -> r.getCommand().handle( event ) );
+
+		// Forward the mouse event to the other commands in the stack
+		CommandExecuteRequest request;
+		Iterator<CommandExecuteRequest> iterator = commandStack.iterator();
+		while( !event.isConsumed() && iterator.hasNext() ) {
+			request = iterator.next();
+			request.getCommand().handle( event );
+		}
 	}
 
-	void handle( ScrollEvent event ) {
+	public void handle( ScrollEvent event ) {
 		doEventCommand( event );
 	}
 
-	void handle( ZoomEvent event ) {
+	public void handle( ZoomEvent event ) {
 		doEventCommand( event );
 	}
 
