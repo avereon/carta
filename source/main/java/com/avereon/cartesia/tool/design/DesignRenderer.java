@@ -110,7 +110,7 @@ public class DesignRenderer extends BorderPane {
 	 * @return The DPI for the renderer
 	 */
 	public Point2D getDpi() {
-		return new Point2D( renderer.getDpiX(), renderer.getDpiY() );
+		return new Point2D( renderer.getPpiX(), renderer.getPpiY() );
 	}
 
 	/**
@@ -131,7 +131,7 @@ public class DesignRenderer extends BorderPane {
 	 * @param dpiY The DPI to set for the Y axis
 	 */
 	public void setDpi( double dpiX, double dpiY ) {
-		renderer.setDpi( dpiX, dpiY );
+		renderer.setPpi( dpiX, dpiY );
 	}
 
 	public boolean isGridVisible() {

@@ -5,6 +5,7 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
+import com.avereon.marea.RenderUnit;
 import com.avereon.marea.Renderer2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.zarra.color.Colors;
@@ -125,8 +126,8 @@ public class DesignPaneMarea extends StackPane {
 	public DesignPaneMarea() {
 		select = new Pane();
 		reference = new Pane();
-		//layers = new Pane(); // FIXME Change to a Marea renderer
 		renderer = new FxRenderer2d( 100,100 );
+		renderer.setLengthUnit( RenderUnit.CENTIMETER );
 		grid = new Pane();
 		getChildren().addAll( grid, (Node)renderer, reference, select );
 
@@ -145,8 +146,8 @@ public class DesignPaneMarea extends StackPane {
 		zoomProperty().addListener( ( p, o, n ) -> updateView() );
 		parentProperty().addListener( ( p, o, n ) -> updateView() );
 
-		renderer.dpiXProperty().bind( dpiProperty() );
-		renderer.dpiYProperty().bind( dpiProperty() );
+		renderer.ppiXProperty().bind( dpiProperty() );
+		renderer.ppiYProperty().bind( dpiProperty() );
 		renderer.zoomXProperty().bind( zoomProperty() );
 		renderer.zoomYProperty().bind( zoomProperty() );
 		viewPointProperty().addListener( (p,o,n) -> renderer.setViewpoint( n.getX(), n.getY() ) );

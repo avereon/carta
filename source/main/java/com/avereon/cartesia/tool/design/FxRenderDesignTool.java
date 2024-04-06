@@ -423,6 +423,17 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	public Point3D getViewPoint() {
 		// FIXME Why not just pass through to the renderer? Why have an extra property?
 		// Partly because the renderer viewpoint is split into x and y properties
+		// The use of a point here is contrary to the JavaFX property pattern. All
+		// point-like properties are split into their coordinate components and
+		// properties are created for each component.
+
+		// How do I want to handle this? Points are convenient, but not the way JavaFX did it.
+		// If I use points here, there is an extra layer to convert to the renderer properties.
+		// If I use the renderer properties here, I have to update the BaseDesignTool interface.
+
+		// So some good news-ish. Turns out the only point like property is the viewpoint.
+		// Zoom should be, but it is a double. It should be converted to a point-like property.
+		// PPU should also be a point-like property.
 		return viewpointProperty.get();
 	}
 
