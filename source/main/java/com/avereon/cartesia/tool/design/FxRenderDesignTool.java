@@ -421,6 +421,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public Point3D getViewPoint() {
+		// FIXME Why not just pass through to the renderer? Why have an extra property?
+		// Partly because the renderer viewpoint is split into x and y properties
 		return viewpointProperty.get();
 	}
 
@@ -637,7 +639,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
-
+		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, x, y ) );
 	}
 
 	@Override

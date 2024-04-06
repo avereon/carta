@@ -4,6 +4,7 @@ import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Vector;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -30,6 +31,14 @@ public class CadPoints {
 	public static double[][] asPoints( List<Point3D> points ) {
 		if( points == null ) return new double[ 0 ][];
 		return points.stream().map( CadPoints::asPoint ).toArray( double[][]::new );
+	}
+
+	public static Point2D toPoint2d( double x, double y ) {
+		return new Point2D( x, y );
+	}
+
+	public static Point2D toPoint2d( Point3D point ) {
+		return new Point2D( point.getX(), point.getY() );
 	}
 
 	public static Point3D toFxPoint( double[] point ) {

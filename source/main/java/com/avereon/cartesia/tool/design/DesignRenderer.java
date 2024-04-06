@@ -184,6 +184,25 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	/**
+	 * Change the view point due to mouse movement.
+	 *
+	 * @param viewAnchor The view point location before being dragged (world)
+	 * @param dragAnchor The point where the mouse was pressed (screen)
+	 * @param x The mouse event X coordinate (screen)
+	 * @param y The mouse event Y coordinate (screen)
+	 */
+	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
+		// Convert the view anchor to screen coordinates
+		Point2D anchor = renderer.localToParent( CadPoints.toPoint2d( viewAnchor ) );
+
+		// Calculate the drag offset in screen coordinates
+		Point2D delta = new Point2D( dragAnchor.getX() - x, dragAnchor.getY() - y );
+
+		// Set the new viewpoint in world coordinates
+		renderer.setViewpoint( renderer.parentToLocal( anchor.add( delta ) ) );
+	}
+
+	/**
 	 * Request that geometry be rendered. This method collapses multiple
 	 * sequential render requests to improve performance. This method is safe to
 	 * call from any thread.

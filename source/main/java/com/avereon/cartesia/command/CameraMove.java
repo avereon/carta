@@ -1,16 +1,18 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.CommandEventKey;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import java.text.ParseException;
 
+@CustomLog
 public class CameraMove extends CameraCommand {
 
 	private CommandEventKey eventKey;
@@ -26,8 +28,7 @@ public class CameraMove extends CameraCommand {
 			return INCOMPLETE;
 		}
 
-		if( parameters[ 0 ] instanceof MouseEvent ) {
-			MouseEvent event = (MouseEvent)parameters[ 0 ];
+		if( parameters[ 0 ] instanceof MouseEvent event ) {
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
 				return COMPLETE;
 			}
