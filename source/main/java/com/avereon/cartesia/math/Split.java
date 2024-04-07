@@ -23,8 +23,8 @@ public class Split {
 			} else {
 				shapes = splitEllipse( tool, (DesignEllipse)shape, mousePoint );
 			}
-		} else if( shape instanceof DesignCurve ) {
-			shapes = splitCurve( tool, (DesignCurve)shape, mousePoint );
+		} else if( shape instanceof DesignCubic ) {
+			shapes = splitCurve( tool, (DesignCubic)shape, mousePoint );
 		}
 
 		// Replace the old shape with the new shapes
@@ -77,13 +77,13 @@ public class Split {
 		return Set.of( a, b );
 	}
 
-	 static Set<DesignShape> splitCurve( BaseDesignTool tool, DesignCurve curve, Point3D point ) {
+	 static Set<DesignShape> splitCurve( BaseDesignTool tool, DesignCubic curve, Point3D point ) {
 		// Fine the parametric value "on the curve"
-		double t = CadGeometry.getCurveParametricValueNear( curve, point );
+		double t = CadGeometry.getCubicParametricValueNear( curve, point );
 		if( Double.isNaN( t ) ) return Set.of();
 
 		// Make new curves
-		List<DesignCurve> curves = CadGeometry.curveSubdivide( curve, t );
+		List<DesignCubic> curves = CadGeometry.cubicSubdivide( curve, t );
 		if( curves.size() < 2 ) return Set.of();
 
 		return Set.of( curves.get( 0 ), curves.get( 1 ) );

@@ -106,7 +106,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		geometryMappers.put( DesignLine.class, m -> mapLine( (DesignLine)m ) );
 		geometryMappers.put( DesignEllipse.class, m -> mapEllipse( (DesignEllipse)m ) );
 		geometryMappers.put( DesignArc.class, m -> mapArc( (DesignArc)m ) );
-		geometryMappers.put( DesignCurve.class, m -> mapCurve( (DesignCurve)m ) );
+		geometryMappers.put( DesignCubic.class, m -> mapCurve( (DesignCubic)m ) );
 		geometryMappers.put( DesignText.class, m -> mapText( (DesignText)m ) );
 	}
 
@@ -210,7 +210,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 				case DesignLine.LINE -> loadDesignLine( g );
 				case DesignEllipse.CIRCLE, DesignEllipse.ELLIPSE -> loadDesignEllipse( g );
 				case DesignArc.ARC -> loadDesignArc( g );
-				case DesignCurve.CURVE -> loadDesignCurve( g );
+				case DesignCubic.CUBIC -> loadDesignCurve( g );
 				case DesignText.TEXT -> loadDesignText( g );
 				default -> null;
 			};
@@ -318,11 +318,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return arc;
 	}
 
-	private DesignCurve loadDesignCurve( Map<String, Object> map ) {
-		DesignCurve curve = loadDesignShape( map, new DesignCurve() );
-		curve.setOriginControl( ParseUtil.parsePoint3D( (String)map.get( DesignCurve.ORIGIN_CONTROL ) ) );
-		curve.setPointControl( ParseUtil.parsePoint3D( (String)map.get( DesignCurve.POINT_CONTROL ) ) );
-		curve.setPoint( ParseUtil.parsePoint3D( (String)map.get( DesignCurve.POINT ) ) );
+	private DesignCubic loadDesignCurve( Map<String, Object> map ) {
+		DesignCubic curve = loadDesignShape( map, new DesignCubic() );
+		curve.setOriginControl( ParseUtil.parsePoint3D( (String)map.get( DesignCubic.ORIGIN_CONTROL ) ) );
+		curve.setPointControl( ParseUtil.parsePoint3D( (String)map.get( DesignCubic.POINT_CONTROL ) ) );
+		curve.setPoint( ParseUtil.parsePoint3D( (String)map.get( DesignCubic.POINT ) ) );
 		return curve;
 	}
 
@@ -455,8 +455,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return map;
 	}
 
-	private Map<String, Object> mapCurve( DesignCurve curve ) {
-		return asMap( curve, mapShape( curve, DesignCurve.CURVE ), DesignCurve.ORIGIN_CONTROL, DesignCurve.POINT_CONTROL, DesignCurve.POINT );
+	private Map<String, Object> mapCurve( DesignCubic curve ) {
+		return asMap( curve, mapShape( curve, DesignCubic.CUBIC ), DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignCubic.POINT );
 	}
 
 	private Map<String, Object> mapText( DesignText text ) {

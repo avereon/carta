@@ -147,7 +147,7 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaUiTest {
 		DesignArc arc2 = new DesignArc( new Point3D( -2, -4, 0 ), 5.0, 3.0, 73.0, 14.0, 28.0, DesignArc.Type.CHORD );
 		layer4.addShape( arc2 );
 
-		DesignCurve curve1 = new DesignCurve( new Point3D( -5, 0, 0 ), new Point3D( 1, 5, 0 ), new Point3D( -1, -5, 0 ), new Point3D( 5, 0, 0 ) );
+		DesignCubic curve1 = new DesignCubic( new Point3D( -5, 0, 0 ), new Point3D( 1, 5, 0 ), new Point3D( -1, -5, 0 ), new Point3D( 5, 0, 0 ) );
 		layer5.addShape( curve1 );
 
 		DesignText text1 = new DesignText( new Point3D( 2, 1, 0 ), "Test Text" );

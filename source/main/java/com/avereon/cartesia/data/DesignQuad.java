@@ -13,50 +13,38 @@ import lombok.CustomLog;
 import java.util.Map;
 
 @CustomLog
-public class DesignCurve extends DesignShape {
+public class DesignQuad extends DesignShape {
 
-	public static final String CURVE = "curve";
+	public static final String QUAD = "quad";
 
-	public static final String ORIGIN_CONTROL = "origin-control";
-
-	public static final String POINT_CONTROL = "point-control";
+	public static final String CONTROL = "control";
 
 	public static final String POINT = "point";
 
 	private static final String LENGTH = "length";
 
-	public DesignCurve() {
-		this( null, null, null, null );
+	public DesignQuad() {
+		this( null, null, null );
 	}
 
-	public DesignCurve( Point3D origin, Point3D originControl, Point3D pointControl, Point3D point ) {
+	public DesignQuad( Point3D origin, Point3D originControl, Point3D point ) {
 		super( origin );
-		addModifyingKeys( ORIGIN_CONTROL, POINT_CONTROL, POINT );
-		setOriginControl( originControl );
-		setPointControl( pointControl );
+		addModifyingKeys( CONTROL, POINT );
+		setControl( originControl );
 		setPoint( point );
 	}
 
 	@Override
-	public DesignShape.Type getType() {
-		return DesignShape.Type.CUBIC;
+	public Type getType() {
+		return Type.QUAD;
 	}
 
-	public Point3D getOriginControl() {
-		return getValue( ORIGIN_CONTROL );
+	public Point3D getControl() {
+		return getValue( CONTROL );
 	}
 
-	public DesignShape setOriginControl( Point3D value ) {
-		setValue( ORIGIN_CONTROL, value );
-		return this;
-	}
-
-	public Point3D getPointControl() {
-		return getValue( POINT_CONTROL );
-	}
-
-	public DesignShape setPointControl( Point3D value ) {
-		setValue( POINT_CONTROL, value );
+	public DesignShape setControl( Point3D value ) {
+		setValue( CONTROL, value );
 		return this;
 	}
 
@@ -71,7 +59,7 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		// TODO Improve DesignCurve.distanceTo()
+		// TODO Improve DesignQuad.distanceTo()
 		// This implementation is a simple estimate based on the origin and point
 		double[] a = CadPoints.asPoint( getOrigin() );
 		double[] b = CadPoints.asPoint( getPoint() );
@@ -81,25 +69,24 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public double pathLength() {
-		return CadGeometry.curveArcLength( this );
+		return CadGeometry.quadArcLength( this );
 	}
 
 	@Override
 	public Map<String, Object> getInformation() {
-		return Map.of( ORIGIN, getOrigin(),ORIGIN_CONTROL, getOriginControl(), POINT_CONTROL, getPointControl(), POINT, getPoint(), LENGTH, pathLength() );
+		return Map.of( ORIGIN, getOrigin(),CONTROL, getControl(), POINT, getPoint(), LENGTH, pathLength() );
 	}
 
 	@Override
-	public DesignCurve cloneShape() {
-		return new DesignCurve().copyFrom( this, true );
+	public DesignQuad cloneShape() {
+		return new DesignQuad().copyFrom( this, true );
 	}
 
 	@Override
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
-			setOriginControl( transform.apply( getOriginControl() ) );
-			setPointControl( transform.apply( getPointControl() ) );
+			setControl( transform.apply( getControl() ) );
 			setPoint( transform.apply( getPoint() ) );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
@@ -108,16 +95,15 @@ public class DesignCurve extends DesignShape {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.put( SHAPE, CURVE );
-		map.putAll( asMap( ORIGIN_CONTROL, POINT_CONTROL, POINT ) );
+		map.put( SHAPE, QUAD );
+		map.putAll( asMap( CONTROL, POINT ) );
 		return map;
 	}
 
 	@Override
-	public DesignCurve updateFrom( Map<String, Object> map ) {
+	public DesignQuad updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
-		setOriginControl( ParseUtil.parsePoint3D( (String)map.get( ORIGIN_CONTROL ) ) );
-		setPointControl( ParseUtil.parsePoint3D( (String)map.get( POINT_CONTROL ) ) );
+		setControl( ParseUtil.parsePoint3D( (String)map.get( CONTROL ) ) );
 		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;
 	}
@@ -125,11 +111,10 @@ public class DesignCurve extends DesignShape {
 	@Override
 	public DesignShape updateFrom( DesignShape shape ) {
 		super.updateFrom( shape );
-		if( !(shape instanceof DesignCurve curve) ) return this;
+		if( !(shape instanceof DesignQuad curve) ) return this;
 
 		try( Txn ignore = Txn.create() ) {
-			this.setOriginControl( curve.getOriginControl() );
-			this.setPointControl( curve.getPointControl() );
+			this.setControl( curve.getControl() );
 			this.setPoint( curve.getPoint() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );
@@ -140,7 +125,7 @@ public class DesignCurve extends DesignShape {
 
 	@Override
 	public String toString() {
-		return super.toString( ORIGIN, ORIGIN_CONTROL, POINT_CONTROL, POINT );
+		return super.toString( ORIGIN, CONTROL, POINT );
 	}
 
 }

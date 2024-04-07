@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.product.Rb;
@@ -15,7 +15,7 @@ import java.text.ParseException;
 @CustomLog
 public class DrawCurve4 extends DrawCommand {
 
-	private DesignCurve preview;
+	private DesignCubic preview;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
@@ -23,7 +23,7 @@ public class DrawCurve4 extends DrawCommand {
 
 		// Step 1
 		if( parameters.length < 1 ) {
-			addPreview( context, preview = new DesignCurve( context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse() ) );
+			addPreview( context, preview = new DesignCubic( context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "start-point" );
 			return INCOMPLETE;
 		}
@@ -57,7 +57,7 @@ public class DrawCurve4 extends DrawCommand {
 			Point3D b = asPoint( context, parameters[ 1 ] );
 			Point3D c = asPoint( context, parameters[ 2 ] );
 			Point3D d = asPoint( context, parameters[ 3 ] );
-			context.getTool().getCurrentLayer().addShape( new DesignCurve( a, b, c, d ) );
+			context.getTool().getCurrentLayer().addShape( new DesignCubic( a, b, c, d ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );

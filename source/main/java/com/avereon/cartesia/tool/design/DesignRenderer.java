@@ -20,6 +20,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -43,7 +44,7 @@ public class DesignRenderer extends BorderPane {
 		// FIXME Would an enum and switch be faster? Or maybe direct method calls?
 		designCreateMap = new ConcurrentHashMap<>();
 		designCreateMap.put( DesignArc.class, s -> createArc( (DesignArc)s ) );
-		designCreateMap.put( DesignCurve.class, s -> createCurve( (DesignCurve)s ) );
+		designCreateMap.put( DesignCubic.class, s -> createCurve( (DesignCubic)s ) );
 		designCreateMap.put( DesignLine.class, s -> createLine( (DesignLine)s ) );
 		designCreateMap.put( DesignEllipse.class, s -> createEllipse( (DesignEllipse)s ) );
 		designCreateMap.put( DesignMarker.class, s -> createMarker( (DesignMarker)s ) );
@@ -263,6 +264,101 @@ public class DesignRenderer extends BorderPane {
 
 	private void renderVisibleLayers() {
 		if( design == null ) return;
+		for( DesignLayer layer : design.getAllLayers() ) {
+			// Do not render hidden layers
+			if( !isLayerVisible( layer ) ) continue;
+
+			// Render the geometry for the layer
+			for( DesignShape shape : layer.getShapes() ) {
+				Pen pen = shape.getValue( "cache.marea.pen" );
+				if( pen == null ) {
+					pen = createPen( shape );
+					shape.setValue( "cache.marea.pen", pen );
+				}
+				renderer.setPen( pen.paint(), pen.width(), pen.cap(), pen.join(), pen.dashes(), pen.offset() );
+
+				switch( shape.getType() ) {
+					case ARC -> this.renderArc( (DesignArc)shape );
+					case LINE -> this.renderLine( (DesignLine)shape );
+				}
+
+				// NEXT Continue implementing new render methods
+			}
+		}
+	}
+
+	private void renderArc( DesignArc arc ) {
+		renderer.drawArc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getRadii().getX(), arc.getRadii().getY(), arc.calcRotate(), arc.calcStart(), arc.calcExtent() );
+	}
+
+	private void renderCubic( DesignCubic cubic ) {
+		renderer.drawCubic(
+			cubic.getOrigin().getX(),
+			cubic.getOrigin().getY(),
+			cubic.getOriginControl().getX(),
+			cubic.getOriginControl().getY(),
+			cubic.getPointControl().getX(),
+			cubic.getPointControl().getY(),
+			cubic.getPoint().getX(),
+			cubic.getPoint().getY()
+		);
+	}
+
+	private void renderLine( DesignLine line ) {
+		renderer.drawLine( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
+	}
+
+	private void renderMarker( DesignMarker marker ) {
+		DesignPath path = marker.calcType().getDesignPath();
+		if( path == null ) {
+			log.atError().log( "Undefined marker path: {0}", marker.getMarkerType() );
+		} else {
+			renderer.drawPath( toPathElements( path.getElements() ) );
+		}
+	}
+
+	private void renderPath( DesignPath path ) {
+		renderer.drawPath( toPathElements( path.getElements() ) );
+	}
+
+	private void renderQuad( DesignQuad quad ) {
+		renderer.drawQuad(
+			quad.getOrigin().getX(),
+			quad.getOrigin().getY(),
+			quad.getControl().getX(),
+			quad.getControl().getY(),
+			quad.getPoint().getX(),
+			quad.getPoint().getY()
+		);
+	}
+
+
+	private List<Path.Element> toPathElements( List<DesignPath.Element> elements ) {
+		DesignPath.Element move = elements.getFirst();
+		if( move.command() != DesignPath.Command.MOVE ) {
+			log.atError().log( "DesignPath does not start with a move command" );
+			return List.of();
+		}
+
+		Path path = new Path( move.data()[ 0 ], move.data()[ 1 ] );
+		for( int index = 1; index < elements.size(); index++ ) {
+			DesignPath.Element element = elements.get( index );
+			double[] data = element.data();
+			switch( element.command() ) {
+				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
+				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case LINE -> path.line( data[ 0 ], data[ 1 ] );
+				case CUBIC -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case QUAD -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case CLOSE -> path.close();
+			}
+		}
+
+		return path.getElements();
+	}
+
+	private void renderVisibleLayersOld() {
+		if( design == null ) return;
 
 		for( DesignLayer layer : design.getAllLayers() ) {
 			// Do not render hidden layers
@@ -357,7 +453,7 @@ public class DesignRenderer extends BorderPane {
 		return new Line( origin, point );
 	}
 
-	private Curve createCurve( DesignCurve shape ) {
+	private Curve createCurve( DesignCubic shape ) {
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
 		double[] originControl = CadPoints.asPoint( shape.getOriginControl() );
 		double[] pointControl = CadPoints.asPoint( shape.getPointControl() );
@@ -385,12 +481,12 @@ public class DesignRenderer extends BorderPane {
 		for( DesignPath.Element element : shape.getElements() ) {
 			double[] data = element.data();
 			switch( element.command() ) {
-				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case CURVE -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case CLOSE -> path.close();
-				case LINE -> path.line( data[ 0 ], data[ 1 ] );
 				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
+				case LINE -> path.line( data[ 0 ], data[ 1 ] );
+				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case CUBIC -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case QUAD -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case CLOSE -> path.close();
 			}
 		}
 

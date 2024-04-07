@@ -1,7 +1,7 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.data.DesignArc;
-import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
@@ -18,8 +18,8 @@ public class CadEdit {
 			updateLine( tool, (DesignLine)shape, shapePoint, target );
 		} else if( shape instanceof DesignArc ) {
 			updateArc( tool, (DesignArc)shape, shapePoint, target );
-		} else if( shape instanceof DesignCurve ) {
-			updateCurve( tool, (DesignCurve)shape, shapePoint, target );
+		} else if( shape instanceof DesignCubic ) {
+			updateCurve( tool, (DesignCubic)shape, shapePoint, target );
 		}
 	}
 
@@ -40,11 +40,11 @@ public class CadEdit {
 		arc.moveEndpoint( source, target );
 	}
 
-	protected static void updateCurve( BaseDesignTool tool, DesignCurve curve, Point3D trimPoint, Point3D target ) {
+	protected static void updateCurve( BaseDesignTool tool, DesignCubic curve, Point3D trimPoint, Point3D target ) {
 		if( target == null ) return;
 
-		double t = CadGeometry.getCurveParametricValue( curve, target );
-		List<DesignCurve> curves = CadGeometry.curveSubdivide( curve, t );
+		double t = CadGeometry.getCubicParametricValue( curve, target );
+		List<DesignCubic> curves = CadGeometry.cubicSubdivide( curve, t );
 		if( curves.size() < 1 ) return;
 
 		// Now we have the two curves, we need to determine which one to use

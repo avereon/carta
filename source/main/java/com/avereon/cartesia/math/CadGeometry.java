@@ -1,9 +1,6 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.data.DesignArc;
-import com.avereon.cartesia.data.DesignCurve;
-import com.avereon.cartesia.data.DesignEllipse;
-import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.data.*;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Vector;
 import javafx.geometry.Point3D;
@@ -124,40 +121,38 @@ public class CadGeometry {
 	}
 
 	public static double arcLength( DesignArc arc ) {
-		return Geometry.arcLength(
-			asPoint( arc.getOrigin() ),
-			asPoint( arc.getRadii() ),
-			Math.toRadians( arc.calcRotate() ),
-			Math.toRadians( arc.calcStart() ),
-			Math.toRadians( arc.calcExtent() )
-		);
+		return Geometry.arcLength( asPoint( arc.getOrigin() ), asPoint( arc.getRadii() ), Math.toRadians( arc.calcRotate() ), Math.toRadians( arc.calcStart() ), Math.toRadians( arc.calcExtent() ) );
 	}
 
-	public static double getCurveParametricValue( DesignCurve curve, Point3D point ) {
+	public static double quadArcLength( DesignQuad quad ) {
+		return Geometry.quadArcLength( asPoint( quad.getOrigin() ), asPoint( quad.getControl() ), asPoint( quad.getPoint() ), CadConstants.RESOLUTION_LENGTH );
+	}
+
+	public static double getCubicParametricValue( DesignCubic curve, Point3D point ) {
 		return Geometry.curveParametricValue( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), asPoint( point ) );
 	}
 
-	public static double getCurveParametricValueNear( DesignCurve curve, Point3D point ) {
+	public static double getCubicParametricValueNear( DesignCubic curve, Point3D point ) {
 		return Geometry.curveParametricValueNear( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), asPoint( point ) );
 	}
 
-	public static List<DesignCurve> curveSubdivide( DesignCurve curve, double t ) {
+	public static List<DesignCubic> cubicSubdivide( DesignCubic curve, double t ) {
 		double[][][] curves = Geometry.curveSubdivide( asPoint( curve.getOrigin() ), asPoint( curve.getOriginControl() ), asPoint( curve.getPointControl() ), asPoint( curve.getPoint() ), t );
 		if( curves.length < 2 ) return List.of();
 
 		double[][] v0 = curves[ 0 ];
 		double[][] v1 = curves[ 1 ];
-		DesignCurve c0 = new DesignCurve( toFxPoint( v0[ 0 ] ), toFxPoint( v0[ 1 ] ), toFxPoint( v0[ 2 ] ), toFxPoint( v0[ 3 ] ) );
-		DesignCurve c1 = new DesignCurve( toFxPoint( v1[ 0 ] ), toFxPoint( v1[ 1 ] ), toFxPoint( v1[ 2 ] ), toFxPoint( v1[ 3 ] ) );
+		DesignCubic c0 = new DesignCubic( toFxPoint( v0[ 0 ] ), toFxPoint( v0[ 1 ] ), toFxPoint( v0[ 2 ] ), toFxPoint( v0[ 3 ] ) );
+		DesignCubic c1 = new DesignCubic( toFxPoint( v1[ 0 ] ), toFxPoint( v1[ 1 ] ), toFxPoint( v1[ 2 ] ), toFxPoint( v1[ 3 ] ) );
 
 		return List.of( c0, c1 );
 	}
 
-	public static double curveArcLength( DesignCurve curve ) {
-		return Geometry.curveArcLength( asPoint( curve.getOrigin() ),
-			asPoint( curve.getOriginControl() ),
-			asPoint( curve.getPointControl() ),
-			asPoint( curve.getPoint() ),
+	public static double cubicArcLength( DesignCubic cubic ) {
+		return Geometry.cubicArcLength( asPoint( cubic.getOrigin() ),
+			asPoint( cubic.getOriginControl() ),
+			asPoint( cubic.getPointControl() ),
+			asPoint( cubic.getPoint() ),
 			CadConstants.RESOLUTION_LENGTH
 		);
 	}

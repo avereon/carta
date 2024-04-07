@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
@@ -112,7 +112,7 @@ public class Stretch extends EditCommand {
 			return Set.of( DesignLine.ORIGIN, DesignLine.POINT );
 		} else if( shape instanceof DesignEllipse ) {
 			return Set.of( DesignLine.ORIGIN );
-		} else if( shape instanceof DesignCurve ) {
+		} else if( shape instanceof DesignCubic ) {
 			return Set.of( DesignLine.ORIGIN, DesignLine.POINT );
 		}
 		return Set.of();

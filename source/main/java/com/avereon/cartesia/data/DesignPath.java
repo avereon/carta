@@ -16,10 +16,10 @@ public class DesignPath extends DesignShape {
 	public enum Command {
 		MOVE,
 		ARC,
-		CURVE,
+		CUBIC,
 		LINE,
 		QUAD,
-		CLOSE,
+		CLOSE
 	}
 
 	public static final String PATH = "path";
@@ -117,7 +117,7 @@ public class DesignPath extends DesignShape {
 	}
 
 	public DesignPath curve( double bx, double by, double cx, double cy, double dx, double dy ) {
-		elements.add( new Element( Command.CURVE, new double[]{ bx, by, cx, cy, dx, dy } ) );
+		elements.add( new Element( Command.CUBIC, new double[]{ bx, by, cx, cy, dx, dy } ) );
 		return this;
 	}
 

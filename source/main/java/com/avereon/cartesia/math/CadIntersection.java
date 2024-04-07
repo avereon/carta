@@ -1,6 +1,6 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
@@ -32,24 +32,24 @@ public class CadIntersection {
 				return intersectLineLine( (DesignLine)a, (DesignLine)b );
 			} else if( b instanceof DesignEllipse ) {
 				return intersectLineEllipse( (DesignLine)a, (DesignEllipse)b );
-			} else if( b instanceof DesignCurve ) {
-				return intersectLineCurve( (DesignLine)a, (DesignCurve)b );
+			} else if( b instanceof DesignCubic ) {
+				return intersectLineCurve( (DesignLine)a, (DesignCubic)b );
 			}
 		} else if( a instanceof DesignEllipse ) {
 			if( b instanceof DesignLine ) {
 				return intersectLineEllipse( (DesignLine)b, (DesignEllipse)a );
 			} else if( b instanceof DesignEllipse ) {
 				return intersectEllipseEllipse( (DesignEllipse)a, (DesignEllipse)b );
-			} else if( b instanceof DesignCurve ) {
-				return intersectEllipseCurve( (DesignEllipse)a, (DesignCurve)b );
+			} else if( b instanceof DesignCubic ) {
+				return intersectEllipseCurve( (DesignEllipse)a, (DesignCubic)b );
 			}
-		} else if( a instanceof DesignCurve ) {
+		} else if( a instanceof DesignCubic ) {
 			if( b instanceof DesignLine ) {
-				return intersectLineCurve( (DesignLine)b, (DesignCurve)a );
+				return intersectLineCurve( (DesignLine)b, (DesignCubic)a );
 			} else if( b instanceof DesignEllipse ) {
-				return intersectEllipseCurve( (DesignEllipse)b, (DesignCurve)a );
-			} else if( b instanceof DesignCurve ) {
-				return intersectCurveCurve( (DesignCurve)a, (DesignCurve)b );
+				return intersectEllipseCurve( (DesignEllipse)b, (DesignCubic)a );
+			} else if( b instanceof DesignCubic ) {
+				return intersectCurveCurve( (DesignCubic)a, (DesignCubic)b );
 			}
 		}
 
@@ -122,7 +122,7 @@ public class CadIntersection {
 		return toFxPoints( Intersection2D.intersectLineEllipse( asPoint( p1 ), asPoint( p2 ), asPoint( o ), rx, ry, rotate ).getPoints() );
 	}
 
-	public static List<Point3D> intersectLineCurve( DesignLine a, DesignCurve b ) {
+	public static List<Point3D> intersectLineCurve( DesignLine a, DesignCubic b ) {
 		Intersection2D xn = Intersection2D.intersectLineBezier3( asPoint( a.getOrigin() ),
 			asPoint( a.getPoint() ),
 			asPoint( b.getOrigin() ),
@@ -155,7 +155,7 @@ public class CadIntersection {
 		return toFxPoints( xn.getPoints() );
 	}
 
-	public static List<Point3D> intersectEllipseCurve( DesignEllipse a, DesignCurve b ) {
+	public static List<Point3D> intersectEllipseCurve( DesignEllipse a, DesignCubic b ) {
 		Intersection2D xn = Intersection2D.intersectEllipseBezier3( asPoint( a.getOrigin() ),
 			a.getXRadius(),
 			a.getYRadius(),
@@ -168,7 +168,7 @@ public class CadIntersection {
 		return toFxPoints( xn.getPoints() );
 	}
 
-	public static List<Point3D> intersectCurveCurve( DesignCurve a, DesignCurve b ) {
+	public static List<Point3D> intersectCurveCurve( DesignCubic a, DesignCubic b ) {
 		Intersection2D xn = Intersection2D.intersectBezier3Bezier3( asPoint( a.getOrigin() ),
 			asPoint( a.getOriginControl() ),
 			asPoint( a.getPointControl() ),

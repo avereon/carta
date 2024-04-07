@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool.view;
 
-import com.avereon.cartesia.data.DesignCurve;
+import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
@@ -25,13 +25,13 @@ public class DesignCurveView extends DesignShapeView {
 		super( pane, designShape );
 	}
 
-	public DesignCurve getDesignCurve() {
-		return (DesignCurve)getDesignNode();
+	public DesignCubic getDesignCurve() {
+		return (DesignCubic)getDesignNode();
 	}
 
 	@Override
 	protected List<Shape> generateGeometry() {
-		DesignCurve curve = getDesignCurve();
+		DesignCubic curve = getDesignCurve();
 		Shape shape = new CubicCurve(
 			curve.getOrigin().getX(),
 			curve.getOrigin().getY(),
@@ -59,20 +59,20 @@ public class DesignCurveView extends DesignShapeView {
 	@Override
 	void registerListeners() {
 		super.registerListeners();
-		DesignCurve designEllipse = getDesignCurve();
-		getDesignShape().register( DesignCurve.ORIGIN, originHandler = e -> Fx.run( () -> {
+		DesignCubic designEllipse = getDesignCurve();
+		getDesignShape().register( DesignCubic.ORIGIN, originHandler = e -> Fx.run( () -> {
 			((CubicCurve)getShape()).setStartX( designEllipse.getOrigin().getX() );
 			((CubicCurve)getShape()).setStartY( designEllipse.getOrigin().getY() );
 		} ) );
-		getDesignShape().register( DesignCurve.ORIGIN_CONTROL, originControlHandler = e -> Fx.run( () -> {
+		getDesignShape().register( DesignCubic.ORIGIN_CONTROL, originControlHandler = e -> Fx.run( () -> {
 			((CubicCurve)getShape()).setControlX1( designEllipse.getOriginControl().getX() );
 			((CubicCurve)getShape()).setControlY1( designEllipse.getOriginControl().getY() );
 		} ) );
-		getDesignShape().register( DesignCurve.POINT_CONTROL, pointControlHandler = e -> Fx.run( () -> {
+		getDesignShape().register( DesignCubic.POINT_CONTROL, pointControlHandler = e -> Fx.run( () -> {
 			((CubicCurve)getShape()).setControlX2( designEllipse.getPointControl().getX() );
 			((CubicCurve)getShape()).setControlY2( designEllipse.getPointControl().getY() );
 		} ) );
-		getDesignShape().register( DesignCurve.POINT, pointHandler = e -> Fx.run( () -> {
+		getDesignShape().register( DesignCubic.POINT, pointHandler = e -> Fx.run( () -> {
 			((CubicCurve)getShape()).setEndX( designEllipse.getPoint().getX() );
 			((CubicCurve)getShape()).setEndY( designEllipse.getPoint().getY() );
 		} ) );
@@ -80,10 +80,10 @@ public class DesignCurveView extends DesignShapeView {
 
 	@Override
 	void unregisterListeners() {
-		getDesignShape().unregister( DesignCurve.POINT, pointHandler );
-		getDesignShape().unregister( DesignCurve.POINT_CONTROL, pointControlHandler );
-		getDesignShape().unregister( DesignCurve.ORIGIN_CONTROL, originControlHandler );
-		getDesignShape().unregister( DesignCurve.ORIGIN, originHandler );
+		getDesignShape().unregister( DesignCubic.POINT, pointHandler );
+		getDesignShape().unregister( DesignCubic.POINT_CONTROL, pointControlHandler );
+		getDesignShape().unregister( DesignCubic.ORIGIN_CONTROL, originControlHandler );
+		getDesignShape().unregister( DesignCubic.ORIGIN, originHandler );
 		super.unregisterListeners();
 	}
 

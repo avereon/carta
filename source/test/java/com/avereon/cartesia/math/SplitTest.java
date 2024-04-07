@@ -51,9 +51,9 @@ public class SplitTest {
 	@Test
 	void testSplitCurve() {
 		Point3D mouse = new Point3D( 0.5, 2, 0 );
-		DesignCurve a = new DesignCurve( new Point3D( 0, 1, 0 ), new Point3D( 1, 2, 0 ), new Point3D( 1, 0, 0 ), new Point3D( 2, 1, 0 ) );
-		DesignCurve b = CadGeometry.curveSubdivide( a, CadGeometry.getCurveParametricValueNear( a, mouse ) ).get( 0 );
-		DesignCurve c = CadGeometry.curveSubdivide( a, CadGeometry.getCurveParametricValueNear( a, mouse ) ).get( 1 );
+		DesignCubic a = new DesignCubic( new Point3D( 0, 1, 0 ), new Point3D( 1, 2, 0 ), new Point3D( 1, 0, 0 ), new Point3D( 2, 1, 0 ) );
+		DesignCubic b = CadGeometry.cubicSubdivide( a, CadGeometry.getCubicParametricValueNear( a, mouse ) ).get( 0 );
+		DesignCubic c = CadGeometry.cubicSubdivide( a, CadGeometry.getCubicParametricValueNear( a, mouse ) ).get( 1 );
 
 		Set<DesignShape> shapes = Split.splitCurve( null, a, mouse );
 
@@ -78,7 +78,7 @@ public class SplitTest {
 
 	private static boolean containsCurve( Set<DesignShape> shapes, DesignShape shape ) {
 		for( DesignShape test : shapes ) {
-			if( test.equals( shape, DesignCurve.ORIGIN, DesignCurve.ORIGIN_CONTROL, DesignCurve.POINT_CONTROL, DesignLine.POINT ) ) return true;
+			if( test.equals( shape, DesignCubic.ORIGIN, DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignLine.POINT ) ) return true;
 		}
 		return false;
 	}
