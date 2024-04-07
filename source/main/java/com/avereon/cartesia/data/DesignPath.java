@@ -51,6 +51,11 @@ public class DesignPath extends DesignShape {
 		}
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.PATH;
+	}
+
 	public List<Element> getElements() {
 		return new ArrayList<>( elements );
 	}

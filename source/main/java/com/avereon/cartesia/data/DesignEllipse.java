@@ -75,6 +75,11 @@ public class DesignEllipse extends DesignShape {
 		setRotate( rotate );
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.ELLIPSE;
+	}
+
 	public Point3D getRadii() {
 		return getValue( RADII );
 	}

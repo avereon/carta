@@ -33,6 +33,11 @@ public class DesignLine extends DesignShape {
 		setPoint( point );
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.LINE;
+	}
+
 	public Point3D getPoint() {
 		return getValue( POINT );
 	}

@@ -59,6 +59,11 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		setRotate( rotate );
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.TEXT;
+	}
+
 	public String getText() {
 		return getValue( TEXT );
 	}

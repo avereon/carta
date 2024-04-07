@@ -433,6 +433,11 @@ public class DesignMarker extends DesignShape {
 		addModifyingKeys( ORIGIN, SIZE, TYPE );
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.MARKER;
+	}
+
 	public List<DesignPath.Element> getElements() {
 		Type type = calcType();
 		return type != null ? type.getDesignPath().getElements() : List.of();

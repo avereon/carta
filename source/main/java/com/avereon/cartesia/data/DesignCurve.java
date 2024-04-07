@@ -37,6 +37,11 @@ public class DesignCurve extends DesignShape {
 		setPoint( point );
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.CUBIC;
+	}
+
 	public Point3D getOriginControl() {
 		return getValue( ORIGIN_CONTROL );
 	}

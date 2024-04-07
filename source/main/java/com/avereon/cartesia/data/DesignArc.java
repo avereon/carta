@@ -76,6 +76,11 @@ public class DesignArc extends DesignEllipse {
 		if( type == Type.OPEN ) setFillPaint( null );
 	}
 
+	@Override
+	public DesignShape.Type getType() {
+		return DesignShape.Type.ARC;
+	}
+
 	public double calcStart() {
 		return hasKey( START ) ? getStart() : 0.0;
 	}
