@@ -6,7 +6,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.marea.RenderUnit;
-import com.avereon.marea.Renderer2d;
+import com.avereon.marea.ShapeRenderer2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.color.Paints;
@@ -85,7 +85,7 @@ public class DesignPaneMarea extends StackPane {
 	private final Pane reference;
 
 	//private final Pane layers;
-	private final Renderer2d renderer;
+	private final ShapeRenderer2d renderer;
 
 	private final Pane grid;
 
