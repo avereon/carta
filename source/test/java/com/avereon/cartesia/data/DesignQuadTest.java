@@ -1,6 +1,8 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadConstants;
 import javafx.geometry.Point3D;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -12,57 +14,57 @@ public class DesignQuadTest {
 
 	@Test
 	void testModify() {
-		DesignQuad curve = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
-		assertThat( curve.isModified() ).isTrue();
-		curve.setModified( false );
-		assertThat( curve.isModified() ).isFalse();
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		assertThat( quad.isModified() ).isTrue();
+		quad.setModified( false );
+		assertThat( quad.isModified() ).isFalse();
 
-		curve.setOrigin( new Point3D( 0, 0, 0 ) );
-		curve.setPoint( new Point3D( 0, 0, 0 ) );
-		assertThat( curve.isModified() ).isFalse();
+		quad.setOrigin( new Point3D( 0, 0, 0 ) );
+		quad.setPoint( new Point3D( 0, 0, 0 ) );
+		assertThat( quad.isModified() ).isFalse();
 
-		curve.setOrigin( new Point3D( 1, 1, 0 ) );
-		assertThat( curve.isModified() ).isTrue();
-		curve.setModified( false );
-		assertThat( curve.isModified() ).isFalse();
+		quad.setOrigin( new Point3D( 1, 1, 0 ) );
+		assertThat( quad.isModified() ).isTrue();
+		quad.setModified( false );
+		assertThat( quad.isModified() ).isFalse();
 
-		curve.setPoint( new Point3D( 2, 2, 0 ) );
-		assertThat( curve.isModified() ).isTrue();
-		curve.setModified( false );
-		assertThat( curve.isModified() ).isFalse();
+		quad.setPoint( new Point3D( 2, 2, 0 ) );
+		assertThat( quad.isModified() ).isTrue();
+		quad.setModified( false );
+		assertThat( quad.isModified() ).isFalse();
 	}
 
 	@Test
 	void testOrigin() {
-		DesignQuad curve = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
-		assertThat( curve.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		assertThat( quad.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 
-		curve.setOrigin( new Point3D( 1, 2, 3 ) );
-		assertThat( curve.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+		quad.setOrigin( new Point3D( 1, 2, 3 ) );
+		assertThat( quad.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
 	void testPoint() {
-		DesignQuad curve = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
-		assertThat( curve.getPoint() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		assertThat( quad.getPoint() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 
-		curve.setPoint( new Point3D( 1, 2, 3 ) );
-		assertThat( curve.getPoint() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+		quad.setPoint( new Point3D( 1, 2, 3 ) );
+		assertThat( quad.getPoint() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
 	void testPathLength() {
-//		DesignQuad curve = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 1, 1, 0 ), new Point3D( 1, 0, 0 ) );
-//		assertThat( curve.pathLength() ).isEqualTo( 2.0, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
-//
-//		curve = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 1, 1, 0 ), new Point3D( 2, 1, 0 ) );
-//		assertThat( curve.pathLength() ).isEqualTo( 2.550645, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0.5, 0.5, 0 ), new Point3D( 1, 0, 0 ) );
+		assertThat( quad.pathLength() ).isEqualTo( 1.274307417012654, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
+
+		quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 1, 0 ), new Point3D( 1, 1, 0 ) );
+		assertThat( quad.pathLength() ).isEqualTo( 1.802142831771924, Offset.offset( CadConstants.RESOLUTION_LENGTH ) );
 	}
 
 	@Test
 	void testToMap() {
-		DesignQuad curve = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0.5, 0.5, 0 ), new Point3D( 1, 0, 0 ) );
-		Map<String, Object> map = curve.asMap();
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0.5, 0.5, 0 ), new Point3D( 1, 0, 0 ) );
+		Map<String, Object> map = quad.asMap();
 
 		assertThat( map.get( DesignQuad.SHAPE ) ).isEqualTo( DesignQuad.QUAD );
 		assertThat( map.get( DesignQuad.ORIGIN ) ).isEqualTo( new Point3D( 0, 0, 0 ) );
@@ -78,12 +80,12 @@ public class DesignQuadTest {
 		map.put( DesignQuad.CONTROL, "0.5,0.5,0" );
 		map.put( DesignQuad.POINT, "1,0,0" );
 
-		DesignQuad curve = new DesignQuad();
-		curve.updateFrom( map );
+		DesignQuad quad = new DesignQuad();
+		quad.updateFrom( map );
 
-		assertThat( curve.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
-		assertThat( curve.getControl() ).isEqualTo( new Point3D( 0.5, 0.5, 0 ) );
-		assertThat( curve.getPoint() ).isEqualTo( new Point3D( 1, 0, 0 ) );
+		assertThat( quad.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+		assertThat( quad.getControl() ).isEqualTo( new Point3D( 0.5, 0.5, 0 ) );
+		assertThat( quad.getPoint() ).isEqualTo( new Point3D( 1, 0, 0 ) );
 	}
 
 }
