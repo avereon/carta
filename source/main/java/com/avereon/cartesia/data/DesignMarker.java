@@ -454,7 +454,7 @@ public class DesignMarker extends DesignShape {
 	}
 
 	public Type calcType() {
-		String type = getType();
+		String type = getMarkerType();
 		if( type == null ) type = DesignMarker.DEFAULT_TYPE.name();
 		return DesignMarker.Type.valueOf( type.toUpperCase() );
 	}
@@ -464,7 +464,7 @@ public class DesignMarker extends DesignShape {
 	 *
 	 * @return The lower case string value of the marker type
 	 */
-	public String getType() {
+	public String getMarkerType() {
 		return getValue( TYPE );
 	}
 
@@ -543,7 +543,7 @@ public class DesignMarker extends DesignShape {
 
 		try( Txn ignore = Txn.create() ) {
 			this.setSize( marker.getSize() );
-			this.setType( marker.getType() );
+			this.setType( marker.getMarkerType() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );
 		}

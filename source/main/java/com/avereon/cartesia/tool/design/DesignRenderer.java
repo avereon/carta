@@ -374,7 +374,7 @@ public class DesignRenderer extends BorderPane {
 
 	private Path createMarker( DesignMarker shape ) {
 		DesignPath path = shape.calcType().getDesignPath();
-		if( path == null ) log.atError().log( "Undefined marker path: {0}", shape.getType() );
+		if( path == null ) log.atError().log( "Undefined marker path: {0}", shape.getMarkerType() );
 		return createPath( shape.calcType().getDesignPath() );
 	}
 

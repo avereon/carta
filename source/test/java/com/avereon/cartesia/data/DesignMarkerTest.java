@@ -52,7 +52,7 @@ public class DesignMarkerTest {
 		DesignMarker marker = new DesignMarker( new Point3D( 0, 0, 0 ) );
 		marker.setType( DesignMarker.Type.CIRCLE.name() );
 
-		assertThat( marker.getType() ).isEqualTo( DesignMarker.Type.CIRCLE.name().toLowerCase() );
+		assertThat( marker.getMarkerType() ).isEqualTo( DesignMarker.Type.CIRCLE.name().toLowerCase() );
 
 		List<DesignPath.Element> elements = marker.getElements();
 		DesignPath.Element e0 = elements.get( 0 );

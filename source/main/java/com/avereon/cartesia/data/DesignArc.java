@@ -122,7 +122,7 @@ public class DesignArc extends DesignEllipse {
 		return CadGeometry.ellipsePoint360( this, calcEnd() );
 	}
 
-	public DesignArc.Type getType() {
+	public DesignArc.Type getArcType() {
 		return getValue( TYPE );
 	}
 
@@ -221,7 +221,7 @@ public class DesignArc extends DesignEllipse {
 			this.setRotate( arc.getRotate() );
 			this.setStart( arc.getStart() );
 			this.setExtent( arc.getExtent() );
-			this.setType( arc.getType() );
+			this.setType( arc.getArcType() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );
 		}

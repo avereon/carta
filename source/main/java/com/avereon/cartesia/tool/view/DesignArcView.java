@@ -90,7 +90,7 @@ public class DesignArcView extends DesignShapeView {
 		DesignArc designArc = getDesignArc();
 		Arc arc = (Arc)shape;
 
-		arc.setType( designArc.getType() == null ? ArcType.OPEN : designArc.getType().arcType() );
+		arc.setType( designArc.getArcType() == null ? ArcType.OPEN : designArc.getArcType().arcType() );
 		// DesignArcView does not subclass DesignArcEllipse and needs to update the rotate on its own
 		updateRotate( designArc, shape );
 	}

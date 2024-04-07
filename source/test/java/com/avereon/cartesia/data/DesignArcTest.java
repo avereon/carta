@@ -119,7 +119,7 @@ public class DesignArcTest {
 		assertThat( arc.getExtent() ).isEqualTo( 17.0 );
 		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
 		assertThat( arc.getRotate() ).isNull();
-		assertThat( arc.getType() ).isNull();
+		assertThat( arc.getArcType() ).isNull();
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class DesignArcTest {
 		assertThat( arc.getRotate() ).isNull();
 		assertThat( arc.getStart() ).isEqualTo( 6.0 );
 		assertThat( arc.getExtent() ).isEqualTo( 7.0 );
-		assertThat( arc.getType() ).isNull();
+		assertThat( arc.getArcType() ).isNull();
 	}
 
 	@Test
@@ -165,7 +165,7 @@ public class DesignArcTest {
 		assertThat( arc.getRotate() ).isNull();
 		assertThat( arc.getStart() ).isEqualTo( 6.0 );
 		assertThat( arc.getExtent() ).isEqualTo( 7.0 );
-		assertThat( arc.getType() ).isNull();
+		assertThat( arc.getArcType() ).isNull();
 	}
 
 	@Test
@@ -190,7 +190,7 @@ public class DesignArcTest {
 		assertThat( arc.getRotate() ).isEqualTo( 6.0 );
 		assertThat( arc.getStart() ).isEqualTo( 7.0 );
 		assertThat( arc.getExtent() ).isEqualTo( 8.0 );
-		assertThat( arc.getType() ).isEqualTo( DesignArc.Type.CHORD );
+		assertThat( arc.getArcType() ).isEqualTo( DesignArc.Type.CHORD );
 	}
 
 	@Test
