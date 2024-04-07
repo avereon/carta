@@ -258,7 +258,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		return layer == null ? DesignLayer.DEFAULT_TEXT_FILL_PAINT : layer.getTextFillPaint();
 	}
 
-	public Font calcTextFont() {
+	public Font calcFont() {
 		return Font.font( calcFontName(), calcFontWeight(), calcFontPosture(), calcTextSize() );
 	}
 

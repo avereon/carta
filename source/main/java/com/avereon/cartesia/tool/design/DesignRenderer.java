@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
+import com.avereon.marea.Font;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.Pen;
 import com.avereon.marea.Shape2d;
@@ -20,6 +21,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -264,7 +266,12 @@ public class DesignRenderer extends BorderPane {
 
 	private void renderVisibleLayers() {
 		if( design == null ) return;
-		for( DesignLayer layer : design.getAllLayers() ) {
+
+		// Render the layers in reverse order
+		List<DesignLayer> orderedLayers = design.getAllLayers();
+		Collections.reverse(orderedLayers);
+
+		for( DesignLayer layer : orderedLayers ) {
 			// Do not render hidden layers
 			if( !isLayerVisible( layer ) ) continue;
 
@@ -275,14 +282,21 @@ public class DesignRenderer extends BorderPane {
 					pen = createPen( shape );
 					shape.setValue( "cache.marea.pen", pen );
 				}
-				renderer.setPen( pen.paint(), pen.width(), pen.cap(), pen.join(), pen.dashes(), pen.offset() );
+
+				// TODO Handle fill
+				renderer.setFillPen( pen.paint() );
+				renderer.setDrawPen( pen.paint(), pen.width(), pen.cap(), pen.join(), pen.dashes(), pen.offset() );
 
 				switch( shape.getType() ) {
 					case ARC -> this.renderArc( (DesignArc)shape );
+					case CUBIC -> this.renderCubic( (DesignCubic)shape );
+					case ELLIPSE -> this.renderEllipse( (DesignEllipse)shape );
 					case LINE -> this.renderLine( (DesignLine)shape );
+					case MARKER -> this.renderMarker( (DesignMarker)shape );
+					case QUAD -> this.renderQuad( (DesignQuad)shape );
+					case PATH -> this.renderPath( (DesignPath)shape );
+					case TEXT -> this.renderText( (DesignText)shape );
 				}
-
-				// NEXT Continue implementing new render methods
 			}
 		}
 	}
@@ -304,6 +318,11 @@ public class DesignRenderer extends BorderPane {
 		);
 	}
 
+	private void renderEllipse( DesignEllipse ellipse ) {
+		// TODO Handle fill
+		renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
+	}
+
 	private void renderLine( DesignLine line ) {
 		renderer.drawLine( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
 	}
@@ -313,25 +332,25 @@ public class DesignRenderer extends BorderPane {
 		if( path == null ) {
 			log.atError().log( "Undefined marker path: {0}", marker.getMarkerType() );
 		} else {
+			// TODO Handle fill
+			renderer.fillPath( toPathElements( path.getElements() ) );
 			renderer.drawPath( toPathElements( path.getElements() ) );
 		}
 	}
 
+	private void renderQuad( DesignQuad quad ) {
+		renderer.drawQuad( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
+	}
+
 	private void renderPath( DesignPath path ) {
+		// TODO Handle fill
 		renderer.drawPath( toPathElements( path.getElements() ) );
 	}
 
-	private void renderQuad( DesignQuad quad ) {
-		renderer.drawQuad(
-			quad.getOrigin().getX(),
-			quad.getOrigin().getY(),
-			quad.getControl().getX(),
-			quad.getControl().getY(),
-			quad.getPoint().getX(),
-			quad.getPoint().getY()
-		);
+	private void renderText( DesignText text ) {
+		// TODO Handle fill
+		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
-
 
 	private List<Path.Element> toPathElements( List<DesignPath.Element> elements ) {
 		DesignPath.Element move = elements.getFirst();
@@ -496,7 +515,7 @@ public class DesignRenderer extends BorderPane {
 	private Text createText( DesignText shape ) {
 		String string = shape.getText();
 		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double height = shape.calcTextFont().getSize();
+		double height = shape.calcFont().getSize();
 		return new Text( string, origin, height );
 	}
 

@@ -59,7 +59,7 @@ public class DesignTextTest {
 		assertThat( text.calcFontUnderline() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_UNDERLINE ) );
 		assertThat( text.calcFontStrikethrough() ).isEqualTo( Boolean.parseBoolean( DesignLayer.DEFAULT_FONT_STRIKETHROUGH ) );
 
-		assertThat( text.calcTextFont() ).isEqualTo( Font.font( DesignLayer.DEFAULT_FONT_NAME, Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) ) );
+		assertThat( text.calcFont() ).isEqualTo( Font.font( DesignLayer.DEFAULT_FONT_NAME, Double.parseDouble( DesignLayer.DEFAULT_TEXT_SIZE ) ) );
 	}
 
 	@Test

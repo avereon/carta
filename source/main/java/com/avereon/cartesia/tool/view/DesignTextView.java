@@ -159,7 +159,7 @@ public class DesignTextView extends DesignShapeView {
 
 	void updateFont( DesignText designText, Shape shape ) {
 		Text text = (Text)shape;
-		text.setFont( designText.calcTextFont() );
+		text.setFont( designText.calcFont() );
 		text.setUnderline( designText.calcFontUnderline() );
 		text.setStrikethrough( designText.calcFontStrikethrough() );
 
