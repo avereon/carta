@@ -132,7 +132,16 @@ public abstract class DesignShape extends DesignDrawable {
 
     @Override
     public <T extends Node> Comparator<T> getComparator() {
+        // FIXME This does not handle null values
         return Comparator.comparingInt(o -> o.getValue(ORDER));
     }
 
+    public static class OrderComparator implements Comparator<DesignShape>  {
+        @Override
+        public int compare(DesignShape a, DesignShape b) {
+            return a.getOrder() - b.getOrder();
+        }
+    }
 }
+
+

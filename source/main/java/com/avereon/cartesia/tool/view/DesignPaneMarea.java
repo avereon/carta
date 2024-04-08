@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.view;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.tool.NearestShapeComparator;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventType;
 import com.avereon.marea.RenderUnit;

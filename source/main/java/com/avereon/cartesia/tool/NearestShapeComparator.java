@@ -1,4 +1,4 @@
-package com.avereon.cartesia.tool.view;
+package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;

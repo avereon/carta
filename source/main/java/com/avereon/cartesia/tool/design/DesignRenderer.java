@@ -22,9 +22,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -328,17 +326,27 @@ public class DesignRenderer extends BorderPane {
 			// Do not render hidden layers
 			if( !isLayerVisible( layer ) ) continue;
 
+			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
+			//orderedShapes.sort( Comparator.comparingInt( DesignDrawable::getOrder ) );
+			Collections.sort(orderedShapes);
+
 			// Render the geometry for the layer
-			for( DesignShape shape : layer.getShapes() ) {
-				Pen pen = shape.getValue( "cache.marea.pen" );
-				if( pen == null ) {
-					pen = createPen( shape );
-					shape.setValue( "cache.marea.pen", pen );
+			for( DesignShape shape : orderedShapes ) {
+				// FIXME Make an internal pen cache
+				Pen fillPen = shape.getValue( "cache.marea.pen.fill" );
+				if( fillPen == null ) {
+					fillPen = createFillPen( shape );
+					shape.setValue( "cache.marea.pen.fill", fillPen );
+				}
+				Pen drawPen = shape.getValue( "cache.marea.pen.draw" );
+				if( drawPen == null ) {
+					drawPen = createDrawPen( shape );
+					shape.setValue( "cache.marea.pen.draw", drawPen );
 				}
 
 				// TODO Handle fill
-				renderer.setFillPen( pen.paint() );
-				renderer.setDrawPen( pen.paint(), pen.width(), pen.cap(), pen.join(), pen.dashes(), pen.offset() );
+				renderer.setFillPen( fillPen.paint() );
+				renderer.setDrawPen( drawPen.paint(), drawPen.width(), drawPen.cap(), drawPen.join(), drawPen.dashes(), drawPen.offset() );
 
 				switch( shape.getType() ) {
 					case ARC -> this.renderArc( (DesignArc)shape );
@@ -372,7 +380,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderEllipse( DesignEllipse ellipse ) {
-		// TODO Handle fill
+		renderer.fillEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 		renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 	}
 
@@ -385,7 +393,6 @@ public class DesignRenderer extends BorderPane {
 		if( path == null ) {
 			log.atError().log( "Undefined marker path: {0}", marker.getMarkerType() );
 		} else {
-			// TODO Handle fill
 			renderer.fillPath( toPathElements( path.getElements() ) );
 			renderer.drawPath( toPathElements( path.getElements() ) );
 		}
@@ -396,12 +403,12 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderPath( DesignPath path ) {
-		// TODO Handle fill
+		renderer.fillPath( toPathElements( path.getElements() ) );
 		renderer.drawPath( toPathElements( path.getElements() ) );
 	}
 
 	private void renderText( DesignText text ) {
-		// TODO Handle fill
+		renderer.fillText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
 
@@ -443,7 +450,7 @@ public class DesignRenderer extends BorderPane {
 				// NOTE Caching the pen really helped
 				Pen pen = shape.getValue( "cache.marea.pen" );
 				if( pen == null ) {
-					pen = createPen( shape );
+					pen = createDrawPen( shape );
 					shape.setValue( "cache.marea.pen", pen );
 				}
 
@@ -498,7 +505,7 @@ public class DesignRenderer extends BorderPane {
 
 	}
 
-	private Pen createPen( DesignShape shape ) {
+	private Pen createDrawPen( DesignShape shape ) {
 		// TODO Can/should pens be cached?
 		Pen pen = new Pen( shape.calcDrawPaint(), shape.calcDrawWidth() );
 		// TODO Can probably cache this transform
@@ -508,6 +515,10 @@ public class DesignRenderer extends BorderPane {
 		pen.dashes( shape.calcDrawPattern().stream().mapToDouble( d -> d ).toArray() );
 		//pen.offset( shape.calcDrawPatternOffset());
 		return pen;
+	}
+
+	private Pen createFillPen( DesignShape shape ) {
+		return new Pen( shape.calcFillPaint() );
 	}
 
 	private Arc createArc( DesignArc shape ) {

@@ -38,6 +38,7 @@ public class CadPoints {
 	}
 
 	public static Point2D toPoint2d( Point3D point ) {
+		if( point == null ) return null;
 		return new Point2D( point.getX(), point.getY() );
 	}
 
@@ -46,6 +47,7 @@ public class CadPoints {
 	}
 
 	public static Point3D toPoint3d( Point2D point ) {
+		if( point == null ) return null;
 		return new Point3D( point.getX(), point.getY(), 0 );
 	}
 
