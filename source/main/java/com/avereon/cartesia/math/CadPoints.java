@@ -41,6 +41,14 @@ public class CadPoints {
 		return new Point2D( point.getX(), point.getY() );
 	}
 
+	public static Point3D toPoint3d( double x, double y, double z ) {
+		return new Point3D( x, y, z );
+	}
+
+	public static Point3D toPoint3d( Point2D point ) {
+		return new Point3D( point.getX(), point.getY(), 0 );
+	}
+
 	public static Point3D toFxPoint( double[] point ) {
 		if( point == null ) return null;
 		return new Point3D( point[ 0 ], point[ 1 ], point[ 2 ] );

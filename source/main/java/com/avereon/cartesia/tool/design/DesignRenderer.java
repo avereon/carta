@@ -11,6 +11,7 @@ import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
 import com.avereon.zarra.javafx.Fx;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
@@ -167,6 +168,58 @@ public class DesignRenderer extends BorderPane {
 
 	public ObservableSet<DesignLayer> visibleLayers() {
 		return visibleLayers;
+	}
+
+	/**
+	 * Convenience method to get the viewpoint of the renderer.
+	 *
+	 * @return The viewpoint of the renderer
+	 */
+	public Point2D getViewpoint() {
+		return new Point2D( renderer.getViewpointX(), renderer.getViewpointY() );
+	}
+
+	/**
+	 * Convenience method to set the viewpoint of the renderer.
+	 *
+	 * @param viewpoint The viewpoint to set
+	 */
+	public void setViewpoint( Point2D viewpoint ) {
+		renderer.setViewpoint( viewpoint.getX(), viewpoint.getY() );
+	}
+
+	public DoubleProperty viewpointXProperty() {
+		return renderer.viewpointXProperty();
+	}
+
+	public DoubleProperty viewpointYProperty() {
+		return renderer.viewpointYProperty();
+	}
+
+	/**
+	 * Convenience method to get the zoom of the renderer.
+	 *
+	 * @return The zoom of the renderer
+	 */
+	public Point2D getZoom() {
+		return new Point2D( renderer.getZoomX(), renderer.getZoomY() );
+	}
+
+	/**
+	 * Convenience method to set the zoom of the renderer.
+	 *
+	 * @param zoom The zoom to set
+	 */
+	public void setZoom( Point2D zoom ) {
+		renderer.setZoom( zoom.getX(), zoom.getY() );
+	}
+
+	public DoubleProperty zoomXProperty() {
+		return renderer.zoomXProperty();
+	}
+
+	public DoubleProperty zoomYProperty() {
+		return renderer.zoomYProperty();
 	}
 
 	/**

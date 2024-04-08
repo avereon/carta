@@ -7,6 +7,7 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.*;
@@ -33,6 +34,7 @@ import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -43,7 +45,10 @@ import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -86,9 +91,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	// PROPERTIES
 
-	private final ObjectProperty<Point3D> viewpointProperty;
+	//private final ObjectProperty<Point3D> viewpointProperty;
 
-	private final DoubleProperty viewZoomProperty;
+	//private final DoubleProperty viewZoomProperty;
 
 	private final DoubleProperty viewRotateProperty;
 
@@ -158,8 +163,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//		this.workplane.setSnapGridX( "0.1" );
 		//		this.workplane.setSnapGridY( "0.1" );
 
-		viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
-		viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		//viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
+		//viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
 		viewRotateProperty = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 
@@ -337,13 +342,13 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//		// Add reference points visible property listener
 		//		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
-				addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 
-				//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
-				addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
-				addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
-				addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
-				addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
+		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
 		//		getCoordinateStatus().updateZoom( getZoom() );
 		//		designPane.updateView();
@@ -362,13 +367,13 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	protected void guideNodesSelected( Set<GuideNode> oldNodes, Set<GuideNode> newNodes ) {
-				if( getCurrentGuide() == layersGuide ) {
-					newNodes.stream().findFirst().ifPresent( n -> doSetSelectedLayerById( n.getId() ) );
-		//		} else if( getCurrentGuide() == viewsGuide ) {
-		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
-		//		} else if( getCurrentGuide() == printsGuide ) {
-		//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentPrintById( n.getId() ) );
-				}
+		if( getCurrentGuide() == layersGuide ) {
+			newNodes.stream().findFirst().ifPresent( n -> doSetSelectedLayerById( n.getId() ) );
+			//		} else if( getCurrentGuide() == viewsGuide ) {
+			//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentViewById( n.getId() ) );
+			//		} else if( getCurrentGuide() == printsGuide ) {
+			//			newNodes.stream().findFirst().ifPresent( n -> doSetCurrentPrintById( n.getId() ) );
+		}
 	}
 
 	@Override
@@ -421,57 +426,52 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public Point3D getViewPoint() {
-		// FIXME Why not just pass through to the renderer? Why have an extra property?
-		// Partly because the renderer viewpoint is split into x and y properties
-		// The use of a point here is contrary to the JavaFX property pattern. All
-		// point-like properties are split into their coordinate components and
-		// properties are created for each component.
-
-		// How do I want to handle this? Points are convenient, but not the way JavaFX did it.
-		// If I use points here, there is an extra layer to convert to the renderer properties.
-		// If I use the renderer properties here, I have to update the BaseDesignTool interface.
-
-		// So some good news-ish. Turns out the only point like property is the viewpoint.
-		// Zoom should be, but it is a double. It should be converted to a point-like property.
-		// PPU should also be a point-like property.
-		return viewpointProperty.get();
+		return CadPoints.toPoint3d( renderer.getViewpoint() );
 	}
 
 	@Override
 	public void setViewPoint( Point3D point ) {
-		viewpointProperty.set( point );
+		renderer.setViewpoint( CadPoints.toPoint2d( point ) );
 	}
 
-	public ObjectProperty<Point3D> viewpointProperty() {
-		return viewpointProperty;
+	public DoubleProperty viewpointXProperty() {
+		return renderer.viewpointXProperty();
+	}
+
+	public DoubleProperty viewpointYProperty() {
+		return renderer.viewpointYProperty();
 	}
 
 	@Override
 	public double getZoom() {
-		return viewZoomProperty.get();
+		return 0;
 	}
 
 	@Override
 	public void setZoom( double zoom ) {
-		viewZoomProperty.set( zoom );
+		renderer.setZoom( new Point2D( zoom, zoom ) );
 	}
 
-	public DoubleProperty viewZoomProperty() {
-		return viewZoomProperty;
+	public DoubleProperty zoomXProperty() {
+		return renderer.zoomXProperty();
+	}
+
+	public DoubleProperty zoomYProperty() {
+		return renderer.zoomYProperty();
 	}
 
 	@Override
 	public double getViewRotate() {
-		return viewRotateProperty.get();
+		return renderer.getRotate();
 	}
 
 	@Override
 	public void setViewRotate( double angle ) {
-		viewRotateProperty.set( angle );
+		renderer.setRotate( angle );
 	}
 
 	public DoubleProperty viewRotateProperty() {
-		return viewRotateProperty;
+		return renderer.rotateProperty();
 	}
 
 	@Override
@@ -643,8 +643,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void zoom( Point3D anchor, double factor ) {
-		log.atConfig().log( "Zooming factor=%s anchor=%s", factor, anchor );
-		Objects.requireNonNull( anchor );
 		Fx.run( () -> renderer.zoom( anchor, factor ) );
 	}
 
