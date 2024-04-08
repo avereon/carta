@@ -327,7 +327,6 @@ public class DesignRenderer extends BorderPane {
 			if( !isLayerVisible( layer ) ) continue;
 
 			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
-			//orderedShapes.sort( Comparator.comparingInt( DesignDrawable::getOrder ) );
 			Collections.sort(orderedShapes);
 
 			// Render the geometry for the layer
