@@ -648,6 +648,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
+		if( viewAnchor == null || dragAnchor == null ) return;
 		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, x, y ) );
 	}
 
