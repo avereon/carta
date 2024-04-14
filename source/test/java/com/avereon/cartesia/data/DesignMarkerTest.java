@@ -60,10 +60,10 @@ public class DesignMarkerTest {
 		assertThat( e0.data() ).isEqualTo( new double[]{ 0.0, -0.5 } );
 		DesignPath.Element e1 = elements.get( 1 );
 		assertThat( e1.command() ).isEqualTo( DesignPath.Command.ARC );
-		assertThat( e1.data() ).isEqualTo( new double[]{ 0.0, 0.5, 0.5, 0.5, -90, 180 } );
+		assertThat( e1.data() ).isEqualTo( new double[]{ 0.0, 0.0, 0.5, 0.5, -90, 180 } );
 		DesignPath.Element e2 = elements.get( 2 );
 		assertThat( e2.command() ).isEqualTo( DesignPath.Command.ARC );
-		assertThat( e2.data() ).isEqualTo( new double[]{ 0.0, -0.5, 0.5, 0.5, 90, 180 } );
+		assertThat( e2.data() ).isEqualTo( new double[]{ 0.0, 0.0, 0.5, 0.5, 90, 180 } );
 		DesignPath.Element e3 = elements.get( 3 );
 		assertThat( e3.command() ).isEqualTo( DesignPath.Command.CLOSE );
 		assertThat( e3.data() ).isEqualTo( new double[]{} );

@@ -7,7 +7,6 @@ import com.avereon.data.NodeEvent;
 import com.avereon.marea.Font;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.Pen;
-import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
 import com.avereon.zarra.javafx.Fx;
@@ -25,16 +24,12 @@ import lombok.CustomLog;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
+import java.util.Set;
 
 @CustomLog
 public class DesignRenderer extends BorderPane {
 
 	private final FxRenderer2d renderer;
-
-	private final Map<Class<? extends DesignShape>, Function<DesignShape, Shape2d>> designCreateMap;
 
 	private final ObservableSet<DesignLayer> visibleLayers;
 
@@ -45,17 +40,6 @@ public class DesignRenderer extends BorderPane {
 	private SimpleBooleanProperty gridVisible;
 
 	public DesignRenderer() {
-		// FIXME Would an enum and switch be faster? Or maybe direct method calls?
-		designCreateMap = new ConcurrentHashMap<>();
-		designCreateMap.put( DesignArc.class, s -> createArc( (DesignArc)s ) );
-		designCreateMap.put( DesignCubic.class, s -> createCurve( (DesignCubic)s ) );
-		designCreateMap.put( DesignLine.class, s -> createLine( (DesignLine)s ) );
-		designCreateMap.put( DesignEllipse.class, s -> createEllipse( (DesignEllipse)s ) );
-		designCreateMap.put( DesignMarker.class, s -> createMarker( (DesignMarker)s ) );
-		designCreateMap.put( DesignPath.class, s -> createPath( (DesignPath)s ) );
-		// ?? designCreateMap.put( DesignQuad.class, s -> createQuad( (DesignQuad)s ) );
-		designCreateMap.put( DesignText.class, s -> createText( (DesignText)s ) );
-
 		visibleLayers = FXCollections.observableSet();
 
 		// Create and add the renderer to the center
@@ -154,18 +138,18 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public boolean isLayerVisible( DesignLayer layer ) {
-		return visibleLayers != null && visibleLayers.contains( layer );
+		return visibleLayers.contains( layer );
 	}
 
-	//	public Set<DesignLayer> getVisibleLayers() {
-	//		return visibleLayers;
-	//	}
-	//
-	//	public void setVisibleLayers( Set<DesignLayer> visibleLayers ) {
-	//		visibleLayersProperty().clear();
-	//		visibleLayersProperty().addAll( visibleLayers );
-	//		render();
-	//	}
+	public Set<DesignLayer> getVisibleLayers() {
+		return visibleLayers;
+	}
+
+	public void setVisibleLayers( Set<DesignLayer> layers ) {
+		visibleLayers.clear();
+		visibleLayers.addAll( layers );
+		render();
+	}
 
 	public ObservableSet<DesignLayer> visibleLayers() {
 		return visibleLayers;
@@ -460,52 +444,6 @@ public class DesignRenderer extends BorderPane {
 		}
 
 		return path.getElements();
-	}
-
-	private void renderVisibleLayersOld() {
-		if( design == null ) return;
-
-		for( DesignLayer layer : design.getAllLayers() ) {
-			// Do not render hidden layers
-			if( !isLayerVisible( layer ) ) continue;
-
-			// Render the geometry for the layer
-			for( DesignShape shape : layer.getShapes() ) {
-				// FIXME To improve rendering performance, consider direct render methods on the renderer.
-
-				// NOTE Caching the pen really helped
-				Pen pen = shape.getValue( "cache.marea.pen" );
-				if( pen == null ) {
-					pen = createDrawPen( shape );
-					shape.setValue( "cache.marea.pen", pen );
-				}
-
-				// NOTE Caching the shape helped a bunch also
-				Shape2d drawable = shape.getValue( "cache.marea.shape" );
-				//Shape2d drawable = null;
-				if( drawable == null ) {
-					Function<DesignShape, Shape2d> converter = designCreateMap.get( shape.getClass() );
-					if( converter != null ) {
-
-						drawable = designCreateMap.get( shape.getClass() ).apply( shape );
-						shape.setValue( "cache.marea.shape", drawable );
-					} else {
-						log.atWarn().log( "Geometry not supported yet: {0}", shape.getClass().getSimpleName() );
-					}
-				}
-
-				// Draw the geometry
-				if( drawable != null ) {
-					// TODO If the shape is selected, don't render here, render as a hint
-					if( shape instanceof DesignMarker ) {
-						renderer.fill( drawable, pen );
-					} else {
-						renderer.draw( drawable, pen );
-					}
-				}
-
-			}
-		}
 	}
 
 	private void renderHintGeometry() {
