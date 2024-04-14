@@ -237,12 +237,12 @@ public class DesignMarker extends DesignShape {
 				path.line( -s, -s );
 
 				path.move( 0, -r1 );
-				path.arc( 0, r1, r1, r1, -90, 180 );
-				path.arc( 0, -r1, r1, r1, 90, 180 );
+				path.arc( 0, 0, r1, r1, -90, 180 );
+				path.arc( 0, 0, r1, r1, 90, 180 );
 
 				path.move( 0, -r2 );
-				path.arc( 0, r2, r2, r2, -90, 180 );
-				path.arc( 0, -r2, r2, r2, 90, 180 );
+				path.arc( 0, 0, r2, r2, -90, 180 );
+				path.arc( 0, 0, r2, r2, 90, 180 );
 
 				path.close();
 
@@ -265,8 +265,8 @@ public class DesignMarker extends DesignShape {
 				double r = HALF_SIZE * 0.8;
 				DesignPath path = new DesignPath( CIRCLE.getDesignPath() );
 				path.move( 0, -r );
-				path.arc( 0, r, r, r, -90, 180 );
-				path.arc( 0, r, r, r, 90, 180 );
+				path.arc( 0, 0, r, r, -90, 180 );
+				path.arc( 0, 0, r, r, 90, 180 );
 				path.close();
 				return path;
 			}
