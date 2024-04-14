@@ -65,24 +65,6 @@ import java.util.stream.Collectors;
 @CustomLog
 public abstract class FxShapeDesignTool extends BaseDesignTool {
 
-	private static final String SETTINGS_VIEW_ZOOM = "view-zoom";
-
-	private static final String SETTINGS_VIEW_POINT = "view-point";
-
-	private static final String SETTINGS_VIEW_ROTATE = "view-rotate";
-
-	private static final String CURRENT_LAYER = "current-layer";
-
-	private static final String CURRENT_VIEW = "current-view";
-
-	private static final String ENABLED_LAYERS = "enabled-layers";
-
-	private static final String VISIBLE_LAYERS = "visible-layers";
-
-	private static final String GRID_VISIBLE = "grid-visible";
-
-	private static final String GRID_SNAP_ENABLED = "grid-snap";
-
 	private static final String REFERENCE_LAYER_VISIBLE = "";
 
 	private static final Snap gridSnap = new SnapGrid();

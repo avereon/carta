@@ -31,19 +31,37 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
 
-	static final String RETICLE = "reticle";
+	public static final boolean DEFAULT_GRID_VISIBLE = true;
 
-	static final String SELECT_APERTURE_SIZE = "select-aperture-size";
+	protected static final String RETICLE = "reticle";
 
-	static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
+	protected static final String SELECT_APERTURE_SIZE = "select-aperture-size";
 
-	static final String REFERENCE_POINT_SIZE = "reference-point-size";
+	protected static final String SELECT_APERTURE_UNIT = "select-aperture-unit";
 
-	static final String REFERENCE_POINT_TYPE = "reference-point-type";
+	protected static final String REFERENCE_POINT_SIZE = "reference-point-size";
 
-	static final String REFERENCE_POINT_PAINT = "reference-point-paint";
+	protected static final String REFERENCE_POINT_TYPE = "reference-point-type";
 
-	static final boolean DEFAULT_GRID_VISIBLE = true;
+	protected static final String REFERENCE_POINT_PAINT = "reference-point-paint";
+
+	protected static final String SETTINGS_VIEW_ZOOM = "view-zoom";
+
+	protected static final String SETTINGS_VIEW_POINT = "view-point";
+
+	protected static final String SETTINGS_VIEW_ROTATE = "view-rotate";
+
+	protected static final String CURRENT_LAYER = "current-layer";
+
+	protected static final String CURRENT_VIEW = "current-view";
+
+	protected static final String ENABLED_LAYERS = "enabled-layers";
+
+	protected static final String VISIBLE_LAYERS = "visible-layers";
+
+	protected static final String GRID_VISIBLE = "grid-visible";
+
+	protected static final String GRID_SNAP_ENABLED = "grid-snap";
 
 	// FX properties (what others should be here?)
 

@@ -144,7 +144,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public void setGridVisible( boolean visible ) {
-		gridVisible.set( visible );
+		gridVisible().set( visible );
 		render();
 	}
 

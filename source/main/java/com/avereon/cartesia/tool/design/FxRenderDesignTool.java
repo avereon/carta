@@ -1,10 +1,7 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.CommandMap;
-import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
@@ -27,6 +24,7 @@ import com.avereon.xenon.workpane.ToolException;
 import com.avereon.xenon.workpane.Workpane;
 import com.avereon.xenon.workspace.StatusBar;
 import com.avereon.xenon.workspace.Workspace;
+import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
@@ -62,6 +60,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
 
+	public static final DesignValue DEFAULT_SELECT_APERTURE = new DesignValue( 2, DesignUnit.MILLIMETER );
+
 	// KEYS
 
 	private static final String CURRENT_LAYER = "current-layer";
@@ -88,11 +88,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final ObjectProperty<Reticle> reticleProperty;
 
+	private final ObjectProperty<DesignValue> selectAperture;
+
+	private final ObjectProperty<DesignLayer> currentLayer;
+
 	// OPTIONAL PROPERTIES
 
 	private ObjectProperty<DesignLayer> selectedLayer;
 
-	private ObjectProperty<DesignLayer> currentLayer;
+	private ObjectProperty<DesignView> currentView;
 
 	// ACTIONS
 
@@ -132,28 +136,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.workplane = new DesignWorkplane();
 		this.renderer.setWorkplane( workplane );
 
-		// Workplane defaults
-		//		this.workplane.setBounds( new BoundingBox( -1, -1, 2, 2 ) );
+		// TODO Move this to tool settings like reticle and aperture
 		this.workplane.setGridStyle( GridStyle.DOT );
 
-		//		this.workplane.setGridAxisPaint( Color.YELLOW );
-		//		this.workplane.setGridAxisWidth( "0.04" );
-		//
-		//		this.workplane.setMajorGridPaint( Color.CYAN );
-		//		this.workplane.setMajorGridWidth( "0.02" );
-		//		this.workplane.setMajorGridX( "1" );
-		//		this.workplane.setMajorGridY( "1" );
-		//
-		//		this.workplane.setMinorGridPaint( Color.CYAN );
-		//		this.workplane.setMinorGridWidth( "0.01" );
-		//		this.workplane.setMinorGridX( "0.5" );
-		//		this.workplane.setMinorGridY( "0.5" );
-		//
-		//		this.workplane.setSnapGridX( "0.1" );
-		//		this.workplane.setSnapGridY( "0.1" );
+		this.reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
+		this.selectAperture = new SimpleObjectProperty<>( DEFAULT_SELECT_APERTURE );
+		this.currentLayer = new SimpleObjectProperty<>();
+		this.currentView = new SimpleObjectProperty<>();
 
-		reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
-
+		// Actions
 		this.printAction = new PrintAction( product.getProgram() );
 		this.propertiesAction = new PropertiesAction( product.getProgram() );
 		this.deleteAction = new DeleteAction( product.getProgram() );
@@ -231,33 +222,33 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		Settings productSettings = getProduct().getSettings();
 		Settings settings = getSettings();
-		String defaultSelectSize = "2";
-		String defaultSelectUnit = DesignUnit.CENTIMETER.name().toLowerCase();
+		String defaultSelectSize = String.valueOf( DEFAULT_SELECT_APERTURE.getValue() );
+		String defaultSelectUnit = DEFAULT_SELECT_APERTURE.getUnit().toString().toLowerCase();
 		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
 		String defaultReferencePointSize = "10";
 		String defaultReferencePointPaint = "#808080";
-		String defaultReticle = Reticle.DUPLEX.name().toLowerCase();
+		String defaultReticle = DEFAULT_RETICLE.name().toLowerCase();
 
-		//		// Get tool settings
-		//		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
-		//		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
-		//		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
-		//		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
-		//		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
-		//
-		//		Point3D viewPoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
-		//		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
-		//		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
-		//		setView( viewPoint, viewZoom, viewRotate );
-		//		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
-		//		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
+		// Get tool settings
+		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
+		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
+		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
+		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
+
+		Point3D viewPoint = ParseUtil.parsePoint3D( settings.get( SETTINGS_VIEW_POINT, "0,0,0" ) );
+		double viewZoom = Double.parseDouble( settings.get( SETTINGS_VIEW_ZOOM, "1.0" ) );
+		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
+		setView( viewPoint, viewZoom, viewRotate );
+		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
+		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		//		designPane.setReferencePointType( referencePointType );
 		//		designPane.setReferencePointSize( referencePointSize );
 		//		designPane.setReferencePointPaint( referencePointPaint );
 
 		getDesign().findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
-		//		getDesign().findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
-		//
+		getDesign().findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
+
 		//		// Restore the list of enabled layers
 		//		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
 		//		getDesign().getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
@@ -265,24 +256,24 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//		// Restore the list of visible layers
 		//		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
 		//		getDesign().getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
-		//
-		//		// Restore the grid visible flag
-		//		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
-		//
-		//		// Restore the grid snap enabled flag
-		//		setGridSnapEnabled( Boolean.parseBoolean( settings.get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
-		//
+
+		// Restore the grid visible flag
+		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
+
+		// Restore the grid snap enabled flag
+		setGridSnapEnabled( Boolean.parseBoolean( settings.get( GRID_SNAP_ENABLED, DEFAULT_GRID_SNAP_ENABLED ) ) );
+
 		//		// Restore the reference view visibility
 		//		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
 		//
 		//		// Settings listeners
-		//		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		//		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
-		//		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
-		//		productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		//		productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
-		//		productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		//
+		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
+		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		//productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		//productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
+		//productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+
 		//		// Add layout bounds property listener
 		//		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
 		//
@@ -317,15 +308,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
 
-		//		// Add current view property listener
-		//		currentViewProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_VIEW, n.getId() ) );
-		//
-		//		// Add grid visible property listener
-		//		gridVisible().addListener( ( p, o, n ) -> settings.set( GRID_VISIBLE, String.valueOf( n ) ) );
-		//
-		//		// Add grid visible property listener
-		//		gridSnapEnabled().addListener( ( p, o, n ) -> settings.set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
-		//
+		// Add current view property listener
+		currentViewProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_VIEW, n.getId() ) );
+
+		// Add grid visible property listener
+		gridVisible().addListener( ( p, o, n ) -> settings.set( GRID_VISIBLE, String.valueOf( n ) ) );
+
+		// Add grid visible property listener
+		gridSnapEnabled().addListener( ( p, o, n ) -> settings.set( GRID_SNAP_ENABLED, String.valueOf( n ) ) );
+
 		//		// Add reference points visible property listener
 		//		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
@@ -337,7 +328,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
-		//		getCoordinateStatus().updateZoom( getZoom() );
+		getCoordinateStatus().updateZoom( getZoom() );
 		//		designPane.updateView();
 		//		doUpdateGridBounds();
 
@@ -397,7 +388,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	protected void conceal() throws ToolException {
-		//		unregisterCommandCapture();
+		unregisterCommandCapture();
 		unregisterActions();
 
 		super.conceal();
@@ -484,17 +475,20 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void setView( DesignPortal portal ) {
-
+		setView( portal.getViewpoint(), portal.getZoom(), portal.getRotate() );
 	}
 
 	@Override
 	public void setView( Point3D center, double zoom ) {
-
+		renderer.setViewpoint( CadPoints.toPoint2d( center ) );
+		renderer.setZoom( CadPoints.toPoint2d( zoom, zoom ) );
 	}
 
 	@Override
 	public void setView( Point3D center, double zoom, double rotate ) {
-
+		renderer.setViewpoint( CadPoints.toPoint2d( center ) );
+		renderer.setZoom( CadPoints.toPoint2d( zoom, zoom ) );
+		renderer.setRotate( rotate );
 	}
 
 	@Override
@@ -504,17 +498,17 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void setSelectAperture( DesignValue aperture ) {
-
+		selectApertureProperty().set( aperture );
 	}
 
 	@Override
 	public DesignValue getSelectAperture() {
-		return null;
+		return selectAperture.get();
 	}
 
 	@Override
 	public ObjectProperty<DesignValue> selectApertureProperty() {
-		return null;
+		return selectAperture;
 	}
 
 	@Override
@@ -561,7 +555,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
-		if( currentLayer == null ) currentLayer = new SimpleObjectProperty<>();
 		return currentLayer;
 	}
 
@@ -615,16 +608,18 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void setCurrentView( DesignView view ) {
+		currentViewProperty().set( view );
 	}
 
 	@Override
 	public DesignView getCurrentView() {
-		return null;
+		return currentView == null ? null : currentView.get();
 	}
 
 	@Override
 	public ObjectProperty<DesignView> currentViewProperty() {
-		return null;
+		if( currentView == null ) currentView = new SimpleObjectProperty<>();
+		return currentView;
 	}
 
 	@Override
