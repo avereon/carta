@@ -56,6 +56,7 @@ public class CameraMove extends CameraCommand {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
 			if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {
+				if( viewAnchor == null || dragAnchor == null ) return;
 				tool.pan( viewAnchor, dragAnchor, event.getX(), event.getY() );
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED && event.getButton() == eventKey.getButton() ) {
 				tool.getCommandContext().resubmit( tool, this, event );

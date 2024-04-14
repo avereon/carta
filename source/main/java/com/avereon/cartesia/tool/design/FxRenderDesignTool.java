@@ -4,6 +4,7 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
@@ -12,6 +13,7 @@ import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.*;
 import com.avereon.data.NodeSettings;
+import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
@@ -58,13 +60,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	// DEFAULTS
 
-	// FIXME Possibly rename this to aim?
-	public static final Point3D DEFAULT_VIEWPOINT = Point3D.ZERO;
-
-	public static final double DEFAULT_ZOOM = 1.0;
-
-	public static final double DEFAULT_ROTATE = 0.0;
-
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
 
 	// KEYS
@@ -90,12 +85,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private final DesignWorkplane workplane;
 
 	// PROPERTIES
-
-	//private final ObjectProperty<Point3D> viewpointProperty;
-
-	//private final DoubleProperty viewZoomProperty;
-
-	private final DoubleProperty viewRotateProperty;
 
 	private final ObjectProperty<Reticle> reticleProperty;
 
@@ -163,9 +152,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//		this.workplane.setSnapGridX( "0.1" );
 		//		this.workplane.setSnapGridY( "0.1" );
 
-		//viewpointProperty = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
-		//viewZoomProperty = new SimpleDoubleProperty( DEFAULT_ZOOM );
-		viewRotateProperty = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 
 		this.printAction = new PrintAction( product.getProgram() );
@@ -175,7 +161,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.redoAction = new RedoAction( product.getProgram() );
 
 		// Create the toast label
-		this.toast = new Label( "Loading..." );
+		String loadingLabel = Rb.text( RbKey.LABEL, "loading" );
+		this.toast = new Label( loadingLabel + "..." );
 
 		// Add the components to the parent
 		StackPane stack = new StackPane( renderer, toast );
@@ -628,7 +615,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void setCurrentView( DesignView view ) {
-
 	}
 
 	@Override
@@ -648,7 +634,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
-		if( viewAnchor == null || dragAnchor == null ) return;
 		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, x, y ) );
 	}
 
@@ -675,32 +660,32 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public Point3D worldToScreen( double x, double y, double z ) {
-		return null;
+		return renderer == null ? Point3D.ZERO : renderer.localToParent( x, y, z );
 	}
 
 	@Override
 	public Point3D worldToScreen( Point3D point ) {
-		return null;
+		return renderer == null ? Point3D.ZERO : renderer.localToParent( point );
 	}
 
 	@Override
 	public Bounds worldToScreen( Bounds bounds ) {
-		return null;
+		return renderer == null ? Fx.EMPTY_BOUNDS : renderer.localToParent( bounds );
 	}
 
 	@Override
 	public Point3D screenToWorld( double x, double y, double z ) {
-		return null;
+		return renderer == null ? Point3D.ZERO : renderer.parentToLocal( x, y, z );
 	}
 
 	@Override
 	public Point3D screenToWorld( Point3D point ) {
-		return null;
+		return renderer == null ? Point3D.ZERO : renderer.parentToLocal( point );
 	}
 
 	@Override
 	public Bounds screenToWorld( Bounds bounds ) {
-		return null;
+		return renderer == null ? Fx.EMPTY_BOUNDS : renderer.parentToLocal( bounds );
 	}
 
 	@Override
