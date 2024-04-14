@@ -12,6 +12,7 @@ import com.avereon.cartesia.tool.*;
 import com.avereon.data.NodeSettings;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
+import com.avereon.util.DelayedAction;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
@@ -45,10 +46,7 @@ import javafx.scene.shape.Shape;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -84,6 +82,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final DesignWorkplane workplane;
 
+	private final Stack<DesignPortal> portalStack;
+
 	// PROPERTIES
 
 	private final ObjectProperty<Reticle> reticleProperty;
@@ -111,6 +111,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private final UndoAction undoAction;
 
 	private final RedoAction redoAction;
+
+	private final DelayedAction storePreviousViewAction;
 
 	private BooleanProperty gridSnapEnabled;
 
@@ -150,6 +152,11 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		this.deleteAction = new DeleteAction( product.getProgram() );
 		this.undoAction = new UndoAction( product.getProgram() );
 		this.redoAction = new RedoAction( product.getProgram() );
+
+		this.storePreviousViewAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::capturePreviousPortal );
+		this.storePreviousViewAction.setMinTriggerLimit( 1000 );
+		this.storePreviousViewAction.setMaxTriggerLimit( 5000 );
+		this.portalStack = new Stack<>();
 
 		// Create the toast label
 		String loadingLabel = Rb.text( RbKey.LABEL, "loading" );
@@ -276,29 +283,42 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		//		// Add layout bounds property listener
 		//		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
-		//
-		//		// Add view point property listener
-		//		designPane.viewPointProperty().addListener( ( p, o, n ) -> {
-		//			storePreviousViewAction.request();
-		//			settings.set( SETTINGS_VIEW_POINT, n.getX() + "," + n.getY() + "," + n.getZ() );
-		//			doUpdateGridBounds();
-		//		} );
-		//
-		//		// Add view rotate property listener
-		//		designPane.viewRotateProperty().addListener( ( p, o, n ) -> {
-		//			storePreviousViewAction.request();
-		//			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
-		//			doUpdateGridBounds();
-		//		} );
-		//
-		//		// Add view zoom property listener
-		//		designPane.zoomProperty().addListener( ( p, o, n ) -> {
-		//			storePreviousViewAction.request();
-		//			getCoordinateStatus().updateZoom( n.doubleValue() );
-		//			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
-		//			doUpdateGridBounds();
-		//		} );
-		//
+
+		// Add view point property listener
+		renderer.viewpointXProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
+			Point2D vp = renderer.getViewpoint();
+			settings.set( SETTINGS_VIEW_POINT, vp.getX() + "," + vp.getY() + ",0" );
+			//doUpdateGridBounds();
+		} );
+		renderer.viewpointYProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
+			Point2D vp = renderer.getViewpoint();
+			settings.set( SETTINGS_VIEW_POINT, vp.getX() + "," + vp.getY() + ",0" );
+			//doUpdateGridBounds();
+		} );
+
+		// Add view rotate property listener
+		renderer.rotateProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
+			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
+			//doUpdateGridBounds();
+		} );
+
+		// Add view zoom property listener
+		renderer.zoomXProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
+			getCoordinateStatus().updateZoom( n.doubleValue() );
+			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
+			//doUpdateGridBounds();
+		} );
+		renderer.zoomYProperty().addListener( ( p, o, n ) -> {
+			storePreviousViewAction.request();
+			getCoordinateStatus().updateZoom( n.doubleValue() );
+			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
+			//doUpdateGridBounds();
+		} );
+
 		//		// Add enabled layers listener
 		//		designPane.enabledLayersProperty().addListener( this::doStoreEnabledLayers );
 		//
@@ -422,7 +442,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public double getZoom() {
-		return 0;
+		return renderer.getZoomX();
 	}
 
 	@Override
@@ -781,7 +801,12 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public DesignPortal getPriorPortal() {
-		return null;
+		if( !portalStack.isEmpty() ) portalStack.pop();
+		return portalStack.isEmpty() ? DesignPortal.DEFAULT : portalStack.pop();
+	}
+
+	private void capturePreviousPortal() {
+		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getViewRotate() ) );
 	}
 
 	protected final void showCommandPrompt() {

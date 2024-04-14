@@ -199,6 +199,14 @@ public class DesignRenderer extends BorderPane {
 		renderer.setZoom( zoom.getX(), zoom.getY() );
 	}
 
+	public double getZoomX() {
+		return renderer.getZoomX();
+	}
+
+	public double getZoomY() {
+		return renderer.getZoomY();
+	}
+
 	public DoubleProperty zoomXProperty() {
 		return renderer.zoomXProperty();
 	}
