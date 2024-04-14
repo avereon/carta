@@ -60,8 +60,7 @@ public class DesignMarker extends DesignShape {
 				double t = r - 2 * s;
 
 				DesignPath path = new DesignPath( new Point3D( 0, 0, 0 ) );
-				path.arc( 0, 0, r, r, 0, 180 );
-				path.arc( 0, 0, r, r, 180, 180 );
+				path.circle( 0, 0, r );
 
 				path.move( 0, 0 );
 				path.arc( 0, 0, t, t, 0, -90 );
@@ -89,8 +88,7 @@ public class DesignMarker extends DesignShape {
 			public DesignPath getDesignPath() {
 				double r = HALF_SIZE;
 				DesignPath path = new DesignPath( new Point3D( 0, -r, 0 ) );
-				path.arc( 0, 0, r, r, 0, 180 );
-				path.arc( 0, 0, r, r, 180, 180 );
+				path.circle( 0, 0, r );
 				path.close();
 				return path;
 			}
@@ -237,12 +235,9 @@ public class DesignMarker extends DesignShape {
 				path.line( -s, -s );
 
 				path.move( 0, -r1 );
-				path.arc( 0, 0, r1, r1, -90, 180 );
-				path.arc( 0, 0, r1, r1, 90, 180 );
-
+				path.circle( 0, 0, r1 );
 				path.move( 0, -r2 );
-				path.arc( 0, 0, r2, r2, -90, 180 );
-				path.arc( 0, 0, r2, r2, 90, 180 );
+				path.circle( 0, 0, r2 );
 
 				path.close();
 
@@ -265,8 +260,7 @@ public class DesignMarker extends DesignShape {
 				double r = HALF_SIZE * 0.8;
 				DesignPath path = new DesignPath( CIRCLE.getDesignPath() );
 				path.move( 0, -r );
-				path.arc( 0, 0, r, r, -90, 180 );
-				path.arc( 0, 0, r, r, 90, 180 );
+				path.circle( 0, 0, r );
 				path.close();
 				return path;
 			}
@@ -316,7 +310,7 @@ public class DesignMarker extends DesignShape {
 				double r = HALF_SIZE;
 				double s = r * 0.5 * (3 - Math.sqrt( 5 ));
 
-				DesignPath path = new DesignPath((Point3D)null);
+				DesignPath path = new DesignPath( (Point3D)null );
 				for( int index = 0; index < 10; index++ ) {
 					boolean point = index % 2 == 0;
 					double alpha = 2 * Math.PI * (index / 10.0) + 0.5 * Math.PI;

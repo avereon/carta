@@ -42,7 +42,7 @@ public class DesignPath extends DesignShape {
 		this();
 
 		List<Element> source = path.getElements();
-		Element element = source.get( 0 );
+		Element element = source.getFirst();
 		if( element.command() == Command.MOVE ) {
 			setOrigin( new Point3D( element.data()[ 0 ], element.data()[ 1 ], 0 ) );
 			elements.addAll( path.getElements() );
@@ -103,6 +103,12 @@ public class DesignPath extends DesignShape {
 
 	public DesignPath arc( double x, double y, double rx, double ry, double start, double extent ) {
 		elements.add( new Element( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
+		return this;
+	}
+
+	public DesignPath circle( double x, double y, double r ) {
+		elements.add( new Element( Command.ARC, new double[]{ x, y, r, r, -90, 180 } ) );
+		elements.add( new Element( Command.ARC, new double[]{ x, y, r, r, 90, 180 } ) );
 		return this;
 	}
 
