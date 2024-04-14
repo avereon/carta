@@ -60,10 +60,8 @@ public class DesignMarker extends DesignShape {
 				double t = r - 2 * s;
 
 				DesignPath path = new DesignPath( new Point3D( 0, 0, 0 ) );
-//				path.move( 0, 0 );
 				path.arc( 0, 0, r, r, 0, 180 );
 				path.arc( 0, 0, r, r, 180, 180 );
-				path.close();
 
 				path.move( 0, 0 );
 				path.arc( 0, 0, t, t, 0, -90 );
@@ -72,10 +70,6 @@ public class DesignMarker extends DesignShape {
 				path.move( 0, 0 );
 				path.arc( 0, 0, t, t, 90, 90 );
 				path.close();
-//				path.move(-0.25*r, -r);
-//				path.line( 0, r );
-//				path.line(0.25*r, -r );
-//				path.close();
 
 				return path;
 			}
@@ -95,8 +89,8 @@ public class DesignMarker extends DesignShape {
 			public DesignPath getDesignPath() {
 				double r = HALF_SIZE;
 				DesignPath path = new DesignPath( new Point3D( 0, -r, 0 ) );
-				path.arc( 0, r, r, r, -90, 180 );
-				path.arc( 0, -r, r, r, 90, 180 );
+				path.arc( 0, 0, r, r, 0, 180 );
+				path.arc( 0, 0, r, r, 180, 180 );
 				path.close();
 				return path;
 			}
