@@ -22,7 +22,10 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
 import lombok.CustomLog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -257,7 +260,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	/**
-	 * Request that geometry be rendered. This method collapses multiple
+	 * Request that geometry be rendered. This method will collapse multiple
 	 * sequential render requests to improve performance. This method is safe to
 	 * call from any thread.
 	 */
@@ -320,42 +323,54 @@ public class DesignRenderer extends BorderPane {
 
 		// Render the layers in reverse order
 		List<DesignLayer> orderedLayers = design.getAllLayers();
-		Collections.reverse(orderedLayers);
+		Collections.reverse( orderedLayers );
 
 		for( DesignLayer layer : orderedLayers ) {
 			// Do not render hidden layers
 			if( !isLayerVisible( layer ) ) continue;
 
 			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
-			Collections.sort(orderedShapes);
+			Collections.sort( orderedShapes );
 
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
-				// FIXME Make an internal pen cache
-				Pen fillPen = shape.getValue( "cache.marea.pen.fill" );
+				// Set fill pen
+				Pen fillPen = shape.getValue( "cache.carta.pen.fill" );
 				if( fillPen == null ) {
 					fillPen = createFillPen( shape );
-					shape.setValue( "cache.marea.pen.fill", fillPen );
+					shape.setValue( "cache.carta.pen.fill", fillPen );
 				}
-				Pen drawPen = shape.getValue( "cache.marea.pen.draw" );
+				renderer.setFillPen( fillPen.paint() );
+
+				// Set draw pen
+				Pen drawPen = shape.getValue( "cache.carta.pen.draw" );
 				if( drawPen == null ) {
 					drawPen = createDrawPen( shape );
-					shape.setValue( "cache.marea.pen.draw", drawPen );
+					shape.setValue( "cache.carta.pen.draw", drawPen );
 				}
-
-				// TODO Handle fill
-				renderer.setFillPen( fillPen.paint() );
 				renderer.setDrawPen( drawPen.paint(), drawPen.width(), drawPen.cap(), drawPen.join(), drawPen.dashes(), drawPen.offset() );
 
-				switch( shape.getType() ) {
-					case ARC -> this.renderArc( (DesignArc)shape );
-					case CUBIC -> this.renderCubic( (DesignCubic)shape );
-					case ELLIPSE -> this.renderEllipse( (DesignEllipse)shape );
-					case LINE -> this.renderLine( (DesignLine)shape );
-					case MARKER -> this.renderMarker( (DesignMarker)shape );
-					case QUAD -> this.renderQuad( (DesignQuad)shape );
-					case PATH -> this.renderPath( (DesignPath)shape );
-					case TEXT -> this.renderText( (DesignText)shape );
+				// Fill the shape
+				if( fillPen.paint() != null ) {
+					switch( shape.getType() ) {
+						case ELLIPSE -> this.fillEllipse( (DesignEllipse)shape );
+						case PATH -> this.fillPath( (DesignPath)shape );
+						case TEXT -> this.fillText( (DesignText)shape );
+					}
+				}
+
+				// Draw the shape
+				if( drawPen.paint() != null ) {
+					switch( shape.getType() ) {
+						case ARC -> this.renderArc( (DesignArc)shape );
+						case CUBIC -> this.renderCubic( (DesignCubic)shape );
+						case ELLIPSE -> this.renderEllipse( (DesignEllipse)shape );
+						case LINE -> this.renderLine( (DesignLine)shape );
+						case MARKER -> this.renderMarker( (DesignMarker)shape );
+						case QUAD -> this.renderQuad( (DesignQuad)shape );
+						case PATH -> this.renderPath( (DesignPath)shape );
+						case TEXT -> this.renderText( (DesignText)shape );
+					}
 				}
 			}
 		}
@@ -378,8 +393,11 @@ public class DesignRenderer extends BorderPane {
 		);
 	}
 
-	private void renderEllipse( DesignEllipse ellipse ) {
+	private void fillEllipse( DesignEllipse ellipse ) {
 		renderer.fillEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
+	}
+
+	private void renderEllipse( DesignEllipse ellipse ) {
 		renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 	}
 
@@ -401,13 +419,19 @@ public class DesignRenderer extends BorderPane {
 		renderer.drawQuad( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
 	}
 
-	private void renderPath( DesignPath path ) {
+	private void fillPath( DesignPath path ) {
 		renderer.fillPath( toPathElements( path.getElements() ) );
+	}
+
+	private void renderPath( DesignPath path ) {
 		renderer.drawPath( toPathElements( path.getElements() ) );
 	}
 
-	private void renderText( DesignText text ) {
+	private void fillText( DesignText text ) {
 		renderer.fillText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
+	}
+
+	private void renderText( DesignText text ) {
 		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
 
