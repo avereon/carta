@@ -29,7 +29,7 @@ public class DesignMarkerView extends DesignShapeView {
 	@Override
 	public List<Shape> generateGeometry() {
 		DesignMarker marker = getDesignMarker();
-		Path path = marker.calcType().getPath();
+		Path path = marker.calcType().getFxPath();
 		path.setLayoutX( marker.getOrigin().getX() );
 		path.setLayoutY( marker.getOrigin().getY() );
 		path.setScaleX( marker.calcSize() );

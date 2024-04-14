@@ -21,8 +21,8 @@ public class DesignMarker extends DesignShape {
 	public enum Type {
 
 		DEFAULT {
-			public Path getPath() {
-				return CROSS.getPath();
+			public Path getFxPath() {
+				return CROSS.getFxPath();
 			}
 
 			public DesignPath getDesignPath() {
@@ -30,7 +30,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		CG {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = 0.5 * HALF_WIDTH * r;
 				double t = r - 2 * s;
@@ -59,28 +59,30 @@ public class DesignMarker extends DesignShape {
 				double s = 0.5 * HALF_WIDTH * r;
 				double t = r - 2 * s;
 
-				DesignPath path = new DesignPath( new Point3D( 0, -r, 0 ) );
-				path.move( 0, -r );
-				path.arc( 0, r, r, r, -90, 180 );
-				path.arc( 0, -r, r, r, 90, 180 );
+				DesignPath path = new DesignPath( new Point3D( 0, 0, 0 ) );
+//				path.move( 0, 0 );
+				path.arc( 0, 0, r, r, 0, 180 );
+				path.arc( 0, 0, r, r, 180, 180 );
 				path.close();
 
 				path.move( 0, 0 );
-				path.line( 0, -r + 2 * s );
-				path.arc( t, 0, t, t, 0, 180 );
+				path.arc( 0, 0, t, t, 0, -90 );
 				path.close();
 
 				path.move( 0, 0 );
-				path.line( 0, r - 2 * s );
-				path.arc( -t, 0, t, t, 180, 180 );
+				path.arc( 0, 0, t, t, 90, 90 );
 				path.close();
+//				path.move(-0.25*r, -r);
+//				path.line( 0, r );
+//				path.line(0.25*r, -r );
+//				path.close();
 
 				return path;
 			}
 
 		},
 		CIRCLE {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( 0, -r ) );
@@ -100,7 +102,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		CROSS {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = HALF_WIDTH * r;
 				Path path = new Path( new MoveTo( -s, -r ) );
@@ -149,7 +151,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		DIAMOND {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( -r, 0 ) );
@@ -171,8 +173,8 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		REFERENCE {
-			public Path getPath() {
-				return STAR.getPath();
+			public Path getFxPath() {
+				return STAR.getFxPath();
 			}
 
 			public DesignPath getDesignPath() {
@@ -180,7 +182,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		RETICLE {
-			public Path getPath() {
+			public Path getFxPath() {
 				double s = 0.1 * LINE_WIDTH;
 				double r = HALF_SIZE;
 				double r1 = 0.5 * r + s;
@@ -254,10 +256,10 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		RING {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE * 0.8;
 				Path path = new Path();
-				path.getElements().addAll( CIRCLE.getPath().getElements() );
+				path.getElements().addAll( CIRCLE.getFxPath().getElements() );
 				path.getElements().add( new MoveTo( 0, -r ) );
 				path.getElements().add( new ArcTo( r, r, 0, 0, r, false, true ) );
 				path.getElements().add( new ArcTo( r, r, 0, 0, -r, false, true ) );
@@ -276,7 +278,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		SQUARE {
-			public Path getPath() {
+			public Path getFxPath() {
 				double z = HALF_SIZE * Constants.SQRT_ONE_HALF;
 				Path path = new Path();
 				path.getElements().add( new MoveTo( -z, -z ) );
@@ -298,7 +300,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		STAR {
-			public Path getPath() {
+			public Path getFxPath() {
 				double r = HALF_SIZE;
 				double s = r * 0.5 * (3 - Math.sqrt( 5 ));
 
@@ -339,7 +341,7 @@ public class DesignMarker extends DesignShape {
 			}
 		},
 		X {
-			public Path getPath() {
+			public Path getFxPath() {
 				double s = Constants.SQRT_ONE_HALF * HALF_SIZE;
 				double t = HALF_WIDTH * s;
 
@@ -402,7 +404,7 @@ public class DesignMarker extends DesignShape {
 		 * @deprecated In favor of {@link #getDesignPath}
 		 */
 		@Deprecated
-		public abstract Path getPath();
+		public abstract Path getFxPath();
 
 		/**
 		 * Get the path of the marker.

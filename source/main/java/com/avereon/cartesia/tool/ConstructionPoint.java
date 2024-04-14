@@ -73,7 +73,7 @@ public class ConstructionPoint extends Region {
 	}
 
 	private void doUpdateGeometry() {
-		path = getType().getPath();
+		path = getType().getFxPath();
 		path.setFill( getPaint() );
 		getChildren().setAll( path );
 	}

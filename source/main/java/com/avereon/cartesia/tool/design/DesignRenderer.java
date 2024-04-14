@@ -406,12 +406,13 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderMarker( DesignMarker marker ) {
+		Point3D origin = marker.getOrigin();
 		DesignPath path = marker.calcType().getDesignPath();
-		if( path == null ) {
-			log.atError().log( "Undefined marker path: {0}", marker.getMarkerType() );
+
+		if( path != null ) {
+			renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
 		} else {
-			renderer.fillPath( toPathElements( path.getElements() ) );
-			renderer.drawPath( toPathElements( path.getElements() ) );
+			log.atError().log( "Undefined marker type: {0}", marker.getMarkerType() );
 		}
 	}
 
@@ -420,11 +421,13 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void fillPath( DesignPath path ) {
-		renderer.fillPath( toPathElements( path.getElements() ) );
+		Point3D origin = path.getOrigin();
+		renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
 	}
 
 	private void renderPath( DesignPath path ) {
-		renderer.drawPath( toPathElements( path.getElements() ) );
+		Point3D origin = path.getOrigin();
+		renderer.drawPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
 	}
 
 	private void fillText( DesignText text ) {
