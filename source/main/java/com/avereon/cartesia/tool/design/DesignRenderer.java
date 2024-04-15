@@ -6,9 +6,10 @@ import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.marea.Font;
 import com.avereon.marea.LineCap;
-import com.avereon.marea.Pen;
+import com.avereon.marea.LineJoin;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.*;
+import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -19,6 +20,8 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
 import java.util.ArrayList;
@@ -29,23 +32,32 @@ import java.util.Set;
 @CustomLog
 public class DesignRenderer extends BorderPane {
 
-	private final FxRenderer2d renderer;
-
-	private final ObservableSet<DesignLayer> visibleLayers;
-
 	private Design design;
 
 	private DesignWorkplane workplane;
 
+	private final FxRenderer2d renderer;
+
+	private final ObservableSet<DesignLayer> visibleLayers;
+
+	private final ObservableSet<DesignShape> selectedShapes;
+
 	private SimpleBooleanProperty gridVisible;
+
+	private SimpleBooleanProperty selectApertureVisible;
+
+	private SimpleBooleanProperty referencePointsVisible;
+
+	private SimpleBooleanProperty constructionPointsVisible;
 
 	public DesignRenderer() {
 		visibleLayers = FXCollections.observableSet();
+		selectedShapes = FXCollections.observableSet();
 
 		// Create and add the renderer to the center
 		setCenter( this.renderer = new FxRenderer2d() );
 
-		// TODO Change the renderer mouse actions
+		// Disable the default renderer mouse actions
 		renderer.setOnMousePressed( null );
 		renderer.setOnMouseDragged( null );
 		renderer.setOnMouseReleased( null );
@@ -65,6 +77,7 @@ public class DesignRenderer extends BorderPane {
 		renderer.heightProperty().addListener( ( p, o, n ) -> render() );
 
 		visibleLayers.addListener( (SetChangeListener<? super DesignLayer>)( c ) -> render() );
+		selectedShapes.addListener( (SetChangeListener<? super DesignShape>)( c ) -> render() );
 	}
 
 	public void setDesign( Design design ) {
@@ -76,7 +89,8 @@ public class DesignRenderer extends BorderPane {
 
 		// Temporary listener for testing
 		design.register( NodeEvent.VALUE_CHANGED, e -> {
-			log.atConfig().log( "Something changed in the design: " + e.getKey() );
+			//log.atConfig().log( "Something changed in the design: " + e.getKey() );
+			render();
 		} );
 	}
 
@@ -89,7 +103,8 @@ public class DesignRenderer extends BorderPane {
 
 		// Temporary listener for testing
 		workplane.register( NodeEvent.VALUE_CHANGED, e -> {
-			log.atConfig().log( "Something changed in the workplane: " + e.getKey() );
+			//log.atConfig().log( "Something changed in the workplane: " + e.getKey() );
+			render();
 		} );
 	}
 
@@ -153,6 +168,24 @@ public class DesignRenderer extends BorderPane {
 
 	public ObservableSet<DesignLayer> visibleLayers() {
 		return visibleLayers;
+	}
+
+	public boolean isShapeSelected( DesignShape shape ) {
+		return selectedShapes.contains( shape );
+	}
+
+	public Set<DesignShape> getSelectedShapes() {
+		return selectedShapes;
+	}
+
+	public void setSelectedShapes( Set<DesignShape> shapes ) {
+		selectedShapes.clear();
+		selectedShapes.addAll( shapes );
+		render();
+	}
+
+	public ObservableSet<DesignShape> selectedShapes() {
+		return selectedShapes;
 	}
 
 	/**
@@ -288,6 +321,11 @@ public class DesignRenderer extends BorderPane {
 	private void doRender() {
 		//long startNs = System.nanoTime();
 
+		// Update the workplane bounds to match this pane
+		// FIXME Probably should not be updating the bounds during the render process
+		// Listeners can be added to the width and height properties to update the bounds
+		workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
+
 		renderer.clear();
 		renderWorkplane();
 		renderVisibleLayers();
@@ -302,9 +340,6 @@ public class DesignRenderer extends BorderPane {
 
 	private void renderWorkplane() {
 		if( workplane == null ) return;
-
-		// Update the workplane bounds to match this pane
-		workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
 
 		// Render grid
 		if( isGridVisible() ) workplane.getCoordinateSystem().drawMareaGeometryGrid( renderer, workplane );
@@ -324,26 +359,19 @@ public class DesignRenderer extends BorderPane {
 			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
 			Collections.sort( orderedShapes );
 
+			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.1 );
+			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.5 );
+
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
-				// Set fill pen
-				Pen fillPen = shape.getValue( "cache.carta.pen.fill" );
-				if( fillPen == null ) {
-					fillPen = createFillPen( shape );
-					shape.setValue( "cache.carta.pen.fill", fillPen );
-				}
-				renderer.setFillPen( fillPen.paint() );
+				// TODO Would this be faster as a flag on the shape?
+				boolean selected = true;
 
-				// Set draw pen
-				Pen drawPen = shape.getValue( "cache.carta.pen.draw" );
-				if( drawPen == null ) {
-					drawPen = createDrawPen( shape );
-					shape.setValue( "cache.carta.pen.draw", drawPen );
-				}
-				renderer.setDrawPen( drawPen.paint(), drawPen.width(), drawPen.cap(), drawPen.join(), drawPen.dashes(), drawPen.offset() );
+				Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
+				Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
 
 				// Fill the shape
-				if( fillPen.paint() != null ) {
+				if( fillPaint != null ) {
 					switch( shape.getType() ) {
 						case ELLIPSE -> this.fillEllipse( (DesignEllipse)shape );
 						case PATH -> this.fillPath( (DesignPath)shape );
@@ -352,27 +380,59 @@ public class DesignRenderer extends BorderPane {
 				}
 
 				// Draw the shape
-				if( drawPen.paint() != null ) {
+				if( drawPaint != null ) {
 					switch( shape.getType() ) {
-						case ARC -> this.renderArc( (DesignArc)shape );
-						case CUBIC -> this.renderCubic( (DesignCubic)shape );
-						case ELLIPSE -> this.renderEllipse( (DesignEllipse)shape );
-						case LINE -> this.renderLine( (DesignLine)shape );
-						case MARKER -> this.renderMarker( (DesignMarker)shape );
-						case QUAD -> this.renderQuad( (DesignQuad)shape );
-						case PATH -> this.renderPath( (DesignPath)shape );
-						case TEXT -> this.renderText( (DesignText)shape );
+						case ARC -> this.drawArc( (DesignArc)shape );
+						case CUBIC -> this.drawCubic( (DesignCubic)shape );
+						case ELLIPSE -> this.drawEllipse( (DesignEllipse)shape );
+						case LINE -> this.drawLine( (DesignLine)shape );
+						case MARKER -> this.drawMarker( (DesignMarker)shape );
+						case QUAD -> this.drawQuad( (DesignQuad)shape );
+						case PATH -> this.drawPath( (DesignPath)shape );
+						case TEXT -> this.drawText( (DesignText)shape );
 					}
 				}
 			}
 		}
 	}
 
-	private void renderArc( DesignArc arc ) {
+	private Paint setFillPen( DesignShape shape, boolean selected, Paint selectedFillPaint ) {
+		Paint fillPaint = shape.calcFillPaint();
+		if( fillPaint == null ) {
+			renderer.setFillPen( null );
+		} else {
+			renderer.setFillPen( selected ? selectedFillPaint : fillPaint );
+		}
+		return fillPaint;
+	}
+
+	private Paint setDrawPen( DesignShape shape, boolean selected, Paint selectedDrawPaint ) {
+		Paint drawPaint = shape.calcDrawPaint();
+		boolean isText = shape.getType() == DesignShape.Type.TEXT;
+
+		if( drawPaint == null ) {
+			renderer.setDrawPen( null, 0.0, null, null, null, 0.0, isText );
+		} else {
+			renderer.setDrawPen(
+				selected ? selectedDrawPaint : drawPaint,
+				// FIXME Why is this comming in as 0.0 for text
+				shape.calcDrawWidth(),
+				LineCap.valueOf( shape.calcDrawCap().name() ),
+				LineJoin.ROUND,
+				shape.calcDrawPattern().stream().mapToDouble( d -> d ).toArray(),
+				0.0,
+				isText
+			);
+		}
+
+		return drawPaint;
+	}
+
+	private void drawArc( DesignArc arc ) {
 		renderer.drawArc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getRadii().getX(), arc.getRadii().getY(), arc.calcRotate(), arc.calcStart(), arc.calcExtent() );
 	}
 
-	private void renderCubic( DesignCubic cubic ) {
+	private void drawCubic( DesignCubic cubic ) {
 		renderer.drawCubic(
 			cubic.getOrigin().getX(),
 			cubic.getOrigin().getY(),
@@ -389,15 +449,15 @@ public class DesignRenderer extends BorderPane {
 		renderer.fillEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 	}
 
-	private void renderEllipse( DesignEllipse ellipse ) {
+	private void drawEllipse( DesignEllipse ellipse ) {
 		renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 	}
 
-	private void renderLine( DesignLine line ) {
+	private void drawLine( DesignLine line ) {
 		renderer.drawLine( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
 	}
 
-	private void renderMarker( DesignMarker marker ) {
+	private void drawMarker( DesignMarker marker ) {
 		Point3D origin = marker.getOrigin();
 		DesignPath path = marker.calcType().getDesignPath();
 
@@ -408,7 +468,7 @@ public class DesignRenderer extends BorderPane {
 		}
 	}
 
-	private void renderQuad( DesignQuad quad ) {
+	private void drawQuad( DesignQuad quad ) {
 		renderer.drawQuad( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
 	}
 
@@ -417,7 +477,7 @@ public class DesignRenderer extends BorderPane {
 		renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
 	}
 
-	private void renderPath( DesignPath path ) {
+	private void drawPath( DesignPath path ) {
 		Point3D origin = path.getOrigin();
 		renderer.drawPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
 	}
@@ -426,7 +486,7 @@ public class DesignRenderer extends BorderPane {
 		renderer.fillText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
 
-	private void renderText( DesignText text ) {
+	private void drawText( DesignText text ) {
 		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
 
@@ -459,11 +519,8 @@ public class DesignRenderer extends BorderPane {
 
 		// Hint geometry are:
 		//  - temporary geometry are things like preview geometry for commands
-		//  - selected geometry
 
 		// TODO Render temporary geometry
-
-		// TODO Render selected geometry
 	}
 
 	private void renderReferenceGeometry() {
@@ -473,24 +530,8 @@ public class DesignRenderer extends BorderPane {
 
 	private void renderSelectorGeometry() {
 		// TODO Render selector geometry
-		// mainly the selector window
+		// mainly the selector window or aperture
 
-	}
-
-	private Pen createDrawPen( DesignShape shape ) {
-		// TODO Can/should pens be cached?
-		Pen pen = new Pen( shape.calcDrawPaint(), shape.calcDrawWidth() );
-		// TODO Can probably cache this transform
-		pen.cap( LineCap.valueOf( shape.calcDrawCap().name() ) );
-		// TODO Can probably cache this transform
-		//pen.join(shape.calcDrawJoin());
-		pen.dashes( shape.calcDrawPattern().stream().mapToDouble( d -> d ).toArray() );
-		//pen.offset( shape.calcDrawPatternOffset());
-		return pen;
-	}
-
-	private Pen createFillPen( DesignShape shape ) {
-		return new Pen( shape.calcFillPaint() );
 	}
 
 	private Arc createArc( DesignArc shape ) {

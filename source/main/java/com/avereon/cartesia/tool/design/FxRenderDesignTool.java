@@ -84,7 +84,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final Stack<DesignPortal> portalStack;
 
-	// PROPERTIES
+	// TOOL PROPERTIES
+	// The renderer might also have some properties that should be exposed
 
 	private final ObjectProperty<Reticle> reticleProperty;
 
@@ -92,7 +93,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
-	// OPTIONAL PROPERTIES
+	// OPTIONAL TOOL PROPERTIES
+	// The renderer might also have some properties that should be exposed
 
 	private ObjectProperty<DesignLayer> selectedLayer;
 
