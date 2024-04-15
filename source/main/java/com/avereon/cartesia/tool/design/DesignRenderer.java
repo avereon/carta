@@ -359,8 +359,8 @@ public class DesignRenderer extends BorderPane {
 			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
 			Collections.sort( orderedShapes );
 
-			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.1 );
-			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.5 );
+			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
+			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
 
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
@@ -408,20 +408,19 @@ public class DesignRenderer extends BorderPane {
 
 	private Paint setDrawPen( DesignShape shape, boolean selected, Paint selectedDrawPaint ) {
 		Paint drawPaint = shape.calcDrawPaint();
-		boolean isText = shape.getType() == DesignShape.Type.TEXT;
 
 		if( drawPaint == null ) {
-			renderer.setDrawPen( null, 0.0, null, null, null, 0.0, isText );
+			renderer.setDrawPen( null, 0.0, null, null, null, 0.0, false );
 		} else {
 			renderer.setDrawPen(
 				selected ? selectedDrawPaint : drawPaint,
-				// FIXME Why is this comming in as 0.0 for text
+				// FIXME Why is this coming in as 0.0 for text
 				shape.calcDrawWidth(),
 				LineCap.valueOf( shape.calcDrawCap().name() ),
 				LineJoin.ROUND,
 				shape.calcDrawPattern().stream().mapToDouble( d -> d ).toArray(),
 				0.0,
-				isText
+				shape.getType() == DesignShape.Type.TEXT
 			);
 		}
 
