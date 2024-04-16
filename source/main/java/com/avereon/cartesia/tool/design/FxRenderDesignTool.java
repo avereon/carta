@@ -60,9 +60,9 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	public static final DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MILLIMETER );
 
-	public static final Paint DEFAULT_SELECT_DRAW = Paints.parse( "#ff0000ff" );
+	public static final Paint DEFAULT_SELECT_DRAW = Paints.parse( "#ff00c0ff" );
 
-	public static final Paint DEFAULT_SELECT_FILL = Paints.parse( "#ff000034" );
+	public static final Paint DEFAULT_SELECT_FILL = Paints.parse( "#ff00c040" );
 
 	// KEYS
 
