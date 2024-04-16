@@ -248,17 +248,17 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 	}
 
 	@Override
-	public void setSelectAperture( DesignValue aperture ) {
+	public void setSelectTolerance( DesignValue aperture ) {
 		selectAperture.set( aperture );
 	}
 
 	@Override
-	public DesignValue getSelectAperture() {
+	public DesignValue getSelectTolerance() {
 		return selectAperture.get();
 	}
 
 	@Override
-	public ObjectProperty<DesignValue> selectApertureProperty() {
+	public ObjectProperty<DesignValue> selectTolerance() {
 		return selectAperture;
 	}
 
@@ -571,7 +571,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
 		if( design != null ) setView( viewPoint, viewZoom, viewRotate );
 		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
-		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
+		setSelectTolerance( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		designPane.setReferencePointType( referencePointType );
 		designPane.setReferencePointSize( referencePointSize );
 		designPane.setReferencePointPaint( referencePointPaint );
@@ -600,8 +600,8 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		// Settings listeners
 		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
-		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectTolerance().getUnit() ) ) );
+		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( getSelectTolerance().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 		productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
 		productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
@@ -918,18 +918,18 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 	@Override
 	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		return designPane.screenPointSelect( mouse, getSelectAperture() ).stream().findFirst().stream().collect( Collectors.toList() );
+		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().collect( Collectors.toList() );
 	}
 
 	@Override
 	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		return new ArrayList<>( designPane.screenPointSelect( mouse, getSelectAperture() ) );
+		return new ArrayList<>( designPane.screenPointSelect( mouse, getSelectTolerance() ) );
 	}
 
 	@Override
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
 		selectedShapes.clear();
-		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectAperture() ).stream().findFirst().stream().toList() );
+		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().toList() );
 		return selectedShapes();
 	}
 
@@ -942,7 +942,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
 		if( !toggle ) selectedShapes().clear();
 
-		designPane.screenPointSelect( mouse, getSelectAperture() ).stream().findFirst().ifPresent( shape -> {
+		designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
 			if( toggle && DesignShapeView.getDesignData( shape ).isSelected() ) {
 				selectedShapes().remove( shape );
 			} else {
@@ -969,7 +969,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 		Fx.run( () -> {
 			if( !toggle ) selectedShapes().clear();
 
-			List<Shape> selection = designPane.worldPointSelect( point, getSelectAperture() );
+			List<Shape> selection = designPane.worldPointSelect( point, getSelectTolerance() );
 			selection.stream().findFirst().ifPresent( shape -> {
 				if( toggle && DesignShapeView.getDesignData( shape ).isSelected() ) {
 					selectedShapes().remove( shape );
@@ -987,12 +987,12 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 	@Override
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
-		return designPane.screenPointSelect( mouse, getSelectAperture() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	@Override
 	public List<DesignShape> findShapesWithPoint( Point3D point ) {
-		return designPane.worldPointSelect( point, getSelectAperture() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	@Override

@@ -169,9 +169,9 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 */
 	public abstract void setViewport( Bounds viewport );
 
-	public abstract DesignValue getSelectAperture();
+	public abstract DesignValue getSelectTolerance();
 
-	public abstract void setSelectAperture( DesignValue aperture );
+	public abstract void setSelectTolerance( DesignValue aperture );
 
 	/**
 	 * The select aperture is a design value (unit and value) for the selection
@@ -180,7 +180,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 *
 	 * @return The select aperture property
 	 */
-	public abstract ObjectProperty<DesignValue> selectApertureProperty();
+	public abstract ObjectProperty<DesignValue> selectTolerance();
 
 	public abstract ObservableList<Shape> selectedShapes();
 

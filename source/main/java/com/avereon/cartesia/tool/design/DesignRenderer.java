@@ -8,11 +8,13 @@ import com.avereon.marea.Font;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.LineJoin;
 import com.avereon.marea.fx.FxRenderer2d;
-import com.avereon.marea.geom.*;
+import com.avereon.marea.geom.Path;
 import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 import javafx.collections.SetChangeListener;
@@ -44,7 +46,7 @@ public class DesignRenderer extends BorderPane {
 
 	private SimpleBooleanProperty gridVisible;
 
-	private SimpleBooleanProperty selectApertureVisible;
+	private final SimpleObjectProperty<DesignShape> selectAperture;
 
 	private SimpleBooleanProperty referencePointsVisible;
 
@@ -53,6 +55,7 @@ public class DesignRenderer extends BorderPane {
 	public DesignRenderer() {
 		visibleLayers = FXCollections.observableSet();
 		selectedShapes = FXCollections.observableSet();
+		selectAperture = new SimpleObjectProperty<>();
 
 		// Create and add the renderer to the center
 		setCenter( this.renderer = new FxRenderer2d() );
@@ -78,6 +81,7 @@ public class DesignRenderer extends BorderPane {
 
 		visibleLayers.addListener( (SetChangeListener<? super DesignLayer>)( c ) -> render() );
 		selectedShapes.addListener( (SetChangeListener<? super DesignShape>)( c ) -> render() );
+		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 	}
 
 	public void setDesign( Design design ) {
@@ -168,6 +172,18 @@ public class DesignRenderer extends BorderPane {
 
 	public ObservableSet<DesignLayer> visibleLayers() {
 		return visibleLayers;
+	}
+
+	public void setSelectAperture( DesignShape aperture ) {
+		selectAperture.set( aperture );
+	}
+
+	public DesignShape getSelectAperture() {
+		return selectAperture.get();
+	}
+
+	public SimpleObjectProperty<DesignShape> selectAperture() {
+		return selectAperture;
 	}
 
 	public boolean isShapeSelected( DesignShape shape ) {
@@ -365,7 +381,7 @@ public class DesignRenderer extends BorderPane {
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
 				// TODO Would this be faster as a flag on the shape?
-				boolean selected = true;
+				boolean selected = isShapeSelected( shape );
 
 				Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
 				Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
@@ -414,7 +430,6 @@ public class DesignRenderer extends BorderPane {
 		} else {
 			renderer.setDrawPen(
 				selected ? selectedDrawPaint : drawPaint,
-				// FIXME Why is this coming in as 0.0 for text
 				shape.calcDrawWidth(),
 				LineCap.valueOf( shape.calcDrawCap().name() ),
 				LineJoin.ROUND,
@@ -528,71 +543,26 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderSelectorGeometry() {
-		// TODO Render selector geometry
-		// mainly the selector window or aperture
+		if( selectAperture == null ) return;
+		DesignShape aperture = selectAperture.get();
+		if( aperture == null ) return;
 
-	}
+		Paint fillColor = setFillPen( aperture, false, null );
+		Paint drawColor = setDrawPen( aperture, false, null );
 
-	private Arc createArc( DesignArc shape ) {
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] radius = CadPoints.asPoint( shape.getRadii() );
-		double rotate = shape.calcRotate();
-		double start = shape.calcStart();
-		double extent = shape.calcExtent();
-		return new Arc( origin, radius, rotate, start, extent );
-	}
-
-	private Line createLine( DesignLine shape ) {
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] point = CadPoints.asPoint( shape.getPoint() );
-		return new Line( origin, point );
-	}
-
-	private Curve createCurve( DesignCubic shape ) {
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] originControl = CadPoints.asPoint( shape.getOriginControl() );
-		double[] pointControl = CadPoints.asPoint( shape.getPointControl() );
-		double[] point = CadPoints.asPoint( shape.getPoint() );
-		return new Curve( origin, originControl, pointControl, point );
-	}
-
-	private Ellipse createEllipse( DesignEllipse shape ) {
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double[] radius = CadPoints.asPoint( shape.getRadii() );
-		double rotate = shape.calcRotate();
-		return new Ellipse( origin, radius, rotate );
-	}
-
-	private Path createMarker( DesignMarker shape ) {
-		DesignPath path = shape.calcType().getDesignPath();
-		if( path == null ) log.atError().log( "Undefined marker path: {0}", shape.getMarkerType() );
-		return createPath( shape.calcType().getDesignPath() );
-	}
-
-	private Path createPath( DesignPath shape ) {
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-
-		com.avereon.marea.geom.Path path = new com.avereon.marea.geom.Path( origin, 0.0 );
-		for( DesignPath.Element element : shape.getElements() ) {
-			double[] data = element.data();
-			switch( element.command() ) {
-				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
-				case LINE -> path.line( data[ 0 ], data[ 1 ] );
-				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case CUBIC -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case QUAD -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
-				case CLOSE -> path.close();
-			}
+		if( aperture.getType() == DesignShape.Type.ELLIPSE ) {
+			DesignEllipse ellipse = (DesignEllipse)aperture;
+			renderer.setFillPen( fillColor );
+			renderer.fillEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
+			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
+			renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
+		} else if( aperture.getType() == DesignShape.Type.LINE ) {
+			DesignLine rectangle = (DesignLine)aperture;
+			renderer.setFillPen( fillColor );
+			renderer.fillScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getPoint().getX(), rectangle.getPoint().getY() );
+			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
+			renderer.drawScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getPoint().getX(), rectangle.getPoint().getY() );
 		}
-
-		return path;
-	}
-
-	private Text createText( DesignText shape ) {
-		String string = shape.getText();
-		double[] origin = CadPoints.asPoint( shape.getOrigin() );
-		double height = shape.calcFont().getSize();
-		return new Text( string, origin, height );
 	}
 
 	/**

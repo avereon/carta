@@ -58,7 +58,11 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
 
-	public static final DesignValue DEFAULT_SELECT_APERTURE = new DesignValue( 2, DesignUnit.MILLIMETER );
+	public static final DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MILLIMETER );
+
+	public static final Paint DEFAULT_SELECT_DRAW = Paints.parse( "#ff0000ff" );
+
+	public static final Paint DEFAULT_SELECT_FILL = Paints.parse( "#ff000034" );
 
 	// KEYS
 
@@ -87,9 +91,11 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	// TOOL PROPERTIES
 	// The renderer might also have some properties that should be exposed
 
-	private final ObjectProperty<Reticle> reticleProperty;
+	private final ObjectProperty<Reticle> reticle;
 
-	private final ObjectProperty<DesignValue> selectAperture;
+	private final ObjectProperty<DesignValue> selectTolerance;
+
+	private final ObjectProperty<DesignShape> selectAperture;
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
@@ -99,6 +105,10 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private ObjectProperty<DesignLayer> selectedLayer;
 
 	private ObjectProperty<DesignView> currentView;
+
+	private StringProperty selectDrawPaint;
+
+	private StringProperty selectFillPaint;
 
 	// ACTIONS
 
@@ -143,10 +153,13 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		// TODO Move this to tool settings like reticle and aperture
 		this.workplane.setGridStyle( GridStyle.DOT );
 
-		this.reticleProperty = new SimpleObjectProperty<>( DEFAULT_RETICLE );
-		this.selectAperture = new SimpleObjectProperty<>( DEFAULT_SELECT_APERTURE );
+		this.reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
+		this.selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
+		this.selectAperture = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 		this.currentView = new SimpleObjectProperty<>();
+		this.selectDrawPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_DRAW ) );
+		this.selectFillPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_FILL ) );
 
 		// Actions
 		this.printAction = new PrintAction( product.getProgram() );
@@ -231,8 +244,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		Settings productSettings = getProduct().getSettings();
 		Settings settings = getSettings();
-		String defaultSelectSize = String.valueOf( DEFAULT_SELECT_APERTURE.getValue() );
-		String defaultSelectUnit = DEFAULT_SELECT_APERTURE.getUnit().toString().toLowerCase();
+		String defaultSelectSize = String.valueOf( DEFAULT_SELECT_TOLERANCE.getValue() );
+		String defaultSelectUnit = DEFAULT_SELECT_TOLERANCE.getUnit().toString().toLowerCase();
 		String defaultReferencePointType = DesignMarker.Type.CIRCLE.name().toLowerCase();
 		String defaultReferencePointSize = "10";
 		String defaultReferencePointPaint = "#808080";
@@ -250,7 +263,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		double viewRotate = Double.parseDouble( settings.get( SETTINGS_VIEW_ROTATE, "0.0" ) );
 		setView( viewPoint, viewZoom, viewRotate );
 		setReticle( Reticle.valueOf( productSettings.get( RETICLE, defaultReticle ).toUpperCase() ) );
-		setSelectAperture( new DesignValue( selectApertureSize, selectApertureUnit ) );
+		setSelectTolerance( new DesignValue( selectApertureSize, selectApertureUnit ) );
 		//		designPane.setReferencePointType( referencePointType );
 		//		designPane.setReferencePointSize( referencePointSize );
 		//		designPane.setReferencePointPaint( referencePointPaint );
@@ -277,8 +290,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		//
 		//		// Settings listeners
 		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectAperture( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectAperture().getUnit() ) ) );
-		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectAperture( new DesignValue( getSelectAperture().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
+		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectTolerance().getUnit() ) ) );
+		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( getSelectTolerance().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
 		//productSettings.register( REFERENCE_POINT_TYPE, e -> designPane.setReferencePointType( DesignMarker.Type.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		//productSettings.register( REFERENCE_POINT_SIZE, e -> designPane.setReferencePointSize( Double.parseDouble( (String)e.getNewValue() ) ) );
 		//productSettings.register( REFERENCE_POINT_PAINT, e -> designPane.setReferencePointPaint( Paints.parse( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
@@ -357,7 +370,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		// Get the reticle setting and bind the setting to the reticleProperty
 
 		// Update the cursor if the reticle changes and cursor is currently a reticle
-		reticleProperty.addListener( ( p, o, n ) -> {
+		reticle.addListener( ( p, o, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
 
@@ -480,11 +493,15 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	}
 
 	private Reticle getReticle() {
-		return reticleProperty.get();
+		return reticle.get();
 	}
 
 	private void setReticle( Reticle reticle ) {
-		reticleProperty.set( reticle );
+		this.reticle.set( reticle );
+	}
+
+	public ObjectProperty<Reticle> reticle() {
+		return reticle;
 	}
 
 	private CommandPrompt getCommandPrompt() {
@@ -519,17 +536,21 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	}
 
 	@Override
-	public void setSelectAperture( DesignValue aperture ) {
-		selectApertureProperty().set( aperture );
+	public void setSelectTolerance( DesignValue aperture ) {
+		selectTolerance().set( aperture );
 	}
 
 	@Override
-	public DesignValue getSelectAperture() {
-		return selectAperture.get();
+	public DesignValue getSelectTolerance() {
+		return selectTolerance.get();
 	}
 
 	@Override
-	public ObjectProperty<DesignValue> selectApertureProperty() {
+	public ObjectProperty<DesignValue> selectTolerance() {
+		return selectTolerance;
+	}
+
+	public ObjectProperty<DesignShape> selectAperture() {
 		return selectAperture;
 	}
 
@@ -738,7 +759,24 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {
+		if( anchor == null || mouse == null ) return;
 
+		// Calculate the bounds of the select aperture
+		double x = Math.min( anchor.getX(), mouse.getX() );
+		double y = Math.min( anchor.getY(), mouse.getY() );
+		double w = Math.abs( anchor.getX() - mouse.getX() );
+		double h = Math.abs( anchor.getY() - mouse.getY() );
+
+		// Set the select aperture
+		if( w == 0 || h == 0 ) {
+			renderer.setSelectAperture( null );
+		} else {
+			DesignLine selectAperture = new DesignLine( x, y, w, h );
+			selectAperture.setFillPaint( selectFillPaint.get() );
+			selectAperture.setDrawPaint( selectDrawPaint.get() );
+			selectAperture().set( selectAperture );
+			renderer.setSelectAperture( selectAperture );
+		}
 	}
 
 	@Override
