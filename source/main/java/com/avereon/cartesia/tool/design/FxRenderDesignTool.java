@@ -5,6 +5,7 @@ import com.avereon.cartesia.*;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
@@ -88,6 +89,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final Stack<DesignPortal> portalStack;
 
+	private final DesignPropertiesMap designPropertiesMap;
+
 	// TOOL PROPERTIES
 	// The renderer might also have some properties that should be exposed
 
@@ -140,6 +143,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		getStyleClass().add( "design-tool" );
 
 		this.commandActions = new ConcurrentHashMap<>();
+		this.designPropertiesMap = new DesignPropertiesMap( product );
 
 		this.layersGuide = new LayersGuide( product, this );
 		//		this.viewsGuide = new ViewsGuide( product, this );
@@ -391,7 +395,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
-		//		showPropertiesPage( getCurrentLayer() );
+		showPropertiesPage( getCurrentLayer() );
 	}
 
 	@Override
@@ -1016,7 +1020,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private void doSetCurrentLayerById( String id ) {
 		getDesign().findLayerById( id ).ifPresent( y -> {
 			currentLayerProperty().set( y );
-			//showPropertiesPage( y );
+			showPropertiesPage( y );
 		} );
 	}
 
@@ -1030,6 +1034,36 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private void doSetCurrentPrintById( String id ) {
 		// TODO Implement DesignTool.doSetCurrentPrintById()
+	}
+
+	private void showPropertiesPage( DesignDrawable drawable ) {
+		if( drawable != null ) showPropertiesPage( new NodeSettings( drawable ), drawable.getClass() );
+	}
+
+	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
+		SettingsPage page = designPropertiesMap.getSettingsPage( type );
+		if( page != null ) {
+			page.setSettings( settings );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Open the tool but don't make it the active tool
+					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
+
+					// Fire the event on the FX thread
+					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
+				} catch( Exception exception ) {
+					log.atWarn( exception ).log();
+				}
+			} ) );
+		} else {
+			log.atError().log( "Unable to find properties page for %s", type.getName() );
+		}
+	}
+
+	private void hidePropertiesPage() {
+		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
 	private class CommandAction extends ProgramAction {
