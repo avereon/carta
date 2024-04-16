@@ -1,5 +1,7 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.DesignWorkplane;
@@ -196,7 +198,7 @@ public class DesignRenderer extends BorderPane {
 
 	public void setSelectedShapes( Set<DesignShape> shapes ) {
 		selectedShapes.clear();
-		selectedShapes.addAll( shapes );
+		if( shapes != null ) selectedShapes.addAll( shapes );
 		render();
 	}
 
@@ -332,6 +334,45 @@ public class DesignRenderer extends BorderPane {
 	@Override
 	public Bounds parentToLocal( Bounds parentBounds ) {
 		return renderer.parentToLocal( parentBounds );
+	}
+
+	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
+		double size = valueToWorld( tolerance );
+		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
+	}
+
+	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
+		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), contains );
+	}
+
+	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue v ) {
+		return worldPointSelect( anchor, v.getValue() );
+	}
+
+	public List<DesignShape> worldPointSelect( Point3D anchor, double radius ) {
+		return worldPointSelect( anchor, new Point3D( radius, radius, 0 ) );
+	}
+
+	public List<DesignShape> worldPointSelect( Point3D anchor, Point3D radii ) {
+		return doSelectByShape( new DesignEllipse( anchor, radii ), false );
+	}
+
+	/**
+	 * Find the nodes contained by, or intersecting, the window specified by points a and b.
+	 *
+	 * @param a One corner of the window
+	 * @param b The other corner of the window
+	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
+	 * @return The set of selected nodes
+	 */
+	public List<DesignShape> worldWindowSelect( Point3D a, Point3D b, boolean contains ) {
+		double x = Math.min( a.getX(), b.getX() );
+		double y = Math.min( a.getY(), b.getY() );
+		double w = Math.abs( a.getX() - b.getX() );
+		double h = Math.abs( a.getY() - b.getY() );
+
+		DesignBox box = new DesignBox( x, y, w, h );
+		return doSelectByShape( box, contains );
 	}
 
 	private void doRender() {
@@ -557,12 +598,52 @@ public class DesignRenderer extends BorderPane {
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
 			renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 		} else if( aperture.getType() == DesignShape.Type.LINE ) {
-			DesignLine rectangle = (DesignLine)aperture;
+			DesignBox rectangle = (DesignBox)aperture;
 			renderer.setFillPen( fillColor );
-			renderer.fillScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getPoint().getX(), rectangle.getPoint().getY() );
+			renderer.fillScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getSize().getX(), rectangle.getSize().getY() );
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
-			renderer.drawScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getPoint().getX(), rectangle.getPoint().getY() );
+			renderer.drawScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getSize().getX(), rectangle.getSize().getY() );
 		}
+	}
+
+	private double valueToPixels( DesignValue v ) {
+		return v.getUnit().to( v.getValue(), DesignUnit.INCH ) * getDpi().getX();
+	}
+
+	private double valueToWorld( DesignValue v ) {
+		return valueToPixels( v ) / getInternalScale();
+	}
+
+	private double getInternalScale() {
+		return this.getDpi().getX() * getZoom().getX();
+	}
+
+	/**
+	 * Select nodes using a shape. The selecting shape can be any shape but it
+	 * usually a {@link DesignEllipse} or a {@link DesignBox}. Returns the list
+	 * of selected shapes in order from top to bottom.
+	 *
+	 * @param selector The selecting shape
+	 * @param contains True to require selected shapes be contained by the selecting shape
+	 * @return The list of selected shapes
+	 */
+	private List<DesignShape> doSelectByShape( final DesignShape selector, final boolean contains ) {
+		// This method should be thread agnostic, however, the code to calculate
+		// selections must be run on the FX thread. If we are on the FX thread then
+		// this is just a simple call to fxSelectByShape(). If not, a future must
+		// be created to run on the FX thread and return the result.
+
+		// NEXT Need to implement this method using design shapes
+
+		//		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
+		//
+		//		try {
+		//			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, contains ) ) ).get( 500, TimeUnit.MILLISECONDS );
+		//		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
+		//			log.atWarn( exception ).log( "Unable to select shapes" );
+		//		}
+
+		return List.of();
 	}
 
 	/**

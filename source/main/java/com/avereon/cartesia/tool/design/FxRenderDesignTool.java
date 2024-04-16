@@ -102,16 +102,16 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
+	private final StringProperty selectDrawPaint;
+
+	private final StringProperty selectFillPaint;
+
 	// OPTIONAL TOOL PROPERTIES
 	// The renderer might also have some properties that should be exposed
 
 	private ObjectProperty<DesignLayer> selectedLayer;
 
 	private ObjectProperty<DesignView> currentView;
-
-	private StringProperty selectDrawPaint;
-
-	private StringProperty selectFillPaint;
 
 	// ACTIONS
 
@@ -775,7 +775,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 		if( w == 0 || h == 0 ) {
 			renderer.setSelectAperture( null );
 		} else {
-			DesignLine selectAperture = new DesignLine( x, y, w, h );
+			DesignBox selectAperture = new DesignBox( x, y, w, h );
 			selectAperture.setFillPaint( selectFillPaint.get() );
 			selectAperture.setDrawPaint( selectDrawPaint.get() );
 			selectAperture().set( selectAperture );
@@ -785,62 +785,62 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		return null;
+		throw new UnsupportedOperationException( "This method has a bad interface for this class" );
 	}
 
 	@Override
 	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		return null;
+		throw new UnsupportedOperationException( "This method has a bad interface for this class" );
 	}
 
 	@Override
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
-		return null;
+		throw new UnsupportedOperationException( "This method has a bad interface for this class" );
 	}
 
 	@Override
 	public void screenPointSelect( Point3D mouse ) {
-
+		// TODO Implement this
 	}
 
 	@Override
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
-
+		// TODO Implement this
 	}
 
 	@Override
 	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
-
+		// TODO Implement this
 	}
 
 	@Override
 	public void worldPointSelect( Point3D point ) {
-
+		// TODO Implement this
 	}
 
 	@Override
 	public void worldPointSelect( Point3D point, boolean toggle ) {
-
+		// TODO Implement this
 	}
 
 	@Override
 	public void clearSelected() {
-
+		renderer.setSelectedShapes( null );
 	}
 
 	@Override
 	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
-		return null;
+		return renderer.screenPointSelect( mouse, getSelectTolerance() );
 	}
 
 	@Override
 	public List<DesignShape> findShapesWithPoint( Point3D point ) {
-		return null;
+		return renderer.worldPointSelect( point, getSelectTolerance() );
 	}
 
 	@Override
 	public List<DesignShape> getSelectedGeometry() {
-		return null;
+		return new ArrayList<>( renderer.selectedShapes() );
 	}
 
 	@Override
@@ -1027,7 +1027,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 	private void doSetCurrentViewById( String id ) {
 		getDesign().findViewById( id ).ifPresent( v -> {
 			currentViewProperty().set( v );
-			//getDesignPane().setView( v.getLayers(), v.getOrigin(), v.getZoom(), v.getRotate() );
+			//renderer.setView( v.getLayers(), v.getOrigin(), v.getZoom(), v.getRotate() );
 			//showPropertiesPage( v );
 		} );
 	}
