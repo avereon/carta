@@ -641,8 +641,12 @@ public class DesignRenderer extends BorderPane {
 		//		//		boolean invisibleShape = isInvisible( shape );
 		//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
 
+
+		// NEXT Implement shape bounds for all shapes
+
 		//		// This first test is an optimization to determine if the accurate test can be skipped
 		//		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+		if( !localToParent( selector.getBounds() ).intersects( localToParent( shape.getBounds() ) ) ) return false;
 
 		// 		// This is the slow but accurate test if the shape is intersecting
 		//		boolean result = !((javafx.scene.shape.Path)Shape.intersect( shape, selector )).getElements().isEmpty();
@@ -656,11 +660,13 @@ public class DesignRenderer extends BorderPane {
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
 		//		//		boolean invisibleShape = isInvisible( shape );
 		//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
-		//
+
 		//		// This first test is an optimization to determine if the accurate test can be skipped
 		//		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+
 		//		// This second test is an optimization for fully contained shapes
 		//		if( selector.getBoundsInParent().contains( shape.getBoundsInParent() ) ) return true;
+
 		//		// This is the slow but accurate test if the shape is contained
 		//		boolean result = ((javafx.scene.shape.Path)Shape.subtract( shape, selector )).getElements().isEmpty();
 		//

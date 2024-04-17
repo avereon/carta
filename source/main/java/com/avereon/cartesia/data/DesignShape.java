@@ -5,6 +5,8 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.javafx.Fx;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -74,6 +76,10 @@ public abstract class DesignShape extends DesignDrawable {
 	public DesignShape setSelected( boolean selected ) {
 		setValue( SELECTED, selected ? true : null );
 		return this;
+	}
+
+	public Bounds getBounds() {
+		return Fx.EMPTY_BOUNDS;
 	}
 
 	public double distanceTo( Point3D point ) {
