@@ -628,22 +628,46 @@ public class DesignRenderer extends BorderPane {
 	 * @return The list of selected shapes
 	 */
 	private List<DesignShape> doSelectByShape( final DesignShape selector, final boolean contains ) {
-		// This method should be thread agnostic, however, the code to calculate
-		// selections must be run on the FX thread. If we are on the FX thread then
-		// this is just a simple call to fxSelectByShape(). If not, a future must
-		// be created to run on the FX thread and return the result.
+		// This method should be thread agnostic. It should be safe to call from any thread.
 
 		// NEXT Need to implement this method using design shapes
 
-		//		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
 		//
-		//		try {
-		//			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, contains ) ) ).get( 500, TimeUnit.MILLISECONDS );
-		//		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
-		//			log.atWarn( exception ).log( "Unable to select shapes" );
-		//		}
 
 		return List.of();
+	}
+
+	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
+//		//		boolean invisibleShape = isInvisible( shape );
+//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+//
+//		// This first test is an optimization to determine if the accurate test can be skipped
+//
+//		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+//		// This is the slow but accurate test if the shape is intersecting
+//		boolean result = !((javafx.scene.shape.Path)Shape.intersect( shape, selector )).getElements().isEmpty();
+//
+//		//		if( invisibleShape ) shape.setStroke( null );
+//
+//		return result;
+		return false;
+	}
+
+	private boolean isContained( DesignShape selector, DesignShape shape ) {
+//		//		boolean invisibleShape = isInvisible( shape );
+//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+//
+//		// This first test is an optimization to determine if the accurate test can be skipped
+//		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+//		// This second test is an optimization for fully contained shapes
+//		if( selector.getBoundsInParent().contains( shape.getBoundsInParent() ) ) return true;
+//		// This is the slow but accurate test if the shape is contained
+//		boolean result = ((javafx.scene.shape.Path)Shape.subtract( shape, selector )).getElements().isEmpty();
+//
+//		//		if( invisibleShape ) shape.setStroke( null );
+//
+//		return result;
+		return false;
 	}
 
 	/**
