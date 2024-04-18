@@ -5,6 +5,8 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -45,6 +47,12 @@ public class DesignBox extends DesignShape {
 	public DesignShape setSize( Point3D point ) {
 		setValue( SIZE, point );
 		return this;
+	}
+
+	@Override
+	public Bounds getBounds() {
+		// TODO This is used a lot and should be cached
+		return new BoundingBox( getOrigin().getX(), getOrigin().getY(), getSize().getX(), getSize().getY() );
 	}
 
 	@Override

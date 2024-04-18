@@ -490,8 +490,8 @@ public class DesignMarker extends DesignShape {
 
 	@Override
 	public Bounds getBounds() {
-		double x = getOrigin().getX();
-		double y = getOrigin().getY();
+		double x = getOrigin().getX() - 0.5 * calcSize();
+		double y = getOrigin().getY() - 0.5 * calcSize();
 		double w = calcSize();
 		double h = calcSize();
 		return new BoundingBox( x, y, w, h );

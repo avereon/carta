@@ -395,7 +395,8 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
-		showPropertiesPage( getCurrentLayer() );
+		// FIXME Showing the properties pages over and over blows up the memory
+		//showPropertiesPage( getCurrentLayer() );
 	}
 
 	@Override
@@ -404,7 +405,6 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		// Add asset switch listener to remove command prompt
 		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-			// FIXME #113 Design tool activate does not show coordinate status
 			if( isDisplayed() && e.getOldAsset() == this.getAsset() && e.getNewAsset() != this.getAsset() ) {
 				unregisterStatusBarItems();
 			}
@@ -621,7 +621,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public List<DesignLayer> getVisibleLayers() {
-		return getFilteredLayers( renderer::isLayerVisible );
+		return new ArrayList<>( renderer.visibleLayers() );
 	}
 
 	public ObservableSet<DesignLayer> visibleLayers() {

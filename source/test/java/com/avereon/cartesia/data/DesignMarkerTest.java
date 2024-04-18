@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -45,6 +46,11 @@ public class DesignMarkerTest {
 	@Test
 	void testPathLength() {
 		assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).pathLength() ).isCloseTo( 0.0, TOLERANCE );
+	}
+
+	@Test
+	void testGetBounds() {
+		assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).getBounds() ).isEqualTo( new BoundingBox( -2.5, 0.5, 1, 1 ) );
 	}
 
 	@Test

@@ -1,10 +1,14 @@
 package com.avereon.cartesia.math;
 
+import com.avereon.curve.math.Point;
 import com.avereon.curve.math.Transform;
-import com.avereon.curve.math.Vector;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 
 import java.nio.DoubleBuffer;
+
+import static com.avereon.curve.math.Vector.UNIT_Z;
 
 public class CadTransform {
 
@@ -34,8 +38,22 @@ public class CadTransform {
 		return transform.isMirror();
 	}
 
-	public Point3D apply( Point3D vector ) {
+	public final Point3D apply( Point3D vector ) {
 		return CadPoints.toFxPoint( transform.apply( CadPoints.asPoint( vector ) ) );
+	}
+
+	public final Bounds apply( Bounds bounds ) {
+		Point3D a = apply( new Point3D( bounds.getMinX(), bounds.getMinY(), 0 ) );
+		Point3D b = apply( new Point3D( bounds.getMaxX(), bounds.getMinY(), 0 ) );
+		Point3D c = apply( new Point3D( bounds.getMinX(), bounds.getMaxY(), 0 ) );
+		Point3D d = apply( new Point3D( bounds.getMaxX(), bounds.getMaxY(), 0 ) );
+
+		double x = Math.min( Math.min( Math.min( a.getX(), b.getX() ), c.getX() ), d.getX() );
+		double y = Math.min( Math.min( Math.min( a.getY(), b.getY() ), c.getY() ), d.getY() );
+		double w = Math.max( Math.max( Math.max( a.getX(), b.getX() ), c.getX() ), d.getX() ) - x;
+		double h = Math.max( Math.max( Math.max( a.getY(), b.getY() ), c.getY() ), d.getY() ) - y;
+
+		return new BoundingBox( x, y, w, h );
 	}
 
 	public Point3D applyDirection( Point3D vector ) {
@@ -90,6 +108,10 @@ public class CadTransform {
 		return new CadTransform( Transform.translation( deltaX, deltaY, deltaZ ) );
 	}
 
+	public static CadTransform rotation( double x, double y, double angle ) {
+		return new CadTransform( Transform.rotation( Point.of( x, y, 0 ), UNIT_Z, Math.toRadians( angle ) ) );
+	}
+
 	public static CadTransform rotation( Point3D axis, double angle ) {
 		return new CadTransform( Transform.rotation( CadPoints.asPoint( axis ), Math.toRadians( angle ) ) );
 	}
@@ -111,7 +133,7 @@ public class CadTransform {
 	}
 
 	public static CadTransform mirror( Point3D origin, Point3D point ) {
-		return new CadTransform( Transform.mirror( CadPoints.asPoint( origin ), CadPoints.asPoint( point ), Vector.UNIT_Z ) );
+		return new CadTransform( Transform.mirror( CadPoints.asPoint( origin ), CadPoints.asPoint( point ), UNIT_Z ) );
 	}
 
 	public static CadTransform mirror( Point3D origin, Point3D point, Point3D normal ) {

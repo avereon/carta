@@ -331,7 +331,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 		// Geometry value mapping
 		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
-		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( ((Number)map.get( DesignText.ROTATE )).doubleValue() );
+		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( (String)map.get( DesignText.ROTATE ) );
 
 		if( map.containsKey( DesignText.TEXT_SIZE ) ) text.setTextSize( (String)map.get( DesignText.TEXT_SIZE ) );
 		if( map.containsKey( DesignText.FONT_NAME ) ) text.setFontName( (String)map.get( DesignText.FONT_NAME ) );

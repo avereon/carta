@@ -111,6 +111,17 @@ public class CadTransformTest {
 
 	@Test
 	void testRotation() {
+		CadTransform transform = CadTransform.rotation( 1, 1, 90 );
+		//assertMatrixValues( transform, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1 );
+		System.out.println( "point=" + transform.apply( new Point3D( 1, 0, 0 ) ) );
+		assertThat( CadGeometry.distance( transform.apply( new Point3D( 1, 0, 0 ) ), new Point3D( 2, 1, 0 ) ) ).isCloseTo( 0.0, Offset.offset( 1e-15 ) );
+
+		transform = CadTransform.rotation( CadPoints.UNIT_Y, 0 );
+		assertThat( transform.apply( CadPoints.UNIT_X ) ).isEqualTo( CadPoints.UNIT_X );
+	}
+
+	@Test
+	void testRotationWithAxisPoint() {
 		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), 180 );
 		assertMatrixValues( transform, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1 );
 		assertThat( CadGeometry.distance( new Point3D( 0, 1, 0 ), transform.apply( new Point3D( 1, 0, 0 ) ) ) ).isCloseTo( 0.0, Offset.offset( 1e-15 ) );

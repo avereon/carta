@@ -29,10 +29,7 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CustomLog
@@ -170,7 +167,7 @@ public class DesignRenderer extends BorderPane {
 		return visibleLayers;
 	}
 
-	public void setVisibleLayers( Set<DesignLayer> layers ) {
+	public void setVisibleLayers( Collection<DesignLayer> layers ) {
 		visibleLayers.clear();
 		visibleLayers.addAll( layers );
 		render();
@@ -210,7 +207,7 @@ public class DesignRenderer extends BorderPane {
 		return selectedShapes;
 	}
 
-	public void setSelectedShapes( Set<DesignShape> shapes ) {
+	public void setSelectedShapes( Collection<DesignShape> shapes ) {
 		selectedShapes.clear();
 		if( shapes != null ) selectedShapes.addAll( shapes );
 		render();
@@ -401,9 +398,9 @@ public class DesignRenderer extends BorderPane {
 
 		renderer.clear();
 		renderWorkplane();
-		renderVisibleLayers();
-		renderHintGeometry();
+		renderLayers();
 		renderReferenceGeometry();
+		renderHintGeometry();
 		renderSelectorGeometry();
 
 		//long endNs = System.nanoTime();
@@ -418,22 +415,21 @@ public class DesignRenderer extends BorderPane {
 		if( isGridVisible() ) workplane.getCoordinateSystem().drawMareaGeometryGrid( renderer, workplane );
 	}
 
-	private void renderVisibleLayers() {
+	private void renderLayers() {
 		if( design == null ) return;
 
+		List<DesignLayer> orderedLayers = new ArrayList<>( getVisibleLayers() );
+
 		// Render the layers in reverse order
-		List<DesignLayer> orderedLayers = design.getAllLayers();
-		Collections.reverse( orderedLayers );
+		orderedLayers.sort( Collections.reverseOrder() );
 
 		for( DesignLayer layer : orderedLayers ) {
-			// Do not render hidden layers
-			if( !isLayerVisible( layer ) ) continue;
-
 			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
 			Collections.sort( orderedShapes );
 
 			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
 			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
+			Paint boundingDrawPaint = Colors.translucent( Color.RED, 0.5 );
 
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
@@ -465,6 +461,21 @@ public class DesignRenderer extends BorderPane {
 						case TEXT -> this.drawText( (DesignText)shape );
 					}
 				}
+
+				// FIXME Temporary code to show the bounding box
+				if( 1 == 1 ) {
+					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint,
+						0.01,
+						LineCap.valueOf( shape.calcDrawCap().name() ),
+						LineJoin.ROUND,
+						null,
+						0.0,
+						false
+					);
+
+					Bounds bounds = shape.getBounds();
+					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
+				}
 			}
 		}
 	}
@@ -485,8 +496,7 @@ public class DesignRenderer extends BorderPane {
 		if( drawPaint == null ) {
 			renderer.setDrawPen( null, 0.0, null, null, null, 0.0, false );
 		} else {
-			renderer.setDrawPen(
-				selected ? selectedDrawPaint : drawPaint,
+			renderer.setDrawPen( selected ? selectedDrawPaint : drawPaint,
 				shape.calcDrawWidth(),
 				LineCap.valueOf( shape.calcDrawCap().name() ),
 				LineJoin.ROUND,
@@ -504,8 +514,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void drawCubic( DesignCubic cubic ) {
-		renderer.drawCubic(
-			cubic.getOrigin().getX(),
+		renderer.drawCubic( cubic.getOrigin().getX(),
 			cubic.getOrigin().getY(),
 			cubic.getOriginControl().getX(),
 			cubic.getOriginControl().getY(),
@@ -533,7 +542,7 @@ public class DesignRenderer extends BorderPane {
 		DesignPath path = marker.calcType().getDesignPath();
 
 		if( path != null ) {
-			renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
+			renderer.fillMarker( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
 		} else {
 			log.atError().log( "Undefined marker type: {0}", marker.getMarkerType() );
 		}
@@ -613,7 +622,7 @@ public class DesignRenderer extends BorderPane {
 			renderer.fillEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
 			renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
-		} else if( aperture.getType() == DesignShape.Type.LINE ) {
+		} else if( aperture.getType() == DesignShape.Type.BOX ) {
 			DesignBox rectangle = (DesignBox)aperture;
 			renderer.setFillPen( fillColor );
 			renderer.fillScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getSize().getX(), rectangle.getSize().getY() );
@@ -645,59 +654,41 @@ public class DesignRenderer extends BorderPane {
 	 */
 	private List<DesignShape> doSelectByShape( final DesignShape selector, final boolean contains ) {
 		// This method should be thread agnostic. It should be safe to call from any thread.
-
-		List<DesignShape> selected = new ArrayList<>();
-
-		// NEXT Need to implement this method using design shapes
-		for( DesignShape shape : getVisibleShapes() ) {
-			if( contains ? isContained( selector, shape ) : isIntersecting( selector, shape ) ) {
-				selected.add( shape );
-			}
-		}
-
-		log.atWarn().log( "selected count={0}", selected.size() );
-
+		List<DesignShape> selected = getVisibleShapes().stream().filter( shape -> shouldSelect( selector, contains, shape ) ).collect( Collectors.toList() );
+		setSelectedShapes( selected );
 		return selected;
 	}
 
-	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
-		//		//		boolean invisibleShape = isInvisible( shape );
-		//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
-
-		// NEXT Implement shape bounds for all shapes
-
-		//		// This first test is an optimization to determine if the accurate test can be skipped
-		//		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
-		if( !localToParent( selector.getBounds() ).intersects( localToParent( shape.getBounds() ) ) ) return false;
-
-		// 		// This is the slow but accurate test if the shape is intersecting
-		Shape fxSelector = selector.getFxShape();
-		Shape fxShape = shape.getFxShape();
-		boolean result = !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
-
-		//		//		if( invisibleShape ) shape.setStroke( null );
-
-				return result;
-//		return false;
+	private boolean shouldSelect( DesignShape selector, boolean contains, DesignShape shape ) {
+		return contains ? isContained( selector, shape ) : isIntersecting( selector, shape );
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
-		//		//		boolean invisibleShape = isInvisible( shape );
-		//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
+		Bounds selectorBounds = renderer.localToParent( selector.getBounds() );
+		Bounds shapeBounds = renderer.localToParent( shape.getBounds() );
 
-		//		// This first test is an optimization to determine if the accurate test can be skipped
-		//		if( !selector.getBoundsInParent().intersects( shape.getBoundsInParent() ) ) return false;
+		// This first test is an optimization to determine if the accurate test can be skipped
+		if( !localToParent( selectorBounds ).intersects( shapeBounds ) ) return false;
 
-		//		// This second test is an optimization for fully contained shapes
-		//		if( selector.getBoundsInParent().contains( shape.getBoundsInParent() ) ) return true;
+		// This second test is an optimization for fully contained shapes
+		if( localToParent( selectorBounds ).contains( shapeBounds ) ) return true;
 
-		//		// This is the slow but accurate test if the shape is contained
-		//		boolean result = ((javafx.scene.shape.Path)Shape.subtract( shape, selector )).getElements().isEmpty();
-		//
-		//		//		if( invisibleShape ) shape.setStroke( null );
-		//
-		//		return result;
+//		// This is the slow but accurate test if the shape is contained when the selector is not a box
+//		Shape fxSelector = selector.getFxShape();
+//		Shape fxShape = shape.getFxShape();
+//		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
+
 		return false;
+	}
+
+	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
+		// This first test is an optimization to determine if the accurate test can be skipped
+		if( !localToParent( selector.getBounds() ).intersects( localToParent( shape.getBounds() ) ) ) return false;
+
+		// This is the slow but accurate test if the shape is intersecting
+		Shape fxSelector = selector.getFxShape();
+		Shape fxShape = shape.getFxShape();
+		return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
 	}
 
 	/**

@@ -54,7 +54,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		this( origin, text, null );
 	}
 
-	public DesignText( Point3D origin, String text, Double rotate ) {
+	public DesignText( Point3D origin, String text, String rotate ) {
 		super( origin );
 		addModifyingKeys( TEXT, TEXT_SIZE, ROTATE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH );
 
@@ -266,16 +266,16 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	}
 
 	public double calcRotate() {
-		return hasKey( ROTATE ) ? getRotate() : 0.0;
+		String rotate = getRotate();
+		return rotate == null ? 0.0 : CadMath.evalNoException( rotate );
 	}
 
-	public Double getRotate() {
+	public String getRotate() {
 		return getValue( ROTATE );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T extends DesignText> T setRotate( Double value ) {
-		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) ) value = null;
+	public <T extends DesignText> T setRotate( String value ) {
 		setValue( ROTATE, value );
 		return (T)this;
 	}
@@ -335,15 +335,15 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public Bounds getBounds() {
 		// TODO This is used a lot and should be cached
 
-		FontMetrics metrics = new FontMetrics( calcFont() );
-		double x = getOrigin().getX();
-		double y = getOrigin().getY();
-		double w = metrics.computeStringWidth( getText() );
-		double h = metrics.computeStringHeight( getText() );
+		Bounds textBounds = new FontMetrics( calcFont() ).computeStringBounds( getText() );
+		double x = getOrigin().getX() + textBounds.getMinX();
+		double y = getOrigin().getY() - (textBounds.getMinY() + textBounds.getHeight());
+		double w = textBounds.getWidth();
+		double h = textBounds.getHeight();
 
-		// FIXME Need to take rotation into account
-
-		return new BoundingBox( x, y, w, h );
+		Bounds bounds = new BoundingBox( x, y, w, h );
+		CadTransform rotate = CadTransform.rotation( getOrigin().getX(), getOrigin().getY(), calcRotate() );
+		return rotate.apply( bounds );
 	}
 
 	@Override
@@ -396,7 +396,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
-			setRotate( rotate );
+			setRotate( String.valueOf( rotate ) );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
@@ -413,7 +413,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	public DesignText updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		if( map.containsKey( TEXT ) ) setText( (String)map.get( TEXT ) );
-		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
+		if( map.containsKey( ROTATE ) ) setRotate( (String)map.get( ROTATE ) );
 
 		if( map.containsKey( TEXT_SIZE ) ) setTextSize( (String)map.get( TEXT_SIZE ) );
 		if( map.containsKey( FONT_NAME ) ) setFontName( (String)map.get( FONT_NAME ) );

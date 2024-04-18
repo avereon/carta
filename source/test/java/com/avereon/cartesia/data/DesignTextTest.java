@@ -84,7 +84,7 @@ public class DesignTextTest {
 		text.setModified( false );
 		assertThat( text.isModified() ).isFalse();
 
-		text.setRotate( 25.0 );
+		text.setRotate( "25.0" );
 		assertThat( text.isModified() ).isTrue();
 		text.setModified( false );
 		assertThat( text.isModified() ).isFalse();
@@ -146,11 +146,11 @@ public class DesignTextTest {
 
 	@Test
 	void testRotate() {
-		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty", 40.0 );
-		assertThat( text.getRotate() ).isEqualTo( 40.0 );
+		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty", "1/3" );
+		assertThat( text.getRotate() ).isEqualTo( "1/3" );
 
-		text.setRotate( 73.0 );
-		assertThat( text.getRotate() ).isEqualTo( 73.0 );
+		text.setRotate( "73.0" );
+		assertThat( text.getRotate() ).isEqualTo( "73.0" );
 	}
 
 	@Test
