@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
@@ -8,6 +9,7 @@ import com.avereon.transaction.TxnException;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.Comparator;
@@ -18,6 +20,7 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public enum Type {
 		ARC,
+		BOX,
 		CUBIC,
 		ELLIPSE,
 		LINE,
@@ -76,6 +79,10 @@ public abstract class DesignShape extends DesignDrawable {
 	public DesignShape setSelected( boolean selected ) {
 		setValue( SELECTED, selected ? true : null );
 		return this;
+	}
+
+	public Shape getFxShape() {
+		return CadGeometry.toFxShape( this );
 	}
 
 	public Bounds getBounds() {

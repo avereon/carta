@@ -2,7 +2,11 @@ package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.PointAssert;
 import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignBox;
+import com.avereon.cartesia.data.DesignEllipse;
+import com.avereon.cartesia.data.DesignLine;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.*;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
@@ -157,6 +161,65 @@ public class CadGeometryTest {
 		assertThat( CadGeometry.normalizeAngle360( -315 ) ).isEqualTo( -315.0 );
 		assertThat( CadGeometry.normalizeAngle360( 675 ) ).isEqualTo( 315.0 );
 		assertThat( CadGeometry.normalizeAngle360( -675 ) ).isEqualTo( -315.0 );
+	}
+
+	@Test
+	void toFxShapeWithLine() {
+		Line line = (Line)CadGeometry.toFxShape( new DesignLine( 0, 0, 1, 1 ) );
+		assertThat( line.getStartX() ).isEqualTo( 0 );
+		assertThat( line.getStartY() ).isEqualTo( 0 );
+		assertThat( line.getEndX() ).isEqualTo( 1 );
+		assertThat( line.getEndY() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void toFxShapeWithBox() {
+		Rectangle box = (Rectangle)CadGeometry.toFxShape( new DesignBox( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ) );
+		assertThat( box.getX() ).isEqualTo( 0 );
+		assertThat( box.getY() ).isEqualTo( 0 );
+		assertThat( box.getWidth() ).isEqualTo( 1 );
+		assertThat( box.getHeight() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void toFxShapeWithArc() {
+		Arc arc = (Arc)CadGeometry.toFxShape( new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 1.0, 0.0, 90.0, DesignArc.Type.OPEN ) );
+		assertThat( arc.getCenterX() ).isEqualTo( 3 );
+		assertThat( arc.getCenterY() ).isEqualTo( 5 );
+		assertThat( arc.getRadiusX() ).isEqualTo( 1 );
+		assertThat( arc.getRadiusY() ).isEqualTo( 1 );
+		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
+		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
+	}
+
+	@Test
+	void toFxShapeWithEllipse() {
+		double rotate = 0.0;
+
+		Ellipse ellipse = (Ellipse)CadGeometry.toFxShape( new DesignEllipse( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate ) );
+		assertThat( ellipse.getCenterX() ).isEqualTo( 3 );
+		assertThat( ellipse.getCenterY() ).isEqualTo( 5 );
+		assertThat( ellipse.getRadiusX() ).isEqualTo( 1 );
+		assertThat( ellipse.getRadiusY() ).isEqualTo( 1 );
+
+		assertThat( ellipse.getTransforms() ).isEmpty();
+	}
+
+	@Test
+	void toFxShapeWithEllipseWithRotate() {
+		double rotate = 1.0;
+
+		Ellipse ellipse = (Ellipse)CadGeometry.toFxShape( new DesignEllipse( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate ) );
+		assertThat( ellipse.getCenterX() ).isEqualTo( 3 );
+		assertThat( ellipse.getCenterY() ).isEqualTo( 5 );
+		assertThat( ellipse.getRadiusX() ).isEqualTo( 1 );
+		assertThat( ellipse.getRadiusY() ).isEqualTo( 1 );
+
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)ellipse.getTransforms().getFirst();
+		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		assertThat( fxRotate.getPivotX() ).isEqualTo( 3 );
+		assertThat( fxRotate.getPivotY() ).isEqualTo( 5 );
 	}
 
 }

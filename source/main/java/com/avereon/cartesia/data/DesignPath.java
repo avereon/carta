@@ -4,6 +4,8 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Point;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.javafx.Fx;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -58,6 +60,13 @@ public class DesignPath extends DesignShape {
 
 	public List<Element> getElements() {
 		return new ArrayList<>( elements );
+	}
+
+	@Override
+	public Bounds getBounds() {
+		// TODO Calculate path bounds
+
+		return Fx.EMPTY_BOUNDS;
 	}
 
 	@Override

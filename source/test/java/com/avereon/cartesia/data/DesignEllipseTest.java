@@ -2,6 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.PointAssert;
 import com.avereon.curve.math.Constants;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
@@ -226,7 +227,27 @@ public class DesignEllipseTest {
 		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 2.0, 0.0 ).pathLength() ).isCloseTo( 8.0, Offset.offset( Constants.RESOLUTION_LENGTH ) );
 		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 0.0, 1.0 ).pathLength() ).isCloseTo( 4.0, Offset.offset( Constants.RESOLUTION_LENGTH ) );
 
+		// Normal ellipse
 		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0 ).pathLength() ).isCloseTo( 48.44224110273837, Offset.offset( Constants.RESOLUTION_LENGTH ) );
+
+		// Rotated ellipse
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0, 45.0 ).pathLength() ).isCloseTo( 48.44224110273837, Offset.offset( Constants.RESOLUTION_LENGTH ) );
+	}
+
+	@Test
+	void testBounds() {
+		// Circle
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 1.0 ).getBounds() ).isEqualTo( new BoundingBox( 4, -1, 2, 2 ) );
+
+		// Degenerate ellipses
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 2.0, 0.0 ).getBounds() ).isEqualTo( new BoundingBox( 3, 0, 4, 0 ) );
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 0.0, 1.0 ).getBounds() ).isEqualTo( new BoundingBox( 5, -1, 0, 2 ) );
+
+		// Normal ellipse
+		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0 ).getBounds() ).isEqualTo( new BoundingBox( -5, -5, 20, 10 ) );
+
+		// Rotated ellipse
+		//assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0, 45.0 ).getBounds() ).isEqualTo( new BoundingBox( -5, -5, 20, 20 ) );
 	}
 
 	@Test

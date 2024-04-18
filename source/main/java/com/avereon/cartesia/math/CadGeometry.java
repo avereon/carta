@@ -3,7 +3,11 @@ package com.avereon.cartesia.math;
 import com.avereon.cartesia.data.*;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Vector;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Ellipse;
+import javafx.scene.shape.Shape;
 
 import java.util.Arrays;
 import java.util.List;
@@ -202,6 +206,14 @@ public class CadGeometry {
 		return CadPoints.toFxPoint( Geometry.cartesianToPolarDegrees( asPoint( point ) ) );
 	}
 
+	public static Bounds getBounds( Point3D a, Point3D b ) {
+		double x = Math.min( a.getX(), b.getX() );
+		double y = Math.min( a.getY(), b.getY() );
+		double w = Math.abs( a.getX() - b.getX() );
+		double h = Math.abs( a.getY() - b.getY() );
+		return new BoundingBox( x, y, w, h );
+	}
+
 	public static DesignEllipse circleFromThreePoints( Point3D start, Point3D mid, Point3D end ) {
 		Point3D sm = mid.subtract( start );
 		Point3D me = end.subtract( mid );
@@ -216,7 +228,7 @@ public class CadGeometry {
 		List<Point3D> xns = CadIntersection.intersectLineLine( new DesignLine( a, b ), new DesignLine( c, d ) );
 		if( xns.isEmpty() ) return null;
 
-		Point3D origin = xns.get( 0 );
+		Point3D origin = xns.getFirst();
 		double radius = origin.distance( mid );
 
 		return new DesignEllipse( origin, radius );
@@ -253,6 +265,58 @@ public class CadGeometry {
 		if( spin != sweep ) extent *= -1;
 
 		return new DesignArc( origin, radius, startAngle, extent, DesignArc.Type.OPEN );
+	}
+
+	public static Shape toFxShape( DesignShape shape ) {
+		Bounds bounds = shape.getBounds();
+
+		switch( shape.getType() ) {
+			case BOX -> {
+				DesignBox box = (DesignBox)shape;
+				return new javafx.scene.shape.Rectangle( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY() );
+			}
+			case LINE -> {
+				DesignLine line = (DesignLine)shape;
+				return new javafx.scene.shape.Line( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
+			}
+			case ELLIPSE -> {
+				DesignEllipse ellipse = (DesignEllipse)shape;
+				Ellipse fxEllipse = new javafx.scene.shape.Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
+				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( javafx.scene.transform.Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() ) );
+				return fxEllipse;
+			}
+			case ARC -> {
+				DesignArc arc = (DesignArc)shape;
+				return new javafx.scene.shape.Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcStart(), arc.calcExtent() );
+			}
+			case QUAD -> {
+				DesignQuad quad = (DesignQuad)shape;
+				return new javafx.scene.shape.QuadCurve( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
+			}
+			case CUBIC -> {
+				DesignCubic cubic = (DesignCubic)shape;
+				return new javafx.scene.shape.CubicCurve( cubic.getOrigin().getX(),
+					cubic.getOrigin().getY(),
+					cubic.getOriginControl().getX(),
+					cubic.getOriginControl().getY(),
+					cubic.getPointControl().getX(),
+					cubic.getPointControl().getY(),
+					cubic.getPoint().getX(),
+					cubic.getPoint().getY()
+				);
+			}
+			case PATH -> {
+				DesignPath path = (DesignPath)shape;
+				// TODO Calculate path shape
+				return new javafx.scene.shape.Rectangle( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
+			}
+			case TEXT -> {
+				DesignText text = (DesignText)shape;
+				return new javafx.scene.text.Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
+			}
+		}
+
+		return new javafx.scene.shape.Rectangle( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
 	}
 
 }

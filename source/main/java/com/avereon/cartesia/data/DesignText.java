@@ -4,6 +4,9 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.font.FontMetrics;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -326,6 +329,21 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 			default -> super.setValue( key, newValue );
 		};
+	}
+
+	@Override
+	public Bounds getBounds() {
+		// TODO This is used a lot and should be cached
+
+		FontMetrics metrics = new FontMetrics( calcFont() );
+		double x = getOrigin().getX();
+		double y = getOrigin().getY();
+		double w = metrics.computeStringWidth( getText() );
+		double h = metrics.computeStringHeight( getText() );
+
+		// FIXME Need to take rotation into account
+
+		return new BoundingBox( x, y, w, h );
 	}
 
 	@Override

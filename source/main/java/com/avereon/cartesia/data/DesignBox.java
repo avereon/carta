@@ -35,7 +35,7 @@ public class DesignBox extends DesignShape {
 
 	@Override
 	public Type getType() {
-		return Type.LINE;
+		return Type.BOX;
 	}
 
 	public Point3D getSize() {
@@ -104,10 +104,10 @@ public class DesignBox extends DesignShape {
 
 	public DesignShape updateFrom( DesignShape shape ) {
 		super.updateFrom( shape );
-		if( !(shape instanceof DesignBox line) ) return this;
+		if( !(shape instanceof DesignBox box) ) return this;
 
 		try( Txn ignore = Txn.create() ) {
-			this.setSize( line.getSize() );
+			this.setSize( box.getSize() );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to update curve" );
 		}

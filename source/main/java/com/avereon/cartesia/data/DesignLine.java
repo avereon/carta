@@ -5,7 +5,9 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -45,6 +47,12 @@ public class DesignLine extends DesignShape {
 	public DesignShape setPoint( Point3D point ) {
 		setValue( POINT, point );
 		return this;
+	}
+
+	@Override
+	public Bounds getBounds() {
+		// TODO This is used a lot and should be cached
+		return CadGeometry.getBounds( getOrigin(), getPoint() );
 	}
 
 	@Override

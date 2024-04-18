@@ -810,7 +810,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
-		// TODO Implement this
+		renderer.screenWindowSelect( a, b, contains );
 	}
 
 	@Override

@@ -7,6 +7,8 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.ArcType;
 import lombok.CustomLog;
@@ -134,6 +136,20 @@ public class DesignArc extends DesignEllipse {
 	public DesignArc setType( DesignArc.Type value ) {
 		setValue( TYPE, value );
 		return this;
+	}
+
+	@Override
+	public Bounds getBounds() {
+		// TODO This is used a lot and should be cached
+
+		double x = getOrigin().getX() - getXRadius();
+		double y = getOrigin().getY() - getYRadius();
+		double w = 2 * getXRadius();
+		double h = 2 * getYRadius();
+
+		// FIXME Need to take rotation into account
+
+		return new BoundingBox( x, y, w, h );
 	}
 
 	@Override

@@ -26,12 +26,14 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @CustomLog
 public class DesignRenderer extends BorderPane {
@@ -158,6 +160,8 @@ public class DesignRenderer extends BorderPane {
 		return gridVisible;
 	}
 
+	// Visible Layers ------------------------------------------------------------
+
 	public boolean isLayerVisible( DesignLayer layer ) {
 		return visibleLayers.contains( layer );
 	}
@@ -176,6 +180,14 @@ public class DesignRenderer extends BorderPane {
 		return visibleLayers;
 	}
 
+	// Visible Shapes ------------------------------------------------------------
+
+	public Set<DesignShape> getVisibleShapes() {
+		return getVisibleLayers().stream().flatMap( l -> l.getShapes().stream() ).collect( Collectors.toSet() );
+	}
+
+	// Visible Shapes ------------------------------------------------------------
+
 	public void setSelectAperture( DesignShape aperture ) {
 		selectAperture.set( aperture );
 	}
@@ -187,6 +199,8 @@ public class DesignRenderer extends BorderPane {
 	public SimpleObjectProperty<DesignShape> selectAperture() {
 		return selectAperture;
 	}
+
+	// Selected Shapes -----------------------------------------------------------
 
 	public boolean isShapeSelected( DesignShape shape ) {
 		return selectedShapes.contains( shape );
@@ -205,6 +219,8 @@ public class DesignRenderer extends BorderPane {
 	public ObservableSet<DesignShape> selectedShapes() {
 		return selectedShapes;
 	}
+
+	// Other ---------------------------------------------------------------------
 
 	/**
 	 * Convenience method to get the viewpoint of the renderer.
@@ -630,17 +646,23 @@ public class DesignRenderer extends BorderPane {
 	private List<DesignShape> doSelectByShape( final DesignShape selector, final boolean contains ) {
 		// This method should be thread agnostic. It should be safe to call from any thread.
 
+		List<DesignShape> selected = new ArrayList<>();
+
 		// NEXT Need to implement this method using design shapes
+		for( DesignShape shape : getVisibleShapes() ) {
+			if( contains ? isContained( selector, shape ) : isIntersecting( selector, shape ) ) {
+				selected.add( shape );
+			}
+		}
 
-		//
+		log.atWarn().log( "selected count={0}", selected.size() );
 
-		return List.of();
+		return selected;
 	}
 
 	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
 		//		//		boolean invisibleShape = isInvisible( shape );
 		//		//		if( invisibleShape ) shape.setStroke( BARELY_VISIBLE );
-
 
 		// NEXT Implement shape bounds for all shapes
 
@@ -649,12 +671,14 @@ public class DesignRenderer extends BorderPane {
 		if( !localToParent( selector.getBounds() ).intersects( localToParent( shape.getBounds() ) ) ) return false;
 
 		// 		// This is the slow but accurate test if the shape is intersecting
-		//		boolean result = !((javafx.scene.shape.Path)Shape.intersect( shape, selector )).getElements().isEmpty();
+		Shape fxSelector = selector.getFxShape();
+		Shape fxShape = shape.getFxShape();
+		boolean result = !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
 
 		//		//		if( invisibleShape ) shape.setStroke( null );
-		//
-		//		return result;
-		return false;
+
+				return result;
+//		return false;
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
