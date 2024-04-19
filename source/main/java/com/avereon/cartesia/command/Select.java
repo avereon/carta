@@ -1,10 +1,9 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandEventKey;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
+import com.avereon.cartesia.tool.CommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
@@ -49,28 +48,20 @@ public class Select extends Command {
 		Point3D point = new Point3D( event.getX(), event.getY(), event.getZ() );
 		if( context.isSelectMode() ) {
 			if( event.isStillSincePress() ) {
-				tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggleEvent( event ) );
+				tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggle( event ) );
 				return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			} else {
-				tool.mouseWindowSelect( dragAnchor, point, isSelectByContains( event ) );
-				return createBounds( dragAnchor, point );
+				tool.screenWindowSelect( dragAnchor, point, isSelectByIntersect( event ), isSelectToggle( event ) );
+				return CadGeometry.getBounds( dragAnchor, point );
 			}
 		} else if( context.isPenMode() ) {
 			if( event.isStillSincePress() ) {
 				return tool.mouseToWorkplane( point );
 			} else {
-				return createBounds( dragAnchor, point );
+				return CadGeometry.getBounds( dragAnchor, point );
 			}
 		}
 		return COMPLETE;
-	}
-
-	private Bounds createBounds( Point3D a, Point3D b ) {
-		double x = Math.min( a.getX(), b.getX() );
-		double y = Math.min( a.getY(), b.getY() );
-		double w = Math.abs( a.getX() - b.getX() );
-		double h = Math.abs( a.getY() - b.getY() );
-		return new BoundingBox( x, y, w, h );
 	}
 
 	@Override
@@ -86,12 +77,12 @@ public class Select extends Command {
 		}
 	}
 
-	private boolean isSelectToggleEvent( MouseEvent event ) {
+	private boolean isSelectToggle( MouseEvent event ) {
 		return event.isControlDown();
 	}
 
-	private boolean isSelectByContains( MouseEvent event ) {
-		return !event.isControlDown();
+	private boolean isSelectByIntersect( MouseEvent event ) {
+		return event.isAltDown();
 	}
 
 }

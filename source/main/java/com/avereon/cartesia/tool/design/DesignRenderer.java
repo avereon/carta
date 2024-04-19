@@ -207,10 +207,13 @@ public class DesignRenderer extends BorderPane {
 		return selectedShapes;
 	}
 
+	public void clearSelectedShapes() {
+		setSelectedShapes( null );
+	}
+
 	public void setSelectedShapes( Collection<DesignShape> shapes ) {
 		selectedShapes.clear();
 		if( shapes != null ) selectedShapes.addAll( shapes );
-		render();
 	}
 
 	public ObservableSet<DesignShape> selectedShapes() {
@@ -354,8 +357,8 @@ public class DesignRenderer extends BorderPane {
 		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
 	}
 
-	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
-		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), contains );
+	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
 	}
 
 	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue v ) {
@@ -367,7 +370,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public List<DesignShape> worldPointSelect( Point3D anchor, Point3D radii ) {
-		return doSelectByShape( new DesignEllipse( anchor, radii ), false );
+		return doFindByShape( new DesignEllipse( anchor, radii ), true );
+		//return doFindByShape( new DesignBox( anchor.subtract( radii ), radii.multiply( 2 ) ), true );
 	}
 
 	/**
@@ -375,17 +379,17 @@ public class DesignRenderer extends BorderPane {
 	 *
 	 * @param a One corner of the window
 	 * @param b The other corner of the window
-	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
+	 * @param intersect True to select shapes by intersection
 	 * @return The set of selected nodes
 	 */
-	public List<DesignShape> worldWindowSelect( Point3D a, Point3D b, boolean contains ) {
+	public List<DesignShape> worldWindowSelect( Point3D a, Point3D b, boolean intersect ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
 		double h = Math.abs( a.getY() - b.getY() );
 
 		DesignBox box = new DesignBox( x, y, w, h );
-		return doSelectByShape( box, contains );
+		return doFindByShape( box, intersect );
 	}
 
 	private void doRender() {
@@ -464,14 +468,7 @@ public class DesignRenderer extends BorderPane {
 
 				// FIXME Temporary code to show the bounding box
 				if( 1 == 1 ) {
-					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint,
-						0.01,
-						LineCap.valueOf( shape.calcDrawCap().name() ),
-						LineJoin.ROUND,
-						null,
-						0.0,
-						false
-					);
+					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
 
 					Bounds bounds = shape.getBounds();
 					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
@@ -496,7 +493,8 @@ public class DesignRenderer extends BorderPane {
 		if( drawPaint == null ) {
 			renderer.setDrawPen( null, 0.0, null, null, null, 0.0, false );
 		} else {
-			renderer.setDrawPen( selected ? selectedDrawPaint : drawPaint,
+			renderer.setDrawPen(
+				selected ? selectedDrawPaint : drawPaint,
 				shape.calcDrawWidth(),
 				LineCap.valueOf( shape.calcDrawCap().name() ),
 				LineJoin.ROUND,
@@ -514,7 +512,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void drawCubic( DesignCubic cubic ) {
-		renderer.drawCubic( cubic.getOrigin().getX(),
+		renderer.drawCubic(
+			cubic.getOrigin().getX(),
 			cubic.getOrigin().getY(),
 			cubic.getOriginControl().getX(),
 			cubic.getOriginControl().getY(),
@@ -616,14 +615,14 @@ public class DesignRenderer extends BorderPane {
 		Paint fillColor = setFillPen( aperture, false, null );
 		Paint drawColor = setDrawPen( aperture, false, null );
 
-		if( aperture.getType() == DesignShape.Type.ELLIPSE ) {
-			DesignEllipse ellipse = (DesignEllipse)aperture;
+		if( aperture instanceof DesignEllipse ellipse ) {
 			renderer.setFillPen( fillColor );
-			renderer.fillEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
+			renderer.fillScreenOval( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY() );
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
-			renderer.drawEllipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY(), ellipse.calcRotate() );
-		} else if( aperture.getType() == DesignShape.Type.BOX ) {
-			DesignBox rectangle = (DesignBox)aperture;
+			renderer.drawScreenOval( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY() );
+		}
+
+		if( aperture instanceof DesignBox rectangle ) {
 			renderer.setFillPen( fillColor );
 			renderer.fillScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getSize().getX(), rectangle.getSize().getY() );
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
@@ -649,18 +648,16 @@ public class DesignRenderer extends BorderPane {
 	 * of selected shapes in order from top to bottom.
 	 *
 	 * @param selector The selecting shape
-	 * @param contains True to require selected shapes be contained by the selecting shape
+	 * @param intersect True to select shapes by intersection
 	 * @return The list of selected shapes
 	 */
-	private List<DesignShape> doSelectByShape( final DesignShape selector, final boolean contains ) {
+	private List<DesignShape> doFindByShape( final DesignShape selector, final boolean intersect ) {
 		// This method should be thread agnostic. It should be safe to call from any thread.
-		List<DesignShape> selected = getVisibleShapes().stream().filter( shape -> shouldSelect( selector, contains, shape ) ).collect( Collectors.toList() );
-		setSelectedShapes( selected );
-		return selected;
+		return getVisibleShapes().stream().filter( shape -> matches( selector, shape, intersect ) ).collect( Collectors.toList() );
 	}
 
-	private boolean shouldSelect( DesignShape selector, boolean contains, DesignShape shape ) {
-		return contains ? isContained( selector, shape ) : isIntersecting( selector, shape );
+	private boolean matches( DesignShape selector, DesignShape shape, boolean intersect ) {
+		return intersect ? isIntersecting( selector, shape ) : isContained( selector, shape );
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
@@ -673,10 +670,10 @@ public class DesignRenderer extends BorderPane {
 		// This second test is an optimization for fully contained shapes
 		if( localToParent( selectorBounds ).contains( shapeBounds ) ) return true;
 
-//		// This is the slow but accurate test if the shape is contained when the selector is not a box
-//		Shape fxSelector = selector.getFxShape();
-//		Shape fxShape = shape.getFxShape();
-//		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
+		//		// This is the slow but accurate test if the shape is contained when the selector is not a box
+		//		Shape fxSelector = selector.getFxShape();
+		//		Shape fxShape = shape.getFxShape();
+		//		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
 
 		return false;
 	}

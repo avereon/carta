@@ -184,19 +184,22 @@ public class CommandMap {
 		// Single select
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
 		// Add/remove select
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "select" );
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );
 		// Snap nearest
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
-		// Camera move
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-move" );
+		// Camera move (aka pan)
+		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
 		// Camera spin
 		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, true, false, false ), "camera-spin" );
 		// Camera zoom
-		add( new CommandEventKey( ScrollEvent.SCROLL, true, false, false, false ), "camera-zoom" );
-		add( new CommandEventKey( ZoomEvent.ZOOM, true, false, false, false ), "camera-zoom" );
-		// Camera walk
-		add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-walk" );
-		add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-walk" );
+		// FIXME Shift+Scroll is not working
+		// But scroll with no modifiers is working
+		// And Ctrl+Scroll is working
+		add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-zoom" );
+		add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-zoom" );
+		// Camera walk (moving the camara forward and back)
+		//add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-walk" );
+		//add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-walk" );
 
 		//printCommandMapByCommand();
 		//printCommandMapByName();

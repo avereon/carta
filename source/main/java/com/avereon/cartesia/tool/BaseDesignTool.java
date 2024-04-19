@@ -297,7 +297,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract void screenPointSelect( Point3D mouse, boolean toggle );
 
-	public abstract void mouseWindowSelect( Point3D a, Point3D b, boolean contains );
+	public abstract void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle );
 
 	public abstract void worldPointSelect( Point3D point );
 

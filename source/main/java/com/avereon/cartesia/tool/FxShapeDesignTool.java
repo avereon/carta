@@ -952,10 +952,10 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 	}
 
 	@Override
-	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
+	public void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
 		Fx.run( () -> {
 			selectedShapes().clear();
-			selectedShapes().addAll( designPane.screenWindowSelect( a, b, contains ) );
+			selectedShapes().addAll( designPane.screenWindowSelect( a, b, intersect ) );
 		} );
 	}
 

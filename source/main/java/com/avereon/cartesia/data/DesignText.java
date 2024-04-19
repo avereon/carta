@@ -341,6 +341,9 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		double w = textBounds.getWidth();
 		double h = textBounds.getHeight();
 
+		// NOTE This does not perfectly match the text bounds when rotated.
+		// It will always be a bit larger when rotated, so it is close enough for now.
+		// To get perfect bounds the path of the text would need to be walked.
 		Bounds bounds = new BoundingBox( x, y, w, h );
 		CadTransform rotate = CadTransform.rotation( getOrigin().getX(), getOrigin().getY(), calcRotate() );
 		return rotate.apply( bounds );

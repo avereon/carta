@@ -805,12 +805,33 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
-		// TODO Implement this
+		if( !toggle ) renderer.clearSelectedShapes();
+
+		renderer.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
+			if( renderer.isShapeSelected( shape ) ) {
+				renderer.selectedShapes().remove( shape );
+			} else {
+				renderer.selectedShapes().add( shape );
+			}
+		} );
 	}
 
 	@Override
-	public void mouseWindowSelect( Point3D a, Point3D b, boolean contains ) {
-		renderer.screenWindowSelect( a, b, contains );
+	public void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
+		if( !toggle ) renderer.clearSelectedShapes();
+
+		List<DesignShape> shapes = renderer.screenWindowSelect( a, b, intersect );
+		if( toggle ) {
+			shapes.forEach( shape -> {
+				if( renderer.isShapeSelected( shape ) ) {
+					renderer.selectedShapes().remove( shape );
+				} else {
+					renderer.selectedShapes().add( shape );
+				}
+			} );
+		} else {
+			renderer.selectedShapes().addAll( shapes );
+		}
 	}
 
 	@Override
@@ -825,7 +846,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	@Override
 	public void clearSelected() {
-		renderer.setSelectedShapes( null );
+		renderer.clearSelectedShapes();
 	}
 
 	@Override

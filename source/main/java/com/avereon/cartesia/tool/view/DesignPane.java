@@ -463,8 +463,8 @@ public class DesignPane extends StackPane {
 		return worldPointSelect( parentToLocal( point ), new Point2D( size, size ) );
 	}
 
-	public List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean contains ) {
-		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), contains );
+	public List<Shape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
 	}
 
 	public List<Shape> worldPointSelect( Point3D anchor, DesignValue v ) {
@@ -484,17 +484,17 @@ public class DesignPane extends StackPane {
 	 *
 	 * @param a One corner of the window
 	 * @param b The other corner of the window
-	 * @param contains True to select nodes contained in the window, false to select nodes intersecting the window
+	 * @param intersect True to select shapes by intersection
 	 * @return The set of selected nodes
 	 */
-	public List<Shape> worldWindowSelect( Point3D a, Point3D b, boolean contains ) {
+	public List<Shape> worldWindowSelect( Point3D a, Point3D b, boolean intersect ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
 		double h = Math.abs( a.getY() - b.getY() );
 
 		Rectangle box = new Rectangle( x, y, w, h );
-		return doSelectByShape( box, contains );
+		return doSelectByShape( box, intersect );
 	}
 
 	public List<DesignLayerPane> getLayers() {
@@ -699,19 +699,19 @@ public class DesignPane extends StackPane {
 	 * Select nodes using a shape. The selecting shape can be any shape but it usually a {@link Circle} or a {@link Rectangle}. Returns the list of selected shapes in order from top to bottom.
 	 *
 	 * @param selector The selecting shape
-	 * @param contains True to require selected shapes be contained by the selecting shape
+	 * @param intersect True to select shapes by intersection
 	 * @return The list of selected shapes
 	 */
-	private List<Shape> doSelectByShape( final Shape selector, final boolean contains ) {
+	private List<Shape> doSelectByShape( final Shape selector, final boolean intersect ) {
 		// This method should be thread agnostic, however, the code to calculate
 		// selections must be run on the FX thread. If we are on the FX thread then
 		// this is just a simple call to fxSelectByShape(). If not, a future must
 		// be created to run on the FX thread and return the result.
 
-		if( Fx.isFxThread() ) return fxSelectByShape( selector, contains );
+		if( Fx.isFxThread() ) return fxSelectByShape( selector, intersect );
 
 		try {
-			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, contains ) ) ).get( 500, TimeUnit.MILLISECONDS );
+			return Fx.run( new FutureTask<>( () -> fxSelectByShape( selector, intersect ) ) ).get( 500, TimeUnit.MILLISECONDS );
 		} catch( ExecutionException | TimeoutException | InterruptedException exception ) {
 			log.atWarn( exception ).log( "Unable to select shapes" );
 		}
@@ -720,7 +720,7 @@ public class DesignPane extends StackPane {
 	}
 
 	// THREAD JavaFX Application Thread
-	private List<Shape> fxSelectByShape( final Shape selector, final boolean contains ) {
+	private List<Shape> fxSelectByShape( final Shape selector, final boolean intersect ) {
 		Fx.affirmOnFxThread();
 
 		// The shape must have a fill but no stroke. The selector color is not
@@ -736,7 +736,7 @@ public class DesignPane extends StackPane {
 			Bounds bounds = selector.getLayoutBounds();
 			Point3D center = new Point3D( bounds.getCenterX(), bounds.getCenterY(), bounds.getCenterZ() );
 
-			Stream<Shape> selectStream = shapes.stream().filter( contains ? s -> isContained( selector, s ) : s -> isIntersecting( selector, s ) );
+			Stream<Shape> selectStream = shapes.stream().filter( intersect ? s -> isIntersecting( selector, s ) : s -> isContained( selector, s ) );
 
 			return selectStream
 				.map( DesignShapeView::getDesignData )
