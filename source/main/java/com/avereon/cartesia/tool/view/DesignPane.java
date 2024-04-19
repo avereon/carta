@@ -476,7 +476,7 @@ public class DesignPane extends StackPane {
 	}
 
 	public List<Shape> worldPointSelect( Point3D anchor, Point2D radii ) {
-		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), radii.getX(), radii.getY() ), false );
+		return doSelectByShape( new Ellipse( anchor.getX(), anchor.getY(), radii.getX(), radii.getY() ), true );
 	}
 
 	/**

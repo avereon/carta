@@ -101,16 +101,16 @@ public class DesignPaneTest extends BaseFxPlatformTestCase implements TestTimeou
 		assertThat( line.getEndX() ).isEqualTo( 1.0 );
 		assertThat( line.getEndY() ).isEqualTo( -1.0 );
 
-		assertThat( pane.worldWindowSelect( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), false ).isEmpty() ).isTrue();
-		assertThat( pane.worldWindowSelect( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), false ) ).contains( line );
-		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), false ) ).contains( line );
-		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), false ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), true ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), true ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), true ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), true ).isEmpty() ).isTrue();
 
-		assertThat( pane.worldWindowSelect( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), false ) ).contains( line );
-		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), false ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), true ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), true ) ).contains( line );
 
-		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), false ) ).contains( line );
-		assertThat( pane.worldWindowSelect( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), false ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), true ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), true ) ).contains( line );
 	}
 
 	@Test
@@ -131,20 +131,20 @@ public class DesignPaneTest extends BaseFxPlatformTestCase implements TestTimeou
 		assertThat( line.getEndX() ).isEqualTo( 1.0 );
 		assertThat( line.getEndY() ).isEqualTo( -1.0 );
 
-		assertThat( pane.worldWindowSelect( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), true ).isEmpty() ).isTrue();
-		assertThat( pane.worldWindowSelect( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), true ).isEmpty() ).isTrue();
-		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), true ).isEmpty() ).isTrue();
-		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), true ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( 1, 1, 0 ), new Point3D( 2, 2, 0 ), false ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ), false ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 0, 0, 0 ), false ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( -1, -1, 0 ), false ).isEmpty() ).isTrue();
 
-		assertThat( pane.worldWindowSelect( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), true ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( -0.5, -0.5, 0 ), new Point3D( 0.5, 0.5, 0 ), false ).isEmpty() ).isTrue();
 		// This does not contain the line because the line has width and stroke caps
-		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), true ).isEmpty() ).isTrue();
+		assertThat( pane.worldWindowSelect( new Point3D( -1, -1, 0 ), new Point3D( 1, 1, 0 ), false ).isEmpty() ).isTrue();
 		// This should just barely contain the line
 		double d = line.getBoundsInLocal().getMaxX();
-		assertThat( pane.worldWindowSelect( new Point3D( -d, -d, 0 ), new Point3D( d, d, 0 ), true ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -d, -d, 0 ), new Point3D( d, d, 0 ), false ) ).contains( line );
 
-		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), true ) ).contains( line );
-		assertThat( pane.worldWindowSelect( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), true ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ), false ) ).contains( line );
+		assertThat( pane.worldWindowSelect( new Point3D( -2, 2, 0 ), new Point3D( 2, -2, 0 ), false ) ).contains( line );
 	}
 
 	@Test
