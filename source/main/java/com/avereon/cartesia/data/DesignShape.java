@@ -41,8 +41,10 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String REFERENCE = "reference";
 
+	// TODO This could be optimized more by just having a local reference
 	protected static final String BOUNDS_CACHE = "bounds-cache";
 
+	// TODO This could be optimized more by just having a local reference
 	protected static final String FX_SHAPE_CACHE = "fx-shape-cache";
 
 	public DesignShape() {
