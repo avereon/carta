@@ -6,8 +6,12 @@ import com.avereon.curve.math.Vector;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Ellipse;
-import javafx.scene.shape.Shape;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.*;
+import javafx.scene.text.Text;
+import javafx.scene.transform.Transform;
+import lombok.CustomLog;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +19,7 @@ import java.util.List;
 import static com.avereon.cartesia.math.CadPoints.asPoint;
 import static com.avereon.cartesia.math.CadPoints.toFxPoint;
 
+@CustomLog
 public class CadGeometry {
 
 	public static double angle360( Point3D a ) {
@@ -41,11 +46,11 @@ public class CadGeometry {
 	}
 
 	public static Point3D rotate360( Point3D point, double angle ) {
-		return CadPoints.toFxPoint( Vector.rotate( asPoint( point ), Math.toRadians( angle ) ) );
+		return toFxPoint( Vector.rotate( asPoint( point ), Math.toRadians( angle ) ) );
 	}
 
 	public static Point3D rotate360( Point3D axis, Point3D point, double angle ) {
-		return CadPoints.toFxPoint( Vector.rotate( asPoint( axis ), asPoint( point ), Math.toRadians( angle ) ) );
+		return toFxPoint( Vector.rotate( asPoint( axis ), asPoint( point ), Math.toRadians( angle ) ) );
 	}
 
 	public static double distance( Point3D a, Point3D b ) {
@@ -53,19 +58,19 @@ public class CadGeometry {
 	}
 
 	public static Point3D midpoint( Point3D a, Point3D b ) {
-		return CadPoints.toFxPoint( Geometry.midpoint( asPoint( a ), asPoint( b ) ) );
+		return toFxPoint( Geometry.midpoint( asPoint( a ), asPoint( b ) ) );
 	}
 
 	public static Point3D midpoint( Point3D origin, double xRadius, double yRadius, double rotate, double start, double extent ) {
-		return CadPoints.toFxPoint( Geometry.midpoint( asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
+		return toFxPoint( Geometry.midpoint( asPoint( origin ), xRadius, yRadius, rotate, start, extent ) );
 	}
 
 	public static Point3D nearestLinePoint( Point3D a, Point3D b, Point3D p ) {
-		return CadPoints.toFxPoint( Geometry.nearestLinePoint( asPoint( a ), asPoint( b ), asPoint( p ) ) );
+		return toFxPoint( Geometry.nearestLinePoint( asPoint( a ), asPoint( b ), asPoint( p ) ) );
 	}
 
 	public static Point3D nearestBoundLinePoint( Point3D a, Point3D b, Point3D p ) {
-		return CadPoints.toFxPoint( Geometry.nearestBoundLinePoint( asPoint( a ), asPoint( b ), asPoint( p ) ) );
+		return toFxPoint( Geometry.nearestBoundLinePoint( asPoint( a ), asPoint( b ), asPoint( p ) ) );
 	}
 
 	/**
@@ -113,7 +118,7 @@ public class CadGeometry {
 	}
 
 	public static Point3D ellipsePoint360( Point3D o, Point3D radii, double rotate, double angle ) {
-		return CadPoints.toFxPoint( Geometry.ellipsePoint( asPoint( o ), asPoint( radii ), Math.toRadians( rotate ), Math.toRadians( angle ) ) );
+		return toFxPoint( Geometry.ellipsePoint( asPoint( o ), asPoint( radii ), Math.toRadians( rotate ), Math.toRadians( angle ) ) );
 	}
 
 	public static double ellipseAngle360( DesignEllipse ellipse, Point3D point ) {
@@ -166,7 +171,7 @@ public class CadGeometry {
 	}
 
 	public static Point3D getNormal( Point3D a, Point3D b, Point3D c ) {
-		return CadPoints.toFxPoint( Geometry.getNormal( asPoint( a ), asPoint( b ), asPoint( c ) ) );
+		return toFxPoint( Geometry.getNormal( asPoint( a ), asPoint( b ), asPoint( c ) ) );
 	}
 
 	public static boolean areSameSize( double a, double b ) {
@@ -191,19 +196,19 @@ public class CadGeometry {
 	}
 
 	public static Point3D polarToCartesian( Point3D polar ) {
-		return CadPoints.toFxPoint( Geometry.polarToCartesian( asPoint( polar ) ) );
+		return toFxPoint( Geometry.polarToCartesian( asPoint( polar ) ) );
 	}
 
 	public static Point3D polarToCartesian360( Point3D polar ) {
-		return CadPoints.toFxPoint( Geometry.polarDegreesToCartesian( asPoint( polar ) ) );
+		return toFxPoint( Geometry.polarDegreesToCartesian( asPoint( polar ) ) );
 	}
 
 	public static Point3D cartesianToPolar( Point3D point ) {
-		return CadPoints.toFxPoint( Geometry.cartesianToPolar( asPoint( point ) ) );
+		return toFxPoint( Geometry.cartesianToPolar( asPoint( point ) ) );
 	}
 
 	public static Point3D cartesianToPolar360( Point3D point ) {
-		return CadPoints.toFxPoint( Geometry.cartesianToPolarDegrees( asPoint( point ) ) );
+		return toFxPoint( Geometry.cartesianToPolarDegrees( asPoint( point ) ) );
 	}
 
 	public static Bounds getBounds( Point3D a, Point3D b ) {
@@ -268,34 +273,32 @@ public class CadGeometry {
 	}
 
 	public static Shape toFxShape( DesignShape shape ) {
-		Bounds bounds = shape.getBounds();
-
-		switch( shape.getType() ) {
+		Shape fxShape = switch( shape.getType() ) {
 			case BOX -> {
 				DesignBox box = (DesignBox)shape;
-				return new javafx.scene.shape.Rectangle( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY() );
+				yield new Rectangle( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY() );
 			}
 			case LINE -> {
 				DesignLine line = (DesignLine)shape;
-				return new javafx.scene.shape.Line( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
+				yield new Line( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
 			}
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
-				Ellipse fxEllipse = new javafx.scene.shape.Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
-				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( javafx.scene.transform.Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() ) );
-				return fxEllipse;
+				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
+				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() ) );
+				yield fxEllipse;
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
-				return new javafx.scene.shape.Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcStart(), arc.calcExtent() );
+				yield new Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcStart(), arc.calcExtent() );
 			}
 			case QUAD -> {
 				DesignQuad quad = (DesignQuad)shape;
-				return new javafx.scene.shape.QuadCurve( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
+				yield new QuadCurve( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
 			}
 			case CUBIC -> {
 				DesignCubic cubic = (DesignCubic)shape;
-				return new javafx.scene.shape.CubicCurve( cubic.getOrigin().getX(),
+				yield new CubicCurve( cubic.getOrigin().getX(),
 					cubic.getOrigin().getY(),
 					cubic.getOriginControl().getX(),
 					cubic.getOriginControl().getY(),
@@ -305,18 +308,34 @@ public class CadGeometry {
 					cubic.getPoint().getY()
 				);
 			}
+			case MARKER -> {
+				// TODO This should return a path
+				DesignMarker marker = (DesignMarker)shape;
+				double size = marker.calcSize();
+				yield new Rectangle( marker.getOrigin().getX() - 0.5 * size, marker.getOrigin().getY() - 0.5 * size, size, size );
+			}
 			case PATH -> {
 				DesignPath path = (DesignPath)shape;
 				// TODO Calculate path shape
-				return new javafx.scene.shape.Rectangle( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
+				yield new Rectangle( path.getOrigin().getX(), path.getOrigin().getY(), 1, 1 );
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
-				return new javafx.scene.text.Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
+				yield new Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
 			}
-		}
+		};
 
-		return new javafx.scene.shape.Rectangle( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
+		Paint drawPaint = shape.calcDrawPaint();
+		Paint fillPaint = shape.calcFillPaint();
+		if( drawPaint != null ) fxShape.setStroke( Color.YELLOW );
+		if( fillPaint != null ) fxShape.setFill( Color.RED );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() );
+//		fxShape.setStrokeLineCap( shape.calcDrawCap() );
+//		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
+//		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
+//		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
+
+		return fxShape;
 	}
 
 }

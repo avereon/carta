@@ -7,8 +7,6 @@ import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
@@ -486,15 +484,6 @@ public class DesignMarker extends DesignShape {
 	@Override
 	public Paint calcFillPaint() {
 		return calcDrawPaint();
-	}
-
-	@Override
-	public Bounds getBounds() {
-		double x = getOrigin().getX() - 0.5 * calcSize();
-		double y = getOrigin().getY() - 0.5 * calcSize();
-		double w = calcSize();
-		double h = calcSize();
-		return new BoundingBox( x, y, w, h );
 	}
 
 	@Override

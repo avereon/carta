@@ -76,6 +76,10 @@ public abstract class DesignDrawable extends DesignNode {
 		return Paints.parseWithNullOnException( getDrawPaintWithInheritance() );
 	}
 
+	public Paint calcDrawPaintWithoutInheritance() {
+		return Paints.parseWithNullOnException( getDrawPaint() );
+	}
+
 	public String getDrawPaintWithInheritance() {
 		String paint = getDrawPaint();
 		if( isCustomValue( paint ) ) return paint;

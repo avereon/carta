@@ -1,12 +1,18 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.curve.math.Constants;
+import com.avereon.zarra.color.Paints;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -84,10 +90,86 @@ public class DesignLineTest {
 
 	@Test
 	void testPathLength() {
-		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) ).pathLength() ).isCloseTo( 1.0, TOLERANCE );
-		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, -1, 0 ) ).pathLength() ).isCloseTo( 1.0, TOLERANCE );
-		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ).pathLength() ).isCloseTo( Constants.SQRT_TWO, TOLERANCE );
-		assertThat( new DesignLine( new Point3D( -2, 1, 0 ), new Point3D( 2, -2, 0 ) ).pathLength() ).isCloseTo( 5.0, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 0, 0 ) ).pathLength() ).isEqualTo( 1.0, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, -1, 0 ) ).pathLength() ).isEqualTo( 1.0, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ).pathLength() ).isEqualTo( Constants.SQRT_TWO, TOLERANCE );
+		assertThat( new DesignLine( new Point3D( -2, 1, 0 ), new Point3D( 2, -2, 0 ) ).pathLength() ).isEqualTo( 5.0, TOLERANCE );
+	}
+
+	@Test
+	@Disabled
+	void getSelectionBounds() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
+		//line.setDrawWidth( "0.0" );
+
+		// when
+		Bounds bounds = line.getSelectionBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( -2 );
+		assertThat( bounds.getMinY() ).isEqualTo( -2 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2 );
+		assertThat( bounds.getWidth() ).isEqualTo( 4 );
+		assertThat( bounds.getHeight() ).isEqualTo( 4 );
+	}
+
+	@Test
+	void getSelectionBoundsWithStroke() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
+		line.setDrawPaint( Paints.toString( Color.WHITE ) );
+		line.setDrawWidth( "1.0" );
+
+		// when
+		Bounds bounds = line.getSelectionBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4 + CadMath.SQRT2, LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 4 + CadMath.SQRT2, LOOSE_TOLERANCE );
+	}
+
+	@Test
+	@Disabled
+	void getSelectionBoundsWithNoLength() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+
+		// when
+		Bounds bounds = line.getSelectionBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( 0 );
+		assertThat( bounds.getMinY() ).isEqualTo( 0 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 0 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 0 );
+		assertThat( bounds.getWidth() ).isEqualTo( 0 );
+		assertThat( bounds.getHeight() ).isEqualTo( 0 );
+	}
+
+	@Test
+	@Disabled
+	void getSelectionBoundsWithNarrowWidth() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
+		line.setDrawPaint( Paints.toString( Color.WHITE ) );
+		line.setDrawWidth( "0.1" );
+
+		// when
+		Bounds bounds = line.getSelectionBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( -2.0707, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -2.0707, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2.0707, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.0707, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4.141, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 4.141, TOLERANCE );
 	}
 
 }

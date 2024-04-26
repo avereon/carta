@@ -470,7 +470,7 @@ public class DesignRenderer extends BorderPane {
 				if( 1 == 1 ) {
 					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
 
-					Bounds bounds = shape.getBounds();
+					Bounds bounds = shape.getSelectionBounds();
 					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
 				}
 			}
@@ -661,8 +661,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
-		Bounds selectorBounds = renderer.localToParent( selector.getBounds() );
-		Bounds shapeBounds = renderer.localToParent( shape.getBounds() );
+		Bounds selectorBounds = renderer.localToParent( selector.getSelectionBounds() );
+		Bounds shapeBounds = renderer.localToParent( shape.getSelectionBounds() );
 
 		// This first test is an optimization to determine if the accurate test can be skipped
 		if( !localToParent( selectorBounds ).intersects( shapeBounds ) ) return false;
@@ -670,17 +670,16 @@ public class DesignRenderer extends BorderPane {
 		// This second test is an optimization for fully contained shapes
 		if( localToParent( selectorBounds ).contains( shapeBounds ) ) return true;
 
-		//		// This is the slow but accurate test if the shape is contained when the selector is not a box
-		//		Shape fxSelector = selector.getFxShape();
-		//		Shape fxShape = shape.getFxShape();
-		//		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
+		// This is the slow but accurate test if the shape is contained when the selector is not a box
+		Shape fxSelector = selector.getFxShape();
+		Shape fxShape = shape.getFxShape();
+		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
 
-		return false;
 	}
 
 	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
 		// This first test is an optimization to determine if the accurate test can be skipped
-		if( !localToParent( selector.getBounds() ).intersects( localToParent( shape.getBounds() ) ) ) return false;
+		if( !localToParent( selector.getSelectionBounds() ).intersects( localToParent( shape.getSelectionBounds() ) ) ) return false;
 
 		// This is the slow but accurate test if the shape is intersecting
 		Shape fxSelector = selector.getFxShape();

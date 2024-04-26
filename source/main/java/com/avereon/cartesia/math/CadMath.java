@@ -12,12 +12,15 @@ import java.util.stream.Collectors;
 
 public class CadMath {
 
+	public static final double SQRT2 = Math.sqrt( 2 );
+	public static final double SQRT2_OVER_2 = 0.5 * SQRT2;
+
 	/**
 	 * Evaluate the math expression.
 	 *
 	 * @param expression The math expression
 	 * @return The value of the expression
-	 * @throws ParseException
+	 * @throws CadMathExpressionException If the expression cannot be evaluated
 	 */
 	public static double eval( String expression ) throws CadMathExpressionException {
 		return Expressions.eval( expression );
@@ -35,8 +38,8 @@ public class CadMath {
 	}
 
 	public static List<Double> evalExpressions( String expressions ) {
-		if( TextUtil.isEmpty( expressions )) return List.of();
-		return Arrays.stream( expressions.split( "," ) ).map( CadMath::evalNoException ).collect( Collectors.toList());
+		if( TextUtil.isEmpty( expressions ) ) return List.of();
+		return Arrays.stream( expressions.split( "," ) ).map( CadMath::evalNoException ).collect( Collectors.toList() );
 	}
 
 	private static class Expressions extends JEP {

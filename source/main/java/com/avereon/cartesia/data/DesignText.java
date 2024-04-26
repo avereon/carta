@@ -4,9 +4,6 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.zarra.font.FontMetrics;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
@@ -331,23 +328,23 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		};
 	}
 
-	@Override
-	public Bounds getBounds() {
-		// TODO This is used a lot and should be cached
-
-		Bounds textBounds = new FontMetrics( calcFont() ).computeStringBounds( getText() );
-		double x = getOrigin().getX() + textBounds.getMinX();
-		double y = getOrigin().getY() - (textBounds.getMinY() + textBounds.getHeight());
-		double w = textBounds.getWidth();
-		double h = textBounds.getHeight();
-
-		// NOTE This does not perfectly match the text bounds when rotated.
-		// It will always be a bit larger when rotated, so it is close enough for now.
-		// To get perfect bounds the path of the text would need to be walked.
-		Bounds bounds = new BoundingBox( x, y, w, h );
-		CadTransform rotate = CadTransform.rotation( getOrigin().getX(), getOrigin().getY(), calcRotate() );
-		return rotate.apply( bounds );
-	}
+//	@Override
+//	public Bounds getBounds() {
+//		// TODO This is used a lot and should be cached
+//
+//		Bounds textBounds = new FontMetrics( calcFont() ).computeStringBounds( getText() );
+//		double x = getOrigin().getX() + textBounds.getMinX();
+//		double y = getOrigin().getY() - (textBounds.getMinY() + textBounds.getHeight());
+//		double w = textBounds.getWidth();
+//		double h = textBounds.getHeight();
+//
+//		// NOTE This does not perfectly match the text bounds when rotated.
+//		// It will always be a bit larger when rotated, so it is close enough for now.
+//		// To get perfect bounds the path of the text would need to be walked.
+//		Bounds bounds = new BoundingBox( x, y, w, h );
+//		CadTransform rotate = CadTransform.rotation( getOrigin().getX(), getOrigin().getY(), calcRotate() );
+//		return rotate.apply( bounds );
+//	}
 
 	@Override
 	public double distanceTo( Point3D point ) {

@@ -7,7 +7,6 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -68,13 +67,6 @@ public class DesignCubic extends DesignShape {
 	public DesignShape setPoint( Point3D point ) {
 		setValue( POINT, point );
 		return this;
-	}
-
-	@Override
-	public Bounds getBounds() {
-		// TODO This is used a lot and should be cached
-
-		return CadGeometry.getBounds( getOrigin(), getPoint() );
 	}
 
 	@Override

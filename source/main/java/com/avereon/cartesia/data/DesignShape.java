@@ -6,7 +6,6 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
@@ -14,6 +13,8 @@ import lombok.CustomLog;
 
 import java.util.Comparator;
 import java.util.Map;
+
+import static com.avereon.data.NodeEvent.MODIFIED;
 
 @CustomLog
 public abstract class DesignShape extends DesignDrawable {
@@ -40,6 +41,10 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String REFERENCE = "reference";
 
+	protected static final String BOUNDS_CACHE = "bounds-cache";
+
+	protected static final String FX_SHAPE_CACHE = "fx-shape-cache";
+
 	public DesignShape() {
 		this( null );
 	}
@@ -47,6 +52,14 @@ public abstract class DesignShape extends DesignDrawable {
 	public DesignShape( Point3D origin ) {
 		addModifyingKeys( ORIGIN );
 		setOrigin( origin );
+
+		// Register a listener to clear caches
+		register( MODIFIED, e -> {
+			if( e.getNewValue() == Boolean.TRUE ) {
+				setBounds( null );
+				setFxShape( null );
+			}
+		} );
 	}
 
 	public Type getType() {
@@ -82,11 +95,40 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public Shape getFxShape() {
-		return CadGeometry.toFxShape( this );
+		return computeIfAbsent( FX_SHAPE_CACHE, k -> CadGeometry.toFxShape( this ) );
+	}
+
+	private void setFxShape( Shape fxShape ) {
+		setValue( FX_SHAPE_CACHE, fxShape );
 	}
 
 	public Bounds getBounds() {
-		return Fx.EMPTY_BOUNDS;
+		// TODO Compute the bounds of the shape
+
+		// Not sure if this should include the stroke width
+
+		// Should probably include the transforms (i.e. rotation)
+
+		return computeIfAbsent( BOUNDS_CACHE, k -> getFxShape().getBoundsInParent() );
+	}
+
+	/**
+	 * This is a special implementation using FX to compute visual selection boundaries.
+	 *
+	 * @return
+	 */
+	public Bounds getSelectionBounds() {
+		// FIXME Using FX for computing bounds is problematic
+		// Because there are some features/bugs that exist
+		// for example, lines cannot be less than width 1 due to Math.max( half, 0.5 )
+
+		// NOTE An option to somewhat remedy this is to pass in a scale of some sort
+		// like points, PPU or even the zoom
+		return computeIfAbsent( BOUNDS_CACHE, k -> getFxShape().getBoundsInParent() );
+	}
+
+	private void setBounds( Bounds bounds ) {
+		setValue( BOUNDS_CACHE, bounds );
 	}
 
 	public double distanceTo( Point3D point ) {
