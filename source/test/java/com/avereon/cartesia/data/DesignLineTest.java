@@ -120,6 +120,7 @@ public class DesignLineTest {
 		// given
 		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
 		line.setDrawPaint( Paints.toString( Color.WHITE ) );
+		line.setDrawCap( "square" );
 		line.setDrawWidth( "1.0" );
 
 		// when

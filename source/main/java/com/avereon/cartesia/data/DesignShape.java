@@ -179,7 +179,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public static CadTransform calcLocalTransform( Point3D center, double rotate ) {
-		return calcOrientation( center, rotate ).getTargetToLocalTransform();
+		return calcOrientation( center, rotate ).getLocalToTargetTransform();
 	}
 
 	public CadOrientation getOrientation() {

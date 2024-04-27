@@ -330,10 +330,11 @@ public class CadGeometry {
 		if( drawPaint != null ) fxShape.setStroke( Color.YELLOW );
 		if( fillPaint != null ) fxShape.setFill( Color.RED );
 		fxShape.setStrokeWidth( shape.calcDrawWidth() );
-//		fxShape.setStrokeLineCap( shape.calcDrawCap() );
-//		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
-//		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
-//		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
+		fxShape.setStrokeLineCap( shape.calcDrawCap() );
+		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
+		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
+		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
+		fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX(), shape.getOrigin().getY() ) );
 
 		return fxShape;
 	}
