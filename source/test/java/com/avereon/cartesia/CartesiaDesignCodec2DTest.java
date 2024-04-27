@@ -71,7 +71,6 @@ public class CartesiaDesignCodec2DTest extends BaseCartesiaUiTest {
 	}
 
 	@Test
-	@SuppressWarnings( "unchecked" )
 	void testSave() throws Exception {
 		// Create the expected result
 		Design design = createTestDesign( asset.getModel() );

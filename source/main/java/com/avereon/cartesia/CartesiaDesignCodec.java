@@ -273,6 +273,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		loadDesignDrawable( map, shape );
 		if( map.containsKey( DesignShape.ORIGIN ) ) shape.setOrigin( ParseUtil.parsePoint3D( (String)map.get( DesignShape.ORIGIN ) ) );
 		if( shape.getOrigin() == null ) throw new RuntimeException( "Shape missing origin: " + shape.getId() );
+		if( map.containsKey( DesignShape.ROTATE ) ) {
+			Object rotate = map.get( DesignShape.ROTATE );
+			if( rotate != null ) shape.setRotate( String.valueOf( rotate ) );
+		}
 		return shape;
 	}
 
@@ -302,7 +306,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 			ellipse.setRadii( new Point3D( xRadius, yRadius, 0 ) );
 		}
 
-		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( ((String)map.get( DesignEllipse.ROTATE )) );
 		return ellipse;
 	}
 
@@ -331,8 +334,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 		// Geometry value mapping
 		if( map.containsKey( DesignText.TEXT ) ) text.setText( (String)map.get( DesignText.TEXT ) );
-		if( map.containsKey( DesignText.ROTATE ) ) text.setRotate( (String)map.get( DesignText.ROTATE ) );
-
 		if( map.containsKey( DesignText.TEXT_SIZE ) ) text.setTextSize( (String)map.get( DesignText.TEXT_SIZE ) );
 		if( map.containsKey( DesignText.FONT_NAME ) ) text.setFontName( (String)map.get( DesignText.FONT_NAME ) );
 		if( map.containsKey( DesignText.FONT_WEIGHT ) ) text.setFontWeight( (String)map.get( DesignText.FONT_WEIGHT ) );
@@ -425,7 +426,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapShape( DesignShape shape, String type ) {
-		Map<String, Object> map = asMap( shape, mapDrawable( shape ), DesignShape.ORIGIN );
+		Map<String, Object> map = asMap( shape, mapDrawable( shape ), DesignShape.ORIGIN, DesignShape.ROTATE );
 		map.put( DesignShape.SHAPE, type );
 		return map;
 	}
@@ -444,7 +445,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private Map<String, Object> mapEllipse( DesignEllipse ellipse ) {
 		String shape = Objects.equals( ellipse.getXRadius(), ellipse.getYRadius() ) ? DesignEllipse.CIRCLE : DesignEllipse.ELLIPSE;
-		Map<String, Object> map = asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.RADII, DesignEllipse.ROTATE );
+		Map<String, Object> map = asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.RADII );
 		map.putAll( mapRadii( ellipse ) );
 		return map;
 	}
@@ -464,7 +465,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 			text,
 			mapShape( text, DesignText.TEXT ),
 			DesignText.TEXT,
-			DesignText.ROTATE,
 			DesignText.TEXT_SIZE,
 			DesignText.FONT_NAME,
 			DesignText.FONT_WEIGHT,

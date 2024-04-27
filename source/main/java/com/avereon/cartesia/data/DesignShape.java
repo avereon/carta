@@ -5,6 +5,7 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
@@ -95,6 +96,12 @@ public abstract class DesignShape extends DesignDrawable {
 		return (T)this;
 	}
 
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignShape> T setRotate( double value ) {
+		setRotate( String.valueOf( value ) );
+		return (T)this;
+	}
+
 	public boolean isReference() {
 		return getValue( REFERENCE, false );
 	}
@@ -125,13 +132,12 @@ public abstract class DesignShape extends DesignDrawable {
 	 * @return The geometric bounds of the shape
 	 */
 	public Bounds getBounds() {
-		if(boundsCache == null) boundsCache = computeBounds();
+		if( boundsCache == null ) boundsCache = computeBounds();
 		return boundsCache;
 	}
 
 	protected Bounds computeBounds() {
-		// TODO Compute the bounds of the shape
-		return getFxShape().getBoundsInParent();
+		return Fx.EMPTY_BOUNDS;
 	}
 
 	/**
@@ -163,7 +169,13 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public CadTransform getLocalTransform() {
-		return calcLocalTransform( getOrigin(), calcRotate() );
+		double rotate = calcRotate();
+		if( rotate == 0.0 ) return CadTransform.identity();
+		CadTransform t = calcLocalTransform( getOrigin(), calcRotate() );
+
+		System.out.println( "transform=" + t );
+
+		return t;
 	}
 
 	public static CadTransform calcLocalTransform( Point3D center, double rotate ) {

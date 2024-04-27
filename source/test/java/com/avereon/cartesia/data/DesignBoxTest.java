@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -45,6 +46,22 @@ public class DesignBoxTest {
 		assertThat( bounds.getHeight() ).isEqualTo( 2 );
 	}
 
+	@Test
+	void getBoundsWithRotate() {
+		// given
+		DesignBox box = new DesignBox( new Point3D( 2, 1, 0 ), new Point3D( 1, 1, 0 ) );
+		box.setRotate( 45 );
+
+		// when
+		Bounds bounds = box.getBounds();
+
+		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2 );
+		assertThat( bounds.getMinY() ).isEqualTo( 1 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2 + CadMath.SQRT2 );
+		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2 );
+		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2 );
+	}
 
 	@Test
 	void getVisualBounds() {
