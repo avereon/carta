@@ -48,12 +48,20 @@ public class CadTransform {
 		Point3D c = apply( new Point3D( bounds.getMinX(), bounds.getMaxY(), 0 ) );
 		Point3D d = apply( new Point3D( bounds.getMaxX(), bounds.getMaxY(), 0 ) );
 
-		double x = Math.min( Math.min( Math.min( a.getX(), b.getX() ), c.getX() ), d.getX() );
-		double y = Math.min( Math.min( Math.min( a.getY(), b.getY() ), c.getY() ), d.getY() );
-		double w = Math.max( Math.max( Math.max( a.getX(), b.getX() ), c.getX() ), d.getX() ) - x;
-		double h = Math.max( Math.max( Math.max( a.getY(), b.getY() ), c.getY() ), d.getY() ) - y;
+		double x = min4( a.getX(), b.getX(), c.getX(), d.getX() );
+		double y = min4( a.getY(), b.getY(), c.getY(), d.getY() );
+		double w = max4( a.getX(), b.getX(), c.getX(), d.getX() ) - x;
+		double h = max4( a.getY(), b.getY(), c.getY(), d.getY() ) - y;
 
 		return new BoundingBox( x, y, w, h );
+	}
+
+	private double min4( double a, double b, double c, double d ) {
+		return Math.min( Math.min( Math.min( a, b ), c ), d );
+	}
+
+	private double max4( double a, double b, double c, double d ) {
+		return Math.max( Math.max( Math.max( a, b ), c ), d );
 	}
 
 	public Point3D applyDirection( Point3D vector ) {

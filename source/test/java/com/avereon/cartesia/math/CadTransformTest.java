@@ -1,6 +1,8 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.PointAssert;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
@@ -146,6 +148,17 @@ public class CadTransformTest {
 	void testRotationWithOrigin() {
 		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), CadPoints.UNIT_Z, 90 );
 		PointAssert.assertThat( transform.apply( new Point3D( 2, 2, 0 ) ) ).isCloseTo( new Point3D( 0, 2, 0 ), 1e-15 );
+	}
+
+	@Test
+	void testRotationWithOriginApplyBounds() {
+		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), CadPoints.UNIT_Z, 45 );
+
+		Bounds bounds = transform.apply( new BoundingBox( 2, 2, 1, 1 ) );
+		assertThat( bounds.getMinX() ).isEqualTo( 1 - CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 1 + CadMath.SQRT2, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1 + CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 1 + 2 * CadMath.SQRT2, TOLERANCE );
 	}
 
 	@Test
