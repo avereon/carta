@@ -27,6 +27,10 @@ public class DesignLine extends DesignShape {
 		this( new Point3D( x1, y1, 0 ), new Point3D( x2, y2, 0 ) );
 	}
 
+	public DesignLine( double x1, double y1, double z1, double x2, double y2, double z2 ) {
+		this( new Point3D( x1, y1, z1 ), new Point3D( x2, y2, z2 ) );
+	}
+
 	public DesignLine( Point3D origin, Point3D point ) {
 		super( origin );
 		addModifyingKeys( POINT );

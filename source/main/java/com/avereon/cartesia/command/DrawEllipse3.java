@@ -48,7 +48,7 @@ public class DrawEllipse3 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
 			previewEllipse.setRadii( new Point3D( CadGeometry.distance( previewEllipse.getOrigin(), xPoint ), 0, 0 ) );
-			previewEllipse.setRotate( deriveRotate( origin, xPoint ) );
+			previewEllipse.setRotate( String.valueOf( deriveRotate( origin, xPoint ) ) );
 			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
@@ -86,7 +86,7 @@ public class DrawEllipse3 extends DrawCommand {
 				}
 				case 2 -> {
 					previewLine.setPoint( point );
-					previewEllipse.setRotate( deriveRotate( origin, point ) );
+					previewEllipse.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
 				}
 				case 3 -> {
 					previewLine.setPoint( point );

@@ -98,13 +98,13 @@ public class DesignLineTest {
 
 	@Test
 	@Disabled
-	void getSelectionBounds() {
+	void getVisualBounds() {
 		// given
 		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
 		//line.setDrawWidth( "0.0" );
 
 		// when
-		Bounds bounds = line.getSelectionBounds();
+		Bounds bounds = line.getVisualBounds();
 
 		// then
 		assertThat( bounds.getMinX() ).isEqualTo( -2 );
@@ -116,14 +116,14 @@ public class DesignLineTest {
 	}
 
 	@Test
-	void getSelectionBoundsWithStroke() {
+	void getVisualBoundsWithStroke() {
 		// given
 		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
 		line.setDrawPaint( Paints.toString( Color.WHITE ) );
 		line.setDrawWidth( "1.0" );
 
 		// when
-		Bounds bounds = line.getSelectionBounds();
+		Bounds bounds = line.getVisualBounds();
 
 		// then
 		assertThat( bounds.getMinX() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
@@ -136,12 +136,12 @@ public class DesignLineTest {
 
 	@Test
 	@Disabled
-	void getSelectionBoundsWithNoLength() {
+	void getVisualBoundsWithNoLength() {
 		// given
 		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
 
 		// when
-		Bounds bounds = line.getSelectionBounds();
+		Bounds bounds = line.getVisualBounds();
 
 		// then
 		assertThat( bounds.getMinX() ).isEqualTo( 0 );
@@ -154,14 +154,14 @@ public class DesignLineTest {
 
 	@Test
 	@Disabled
-	void getSelectionBoundsWithNarrowWidth() {
+	void getVisualBoundsWithNarrowWidth() {
 		// given
 		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
 		line.setDrawPaint( Paints.toString( Color.WHITE ) );
 		line.setDrawWidth( "0.1" );
 
 		// when
-		Bounds bounds = line.getSelectionBounds();
+		Bounds bounds = line.getVisualBounds();
 
 		// then
 		assertThat( bounds.getMinX() ).isEqualTo( -2.0707, TOLERANCE );

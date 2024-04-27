@@ -470,7 +470,7 @@ public class DesignRenderer extends BorderPane {
 				if( 1 == 1 ) {
 					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
 
-					Bounds bounds = shape.getSelectionBounds();
+					Bounds bounds = shape.getVisualBounds();
 					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
 				}
 			}
@@ -661,8 +661,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
-		Bounds selectorBounds = renderer.localToParent( selector.getSelectionBounds() );
-		Bounds shapeBounds = renderer.localToParent( shape.getSelectionBounds() );
+		Bounds selectorBounds = renderer.localToParent( selector.getVisualBounds() );
+		Bounds shapeBounds = renderer.localToParent( shape.getVisualBounds() );
 
 		// This first test is an optimization to determine if the accurate test can be skipped
 		if( !localToParent( selectorBounds ).intersects( shapeBounds ) ) return false;
@@ -679,7 +679,7 @@ public class DesignRenderer extends BorderPane {
 
 	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
 		// This first test is an optimization to determine if the accurate test can be skipped
-		if( !localToParent( selector.getSelectionBounds() ).intersects( localToParent( shape.getSelectionBounds() ) ) ) return false;
+		if( !localToParent( selector.getVisualBounds() ).intersects( localToParent( shape.getVisualBounds() ) ) ) return false;
 
 		// This is the slow but accurate test if the shape is intersecting
 		Shape fxSelector = selector.getFxShape();

@@ -92,7 +92,7 @@ public class DesignArcTest {
 		assertThat( map.get( DesignArc.SHAPE ) ).isEqualTo( DesignArc.ARC );
 		assertThat( map.get( DesignArc.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
 		assertThat( map.get( DesignArc.RADII ) ).isEqualTo( new Point3D( 4, 5, 0 ) );
-		assertThat( map.get( DesignArc.ROTATE ) ).isEqualTo( 6.0 );
+		assertThat( map.get( DesignArc.ROTATE ) ).isEqualTo( "6.0" );
 		assertThat( map.get( DesignArc.START ) ).isEqualTo( 7.0 );
 		assertThat( map.get( DesignArc.EXTENT ) ).isEqualTo( 8.0 );
 		assertThat( map.get( DesignArc.TYPE ) ).isEqualTo( DesignArc.Type.CHORD );
@@ -174,7 +174,7 @@ public class DesignArcTest {
 		map.put( DesignArc.SHAPE, DesignArc.ARC );
 		map.put( DesignArc.ORIGIN, "1,2,3" );
 		map.put( DesignArc.RADII, "4,5,0" );
-		map.put( DesignArc.ROTATE, 6.0 );
+		map.put( DesignArc.ROTATE, "6.0" );
 		map.put( DesignArc.START, 7.0 );
 		map.put( DesignArc.EXTENT, 8.0 );
 		map.put( DesignArc.TYPE, DesignArc.Type.CHORD.name().toLowerCase() );
@@ -187,7 +187,7 @@ public class DesignArcTest {
 		assertThat( arc.getXRadius() ).isEqualTo( 4.0 );
 		assertThat( arc.getYRadius() ).isEqualTo( 5.0 );
 		assertThat( arc.calcRotate() ).isEqualTo( 6.0 );
-		assertThat( arc.getRotate() ).isEqualTo( 6.0 );
+		assertThat( arc.getRotate() ).isEqualTo( "6.0" );
 		assertThat( arc.getStart() ).isEqualTo( 7.0 );
 		assertThat( arc.getExtent() ).isEqualTo( 8.0 );
 		assertThat( arc.getArcType() ).isEqualTo( DesignArc.Type.CHORD );

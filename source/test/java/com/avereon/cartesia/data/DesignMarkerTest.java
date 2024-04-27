@@ -49,8 +49,8 @@ public class DesignMarkerTest {
 	}
 
 	@Test
-	void testGetBounds() {
-		assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).getSelectionBounds() ).isEqualTo( new BoundingBox( -2.5, 0.5, 1, 1 ) );
+	void testGetVisualBounds() {
+		assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).getVisualBounds() ).isEqualTo( new BoundingBox( -2.5, 0.5, 1, 1 ) );
 	}
 
 	@Test

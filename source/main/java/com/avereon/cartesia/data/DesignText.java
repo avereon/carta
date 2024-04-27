@@ -18,8 +18,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	public static final String TEXT = "text";
 
-	public static final String ROTATE = "rotate";
-
 	public static final String DEFAULT_ROTATE = String.valueOf( 0.0 );
 
 	// TODO Add horizontal alignment
@@ -53,7 +51,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	public DesignText( Point3D origin, String text, String rotate ) {
 		super( origin );
-		addModifyingKeys( TEXT, TEXT_SIZE, ROTATE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH );
+		addModifyingKeys( TEXT, TEXT_SIZE, FONT_NAME, FONT_WEIGHT, FONT_POSTURE, FONT_UNDERLINE, FONT_STRIKETHROUGH );
 
 		setText( text );
 		setRotate( rotate );
@@ -260,21 +258,6 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	public Font calcFont() {
 		return Font.font( calcFontName(), calcFontWeight(), calcFontPosture(), calcTextSize() );
-	}
-
-	public double calcRotate() {
-		String rotate = getRotate();
-		return rotate == null ? 0.0 : CadMath.evalNoException( rotate );
-	}
-
-	public String getRotate() {
-		return getValue( ROTATE );
-	}
-
-	@SuppressWarnings( "unchecked" )
-	public <T extends DesignText> T setRotate( String value ) {
-		setValue( ROTATE, value );
-		return (T)this;
 	}
 
 	public CadOrientation getOrientation() {

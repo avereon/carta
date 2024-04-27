@@ -28,8 +28,6 @@ public class DesignEllipse extends DesignShape {
 
 	public static final String RADII = "radii";
 
-	public static final String ROTATE = "rotate";
-
 	/**
 	 * @deprecated Maintained for backward compatibility only
 	 */
@@ -72,9 +70,9 @@ public class DesignEllipse extends DesignShape {
 
 	public DesignEllipse( Point3D origin, Point3D radii, Double rotate ) {
 		super( origin );
-		addModifyingKeys( RADII, ROTATE );
+		addModifyingKeys( RADII );
 		setRadii( radii );
-		setRotate( rotate );
+		setRotate( rotate == null || rotate == 0.0 ? null : rotate.toString() );
 	}
 
 	@Override
@@ -110,21 +108,21 @@ public class DesignEllipse extends DesignShape {
 		return getRadii().getY();
 	}
 
-	@SuppressWarnings( "unchecked" )
-	public double calcRotate() {
-		return hasKey( ROTATE ) ? getRotate() : 0.0;
-	}
-
-	public Double getRotate() {
-		return getValue( ROTATE );
-	}
-
-	@SuppressWarnings( "unchecked" )
-	public <T extends DesignEllipse> T setRotate( Double value ) {
-		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) ) value = null;
-		setValue( ROTATE, value );
-		return (T)this;
-	}
+	//	@SuppressWarnings( "unchecked" )
+	//	public double calcRotate() {
+	//		return hasKey( ROTATE ) ? getRotate() : 0.0;
+	//	}
+	//
+	//	public Double getRotate() {
+	//		return getValue( ROTATE );
+	//	}
+	//
+	//	@SuppressWarnings( "unchecked" )
+	//	public <T extends DesignEllipse> T setRotate( Double value ) {
+	//		if( value != null && CadGeometry.areSameAngle360( 0.0, value ) ) value = null;
+	//		setValue( ROTATE, value );
+	//		return (T)this;
+	//	}
 
 	/**
 	 * Test if a given point is on the ellipse.
@@ -144,14 +142,6 @@ public class DesignEllipse extends DesignShape {
 
 	public static CadTransform calcLocalTransform( Point3D center, double xRadius, double yRadius, double rotate ) {
 		return CadTransform.scale( 1, xRadius / yRadius, 0 ).combine( calcOrientation( center, rotate ).getTargetToLocalTransform() );
-	}
-
-	public CadOrientation getOrientation() {
-		return calcOrientation( getOrigin(), calcRotate() );
-	}
-
-	public static CadOrientation calcOrientation( Point3D center, double rotate ) {
-		return new CadOrientation( center, CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, rotate ) );
 	}
 
 	@Override
@@ -245,7 +235,7 @@ public class DesignEllipse extends DesignShape {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( origin );
 			setRadii( radii );
-			setRotate( rotate );
+			setRotate( String.valueOf( rotate ) );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
@@ -276,7 +266,6 @@ public class DesignEllipse extends DesignShape {
 			setRadii( new Point3D( (Double)map.get( X_RADIUS ), (Double)map.get( Y_RADIUS ), 0 ) );
 		}
 
-		if( map.containsKey( ROTATE ) ) setRotate( (Double)map.get( ROTATE ) );
 		return this;
 	}
 

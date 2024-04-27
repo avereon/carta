@@ -52,17 +52,17 @@ public class Split {
 		return Set.of( a, b );
 	}
 
-	 static Set<DesignShape> splitEllipse( BaseDesignTool tool, DesignEllipse ellipse, Point3D point ) {
+	static Set<DesignShape> splitEllipse( BaseDesignTool tool, DesignEllipse ellipse, Point3D point ) {
 		// Find the angle "on the ellipse"
 		double theta = CadGeometry.ellipseAngle360( ellipse, point );
 
 		// Make a new arc
-		DesignArc arc = new DesignArc( ellipse.getOrigin(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.getRotate(), theta, 360.0, DesignArc.Type.OPEN );
+		DesignArc arc = new DesignArc( ellipse.getOrigin(), ellipse.getXRadius(), ellipse.getYRadius(), ellipse.calcRotate(), theta, 360.0, DesignArc.Type.OPEN );
 
 		return Set.of( arc );
 	}
 
-	 static Set<DesignShape> splitArc( BaseDesignTool tool, DesignArc arc, Point3D point ) {
+	static Set<DesignShape> splitArc( BaseDesignTool tool, DesignArc arc, Point3D point ) {
 		// Find the point "on the arc" and make to new arcs
 		List<Point3D> xns = CadIntersection.getIntersections( arc, new DesignLine( arc.getOrigin(), point ) );
 		Point3D nearest = CadPoints.getNearest( point, xns );
@@ -71,13 +71,13 @@ public class Split {
 		double theta = CadGeometry.ellipseAngle360( arc, nearest );
 
 		// Make a new arcs
-		DesignArc a = new DesignArc( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.getRotate(), arc.getStart(), theta - arc.getStart(), DesignArc.Type.OPEN );
-		DesignArc b = new DesignArc( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.getRotate(), theta, (arc.getStart() + arc.getExtent()) - theta, DesignArc.Type.OPEN );
+		DesignArc a = new DesignArc( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.calcRotate(), arc.getStart(), theta - arc.getStart(), DesignArc.Type.OPEN );
+		DesignArc b = new DesignArc( arc.getOrigin(), arc.getXRadius(), arc.getYRadius(), arc.calcRotate(), theta, (arc.getStart() + arc.getExtent()) - theta, DesignArc.Type.OPEN );
 
 		return Set.of( a, b );
 	}
 
-	 static Set<DesignShape> splitCurve( BaseDesignTool tool, DesignCubic curve, Point3D point ) {
+	static Set<DesignShape> splitCurve( BaseDesignTool tool, DesignCubic curve, Point3D point ) {
 		// Fine the parametric value "on the curve"
 		double t = CadGeometry.getCubicParametricValueNear( curve, point );
 		if( Double.isNaN( t ) ) return Set.of();

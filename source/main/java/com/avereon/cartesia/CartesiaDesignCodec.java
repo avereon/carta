@@ -302,7 +302,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 			ellipse.setRadii( new Point3D( xRadius, yRadius, 0 ) );
 		}
 
-		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( ((Number)map.get( DesignEllipse.ROTATE )).doubleValue() );
+		if( map.containsKey( DesignEllipse.ROTATE ) ) ellipse.setRotate( ((String)map.get( DesignEllipse.ROTATE )) );
 		return ellipse;
 	}
 
@@ -352,7 +352,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	private Map<String, Object> mapDesign( Design design ) {
 		Map<String, Object> map = new HashMap<>( asMap( design, Design.ID, Design.NAME, Design.AUTHOR, Design.DESCRIPTION, Design.UNIT ) );
 		map.put( Design.LAYERS, design.getLayers().getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
-		if( design.getViews().size() > 0 ) map.put( Design.VIEWS, design.getViews().stream().collect( Collectors.toMap( IdNode::getId, this::mapView ) ) );
+		if( !design.getViews().isEmpty() ) map.put( Design.VIEWS, design.getViews().stream().collect( Collectors.toMap( IdNode::getId, this::mapView ) ) );
 		return map;
 	}
 
@@ -377,11 +377,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 		remapValue( map, DesignLayer.DRAW_PAINT, saveLayerPaintMapping );
 		remapValue( map, DesignLayer.FILL_PAINT, saveLayerPaintMapping );
 
-//		remapValue( map, DesignLayer.TEXT_FILL_PAINT, saveLayerPaintMapping );
-//		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, saveLayerPaintMapping );
-//		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, saveLayerPropertyMapping );
-//		remapValue( map, DesignLayer.TEXT_DRAW_CAP, saveLayerPropertyMapping );
-//		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, saveLayerPropertyMapping );
+		//		remapValue( map, DesignLayer.TEXT_FILL_PAINT, saveLayerPaintMapping );
+		//		remapValue( map, DesignLayer.TEXT_DRAW_PAINT, saveLayerPaintMapping );
+		//		remapValue( map, DesignLayer.TEXT_DRAW_WIDTH, saveLayerPropertyMapping );
+		//		remapValue( map, DesignLayer.TEXT_DRAW_CAP, saveLayerPropertyMapping );
+		//		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, saveLayerPropertyMapping );
 
 		map.put( DesignLayer.LAYERS, layer.getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
 		map.put( DesignLayer.SHAPES, layer.getShapes().stream().filter( s -> !s.isReference() ).collect( Collectors.toMap( IdNode::getId, this::mapGeometry ) ) );

@@ -1,8 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
-import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadTransform;
+import com.avereon.cartesia.math.*;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
@@ -37,29 +36,32 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String ORIGIN = "origin";
 
+	public static final String ROTATE = "rotate";
+
 	public static final String SELECTED = "selected";
 
 	public static final String REFERENCE = "reference";
 
-	// TODO This could be optimized more by just having a local reference
-	protected static final String BOUNDS_CACHE = "bounds-cache";
+	private Shape fxShapeCache;
 
-	// TODO This could be optimized more by just having a local reference
-	protected static final String FX_SHAPE_CACHE = "fx-shape-cache";
+	private Bounds boundsCache;
+
+	private Bounds visualBoundsCache;
 
 	public DesignShape() {
 		this( null );
 	}
 
 	public DesignShape( Point3D origin ) {
-		addModifyingKeys( ORIGIN );
+		addModifyingKeys( ORIGIN, ROTATE );
 		setOrigin( origin );
 
 		// Register a listener to clear caches
 		register( MODIFIED, e -> {
 			if( e.getNewValue() == Boolean.TRUE ) {
-				setBounds( null );
-				setFxShape( null );
+				boundsCache = null;
+				visualBoundsCache = null;
+				fxShapeCache = null;
 			}
 		} );
 	}
@@ -75,6 +77,21 @@ public abstract class DesignShape extends DesignDrawable {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignShape> T setOrigin( Point3D origin ) {
 		setValue( ORIGIN, origin );
+		return (T)this;
+	}
+
+	public double calcRotate() {
+		String rotate = getRotate();
+		return rotate == null ? 0.0 : CadMath.evalNoException( rotate );
+	}
+
+	public String getRotate() {
+		return getValue( ROTATE );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	public <T extends DesignShape> T setRotate( String value ) {
+		setValue( ROTATE, value );
 		return (T)this;
 	}
 
@@ -97,21 +114,24 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public Shape getFxShape() {
-		return computeIfAbsent( FX_SHAPE_CACHE, k -> CadGeometry.toFxShape( this ) );
+		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this );
+		return fxShapeCache;
 	}
 
-	private void setFxShape( Shape fxShape ) {
-		setValue( FX_SHAPE_CACHE, fxShape );
-	}
-
+	/**
+	 * Get the geometric bounds of this shape. The geometric bounds include the
+	 * geometry with the transforms applied, but not the stroke or effects.
+	 *
+	 * @return The geometric bounds of the shape
+	 */
 	public Bounds getBounds() {
+		if(boundsCache == null) boundsCache = computeBounds();
+		return boundsCache;
+	}
+
+	protected Bounds computeBounds() {
 		// TODO Compute the bounds of the shape
-
-		// Not sure if this should include the stroke width
-
-		// Should probably include the transforms (i.e. rotation)
-
-		return computeIfAbsent( BOUNDS_CACHE, k -> getFxShape().getBoundsInParent() );
+		return getFxShape().getBoundsInParent();
 	}
 
 	/**
@@ -119,18 +139,19 @@ public abstract class DesignShape extends DesignDrawable {
 	 *
 	 * @return
 	 */
-	public Bounds getSelectionBounds() {
-		// FIXME Using FX for computing bounds is problematic
-		// Because there are some features/bugs that exist
-		// for example, lines cannot be less than width 1 due to Math.max( half, 0.5 )
-
-		// NOTE An option to somewhat remedy this is to pass in a scale of some sort
-		// like points, PPU or even the zoom
-		return computeIfAbsent( BOUNDS_CACHE, k -> getFxShape().getBoundsInParent() );
+	public Bounds getVisualBounds() {
+		//		// FIXME Using FX for computing bounds is problematic
+		//		// Because there are some features/bugs that exist
+		//		// for example, lines cannot be less than width 1 due to Math.max( half, 0.5 )
+		//
+		//		// NOTE An option to somewhat remedy this is to pass in a scale of some sort
+		//		// like points, PPU or even the zoom
+		if( visualBoundsCache == null ) visualBoundsCache = computeVisualBounds();
+		return visualBoundsCache;
 	}
 
-	private void setBounds( Bounds bounds ) {
-		setValue( BOUNDS_CACHE, bounds );
+	protected Bounds computeVisualBounds() {
+		return getFxShape().getBoundsInParent();
 	}
 
 	public double distanceTo( Point3D point ) {
@@ -139,6 +160,22 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public double pathLength() {
 		return Double.NaN;
+	}
+
+	public CadTransform getLocalTransform() {
+		return calcLocalTransform( getOrigin(), calcRotate() );
+	}
+
+	public static CadTransform calcLocalTransform( Point3D center, double rotate ) {
+		return calcOrientation( center, rotate ).getTargetToLocalTransform();
+	}
+
+	public CadOrientation getOrientation() {
+		return calcOrientation( getOrigin(), calcRotate() );
+	}
+
+	public static CadOrientation calcOrientation( Point3D center, double rotate ) {
+		return new CadOrientation( center, CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, rotate ) );
 	}
 
 	/**
@@ -173,6 +210,7 @@ public abstract class DesignShape extends DesignDrawable {
 	public DesignShape updateFrom( Map<String, Object> map ) {
 		super.updateFrom( map );
 		setOrigin( ParseUtil.parsePoint3D( (String)map.get( ORIGIN ) ) );
+		if( map.containsKey( ROTATE ) ) setRotate( (String)map.get( ROTATE ) );
 		return this;
 	}
 

@@ -95,7 +95,7 @@ public class DesignEllipseTest {
 		assertThat( map.get( DesignEllipse.SHAPE ) ).isEqualTo( DesignEllipse.ELLIPSE );
 		assertThat( map.get( DesignEllipse.ORIGIN ) ).isEqualTo( new Point3D( 1, 2, 3 ) );
 		assertThat( map.get( DesignEllipse.RADII ) ).isEqualTo( new Point3D( 6, 7, 0 ) );
-		assertThat( map.get( DesignEllipse.ROTATE ) ).isEqualTo( 8.0 );
+		assertThat( map.get( DesignEllipse.ROTATE ) ).isEqualTo( "8.0" );
 	}
 
 	@Test
@@ -176,7 +176,7 @@ public class DesignEllipseTest {
 		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
 		map.put( DesignEllipse.RADII, "6,7,0" );
-		map.put( DesignEllipse.ROTATE, 8.0 );
+		map.put( DesignEllipse.ROTATE, "8.0" );
 
 		DesignEllipse arc = new DesignEllipse();
 		arc.updateFrom( map );
@@ -186,7 +186,7 @@ public class DesignEllipseTest {
 		assertThat( arc.getXRadius() ).isEqualTo( 6.0 );
 		assertThat( arc.getYRadius() ).isEqualTo( 7.0 );
 		assertThat( arc.calcRotate() ).isEqualTo( 8.0 );
-		assertThat( arc.getRotate() ).isEqualTo( 8.0 );
+		assertThat( arc.getRotate() ).isEqualTo( "8.0" );
 	}
 
 	@Test
@@ -195,7 +195,7 @@ public class DesignEllipseTest {
 		map.put( DesignEllipse.SHAPE, DesignEllipse.ELLIPSE );
 		map.put( DesignEllipse.ORIGIN, "0,0,0" );
 		map.put( DesignEllipse.RADII, "6,7,0" );
-		map.put( DesignEllipse.ROTATE, 8.0 );
+		map.put( DesignEllipse.ROTATE, "8.0" );
 
 		DesignEllipse arc = new DesignEllipse();
 		arc.updateFrom( map );
@@ -205,7 +205,7 @@ public class DesignEllipseTest {
 		assertThat( arc.getXRadius() ).isEqualTo( 6.0 );
 		assertThat( arc.getYRadius() ).isEqualTo( 7.0 );
 		assertThat( arc.calcRotate() ).isEqualTo( 8.0 );
-		assertThat( arc.getRotate() ).isEqualTo( 8.0 );
+		assertThat( arc.getRotate() ).isEqualTo( "8.0" );
 	}
 
 	@Test

@@ -54,7 +54,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 		if( parameters.length < 3 ) {
 			xPoint = asPoint( context, parameters[ 1 ] );
 			referenceArc.setRadii( new Point3D( CadGeometry.distance( origin, xPoint ), 0, 0 ) );
-			referenceArc.setRotate( deriveRotate( origin, xPoint ) );
+			referenceArc.setRotate( String.valueOf( deriveRotate( origin, xPoint ) ) );
 			promptForNumber( context, "radius" );
 			return INCOMPLETE;
 		}
@@ -121,7 +121,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 					// Arc X radius and rotate
 					previewLine.setPoint( point );
 					referenceArc.setRadii( new Point3D( point.distance( referenceArc.getOrigin() ), 0, 0 ) );
-					referenceArc.setRotate( deriveRotate( origin, point ) );
+					referenceArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
 				}
 				case 3 -> {
 					// Arc Y radius
