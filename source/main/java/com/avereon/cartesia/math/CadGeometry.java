@@ -334,7 +334,10 @@ public class CadGeometry {
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
 		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
-		fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX(), shape.getOrigin().getY() ) );
+
+		// Handle the rotate transform, if needed
+		double rotate = shape.calcRotate();
+		if( rotate != 0.0) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX(), shape.getOrigin().getY() ) );
 
 		return fxShape;
 	}
