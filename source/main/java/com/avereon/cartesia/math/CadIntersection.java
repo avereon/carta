@@ -85,7 +85,7 @@ public class CadIntersection {
 		}
 
 		// Transform all the points to the common plane
-		CadTransform transform = orientation.getTargetToLocalTransform();
+		CadTransform transform = orientation.getWorldToLocalTransform();
 		p1 = transform.apply( p1 );
 		p2 = transform.apply( p2 );
 		p3 = transform.apply( p3 );
@@ -93,7 +93,7 @@ public class CadIntersection {
 
 		Intersection2D xn = Intersection2D.intersectLineLine( asPoint( p1 ), asPoint( p2 ), asPoint( p3 ), asPoint( p4 ) );
 		if( xn.getType() == Intersection.Type.INTERSECTION ) {
-			return List.of( orientation.getLocalToTargetTransform().apply( toFxPoint( xn.getPoints()[ 0 ] ) ) );
+			return List.of( orientation.getLocalToWorldTransform().apply( toFxPoint( xn.getPoints()[ 0 ] ) ) );
 		}
 
 		return List.of();

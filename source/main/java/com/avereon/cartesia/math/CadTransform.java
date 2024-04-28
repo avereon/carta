@@ -153,7 +153,7 @@ public class CadTransform {
 	}
 
 	public static CadTransform targetTransform( Point3D origin, Point3D normal, Point3D rotate ) {
-		return new CadTransform( Transform.targetTransform( CadPoints.asPoint( origin ), CadPoints.asPoint( normal ), CadPoints.asPoint( rotate ) ) );
+		return new CadTransform( Transform.worldTransform( CadPoints.asPoint( origin ), CadPoints.asPoint( normal ), CadPoints.asPoint( rotate ) ) );
 	}
 
 	public static CadTransform ortho( double left, double right, double bottom, double top, double near, double far ) {

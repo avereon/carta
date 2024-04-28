@@ -5,10 +5,10 @@ import com.avereon.zarra.color.Paints;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
+import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignBoxTest {
@@ -48,21 +48,20 @@ public class DesignBoxTest {
 	}
 
 	@Test
-	@Disabled
 	void getBoundsWithRotate() {
 		// given
 		DesignBox box = new DesignBox( 2, 1, 1, 1 );
 		box.setRotate( 45 );
 
 		// when
-		Bounds bounds = box.getVisualBounds();
+		Bounds bounds = box.getBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2 );
-		assertThat( bounds.getMinY() ).isEqualTo( 1 );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2 );
-		assertThat( bounds.getMaxY() ).isEqualTo( 2 + CadMath.SQRT2 );
-		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2 );
-		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2 );
+		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 1, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 1 + CadMath.SQRT2, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2, TOLERANCE );
 	}
 
 	@Test

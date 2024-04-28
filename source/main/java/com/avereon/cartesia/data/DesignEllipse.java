@@ -131,7 +131,7 @@ public class DesignEllipse extends DesignShape {
 	 * @return
 	 */
 	public boolean isCoincident( Point3D point ) {
-		Point3D local = getOrientation().getTargetToLocalTransform().apply( point );
+		Point3D local = getOrientation().getWorldToLocalTransform().apply( point );
 		Point3D test = CadPoints.toFxPoint( Geometry.polarToCartesian( new double[]{ getXRadius(), getYRadius(), Math.atan2( local.getY(), local.getX() ) } ) );
 		return CadGeometry.areSamePoint( new Point3D( local.getX(), local.getY(), 0 ), new Point3D( test.getX(), test.getY(), 0 ) );
 	}
@@ -141,7 +141,7 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	public static CadTransform calcLocalTransform( Point3D center, double xRadius, double yRadius, double rotate ) {
-		return CadTransform.scale( 1, xRadius / yRadius, 0 ).combine( calcOrientation( center, rotate ).getTargetToLocalTransform() );
+		return CadTransform.scale( 1, xRadius / yRadius, 0 ).combine( calcOrientation( center, rotate ).getWorldToLocalTransform() );
 	}
 
 	@Override
@@ -215,11 +215,11 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	public void apply( CadTransform transform ) {
-		CadTransform original = getOrientation().getLocalToTargetTransform();
+		CadTransform original = getOrientation().getLocalToWorldTransform();
 		CadOrientation newPose = getOrientation().clone().transform( transform );
 
 		// Radii
-		CadTransform combined = newPose.getTargetToLocalTransform().combine( transform.combine( original ) );
+		CadTransform combined = newPose.getWorldToLocalTransform().combine( transform.combine( original ) );
 		double xRadius = Math.abs( combined.apply( new Point3D( getXRadius(), 0, 0 ) ).getX() );
 		double yRadius = Math.abs( combined.apply( new Point3D( 0, getYRadius(), 0 ) ).getY() );
 

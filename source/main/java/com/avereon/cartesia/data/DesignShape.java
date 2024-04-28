@@ -171,23 +171,16 @@ public abstract class DesignShape extends DesignDrawable {
 	public CadTransform getLocalTransform() {
 		double rotate = calcRotate();
 		if( rotate == 0.0 ) return CadTransform.identity();
-		CadTransform t = calcLocalTransform( getOrigin(), calcRotate() );
-
-		System.out.println( "transform=" + t );
-
-		return t;
-	}
-
-	public static CadTransform calcLocalTransform( Point3D center, double rotate ) {
-		return calcOrientation( center, rotate ).getLocalToTargetTransform();
+		return getOrientation().getLocalToWorldTransform();
+		//return CadTransform.rotation( getOrigin(), CadPoints.UNIT_Z, rotate );
 	}
 
 	public CadOrientation getOrientation() {
 		return calcOrientation( getOrigin(), calcRotate() );
 	}
 
-	public static CadOrientation calcOrientation( Point3D center, double rotate ) {
-		return new CadOrientation( center, CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, rotate ) );
+	public static CadOrientation calcOrientation( Point3D origin, double rotate ) {
+		return new CadOrientation( origin, CadPoints.UNIT_Z, CadGeometry.rotate360( CadPoints.UNIT_Y, rotate ) );
 	}
 
 	/**

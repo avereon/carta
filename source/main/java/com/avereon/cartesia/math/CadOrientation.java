@@ -101,12 +101,12 @@ public class CadOrientation {
 		return this;
 	}
 
-	public CadTransform getLocalToTargetTransform() {
-		return new CadTransform( orientation.getLocalToTargetTransform() );
+	public CadTransform getLocalToWorldTransform() {
+		return new CadTransform( orientation.getLocalToWorldTransform() );
 	}
 
-	public CadTransform getTargetToLocalTransform() {
-		return new CadTransform( orientation.getTargetToLocalTransform() );
+	public CadTransform getWorldToLocalTransform() {
+		return new CadTransform( orientation.getWorldToLocalTransform() );
 	}
 
 	@Override

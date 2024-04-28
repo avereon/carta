@@ -73,7 +73,7 @@ public abstract class EditCommand extends Command {
 
 		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
 
-		return orientation.getLocalToTargetTransform().combine( CadTransform.scale( scale, scale, 1 ) ).combine( orientation.getTargetToLocalTransform() );
+		return orientation.getLocalToWorldTransform().combine( CadTransform.scale( scale, scale, 1 ) ).combine( orientation.getWorldToLocalTransform() );
 	}
 
 	protected void squishShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
@@ -94,7 +94,7 @@ public abstract class EditCommand extends Command {
 
 		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
 
-		return orientation.getLocalToTargetTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getTargetToLocalTransform() );
+		return orientation.getLocalToWorldTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getWorldToLocalTransform() );
 	}
 
 	protected void deleteShapes( BaseDesignTool tool ) {
