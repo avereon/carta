@@ -168,11 +168,10 @@ public abstract class DesignShape extends DesignDrawable {
 		return Double.NaN;
 	}
 
-	public CadTransform getLocalTransform() {
+	public CadTransform getRotateTransform() {
 		double rotate = calcRotate();
 		if( rotate == 0.0 ) return CadTransform.identity();
-		return getOrientation().getLocalToWorldTransform();
-		//return CadTransform.rotation( getOrigin(), CadPoints.UNIT_Z, rotate );
+		return CadTransform.rotation( getOrigin(), CadPoints.UNIT_Z, rotate );
 	}
 
 	public CadOrientation getOrientation() {

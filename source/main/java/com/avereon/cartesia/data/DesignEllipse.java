@@ -136,7 +136,7 @@ public class DesignEllipse extends DesignShape {
 		return CadGeometry.areSamePoint( new Point3D( local.getX(), local.getY(), 0 ), new Point3D( test.getX(), test.getY(), 0 ) );
 	}
 
-	public CadTransform getLocalTransform() {
+	public CadTransform getRotateTransform() {
 		return calcLocalTransform( getOrigin(), getXRadius(), getYRadius(), calcRotate() );
 	}
 

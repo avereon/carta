@@ -51,11 +51,31 @@ public class DesignBox extends DesignShape {
 
 	@Override
 	protected Bounds computeBounds() {
+		// Computing the bounds for a box is pretty simple
+		// because the box fills its bounds exactly
+
 		Point3D origin = getOrigin();
 		Point3D size = getSize();
 		Bounds bounds = new BoundingBox( origin.getX(), origin.getY(), origin.getZ(), size.getX(), size.getY(), size.getZ() );
+		return getRotateTransform().apply( bounds );
+	}
 
-		return getLocalTransform().apply( bounds );
+	@Override
+	protected Bounds computeVisualBounds() {
+		// Computing the visual bounds for a box is made harder
+		// because of the stroke settings
+
+		// drawWidth - used
+		// drawType - used
+		// drawJoin - used
+		// drawMiterLimit - used
+
+		// drawCap - not used
+		// drawDashes - not used
+		// drawDashOffset - not used
+
+
+		return super.computeVisualBounds();
 	}
 
 	@Override

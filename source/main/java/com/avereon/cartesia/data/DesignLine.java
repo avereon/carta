@@ -5,6 +5,8 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -90,6 +92,19 @@ public class DesignLine extends DesignShape {
 		super.updateFrom( map );
 		setPoint( ParseUtil.parsePoint3D( (String)map.get( POINT ) ) );
 		return this;
+	}
+
+	@Override
+	protected Bounds computeBounds() {
+		Point3D origin = getOrigin();
+		Point3D point = getPoint();
+		Bounds bounds = new BoundingBox( origin.getX(), origin.getY(), origin.getZ(), point.getX() - origin.getX(), point.getY() - origin.getY(), point.getZ() - origin.getZ() );
+		return getRotateTransform().apply( bounds );
+	}
+
+	@Override
+	protected Bounds computeVisualBounds() {
+		return computeBounds();
 	}
 
 	public DesignShape updateFrom( DesignShape shape ) {

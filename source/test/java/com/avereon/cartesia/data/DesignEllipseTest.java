@@ -253,22 +253,22 @@ public class DesignEllipseTest {
 	@Test
 	void testLocalTransform() {
 		DesignEllipse ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), 2.0, 1.0 );
-		PointAssert.assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ) ).isCloseTo( new Point3D( 1, 2, 0 ) );
+		PointAssert.assertThat( ellipse.getRotateTransform().apply( new Point3D( 1, 1, 0 ) ) ).isCloseTo( new Point3D( 1, 2, 0 ) );
 
 		ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), 2.0, 4.0 );
-		PointAssert.assertThat( ellipse.getLocalTransform().apply( new Point3D( 1, 1, 0 ) ) ).isCloseTo( new Point3D( 1, 0.5, 0 ) );
+		PointAssert.assertThat( ellipse.getRotateTransform().apply( new Point3D( 1, 1, 0 ) ) ).isCloseTo( new Point3D( 1, 0.5, 0 ) );
 	}
 
 	@Test
 	void testLocalTransformWithRotationScaleAndTranslate() {
 		double root2 = Math.sqrt( 2 );
 		DesignEllipse ellipse = new DesignEllipse( new Point3D( -3.0, 3.0, 0 ), 2.0, 1.0, 45.0 );
-		PointAssert.assertThat( ellipse.getLocalTransform().apply( ellipse.getOrigin() ) ).isCloseTo( new Point3D( 0, 0, 0 ) );
-		PointAssert.assertThat( ellipse.getLocalTransform().apply( new Point3D( -1, -1, 0 ) ) ).isCloseTo( new Point3D( -1 * root2, -6 * root2, 0 ) );
+		PointAssert.assertThat( ellipse.getRotateTransform().apply( ellipse.getOrigin() ) ).isCloseTo( new Point3D( 0, 0, 0 ) );
+		PointAssert.assertThat( ellipse.getRotateTransform().apply( new Point3D( -1, -1, 0 ) ) ).isCloseTo( new Point3D( -1 * root2, -6 * root2, 0 ) );
 
 		ellipse = new DesignEllipse( new Point3D( -3.0, -3.0, 0 ), 2.0, 4.0, 270.0 );
-		PointAssert.assertThat( ellipse.getLocalTransform().apply( ellipse.getOrigin() ) ).isCloseTo( new Point3D( 0, 0, 0 ) );
-		PointAssert.assertThat( ellipse.getLocalTransform().apply( new Point3D( -1, -1, 0 ) ) ).isCloseTo( new Point3D( -2, 1, 0 ) );
+		PointAssert.assertThat( ellipse.getRotateTransform().apply( ellipse.getOrigin() ) ).isCloseTo( new Point3D( 0, 0, 0 ) );
+		PointAssert.assertThat( ellipse.getRotateTransform().apply( new Point3D( -1, -1, 0 ) ) ).isCloseTo( new Point3D( -2, 1, 0 ) );
 	}
 
 }
