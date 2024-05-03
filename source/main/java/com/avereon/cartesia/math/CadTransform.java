@@ -116,6 +116,9 @@ public class CadTransform {
 		return new CadTransform( Transform.translation( deltaX, deltaY, deltaZ ) );
 	}
 
+	public static CadTransform rotation( double angle ) {
+		return new CadTransform( Transform.rotation( UNIT_Z, Math.toRadians( angle ) ) );
+	}
 	public static CadTransform rotation( double x, double y, double angle ) {
 		return new CadTransform( Transform.rotation( Point.of( x, y, 0 ), UNIT_Z, Math.toRadians( angle ) ) );
 	}

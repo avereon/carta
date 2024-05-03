@@ -8,6 +8,8 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeType;
 import lombok.CustomLog;
 
 import java.util.Map;
@@ -104,7 +106,40 @@ public class DesignLine extends DesignShape {
 
 	@Override
 	protected Bounds computeVisualBounds() {
-		return computeBounds();
+		Point3D origin = getOrigin();
+		Point3D point = getPoint();
+		double length = origin.distance( point );
+
+		// Start with the line on the x-axis, drawn at length
+		double x1 = 0;
+		double y1 = 0;
+		double x2 = length;
+
+		double drawWidth = calcDrawWidth();
+		double halfWidth = 0.5 * drawWidth;
+		StrokeType drawAlign = calcDrawAlign();
+		if( drawAlign == StrokeType.CENTERED ) {
+			y1 = halfWidth;
+		} else if( drawAlign == StrokeType.INSIDE ) {
+			y1 = -drawWidth;
+		} else if( drawAlign == StrokeType.OUTSIDE ) {
+			y1 = drawWidth;
+		}
+
+		if( calcDrawCap() == StrokeLineCap.SQUARE) {
+			x1 -= halfWidth;
+			x2 += halfWidth;
+		}
+
+		// Create the bounding box
+		Bounds bounds = new BoundingBox( x1, y1, x2, drawWidth );
+
+		// Create the transform
+		double angle = CadGeometry.angle360( point.subtract( origin ) );
+		CadTransform transform = CadTransform.rotation( angle );
+		transform.combine( CadTransform.translation( origin ) );
+
+		return transform.apply( bounds );
 	}
 
 	public DesignShape updateFrom( DesignShape shape ) {

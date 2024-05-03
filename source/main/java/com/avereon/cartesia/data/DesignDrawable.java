@@ -10,6 +10,7 @@ import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zarra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeType;
 import lombok.CustomLog;
 
 import java.util.List;
@@ -25,6 +26,8 @@ public abstract class DesignDrawable extends DesignNode {
 	public static final String DRAW_PAINT = "draw-paint";
 
 	public static final String DRAW_WIDTH = "draw-width";
+
+	public static final String DRAW_ALIGN = "draw-type";
 
 	public static final String DRAW_CAP = "draw-cap";
 
@@ -55,7 +58,7 @@ public abstract class DesignDrawable extends DesignNode {
 	protected SettingsPage page;
 
 	protected DesignDrawable() {
-		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
+		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 	}
 
 	public DesignLayer getLayer() {
@@ -115,6 +118,31 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawWidth( String width ) {
 		setValue( DRAW_WIDTH, width );
+		return this;
+	}
+
+	public StrokeType calcDrawAlign() {
+		try {
+			return StrokeType.valueOf( getDrawAlignWithInheritance() );
+		} catch( NullPointerException | IllegalArgumentException exception ) {
+			return StrokeType.CENTERED;
+		}
+	}
+
+	public String getDrawAlignWithInheritance() {
+		String align = getDrawAlign();
+		if( isCustomValue( align ) ) return align;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_ALIGN : layer.getDrawAlign();
+	}
+
+	public String getDrawAlign() {
+		return getValue( DRAW_ALIGN );
+	}
+
+	public DesignDrawable setDrawAlign( String align ) {
+		setValue( DRAW_ALIGN, align );
 		return this;
 	}
 
@@ -224,7 +252,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
+		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
 		return map;
 	}
 
@@ -240,6 +268,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		setDrawPaint( map.containsKey( DRAW_PAINT ) ? (String)map.get( DRAW_PAINT ) : null );
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
+		if( map.containsKey( DRAW_ALIGN ) ) setDrawAlign( (String)map.get( DRAW_ALIGN ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
 		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( drawPattern );
 		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );

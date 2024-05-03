@@ -9,6 +9,7 @@ import com.avereon.xenon.NodeOrderNameComparator;
 import com.avereon.zarra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeType;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import lombok.CustomLog;
@@ -37,6 +38,8 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	static final String DEFAULT_DRAW_PAINT = "#808080ff";
 
 	static final String DEFAULT_DRAW_WIDTH = "0.05";
+
+	static final String DEFAULT_DRAW_ALIGN = StrokeType.CENTERED.name().toLowerCase();
 
 	static final String DEFAULT_DRAW_CAP = StrokeLineCap.ROUND.name().toLowerCase();
 
