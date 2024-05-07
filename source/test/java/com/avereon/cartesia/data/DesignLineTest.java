@@ -6,13 +6,11 @@ import com.avereon.zarra.color.Paints;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -97,22 +95,21 @@ public class DesignLineTest {
 	}
 
 	@Test
-	@Disabled
-	void getVisualBounds() {
+	void getVisualBoundsWithZeroStrokeWidth() {
 		// given
 		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
-		//line.setDrawWidth( "0.0" );
+		line.setDrawWidth( "0.0" );
 
 		// when
 		Bounds bounds = line.getVisualBounds();
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -2 );
-		assertThat( bounds.getMinY() ).isEqualTo( -2 );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 );
-		assertThat( bounds.getMaxY() ).isEqualTo( 2 );
-		assertThat( bounds.getWidth() ).isEqualTo( 4 );
-		assertThat( bounds.getHeight() ).isEqualTo( 4 );
+		assertThat( bounds.getMinX() ).isEqualTo( -2, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -2, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 4, TOLERANCE );
 	}
 
 	@Test
@@ -127,50 +124,106 @@ public class DesignLineTest {
 		Bounds bounds = line.getVisualBounds();
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 4 + CadMath.SQRT2, LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 4 + CadMath.SQRT2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -2 - CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4 + CadMath.SQRT2, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 4 + CadMath.SQRT2, TOLERANCE );
 	}
 
 	@Test
-	@Disabled
-	void getVisualBoundsWithNoLength() {
+	void getVisualBoundsWithNoLengthAndZeroStrokeWidth() {
 		// given
-		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		DesignLine line = new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 1, 2, 0 ) );
+		line.setDrawWidth( "0.0" );
 
 		// when
 		Bounds bounds = line.getVisualBounds();
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( 0 );
-		assertThat( bounds.getMinY() ).isEqualTo( 0 );
-		assertThat( bounds.getMaxX() ).isEqualTo( 0 );
-		assertThat( bounds.getMaxY() ).isEqualTo( 0 );
+		assertThat( bounds.getMinX() ).isEqualTo( 1 );
+		assertThat( bounds.getMinY() ).isEqualTo( 2 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2 );
 		assertThat( bounds.getWidth() ).isEqualTo( 0 );
 		assertThat( bounds.getHeight() ).isEqualTo( 0 );
 	}
 
 	@Test
-	@Disabled
-	void getVisualBoundsWithNarrowWidth() {
+	void getVisualBoundsWithNoLengthAndAndButtCaps() {
 		// given
-		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
-		line.setDrawPaint( Paints.toString( Color.WHITE ) );
-		line.setDrawWidth( "0.1" );
+		DesignLine line = new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 1, 2, 0 ) );
+		line.setDrawWidth( "1.0" );
+		line.setDrawCap( "butt" );
 
 		// when
 		Bounds bounds = line.getVisualBounds();
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -2.0707, TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -2.0707, TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2.0707, TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 2.0707, TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 4.141, TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 4.141, TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( 1 );
+		assertThat( bounds.getMinY() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.5 );
+		assertThat( bounds.getWidth() ).isEqualTo( 0 );
+		assertThat( bounds.getHeight() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void getVisualBoundsWithNoLengthAndAndRoundCaps() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 1, 2, 0 ) );
+		line.setDrawWidth( "1.0" );
+		line.setDrawCap( "round" );
+
+		// when
+		Bounds bounds = line.getVisualBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( 0.5 );
+		assertThat( bounds.getMinY() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.5 );
+		assertThat( bounds.getWidth() ).isEqualTo( 1 );
+		assertThat( bounds.getHeight() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void getVisualBoundsWithNoLengthAndAndSquareCaps() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( 1, 2, 0 ), new Point3D( 1, 2, 0 ) );
+		line.setDrawWidth( "1.0" );
+		line.setDrawCap( "square" );
+
+		// when
+		Bounds bounds = line.getVisualBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( 0.5 );
+		assertThat( bounds.getMinY() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.5 );
+		assertThat( bounds.getWidth() ).isEqualTo( 1 );
+		assertThat( bounds.getHeight() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void getVisualBoundsWithNarrowWidth() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
+		line.setDrawWidth( "0.1" );
+		line.setDrawCap( "square" );
+
+		// when
+		Bounds bounds = line.getVisualBounds();
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( -2.0707106781186546, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -2.0707106781186546, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2.0707106781186546, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.0707106781186546, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4.14142135623731, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 4.14142135623731, TOLERANCE );
 	}
 
 }

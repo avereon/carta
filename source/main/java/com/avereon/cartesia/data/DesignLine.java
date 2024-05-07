@@ -108,41 +108,56 @@ public class DesignLine extends DesignShape {
 	protected Bounds computeVisualBounds() {
 		Point3D origin = getOrigin();
 		Point3D point = getPoint();
+		StrokeLineCap cap = calcDrawCap();
 		double length = origin.distance( point );
 
-		// Start with the line on the x-axis, drawn at length
+		// Start with the line on the x-axis, at length
 		double x1 = 0;
 		double y1 = 0;
 		double x2 = length;
 
-		double drawWidth = calcDrawWidth();
-		double halfWidth = 0.5 * drawWidth;
+		// Adjust the line for the stroke width
+		double drawStroke = calcDrawWidth();
+		double halfStroke = 0.5 * drawStroke;
 		StrokeType drawAlign = calcDrawAlign();
 		if( drawAlign == StrokeType.CENTERED ) {
-			y1 = -halfWidth;
+			y1 = -halfStroke;
 		} else if( drawAlign == StrokeType.INSIDE ) {
-			y1 = -drawWidth;
+			y1 = -drawStroke;
 		} else if( drawAlign == StrokeType.OUTSIDE ) {
-			y1 = drawWidth;
+			y1 = drawStroke;
 		}
 
-		if( calcDrawCap() == StrokeLineCap.SQUARE) {
-			x1 -= halfWidth;
-			x2 += halfWidth;
+		// Adjust the line for the stroke cap
+		if( cap == StrokeLineCap.SQUARE ) {
+			x1 -= halfStroke;
+			x2 += halfStroke;
 		}
 
+		// Calculate the width and height
 		double width = Math.abs( x2 - x1 );
-		double height = Math.abs( drawWidth );
+		double height = Math.abs( drawStroke );
 
-		// Create the bounding box
+		// Create the initial bounding box
 		Bounds bounds = new BoundingBox( x1, y1, width, height );
 
 		// Create the transform
 		double angle = CadGeometry.angle360( point.subtract( origin ) );
 		CadTransform transform = CadTransform.translation( origin );
 		transform = transform.combine( CadTransform.rotation( angle ) );
+		bounds = transform.apply( bounds );
 
-		return transform.apply( bounds );
+		// Adjust the bounding box for the stroke cap
+		if( cap == StrokeLineCap.ROUND ) {
+			Bounds baseBounds = new BoundingBox( origin.getX(), origin.getY(), point.getX() - origin.getX(), point.getY() - origin.getY() );
+			x1 = Math.min( bounds.getMinX(), baseBounds.getMinX() - halfStroke );
+			y1 = Math.min( bounds.getMinY(), baseBounds.getMinY() - halfStroke );
+			width = Math.max( bounds.getWidth(), baseBounds.getWidth() + drawStroke );
+			height = Math.max( bounds.getHeight(), baseBounds.getHeight() + drawStroke );
+			bounds = new BoundingBox( x1, y1, width, height );
+		}
+
+		return bounds;
 	}
 
 	public DesignShape updateFrom( DesignShape shape ) {
