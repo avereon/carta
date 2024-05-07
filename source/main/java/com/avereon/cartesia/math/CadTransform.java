@@ -76,6 +76,12 @@ public class CadTransform {
 		return transform.applyZ( CadPoints.asPoint( vector ) );
 	}
 
+	/**
+	 * Combines this transform with another transform.
+	 *
+	 * @param transform The transform to combine with this transform
+	 * @return A new transform that is the combination of this transform and the given transform
+	 */
 	public CadTransform combine( CadTransform transform ) {
 		return new CadTransform( this.transform.combine( transform.transform ) );
 	}

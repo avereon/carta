@@ -119,7 +119,7 @@ public class DesignLine extends DesignShape {
 		double halfWidth = 0.5 * drawWidth;
 		StrokeType drawAlign = calcDrawAlign();
 		if( drawAlign == StrokeType.CENTERED ) {
-			y1 = halfWidth;
+			y1 = -halfWidth;
 		} else if( drawAlign == StrokeType.INSIDE ) {
 			y1 = -drawWidth;
 		} else if( drawAlign == StrokeType.OUTSIDE ) {
@@ -131,13 +131,16 @@ public class DesignLine extends DesignShape {
 			x2 += halfWidth;
 		}
 
+		double width = Math.abs( x2 - x1 );
+		double height = Math.abs( drawWidth );
+
 		// Create the bounding box
-		Bounds bounds = new BoundingBox( x1, y1, x2, drawWidth );
+		Bounds bounds = new BoundingBox( x1, y1, width, height );
 
 		// Create the transform
 		double angle = CadGeometry.angle360( point.subtract( origin ) );
-		CadTransform transform = CadTransform.rotation( angle );
-		transform.combine( CadTransform.translation( origin ) );
+		CadTransform transform = CadTransform.translation( origin );
+		transform = transform.combine( CadTransform.rotation( angle ) );
 
 		return transform.apply( bounds );
 	}
