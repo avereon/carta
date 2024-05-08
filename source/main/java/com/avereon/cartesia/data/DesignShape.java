@@ -19,6 +19,9 @@ import static com.avereon.data.NodeEvent.MODIFIED;
 @CustomLog
 public abstract class DesignShape extends DesignDrawable {
 
+	// The shape types in order of simplicity:
+	// BOX, LINE, ELLIPSE, ARC, QUAD, CUBIC, PATH, MARKER, TEXT
+
 	public enum Type {
 		ARC,
 		BOX,

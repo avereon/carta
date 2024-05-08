@@ -13,6 +13,7 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Ellipse;
 import lombok.CustomLog;
 
 import java.util.HashMap;
@@ -282,6 +283,24 @@ public class DesignEllipse extends DesignShape {
 		}
 
 		return this;
+	}
+
+	@Override
+	protected Bounds computeBounds() {
+		// The bounds of a non-rotated ellipse
+		Point3D origin = getOrigin();
+		Point3D radii = getRadii();
+		double x = origin.getX() - radii.getX();
+		double y = origin.getY() - radii.getY();
+		double w = 2 * radii.getX();
+		double h = 2 * radii.getY();
+		return new BoundingBox( x, y, w, h );
+	}
+
+	@Override
+	protected Bounds computeVisualBounds() {
+		Ellipse e;
+		return super.computeVisualBounds();
 	}
 
 	@Override
