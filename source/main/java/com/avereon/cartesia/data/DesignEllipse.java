@@ -13,7 +13,6 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Ellipse;
 import lombok.CustomLog;
 
 import java.util.HashMap;
@@ -299,7 +298,6 @@ public class DesignEllipse extends DesignShape {
 
 	@Override
 	protected Bounds computeVisualBounds() {
-		Ellipse e;
 		return super.computeVisualBounds();
 	}
 
