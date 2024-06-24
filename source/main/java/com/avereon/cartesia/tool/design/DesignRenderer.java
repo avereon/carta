@@ -89,6 +89,7 @@ public class DesignRenderer extends BorderPane {
 		// TODO Disconnect listeners
 
 		this.design = design;
+		visibleLayers().addAll( design.getAllLayers() );
 
 		// TODO Connect listeners
 
@@ -122,6 +123,14 @@ public class DesignRenderer extends BorderPane {
 		return new Point2D( renderer.getPpiX(), renderer.getPpiY() );
 	}
 
+	public double getDpiX() {
+		return renderer.getPpiX();
+	}
+
+	public double getDpiY() {
+		return renderer.getPpiY();
+	}
+
 	/**
 	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
 	 * axes to the same value.
@@ -141,6 +150,10 @@ public class DesignRenderer extends BorderPane {
 	 */
 	public void setDpi( double dpiX, double dpiY ) {
 		renderer.setPpi( dpiX, dpiY );
+	}
+
+	public void setDpi( Point2D dpi ) {
+		renderer.setPpi( dpi.getX(), dpi.getY() );
 	}
 
 	public boolean isGridVisible() {
@@ -217,6 +230,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public ObservableSet<DesignShape> selectedShapes() {
+		// FIXME Maintain the visible shape order
 		return selectedShapes;
 	}
 
@@ -325,6 +339,31 @@ public class DesignRenderer extends BorderPane {
 	 */
 	public void render() {
 		Fx.run( new RenderTrigger() );
+	}
+
+	@Override
+	public Point3D localToParent(Point3D localPoint) {
+		return renderer.localToParent( localPoint );
+	}
+
+	@Override
+	public Point2D localToParent( double localX, double localY ) {
+		return renderer.localToParent( localX, localY );
+	}
+
+	@Override
+	public Point2D localToParent( Point2D localPoint ) {
+		return renderer.localToParent( localPoint );
+	}
+
+	@Override
+	public Point3D localToParent( double x, double y, double z ) {
+		return renderer.localToParent( x, y, z );
+	}
+
+	@Override
+	public Bounds localToParent( Bounds localBounds ) {
+		return renderer.localToParent( localBounds );
 	}
 
 	@Override

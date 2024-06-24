@@ -221,6 +221,8 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	// FIXME This really should return design shapes and not FX shapes
 	public abstract List<Shape> getVisibleShapes();
 
+	public abstract List<DesignShape> getVisibleGeometry();
+
 	public abstract Paint getSelectedDrawPaint();
 
 	public abstract Paint getSelectedFillPaint();

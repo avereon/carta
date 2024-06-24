@@ -370,6 +370,11 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
+	public List<DesignShape> getVisibleGeometry() {
+		return null;
+	}
+
+	@Override
 	public Paint getSelectedDrawPaint() {
 		return designPane.getSelectDrawPaint();
 	}

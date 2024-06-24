@@ -204,7 +204,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Set the renderer design
 		renderer.setDesign( getDesign() );
-		renderer.visibleLayers().addAll( getDesign().getAllLayers() );
+		renderer.setDpi( Screen.getPrimary().getDpi() );
 
 		// Set "so settings" defaults
 		setCurrentLayer( getDesign().getAllLayers().getFirst() );
@@ -221,11 +221,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		//getGuideContext().getGuides().addAll( layersGuide, viewsGuide, printsGuide );
 		getGuideContext().getGuides().addAll( layersGuide );
 		getGuideContext().setCurrentGuide( layersGuide );
-
-		Fx.run( () -> {
-			renderer.setDpi( Screen.getPrimary().getDpi() );
-			renderer.render();
-		} );
 
 		//		// Keep the design pane centered when resizing
 		//		// These should be added before updating the pan and zoom
@@ -395,8 +390,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
-		// FIXME Showing the properties pages over and over blows up the memory
-		//showPropertiesPage( getCurrentLayer() );
+		showPropertiesPage( getCurrentLayer() );
 	}
 
 	@Override
@@ -457,6 +451,14 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	public DoubleProperty viewpointYProperty() {
 		return renderer.viewpointYProperty();
+	}
+
+	public double getDpi() {
+		return renderer.getDpiX();
+	}
+
+	public void setDpi( double dpi ) {
+		renderer.setDpi( new Point2D( dpi, dpi ) );
 	}
 
 	@Override
@@ -634,6 +636,11 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
+	public List<DesignShape> getVisibleGeometry() {
+		return getVisibleLayers().stream().flatMap( layer -> layer.getShapes().stream() ).toList();
+	}
+
+	@Override
 	public Paint getSelectedDrawPaint() {
 		return null;
 	}
@@ -805,6 +812,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
+		List<DesignShape> shapes = getSelectedGeometry();
+
 		if( !toggle ) renderer.clearSelectedShapes();
 
 		renderer.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
@@ -1062,25 +1071,25 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
-		SettingsPage page = designPropertiesMap.getSettingsPage( type );
-		if( page != null ) {
-			page.setSettings( settings );
-
-			// Switch to a task thread to get the tool
-			getProgram().getTaskManager().submit( Task.of( () -> {
-				try {
-					// Open the tool but don't make it the active tool
-					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
-
-					// Fire the event on the FX thread
-					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
-				} catch( Exception exception ) {
-					log.atWarn( exception ).log();
-				}
-			} ) );
-		} else {
-			log.atError().log( "Unable to find properties page for %s", type.getName() );
-		}
+//		SettingsPage page = designPropertiesMap.getSettingsPage( type );
+//		if( page != null ) {
+//			page.setSettings( settings );
+//
+//			// Switch to a task thread to get the tool
+//			getProgram().getTaskManager().submit( Task.of( () -> {
+//				try {
+//					// Open the tool but don't make it the active tool
+//					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
+//
+//					// Fire the event on the FX thread
+//					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
+//				} catch( Exception exception ) {
+//					log.atWarn( exception ).log();
+//				}
+//			} ) );
+//		} else {
+//			log.atError().log( "Unable to find properties page for %s", type.getName() );
+//		}
 	}
 
 	private void hidePropertiesPage() {
