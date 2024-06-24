@@ -46,13 +46,13 @@ public class LayersGuide extends Guide {
 
 	private final XenonProgramProduct product;
 
-	private final FxRenderDesignTool tool;
+	private final DesignToolV2 tool;
 
 	private final Map<DesignLayer, GuideNode> layerGuideNodes;
 
 	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
-	public LayersGuide( XenonProgramProduct product, FxRenderDesignTool tool ) {
+	public LayersGuide( XenonProgramProduct product, DesignToolV2 tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.layerGuideNodes = new ConcurrentHashMap<>();

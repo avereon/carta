@@ -31,13 +31,13 @@ public class DesignToolLayersGuide extends Guide {
 
 	private final XenonProgramProduct product;
 
-	private final FxShapeDesignTool tool;
+	private final DesignToolV1 tool;
 
 	private final Map<DesignLayer, GuideNode> layerGuideNodes;
 
 	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
-	public DesignToolLayersGuide( XenonProgramProduct product, FxShapeDesignTool tool ) {
+	public DesignToolLayersGuide( XenonProgramProduct product, DesignToolV1 tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.layerGuideNodes = new ConcurrentHashMap<>();

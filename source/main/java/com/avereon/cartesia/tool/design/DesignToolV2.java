@@ -53,7 +53,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @CustomLog
-public class FxRenderDesignTool extends BaseDesignTool {
+public class DesignToolV2 extends BaseDesignTool {
 
 	// DEFAULTS
 
@@ -137,7 +137,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
-	public FxRenderDesignTool( XenonProgramProduct product, Asset asset ) {
+	public DesignToolV2( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
@@ -1121,7 +1121,7 @@ public class FxRenderDesignTool extends BaseDesignTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ) );
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), DesignToolV2.this, getAsset(), (DesignPrint)null ) );
 			//getProgram().getTaskManager().submit( new DesignAwtPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ) );
 		}
 

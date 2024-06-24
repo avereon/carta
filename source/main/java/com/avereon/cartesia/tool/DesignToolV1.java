@@ -63,7 +63,7 @@ import java.util.stream.Collectors;
 
 @Deprecated
 @CustomLog
-public abstract class FxShapeDesignTool extends BaseDesignTool {
+public abstract class DesignToolV1 extends BaseDesignTool {
 
 	private static final String REFERENCE_LAYER_VISIBLE = "";
 
@@ -123,7 +123,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
-	public FxShapeDesignTool( XenonProgramProduct product, Asset asset ) {
+	public DesignToolV1( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
@@ -1156,7 +1156,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
 
 					// Fire the event on the FX thread
-					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( FxShapeDesignTool.this, ShapePropertiesToolEvent.SHOW, page ) ) );
+					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignToolV1.this, ShapePropertiesToolEvent.SHOW, page ) ) );
 				} catch( Exception exception ) {
 					log.atWarn( exception ).log();
 				}
@@ -1167,7 +1167,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 	}
 
 	private void hidePropertiesPage() {
-		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( FxShapeDesignTool.this, ShapePropertiesToolEvent.HIDE, null ) );
+		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignToolV1.this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
 	@Override
@@ -1240,7 +1240,7 @@ public abstract class FxShapeDesignTool extends BaseDesignTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), FxShapeDesignTool.this, getAsset(), null ) );
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), DesignToolV1.this, getAsset(), null ) );
 			//getProgram().getTaskManager().submit( new DesignAwtPrintTask( getProgram(), FxShapeDesignTool.this, getAsset(), null ) );
 		}
 

@@ -21,9 +21,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Getter
 @CustomLog
-public class FxRenderDesignToolTest extends BaseCartesiaUiTest {
+public class DesignToolV2Test extends BaseCartesiaUiTest {
 
-	private FxRenderDesignTool tool;
+	private DesignToolV2 tool;
 
 	@BeforeEach
 	protected void setup() throws Exception {
@@ -31,8 +31,8 @@ public class FxRenderDesignToolTest extends BaseCartesiaUiTest {
 
 		// Load the design asset into a tool
 		URI uri = Objects.requireNonNull( getClass().getResource( "/design-tool-test.cartesia2d" ) ).toURI();
-		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( uri, FxRenderDesignTool.class );
-		tool = (FxRenderDesignTool)future.get();
+		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( uri, DesignToolV2.class );
+		tool = (DesignToolV2)future.get();
 
 		// Wait for the tool to be ready
 		FxEventWatcher eventWatcher = new FxEventWatcher();

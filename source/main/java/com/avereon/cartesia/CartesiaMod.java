@@ -7,8 +7,9 @@ import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.settings.FontSettingEditor;
 import com.avereon.cartesia.tool.Design2dEditor;
-import com.avereon.cartesia.tool.design.FxRenderDesignTool;
+import com.avereon.cartesia.tool.DesignToolV1;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
+import com.avereon.cartesia.tool.design.DesignToolV2;
 import com.avereon.index.Document;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
@@ -58,28 +59,7 @@ public class CartesiaMod extends Module {
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
 
-		// Default tool registration
-		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (Deprecated)" );
-		registerTool( design2dAssetType, design2dEditorRegistration );
-		// Other tool registrations
-		ToolRegistration designToolRegistration = new ToolRegistration( this, FxRenderDesignTool.class );
-		designToolRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
-		registerTool( design2dAssetType, designToolRegistration );
-
-		// Register Design3D asset type and tools
-		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
-		// Tool registration
-		//ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
-		//design3dEditorRegistration.setName( Rb.text(RbKey.LABEL, "design-3d-editor") );
-		//registerTool( design3dAssetType, design3dEditorRegistration );
-
-		// Register ShapeProperties asset type and tools
-		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
-		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
-		shapePropertiesRegistration.setName( Rb.text( RbKey.LABEL, "shape-properties-tool" ) );
-		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );
-		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
+		registerTools();
 
 		getProgram().getSettingsManager().putSettingEditor( "font-cartesia", FontSettingEditor.class );
 		getProgram().getSettingsManager().putSettingEditor( "paint-cartesia", PaintSettingEditor.class );
@@ -124,7 +104,7 @@ public class CartesiaMod extends Module {
 		//unregisterAssetType( design3dAssetType );
 
 		// Unregister Design2D
-		unregisterTool( design2dAssetType, FxRenderDesignTool.class );
+		unregisterTool( design2dAssetType, DesignToolV2.class );
 		unregisterAssetType( design2dAssetType );
 
 		// Unregister Design2D
@@ -195,6 +175,35 @@ public class CartesiaMod extends Module {
 		registerAction( this, "grid-toggle" );
 
 		registerAction( this, "measure" );
+	}
+
+	private void registerTools() {
+		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxShapeDesignTool", DesignToolV1.class );
+		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxRenderDesignTool", DesignToolV2.class );
+
+		// Default tool registration
+		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
+		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (Deprecated)" );
+		registerTool( design2dAssetType, design2dEditorRegistration );
+		// Other tool registrations
+		ToolRegistration designToolRegistration = new ToolRegistration( this, DesignToolV2.class );
+		designToolRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
+		registerTool( design2dAssetType, designToolRegistration );
+
+		// Register Design3D asset type and tools
+		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
+		// Tool registration
+		//ToolRegistration design3dEditorRegistration = new ToolRegistration( this, Design3dEditor.class );
+		//design3dEditorRegistration.setName( Rb.text(RbKey.LABEL, "design-3d-editor") );
+		//registerTool( design3dAssetType, design3dEditorRegistration );
+
+		// Register ShapeProperties asset type and tools
+		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
+		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
+		shapePropertiesRegistration.setName( Rb.text( RbKey.LABEL, "shape-properties-tool" ) );
+		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );
+		registerTool( shapePropertiesAssetType, shapePropertiesRegistration );
+
 	}
 
 	private void unregisterActions() {
