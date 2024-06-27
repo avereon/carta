@@ -146,7 +146,7 @@ public abstract class DesignShape extends DesignDrawable {
 	/**
 	 * This is a special implementation using FX to compute visual selection boundaries.
 	 *
-	 * @return
+	 * @return The visual bounds of the shape
 	 */
 	public Bounds getVisualBounds() {
 		//		// FIXME Using FX for computing bounds is problematic
@@ -155,6 +155,8 @@ public abstract class DesignShape extends DesignDrawable {
 		//
 		//		// NOTE An option to somewhat remedy this is to pass in a scale of some sort
 		//		// like points, PPU or even the zoom
+		//    // If PPU then also include the Screen.getPrimaryScreen().getOutputScaleX()
+
 		if( visualBoundsCache == null ) visualBoundsCache = computeVisualBounds();
 		return visualBoundsCache;
 	}

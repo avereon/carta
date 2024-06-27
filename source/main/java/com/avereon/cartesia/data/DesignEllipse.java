@@ -297,11 +297,6 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	@Override
-	protected Bounds computeVisualBounds() {
-		return super.computeVisualBounds();
-	}
-
-	@Override
 	public String toString() {
 		return super.toString( ORIGIN, RADII, ROTATE );
 	}

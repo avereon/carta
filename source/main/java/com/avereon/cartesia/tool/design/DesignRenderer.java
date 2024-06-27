@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
@@ -342,7 +341,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	@Override
-	public Point3D localToParent(Point3D localPoint) {
+	public Point3D localToParent( Point3D localPoint ) {
 		return renderer.localToParent( localPoint );
 	}
 
@@ -392,7 +391,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
-		double size = valueToWorld( tolerance );
+		double size = realToWorld( tolerance );
 		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
 	}
 
@@ -669,17 +668,18 @@ public class DesignRenderer extends BorderPane {
 		}
 	}
 
-	private double valueToPixels( DesignValue v ) {
-		return v.getUnit().to( v.getValue(), DesignUnit.INCH ) * getDpi().getX();
+	private double realToWorld( DesignValue value ) {
+		// Convert the provided value to design units and divide by the zoom factor
+		return value.to( design.calcDesignUnit() ).getValue() / getZoomX();
 	}
 
-	private double valueToWorld( DesignValue v ) {
-		return valueToPixels( v ) / getInternalScale();
-	}
-
-	private double getInternalScale() {
-		return this.getDpi().getX() * getZoom().getX();
-	}
+//	private double valueToScreen( DesignValue v ) {
+//		return v.to( DesignUnit.INCH ).getValue() * getDpiX() * Screen.getPrimary().getOutputScaleX();
+//	}
+//
+//	private double getInternalScale() {
+//		return this.getDpiX() * getZoomX();
+//	}
 
 	/**
 	 * Select nodes using a shape. The selecting shape can be any shape but it
@@ -691,6 +691,9 @@ public class DesignRenderer extends BorderPane {
 	 * @return The list of selected shapes
 	 */
 	private List<DesignShape> doFindByShape( final DesignShape selector, final boolean intersect ) {
+		// Ensure the selector does not have a draw width
+		selector.setDrawWidth( "0" );
+
 		// This method should be thread agnostic. It should be safe to call from any thread.
 		return getVisibleShapes().stream().filter( shape -> matches( selector, shape, intersect ) ).collect( Collectors.toList() );
 	}
@@ -713,7 +716,6 @@ public class DesignRenderer extends BorderPane {
 		Shape fxSelector = selector.getFxShape();
 		Shape fxShape = shape.getFxShape();
 		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
-
 	}
 
 	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {

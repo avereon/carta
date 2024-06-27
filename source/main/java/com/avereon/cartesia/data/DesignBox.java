@@ -61,24 +61,6 @@ public class DesignBox extends DesignShape {
 	}
 
 	@Override
-	protected Bounds computeVisualBounds() {
-		// Computing the visual bounds for a box is made harder
-		// because of the stroke settings
-
-		// drawWidth - used
-		// drawType - used
-		// drawJoin - used
-		// drawMiterLimit - used
-
-		// drawCap - not used
-		// drawDashes - not used
-		// drawDashOffset - not used
-
-
-		return super.computeVisualBounds();
-	}
-
-	@Override
 	public double distanceTo( Point3D point ) {
 		Point3D origin = getOrigin();
 		Point3D size = getSize();
