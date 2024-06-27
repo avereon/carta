@@ -1,5 +1,8 @@
 package com.avereon.cartesia;
 
+import lombok.Getter;
+
+@Getter
 public class DesignValue {
 
 	private final double value;
@@ -11,12 +14,13 @@ public class DesignValue {
 		this.unit = unit;
 	}
 
-	public double getValue() {
-		return value;
+	@Override
+	public String toString() {
+		return "DesignValue{" + "value=" + value + ", unit=" + unit + '}';
 	}
 
-	public DesignUnit getUnit() {
-		return unit;
+	public DesignValue to( DesignUnit unit ) {
+		return new DesignValue( this.unit.to( value, unit ), unit );
 	}
 
 }
