@@ -273,55 +273,65 @@ public class CadGeometry {
 	}
 
 	public static Shape toFxShape( DesignShape shape ) {
+		return toFxShape( shape, 1.0 );
+	}
+
+	public static Shape toFxShape( DesignShape shape, double scale ) {
 		Shape fxShape = switch( shape.getType() ) {
 			case BOX -> {
 				DesignBox box = (DesignBox)shape;
-				yield new Rectangle( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY() );
+				yield new Rectangle( box.getOrigin().getX() * scale, box.getOrigin().getY() * scale, box.getSize().getX() * scale, box.getSize().getY() * scale );
 			}
 			case LINE -> {
 				DesignLine line = (DesignLine)shape;
-				yield new Line( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
+				yield new Line( line.getOrigin().getX() * scale, line.getOrigin().getY() * scale, line.getPoint().getX() * scale, line.getPoint().getY() * scale );
 			}
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
-				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
-				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX(), ellipse.getOrigin().getY() ) );
+				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
+				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale ) );
 				yield fxEllipse;
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
-				yield new Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), arc.calcStart(), arc.calcExtent() );
+				yield new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, arc.calcStart(), arc.calcExtent() );
 			}
 			case QUAD -> {
 				DesignQuad quad = (DesignQuad)shape;
-				yield new QuadCurve( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
+				yield new QuadCurve( quad.getOrigin().getX() * scale,
+					quad.getOrigin().getY() * scale,
+					quad.getControl().getX() * scale,
+					quad.getControl().getY() * scale,
+					quad.getPoint().getX() * scale,
+					quad.getPoint().getY() * scale
+				);
 			}
 			case CUBIC -> {
 				DesignCubic cubic = (DesignCubic)shape;
-				yield new CubicCurve( cubic.getOrigin().getX(),
-					cubic.getOrigin().getY(),
-					cubic.getOriginControl().getX(),
-					cubic.getOriginControl().getY(),
-					cubic.getPointControl().getX(),
-					cubic.getPointControl().getY(),
-					cubic.getPoint().getX(),
-					cubic.getPoint().getY()
+				yield new CubicCurve( cubic.getOrigin().getX() * scale,
+					cubic.getOrigin().getY() * scale,
+					cubic.getOriginControl().getX() * scale,
+					cubic.getOriginControl().getY() * scale,
+					cubic.getPointControl().getX() * scale,
+					cubic.getPointControl().getY() * scale,
+					cubic.getPoint().getX() * scale,
+					cubic.getPoint().getY() * scale
 				);
 			}
 			case MARKER -> {
 				// TODO This should return a path
 				DesignMarker marker = (DesignMarker)shape;
 				double size = marker.calcSize();
-				yield new Rectangle( marker.getOrigin().getX() - 0.5 * size, marker.getOrigin().getY() - 0.5 * size, size, size );
+				yield new Rectangle( marker.getOrigin().getX() - 0.5 * size * scale, marker.getOrigin().getY() - 0.5 * size * scale, size * scale, size * scale );
 			}
 			case PATH -> {
 				DesignPath path = (DesignPath)shape;
 				// TODO Calculate path shape
-				yield new Rectangle( path.getOrigin().getX(), path.getOrigin().getY(), 1, 1 );
+				yield new Rectangle( path.getOrigin().getX() * scale, path.getOrigin().getY() * scale, 1, 1 );
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
-				yield new Text( text.getOrigin().getX(), text.getOrigin().getY(), text.getText() );
+				yield new Text( text.getOrigin().getX() * scale, text.getOrigin().getY() * scale, text.getText() );
 			}
 		};
 
@@ -329,17 +339,17 @@ public class CadGeometry {
 		Paint fillPaint = shape.calcFillPaint();
 		if( drawPaint != null ) fxShape.setStroke( Color.YELLOW );
 		if( fillPaint != null ) fxShape.setFill( Color.RED );
-		fxShape.setStrokeWidth( shape.calcDrawWidth() );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
 		fxShape.setStrokeType( StrokeType.CENTERED );
 		fxShape.setStrokeLineCap( shape.calcDrawCap() );
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
-		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
-		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
+		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() * scale );
+		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v * scale ).toList() );
 
 		// Handle the rotate transform, if needed
 		double rotate = shape.calcRotate();
-		if( rotate != 0.0) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX(), shape.getOrigin().getY() ) );
+		if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
 
 		return fxShape;
 	}

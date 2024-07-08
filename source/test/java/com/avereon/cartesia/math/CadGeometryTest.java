@@ -7,6 +7,7 @@ import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.*;
+import org.assertj.core.util.DoubleComparator;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
@@ -164,21 +165,51 @@ public class CadGeometryTest {
 	}
 
 	@Test
-	void toFxShapeWithLine() {
-		Line line = (Line)CadGeometry.toFxShape( new DesignLine( 0, 0, 1, 1 ) );
-		assertThat( line.getStartX() ).isEqualTo( 0 );
-		assertThat( line.getStartY() ).isEqualTo( 0 );
-		assertThat( line.getEndX() ).isEqualTo( 1 );
-		assertThat( line.getEndY() ).isEqualTo( 1 );
-	}
-
-	@Test
 	void toFxShapeWithBox() {
 		Rectangle box = (Rectangle)CadGeometry.toFxShape( new DesignBox( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ) );
 		assertThat( box.getX() ).isEqualTo( 0 );
 		assertThat( box.getY() ).isEqualTo( 0 );
 		assertThat( box.getWidth() ).isEqualTo( 1 );
 		assertThat( box.getHeight() ).isEqualTo( 1 );
+
+		assertThat( box.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithBoxAndScale() {
+		Rectangle box = (Rectangle)CadGeometry.toFxShape( new DesignBox( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ), 2.5 );
+		assertThat( box.getX() ).isEqualTo( 0 );
+		assertThat( box.getY() ).isEqualTo( 0 );
+		assertThat( box.getWidth() ).isEqualTo( 2.5 );
+		assertThat( box.getHeight() ).isEqualTo( 2.5 );
+
+		assertThat( box.getStrokeWidth() ).isEqualTo( 0.125, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithLine() {
+		Line line = (Line)CadGeometry.toFxShape( new DesignLine( 0, 0, 1, 1 ) );
+		assertThat( line.getStartX() ).isEqualTo( 0 );
+		assertThat( line.getStartY() ).isEqualTo( 0 );
+		assertThat( line.getEndX() ).isEqualTo( 1 );
+		assertThat( line.getEndY() ).isEqualTo( 1 );
+
+		assertThat( line.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithLineAndScale() {
+		DesignLine designLine = new DesignLine( 0, 0, 1, 1 );
+		designLine.setDrawPattern( "0.1" );
+
+		Line line = (Line)CadGeometry.toFxShape( designLine, 3.5 );
+		assertThat( line.getStartX() ).isEqualTo( 0 );
+		assertThat( line.getStartY() ).isEqualTo( 0 );
+		assertThat( line.getEndX() ).isEqualTo( 3.5 );
+		assertThat( line.getEndY() ).isEqualTo( 3.5 );
+
+		assertThat( line.getStrokeWidth() ).isEqualTo( 0.175, TOLERANCE );
+		assertThat( line.getStrokeDashArray() ).usingComparatorForType( new DoubleComparator( TOLERANCE.value ), Double.class ).containsExactly( 0.35 );
 	}
 
 	@Test
@@ -191,6 +222,8 @@ public class CadGeometryTest {
 		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
 		assertThat( arc.getLength() ).isEqualTo( 90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
+
+		assertThat( arc.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
 	@Test
@@ -204,6 +237,8 @@ public class CadGeometryTest {
 		assertThat( ellipse.getRadiusY() ).isEqualTo( 1 );
 
 		assertThat( ellipse.getTransforms() ).isEmpty();
+
+		assertThat( ellipse.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
 	@Test
@@ -220,6 +255,8 @@ public class CadGeometryTest {
 		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
 		assertThat( fxRotate.getPivotX() ).isEqualTo( 3 );
 		assertThat( fxRotate.getPivotY() ).isEqualTo( 5 );
+
+		assertThat( ellipse.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
 }
