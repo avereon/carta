@@ -12,7 +12,7 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.guide.Guide;
 import com.avereon.xenon.tool.guide.GuideNode;
-import javafx.collections.SetChangeListener;
+import javafx.collections.ListChangeListener;
 import javafx.scene.input.KeyEvent;
 import lombok.CustomLog;
 
@@ -115,20 +115,20 @@ public class LayersGuide extends Guide {
 		design.register( NodeEvent.CHILD_REMOVED, e -> removeLayer( e.getOldValue() ) );
 
 		// Add listener for visible layer changes
-		tool.visibleLayers().addListener( (SetChangeListener<DesignLayer>)( change ) -> {
-			if( change.wasAdded() ) {
-				DesignLayer layer = change.getElementAdded();
-				if( layer != null ) {
-					boolean isCurrent = tool.isCurrentLayer( layer );
-					GuideNode node = layerGuideNodes.get( layer );
-					if( node != null ) node.setIcon( isCurrent ? GUIDE_LAYER_CURRENT_ICON : GUIDE_LAYER_ICON );
-				}
-			} else if( change.wasRemoved() ) {
-				DesignLayer layer = change.getElementRemoved();
-				if( layer != null ) {
-					boolean isCurrent = tool.isCurrentLayer( layer );
-					GuideNode node = layerGuideNodes.get( layer );
-					if( node != null ) node.setIcon( isCurrent ? GUIDE_LAYER_CURRENT_HIDDEN_ICON : GUIDE_LAYER_HIDDEN_ICON );
+		tool.visibleLayers().addListener( (ListChangeListener<DesignLayer>)( change ) -> {
+			while( change.next() ) {
+				if( change.wasAdded() ) {
+					for( DesignLayer layer : change.getAddedSubList() ) {
+						boolean isCurrent = tool.isCurrentLayer( layer );
+						GuideNode node = layerGuideNodes.get( layer );
+						if( node != null ) node.setIcon( isCurrent ? GUIDE_LAYER_CURRENT_ICON : GUIDE_LAYER_ICON );
+					}
+				} else if( change.wasRemoved() ) {
+					for( DesignLayer layer : change.getRemoved() ) {
+						boolean isCurrent = tool.isCurrentLayer( layer );
+						GuideNode node = layerGuideNodes.get( layer );
+						if( node != null ) node.setIcon( isCurrent ? GUIDE_LAYER_CURRENT_HIDDEN_ICON : GUIDE_LAYER_HIDDEN_ICON );
+					}
 				}
 			}
 		} );

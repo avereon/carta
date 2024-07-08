@@ -16,9 +16,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableSet;
-import javafx.collections.SetChangeListener;
+import javafx.collections.*;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -40,9 +38,9 @@ public class DesignRenderer extends BorderPane {
 
 	private final FxRenderer2d renderer;
 
-	private final ObservableSet<DesignLayer> visibleLayers;
+	private final ObservableList<DesignLayer> visibleLayers;
 
-	private final ObservableSet<DesignShape> selectedShapes;
+	private final ObservableList<DesignShape> selectedShapes;
 
 	private SimpleBooleanProperty gridVisible;
 
@@ -53,8 +51,8 @@ public class DesignRenderer extends BorderPane {
 	private SimpleBooleanProperty constructionPointsVisible;
 
 	public DesignRenderer() {
-		visibleLayers = FXCollections.observableSet();
-		selectedShapes = FXCollections.observableSet();
+		visibleLayers = FXCollections.observableArrayList();
+		selectedShapes = FXCollections.observableArrayList();
 		selectAperture = new SimpleObjectProperty<>();
 
 		// Create and add the renderer to the center
@@ -79,8 +77,8 @@ public class DesignRenderer extends BorderPane {
 		renderer.widthProperty().addListener( ( p, o, n ) -> render() );
 		renderer.heightProperty().addListener( ( p, o, n ) -> render() );
 
-		visibleLayers.addListener( (SetChangeListener<? super DesignLayer>)( c ) -> render() );
-		selectedShapes.addListener( (SetChangeListener<? super DesignShape>)( c ) -> render() );
+		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
+		selectedShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 	}
 
@@ -175,7 +173,7 @@ public class DesignRenderer extends BorderPane {
 		return visibleLayers.contains( layer );
 	}
 
-	public Set<DesignLayer> getVisibleLayers() {
+	public List<DesignLayer> getVisibleLayers() {
 		return visibleLayers;
 	}
 
@@ -185,14 +183,14 @@ public class DesignRenderer extends BorderPane {
 		render();
 	}
 
-	public ObservableSet<DesignLayer> visibleLayers() {
+	public ObservableList<DesignLayer> visibleLayers() {
 		return visibleLayers;
 	}
 
 	// Visible Shapes ------------------------------------------------------------
 
-	public Set<DesignShape> getVisibleShapes() {
-		return getVisibleLayers().stream().flatMap( l -> l.getShapes().stream() ).collect( Collectors.toSet() );
+	public List<DesignShape> getVisibleShapes() {
+		return getVisibleLayers().stream().flatMap( l -> l.getShapes().stream() ).collect( Collectors.toList() );
 	}
 
 	// Visible Shapes ------------------------------------------------------------
@@ -215,7 +213,7 @@ public class DesignRenderer extends BorderPane {
 		return selectedShapes.contains( shape );
 	}
 
-	public Set<DesignShape> getSelectedShapes() {
+	public List<DesignShape> getSelectedShapes() {
 		return selectedShapes;
 	}
 
@@ -228,8 +226,7 @@ public class DesignRenderer extends BorderPane {
 		if( shapes != null ) selectedShapes.addAll( shapes );
 	}
 
-	public ObservableSet<DesignShape> selectedShapes() {
-		// FIXME Maintain the visible shape order
+	public ObservableList<DesignShape> selectedShapes() {
 		return selectedShapes;
 	}
 

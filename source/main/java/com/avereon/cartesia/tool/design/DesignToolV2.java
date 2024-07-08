@@ -32,7 +32,6 @@ import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -626,7 +625,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		return new ArrayList<>( renderer.visibleLayers() );
 	}
 
-	public ObservableSet<DesignLayer> visibleLayers() {
+	public ObservableList<DesignLayer> visibleLayers() {
 		return renderer.visibleLayers();
 	}
 
@@ -812,10 +811,14 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
+		// Get the currently selected shapes
 		List<DesignShape> shapes = getSelectedGeometry();
 
+		// If toggling, clear the selected shapes in the renderer
 		if( !toggle ) renderer.clearSelectedShapes();
 
+		// Add and remove selected shapes as necessary
+		// TODO This should be updated to cascade through the selected shapes
 		renderer.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
 			if( renderer.isShapeSelected( shape ) ) {
 				renderer.selectedShapes().remove( shape );
