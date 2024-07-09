@@ -1,12 +1,10 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.PointAssert;
-import com.avereon.cartesia.data.DesignArc;
-import com.avereon.cartesia.data.DesignBox;
-import com.avereon.cartesia.data.DesignEllipse;
-import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.data.*;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.*;
+import javafx.scene.text.Text;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.jupiter.api.Test;
 
@@ -217,7 +215,7 @@ public class CadGeometryTest {
 
 	@Test
 	void toFxShapeWithArc() {
-		Arc arc = (Arc)CadGeometry.toFxShape( new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 1.0, 0.0, 90.0, DesignArc.Type.OPEN ) );
+		Arc arc = (Arc)CadGeometry.toFxShape( new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 0.0, 0.0, 90.0, DesignArc.Type.OPEN ) );
 		assertThat( arc.getCenterX() ).isEqualTo( 3 );
 		assertThat( arc.getCenterY() ).isEqualTo( 5 );
 		assertThat( arc.getRadiusX() ).isEqualTo( 1 );
@@ -226,12 +224,15 @@ public class CadGeometryTest {
 		assertThat( arc.getLength() ).isEqualTo( 90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
 
+		// Check rotate
+		assertThat( arc.getTransforms() ).isEmpty();
+
 		assertThat( arc.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
 	@Test
 	void toFxShapeWithArcAndScale() {
-		DesignArc designArc = new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 1.0, 0.0, 90.0, DesignArc.Type.OPEN );
+		DesignArc designArc = new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 0.0, 0.0, 90.0, DesignArc.Type.OPEN );
 		designArc.setDrawPattern( "0.1" );
 
 		Arc arc = (Arc)CadGeometry.toFxShape( designArc, 1.5 );
@@ -243,8 +244,56 @@ public class CadGeometryTest {
 		assertThat( arc.getLength() ).isEqualTo( 90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
 
+		// Check rotate
+		assertThat( arc.getTransforms() ).isEmpty();
+
 		assertThat( arc.getStrokeWidth() ).isEqualTo( 0.075, TOLERANCE );
 		assertThat( arc.getStrokeDashArray() ).usingComparatorForType( new DoubleComparator( TOLERANCE.value ), Double.class ).containsExactly( 0.15 );
+	}
+
+	@Test
+	void toFxShapeWithArcAndRotate() {
+		double rotate = 1.0;
+		Arc arc = (Arc)CadGeometry.toFxShape( new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate, 0.0, 90.0, DesignArc.Type.OPEN ) );
+		assertThat( arc.getCenterX() ).isEqualTo( 3 );
+		assertThat( arc.getCenterY() ).isEqualTo( 5 );
+		assertThat( arc.getRadiusX() ).isEqualTo( 1 );
+		assertThat( arc.getRadiusY() ).isEqualTo( 1 );
+		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
+		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
+
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)arc.getTransforms().getFirst();
+		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		assertThat( fxRotate.getPivotX() ).isEqualTo( arc.getCenterX() );
+		assertThat( fxRotate.getPivotY() ).isEqualTo( arc.getCenterY() );
+
+		assertThat( arc.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+		assertThat( arc.getStrokeDashArray() ).isEmpty();
+	}
+
+	@Test
+	void toFxShapeWithArcAndRotateAndScale() {
+		double rotate = 2.0;
+		DesignArc designArc = new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate, 0.0, 90.0, DesignArc.Type.OPEN );
+		designArc.setDrawPattern( "0.3" );
+
+		Arc arc = (Arc)CadGeometry.toFxShape( designArc, 1.1 );
+		assertThat( arc.getCenterX() ).isEqualTo( 3.3, TOLERANCE );
+		assertThat( arc.getCenterY() ).isEqualTo( 5.5, TOLERANCE );
+		assertThat( arc.getRadiusX() ).isEqualTo( 1.1, TOLERANCE );
+		assertThat( arc.getRadiusY() ).isEqualTo( 1.1, TOLERANCE );
+		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
+		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
+
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)arc.getTransforms().getFirst();
+		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		assertThat( fxRotate.getPivotX() ).isEqualTo( arc.getCenterX() );
+		assertThat( fxRotate.getPivotY() ).isEqualTo( arc.getCenterY() );
+
+		assertThat( arc.getStrokeWidth() ).isEqualTo( 0.055, TOLERANCE );
+		assertThat( arc.getStrokeDashArray() ).usingComparatorForType( new DoubleComparator( TOLERANCE.value ), Double.class ).containsExactly( 0.33 );
 	}
 
 	@Test
@@ -281,7 +330,7 @@ public class CadGeometryTest {
 	}
 
 	@Test
-	void toFxShapeWithEllipseWithRotate() {
+	void toFxShapeWithEllipseAndRotate() {
 		double rotate = 1.0;
 
 		Ellipse ellipse = (Ellipse)CadGeometry.toFxShape( new DesignEllipse( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate ) );
@@ -296,6 +345,149 @@ public class CadGeometryTest {
 		assertThat( fxRotate.getPivotY() ).isEqualTo( 5 );
 
 		assertThat( ellipse.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithEllipseAndRotateAndScale() {
+		double rotate = 1.0;
+		DesignEllipse designEllipse = new DesignEllipse( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate );
+
+		Ellipse ellipse = (Ellipse)CadGeometry.toFxShape( designEllipse, 1.7 );
+		assertThat( ellipse.getCenterX() ).isEqualTo( 5.1 );
+		assertThat( ellipse.getCenterY() ).isEqualTo( 8.5 );
+		assertThat( ellipse.getRadiusX() ).isEqualTo( 1.7 );
+		assertThat( ellipse.getRadiusY() ).isEqualTo( 1.7 );
+
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)ellipse.getTransforms().getFirst();
+		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		assertThat( fxRotate.getPivotX() ).isEqualTo( ellipse.getCenterX() );
+		assertThat( fxRotate.getPivotY() ).isEqualTo( ellipse.getCenterY() );
+
+		assertThat( ellipse.getStrokeWidth() ).isEqualTo( 0.085, TOLERANCE );
+	}
+
+	// Quad
+	@Test
+	void toFxShapeWithQuad() {}
+
+	@Test
+	void toFxShapeWithQuadAndScale() {}
+
+	// Cubic
+	@Test
+	void toFxShapeWithCubic() {}
+
+	@Test
+	void toFxShapeWithCubicAndScale() {}
+
+	// Marker
+	@Test
+	void toFxShapeWithMarker() {
+		DesignMarker designMarker = new DesignMarker( new Point3D( 3, 5, 0 ) );
+
+		Path path = (Path)CadGeometry.toFxShape( designMarker );
+		assertThat( path.getElements() ).hasSize( 13 );
+
+		// NOTE Markers are weird! They are not a single shape, but a collection of shapes.
+		//assertThat( path.getElements().getFirst() ).isEqualTo( new MoveTo( 3, 5 ) );
+	}
+
+	@Test
+	void toFxShapeWithMarkerAndScale() {
+		DesignMarker designMarker = new DesignMarker( new Point3D( 3, 5, 0 ) );
+
+		Path path = (Path)CadGeometry.toFxShape( designMarker, 2.9 );
+		assertThat( path.getElements() ).hasSize( 13 );
+
+		// NOTE Markers are weird! They are not a single shape, but a collection of shapes.
+		//assertThat( path.getElements().getFirst() ).isEqualTo( new MoveTo( 8.7, 14.5 ) );
+	}
+
+	// Path
+	@Test
+	void toFxShapeWithPath() {
+		DesignPath designPath = new DesignPath( new Point3D( 3, 5, 0 ) ).line( 4, 5 ).line( 4, 6 ).line( 3, 6 ).close();
+
+		Path path = (Path)CadGeometry.toFxShape( designPath );
+
+		FxPathElementAssert.assertThat( path.getElements().getFirst() ).isEqualTo( new MoveTo( 3, 5 ) );
+		FxPathElementAssert.assertThat( path.getElements().get( 1 ) ).isEqualTo( new LineTo( 4, 5 ) );
+		FxPathElementAssert.assertThat( path.getElements().get( 2 ) ).isEqualTo( new LineTo( 4, 6 ) );
+		FxPathElementAssert.assertThat( path.getElements().get( 3 ) ).isEqualTo( new LineTo( 3, 6 ) );
+		FxPathElementAssert.assertThat( path.getElements().get( 4 ) ).isEqualTo( new ClosePath() );
+		assertThat( path.getElements() ).hasSize( 5 );
+	}
+
+	@Test
+	void toFxShapeWithPathAndScale() {
+		DesignPath designPath = new DesignPath( new Point3D( 3, 5, 0 ) ).line( 4, 5 ).line( 4, 6 ).line( 3, 6 ).close();
+
+		Path path = (Path)CadGeometry.toFxShape( designPath, 4.7 );
+		FxPathElementAssert.assertThat( path.getElements().getFirst() ).isEqualTo( new MoveTo( 14.1, 23.5 ), TOLERANCE );
+		FxPathElementAssert.assertThat( path.getElements().get( 1 ) ).isEqualTo( new LineTo( 18.8, 23.5 ), TOLERANCE );
+		FxPathElementAssert.assertThat( path.getElements().get( 2 ) ).isEqualTo( new LineTo( 18.8, 28.2 ), TOLERANCE );
+		FxPathElementAssert.assertThat( path.getElements().get( 3 ) ).isEqualTo( new LineTo( 14.1, 28.2 ), TOLERANCE );
+		FxPathElementAssert.assertThat( path.getElements().get( 4 ) ).isEqualTo( new ClosePath() );
+		assertThat( path.getElements() ).hasSize( 5 );
+	}
+
+	// Text
+	@Test
+	void toFxShapeWithText() {
+		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!" ) );
+		assertThat( text.getX() ).isEqualTo( 3 );
+		assertThat( text.getY() ).isEqualTo( 5 );
+		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
+
+		assertThat( text.getTransforms() ).isEmpty();
+
+		assertThat( text.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithTextAndRotate() {
+		double rotate = 48.0;
+
+		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!", String.valueOf( rotate ) ) );
+		assertThat( text.getX() ).isEqualTo( 3, TOLERANCE );
+		assertThat( text.getY() ).isEqualTo( 5, TOLERANCE );
+		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
+
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)text.getTransforms().getFirst();
+		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		assertThat( fxRotate.getPivotX() ).isEqualTo( text.getX() );
+		assertThat( fxRotate.getPivotY() ).isEqualTo( text.getY() );
+
+		assertThat( text.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithTextAndScale() {
+		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!" ), 2.7 );
+		assertThat( text.getX() ).isEqualTo( 8.1, TOLERANCE );
+		assertThat( text.getY() ).isEqualTo( 13.5, TOLERANCE );
+		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
+
+		assertThat( text.getTransforms() ).isEmpty();
+
+		assertThat( text.getStrokeWidth() ).isEqualTo( 0.135, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithTextAndRotateAndScale() {
+		double rotate = 48.0;
+
+		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!", String.valueOf( rotate ) ), 2.7 );
+		assertThat( text.getX() ).isEqualTo( 8.1, TOLERANCE );
+		assertThat( text.getY() ).isEqualTo( 13.5, TOLERANCE );
+		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
+
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)text.getTransforms().getFirst();
+		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		assertThat( fxRotate.getPivotX() ).isEqualTo( text.getX() );
+		assertThat( fxRotate.getPivotY() ).isEqualTo( text.getY() );
+
+		assertThat( text.getStrokeWidth() ).isEqualTo( 0.135, TOLERANCE );
 	}
 
 }

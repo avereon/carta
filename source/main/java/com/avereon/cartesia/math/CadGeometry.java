@@ -289,12 +289,14 @@ public class CadGeometry {
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
 				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
-				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( Transform.rotate( ellipse.calcRotate(), ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale ) );
+				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( Transform.rotate( ellipse.calcRotate(), fxEllipse.getCenterX(), fxEllipse.getCenterY() ) );
 				yield fxEllipse;
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
-				yield new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, arc.calcStart(), arc.calcExtent() );
+				Arc fxArc = new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, arc.calcStart(), arc.calcExtent() );
+				if( arc.calcRotate() != 0.0 ) fxArc.getTransforms().add( Transform.rotate( arc.calcRotate(), fxArc.getCenterX(), fxArc.getCenterY() ) );
+				yield fxArc;
 			}
 			case QUAD -> {
 				DesignQuad quad = (DesignQuad)shape;
@@ -319,15 +321,12 @@ public class CadGeometry {
 				);
 			}
 			case MARKER -> {
-				// TODO This should return a path
 				DesignMarker marker = (DesignMarker)shape;
-				double size = marker.calcSize();
-				yield new Rectangle( marker.getOrigin().getX() - 0.5 * size * scale, marker.getOrigin().getY() - 0.5 * size * scale, size * scale, size * scale );
+				yield mapToFxPath( scale, marker.getElements() );
 			}
 			case PATH -> {
 				DesignPath path = (DesignPath)shape;
-				// TODO Calculate path shape
-				yield new Rectangle( path.getOrigin().getX() * scale, path.getOrigin().getY() * scale, 1, 1 );
+				yield mapToFxPath( scale, path.getElements() );
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
@@ -352,6 +351,21 @@ public class CadGeometry {
 		if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
 
 		return fxShape;
+	}
+
+	private static Path mapToFxPath( double scale, List<DesignPath.Element> elements ) {
+		Path fxPath = new Path();
+		for( DesignPath.Element element : elements ) {
+			switch( element.command() ) {
+				case MOVE -> fxPath.getElements().add( new MoveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale ) );
+				case LINE -> fxPath.getElements().add( new LineTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale ) );
+				case QUAD -> fxPath.getElements().add( new QuadCurveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale ) );
+				case CUBIC -> fxPath.getElements().add( new CubicCurveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale, element.data()[ 4 ] * scale, element.data()[ 5 ] * scale ) );
+				case ARC -> fxPath.getElements().add( new ArcTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, 0, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale, false, false ) );
+				case CLOSE -> fxPath.getElements().add( new ClosePath() );
+			}
+		}
+		return fxPath;
 	}
 
 }

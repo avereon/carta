@@ -428,9 +428,14 @@ public class DesignMarker extends DesignShape {
 		return DesignShape.Type.MARKER;
 	}
 
+	public DesignPath getPath() {
+		Type type = calcType();
+		return type == null ? null : type.getDesignPath();
+	}
+
 	public List<DesignPath.Element> getElements() {
 		Type type = calcType();
-		return type != null ? type.getDesignPath().getElements() : List.of();
+		return type == null ? List.of() : type.getDesignPath().getElements();
 	}
 
 	public double calcSize() {

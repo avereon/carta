@@ -79,9 +79,8 @@ public class DesignPath extends DesignShape {
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
-			//setOriginControl( transform.apply( getOriginControl() ) );
-			//setPointControl( transform.apply( getPointControl() ) );
-			//setPoint( transform.apply( getPoint() ) );
+
+			// TODO Go through each element and apply the transform
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
@@ -117,13 +116,13 @@ public class DesignPath extends DesignShape {
 		return this;
 	}
 
-	public DesignPath close() {
-		elements.add( new Element( Command.CLOSE, new double[]{} ) );
+	public DesignPath cubic( double bx, double by, double cx, double cy, double dx, double dy ) {
+		elements.add( new Element( Command.CUBIC, new double[]{ bx, by, cx, cy, dx, dy } ) );
 		return this;
 	}
 
-	public DesignPath curve( double bx, double by, double cx, double cy, double dx, double dy ) {
-		elements.add( new Element( Command.CUBIC, new double[]{ bx, by, cx, cy, dx, dy } ) );
+	public DesignPath close() {
+		elements.add( new Element( Command.CLOSE, new double[]{} ) );
 		return this;
 	}
 
