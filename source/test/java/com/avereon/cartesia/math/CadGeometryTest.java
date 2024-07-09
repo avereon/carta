@@ -177,13 +177,16 @@ public class CadGeometryTest {
 
 	@Test
 	void toFxShapeWithBoxAndScale() {
-		Rectangle box = (Rectangle)CadGeometry.toFxShape( new DesignBox( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) ), 2.5 );
+		DesignBox designBox = new DesignBox( new Point3D( 0, 0, 0 ), new Point3D( 1, 1, 0 ) );
+		designBox.setDrawPattern( "0.2" );
+		Rectangle box = (Rectangle)CadGeometry.toFxShape( designBox, 2.5 );
 		assertThat( box.getX() ).isEqualTo( 0 );
 		assertThat( box.getY() ).isEqualTo( 0 );
 		assertThat( box.getWidth() ).isEqualTo( 2.5 );
 		assertThat( box.getHeight() ).isEqualTo( 2.5 );
 
 		assertThat( box.getStrokeWidth() ).isEqualTo( 0.125, TOLERANCE );
+		assertThat( box.getStrokeDashArray() ).usingComparatorForType( new DoubleComparator( TOLERANCE.value ), Double.class ).containsExactly( 0.5 );
 	}
 
 	@Test
@@ -227,6 +230,24 @@ public class CadGeometryTest {
 	}
 
 	@Test
+	void toFxShapeWithArcAndScale() {
+		DesignArc designArc = new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 1.0, 0.0, 90.0, DesignArc.Type.OPEN );
+		designArc.setDrawPattern( "0.1" );
+
+		Arc arc = (Arc)CadGeometry.toFxShape( designArc, 1.5 );
+		assertThat( arc.getCenterX() ).isEqualTo( 4.5 );
+		assertThat( arc.getCenterY() ).isEqualTo( 7.5 );
+		assertThat( arc.getRadiusX() ).isEqualTo( 1.5 );
+		assertThat( arc.getRadiusY() ).isEqualTo( 1.5 );
+		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
+		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
+
+		assertThat( arc.getStrokeWidth() ).isEqualTo( 0.075, TOLERANCE );
+		assertThat( arc.getStrokeDashArray() ).usingComparatorForType( new DoubleComparator( TOLERANCE.value ), Double.class ).containsExactly( 0.15 );
+	}
+
+	@Test
 	void toFxShapeWithEllipse() {
 		double rotate = 0.0;
 
@@ -239,6 +260,24 @@ public class CadGeometryTest {
 		assertThat( ellipse.getTransforms() ).isEmpty();
 
 		assertThat( ellipse.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
+	}
+
+	@Test
+	void toFxShapeWithEllipseAndScale() {
+		double rotate = 0.0;
+		DesignEllipse designEllipse = new DesignEllipse( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), rotate );
+		designEllipse.setDrawPattern( "0.11" );
+
+		Ellipse ellipse = (Ellipse)CadGeometry.toFxShape( designEllipse, 1.3 );
+		assertThat( ellipse.getCenterX() ).isEqualTo( 3.9, TOLERANCE );
+		assertThat( ellipse.getCenterY() ).isEqualTo( 6.5, TOLERANCE );
+		assertThat( ellipse.getRadiusX() ).isEqualTo( 1.3, TOLERANCE );
+		assertThat( ellipse.getRadiusY() ).isEqualTo( 1.3, TOLERANCE );
+
+		assertThat( ellipse.getTransforms() ).isEmpty();
+
+		assertThat( ellipse.getStrokeWidth() ).isEqualTo( 0.065, TOLERANCE );
+		assertThat( ellipse.getStrokeDashArray() ).usingComparatorForType( new DoubleComparator( TOLERANCE.value ), Double.class ).containsExactly( 0.143 );
 	}
 
 	@Test
