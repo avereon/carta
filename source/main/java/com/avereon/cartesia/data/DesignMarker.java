@@ -7,6 +7,8 @@ import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
@@ -430,12 +432,16 @@ public class DesignMarker extends DesignShape {
 
 	public DesignPath getPath() {
 		Type type = calcType();
-		return type == null ? null : type.getDesignPath();
+		DesignPath path = type.getDesignPath();
+
+		path.apply( CadTransform.translation( getOrigin() ) );
+
+		return path;
 	}
 
 	public List<DesignPath.Element> getElements() {
-		Type type = calcType();
-		return type == null ? List.of() : type.getDesignPath().getElements();
+		DesignPath path = getPath();
+		return path == null ? List.of() : path.getElements();
 	}
 
 	public double calcSize() {
@@ -520,6 +526,15 @@ public class DesignMarker extends DesignShape {
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
+	}
+
+	@Override
+	public Bounds getVisualBounds() {
+		// Special handling of markers because they are not shapes
+		Point3D origin = getOrigin();
+		double size = calcSize();
+		double halfSize = 0.5 * size;
+		return new BoundingBox( origin.getX() - halfSize, origin.getY() - halfSize, size, size );
 	}
 
 	protected Map<String, Object> asMap() {

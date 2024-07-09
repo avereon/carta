@@ -78,9 +78,13 @@ public class DesignPath extends DesignShape {
 	@Override
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
-			setOrigin( transform.apply( getOrigin() ) );
+			Point3D origin = getOrigin();
 
-			// TODO Go through each element and apply the transform
+			setOrigin( transform.apply( origin ) );
+
+			for( Element element : elements ) {
+				element.apply( transform );
+			}
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
@@ -132,6 +136,41 @@ public class DesignPath extends DesignShape {
 		return this;
 	}
 
-	public record Element(DesignPath.Command command, double[] data) {}
+	public record Element(DesignPath.Command command, double[] data) {
+
+		public void apply( CadTransform transform ) {
+			// Limit the values changed depending on the command
+			int count = switch( command ) {
+				case MOVE -> 0;
+				case LINE -> 2;
+				case ARC, QUAD -> 4;
+				case CUBIC -> 6;
+				default -> 0;
+			};
+
+			for( int index = 0; index < count; index += 2 ) {
+				Point3D point = transform.apply( new Point3D( data[ index ], data[ index + 1 ], 0 ) );
+				data[ index ] = point.getX();
+				data[ index + 1 ] = point.getY();
+			}
+		}
+
+		public void translate( Point3D offset ) {
+			// Limit the values changed depending on the command
+			int count = switch( command ) {
+				case MOVE -> 0;
+				case LINE -> 2;
+				case ARC, QUAD -> 4;
+				case CUBIC -> 6;
+				default -> 0;
+			};
+
+			for( int index = 0; index < count; index += 2 ) {
+				data[ index ] += offset.getX();
+				data[ index + 1 ] += offset.getY();
+			}
+		}
+
+	}
 
 }
