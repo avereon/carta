@@ -3,6 +3,7 @@ package com.avereon.cartesia.math;
 import com.avereon.cartesia.data.*;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Vector;
+import com.avereon.zarra.font.FontUtil;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -330,7 +331,9 @@ public class CadGeometry {
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
-				yield new Text( text.getOrigin().getX() * scale, text.getOrigin().getY() * scale, text.getText() );
+				Text fxText =new Text( text.getOrigin().getX() * scale, text.getOrigin().getY() * scale, text.getText() );
+				fxText.setFont( FontUtil.derive( text.calcFont(), text.calcTextSize() * scale ) );
+				yield fxText;
 			}
 		};
 

@@ -8,6 +8,7 @@ import javafx.scene.text.Text;
 import org.assertj.core.util.DoubleComparator;
 import org.junit.jupiter.api.Test;
 
+import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -471,6 +472,7 @@ public class CadGeometryTest {
 		assertThat( text.getTransforms() ).isEmpty();
 
 		assertThat( text.getStrokeWidth() ).isEqualTo( 0.135, TOLERANCE );
+		assertThat( text.getFont().getSize() ).isEqualTo( 2.7, LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -488,6 +490,7 @@ public class CadGeometryTest {
 		assertThat( fxRotate.getPivotY() ).isEqualTo( text.getY() );
 
 		assertThat( text.getStrokeWidth() ).isEqualTo( 0.135, TOLERANCE );
+		assertThat( text.getFont().getSize() ).isEqualTo( 2.7, LOOSE_TOLERANCE );
 	}
 
 }
