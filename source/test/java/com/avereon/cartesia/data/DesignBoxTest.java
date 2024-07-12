@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
-import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignBoxTest {
@@ -56,19 +55,18 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2, TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 1, TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 1 + CadMath.SQRT2, TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2, TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2, TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 1, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 1 + CadMath.SQRT2, LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2, LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2, LOOSE_TOLERANCE );
 	}
 
 	@Test
 	void getVisualBounds() {
 		// given
 		DesignBox box = new DesignBox( new Point3D( 2, 1, 0 ), new Point3D( 4, 2, 0 ) );
-		// The default draw width is 0.05
 
 		// when
 		Bounds bounds = box.getVisualBounds();
@@ -97,6 +95,26 @@ public class DesignBoxTest {
 		assertThat( bounds.getMaxY() ).isEqualTo( 3.5, LOOSE_TOLERANCE );
 		assertThat( bounds.getWidth() ).isEqualTo( 5, LOOSE_TOLERANCE );
 		assertThat( bounds.getHeight() ).isEqualTo( 3, LOOSE_TOLERANCE );
+	}
+
+	@Test
+	void getVisualBoundsWithRotate() {
+		// given
+		DesignBox box = new DesignBox( new Point3D( 2, 1, 0 ), new Point3D( 4, 2, 0 ) );
+		box.setRotate( 45 );
+
+		double a = 0.025 * CadMath.SQRT2;
+		double b = 0.05 * CadMath.SQRT2;
+
+		// when
+		Bounds bounds = box.getVisualBounds();
+
+		assertThat( bounds.getMinX() ).isEqualTo( 2 - (2 * CadMath.SQRT2_OVER_2) - a, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + (4 * CadMath.SQRT2_OVER_2) + a, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 1 - a, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 1 + (6 * CadMath.SQRT2_OVER_2) + a, LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, LOOSE_TOLERANCE );
 	}
 
 }

@@ -5,7 +5,6 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
@@ -125,9 +124,11 @@ public abstract class DesignShape extends DesignDrawable {
 
 	private static final double INTERNAL_SHAPE_SCALE = 1.0;
 
-	public Shape getFxShape() {
-		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
-		return fxShapeCache;
+	public Shape getFxShape(boolean withStroke) {
+//		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
+//		return fxShapeCache;
+
+		return CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE, withStroke );
 	}
 
 	/**
@@ -137,12 +138,12 @@ public abstract class DesignShape extends DesignDrawable {
 	 * @return The geometric bounds of the shape
 	 */
 	public Bounds getBounds() {
-		if( boundsCache == null ) boundsCache = computeBounds();
+		if( boundsCache == null ) boundsCache = computeGeometricBounds();
 		return boundsCache;
 	}
 
-	protected Bounds computeBounds() {
-		return Fx.EMPTY_BOUNDS;
+	protected Bounds computeGeometricBounds() {
+		return getFxShape(false).getBoundsInParent();
 	}
 
 	/**
@@ -164,7 +165,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	protected Bounds computeVisualBounds() {
-		return getFxShape().getBoundsInParent();
+		return getFxShape(true).getBoundsInParent();
 	}
 
 	public double distanceTo( Point3D point ) {

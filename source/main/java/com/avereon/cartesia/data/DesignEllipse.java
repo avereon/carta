@@ -285,7 +285,7 @@ public class DesignEllipse extends DesignShape {
 	}
 
 	@Override
-	protected Bounds computeBounds() {
+	protected Bounds computeGeometricBounds() {
 		// The bounds of a non-rotated ellipse
 		Point3D origin = getOrigin();
 		Point3D radii = getRadii();

@@ -710,8 +710,8 @@ public class DesignRenderer extends BorderPane {
 		if( localToParent( selectorBounds ).contains( shapeBounds ) ) return true;
 
 		// This is the slow but accurate test if the shape is contained when the selector is not a box
-		Shape fxSelector = selector.getFxShape();
-		Shape fxShape = shape.getFxShape();
+		Shape fxSelector = selector.getFxShape(true);
+		Shape fxShape = shape.getFxShape(true);
 		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
 	}
 
@@ -720,8 +720,8 @@ public class DesignRenderer extends BorderPane {
 		if( !localToParent( selector.getVisualBounds() ).intersects( localToParent( shape.getVisualBounds() ) ) ) return false;
 
 		// This is the slow but accurate test if the shape is intersecting
-		Shape fxSelector = selector.getFxShape();
-		Shape fxShape = shape.getFxShape();
+		Shape fxSelector = selector.getFxShape(true);
+		Shape fxShape = shape.getFxShape(true);
 		return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
 	}
 

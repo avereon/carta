@@ -274,10 +274,14 @@ public class CadGeometry {
 	}
 
 	public static Shape toFxShape( DesignShape shape ) {
-		return toFxShape( shape, 1.0 );
+		return toFxShape( shape, 1.0, true );
 	}
 
 	public static Shape toFxShape( DesignShape shape, double scale ) {
+		return toFxShape( shape, scale, true );
+	}
+
+	public static Shape toFxShape( DesignShape shape, double scale, boolean withStroke ) {
 		Shape fxShape = switch( shape.getType() ) {
 			case BOX -> {
 				DesignBox box = (DesignBox)shape;
@@ -341,13 +345,18 @@ public class CadGeometry {
 		Paint fillPaint = shape.calcFillPaint();
 		if( drawPaint != null ) fxShape.setStroke( Color.YELLOW );
 		if( fillPaint != null ) fxShape.setFill( Color.RED );
-		fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
-		fxShape.setStrokeType( StrokeType.CENTERED );
-		fxShape.setStrokeLineCap( shape.calcDrawCap() );
-		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
-		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
-		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() * scale );
-		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v * scale ).toList() );
+		if( withStroke ) {
+			fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
+			fxShape.setStrokeType( StrokeType.CENTERED );
+			fxShape.setStrokeLineCap( shape.calcDrawCap() );
+			//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
+			//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
+			//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() * scale );
+			fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v * scale ).toList() );
+		} else {
+			fxShape.setStroke( null );
+			fxShape.setStrokeWidth( 0 );
+		}
 
 		// Handle the rotate transform, if needed
 		double rotate = shape.calcRotate();

@@ -97,7 +97,7 @@ public class DesignLine extends DesignShape {
 	}
 
 	@Override
-	protected Bounds computeBounds() {
+	protected Bounds computeGeometricBounds() {
 		Point3D origin = getOrigin();
 		Point3D point = getPoint();
 		Bounds bounds = new BoundingBox( origin.getX(), origin.getY(), origin.getZ(), point.getX() - origin.getX(), point.getY() - origin.getY(), point.getZ() - origin.getZ() );
@@ -110,50 +110,54 @@ public class DesignLine extends DesignShape {
 		Point3D point = getPoint();
 		StrokeLineCap cap = calcDrawCap();
 		double length = origin.distance( point );
+		double drawWidth = calcDrawWidth();
+		double halfWidth = 0.5 * drawWidth;
+		boolean hasStroke = drawWidth > 0.0;
 
 		// Start with the line on the x-axis, at length
 		double x1 = 0;
 		double y1 = 0;
 		double x2 = length;
 
-		// Adjust the line for the stroke width
-		double drawStroke = calcDrawWidth();
-		double halfStroke = 0.5 * drawStroke;
-		StrokeType drawAlign = calcDrawAlign();
-		if( drawAlign == StrokeType.CENTERED ) {
-			y1 = -halfStroke;
-		} else if( drawAlign == StrokeType.INSIDE ) {
-			y1 = -drawStroke;
-		} else if( drawAlign == StrokeType.OUTSIDE ) {
-			y1 = drawStroke;
-		}
+		if( hasStroke ) {
+			// Adjust the line for the stroke width
+			StrokeType drawAlign = calcDrawAlign();
+			if( drawAlign == StrokeType.CENTERED ) {
+				y1 = -halfWidth;
+			} else if( drawAlign == StrokeType.INSIDE ) {
+				y1 = drawWidth;
+			} else if( drawAlign == StrokeType.OUTSIDE ) {
+				y1 = -drawWidth;
+			}
 
-		// Adjust the line for the stroke cap
-		if( cap == StrokeLineCap.SQUARE ) {
-			x1 -= halfStroke;
-			x2 += halfStroke;
+			// Adjust the line for the stroke cap
+			if( cap == StrokeLineCap.SQUARE ) {
+				x1 -= halfWidth;
+				x2 += halfWidth;
+			}
 		}
 
 		// Calculate the width and height
 		double width = Math.abs( x2 - x1 );
-		double height = Math.abs( drawStroke );
+		double height = Math.abs( drawWidth );
 
 		// Create the initial bounding box
 		Bounds bounds = new BoundingBox( x1, y1, width, height );
 
 		// Create the transform
 		double angle = CadGeometry.angle360( point.subtract( origin ) );
-		CadTransform transform = CadTransform.translation( origin );
-		transform = transform.combine( CadTransform.rotation( angle ) );
+		CadTransform transform = CadTransform.translation( origin ).combine( CadTransform.rotation( angle ) );
+
+		// Apply the transform to the bounding box
 		bounds = transform.apply( bounds );
 
-		// Adjust the bounding box for the stroke cap
-		if( cap == StrokeLineCap.ROUND ) {
+		// If the line cap is round, calculate the bounding box with a different strategy
+		if( hasStroke && cap == StrokeLineCap.ROUND ) {
 			Bounds baseBounds = new BoundingBox( origin.getX(), origin.getY(), point.getX() - origin.getX(), point.getY() - origin.getY() );
-			x1 = Math.min( bounds.getMinX(), baseBounds.getMinX() - halfStroke );
-			y1 = Math.min( bounds.getMinY(), baseBounds.getMinY() - halfStroke );
-			width = Math.max( bounds.getWidth(), baseBounds.getWidth() + drawStroke );
-			height = Math.max( bounds.getHeight(), baseBounds.getHeight() + drawStroke );
+			x1 = Math.min( bounds.getMinX(), baseBounds.getMinX() - halfWidth );
+			y1 = Math.min( bounds.getMinY(), baseBounds.getMinY() - halfWidth );
+			width = Math.max( bounds.getWidth(), baseBounds.getWidth() + drawWidth );
+			height = Math.max( bounds.getHeight(), baseBounds.getHeight() + drawWidth );
 			bounds = new BoundingBox( x1, y1, width, height );
 		}
 

@@ -3,6 +3,7 @@ package com.avereon.cartesia.math;
 import com.avereon.cartesia.PointAssert;
 import com.avereon.cartesia.data.*;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.text.Text;
 import org.assertj.core.util.DoubleComparator;
@@ -171,6 +172,7 @@ public class CadGeometryTest {
 		assertThat( box.getWidth() ).isEqualTo( 1 );
 		assertThat( box.getHeight() ).isEqualTo( 1 );
 
+		assertThat( box.getStroke()).isEqualTo( Color.YELLOW );
 		assertThat( box.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
@@ -196,6 +198,7 @@ public class CadGeometryTest {
 		assertThat( line.getEndX() ).isEqualTo( 1 );
 		assertThat( line.getEndY() ).isEqualTo( 1 );
 
+		assertThat( line.getStroke()).isEqualTo( Color.YELLOW );
 		assertThat( line.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
