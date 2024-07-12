@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
@@ -224,6 +225,7 @@ public class DesignRenderer extends BorderPane {
 
 	/**
 	 * Get the enabled layers property.
+	 *
 	 * @return The enabled layers property
 	 */
 	public ObservableList<DesignLayer> enabledLayers() {
@@ -483,7 +485,7 @@ public class DesignRenderer extends BorderPane {
 		renderLayers();
 		renderReferenceGeometry();
 		renderHintGeometry();
-		renderSelectorGeometry();
+		renderSelectAperture();
 
 		//long endNs = System.nanoTime();
 
@@ -685,7 +687,7 @@ public class DesignRenderer extends BorderPane {
 		// reference points, construction points, etc.
 	}
 
-	private void renderSelectorGeometry() {
+	private void renderSelectAperture() {
 		if( selectAperture == null ) return;
 		DesignShape aperture = selectAperture.get();
 		if( aperture == null ) return;
@@ -694,10 +696,14 @@ public class DesignRenderer extends BorderPane {
 		Paint drawColor = setDrawPen( aperture, false, null );
 
 		if( aperture instanceof DesignEllipse ellipse ) {
+			double x = ellipse.getOrigin().getX() - ellipse.getRadii().getX();
+			double y = ellipse.getOrigin().getY() - ellipse.getRadii().getY();
+			double w = 2 * ellipse.getRadii().getX();
+			double h = 2 * ellipse.getRadii().getY();
 			renderer.setFillPen( fillColor );
-			renderer.fillScreenOval( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY() );
+			renderer.fillScreenOval( x, y, w, h );
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
-			renderer.drawScreenOval( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getRadii().getX(), ellipse.getRadii().getY() );
+			renderer.drawScreenOval( x, y, w, h );
 		}
 
 		if( aperture instanceof DesignBox rectangle ) {
@@ -708,15 +714,15 @@ public class DesignRenderer extends BorderPane {
 		}
 	}
 
-	private double realToWorld( DesignValue value ) {
+	double realToWorld( DesignValue value ) {
 		// Convert the provided value to design units and divide by the zoom factor
 		return value.to( design.calcDesignUnit() ).getValue() / getZoomX();
 	}
 
-	//	private double valueToScreen( DesignValue v ) {
-	//		return v.to( DesignUnit.INCH ).getValue() * getDpiX() * Screen.getPrimary().getOutputScaleX();
-	//	}
-	//
+	double realToScreen( DesignValue value ) {
+		return value.to( DesignUnit.INCH ).getValue() * getDpiX();
+	}
+
 	//	private double getInternalScale() {
 	//		return this.getDpiX() * getZoomX();
 	//	}

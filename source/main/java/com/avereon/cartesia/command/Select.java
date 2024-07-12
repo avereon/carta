@@ -68,10 +68,11 @@ public class Select extends Command {
 	public void handle( MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
+			Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED && event.getButton() == eventKey.getButton() ) {
-				tool.updateSelectWindow( dragAnchor, new Point3D( event.getX(), event.getY(), event.getZ() ) );
+				tool.updateSelectAperture( dragAnchor, mouse );
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED && event.getButton() == eventKey.getButton() ) {
-				tool.updateSelectWindow( dragAnchor, dragAnchor );
+				tool.updateSelectAperture( mouse, mouse );
 				tool.getCommandContext().resubmit( tool, this, event );
 			}
 		}

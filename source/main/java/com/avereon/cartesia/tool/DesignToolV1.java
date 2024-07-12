@@ -908,7 +908,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {
+	public void updateSelectAperture( Point3D anchor, Point3D mouse ) {
 		if( anchor == null ) return;
 		double x = Math.min( anchor.getX(), mouse.getX() );
 		double y = Math.min( anchor.getY(), mouse.getY() );

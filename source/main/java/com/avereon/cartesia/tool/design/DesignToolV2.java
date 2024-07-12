@@ -356,7 +356,11 @@ public class DesignToolV2 extends BaseDesignTool {
 		//		// Add reference points visible property listener
 		//		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
+		// Update the design context when the mouse moves
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+
+		// Update the select aperture when the mouse moves
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> updateSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
 
 		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -787,25 +791,28 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public void updateSelectWindow( Point3D anchor, Point3D mouse ) {
+	public void updateSelectAperture( Point3D anchor, Point3D mouse ) {
 		if( anchor == null || mouse == null ) return;
 
-		// Calculate the bounds of the select aperture
-		double x = Math.min( anchor.getX(), mouse.getX() );
-		double y = Math.min( anchor.getY(), mouse.getY() );
-		double w = Math.abs( anchor.getX() - mouse.getX() );
-		double h = Math.abs( anchor.getY() - mouse.getY() );
-
 		// Set the select aperture
-		if( w == 0 || h == 0 ) {
-			renderer.setSelectAperture( null );
+		DesignShape selectAperture;
+		if( anchor.equals( mouse ) ) {
+			//renderer.setSelectAperture( null );
+			double size = renderer.realToScreen( getSelectTolerance() );
+			selectAperture = new DesignEllipse( mouse, size );
 		} else {
-			DesignBox selectAperture = new DesignBox( x, y, w, h );
-			selectAperture.setFillPaint( selectFillPaint.get() );
-			selectAperture.setDrawPaint( selectDrawPaint.get() );
-			selectAperture().set( selectAperture );
-			renderer.setSelectAperture( selectAperture );
+			// Calculate the bounds of the select window
+			double x = Math.min( anchor.getX(), mouse.getX() );
+			double y = Math.min( anchor.getY(), mouse.getY() );
+			double w = Math.abs( anchor.getX() - mouse.getX() );
+			double h = Math.abs( anchor.getY() - mouse.getY() );
+			selectAperture = new DesignBox( x, y, w, h );
 		}
+
+		selectAperture.setFillPaint( selectFillPaint.get() );
+		selectAperture.setDrawPaint( selectDrawPaint.get() );
+		renderer.setSelectAperture( selectAperture );
+		selectAperture().set( selectAperture );
 	}
 
 	@Override
