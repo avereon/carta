@@ -16,7 +16,9 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -26,7 +28,10 @@ import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @CustomLog
@@ -37,6 +42,8 @@ public class DesignRenderer extends BorderPane {
 	private DesignWorkplane workplane;
 
 	private final FxRenderer2d renderer;
+
+	private final ObservableList<DesignLayer> enabledLayers;
 
 	private final ObservableList<DesignLayer> visibleLayers;
 
@@ -51,6 +58,7 @@ public class DesignRenderer extends BorderPane {
 	private SimpleBooleanProperty constructionPointsVisible;
 
 	public DesignRenderer() {
+		enabledLayers = FXCollections.observableArrayList();
 		visibleLayers = FXCollections.observableArrayList();
 		selectedShapes = FXCollections.observableArrayList();
 		selectAperture = new SimpleObjectProperty<>();
@@ -78,6 +86,7 @@ public class DesignRenderer extends BorderPane {
 		renderer.heightProperty().addListener( ( p, o, n ) -> render() );
 
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
+		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		selectedShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 	}
@@ -185,6 +194,40 @@ public class DesignRenderer extends BorderPane {
 
 	public ObservableList<DesignLayer> visibleLayers() {
 		return visibleLayers;
+	}
+
+	// Enabled Layers ------------------------------------------------------------
+
+	public boolean isLayerEnabled( DesignLayer layer ) {
+		return enabledLayers.contains( layer );
+	}
+
+	/**
+	 * Get a list of the enabled layers. The list is ordered the same as the layers in the design.
+	 *
+	 * @return A list of the enabled layers
+	 */
+	public List<DesignLayer> getEnabledLayers() {
+		return enabledLayers;
+	}
+
+	/**
+	 * Set the enabled layers. The list of layers is ordered the same as the layers in the design.
+	 *
+	 * @param layers The list of enabled layers
+	 */
+	public void setEnabledLayers( Collection<DesignLayer> layers ) {
+		enabledLayers.clear();
+		enabledLayers.addAll( layers );
+		render();
+	}
+
+	/**
+	 * Get the enabled layers property.
+	 * @return The enabled layers property
+	 */
+	public ObservableList<DesignLayer> enabledLayers() {
+		return enabledLayers;
 	}
 
 	// Visible Shapes ------------------------------------------------------------
@@ -670,13 +713,13 @@ public class DesignRenderer extends BorderPane {
 		return value.to( design.calcDesignUnit() ).getValue() / getZoomX();
 	}
 
-//	private double valueToScreen( DesignValue v ) {
-//		return v.to( DesignUnit.INCH ).getValue() * getDpiX() * Screen.getPrimary().getOutputScaleX();
-//	}
-//
-//	private double getInternalScale() {
-//		return this.getDpiX() * getZoomX();
-//	}
+	//	private double valueToScreen( DesignValue v ) {
+	//		return v.to( DesignUnit.INCH ).getValue() * getDpiX() * Screen.getPrimary().getOutputScaleX();
+	//	}
+	//
+	//	private double getInternalScale() {
+	//		return this.getDpiX() * getZoomX();
+	//	}
 
 	/**
 	 * Select nodes using a shape. The selecting shape can be any shape but it
@@ -710,8 +753,8 @@ public class DesignRenderer extends BorderPane {
 		if( localToParent( selectorBounds ).contains( shapeBounds ) ) return true;
 
 		// This is the slow but accurate test if the shape is contained when the selector is not a box
-		Shape fxSelector = selector.getFxShape(true);
-		Shape fxShape = shape.getFxShape(true);
+		Shape fxSelector = selector.getFxShape( true );
+		Shape fxShape = shape.getFxShape( true );
 		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
 	}
 
@@ -720,8 +763,8 @@ public class DesignRenderer extends BorderPane {
 		if( !localToParent( selector.getVisualBounds() ).intersects( localToParent( shape.getVisualBounds() ) ) ) return false;
 
 		// This is the slow but accurate test if the shape is intersecting
-		Shape fxSelector = selector.getFxShape(true);
-		Shape fxShape = shape.getFxShape(true);
+		Shape fxSelector = selector.getFxShape( true );
+		Shape fxShape = shape.getFxShape( true );
 		return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
 	}
 

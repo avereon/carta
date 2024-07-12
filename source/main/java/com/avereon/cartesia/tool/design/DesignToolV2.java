@@ -10,10 +10,12 @@ import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.*;
+import com.avereon.data.IdNode;
 import com.avereon.data.NodeSettings;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.util.DelayedAction;
+import com.avereon.util.TypeReference;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
@@ -31,6 +33,7 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -269,13 +272,13 @@ public class DesignToolV2 extends BaseDesignTool {
 		getDesign().findLayers( DesignLayer.ID, settings.get( CURRENT_LAYER, "" ) ).stream().findFirst().ifPresent( this::setCurrentLayer );
 		getDesign().findViews( DesignView.ID, settings.get( CURRENT_VIEW, "" ) ).stream().findFirst().ifPresent( this::setCurrentView );
 
-		//		// Restore the list of enabled layers
-		//		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
-		//		getDesign().getAllLayers().forEach( l -> designPane.setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
-		//
-		//		// Restore the list of visible layers
-		//		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
-		//		getDesign().getAllLayers().forEach( l -> designPane.setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
+		// Restore the list of enabled layers
+		Set<String> enabledLayerIds = settings.get( ENABLED_LAYERS, new TypeReference<>() {}, Set.of() );
+		getDesign().getAllLayers().forEach( l -> setLayerEnabled( l, enabledLayerIds.contains( l.getId() ) ) );
+
+		// Restore the list of visible layers
+		Set<String> visibleLayerIds = settings.get( VISIBLE_LAYERS, new TypeReference<>() {}, Set.of() );
+		getDesign().getAllLayers().forEach( l -> setLayerVisible( l, visibleLayerIds.contains( l.getId() ) ) );
 
 		// Restore the grid visible flag
 		setGridVisible( Boolean.parseBoolean( settings.get( GRID_VISIBLE, DEFAULT_GRID_VISIBLE ) ) );
@@ -332,11 +335,11 @@ public class DesignToolV2 extends BaseDesignTool {
 			//doUpdateGridBounds();
 		} );
 
-		//		// Add enabled layers listener
-		//		designPane.enabledLayersProperty().addListener( this::doStoreEnabledLayers );
-		//
-		//		// Add visible layers listener
-		//		designPane.visibleLayersProperty().addListener( this::doStoreVisibleLayers );
+		// Add enabled layers listener
+		enabledLayers().addListener( this::doStoreEnabledLayers );
+
+		// Add visible layers listener
+		visibleLayers().addListener( this::doStoreVisibleLayers );
 
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
@@ -627,6 +630,22 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	public ObservableList<DesignLayer> visibleLayers() {
 		return renderer.visibleLayers();
+	}
+
+	public List<DesignLayer> getEnabledLayers() {
+		return new ArrayList<>( renderer.enabledLayers() );
+	}
+
+	public ObservableList<DesignLayer> enabledLayers() {
+		return renderer.enabledLayers();
+	}
+
+	public void setLayerEnabled( DesignLayer layer, boolean visible ) {
+		if( visible ) {
+			renderer.enabledLayers().add( layer );
+		} else {
+			renderer.enabledLayers().remove( layer );
+		}
 	}
 
 	@Override
@@ -1069,30 +1088,40 @@ public class DesignToolV2 extends BaseDesignTool {
 		// TODO Implement DesignTool.doSetCurrentPrintById()
 	}
 
+	private void doStoreEnabledLayers( ListChangeListener.Change<? extends DesignLayer> c ) {
+		c.next();
+		getSettings().set( ENABLED_LAYERS, c.getList().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+	}
+
+	private void doStoreVisibleLayers( ListChangeListener.Change<? extends DesignLayer> c ) {
+		c.next();
+		getSettings().set( VISIBLE_LAYERS, c.getList().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+	}
+
 	private void showPropertiesPage( DesignDrawable drawable ) {
 		if( drawable != null ) showPropertiesPage( new NodeSettings( drawable ), drawable.getClass() );
 	}
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
-//		SettingsPage page = designPropertiesMap.getSettingsPage( type );
-//		if( page != null ) {
-//			page.setSettings( settings );
-//
-//			// Switch to a task thread to get the tool
-//			getProgram().getTaskManager().submit( Task.of( () -> {
-//				try {
-//					// Open the tool but don't make it the active tool
-//					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
-//
-//					// Fire the event on the FX thread
-//					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
-//				} catch( Exception exception ) {
-//					log.atWarn( exception ).log();
-//				}
-//			} ) );
-//		} else {
-//			log.atError().log( "Unable to find properties page for %s", type.getName() );
-//		}
+		//		SettingsPage page = designPropertiesMap.getSettingsPage( type );
+		//		if( page != null ) {
+		//			page.setSettings( settings );
+		//
+		//			// Switch to a task thread to get the tool
+		//			getProgram().getTaskManager().submit( Task.of( () -> {
+		//				try {
+		//					// Open the tool but don't make it the active tool
+		//					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
+		//
+		//					// Fire the event on the FX thread
+		//					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
+		//				} catch( Exception exception ) {
+		//					log.atWarn( exception ).log();
+		//				}
+		//			} ) );
+		//		} else {
+		//			log.atError().log( "Unable to find properties page for %s", type.getName() );
+		//		}
 	}
 
 	private void hidePropertiesPage() {

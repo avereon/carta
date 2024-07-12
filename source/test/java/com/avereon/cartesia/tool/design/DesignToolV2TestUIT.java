@@ -23,6 +23,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -62,8 +63,14 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 		// Check the tool state
 		assertThat( getTool().getDpi() ).isEqualTo( Screen.getPrimary().getDpi() );
 		assertThat( getTool().getZoom() ).isEqualTo( 2 );
-		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 10 );
-		assertThat( getTool().getVisibleGeometry().size() ).isEqualTo( 2 );
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 0 );
+		assertThat( getTool().getEnabledLayers().size() ).isEqualTo( 0 );
+		assertThat( getTool().getVisibleGeometry().size() ).isEqualTo( 0 );
+	}
+
+	private void useLineLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e7" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
 	}
 
 	@Test
@@ -72,8 +79,9 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	}
 
 	@Test
-	void getVisibleLayers() {
-		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 10 );
+	void getVisibleLayers() throws Exception {
+		useLineLayer();
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 1 );
 	}
 
 	@Test
@@ -83,8 +91,31 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	}
 
 	@Test
-	void screenPointSelect() {
+	void setLayerVisible() {
 		// given
+		DesignLayer layer = getDesign().getAllLayers().getFirst();
+		assertThat( getTool().isLayerVisible( layer ) ).isFalse();
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 0 );
+
+		// when
+		getTool().setLayerVisible( layer, true );
+
+		// then
+		assertThat( getTool().isLayerVisible( layer ) ).isTrue();
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 1 );
+
+		// when
+		getTool().setLayerVisible( layer, false );
+
+		// then
+		assertThat( getTool().isLayerVisible( layer ) ).isFalse();
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 0 );
+	}
+
+	@Test
+	void screenPointSelect() throws Exception {
+		// given
+		useLineLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once
@@ -97,8 +128,9 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	}
 
 	@Test
-	void screenPointSelectWithMultipleSelectsMovingDownVisibleGeometry() {
+	void screenPointSelectWithMultipleSelectsMovingDownVisibleGeometry() throws Exception {
 		// given
+		useLineLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once
@@ -121,8 +153,9 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	}
 
 	@Test
-	void screenPointSelectLineWithMouseCloseEnough() {
+	void screenPointSelectLineWithMouseCloseEnough() throws Exception {
 		// given
+		useLineLayer();
 		DesignValue selectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() );
 		double offsetValue = selectTolerance.getValue() / getTool().getZoom();
 
@@ -143,8 +176,9 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	}
 
 	@Test
-	void screenPointSelectLineWithMouseTooFarAway() {
+	void screenPointSelectLineWithMouseTooFarAway() throws Exception {
 		// given
+		useLineLayer();
 		DesignValue selectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() );
 		double offsetValue = selectTolerance.getValue() / getTool().getZoom();
 
