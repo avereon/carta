@@ -832,7 +832,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void screenPointSelect( Point3D mouse ) {
-		// TODO Implement this
+		screenPointSelect( mouse, false );
 	}
 
 	@Override
@@ -874,7 +874,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void worldPointSelect( Point3D point ) {
-		// TODO Implement this
+		worldPointSelect( point, false );
 	}
 
 	@Override
