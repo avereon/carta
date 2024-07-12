@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -66,6 +65,9 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 0 );
 		assertThat( getTool().getEnabledLayers().size() ).isEqualTo( 0 );
 		assertThat( getTool().getVisibleGeometry().size() ).isEqualTo( 0 );
+
+		assertThat( getTool().getSelectTolerance().getValue() ).isEqualTo( 2 );
+		assertThat( getTool().getSelectTolerance().getUnit() ).isEqualTo( DesignUnit.MILLIMETER );
 	}
 
 	private void useLineLayer() throws TimeoutException, InterruptedException {
@@ -156,13 +158,12 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	void screenPointSelectLineWithMouseCloseEnough() throws Exception {
 		// given
 		useLineLayer();
-		DesignValue selectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() );
-		double offsetValue = selectTolerance.getValue() / getTool().getZoom();
+		double worldSelectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
 
 		// Need to get the selector inside the stroke width of the line
 		// 0.02 is just under half the line stroke width
 
-		Point3D offset = new Point3D( 1.02 * offsetValue, 0, 0 );
+		Point3D offset = new Point3D( 0.02 + worldSelectTolerance, 0, 0 );
 		Point3D point = new Point3D( 2, 2, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
@@ -179,13 +180,12 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	void screenPointSelectLineWithMouseTooFarAway() throws Exception {
 		// given
 		useLineLayer();
-		DesignValue selectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() );
-		double offsetValue = selectTolerance.getValue() / getTool().getZoom();
+		double worldSelectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
 
 		// Need to get the selector outside the stroke width of the line
 		// 0.03 is just over half the line stroke width
 
-		Point3D offset = new Point3D( 1.03 * offsetValue, 0, 0 );
+		Point3D offset = new Point3D( 0.03 + worldSelectTolerance, 0, 0 );
 		Point3D point = new Point3D( 2, 2, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
