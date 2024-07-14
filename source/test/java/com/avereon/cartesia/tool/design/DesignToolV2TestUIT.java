@@ -4,6 +4,7 @@ import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.xenon.ProgramTool;
@@ -70,11 +71,6 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 		assertThat( getTool().getSelectTolerance().getUnit() ).isEqualTo( DesignUnit.MILLIMETER );
 	}
 
-	private void useLineLayer() throws TimeoutException, InterruptedException {
-		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e7" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
-		Fx.waitForWithExceptions( 1000 );
-	}
-
 	@Test
 	void assetTypeResolvesCorrectly() {
 		assertThat( getAsset().getType() ).isInstanceOf( Design2dAssetType.class );
@@ -118,6 +114,7 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	void screenPointSelect() throws Exception {
 		// given
 		useLineLayer();
+		useEllipseLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once
@@ -133,6 +130,7 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	void screenPointSelectWithMultipleSelectsMovingDownVisibleGeometry() throws Exception {
 		// given
 		useLineLayer();
+		useEllipseLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once
@@ -155,15 +153,29 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	}
 
 	@Test
+	void screenPointSelectLine() throws Exception {
+		// given
+		useLineLayer();
+		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
+
+		// when - select once
+		getTool().screenPointSelect( mouse, false );
+
+		// then - the first line should be selected
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.size() ).isEqualTo( 1 );
+		assertThat( selected.getFirst().getOrigin() ).isEqualTo( new Point3D( -2, 2, 0 ) );
+	}
+
+	@Test
 	void screenPointSelectLineWithMouseCloseEnough() throws Exception {
 		// given
 		useLineLayer();
-		double worldSelectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
 
 		// Need to get the selector inside the stroke width of the line
 		// 0.02 is just under half the line stroke width
 
-		Point3D offset = new Point3D( 0.02 + worldSelectTolerance, 0, 0 );
+		Point3D offset = new Point3D( 0.02 + getWorldSelectTolerance(), 0, 0 );
 		Point3D point = new Point3D( 2, 2, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
@@ -180,13 +192,71 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 	void screenPointSelectLineWithMouseTooFarAway() throws Exception {
 		// given
 		useLineLayer();
-		double worldSelectTolerance = getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
 
 		// Need to get the selector outside the stroke width of the line
 		// 0.03 is just over half the line stroke width
 
-		Point3D offset = new Point3D( 0.03 + worldSelectTolerance, 0, 0 );
+		Point3D offset = new Point3D( 0.03 + getWorldSelectTolerance(), 0, 0 );
 		Point3D point = new Point3D( 2, 2, 0 ).add( offset );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.size() ).isEqualTo( 0 );
+	}
+
+	@Test
+	void screenPointSelectEllipse() throws Exception {
+		// given
+		useEllipseLayer();
+
+		Point3D point = new Point3D( 1, 1, 0 );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.getFirst() ).isInstanceOf( DesignEllipse.class );
+		assertThat( selected.size() ).isEqualTo( 1 );
+	}
+
+
+	@Test
+	void screenPointSelectEllipseWithMouseCloseEnough() throws Exception {
+		// given
+		useEllipseLayer();
+
+		// Need to get the selector inside the stroke width of the line
+		// 0.02 is just under half the line stroke width
+
+		Point3D offset = new Point3D( 0, 0.02 + getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( 1, 2, 0 ).add( offset );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.getFirst() ).isInstanceOf( DesignEllipse.class );
+		assertThat( selected.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void screenPointSelectEllipseWithMouseTooFarAway() throws Exception {
+		// given
+		useEllipseLayer();
+
+		// Need to get the selector outside the stroke width of the line
+		// 0.03 is just over half the line stroke width
+
+		Point3D offset = new Point3D( 0, 0.03 + getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( 1, 2, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
@@ -203,6 +273,25 @@ public class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 
 	protected Design getDesign() {
 		return getAsset().getModel();
+	}
+
+	private double getWorldSelectTolerance() {
+		return getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
+	}
+
+	private void useLineLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e7" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
+	private void useArcLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e8" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
+	private void useEllipseLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e9" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
 	}
 
 }

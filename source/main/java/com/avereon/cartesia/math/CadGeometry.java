@@ -294,13 +294,19 @@ public class CadGeometry {
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
 				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
-				if( ellipse.calcRotate() != 0.0 ) fxEllipse.getTransforms().add( Transform.rotate( ellipse.calcRotate(), fxEllipse.getCenterX(), fxEllipse.getCenterY() ) );
+				if( ellipse.calcRotate() != 0.0 ) {
+					fxEllipse.setRotate( ellipse.calcRotate() );
+					fxEllipse.setRotationAxis( ellipse.getOrigin() );
+				}
 				yield fxEllipse;
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
 				Arc fxArc = new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, arc.calcStart(), arc.calcExtent() );
-				if( arc.calcRotate() != 0.0 ) fxArc.getTransforms().add( Transform.rotate( arc.calcRotate(), fxArc.getCenterX(), fxArc.getCenterY() ) );
+				if( arc.calcRotate() != 0.0 ) {
+					fxArc.setRotate( arc.calcRotate() );
+					fxArc.setRotationAxis( arc.getOrigin() );
+				}
 				yield fxArc;
 			}
 			case QUAD -> {
@@ -335,7 +341,7 @@ public class CadGeometry {
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
-				Text fxText =new Text( text.getOrigin().getX() * scale, text.getOrigin().getY() * scale, text.getText() );
+				Text fxText = new Text( text.getOrigin().getX() * scale, text.getOrigin().getY() * scale, text.getText() );
 				fxText.setFont( FontUtil.derive( text.calcFont(), text.calcTextSize() * scale ) );
 				yield fxText;
 			}
@@ -372,7 +378,15 @@ public class CadGeometry {
 				case MOVE -> fxPath.getElements().add( new MoveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale ) );
 				case LINE -> fxPath.getElements().add( new LineTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale ) );
 				case QUAD -> fxPath.getElements().add( new QuadCurveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale ) );
-				case CUBIC -> fxPath.getElements().add( new CubicCurveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale, element.data()[ 4 ] * scale, element.data()[ 5 ] * scale ) );
+				case CUBIC -> fxPath
+					.getElements()
+					.add( new CubicCurveTo( element.data()[ 0 ] * scale,
+						element.data()[ 1 ] * scale,
+						element.data()[ 2 ] * scale,
+						element.data()[ 3 ] * scale,
+						element.data()[ 4 ] * scale,
+						element.data()[ 5 ] * scale
+					) );
 				case ARC -> fxPath.getElements().add( new ArcTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, 0, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale, false, false ) );
 				case CLOSE -> fxPath.getElements().add( new ClosePath() );
 			}

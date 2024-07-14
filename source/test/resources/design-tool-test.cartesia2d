@@ -33,7 +33,29 @@
     	"name": "Layer 2 (arc)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e9" : {
-    	"name": "Layer 3 (ellipse)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e9",
+      "layers" : { },
+    	"name": "Layer 3 (ellipse)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-6e936be5cac1" : {
+          "id" : "5724d788-e5d5-4e78-a947-6e936be5cac1",
+          "origin" : "1,1,0",
+          "radii" : "2,1,0",
+          "shape" : "ellipse"
+        },
+        "73717fa4-08bc-4720-9edc-ff274379f7c2" : {
+          "id" : "73717fa4-08bc-4720-9edc-ff274379f7c2",
+          "origin" : "1,1,0",
+          "radii" : "2,1,0",
+          "rotate" : "90",
+          "shape" : "ellipse"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ea" : {
     	"name": "Layer 4 (curve)"

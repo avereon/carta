@@ -124,9 +124,9 @@ public abstract class DesignShape extends DesignDrawable {
 
 	private static final double INTERNAL_SHAPE_SCALE = 1.0;
 
-	public Shape getFxShape(boolean withStroke) {
-//		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
-//		return fxShapeCache;
+	public Shape getFxShape( boolean withStroke ) {
+		//		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
+		//		return fxShapeCache;
 
 		return CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE, withStroke );
 	}
@@ -143,7 +143,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	protected Bounds computeGeometricBounds() {
-		return getFxShape(false).getBoundsInParent();
+		return getFxShape( false ).getBoundsInParent();
 	}
 
 	/**
@@ -165,7 +165,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	protected Bounds computeVisualBounds() {
-		return getFxShape(true).getBoundsInParent();
+		return getFxShape( true ).getBoundsInParent();
 	}
 
 	public double distanceTo( Point3D point ) {
