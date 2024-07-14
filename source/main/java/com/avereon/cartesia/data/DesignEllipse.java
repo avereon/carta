@@ -284,17 +284,17 @@ public class DesignEllipse extends DesignShape {
 		return this;
 	}
 
-	@Override
-	protected Bounds computeGeometricBounds() {
-		// The bounds of a non-rotated ellipse
-		Point3D origin = getOrigin();
-		Point3D radii = getRadii();
-		double x = origin.getX() - radii.getX();
-		double y = origin.getY() - radii.getY();
-		double w = 2 * radii.getX();
-		double h = 2 * radii.getY();
-		return new BoundingBox( x, y, w, h );
-	}
+	//	@Override
+	//	protected Bounds computeGeometricBounds() {
+	//		// The bounds of a non-rotated ellipse
+	//		Point3D origin = getOrigin();
+	//		Point3D radii = getRadii();
+	//		double x = origin.getX() - radii.getX();
+	//		double y = origin.getY() - radii.getY();
+	//		double w = 2 * radii.getX();
+	//		double h = 2 * radii.getY();
+	//		return new BoundingBox( x, y, w, h );
+	//	}
 
 	@Override
 	public String toString() {

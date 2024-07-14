@@ -7,8 +7,6 @@ import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.*;
@@ -528,14 +526,14 @@ public class DesignMarker extends DesignShape {
 		}
 	}
 
-	@Override
-	public Bounds getVisualBounds() {
-		// Special handling of markers because they are not shapes
-		Point3D origin = getOrigin();
-		double size = calcSize();
-		double halfSize = 0.5 * size;
-		return new BoundingBox( origin.getX() - halfSize, origin.getY() - halfSize, size, size );
-	}
+	//	@Override
+	//	public Bounds getVisualBounds() {
+	//		// Special handling of markers because they are not shapes
+	//		Point3D origin = getOrigin();
+	//		double size = calcSize();
+	//		double halfSize = 0.5 * size;
+	//		return new BoundingBox( origin.getX() - halfSize, origin.getY() - halfSize, size, size );
+	//	}
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
