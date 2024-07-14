@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SelectTest extends BaseCartesiaUiTest {
+class SelectTestUIT extends BaseCartesiaUiTest {
 
 	private CommandContext context;
 
 	private Select command;
 
-	public SelectTest() {}
+	public SelectTestUIT() {}
 
 	@BeforeEach
 	protected void setup() throws Exception {

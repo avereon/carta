@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ModLifecycleTest extends BaseCartesiaUiTest {
+class ModLifecycleTestUIT extends BaseCartesiaUiTest {
 
 	@Test
 	void testLifecycle() {
