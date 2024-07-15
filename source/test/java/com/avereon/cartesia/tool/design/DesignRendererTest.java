@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.BaseCartesiaUnitTest;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.Design;
@@ -9,14 +10,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignRendererTest {
+public class DesignRendererTest extends BaseCartesiaUnitTest {
 
 	private Design design;
 
 	private DesignRenderer renderer;
 
 	@BeforeEach
-	void setup() {
+	protected void setup() throws Exception {
+		super.setup();
 		design = new Design2D();
 		renderer = new DesignRenderer();
 		renderer.setDesign( design );

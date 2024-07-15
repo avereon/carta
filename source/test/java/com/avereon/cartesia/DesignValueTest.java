@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignValueTest {
+public class DesignValueTest extends BaseCartesiaUnitTest {
 
 	@Test
 	void to() {
