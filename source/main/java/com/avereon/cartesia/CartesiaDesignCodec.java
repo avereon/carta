@@ -110,6 +110,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		geometryMappers.put( DesignArc.class, m -> mapArc( (DesignArc)m ) );
 		geometryMappers.put( DesignQuad.class, m -> mapQuad( (DesignQuad)m ) );
 		geometryMappers.put( DesignCubic.class, m -> mapCurve( (DesignCubic)m ) );
+		geometryMappers.put( DesignPath.class, m -> mapPath( (DesignPath)m ) );
 		geometryMappers.put( DesignMarker.class, m -> mapMarker( (DesignMarker)m ) );
 		geometryMappers.put( DesignText.class, m -> mapText( (DesignText)m ) );
 	}
@@ -449,7 +450,9 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapGeometry( DesignShape shape ) {
-		return geometryMappers.get( shape.getClass() ).apply( shape );
+		Function<DesignShape, Map<String, Object>> mapper = geometryMappers.get( shape.getClass() );
+		if( mapper == null ) throw new NullPointerException( "No mapper for shape: " + shape.getClass().getSimpleName() );
+		return mapper.apply( shape );
 	}
 
 	private Map<String, Object> mapShape( DesignShape shape, String type ) {
@@ -491,7 +494,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return asMap( curve, mapShape( curve, DesignCubic.CURVE ), DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignCubic.POINT );
 	}
 
-	private Map<String, Object> mapPath(DesignPath path ) {
+	private Map<String, Object> mapPath( DesignPath path ) {
 		// TODO Map path geometry
 		return asMap( path, mapShape( path, DesignPath.PATH ) );
 	}

@@ -9,6 +9,7 @@ import lombok.CustomLog;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CustomLog
 public class DesignPath extends DesignShape {
@@ -149,6 +150,13 @@ public class DesignPath extends DesignShape {
 			}
 		}
 
+	}
+
+	protected Map<String, Object> asMap() {
+		Map<String, Object> map = super.asMap();
+		map.put( SHAPE, PATH );
+		// TODO Add elements
+		return map;
 	}
 
 }
