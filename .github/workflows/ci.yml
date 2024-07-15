@@ -72,9 +72,9 @@ jobs:
         run: |
           mvn ${{env.MAVEN_PARMS}} compile
 
-      - name: Unit Tests
+      - name: Tests
         run: |
-          mvn ${{env.MAVEN_PARMS}} test
+          mvn ${{env.MAVEN_PARMS}} verify -P testui
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
