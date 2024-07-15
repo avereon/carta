@@ -1,0 +1,77 @@
+package com.avereon.cartesia.tool.design;
+
+import com.avereon.cartesia.data.DesignEllipse;
+import com.avereon.cartesia.data.DesignShape;
+import javafx.geometry.Point3D;
+import lombok.CustomLog;
+import lombok.Getter;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+@Getter
+@CustomLog
+public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2TestUIT {
+
+	@Test
+	void screenPointSelectEllipse() throws Exception {
+		// given
+		useEllipseLayer();
+
+		Point3D point = new Point3D( 1, 1, 0 );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.getFirst() ).isInstanceOf( DesignEllipse.class );
+		assertThat( selected.size() ).isEqualTo( 1 );
+	}
+
+
+	@Test
+	void screenPointSelectEllipseWithMouseCloseEnough() throws Exception {
+		// given
+		useEllipseLayer();
+
+		// Need to get the selector inside the stroke width of the line
+		// 0.02 is just under half the line stroke width
+
+		Point3D offset = new Point3D( 0, 0.02 + getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( 1, 2, 0 ).add( offset );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.getFirst() ).isInstanceOf( DesignEllipse.class );
+		assertThat( selected.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void screenPointSelectEllipseWithMouseTooFarAway() throws Exception {
+		// given
+		useEllipseLayer();
+
+		// Need to get the selector outside the stroke width of the line
+		// 0.03 is just over half the line stroke width
+
+		Point3D offset = new Point3D( 0, 0.03 + getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( 1, 2, 0 ).add( offset );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.size() ).isEqualTo( 0 );
+	}
+
+}

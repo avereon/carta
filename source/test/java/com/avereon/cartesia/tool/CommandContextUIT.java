@@ -67,6 +67,8 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 	void testFullCommand() {
 		String command = "ll 0,0 1,1";
 		// Executing this should give a line from 0,0 to 1,1
+
+		// TODO Verify there is a line from 0,0 to 1,1
 	}
 
 	@Test
