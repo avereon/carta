@@ -13,7 +13,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Getter
 @CustomLog
-public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2TestUIT {
+public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2BaseUIT {
 
 	@Test
 	void screenPointSelectEllipse() throws Exception {

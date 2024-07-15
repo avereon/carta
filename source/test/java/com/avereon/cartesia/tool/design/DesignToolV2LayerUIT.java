@@ -9,20 +9,39 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Getter
 @CustomLog
-public class DesignToolV2LayerUIT extends DesignToolV2TestUIT {
+public class DesignToolV2LayerUIT extends DesignToolV2BaseUIT {
 
 	@Test
-	void getCurrentLayer() {
+	void initialCurrentLayerNotNull() {
+		// when
 		DesignLayer firstLayer = getDesign().getAllLayers().getFirst();
+
+		// then
 		assertThat( getTool().getCurrentLayer() ).isEqualTo( firstLayer );
 	}
 
-	// TODO Test set curren layer
+	@Test
+	void setCurrentLayer() {
+		// given
+		DesignLayer firstLayer = getDesign().getAllLayers().getFirst();
+		DesignLayer secondLayer = getDesign().getAllLayers().get( 1 );
+		assertThat( getTool().getCurrentLayer() ).isEqualTo( firstLayer );
+
+		// when
+		getTool().setCurrentLayer( secondLayer );
+
+		// then
+		assertThat( getTool().getCurrentLayer() ).isEqualTo( secondLayer );
+	}
 
 	@Test
 	void getVisibleLayers() throws Exception {
+		// given
 		useLineLayer();
-		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 1 );
+		useEllipseLayer();
+
+		// then
+		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 2 );
 	}
 
 	@Test

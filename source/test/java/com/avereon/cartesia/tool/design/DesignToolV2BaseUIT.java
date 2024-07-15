@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Getter
 @CustomLog
-public abstract class DesignToolV2TestUIT extends BaseCartesiaUiTest {
+public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 	private DesignToolV2 tool;
 
@@ -75,18 +75,23 @@ public abstract class DesignToolV2TestUIT extends BaseCartesiaUiTest {
 		return getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
 	}
 
+	protected void useBoxLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e6" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
 	protected void useLineLayer() throws TimeoutException, InterruptedException {
 		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e7" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
 		Fx.waitForWithExceptions( 1000 );
 	}
 
-	protected void useArcLayer() throws TimeoutException, InterruptedException {
-		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e8" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+	protected void useEllipseLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e9" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
 		Fx.waitForWithExceptions( 1000 );
 	}
 
-	protected void useEllipseLayer() throws TimeoutException, InterruptedException {
-		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e9" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+	protected void useArcLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e8" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
 		Fx.waitForWithExceptions( 1000 );
 	}
 

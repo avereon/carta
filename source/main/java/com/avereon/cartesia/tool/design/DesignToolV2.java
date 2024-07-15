@@ -208,7 +208,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		renderer.setDesign( getDesign() );
 		renderer.setDpi( Screen.getPrimary().getDpi() );
 
-		// Set "so settings" defaults
+		// Set defaults
 		setCurrentLayer( getDesign().getAllLayers().getFirst() );
 
 		// Fire the design ready event (should be done after renderer.setDesign)
@@ -600,6 +600,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setCurrentLayer( DesignLayer layer ) {
+		if( layer == null ) throw new NullPointerException( "Layer cannot be null" );
 		currentLayerProperty().set( layer );
 	}
 

@@ -12,7 +12,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Getter
 @CustomLog
-public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2TestUIT {
+public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 
 	@Test
 	void screenPointSelect() throws Exception {

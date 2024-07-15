@@ -9,7 +9,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Getter
 @CustomLog
-public class DesignToolV2AssertTypeUIT extends DesignToolV2TestUIT {
+public class DesignToolV2AssertTypeUIT extends DesignToolV2BaseUIT {
 
 	@Test
 	void assetTypeResolvesCorrectly() {
