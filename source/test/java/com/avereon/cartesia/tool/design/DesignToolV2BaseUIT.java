@@ -100,4 +100,9 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		Fx.waitForWithExceptions( 1000 );
 	}
 
+	protected void useCubicLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0eb" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
 }

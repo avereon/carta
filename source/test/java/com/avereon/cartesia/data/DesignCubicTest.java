@@ -66,7 +66,7 @@ public class DesignCubicTest {
 		DesignCubic curve = new DesignCubic( new Point3D( 0, 0, 0 ), new Point3D( 0.5, 0.5, 0 ), new Point3D( 0.5, -0.5, 0 ), new Point3D( 1, 0, 0 ) );
 		Map<String, Object> map = curve.asMap();
 
-		assertThat( map.get( DesignCubic.SHAPE ) ).isEqualTo( DesignCubic.CUBIC );
+		assertThat( map.get( DesignCubic.SHAPE ) ).isEqualTo( DesignCubic.CURVE );
 		assertThat( map.get( DesignCubic.ORIGIN ) ).isEqualTo( new Point3D( 0, 0, 0 ) );
 		assertThat( map.get( DesignCubic.ORIGIN_CONTROL ) ).isEqualTo( new Point3D( 0.5, 0.5, 0 ) );
 		assertThat( map.get( DesignCubic.POINT_CONTROL ) ).isEqualTo( new Point3D( 0.5, -0.5, 0 ) );
@@ -76,7 +76,7 @@ public class DesignCubicTest {
 	@Test
 	void testUpdateFrom() {
 		Map<String, Object> map = new HashMap<>();
-		map.put( DesignCubic.SHAPE, DesignCubic.CUBIC );
+		map.put( DesignCubic.SHAPE, DesignCubic.CURVE );
 		map.put( DesignCubic.ORIGIN, "0,0,0" );
 		map.put( DesignCubic.ORIGIN_CONTROL, "0.5,0.5,0" );
 		map.put( DesignCubic.POINT_CONTROL, "0.5,-0.5,0" );

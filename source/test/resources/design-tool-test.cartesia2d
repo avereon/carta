@@ -87,10 +87,58 @@
       "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ea" : {
-    	"name": "Layer 5 (quad)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ea",
+      "layers" : { },
+    	"name": "Layer 5 (quad)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-6e936be5cac1" : {
+          "id" : "5724d788-e5d5-4e78-a947-6f936be5cac1",
+          "origin" : "-1,-1,0",
+          "control" : "0,-2,0",
+          "point" : "-1,-3,0",
+          "shape" : "quad"
+        },
+        "73717fa4-08bc-4720-9edc-ff274379f7c2" : {
+          "id" : "73717fa4-08bc-4720-9edc-ff174379f7c2",
+          "origin" : "-2,-1,0",
+          "control" : "-3,-2,0",
+          "point" : "-2,-3,0",
+          "shape" : "quad"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0eb" : {
-    	"name": "Layer 6 (cubic)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0eb",
+      "layers" : { },
+    	"name": "Layer 6 (cubic)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-6e936be5cbc1" : {
+          "id" : "5724d788-e5d5-4e78-a947-6f935be5cac1",
+          "origin" : "1,-1,0",
+          "origin-control" : "0,-1,0",
+          "point-control" : "0,-3,0",
+          "point" : "1,-3,0",
+          "shape" : "curve"
+        },
+        "73717fa4-08bc-4720-9edc-ff274378f7c2" : {
+          "id" : "73717fa4-08bc-4720-9edc-ff174479f7c2",
+          "origin" : "2,-1,0",
+          "origin-control" : "3,-2,0",
+          "point-control" : "1,-2,0",
+          "point" : "2,-3,0",
+          "shape" : "curve"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ec" : {
     	"name": "Layer 7 (path)"

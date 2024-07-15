@@ -27,6 +27,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.avereon.cartesia.data.DesignCubic.CUBIC;
+
 @CustomLog
 public abstract class CartesiaDesignCodec extends Codec {
 
@@ -210,7 +212,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 				case DesignLine.LINE -> loadDesignLine( g );
 				case DesignEllipse.CIRCLE, DesignEllipse.ELLIPSE -> loadDesignEllipse( g );
 				case DesignArc.ARC -> loadDesignArc( g );
-				case DesignCubic.CUBIC -> loadDesignCurve( g );
+				case DesignCubic.CURVE, CUBIC -> loadDesignCurve( g );
 				case DesignText.TEXT -> loadDesignText( g );
 				default -> null;
 			};
@@ -458,7 +460,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapCurve( DesignCubic curve ) {
-		return asMap( curve, mapShape( curve, DesignCubic.CUBIC ), DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignCubic.POINT );
+		return asMap( curve, mapShape( curve, DesignCubic.CURVE ), DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignCubic.POINT );
 	}
 
 	private Map<String, Object> mapText( DesignText text ) {

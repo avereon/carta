@@ -15,7 +15,9 @@ import java.util.Map;
 @CustomLog
 public class DesignCubic extends DesignShape {
 
-	public static final String CUBIC = "curve";
+	public static final String CURVE = "curve";
+
+	public static final String CUBIC = "cubic";
 
 	public static final String ORIGIN_CONTROL = "origin-control";
 
@@ -108,7 +110,7 @@ public class DesignCubic extends DesignShape {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.put( SHAPE, CUBIC );
+		map.put( SHAPE, CURVE );
 		map.putAll( asMap( ORIGIN_CONTROL, POINT_CONTROL, POINT ) );
 		return map;
 	}
