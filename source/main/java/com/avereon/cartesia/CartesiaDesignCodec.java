@@ -315,6 +315,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private DesignArc loadDesignArc( Map<String, Object> map ) {
 		DesignArc arc = loadDesignEllipse( map, loadDesignShape( map, new DesignArc() ) );
+		// FIXME These should be strings at some point to allow for expressions
 		if( map.containsKey( DesignArc.START ) ) arc.setStart( ((Number)map.get( DesignArc.START )).doubleValue() );
 		if( map.containsKey( DesignArc.EXTENT ) ) arc.setExtent( ((Number)map.get( DesignArc.EXTENT )).doubleValue() );
 		if( map.containsKey( DesignArc.TYPE ) ) arc.setType( DesignArc.Type.valueOf( ((String)map.get( DesignArc.TYPE )).toUpperCase() ) );

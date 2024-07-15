@@ -58,7 +58,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 		// Check the design state
 		assertThat( getDesign().calcDesignUnit() ).isEqualTo( DesignUnit.CENTIMETER );
-		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 10 );
+		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 11 );
 
 		// Check the tool state
 		assertThat( getTool().getDpi() ).isEqualTo( Screen.getPrimary().getDpi() );

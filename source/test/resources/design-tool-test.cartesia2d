@@ -2,8 +2,11 @@
   "codec-version" : "1",
   "id" : "0958d926-34c6-4731-bd43-278eb88df19a",
   "layers" : {
-    "a56cede9-ee12-40d0-a86c-b3701146c0e6" : {
+    "a56cede9-ee12-40d0-a86c-b3701146c0e5" : {
     	"name": "Layer 0 (empty)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0e6" : {
+    	"name": "Layer 1 (box)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e7" : {
       "draw-cap" : "round",
@@ -11,7 +14,7 @@
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e7",
       "layers" : { },
-      "name" : "Layer 1 (line)",
+      "name" : "Layer 2 (line)",
       "shapes" : {
         "5724d788-e5d5-4e78-a947-6e936be5cab2" : {
           "id" : "5724d788-e5d5-4e78-a947-6e936be5cab2",
@@ -30,7 +33,33 @@
       "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e8" : {
-    	"name": "Layer 2 (arc)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e8",
+      "layers" : { },
+    	"name": "Layer 3 (arc)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-6e936be5cab2" : {
+          "id" : "5724d788-e5d5-4e78-a947-6e936bf5cab2",
+          "origin" : "-1.0,1.0,0.0",
+          "radii" : "1.0,2.0,0.0",
+          "start" : 45,
+          "extent" : 45,
+          "shape" : "arc"
+        },
+        "73717fa4-08bc-4720-9edc-ff274379f732" : {
+          "id" : "73717fa4-08bc-4720-9edc-ff274279f732",
+          "origin" : "-1.0,1.0,0.0",
+          "radii" : "1.0,2.0,0.0",
+          "start" : 45,
+          "extent" : 45,
+          "rotate" : 180,
+          "shape" : "arc"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e9" : {
       "draw-cap" : "round",
@@ -38,7 +67,7 @@
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e9",
       "layers" : { },
-    	"name": "Layer 3 (ellipse)",
+    	"name": "Layer 4 (ellipse)",
       "shapes" : {
         "5724d788-e5d5-4e78-a947-6e936be5cac1" : {
           "id" : "5724d788-e5d5-4e78-a947-6e936be5cac1",
@@ -58,22 +87,22 @@
       "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ea" : {
-    	"name": "Layer 4 (curve)"
+    	"name": "Layer 5 (curve)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0eb" : {
-    	"name": "Layer 5 (text)"
+    	"name": "Layer 6 (text)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ec" : {
-    	"name": "Layer 6 (empty)"
-    },
-    "a56cede9-ee12-40d0-a86c-b3701146c0ed" : {
     	"name": "Layer 7 (empty)"
     },
-    "a56cede9-ee12-40d0-a86c-b3701146c0ee" : {
+    "a56cede9-ee12-40d0-a86c-b3701146c0ed" : {
     	"name": "Layer 8 (empty)"
     },
-    "a56cede9-ee12-40d0-a86c-b3701146c0ef" : {
+    "a56cede9-ee12-40d0-a86c-b3701146c0ee" : {
     	"name": "Layer 9 (empty)"
+    },
+    "a56cede9-ee12-40d0-a86c-b3701146c0ef" : {
+    	"name": "Layer 10 (empty)"
     }
   },
   "unit" : "centimeter"

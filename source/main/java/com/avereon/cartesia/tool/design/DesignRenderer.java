@@ -548,10 +548,9 @@ public class DesignRenderer extends BorderPane {
 
 				// FIXME Temporary code to show the bounding box
 				if( 1 == 1 ) {
-					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
-
 					Bounds bounds = shape.getVisualBounds();
-					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
+					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
+					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
 				}
 			}
 		}
@@ -615,6 +614,15 @@ public class DesignRenderer extends BorderPane {
 	private void drawLine( DesignLine line ) {
 		renderer.drawLine( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
 	}
+
+	private void fillBox( DesignBox box ) {
+		renderer.fillBox( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY(), box.calcRotate() );
+	}
+
+	private void drawBox( DesignBox box ) {
+		renderer.drawBox( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY(), box.calcRotate() );
+	}
+
 
 	private void drawMarker( DesignMarker marker ) {
 		Point3D origin = marker.getOrigin();
@@ -739,6 +747,8 @@ public class DesignRenderer extends BorderPane {
 	private List<DesignShape> doFindByShape( final DesignShape selector, final boolean intersect ) {
 		// Ensure the selector does not have a draw width
 		selector.setDrawWidth( "0" );
+		selector.setDrawPaint( "#ff000000" );
+		selector.setFillPaint( "#ff000000" );
 
 		// This method should be thread agnostic. It should be safe to call from any thread.
 		return getVisibleShapes().stream().filter( shape -> matches( selector, shape, intersect ) ).collect( Collectors.toList() );

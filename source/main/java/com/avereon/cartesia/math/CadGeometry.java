@@ -294,19 +294,19 @@ public class CadGeometry {
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
 				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
-				if( ellipse.calcRotate() != 0.0 ) {
-					fxEllipse.setRotate( ellipse.calcRotate() );
-					fxEllipse.setRotationAxis( ellipse.getOrigin() );
-				}
+//				if( ellipse.calcRotate() != 0.0 ) {
+//					fxEllipse.setRotate( ellipse.calcRotate() );
+//					fxEllipse.setRotationAxis( ellipse.getOrigin() );
+//				}
 				yield fxEllipse;
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
-				Arc fxArc = new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, arc.calcStart(), arc.calcExtent() );
-				if( arc.calcRotate() != 0.0 ) {
-					fxArc.setRotate( arc.calcRotate() );
-					fxArc.setRotationAxis( arc.getOrigin() );
-				}
+				Arc fxArc = new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, -arc.calcStart(), -arc.calcExtent() );
+//				if( arc.calcRotate() != 0.0 ) {
+//					fxArc.setRotate( arc.calcRotate() );
+//					fxArc.setRotationAxis( arc.getOrigin() );
+//				}
 				yield fxArc;
 			}
 			case QUAD -> {
@@ -349,9 +349,12 @@ public class CadGeometry {
 
 		Paint drawPaint = shape.calcDrawPaint();
 		Paint fillPaint = shape.calcFillPaint();
-		if( drawPaint != null ) fxShape.setStroke( Color.YELLOW );
-		if( fillPaint != null ) fxShape.setFill( Color.RED );
-		if( withStroke ) {
+
+		boolean hasDraw = withStroke || drawPaint != null && drawPaint != Color.TRANSPARENT;
+		boolean hasFill = fillPaint != null && fillPaint != Color.TRANSPARENT;
+
+		if( hasDraw ) {
+			fxShape.setStroke( Color.YELLOW );
 			fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
 			fxShape.setStrokeType( StrokeType.CENTERED );
 			fxShape.setStrokeLineCap( shape.calcDrawCap() );
@@ -364,9 +367,11 @@ public class CadGeometry {
 			fxShape.setStrokeWidth( 0 );
 		}
 
-		// Handle the rotate transform, if needed
-		double rotate = shape.calcRotate();
-		if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
+		fxShape.setFill( hasFill ? Color.RED : null );
+
+				// Handle the rotate transform, if needed
+				double rotate = shape.calcRotate();
+				if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
 
 		return fxShape;
 	}
