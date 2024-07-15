@@ -58,7 +58,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 		// Check the design state
 		assertThat( getDesign().calcDesignUnit() ).isEqualTo( DesignUnit.CENTIMETER );
-		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 11 );
+		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 10 );
 
 		// Check the tool state
 		assertThat( getTool().getDpi() ).isEqualTo( Screen.getPrimary().getDpi() );
@@ -92,6 +92,11 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 	protected void useArcLayer() throws TimeoutException, InterruptedException {
 		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0e8" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
+	protected void useQuadLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0ea" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
 		Fx.waitForWithExceptions( 1000 );
 	}
 

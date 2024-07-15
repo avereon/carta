@@ -87,22 +87,19 @@
       "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ea" : {
-    	"name": "Layer 5 (curve)"
+    	"name": "Layer 5 (quad)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0eb" : {
-    	"name": "Layer 6 (text)"
+    	"name": "Layer 6 (cubic)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ec" : {
-    	"name": "Layer 7 (empty)"
+    	"name": "Layer 7 (path)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ed" : {
-    	"name": "Layer 8 (empty)"
+    	"name": "Layer 8 (marker)"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ee" : {
-    	"name": "Layer 9 (empty)"
-    },
-    "a56cede9-ee12-40d0-a86c-b3701146c0ef" : {
-    	"name": "Layer 10 (empty)"
+    	"name": "Layer 9 (text)"
     }
   },
   "unit" : "centimeter"

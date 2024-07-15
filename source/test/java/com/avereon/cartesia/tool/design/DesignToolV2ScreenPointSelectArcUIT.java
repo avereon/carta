@@ -38,7 +38,7 @@ public class DesignToolV2ScreenPointSelectArcUIT extends DesignToolV2BaseUIT {
 	}
 
 	@Test
-	void screenPointSelectArcWithMouseCloseEnough() {
+	void screenPointSelectArc1WithMouseCloseEnough() {
 		// given
 
 		// Need to get the selector inside the stroke width of the line
@@ -58,7 +58,7 @@ public class DesignToolV2ScreenPointSelectArcUIT extends DesignToolV2BaseUIT {
 	}
 
 	@Test
-	void screenPointSelectArcWithMouseTooFarAway() {
+	void screenPointSelectArc1WithMouseTooFarAway() {
 		// given
 
 		// Need to get the selector outside the stroke width of the line
@@ -66,6 +66,45 @@ public class DesignToolV2ScreenPointSelectArcUIT extends DesignToolV2BaseUIT {
 
 		Point3D offset = new Point3D( 0, 0.03 + getWorldSelectTolerance(), 0 );
 		Point3D point = new Point3D( -1, 3, 0 ).add( offset );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.size() ).isEqualTo( 0 );
+	}
+
+	@Test
+	void screenPointSelectArc2WithMouseCloseEnough() {
+		// given
+
+		// Need to get the selector inside the stroke width of the line
+		// 0.02 is just under half the line stroke width
+
+		Point3D offset = new Point3D( 0, 0.02 + getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( -1, -1, 0 ).add( offset );
+		Point3D mouse = getTool().worldToScreen( point );
+
+		// when
+		getTool().screenPointSelect( mouse, false );
+
+		// then
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.getFirst() ).isInstanceOf( DesignArc.class );
+		assertThat( selected.size() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void screenPointSelectArc2WithMouseTooFarAway() {
+		// given
+
+		// Need to get the selector outside the stroke width of the line
+		// 0.03 is just over half the line stroke width
+
+		Point3D offset = new Point3D( 0, 0.03 + getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( -1, -1, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when

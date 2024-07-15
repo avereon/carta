@@ -274,14 +274,10 @@ public class CadGeometry {
 	}
 
 	public static Shape toFxShape( DesignShape shape ) {
-		return toFxShape( shape, 1.0, true );
+		return toFxShape( shape, 1.0 );
 	}
 
 	public static Shape toFxShape( DesignShape shape, double scale ) {
-		return toFxShape( shape, scale, true );
-	}
-
-	public static Shape toFxShape( DesignShape shape, double scale, boolean withStroke ) {
 		Shape fxShape = switch( shape.getType() ) {
 			case BOX -> {
 				DesignBox box = (DesignBox)shape;
@@ -294,19 +290,19 @@ public class CadGeometry {
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
 				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
-//				if( ellipse.calcRotate() != 0.0 ) {
-//					fxEllipse.setRotate( ellipse.calcRotate() );
-//					fxEllipse.setRotationAxis( ellipse.getOrigin() );
-//				}
+				//				if( ellipse.calcRotate() != 0.0 ) {
+				//					fxEllipse.setRotate( ellipse.calcRotate() );
+				//					fxEllipse.setRotationAxis( ellipse.getOrigin() );
+				//				}
 				yield fxEllipse;
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
 				Arc fxArc = new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, -arc.calcStart(), -arc.calcExtent() );
-//				if( arc.calcRotate() != 0.0 ) {
-//					fxArc.setRotate( arc.calcRotate() );
-//					fxArc.setRotationAxis( arc.getOrigin() );
-//				}
+				//				if( arc.calcRotate() != 0.0 ) {
+				//					fxArc.setRotate( arc.calcRotate() );
+				//					fxArc.setRotationAxis( arc.getOrigin() );
+				//				}
 				yield fxArc;
 			}
 			case QUAD -> {
@@ -331,13 +327,13 @@ public class CadGeometry {
 					cubic.getPoint().getY() * scale
 				);
 			}
-			case MARKER -> {
-				DesignMarker marker = (DesignMarker)shape;
-				yield mapToFxPath( scale, marker.getElements() );
-			}
 			case PATH -> {
 				DesignPath path = (DesignPath)shape;
 				yield mapToFxPath( scale, path.getElements() );
+			}
+			case MARKER -> {
+				DesignMarker marker = (DesignMarker)shape;
+				yield mapToFxPath( scale, marker.getElements() );
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
@@ -347,31 +343,26 @@ public class CadGeometry {
 			}
 		};
 
+		// Determine the draw and fill paints
 		Paint drawPaint = shape.calcDrawPaint();
 		Paint fillPaint = shape.calcFillPaint();
-
-		boolean hasDraw = withStroke || drawPaint != null && drawPaint != Color.TRANSPARENT;
+		boolean hasDraw = drawPaint != null && drawPaint != Color.TRANSPARENT;
 		boolean hasFill = fillPaint != null && fillPaint != Color.TRANSPARENT;
 
-		if( hasDraw ) {
-			fxShape.setStroke( Color.YELLOW );
-			fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
-			fxShape.setStrokeType( StrokeType.CENTERED );
-			fxShape.setStrokeLineCap( shape.calcDrawCap() );
-			//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
-			//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
-			//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() * scale );
-			fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v * scale ).toList() );
-		} else {
-			fxShape.setStroke( null );
-			fxShape.setStrokeWidth( 0 );
-		}
-
+		fxShape.setStroke( hasDraw ? Color.YELLOW : null );
 		fxShape.setFill( hasFill ? Color.RED : null );
 
-				// Handle the rotate transform, if needed
-				double rotate = shape.calcRotate();
-				if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
+		fxShape.setStrokeType( StrokeType.CENTERED );
+		fxShape.setStrokeLineCap( shape.calcDrawCap() );
+		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
+		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
+		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() * scale );
+		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v * scale ).toList() );
+
+		// Handle the rotate transform, if needed
+		double rotate = shape.calcRotate();
+		if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
 
 		return fxShape;
 	}

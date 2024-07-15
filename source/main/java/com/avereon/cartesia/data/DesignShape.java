@@ -7,6 +7,8 @@ import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
@@ -124,11 +126,11 @@ public abstract class DesignShape extends DesignDrawable {
 
 	private static final double INTERNAL_SHAPE_SCALE = 1.0;
 
-	public Shape getFxShape( boolean withStroke ) {
+	public Shape getFxShape() {
 		//		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
 		//		return fxShapeCache;
 
-		return CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE, withStroke );
+		return CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
 	}
 
 	/**
@@ -143,7 +145,9 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	protected Bounds computeGeometricBounds() {
-		return getFxShape( false ).getBoundsInParent();
+		Shape shape = getFxShape();
+		shape.setStroke( null );
+		return shape.getBoundsInParent();
 	}
 
 	/**
@@ -152,20 +156,17 @@ public abstract class DesignShape extends DesignDrawable {
 	 * @return The visual bounds of the shape
 	 */
 	public Bounds getVisualBounds() {
-		//		// FIXME Using FX for computing bounds is problematic
-		//		// Because there are some features/bugs that exist
-		//		// for example, lines cannot be less than width 1 due to Math.max( half, 0.5 )
-		//
-		//		// NOTE An option to somewhat remedy this is to pass in a scale of some sort
-		//		// like points, PPU or even the zoom
-		//    // If PPU then also include the Screen.getPrimaryScreen().getOutputScaleX()
-
 		if( visualBoundsCache == null ) visualBoundsCache = computeVisualBounds();
 		return visualBoundsCache;
 	}
 
 	protected Bounds computeVisualBounds() {
-		return getFxShape( true ).getBoundsInParent();
+		Paint drawPaint = calcDrawPaint();
+		boolean hasDraw = drawPaint != null && drawPaint != Color.TRANSPARENT;
+
+		Shape shape = getFxShape();
+		shape.setStroke( hasDraw ? Color.YELLOW : null );
+		return shape.getBoundsInParent();
 	}
 
 	public double distanceTo( Point3D point ) {
