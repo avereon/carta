@@ -1,4 +1,4 @@
-package com.avereon.cartesia.tool.design;
+package com.avereon.cartesia.test;
 
 import javafx.geometry.Bounds;
 import org.assertj.core.api.AbstractAssert;

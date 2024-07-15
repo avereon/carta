@@ -1,4 +1,4 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.test;
 
 import com.avereon.product.ProductCard;
 import com.avereon.settings.MapSettings;

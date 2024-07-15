@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.test.PointAssert;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;

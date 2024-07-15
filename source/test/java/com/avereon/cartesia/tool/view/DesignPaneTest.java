@@ -1,8 +1,8 @@
 package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.Point2DAssert;
-import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.test.Point2DAssert;
+import com.avereon.cartesia.test.PointAssert;
 import com.avereon.cartesia.TestTimeouts;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;

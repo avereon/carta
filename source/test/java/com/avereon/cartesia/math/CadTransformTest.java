@@ -1,6 +1,6 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.test.PointAssert;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;

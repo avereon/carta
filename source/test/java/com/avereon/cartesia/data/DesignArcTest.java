@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.test.PointAssert;
 import com.avereon.cartesia.math.CadConstants;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Constants;

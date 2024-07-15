@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.PointAssert;
+import com.avereon.cartesia.test.PointAssert;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;

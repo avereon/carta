@@ -1,6 +1,6 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.PointListAssert;
+import com.avereon.cartesia.test.PointListAssert;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.geometry.Point3D;

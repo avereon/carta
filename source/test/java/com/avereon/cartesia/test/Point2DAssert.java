@@ -1,4 +1,4 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.test;
 
 import com.avereon.cartesia.math.CadConstants;
 import javafx.geometry.Point2D;

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.tool.design.FxBoundsAssert;
+import com.avereon.cartesia.test.FxBoundsAssert;
 import com.avereon.curve.math.Constants;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.BoundingBox;

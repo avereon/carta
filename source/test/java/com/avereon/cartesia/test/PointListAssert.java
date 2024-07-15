@@ -1,4 +1,4 @@
-package com.avereon.cartesia;
+package com.avereon.cartesia.test;
 
 import com.avereon.cartesia.math.CadGeometry;
 import javafx.geometry.Point3D;
