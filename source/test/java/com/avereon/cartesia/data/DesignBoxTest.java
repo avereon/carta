@@ -21,12 +21,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 );
-		assertThat( bounds.getMinY() ).isEqualTo( 1 );
-		assertThat( bounds.getMaxX() ).isEqualTo( 6 );
-		assertThat( bounds.getMaxY() ).isEqualTo( 3 );
-		assertThat( bounds.getWidth() ).isEqualTo( 4 );
-		assertThat( bounds.getHeight() ).isEqualTo( 2 );
+		assertThat( bounds.getMinX() ).isEqualTo( 1.975, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 0.975, LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4.05, LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 2.05, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 6.025, LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 3.025, LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -38,18 +38,19 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 );
-		assertThat( bounds.getMinY() ).isEqualTo( 1 );
-		assertThat( bounds.getMaxX() ).isEqualTo( 6 );
-		assertThat( bounds.getMaxY() ).isEqualTo( 3 );
-		assertThat( bounds.getWidth() ).isEqualTo( 4 );
-		assertThat( bounds.getHeight() ).isEqualTo( 2 );
+		assertThat( bounds.getMinX() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMinY() ).isEqualTo( 0.5 );
+		assertThat( bounds.getWidth() ).isEqualTo( 5 );
+		assertThat( bounds.getHeight() ).isEqualTo( 3 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 6.5 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 3.5 );
 	}
 
 	@Test
 	void getBoundsWithRotate() {
 		// given
 		DesignBox box = new DesignBox( 2, 1, 1, 1 );
+		box.setDrawWidth( "0" );
 		box.setRotate( 45 );
 
 		// when

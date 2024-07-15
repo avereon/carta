@@ -219,13 +219,13 @@ public class CadGeometryTest {
 
 	@Test
 	void toFxShapeWithArc() {
-		Arc arc = (Arc)CadGeometry.toFxShape( new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 0.0, 0.0, 90.0, DesignArc.Type.OPEN ) );
+		Arc arc = (Arc)CadGeometry.toFxShape( new DesignArc( new Point3D( 3, 5, 0 ), new Point3D( 1, 1, 0 ), 0.0, 45.0, 90.0, DesignArc.Type.OPEN ) );
 		assertThat( arc.getCenterX() ).isEqualTo( 3 );
 		assertThat( arc.getCenterY() ).isEqualTo( 5 );
 		assertThat( arc.getRadiusX() ).isEqualTo( 1 );
 		assertThat( arc.getRadiusY() ).isEqualTo( 1 );
-		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
-		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getStartAngle() ).isEqualTo( -45 );
+		assertThat( arc.getLength() ).isEqualTo( -90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
 
 		// Check rotate
@@ -245,7 +245,7 @@ public class CadGeometryTest {
 		assertThat( arc.getRadiusX() ).isEqualTo( 1.5 );
 		assertThat( arc.getRadiusY() ).isEqualTo( 1.5 );
 		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
-		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getLength() ).isEqualTo( -90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
 
 		// Check rotate
@@ -264,7 +264,7 @@ public class CadGeometryTest {
 		assertThat( arc.getRadiusX() ).isEqualTo( 1 );
 		assertThat( arc.getRadiusY() ).isEqualTo( 1 );
 		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
-		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getLength() ).isEqualTo( -90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
 
 		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)arc.getTransforms().getFirst();
@@ -288,7 +288,7 @@ public class CadGeometryTest {
 		assertThat( arc.getRadiusX() ).isEqualTo( 1.1, TOLERANCE );
 		assertThat( arc.getRadiusY() ).isEqualTo( 1.1, TOLERANCE );
 		assertThat( arc.getStartAngle() ).isEqualTo( 0 );
-		assertThat( arc.getLength() ).isEqualTo( 90 );
+		assertThat( arc.getLength() ).isEqualTo( -90 );
 		assertThat( arc.getType() ).isEqualTo( ArcType.OPEN );
 
 		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)arc.getTransforms().getFirst();
