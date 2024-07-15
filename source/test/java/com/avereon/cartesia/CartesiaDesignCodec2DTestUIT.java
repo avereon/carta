@@ -96,38 +96,42 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		design.setDesignUnit( DesignUnit.METER );
 		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (Empty layer)" );
 		design.getLayers().addLayer( layer0 );
-		DesignLayer layer1 = new DesignLayer().setName( "Layer 1 (Marker)" );
+		DesignLayer layer1 = new DesignLayer().setName( "Layer 1 (Box)" );
 		design.getLayers().addLayer( layer1 );
 		DesignLayer layer2 = new DesignLayer().setName( "Layer 2 (Line)" );
-		layer1.addLayer( layer2 );
+		design.getLayers().addLayer( layer2 );
 		DesignLayer layer3 = new DesignLayer().setName( "Layer 3 (Ellipse)" );
-		layer1.addLayer( layer3 );
+		design.getLayers().addLayer( layer3 );
 		DesignLayer layer4 = new DesignLayer().setName( "Layer 4 (Arc)" );
-		layer1.addLayer( layer4 );
-		DesignLayer layer5 = new DesignLayer().setName( "Layer 5 (Curve)" );
-		layer1.addLayer( layer5 );
-		DesignLayer layer6 = new DesignLayer().setName( "Layer 6 (Text)" );
-		layer1.addLayer( layer6 );
+		design.getLayers().addLayer( layer4 );
+		DesignLayer layer5 = new DesignLayer().setName( "Layer 5 (Quad)" );
+		design.getLayers().addLayer( layer5 );
+		DesignLayer layer6 = new DesignLayer().setName( "Layer 6 (Curve)" );
+		design.getLayers().addLayer( layer6 );
+		DesignLayer layer7 = new DesignLayer().setName( "Layer 7 (Path)" );
+		design.getLayers().addLayer( layer7 );
+		DesignLayer layer8 = new DesignLayer().setName( "Layer 8 (Marker)" );
+		design.getLayers().addLayer( layer8 );
+		DesignLayer layer9 = new DesignLayer().setName( "Layer 9 (Text)" );
+		design.getLayers().addLayer( layer9 );
 
 		DesignView view0 = new DesignView().setName( "View 0" );
 		view0.setOrigin( Point3D.ZERO );
 		view0.setRotate( 0.0 );
 		view0.setZoom( 0.5 );
-		view0.setLayers( Set.of( layer0, layer1, layer2 ) );
+		view0.setLayers( Set.of( layer0, layer8, layer2 ) );
 		design.addView( view0 );
 
 		DesignView view1 = new DesignView().setName( "View 1" );
 		view1.setOrigin( new Point3D( 1, 2, 0 ) );
 		view1.setRotate( 45.0 );
 		view1.setZoom( 2.0 );
-		view1.setLayers( Set.of( layer3, layer5 ) );
+		view1.setLayers( Set.of( layer3, layer6 ) );
 		design.addView( view1 );
 
-		DesignMarker marker = new DesignMarker( new Point3D( 1, 2, 0 ) );
-		marker.setType( "normal" );
-		marker.setSize( "1.5" );
-		marker.setDrawPaint( "0x0000ff80" );
-		layer1.addShape( marker );
+		DesignBox box1 = new DesignBox( new Point3D( 1, 2, 0 ), new Point3D( 3, 4, 0 ) );
+		box1.setDrawPaint( "0x0000ff80" );
+		layer1.addShape( box1 );
 
 		DesignLine line1 = new DesignLine( new Point3D( 2, 3, 0 ), new Point3D( 3, 4, 0 ) );
 		line1.setDrawPaint( "0x0000ff80" );
@@ -147,10 +151,20 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		layer4.addShape( arc2 );
 
 		DesignCubic curve1 = new DesignCubic( new Point3D( -5, 0, 0 ), new Point3D( 1, 5, 0 ), new Point3D( -1, -5, 0 ), new Point3D( 5, 0, 0 ) );
-		layer5.addShape( curve1 );
+		layer6.addShape( curve1 );
+
+		DesignPath path1 = new DesignPath( new Point3D( -6, 0, 0 ) );
+		// TODO Add path geometry
+		layer7.addShape( path1 );
+
+		DesignMarker marker = new DesignMarker( new Point3D( 1, 2, 0 ) );
+		marker.setType( "normal" );
+		marker.setSize( "1.5" );
+		marker.setDrawPaint( "0x0000ff80" );
+		layer8.addShape( marker );
 
 		DesignText text1 = new DesignText( new Point3D( 2, 1, 0 ), "Test Text" );
-		layer6.addShape( text1 );
+		layer9.addShape( text1 );
 
 		return design;
 	}

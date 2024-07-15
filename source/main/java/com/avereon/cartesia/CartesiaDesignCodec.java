@@ -104,11 +104,13 @@ public abstract class CartesiaDesignCodec extends Codec {
 		this.product = product;
 
 		geometryMappers = new HashMap<>();
-		geometryMappers.put( DesignMarker.class, m -> mapMarker( (DesignMarker)m ) );
+		geometryMappers.put( DesignBox.class, m -> mapBox( (DesignBox)m ) );
 		geometryMappers.put( DesignLine.class, m -> mapLine( (DesignLine)m ) );
 		geometryMappers.put( DesignEllipse.class, m -> mapEllipse( (DesignEllipse)m ) );
 		geometryMappers.put( DesignArc.class, m -> mapArc( (DesignArc)m ) );
+		geometryMappers.put( DesignQuad.class, m -> mapQuad( (DesignQuad)m ) );
 		geometryMappers.put( DesignCubic.class, m -> mapCurve( (DesignCubic)m ) );
+		geometryMappers.put( DesignMarker.class, m -> mapMarker( (DesignMarker)m ) );
 		geometryMappers.put( DesignText.class, m -> mapText( (DesignText)m ) );
 	}
 
@@ -208,11 +210,14 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 			String type = String.valueOf( g.get( DesignShape.SHAPE ) );
 			DesignShape shape = switch( type ) {
-				case DesignMarker.MARKER, POINT -> loadDesignMarker( g );
+				case DesignBox.BOX -> loadDesignBox( g );
 				case DesignLine.LINE -> loadDesignLine( g );
 				case DesignEllipse.CIRCLE, DesignEllipse.ELLIPSE -> loadDesignEllipse( g );
 				case DesignArc.ARC -> loadDesignArc( g );
+				case DesignQuad.QUAD -> loadDesignQuad( g );
 				case DesignCubic.CURVE, CUBIC -> loadDesignCurve( g );
+				case DesignPath.PATH -> loadDesignPath( g );
+				case DesignMarker.MARKER, POINT -> loadDesignMarker( g );
 				case DesignText.TEXT -> loadDesignText( g );
 				default -> null;
 			};
@@ -282,17 +287,29 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return shape;
 	}
 
-	private DesignMarker loadDesignMarker( Map<String, Object> map ) {
-		DesignMarker marker = loadDesignShape( map, new DesignMarker() );
-		marker.setSize( (String)map.get( DesignMarker.SIZE ) );
-		marker.setType( (String)map.get( DesignMarker.TYPE ) );
-		return marker;
+	private DesignBox loadDesignBox( Map<String, Object> map ) {
+		DesignBox box = loadDesignShape( map, new DesignBox() );
+		box.setSize( ParseUtil.parsePoint3D( (String)map.get( DesignBox.SIZE ) ) );
+		return box;
 	}
 
 	private DesignLine loadDesignLine( Map<String, Object> map ) {
 		DesignLine line = loadDesignShape( map, new DesignLine() );
 		line.setPoint( ParseUtil.parsePoint3D( (String)map.get( DesignLine.POINT ) ) );
 		return line;
+	}
+
+	private DesignEllipse loadDesignEllipse( Map<String, Object> map ) {
+		return loadDesignEllipse( map, loadDesignShape( map, new DesignEllipse() ) );
+	}
+
+	private DesignArc loadDesignArc( Map<String, Object> map ) {
+		DesignArc arc = loadDesignEllipse( map, loadDesignShape( map, new DesignArc() ) );
+		// FIXME These should be strings at some point to allow for expressions
+		if( map.containsKey( DesignArc.START ) ) arc.setStart( ((Number)map.get( DesignArc.START )).doubleValue() );
+		if( map.containsKey( DesignArc.EXTENT ) ) arc.setExtent( ((Number)map.get( DesignArc.EXTENT )).doubleValue() );
+		if( map.containsKey( DesignArc.TYPE ) ) arc.setType( DesignArc.Type.valueOf( ((String)map.get( DesignArc.TYPE )).toUpperCase() ) );
+		return arc;
 	}
 
 	private <T extends DesignEllipse> T loadDesignEllipse( Map<String, Object> map, T ellipse ) {
@@ -311,17 +328,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return ellipse;
 	}
 
-	private DesignEllipse loadDesignEllipse( Map<String, Object> map ) {
-		return loadDesignEllipse( map, loadDesignShape( map, new DesignEllipse() ) );
-	}
-
-	private DesignArc loadDesignArc( Map<String, Object> map ) {
-		DesignArc arc = loadDesignEllipse( map, loadDesignShape( map, new DesignArc() ) );
-		// FIXME These should be strings at some point to allow for expressions
-		if( map.containsKey( DesignArc.START ) ) arc.setStart( ((Number)map.get( DesignArc.START )).doubleValue() );
-		if( map.containsKey( DesignArc.EXTENT ) ) arc.setExtent( ((Number)map.get( DesignArc.EXTENT )).doubleValue() );
-		if( map.containsKey( DesignArc.TYPE ) ) arc.setType( DesignArc.Type.valueOf( ((String)map.get( DesignArc.TYPE )).toUpperCase() ) );
-		return arc;
+	private DesignQuad loadDesignQuad( Map<String, Object> map ) {
+		DesignQuad quad = loadDesignShape( map, new DesignQuad() );
+		quad.setControl( ParseUtil.parsePoint3D( (String)map.get( DesignQuad.CONTROL ) ) );
+		quad.setPoint( ParseUtil.parsePoint3D( (String)map.get( DesignQuad.POINT ) ) );
+		return quad;
 	}
 
 	private DesignCubic loadDesignCurve( Map<String, Object> map ) {
@@ -330,6 +341,19 @@ public abstract class CartesiaDesignCodec extends Codec {
 		curve.setPointControl( ParseUtil.parsePoint3D( (String)map.get( DesignCubic.POINT_CONTROL ) ) );
 		curve.setPoint( ParseUtil.parsePoint3D( (String)map.get( DesignCubic.POINT ) ) );
 		return curve;
+	}
+
+	private DesignPath loadDesignPath( Map<String, Object> map ) {
+		DesignPath path = loadDesignShape( map, new DesignPath() );
+		// TODO Load path geometry
+		return path;
+	}
+
+	private DesignMarker loadDesignMarker( Map<String, Object> map ) {
+		DesignMarker marker = loadDesignShape( map, new DesignMarker() );
+		marker.setSize( (String)map.get( DesignMarker.SIZE ) );
+		marker.setType( (String)map.get( DesignMarker.TYPE ) );
+		return marker;
 	}
 
 	private DesignText loadDesignText( Map<String, Object> map ) {
@@ -434,33 +458,46 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return map;
 	}
 
-	private Map<String, Object> mapMarker( DesignMarker marker ) {
-		return asMap( marker, mapShape( marker, DesignMarker.MARKER ), DesignMarker.SIZE, DesignMarker.TYPE );
+	private Map<String, Object> mapBox( DesignBox box ) {
+		return asMap( box, mapShape( box, DesignBox.BOX ), DesignBox.SIZE );
 	}
 
 	private Map<String, Object> mapLine( DesignLine line ) {
 		return asMap( line, mapShape( line, DesignLine.LINE ), DesignLine.POINT );
 	}
 
-	private Map<String, Object> mapRadii( DesignEllipse ellipse ) {
-		return asMap( ellipse, DesignEllipse.RADII );
-	}
-
 	private Map<String, Object> mapEllipse( DesignEllipse ellipse ) {
 		String shape = Objects.equals( ellipse.getXRadius(), ellipse.getYRadius() ) ? DesignEllipse.CIRCLE : DesignEllipse.ELLIPSE;
 		Map<String, Object> map = asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.RADII );
-		map.putAll( mapRadii( ellipse ) );
+		//map.putAll( mapRadii( ellipse ) );
 		return map;
 	}
 
 	private Map<String, Object> mapArc( DesignArc arc ) {
-		Map<String, Object> map = asMap( arc, mapShape( arc, DesignArc.ARC ), DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT, DesignArc.TYPE );
-		map.putAll( mapRadii( arc ) );
+		Map<String, Object> map = asMap( arc, mapShape( arc, DesignArc.ARC ), DesignArc.RADII, DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT, DesignArc.TYPE );
+		//map.putAll( mapRadii( arc ) );
 		return map;
+	}
+
+	private Map<String, Object> mapRadii( DesignEllipse ellipse ) {
+		return asMap( ellipse, DesignEllipse.RADII );
+	}
+
+	private Map<String, Object> mapQuad( DesignQuad curve ) {
+		return asMap( curve, mapShape( curve, DesignQuad.QUAD ), DesignQuad.CONTROL, DesignQuad.POINT );
 	}
 
 	private Map<String, Object> mapCurve( DesignCubic curve ) {
 		return asMap( curve, mapShape( curve, DesignCubic.CURVE ), DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignCubic.POINT );
+	}
+
+	private Map<String, Object> mapPath(DesignPath path ) {
+		// TODO Map path geometry
+		return asMap( path, mapShape( path, DesignPath.PATH ) );
+	}
+
+	private Map<String, Object> mapMarker( DesignMarker marker ) {
+		return asMap( marker, mapShape( marker, DesignMarker.MARKER ), DesignMarker.SIZE, DesignMarker.TYPE );
 	}
 
 	private Map<String, Object> mapText( DesignText text ) {
