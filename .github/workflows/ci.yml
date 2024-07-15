@@ -72,9 +72,9 @@ jobs:
         run: |
           mvn ${{env.MAVEN_PARMS}} compile
 
-      - name: Tests
+      - name: Unit Tests
         run: |
-          mvn ${{env.MAVEN_PARMS}} verify -P testui
+          mvn ${{env.MAVEN_PARMS}} test
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v3
@@ -92,9 +92,13 @@ jobs:
           ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p ${{env.JAVADOC_TARGET_PATH}};rm -rf ${{env.JAVADOC_TARGET_PATH}}/*;unzip -o ${{env.JAVADOC_DEPLOY_PATH}}/javadoc.jar -d ${{env.JAVADOC_TARGET_PATH}}"
           if [ $? -ne 0 ]; then exit 1; fi
 
+      - name: UX Tests
+        run: |
+          mvn ${{env.MAVEN_PARMS}} verify -P testui
+
       - name: Generate Packs
         run: |
-          mvn ${{env.MAVEN_PARMS}} verify -P testui,packs
+          mvn ${{env.MAVEN_PARMS}} verify -P packs -Dmaven.test.skip=true
 
       - name: Publish Product Pack
         run: |
