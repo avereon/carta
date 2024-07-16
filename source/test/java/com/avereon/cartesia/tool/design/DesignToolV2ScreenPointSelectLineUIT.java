@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.DesignShape;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 import lombok.Getter;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -14,10 +15,15 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @CustomLog
 public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 
+	@BeforeEach
+	protected void setup() throws Exception {
+		super.setup();
+		useLineLayer();
+	}
+
 	@Test
 	void screenPointSelectLine() throws Exception {
 		// given
-		useLineLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once
@@ -32,7 +38,6 @@ public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 	@Test
 	void screenPointSelectLineWithMouseCloseEnough() throws Exception {
 		// given
-		useLineLayer();
 
 		// Need to get the selector inside the stroke width of the line
 		// 0.02 is just under half the line stroke width
@@ -53,7 +58,6 @@ public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 	@Test
 	void screenPointSelectLineWithMouseTooFarAway() throws Exception {
 		// given
-		useLineLayer();
 
 		// Need to get the selector outside the stroke width of the line
 		// 0.03 is just over half the line stroke width

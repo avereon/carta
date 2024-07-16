@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.data.DesignEllipse;
+import com.avereon.cartesia.data.DesignBox;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -14,19 +14,19 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Getter
 @CustomLog
-public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2BaseUIT {
+public class DesignToolV2ScreenPointSelectBoxUIT extends DesignToolV2BaseUIT {
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		useEllipseLayer();
+		useBoxLayer();
 	}
 
 	@Test
-	void screenPointSelectEllipse() throws Exception {
+	void screenPointSelectBox() {
 		// given
-		// Selecting the center of a transparent ellipse should not select anything
-		Point3D point = new Point3D( 1, 1, 0 );
+		// Selecting the center of a transparent box should not select anything
+		Point3D point = new Point3D( 4, 0, 0 );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
@@ -38,12 +38,12 @@ public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2BaseUIT
 	}
 
 	@Test
-	void screenPointSelectEllipse1WithMouseCloseEnough() throws Exception {
+	void screenPointSelectBox1WithMouseCloseEnough() throws Exception {
 		// Need to get the selector inside the stroke width of the line
 		// 0.02 is just under half the line stroke width
 
 		Point3D offset = new Point3D( 0.02 + getWorldSelectTolerance(), 0, 0 );
-		Point3D point = new Point3D( 3, 1, 0 ).add( offset );
+		Point3D point = new Point3D( 3, 0, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
@@ -51,17 +51,17 @@ public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2BaseUIT
 
 		// then
 		List<DesignShape> selected = getTool().getSelectedGeometry();
-		assertThat( selected.getFirst() ).isInstanceOf( DesignEllipse.class );
+		assertThat( selected.getFirst() ).isInstanceOf( DesignBox.class );
 		assertThat( selected.size() ).isEqualTo( 1 );
 	}
 
 	@Test
-	void screenPointSelectEllipse1WithMouseTooFarAway() throws Exception {
+	void screenPointSelectBox1WithMouseTooFarAway() throws Exception {
 		// Need to get the selector outside the stroke width of the line
 		// 0.03 is just over half the line stroke width
 
 		Point3D offset = new Point3D( 0.03 + getWorldSelectTolerance(), 0, 0 );
-		Point3D point = new Point3D( 3, 1, 0 ).add( offset );
+		Point3D point = new Point3D( 3, 0, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
@@ -73,12 +73,12 @@ public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2BaseUIT
 	}
 
 	@Test
-	void screenPointSelectEllipse2WithMouseCloseEnough() throws Exception {
+	void screenPointSelectBox2WithMouseCloseEnough() throws Exception {
 		// Need to get the selector inside the stroke width of the line
 		// 0.02 is just under half the line stroke width
 
 		Point3D offset = new Point3D( 0, 0.02 + getWorldSelectTolerance(), 0 );
-		Point3D point = new Point3D( 1, 3, 0 ).add( offset );
+		Point3D point = new Point3D( -2, 0, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
@@ -86,17 +86,17 @@ public class DesignToolV2ScreenPointSelectEllipseUIT extends DesignToolV2BaseUIT
 
 		// then
 		List<DesignShape> selected = getTool().getSelectedGeometry();
-		assertThat( selected.getFirst() ).isInstanceOf( DesignEllipse.class );
+		assertThat( selected.getFirst() ).isInstanceOf( DesignBox.class );
 		assertThat( selected.size() ).isEqualTo( 1 );
 	}
 
 	@Test
-	void screenPointSelectEllipse2WithMouseTooFarAway() throws Exception {
+	void screenPointSelectBox2WithMouseTooFarAway() throws Exception {
 		// Need to get the selector outside the stroke width of the line
 		// 0.03 is just over half the line stroke width
 
-		Point3D offset = new Point3D( 0, 0.03 + getWorldSelectTolerance(), 0 );
-		Point3D point = new Point3D( 1, 3, 0 ).add( offset );
+		Point3D offset = new Point3D( 0.03 + getWorldSelectTolerance(), -0.03 - getWorldSelectTolerance(), 0 );
+		Point3D point = new Point3D( -2, 0, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when

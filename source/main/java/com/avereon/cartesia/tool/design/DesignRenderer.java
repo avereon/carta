@@ -526,6 +526,7 @@ public class DesignRenderer extends BorderPane {
 				// Fill the shape
 				if( fillPaint != null ) {
 					switch( shape.getType() ) {
+						case BOX -> this.fillBox( (DesignBox)shape );
 						case ELLIPSE -> this.fillEllipse( (DesignEllipse)shape );
 						case PATH -> this.fillPath( (DesignPath)shape );
 						case TEXT -> this.fillText( (DesignText)shape );
@@ -536,6 +537,7 @@ public class DesignRenderer extends BorderPane {
 				if( drawPaint != null ) {
 					switch( shape.getType() ) {
 						case ARC -> this.drawArc( (DesignArc)shape );
+						case BOX -> this.drawBox( (DesignBox)shape );
 						case CUBIC -> this.drawCubic( (DesignCubic)shape );
 						case ELLIPSE -> this.drawEllipse( (DesignEllipse)shape );
 						case LINE -> this.drawLine( (DesignLine)shape );
