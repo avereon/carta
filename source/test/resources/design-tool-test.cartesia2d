@@ -164,13 +164,72 @@
       "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ec" : {
-    	"name": "Layer 7 (path)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ec",
+      "layers" : { },
+    	"name": "Layer 7 (path)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-7f935be5cac1" : {
+          "id" : "5724d788-e5d5-4e78-a947-7f935be5cac1",
+          "origin" : "3,3,0",
+          "shape" : "path"
+        },
+        "73717fa4-08bc-4720-9edc-df174479f7c2" : {
+          "id" : "73717fa4-08bc-4720-9edc-df174479f7c2",
+          "origin" : "-3,3,0",
+          "shape" : "path"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ed" : {
-    	"name": "Layer 8 (marker)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ed",
+      "layers" : { },
+    	"name": "Layer 8 (marker)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-f6935be5cac1" : {
+          "id" : "5724d788-e5d5-4e78-a947-f6935be5cac1",
+          "origin" : "-3,-3,0",
+          "shape" : "marker"
+        },
+        "73717fa4-08bc-4720-9edc-fd174479f7c2" : {
+          "id" : "73717fa4-08bc-4720-9edc-fd174479f7c2",
+          "origin" : "3,-3,0",
+          "shape" : "marker"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ee" : {
-    	"name": "Layer 9 (text)"
+      "draw-cap" : "round",
+      "draw-paint" : "#ff0000ff",
+      "draw-width" : "0.05",
+      "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ee",
+      "layers" : { },
+    	"name": "Layer 9 (text)",
+      "shapes" : {
+        "5724d788-e5d5-4e78-a947-f6935be4cac1" : {
+          "id" : "5724d788-e5d5-4e78-a947-f6935be4cac1",
+          "origin" : "-6,5,0",
+          "shape" : "text",
+          "text" : "Hello, above the world!"
+        },
+        "73717fa4-08bc-4720-9edc-fd174579f7c2" : {
+          "id" : "73717fa4-08bc-4720-9edc-fd174579f7c2",
+          "origin" : "-6,-5,0",
+          "shape" : "text",
+          "text" : "Hello, below the world!"
+        }
+      },
+      "text-draw-cap" : "round",
+      "text-draw-width" : "0.05"
     }
   },
   "unit" : "centimeter"

@@ -659,6 +659,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private List<Path.Element> toPathElements( List<DesignPath.Element> elements ) {
+		if( elements.isEmpty() ) return List.of();
+
 		DesignPath.Element move = elements.getFirst();
 		if( move.command() != DesignPath.Command.MOVE ) {
 			log.atError().log( "DesignPath does not start with a move command" );

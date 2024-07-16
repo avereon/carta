@@ -105,4 +105,19 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		Fx.waitForWithExceptions( 1000 );
 	}
 
+	protected void usePathLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0ec" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
+	protected void useMarkerLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0ed" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
+	protected void useTextLayer() throws TimeoutException, InterruptedException {
+		getDesign().findLayerById( "a56cede9-ee12-40d0-a86c-b3701146c0ee" ).ifPresent( l -> Fx.run( () -> getTool().setLayerVisible( l, true ) ) );
+		Fx.waitForWithExceptions( 1000 );
+	}
+
 }
