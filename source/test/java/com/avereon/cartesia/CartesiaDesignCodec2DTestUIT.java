@@ -154,7 +154,8 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		layer6.addShape( curve1 );
 
 		DesignPath path1 = new DesignPath( new Point3D( -6, 0, 0 ) );
-		// TODO Add path geometry
+		path1.line(-6,1);
+		path1.cubic(-6,2,-5,2,-5,1);
 		layer7.addShape( path1 );
 
 		DesignMarker marker = new DesignMarker( new Point3D( 1, 2, 0 ) );

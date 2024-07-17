@@ -159,6 +159,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		//System.err.println( JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( map ) );
 	}
 
+	private void loadDesignNode( Map<String, Object> map, DesignNode node ) {
+		if( map.containsKey( DesignNode.ID ) ) node.setId( (String)map.get( DesignNode.ID ) );
+	}
+
 	@SuppressWarnings( "unchecked" )
 	private void loadLayer( DesignLayer parent, Map<String, Object> map ) {
 		DesignLayer layer = new DesignLayer().updateFrom( map );
@@ -228,17 +232,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 		// Load child layers
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
 		layers.values().forEach( l -> loadLayer( layer, l ) );
-	}
-
-	private void cleanPatternValue( Map<String, Object> map, String key ) {
-		String value = (String)map.get( key );
-		if( "0".equals( value ) ) value = null;
-		if( "".equals( value ) ) value = null;
-		map.put( key, value );
-	}
-
-	private void loadDesignNode( Map<String, Object> map, DesignNode node ) {
-		if( map.containsKey( DesignNode.ID ) ) node.setId( (String)map.get( DesignNode.ID ) );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -371,6 +364,13 @@ public abstract class CartesiaDesignCodec extends Codec {
 		if( map.containsKey( DesignText.FONT_STRIKETHROUGH ) ) text.setFontStrikethrough( (String)map.get( DesignText.FONT_STRIKETHROUGH ) );
 
 		return text;
+	}
+
+	private void cleanPatternValue( Map<String, Object> map, String key ) {
+		String value = (String)map.get( key );
+		if( "0".equals( value ) ) value = null;
+		if( "".equals( value ) ) value = null;
+		map.put( key, value );
 	}
 
 	private void moveKey( Map<String, Object> map, String oldKey, String newKey ) {

@@ -221,17 +221,20 @@
           "id" : "5724d788-e5d5-4e78-a947-f6935be4cac1",
           "origin" : "-6,5,0",
           "shape" : "text",
-          "text" : "Hello, above the world!"
+          "text" : "Hello, above the world!",
+          "rotate" : "10"
         },
         "73717fa4-08bc-4720-9edc-fd174579f7c2" : {
           "id" : "73717fa4-08bc-4720-9edc-fd174579f7c2",
           "origin" : "-6,-5,0",
           "shape" : "text",
-          "text" : "Hello, below the world!"
+          "text" : "Hello, below the world!",
+          "rotate" : "-10"
         }
       },
       "text-draw-cap" : "round",
-      "text-draw-width" : "0.05"
+      "text-draw-width" : "0.05",
+      "text-fill-paint" : "#008000ff"
     }
   },
   "unit" : "centimeter"
