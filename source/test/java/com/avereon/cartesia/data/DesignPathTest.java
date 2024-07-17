@@ -1,7 +1,6 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.BaseCartesiaUnitTest;
-import com.avereon.cartesia.CartesiaDesignCodec;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -65,7 +64,7 @@ public class DesignPathTest extends BaseCartesiaUnitTest {
 	}
 
 	@Test
-	void commandString() throws Exception {
+	void asMap() {
 		// given
 		DesignPath path = new DesignPath( new Point3D( 1, 1, 0 ) );
 		path.line( 2, 2 );
@@ -74,13 +73,14 @@ public class DesignPathTest extends BaseCartesiaUnitTest {
 		path.cubic( 8, 8, 9, 9, 10, 11 );
 		path.close();
 
-		String expected = "{\"id\":\"" + path.getId() + "\",\"origin\":\"1.0,1.0,0.0\",\"shape\":\"path\",\"steps\":[\"M 1.0 1.0\",\"L 2.0 2.0\",\"A 3.0 3.0 4.0 4.0 5.0 5.0\",\"Q 6.0 6.0 7.0 7.0\",\"C 8.0 8.0 9.0 9.0 10.0 11.0\",\"Z \"]}";
-
 		// when
-		String json = CartesiaDesignCodec.JSON_MAPPER.writeValueAsString( path.asMap() );
+		var map = path.asMap();
 
 		// then
-		assertThat( json ).isEqualTo( expected );
+		assertThat( map.get( "id" ) ).isEqualTo( path.getId() );
+		assertThat( map.get( "origin" ) ).isEqualTo( new Point3D( 1, 1, 0 ) );
+		assertThat( map.get( "shape" ) ).isEqualTo( "path" );
+		assertThat( map.get( "steps" ) ).isEqualTo( List.of( "M 1.0 1.0", "L 2.0 2.0", "A 3.0 3.0 4.0 4.0 5.0 5.0", "Q 6.0 6.0 7.0 7.0", "C 8.0 8.0 9.0 9.0 10.0 11.0", "Z " ) );
 	}
 
 }
