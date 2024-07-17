@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.BaseCartesiaUnitTest;
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Point;
 import javafx.geometry.Point3D;
@@ -75,10 +76,20 @@ public class DesignPathTest extends BaseCartesiaUnitTest {
 		path.quad( 6, 6, 7, 5 );
 		path.cubic( 8, 8, 9, 8, 10, 5 );
 
+		// when
+		// Leave the path open
+
 		// then
 		assertThat( path.distanceTo( new Point3D( 3, 0, 0 ) ) ).isEqualTo( 1.40919033777722, TOLERANCE );
 
+		// given
+		// Check that this point is closer to the start point before closing the path
+		assertThat( path.distanceTo( new Point3D( 2, 0, 0 ) ) ).isEqualTo( CadMath.SQRT2, TOLERANCE );
+
+		// Close the path
 		path.close();
+
+		// then
 		double expected = Geometry.pointLineDistance( Point.of( 2, 0 ), Point.of( 10, 5 ), Point.of( 1, 1 ) );
 		assertThat( path.distanceTo( new Point3D( 2, 0, 0 ) ) ).isEqualTo( expected, TOLERANCE );
 	}
