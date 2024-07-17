@@ -371,10 +371,10 @@ public class CadGeometry {
 		Path fxPath = new Path();
 		for( DesignPath.Step step : steps ) {
 			switch( step.command() ) {
-				case MOVE -> fxPath.getElements().add( new MoveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
-				case LINE -> fxPath.getElements().add( new LineTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
-				case QUAD -> fxPath.getElements().add( new QuadCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale ) );
-				case CUBIC -> fxPath
+				case M -> fxPath.getElements().add( new MoveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
+				case L -> fxPath.getElements().add( new LineTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
+				case Q -> fxPath.getElements().add( new QuadCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale ) );
+				case B -> fxPath
 					.getElements()
 					.add( new CubicCurveTo( step.data()[ 0 ] * scale,
 						step.data()[ 1 ] * scale,
@@ -383,8 +383,8 @@ public class CadGeometry {
 						step.data()[ 4 ] * scale,
 						step.data()[ 5 ] * scale
 					) );
-				case ARC -> fxPath.getElements().add( new ArcTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, 0, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, false, false ) );
-				case CLOSE -> fxPath.getElements().add( new ClosePath() );
+				case A -> fxPath.getElements().add( new ArcTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, 0, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, false, false ) );
+				case Z -> fxPath.getElements().add( new ClosePath() );
 			}
 		}
 		return fxPath;

@@ -1,6 +1,9 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.curve.math.Geometry;
+import com.avereon.curve.math.Point;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
@@ -17,17 +20,17 @@ public class DesignPath extends DesignShape {
 
 	@Getter
 	public enum Command {
-		MOVE( "M" ),
-		ARC( "A" ),
-		CUBIC( "C" ),
-		LINE( "L" ),
-		QUAD( "Q" ),
-		CLOSE( "Z" );
+		M( "Move" ),
+		A( "Arc" ),
+		B( "Cubic" ),
+		L( "Line" ),
+		Q( "Quad" ),
+		Z( "Close" );
 
-		private final String abbreviation;
+		private final String titile;
 
-		Command( String abbreviation ) {
-			this.abbreviation = abbreviation;
+		Command( String name ) {
+			this.titile = name;
 		}
 	}
 
@@ -54,7 +57,7 @@ public class DesignPath extends DesignShape {
 
 		List<Step> source = path.getSteps();
 		Step step = source.getFirst();
-		if( step.command() == Command.MOVE ) {
+		if( step.command() == Command.M ) {
 			setOrigin( new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 ) );
 			steps.addAll( path.getSteps() );
 		} else {
@@ -79,12 +82,81 @@ public class DesignPath extends DesignShape {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		return Double.NaN;
+		double distance = Double.MAX_VALUE;
+		double[] gPoint = CadPoints.asPoint( point );
+		double[] start = Point.of();
+		double[] prior = Point.of();
+
+		for( Step step : steps ) {
+			switch( step.command() ) {
+				case M -> {
+					distance = Math.min( distance, Geometry.distance( gPoint, Point.of( step.data()[ 0 ], step.data()[ 1 ] ) ) );
+					start = Point.of( step.data()[ 0 ], step.data()[ 1 ] );
+					prior = start;
+				}
+				case L -> {
+					distance = Math.min( distance, Geometry.pointLineDistance( gPoint, prior, Point.of( step.data()[ 0 ], step.data()[ 1 ] ) ) );
+					prior = Point.of( step.data()[ 0 ], step.data()[ 1 ] );
+				}
+				case A -> {
+					distance = Math.min( distance,
+						Geometry.pointArcDistance( gPoint, Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ), 0.0, step.data()[ 4 ], step.data()[ 5 ] )
+					);
+					prior = Geometry.arcEndPoints( Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ), 0.0, step.data()[ 4 ], step.data()[ 5 ] )[ 1 ];
+				}
+				case Q -> {
+					// FIXME Calculate point quad distance
+					prior = Point.of( step.data()[ 2 ], step.data()[ 3 ] );
+				}
+				case B -> {
+					// FIXME Calculate point cubic distance
+					prior = Point.of( step.data()[ 4 ], step.data()[ 5 ] );
+				}
+				case Z -> {
+					distance = Math.min( distance, Geometry.pointLineDistance( gPoint, prior, start ) );
+					prior = start;
+				}
+			}
+		}
+
+		return distance;
 	}
 
 	@Override
 	public double pathLength() {
-		return Double.NaN;
+		double length = 0;
+		double[] start = Point.of();
+		double[] prior = Point.of();
+		for( Step step : steps ) {
+			switch( step.command() ) {
+				case M -> {
+					start = Point.of( step.data()[ 0 ], step.data()[ 1 ] );
+					prior = start;
+				}
+				case L -> {
+					length += Geometry.distance( prior, Point.of( step.data()[ 0 ], step.data()[ 1 ] ) );
+					prior = Point.of( step.data()[ 0 ], step.data()[ 1 ] );
+				}
+				case A -> {
+					length += Geometry.arcLength( Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ), 0.0, step.data()[ 4 ], step.data()[ 5 ] );
+					prior = Geometry.arcEndPoints( Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ), 0.0, step.data()[ 4 ], step.data()[ 5 ] )[ 1 ];
+				}
+				case Q -> {
+					length += Geometry.quadArcLength( prior, Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ) );
+					prior = Point.of( step.data()[ 2 ], step.data()[ 3 ] );
+				}
+				case B -> {
+					length += Geometry.cubicArcLength( prior, Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ), Point.of( step.data()[ 4 ], step.data()[ 5 ] ) );
+					prior = Point.of( step.data()[ 4 ], step.data()[ 5 ] );
+				}
+				case Z -> {
+					length += Geometry.distance( prior, start );
+					prior = start;
+				}
+			}
+		}
+
+		return length;
 	}
 
 	@Override
@@ -112,12 +184,12 @@ public class DesignPath extends DesignShape {
 	}
 
 	public DesignPath line( double x, double y ) {
-		steps.add( new Step( Command.LINE, x, y ) );
+		steps.add( new Step( Command.L, x, y ) );
 		return this;
 	}
 
 	public DesignPath arc( double x, double y, double rx, double ry, double start, double extent ) {
-		steps.add( new Step( Command.ARC, x, y, rx, ry, start, extent ) );
+		steps.add( new Step( Command.A, x, y, rx, ry, start, extent ) );
 		return this;
 	}
 
@@ -128,29 +200,29 @@ public class DesignPath extends DesignShape {
 	}
 
 	public DesignPath quad( double bx, double by, double cx, double cy ) {
-		steps.add( new Step( Command.QUAD, bx, by, cx, cy ) );
+		steps.add( new Step( Command.Q, bx, by, cx, cy ) );
 		return this;
 	}
 
 	public DesignPath cubic( double bx, double by, double cx, double cy, double dx, double dy ) {
-		steps.add( new Step( Command.CUBIC, bx, by, cx, cy, dx, dy ) );
+		steps.add( new Step( Command.B, bx, by, cx, cy, dx, dy ) );
 		return this;
 	}
 
 	public DesignPath close() {
-		steps.add( new Step( Command.CLOSE ) );
+		steps.add( new Step( Command.Z ) );
 		return this;
 	}
 
 	public DesignPath move( double x, double y ) {
 		if( steps.isEmpty() ) setOrigin( new Point3D( x, y, 0.0 ) );
-		steps.add( new Step( Command.MOVE, x, y ) );
+		steps.add( new Step( Command.M, x, y ) );
 		return this;
 	}
 
 	@Override
 	protected Map<String, Object> asMap() {
-		List<String> steps = this.steps.stream().map( Step::asString ).toList();
+		List<String> steps = this.steps.stream().map( Step::marshall ).toList();
 
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, PATH );
@@ -160,12 +232,14 @@ public class DesignPath extends DesignShape {
 
 	public record Step(DesignPath.Command command, double... data) {
 
+		private static final String DELIMITER = " ";
+
 		public void apply( CadTransform transform ) {
 			// Limit the values changed depending on the command
 			int count = switch( command ) {
-				case MOVE, LINE -> 2;
-				case QUAD -> 4;
-				case ARC, CUBIC -> 6;
+				case M, L -> 2;
+				case Q -> 4;
+				case A, B -> 6;
 				default -> 0;
 			};
 
@@ -176,8 +250,15 @@ public class DesignPath extends DesignShape {
 			}
 		}
 
-		public String asString() {
-			return command.getAbbreviation() + " " + String.join( " ", Arrays.stream( data ).mapToObj( String::valueOf ).toList() );
+		public String marshall() {
+			return (command.name() + DELIMITER + String.join( DELIMITER, Arrays.stream( data ).mapToObj( String::valueOf ).toList() )).trim();
+		}
+
+		public static Step unmarshall( String string ) {
+			String[] parts = string.split( DELIMITER );
+			Command command = Command.valueOf( parts[ 0 ].toUpperCase() );
+			String[] data = Arrays.copyOfRange( parts, 1, parts.length );
+			return new Step( command, Arrays.stream( data ).mapToDouble( Double::parseDouble ).toArray() );
 		}
 
 	}

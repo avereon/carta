@@ -642,12 +642,12 @@ public class DesignRenderer extends BorderPane {
 
 	private void fillPath( DesignPath path ) {
 		Point3D origin = path.getOrigin();
-		renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getSteps() ) );
+		renderer.fillPath( toPathElements( path.getSteps() ) );
 	}
 
 	private void drawPath( DesignPath path ) {
 		Point3D origin = path.getOrigin();
-		renderer.drawPath( origin.getX(), origin.getY(), toPathElements( path.getSteps() ) );
+		renderer.drawPath( toPathElements( path.getSteps() ) );
 	}
 
 	private void fillText( DesignText text ) {
@@ -662,7 +662,7 @@ public class DesignRenderer extends BorderPane {
 		if( steps.isEmpty() ) return List.of();
 
 		DesignPath.Step move = steps.getFirst();
-		if( move.command() != DesignPath.Command.MOVE ) {
+		if( move.command() != DesignPath.Command.M ) {
 			log.atError().log( "DesignPath does not start with a move command" );
 			return List.of();
 		}
@@ -672,12 +672,12 @@ public class DesignRenderer extends BorderPane {
 			DesignPath.Step step = steps.get( index );
 			double[] data = step.data();
 			switch( step.command() ) {
-				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
-				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case LINE -> path.line( data[ 0 ], data[ 1 ] );
-				case CUBIC -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case QUAD -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
-				case CLOSE -> path.close();
+				case M -> path.move( data[ 0 ], data[ 1 ] );
+				case A -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case L -> path.line( data[ 0 ], data[ 1 ] );
+				case B -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case Q -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case Z -> path.close();
 			}
 		}
 

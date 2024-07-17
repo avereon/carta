@@ -174,12 +174,14 @@
         "5724d788-e5d5-4e78-a947-7f935be5cac1" : {
           "id" : "5724d788-e5d5-4e78-a947-7f935be5cac1",
           "origin" : "3,3,0",
-          "shape" : "path"
+          "shape" : "path",
+          "steps" : [ "M 3 3", "L 2 2", "L 4 2", "L 4 4", "Z" ]
         },
         "73717fa4-08bc-4720-9edc-df174479f7c2" : {
           "id" : "73717fa4-08bc-4720-9edc-df174479f7c2",
           "origin" : "-3,3,0",
-          "shape" : "path"
+          "shape" : "path",
+          "steps" : [ "M -3 3", "L -2 2", "L -4 2", "L -4 4", "Z" ]
         }
       },
       "text-draw-cap" : "round",

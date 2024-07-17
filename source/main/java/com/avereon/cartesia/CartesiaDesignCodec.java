@@ -343,9 +343,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 		return curve;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	private DesignPath loadDesignPath( Map<String, Object> map ) {
 		DesignPath path = loadDesignShape( map, new DesignPath() );
-		// TODO Load path geometry
+		List<String> steps = (List<String>)map.get( DesignPath.STEPS );
+		path.setSteps( steps.stream().map( DesignPath.Step::unmarshall ).toList() );
 		return path;
 	}
 
@@ -487,8 +489,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private Map<String, Object> mapPath( DesignPath path ) {
 		Map<String, Object> map = asMap( path, mapShape( path, DesignPath.PATH ) );
-		// TODO Map path geometry
-		// map.put( DesignPath.STEPS, path.getSteps().stream().map( Step::asString ).toList() );
+		map.put( DesignPath.STEPS, path.getSteps().stream().map( DesignPath.Step::marshall ).toList() );
 		return map;
 	}
 
