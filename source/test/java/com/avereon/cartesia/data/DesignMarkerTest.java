@@ -64,20 +64,20 @@ public class DesignMarkerTest {
 
 		assertThat( marker.getMarkerType() ).isEqualTo( DesignMarker.Type.CIRCLE.name().toLowerCase() );
 
-		List<DesignPath.Element> elements = marker.getElements();
-		DesignPath.Element e0 = elements.get( 0 );
+		List<DesignPath.Step> steps = marker.getElements();
+		DesignPath.Step e0 = steps.getFirst();
 		assertThat( e0.command() ).isEqualTo( DesignPath.Command.MOVE );
 		assertThat( e0.data() ).isEqualTo( new double[]{ 0.0, -0.5 } );
-		DesignPath.Element e1 = elements.get( 1 );
+		DesignPath.Step e1 = steps.get( 1 );
 		assertThat( e1.command() ).isEqualTo( DesignPath.Command.ARC );
 		assertThat( e1.data() ).isEqualTo( new double[]{ 0.0, 0.0, 0.5, 0.5, -90, 180 } );
-		DesignPath.Element e2 = elements.get( 2 );
+		DesignPath.Step e2 = steps.get( 2 );
 		assertThat( e2.command() ).isEqualTo( DesignPath.Command.ARC );
 		assertThat( e2.data() ).isEqualTo( new double[]{ 0.0, 0.0, 0.5, 0.5, 90, 180 } );
-		DesignPath.Element e3 = elements.get( 3 );
+		DesignPath.Step e3 = steps.get( 3 );
 		assertThat( e3.command() ).isEqualTo( DesignPath.Command.CLOSE );
 		assertThat( e3.data() ).isEqualTo( new double[]{} );
-		assertThat( elements.size() ).isEqualTo( 4 );
+		assertThat( steps.size() ).isEqualTo( 4 );
 	}
 
 }

@@ -32,7 +32,7 @@ import static com.avereon.cartesia.data.DesignCubic.CUBIC;
 @CustomLog
 public abstract class CartesiaDesignCodec extends Codec {
 
-	static final ObjectMapper JSON_MAPPER;
+	public static final ObjectMapper JSON_MAPPER;
 
 	static final String CODEC_VERSION_KEY = "codec-version";
 
@@ -306,7 +306,6 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private DesignArc loadDesignArc( Map<String, Object> map ) {
 		DesignArc arc = loadDesignEllipse( map, loadDesignShape( map, new DesignArc() ) );
-		// FIXME These should be strings at some point to allow for expressions
 		if( map.containsKey( DesignArc.START ) ) arc.setStart( ((Number)map.get( DesignArc.START )).doubleValue() );
 		if( map.containsKey( DesignArc.EXTENT ) ) arc.setExtent( ((Number)map.get( DesignArc.EXTENT )).doubleValue() );
 		if( map.containsKey( DesignArc.TYPE ) ) arc.setType( DesignArc.Type.valueOf( ((String)map.get( DesignArc.TYPE )).toUpperCase() ) );
@@ -471,19 +470,11 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	private Map<String, Object> mapEllipse( DesignEllipse ellipse ) {
 		String shape = Objects.equals( ellipse.getXRadius(), ellipse.getYRadius() ) ? DesignEllipse.CIRCLE : DesignEllipse.ELLIPSE;
-		Map<String, Object> map = asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.RADII );
-		//map.putAll( mapRadii( ellipse ) );
-		return map;
+		return asMap( ellipse, mapShape( ellipse, shape ), DesignEllipse.RADII );
 	}
 
 	private Map<String, Object> mapArc( DesignArc arc ) {
-		Map<String, Object> map = asMap( arc, mapShape( arc, DesignArc.ARC ), DesignArc.RADII, DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT, DesignArc.TYPE );
-		//map.putAll( mapRadii( arc ) );
-		return map;
-	}
-
-	private Map<String, Object> mapRadii( DesignEllipse ellipse ) {
-		return asMap( ellipse, DesignEllipse.RADII );
+		return asMap( arc, mapShape( arc, DesignArc.ARC ), DesignArc.RADII, DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT, DesignArc.TYPE );
 	}
 
 	private Map<String, Object> mapQuad( DesignQuad curve ) {
@@ -495,8 +486,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	private Map<String, Object> mapPath( DesignPath path ) {
+		Map<String, Object> map = asMap( path, mapShape( path, DesignPath.PATH ) );
 		// TODO Map path geometry
-		return asMap( path, mapShape( path, DesignPath.PATH ) );
+		// map.put( DesignPath.STEPS, path.getSteps().stream().map( Step::asString ).toList() );
+		return map;
 	}
 
 	private Map<String, Object> mapMarker( DesignMarker marker ) {

@@ -1,11 +1,15 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.BaseCartesiaUnitTest;
+import com.avereon.cartesia.CartesiaDesignCodec;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignPathTest {
+public class DesignPathTest extends BaseCartesiaUnitTest {
 
 	@Test
 	void constructor() {
@@ -27,6 +31,56 @@ public class DesignPathTest {
 		assertThat( path.isModified() ).isTrue();
 		path.setModified( false );
 		assertThat( path.isModified() ).isFalse();
+	}
+
+	@Test
+	void moveOrigin() {
+		// given
+		DesignPath path = new DesignPath( Point3D.ZERO );
+		path.setModified( false );
+		assertThat( path.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( path.getSteps() ).hasSize( 1 );
+		assertThat( path.isModified() ).isFalse();
+
+		// when
+		path.setOrigin( new Point3D( 2, 2, 0 ) );
+
+		// then
+		assertThat( path.getOrigin() ).isEqualTo( new Point3D( 2, 2, 0 ) );
+		assertThat( path.getSteps() ).hasSize( 1 );
+		assertThat( path.isModified() ).isTrue();
+	}
+
+	@Test
+	void setSteps() {
+		DesignPath path = new DesignPath( Point3D.ZERO );
+		path.setModified( false );
+		assertThat( path.getOrigin() ).isEqualTo( Point3D.ZERO );
+		assertThat( path.getSteps() ).hasSize( 1 );
+		assertThat( path.isModified() ).isFalse();
+
+		path.setSteps( List.of( new DesignPath.Step( DesignPath.Command.MOVE, 1, 1 ), new DesignPath.Step( DesignPath.Command.LINE, 2, 2 ) ) );
+		assertThat( path.getSteps() ).hasSize( 2 );
+		assertThat( path.isModified() ).isTrue();
+	}
+
+	@Test
+	void commandString() throws Exception {
+		// given
+		DesignPath path = new DesignPath( new Point3D( 1, 1, 0 ) );
+		path.line( 2, 2 );
+		path.arc( 3, 3, 4, 4, 5, 5 );
+		path.quad( 6, 6, 7, 7 );
+		path.cubic( 8, 8, 9, 9, 10, 11 );
+		path.close();
+
+		String expected = "{\"id\":\"" + path.getId() + "\",\"origin\":\"1.0,1.0,0.0\",\"shape\":\"path\",\"steps\":[\"M 1.0 1.0\",\"L 2.0 2.0\",\"A 3.0 3.0 4.0 4.0 5.0 5.0\",\"Q 6.0 6.0 7.0 7.0\",\"C 8.0 8.0 9.0 9.0 10.0 11.0\",\"Z \"]}";
+
+		// when
+		String json = CartesiaDesignCodec.JSON_MAPPER.writeValueAsString( path.asMap() );
+
+		// then
+		assertThat( json ).isEqualTo( expected );
 	}
 
 }

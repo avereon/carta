@@ -329,7 +329,7 @@ public class CadGeometry {
 			}
 			case PATH -> {
 				DesignPath path = (DesignPath)shape;
-				yield mapToFxPath( scale, path.getElements() );
+				yield mapToFxPath( scale, path.getSteps() );
 			}
 			case MARKER -> {
 				DesignMarker marker = (DesignMarker)shape;
@@ -367,23 +367,23 @@ public class CadGeometry {
 		return fxShape;
 	}
 
-	private static Path mapToFxPath( double scale, List<DesignPath.Element> elements ) {
+	private static Path mapToFxPath( double scale, List<DesignPath.Step> steps ) {
 		Path fxPath = new Path();
-		for( DesignPath.Element element : elements ) {
-			switch( element.command() ) {
-				case MOVE -> fxPath.getElements().add( new MoveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale ) );
-				case LINE -> fxPath.getElements().add( new LineTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale ) );
-				case QUAD -> fxPath.getElements().add( new QuadCurveTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale ) );
+		for( DesignPath.Step step : steps ) {
+			switch( step.command() ) {
+				case MOVE -> fxPath.getElements().add( new MoveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
+				case LINE -> fxPath.getElements().add( new LineTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
+				case QUAD -> fxPath.getElements().add( new QuadCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale ) );
 				case CUBIC -> fxPath
 					.getElements()
-					.add( new CubicCurveTo( element.data()[ 0 ] * scale,
-						element.data()[ 1 ] * scale,
-						element.data()[ 2 ] * scale,
-						element.data()[ 3 ] * scale,
-						element.data()[ 4 ] * scale,
-						element.data()[ 5 ] * scale
+					.add( new CubicCurveTo( step.data()[ 0 ] * scale,
+						step.data()[ 1 ] * scale,
+						step.data()[ 2 ] * scale,
+						step.data()[ 3 ] * scale,
+						step.data()[ 4 ] * scale,
+						step.data()[ 5 ] * scale
 					) );
-				case ARC -> fxPath.getElements().add( new ArcTo( element.data()[ 0 ] * scale, element.data()[ 1 ] * scale, 0, element.data()[ 2 ] * scale, element.data()[ 3 ] * scale, false, false ) );
+				case ARC -> fxPath.getElements().add( new ArcTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, 0, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, false, false ) );
 				case CLOSE -> fxPath.getElements().add( new ClosePath() );
 			}
 		}

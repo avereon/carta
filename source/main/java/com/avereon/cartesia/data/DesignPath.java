@@ -1,37 +1,47 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.curve.math.Point;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 @CustomLog
 public class DesignPath extends DesignShape {
 
+	@Getter
 	public enum Command {
-		MOVE,
-		ARC,
-		CUBIC,
-		LINE,
-		QUAD,
-		CLOSE
+		MOVE( "M" ),
+		ARC( "A" ),
+		CUBIC( "C" ),
+		LINE( "L" ),
+		QUAD( "Q" ),
+		CLOSE( "Z" );
+
+		private final String abbreviation;
+
+		Command( String abbreviation ) {
+			this.abbreviation = abbreviation;
+		}
 	}
 
 	public static final String PATH = "path";
 
+	public static final String STEPS = "steps";
+
 	public static final String CLOSED = "closed";
 
-	private final List<Element> elements = new ArrayList<>();
+	private final List<Step> steps = new ArrayList<>();
 
 	public DesignPath() {
 		super( null );
-		addModifyingKeys( PATH, CLOSED );
+		addModifyingKeys( CLOSED );
 	}
 
 	public DesignPath( Point3D origin ) {
@@ -42,11 +52,11 @@ public class DesignPath extends DesignShape {
 	public DesignPath( DesignPath path ) {
 		this();
 
-		List<Element> source = path.getElements();
-		Element element = source.getFirst();
-		if( element.command() == Command.MOVE ) {
-			setOrigin( new Point3D( element.data()[ 0 ], element.data()[ 1 ], 0 ) );
-			elements.addAll( path.getElements() );
+		List<Step> source = path.getSteps();
+		Step step = source.getFirst();
+		if( step.command() == Command.MOVE ) {
+			setOrigin( new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 ) );
+			steps.addAll( path.getSteps() );
 		} else {
 			throw new IllegalArgumentException( "DesignPath does not start with a move command" );
 		}
@@ -57,8 +67,14 @@ public class DesignPath extends DesignShape {
 		return DesignShape.Type.PATH;
 	}
 
-	public List<Element> getElements() {
-		return new ArrayList<>( elements );
+	public List<Step> getSteps() {
+		return new ArrayList<>( steps );
+	}
+
+	public void setSteps( List<Step> steps ) {
+		this.steps.clear();
+		this.steps.addAll( steps );
+		setModified( true );
 	}
 
 	@Override
@@ -80,66 +96,76 @@ public class DesignPath extends DesignShape {
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
-			elements.forEach( element -> element.apply( transform ) );
+			steps.forEach( element -> element.apply( transform ) );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 
 	public DesignPath add( DesignPath path ) {
-		elements.addAll( path.getElements() );
+		steps.addAll( path.getSteps() );
 		return this;
 	}
 
-	public DesignPath line( double x, double y ) {
-		return line( Point.of( x, y ) );
+	public DesignPath line( double[] point ) {
+		return line( point[ 0 ], point[ 1 ] );
 	}
 
-	public DesignPath line( double[] point ) {
-		elements.add( new Element( Command.LINE, point ) );
+	public DesignPath line( double x, double y ) {
+		steps.add( new Step( Command.LINE, x, y ) );
 		return this;
 	}
 
 	public DesignPath arc( double x, double y, double rx, double ry, double start, double extent ) {
-		elements.add( new Element( Command.ARC, new double[]{ x, y, rx, ry, start, extent } ) );
+		steps.add( new Step( Command.ARC, x, y, rx, ry, start, extent ) );
 		return this;
 	}
 
 	public DesignPath circle( double x, double y, double r ) {
-		elements.add( new Element( Command.ARC, new double[]{ x, y, r, r, -90, 180 } ) );
-		elements.add( new Element( Command.ARC, new double[]{ x, y, r, r, 90, 180 } ) );
+		arc( x, y, r, r, -90, 180 );
+		arc( x, y, r, r, 90, 180 );
 		return this;
 	}
 
 	public DesignPath quad( double bx, double by, double cx, double cy ) {
-		elements.add( new Element( Command.QUAD, new double[]{ bx, by, cx, cy } ) );
+		steps.add( new Step( Command.QUAD, bx, by, cx, cy ) );
 		return this;
 	}
 
 	public DesignPath cubic( double bx, double by, double cx, double cy, double dx, double dy ) {
-		elements.add( new Element( Command.CUBIC, new double[]{ bx, by, cx, cy, dx, dy } ) );
+		steps.add( new Step( Command.CUBIC, bx, by, cx, cy, dx, dy ) );
 		return this;
 	}
 
 	public DesignPath close() {
-		elements.add( new Element( Command.CLOSE, new double[]{} ) );
+		steps.add( new Step( Command.CLOSE ) );
 		return this;
 	}
 
 	public DesignPath move( double x, double y ) {
-		if( elements.isEmpty() ) setOrigin( new Point3D( x, y, 0.0 ) );
-		elements.add( new Element( Command.MOVE, new double[]{ x, y } ) );
+		if( steps.isEmpty() ) setOrigin( new Point3D( x, y, 0.0 ) );
+		steps.add( new Step( Command.MOVE, x, y ) );
 		return this;
 	}
 
-	public record Element(DesignPath.Command command, double[] data) {
+	@Override
+	protected Map<String, Object> asMap() {
+		List<String> steps = this.steps.stream().map( Step::asString ).toList();
+
+		Map<String, Object> map = super.asMap();
+		map.put( SHAPE, PATH );
+		map.put( STEPS, steps );
+		return map;
+	}
+
+	public record Step(DesignPath.Command command, double... data) {
 
 		public void apply( CadTransform transform ) {
 			// Limit the values changed depending on the command
 			int count = switch( command ) {
 				case MOVE, LINE -> 2;
-				case ARC, QUAD -> 4;
-				case CUBIC -> 6;
+				case QUAD -> 4;
+				case ARC, CUBIC -> 6;
 				default -> 0;
 			};
 
@@ -150,13 +176,10 @@ public class DesignPath extends DesignShape {
 			}
 		}
 
-	}
+		public String asString() {
+			return command.getAbbreviation() + " " + String.join( " ", Arrays.stream( data ).mapToObj( String::valueOf ).toList() );
+		}
 
-	protected Map<String, Object> asMap() {
-		Map<String, Object> map = super.asMap();
-		map.put( SHAPE, PATH );
-		// TODO Add elements
-		return map;
 	}
 
 }

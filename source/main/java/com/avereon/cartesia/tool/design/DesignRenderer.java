@@ -630,7 +630,7 @@ public class DesignRenderer extends BorderPane {
 		DesignPath path = marker.calcType().getDesignPath();
 
 		if( path != null ) {
-			renderer.fillMarker( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
+			renderer.fillMarker( origin.getX(), origin.getY(), toPathElements( path.getSteps() ) );
 		} else {
 			log.atError().log( "Undefined marker type: {0}", marker.getMarkerType() );
 		}
@@ -642,12 +642,12 @@ public class DesignRenderer extends BorderPane {
 
 	private void fillPath( DesignPath path ) {
 		Point3D origin = path.getOrigin();
-		renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
+		renderer.fillPath( origin.getX(), origin.getY(), toPathElements( path.getSteps() ) );
 	}
 
 	private void drawPath( DesignPath path ) {
 		Point3D origin = path.getOrigin();
-		renderer.drawPath( origin.getX(), origin.getY(), toPathElements( path.getElements() ) );
+		renderer.drawPath( origin.getX(), origin.getY(), toPathElements( path.getSteps() ) );
 	}
 
 	private void fillText( DesignText text ) {
@@ -658,20 +658,20 @@ public class DesignRenderer extends BorderPane {
 		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
 
-	private List<Path.Element> toPathElements( List<DesignPath.Element> elements ) {
-		if( elements.isEmpty() ) return List.of();
+	private List<Path.Element> toPathElements( List<DesignPath.Step> steps ) {
+		if( steps.isEmpty() ) return List.of();
 
-		DesignPath.Element move = elements.getFirst();
+		DesignPath.Step move = steps.getFirst();
 		if( move.command() != DesignPath.Command.MOVE ) {
 			log.atError().log( "DesignPath does not start with a move command" );
 			return List.of();
 		}
 
 		Path path = new Path( move.data()[ 0 ], move.data()[ 1 ] );
-		for( int index = 1; index < elements.size(); index++ ) {
-			DesignPath.Element element = elements.get( index );
-			double[] data = element.data();
-			switch( element.command() ) {
+		for( int index = 1; index < steps.size(); index++ ) {
+			DesignPath.Step step = steps.get( index );
+			double[] data = step.data();
+			switch( step.command() ) {
 				case MOVE -> path.move( data[ 0 ], data[ 1 ] );
 				case ARC -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case LINE -> path.line( data[ 0 ], data[ 1 ] );
