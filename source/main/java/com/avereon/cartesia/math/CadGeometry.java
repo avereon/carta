@@ -16,6 +16,7 @@ import lombok.CustomLog;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static com.avereon.cartesia.math.CadPoints.asPoint;
 import static com.avereon.cartesia.math.CadPoints.toFxPoint;
@@ -289,21 +290,11 @@ public class CadGeometry {
 			}
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
-				Ellipse fxEllipse = new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
-				//				if( ellipse.calcRotate() != 0.0 ) {
-				//					fxEllipse.setRotate( ellipse.calcRotate() );
-				//					fxEllipse.setRotationAxis( ellipse.getOrigin() );
-				//				}
-				yield fxEllipse;
+				yield new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
-				Arc fxArc = new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, -arc.calcStart(), -arc.calcExtent() );
-				//				if( arc.calcRotate() != 0.0 ) {
-				//					fxArc.setRotate( arc.calcRotate() );
-				//					fxArc.setRotationAxis( arc.getOrigin() );
-				//				}
-				yield fxArc;
+				yield new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, -arc.calcStart(), -arc.calcExtent() );
 			}
 			case QUAD -> {
 				DesignQuad quad = (DesignQuad)shape;
@@ -337,7 +328,8 @@ public class CadGeometry {
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
-				Text fxText = new Text( text.getOrigin().getX() * scale, text.getOrigin().getY() * scale, text.getText() );
+				Text fxText = new Text( (text.getOrigin().getX()) * scale, -text.getOrigin().getY() * scale, text.getText() );
+				fxText.getTransforms().add( Transform.scale( 1, -1 ) );
 				fxText.setFont( FontUtil.derive( text.calcFont(), text.calcTextSize() * scale ) );
 				yield fxText;
 			}
@@ -362,7 +354,13 @@ public class CadGeometry {
 
 		// Handle the rotate transform, if needed
 		double rotate = shape.calcRotate();
-		if( rotate != 0.0 ) fxShape.getTransforms().add( Transform.rotate( shape.calcRotate(), shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
+		if( rotate != 0.0 ) {
+			if( Objects.requireNonNull( shape.getType() ) == DesignShape.Type.TEXT ) {
+				fxShape.getTransforms().add( Transform.rotate( -rotate, shape.getOrigin().getX() * scale, -shape.getOrigin().getY() * scale ) );
+			} else {
+				fxShape.getTransforms().add( Transform.rotate( rotate, shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
+			}
+		}
 
 		return fxShape;
 	}
@@ -376,13 +374,7 @@ public class CadGeometry {
 				case Q -> fxPath.getElements().add( new QuadCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale ) );
 				case B -> fxPath
 					.getElements()
-					.add( new CubicCurveTo( step.data()[ 0 ] * scale,
-						step.data()[ 1 ] * scale,
-						step.data()[ 2 ] * scale,
-						step.data()[ 3 ] * scale,
-						step.data()[ 4 ] * scale,
-						step.data()[ 5 ] * scale
-					) );
+					.add( new CubicCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, step.data()[ 4 ] * scale, step.data()[ 5 ] * scale ) );
 				case A -> fxPath.getElements().add( new ArcTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, 0, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, false, false ) );
 				case Z -> fxPath.getElements().add( new ClosePath() );
 			}

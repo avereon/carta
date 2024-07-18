@@ -1,7 +1,7 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.test.PointAssert;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.test.PointAssert;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -172,7 +172,7 @@ public class CadGeometryTest {
 		assertThat( box.getWidth() ).isEqualTo( 1 );
 		assertThat( box.getHeight() ).isEqualTo( 1 );
 
-		assertThat( box.getStroke()).isEqualTo( Color.YELLOW );
+		assertThat( box.getStroke() ).isEqualTo( Color.YELLOW );
 		assertThat( box.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
@@ -198,7 +198,7 @@ public class CadGeometryTest {
 		assertThat( line.getEndX() ).isEqualTo( 1 );
 		assertThat( line.getEndY() ).isEqualTo( 1 );
 
-		assertThat( line.getStroke()).isEqualTo( Color.YELLOW );
+		assertThat( line.getStroke() ).isEqualTo( Color.YELLOW );
 		assertThat( line.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
 
@@ -440,10 +440,10 @@ public class CadGeometryTest {
 	void toFxShapeWithText() {
 		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!" ) );
 		assertThat( text.getX() ).isEqualTo( 3 );
-		assertThat( text.getY() ).isEqualTo( 5 );
+		assertThat( text.getY() ).isEqualTo( -5 );
 		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
 
-		assertThat( text.getTransforms() ).isEmpty();
+		assertThat( text.getTransforms() ).hasSize( 1 );
 
 		assertThat( text.getStrokeWidth() ).isEqualTo( 0.05, TOLERANCE );
 	}
@@ -454,11 +454,11 @@ public class CadGeometryTest {
 
 		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!", String.valueOf( rotate ) ) );
 		assertThat( text.getX() ).isEqualTo( 3, TOLERANCE );
-		assertThat( text.getY() ).isEqualTo( 5, TOLERANCE );
+		assertThat( text.getY() ).isEqualTo( -5, TOLERANCE );
 		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
 
-		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)text.getTransforms().getFirst();
-		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)text.getTransforms().get(1);
+		assertThat( fxRotate.getAngle() ).isEqualTo( -rotate );
 		assertThat( fxRotate.getPivotX() ).isEqualTo( text.getX() );
 		assertThat( fxRotate.getPivotY() ).isEqualTo( text.getY() );
 
@@ -469,10 +469,10 @@ public class CadGeometryTest {
 	void toFxShapeWithTextAndScale() {
 		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!" ), 2.7 );
 		assertThat( text.getX() ).isEqualTo( 8.1, TOLERANCE );
-		assertThat( text.getY() ).isEqualTo( 13.5, TOLERANCE );
+		assertThat( text.getY() ).isEqualTo( -13.5, TOLERANCE );
 		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
 
-		assertThat( text.getTransforms() ).isEmpty();
+		assertThat( text.getTransforms() ).hasSize( 1 );
 
 		assertThat( text.getStrokeWidth() ).isEqualTo( 0.135, TOLERANCE );
 		assertThat( text.getFont().getSize() ).isEqualTo( 2.7, LOOSE_TOLERANCE );
@@ -484,11 +484,11 @@ public class CadGeometryTest {
 
 		Text text = (Text)CadGeometry.toFxShape( new DesignText( new Point3D( 3, 5, 0 ), "Hello, World!", String.valueOf( rotate ) ), 2.7 );
 		assertThat( text.getX() ).isEqualTo( 8.1, TOLERANCE );
-		assertThat( text.getY() ).isEqualTo( 13.5, TOLERANCE );
+		assertThat( text.getY() ).isEqualTo( -13.5, TOLERANCE );
 		assertThat( text.getText() ).isEqualTo( "Hello, World!" );
 
-		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)text.getTransforms().getFirst();
-		assertThat( fxRotate.getAngle() ).isEqualTo( rotate );
+		javafx.scene.transform.Rotate fxRotate = (javafx.scene.transform.Rotate)text.getTransforms().get(1);
+		assertThat( fxRotate.getAngle() ).isEqualTo( -rotate );
 		assertThat( fxRotate.getPivotX() ).isEqualTo( text.getX() );
 		assertThat( fxRotate.getPivotY() ).isEqualTo( text.getY() );
 

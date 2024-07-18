@@ -641,12 +641,10 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void fillPath( DesignPath path ) {
-		Point3D origin = path.getOrigin();
 		renderer.fillPath( toPathElements( path.getSteps() ) );
 	}
 
 	private void drawPath( DesignPath path ) {
-		Point3D origin = path.getOrigin();
 		renderer.drawPath( toPathElements( path.getSteps() ) );
 	}
 
@@ -750,8 +748,8 @@ public class DesignRenderer extends BorderPane {
 	private List<DesignShape> doFindByShape( final DesignShape selector, final boolean intersect ) {
 		// Ensure the selector does not have a draw width
 		selector.setDrawWidth( "0" );
-		selector.setDrawPaint( "#ff000000" );
-		selector.setFillPaint( "#ff000000" );
+		selector.setDrawPaint( "#ff00ffff" );
+		selector.setFillPaint( "#ff00ffff" );
 
 		// This method should be thread agnostic. It should be safe to call from any thread.
 		return getVisibleShapes().stream().filter( shape -> matches( selector, shape, intersect ) ).collect( Collectors.toList() );

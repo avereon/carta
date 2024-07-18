@@ -210,9 +210,6 @@
       "text-draw-width" : "0.05"
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ee" : {
-      "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
-      "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ee",
       "layers" : { },
     	"name": "Layer 9 (text)",
@@ -232,8 +229,6 @@
           "rotate" : "-10"
         }
       },
-      "text-draw-cap" : "round",
-      "text-draw-width" : "0.05",
       "text-fill-paint" : "#008000ff"
     }
   },
