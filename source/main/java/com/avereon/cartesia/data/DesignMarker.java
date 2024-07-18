@@ -63,11 +63,13 @@ public class DesignMarker extends DesignShape {
 				path.circle( 0, 0, r );
 
 				path.move( 0, 0 );
-				path.arc( 0, 0, t, t, 0, -90 );
+				path.line( t, 0 );
+				path.arc( 0, -t, t, t, 0, 0, 1 );
 				path.close();
 
 				path.move( 0, 0 );
-				path.arc( 0, 0, t, t, 90, 90 );
+				path.line( 0, t );
+				path.arc( -t, 0, t, t, 0, 0, 0 );
 				path.close();
 
 				return path;
@@ -86,9 +88,8 @@ public class DesignMarker extends DesignShape {
 			}
 
 			public DesignPath getDesignPath() {
-				double r = HALF_SIZE;
-				DesignPath path = new DesignPath( new Point3D( 0, -r, 0 ) );
-				path.circle( 0, 0, r );
+				DesignPath path = new DesignPath();
+				path.circle( 0, 0, HALF_SIZE );
 				path.close();
 				return path;
 			}

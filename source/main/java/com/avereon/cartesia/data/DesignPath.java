@@ -188,14 +188,40 @@ public class DesignPath extends DesignShape {
 		return this;
 	}
 
-	public DesignPath arc( double x, double y, double rx, double ry, double start, double extent ) {
-		steps.add( new Step( Command.A, x, y, rx, ry, start, extent ) );
+	/**
+	 * Add an arc to the path.
+	 *
+	 * @param x The x coordinate of the end point
+	 * @param y The y coordinate of the end point
+	 * @param rx The x radius of the ellipse
+	 * @param ry The y radius of the ellipse
+	 * @param rotate The rotate angle of the ellipse
+	 * @param largeArc The large arc flag - determines if the arc should be
+	 * greater than or less than 180 degrees:
+	 * 0 = less than or equal to 180 degrees, 1 = greater than 180 degrees
+	 * @param sweep The sweep flag - determines if the arc should begin moving at
+	 * positive angles or negative ones:
+	 * 0 = positive, 1 = negative
+	 * @return The path
+	 */
+	public DesignPath arc( double x, double y, double rx, double ry, double rotate, double largeArc, double sweep ) {
+		steps.add( new Step( Command.A, x, y, rx, ry, rotate, largeArc, sweep ) );
 		return this;
 	}
 
+	/**
+	 * Add a circle to the path. This implementation uses a move and two arc
+	 * commands to create the circle around the y-axis.
+	 *
+	 * @param x The x coordinate of the center of the circle
+	 * @param y The y coordinate of the center of the circle
+	 * @param r The radius of the circle
+	 * @return The path
+	 */
 	public DesignPath circle( double x, double y, double r ) {
-		arc( x, y, r, r, -90, 180 );
-		arc( x, y, r, r, 90, 180 );
+		move( x, y - r );
+		arc( x, y + r, r, r, 0, 0, 0 );
+		arc( x, y - r, r, r, 0, 0, 1 );
 		return this;
 	}
 
@@ -238,8 +264,8 @@ public class DesignPath extends DesignShape {
 			// Limit the values changed depending on the command
 			int count = switch( command ) {
 				case M, L -> 2;
-				case Q -> 4;
-				case A, B -> 6;
+				case A, Q -> 4;
+				case B -> 6;
 				default -> 0;
 			};
 

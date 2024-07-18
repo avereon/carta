@@ -375,11 +375,28 @@ public class CadGeometry {
 				case B -> fxPath
 					.getElements()
 					.add( new CubicCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, step.data()[ 4 ] * scale, step.data()[ 5 ] * scale ) );
+
+				// FIXME I think this conversion is incorrect
 				case A -> fxPath.getElements().add( new ArcTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, 0, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, false, false ) );
 				case Z -> fxPath.getElements().add( new ClosePath() );
 			}
 		}
 		return fxPath;
+	}
+
+	private double[] convertCartisiaArcToFxArcTo(double cx,double cy,double rx,double ry,double s,double e) {
+		double x1 = cx + rx * Math.cos(s);
+		double y1 = cy + ry * Math.sin(s);
+		double x2 = cx + rx * Math.cos(s+e);
+		double y2 = cy + ry * Math.sin(s+e);
+		double[] result = new double[6];
+		result[0] = x1;
+		result[1] = y1;
+		result[2] = x2;
+		result[3] = y2;
+		result[4] = rx;
+		result[5] = ry;
+		return result;
 	}
 
 }

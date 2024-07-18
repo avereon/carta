@@ -4,6 +4,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadPoints;
+import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.marea.Font;
@@ -626,13 +627,12 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void drawMarker( DesignMarker marker ) {
-		Point3D origin = marker.getOrigin();
 		DesignPath path = marker.calcType().getDesignPath();
-
 		if( path != null ) {
-			renderer.fillMarker( origin.getX(), origin.getY(), toPathElements( path.getSteps() ) );
+			path.apply( CadTransform.translation( marker.getOrigin() ) );
+			renderer.fillPath( toMareaPathSteps( path.getSteps() ) );
 		} else {
-			log.atError().log( "Undefined marker type: {0}", marker.getMarkerType() );
+			log.atWarn().log( "Undefined marker type: {0}", marker.getMarkerType() );
 		}
 	}
 
@@ -641,11 +641,11 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void fillPath( DesignPath path ) {
-		renderer.fillPath( toPathElements( path.getSteps() ) );
+		renderer.fillPath( toMareaPathSteps( path.getSteps() ) );
 	}
 
 	private void drawPath( DesignPath path ) {
-		renderer.drawPath( toPathElements( path.getSteps() ) );
+		renderer.drawPath( toMareaPathSteps( path.getSteps() ) );
 	}
 
 	private void fillText( DesignText text ) {
@@ -656,7 +656,7 @@ public class DesignRenderer extends BorderPane {
 		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
 	}
 
-	private List<Path.Element> toPathElements( List<DesignPath.Step> steps ) {
+	private List<Path.Step> toMareaPathSteps( List<DesignPath.Step> steps ) {
 		if( steps.isEmpty() ) return List.of();
 
 		DesignPath.Step move = steps.getFirst();
@@ -665,9 +665,8 @@ public class DesignRenderer extends BorderPane {
 			return List.of();
 		}
 
-		Path path = new Path( move.data()[ 0 ], move.data()[ 1 ] );
-		for( int index = 1; index < steps.size(); index++ ) {
-			DesignPath.Step step = steps.get( index );
+		Path path = new Path();
+		for( DesignPath.Step step : steps ) {
 			double[] data = step.data();
 			switch( step.command() ) {
 				case M -> path.move( data[ 0 ], data[ 1 ] );
@@ -679,7 +678,7 @@ public class DesignRenderer extends BorderPane {
 			}
 		}
 
-		return path.getElements();
+		return path.getSteps();
 	}
 
 	private void renderHintGeometry() {
