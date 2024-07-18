@@ -203,7 +203,8 @@
         "73717fa4-08bc-4720-9edc-fd174479f7c2" : {
           "id" : "73717fa4-08bc-4720-9edc-fd174479f7c2",
           "origin" : "3,-3,0",
-          "shape" : "marker"
+          "shape" : "marker",
+          "type" : "circle"
         }
       },
       "text-draw-cap" : "round",
