@@ -181,7 +181,7 @@
           "id" : "73717fa4-08bc-4720-9edc-df174479f7c2",
           "origin" : "-3,3,0",
           "shape" : "path",
-          "steps" : [ "M -3 3", "L -2 2", "L -4 2", "L -4 4", "Z" ]
+          "steps" : [ "M -3 3", "L -4 3", "A -3 4 1 1 0 0 0", "L -2 2", "Z" ]
         }
       },
       "text-draw-cap" : "round",

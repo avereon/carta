@@ -135,6 +135,23 @@ public class CadGeometry {
 		return Geometry.arcLength( asPoint( arc.getOrigin() ), asPoint( arc.getRadii() ), Math.toRadians( arc.calcRotate() ), Math.toRadians( arc.calcStart() ), Math.toRadians( arc.calcExtent() ) );
 	}
 
+	/**
+	 * Convert an arc definition from endpoint format to center format.
+	 * <p>
+	 * NOTE: Angles values are expected in degrees and returned in degrees
+	 * <p>
+	 * Derived from <a href="https://www.w3.org/TR/SVG11/implnote.html#ArcConversionEndpointToCenter">https://www.w3.org/TR/SVG11/implnote.html#ArcConversionEndpointToCenter</a>
+	 *
+	 * @param p1 The start point of the arc
+	 * @param data The remaining data for the arc in the format [x, y, rx, ry, rotate, largeArc, sweep]
+	 * @return The center format of the arc in the format [cx, cy, rx, ry, startAngle, deltaAngle]
+	 */
+	public static double[] arcEndpointToCenter( double[] p1, double[] data ) {
+		double[] endpointData = new double[]{ p1[ 0 ], p1[ 1 ], data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], Math.toRadians( data[ 4 ] ), data[ 5 ], data[ 6 ] };
+		double[] centerData = Geometry.arcEndpointToCenter( p1, endpointData );
+		return new double[]{ centerData[ 0 ], centerData[ 1 ], centerData[ 2 ], centerData[ 3 ], Math.toDegrees( centerData[ 4 ] ), Math.toDegrees( centerData[ 5 ] ) };
+	}
+
 	public static double quadArcLength( DesignQuad quad ) {
 		return Geometry.quadArcLength( asPoint( quad.getOrigin() ), asPoint( quad.getControl() ), asPoint( quad.getPoint() ), CadConstants.RESOLUTION_LENGTH );
 	}
@@ -377,14 +394,7 @@ public class CadGeometry {
 					.add( new CubicCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, step.data()[ 4 ] * scale, step.data()[ 5 ] * scale ) );
 				case A -> fxPath
 					.getElements()
-					.add( new ArcTo( step.data()[ 2 ] * scale,
-						step.data()[ 3 ] * scale,
-						step.data()[ 4 ],
-						step.data()[ 0 ] * scale,
-						step.data()[ 1 ] * scale,
-						step.data()[ 5 ] > 0,
-						step.data()[ 6 ] > 0
-					) );
+					.add( new ArcTo( step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, step.data()[ 4 ], step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 5 ] > 0, step.data()[ 6 ] > 0 ) );
 				case Z -> fxPath.getElements().add( new ClosePath() );
 			}
 		}

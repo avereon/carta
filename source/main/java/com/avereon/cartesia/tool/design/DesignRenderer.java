@@ -630,7 +630,7 @@ public class DesignRenderer extends BorderPane {
 		DesignPath path = marker.calcType().getDesignPath();
 		if( path != null ) {
 			path.apply( CadTransform.translation( marker.getOrigin() ) );
-			renderer.fillPath( toMareaPathSteps( path.getSteps() ) );
+			renderer.fillPath( toMareaPathSteps( path ) );
 		} else {
 			log.atWarn().log( "Undefined marker type: {0}", marker.getMarkerType() );
 		}
@@ -641,11 +641,11 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void fillPath( DesignPath path ) {
-		renderer.fillPath( toMareaPathSteps( path.getSteps() ) );
+		renderer.fillPath( toMareaPathSteps( path ) );
 	}
 
 	private void drawPath( DesignPath path ) {
-		renderer.drawPath( toMareaPathSteps( path.getSteps() ) );
+		renderer.drawPath( toMareaPathSteps( path ) );
 	}
 
 	private void fillText( DesignText text ) {
@@ -654,6 +654,10 @@ public class DesignRenderer extends BorderPane {
 
 	private void drawText( DesignText text ) {
 		renderer.drawText( text.getOrigin().getX(), text.getOrigin().getY(), text.calcTextSize(), text.calcRotate(), text.getText(), Font.of( text.calcFont() ) );
+	}
+
+	private List<Path.Step> toMareaPathSteps( DesignPath path ) {
+		return toMareaPathSteps( path.getSteps() );
 	}
 
 	private List<Path.Step> toMareaPathSteps( List<DesignPath.Step> steps ) {
@@ -670,7 +674,7 @@ public class DesignRenderer extends BorderPane {
 			double[] data = step.data();
 			switch( step.command() ) {
 				case M -> path.move( data[ 0 ], data[ 1 ] );
-				case A -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case A -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ] );
 				case L -> path.line( data[ 0 ], data[ 1 ] );
 				case B -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
 				case Q -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );

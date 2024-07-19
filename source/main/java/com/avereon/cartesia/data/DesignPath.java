@@ -168,7 +168,7 @@ public class DesignPath extends DesignShape {
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
-			steps.forEach( element -> element.apply( transform ) );
+			steps.forEach( step -> step.apply( transform ) );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
@@ -221,7 +221,7 @@ public class DesignPath extends DesignShape {
 	public DesignPath circle( double x, double y, double r ) {
 		move( x, y - r );
 		arc( x, y + r, r, r, 0, 0, 0 );
-		arc( x, y - r, r, r, 0, 0, 1 );
+		arc( x, y - r, r, r, 0, 0, 0 );
 		return this;
 	}
 
@@ -261,19 +261,21 @@ public class DesignPath extends DesignShape {
 		private static final String DELIMITER = " ";
 
 		public void apply( CadTransform transform ) {
-			// Limit the values changed depending on the command
+			// Transform points
 			int count = switch( command ) {
-				case M, L -> 2;
-				case A, Q -> 4;
+				case M, L, A -> 2;
+				case Q -> 4;
 				case B -> 6;
 				default -> 0;
 			};
-
 			for( int index = 0; index < count; index += 2 ) {
 				Point3D point = transform.apply( new Point3D( data[ index ], data[ index + 1 ], 0 ) );
 				data[ index ] = point.getX();
 				data[ index + 1 ] = point.getY();
 			}
+
+			// TODO Transform distances (like radii)
+			// TODO Transform angles (like rotate)
 		}
 
 		public String marshall() {

@@ -64,12 +64,12 @@ public class DesignMarker extends DesignShape {
 
 				path.move( 0, 0 );
 				path.line( t, 0 );
-				path.arc( 0, -t, t, t, 0, 0, 1 );
+				path.arc( 0, -t, t, t, 0, 0, 0 );
 				path.close();
 
 				path.move( 0, 0 );
 				path.line( 0, t );
-				path.arc( -t, 0, t, t, 0, 0, 0 );
+				path.arc( -t, 0, t, t, 0, 0, 1 );
 				path.close();
 
 				return path;

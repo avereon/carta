@@ -496,4 +496,9 @@ public class CadGeometryTest {
 		assertThat( text.getFont().getSize() ).isEqualTo( 2.7, LOOSE_TOLERANCE );
 	}
 
+	@Test
+	void arcEndpointToCenter() {
+		//
+	}
+
 }
