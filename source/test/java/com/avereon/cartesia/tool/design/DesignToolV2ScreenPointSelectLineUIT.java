@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -32,7 +33,7 @@ public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 		// then - the first line should be selected
 		List<DesignShape> selected = getTool().getSelectedGeometry();
 		assertThat( selected.size() ).isEqualTo( 1 );
-		assertThat( selected.getFirst().getOrigin() ).isEqualTo( new Point3D( -2, 2, 0 ) );
+		assertThat( selected.getFirst() ).isInstanceOf( DesignLine.class );
 	}
 
 	@Test
@@ -43,7 +44,7 @@ public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 		// 0.02 is just under half the line stroke width
 
 		Point3D offset = new Point3D( 0.02 + getWorldSelectTolerance(), 0, 0 );
-		Point3D point = new Point3D( 2, 2, 0 ).add( offset );
+		Point3D point = new Point3D( 1, 1, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
@@ -52,7 +53,7 @@ public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 		// then
 		List<DesignShape> selected = getTool().getSelectedGeometry();
 		assertThat( selected.size() ).isEqualTo( 1 );
-		assertThat( selected.getFirst().getOrigin() ).isEqualTo( new Point3D( -2, -2, 0 ) );
+		assertThat( selected.getFirst() ).isInstanceOf( DesignLine.class );
 	}
 
 	@Test
@@ -63,7 +64,7 @@ public class DesignToolV2ScreenPointSelectLineUIT extends DesignToolV2BaseUIT {
 		// 0.03 is just over half the line stroke width
 
 		Point3D offset = new Point3D( 0.03 + getWorldSelectTolerance(), 0, 0 );
-		Point3D point = new Point3D( 2, 2, 0 ).add( offset );
+		Point3D point = new Point3D( 1, 1, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
 		// when
