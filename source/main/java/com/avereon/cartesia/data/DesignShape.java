@@ -14,6 +14,7 @@ import lombok.CustomLog;
 
 import java.util.Comparator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.avereon.data.NodeEvent.MODIFIED;
 
@@ -47,11 +48,13 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String REFERENCE = "reference";
 
-	private Shape fxShapeCache;
+	private final Map<String, Object> cache;
 
-	private Bounds boundsCache;
+	private static final String CACHE_BOUNDS = "bounds";
 
-	private Bounds visualBoundsCache;
+	private static final String CACHE_FX_SHAPE = "fx-shape";
+
+	private static final String CACHE_SELECT_BOUNDS = "select-bounds";
 
 	public DesignShape() {
 		this( null );
@@ -61,13 +64,11 @@ public abstract class DesignShape extends DesignDrawable {
 		addModifyingKeys( ORIGIN, ROTATE );
 		setOrigin( origin );
 
+		cache = new ConcurrentHashMap<>();
+
 		// Register a listener to clear caches
 		register( MODIFIED, e -> {
-			if( e.getNewValue() == Boolean.TRUE ) {
-				boundsCache = null;
-				visualBoundsCache = null;
-				fxShapeCache = null;
-			}
+			if( e.getNewValue() == Boolean.TRUE ) cache.clear();
 		} );
 	}
 
@@ -125,8 +126,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public Shape getFxShape() {
-		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this );
-		return fxShapeCache;
+		return (Shape)cache.computeIfAbsent( CACHE_FX_SHAPE, k -> CadGeometry.toFxShape( this ) );
 	}
 
 	/**
@@ -136,8 +136,7 @@ public abstract class DesignShape extends DesignDrawable {
 	 * @return The geometric bounds of the shape
 	 */
 	public Bounds getBounds() {
-		if( boundsCache == null ) boundsCache = computeGeometricBounds();
-		return boundsCache;
+		return (Bounds)cache.computeIfAbsent( CACHE_BOUNDS, k -> computeGeometricBounds() );
 	}
 
 	protected Bounds computeGeometricBounds() {
@@ -151,12 +150,11 @@ public abstract class DesignShape extends DesignDrawable {
 	 *
 	 * @return The visual bounds of the shape
 	 */
-	public Bounds getVisualBounds() {
-		if( visualBoundsCache == null ) visualBoundsCache = computeVisualBounds();
-		return visualBoundsCache;
+	public Bounds getSelectBounds() {
+		return (Bounds)cache.computeIfAbsent( CACHE_SELECT_BOUNDS, k -> computeSelectBounds() );
 	}
 
-	protected Bounds computeVisualBounds() {
+	protected Bounds computeSelectBounds() {
 		Paint drawPaint = calcDrawPaint();
 		boolean hasDraw = drawPaint != null && drawPaint != Color.TRANSPARENT;
 

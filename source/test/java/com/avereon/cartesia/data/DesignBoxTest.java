@@ -76,7 +76,7 @@ public class DesignBoxTest {
 		DesignBox box = new DesignBox( new Point3D( 2, 1, 0 ), new Point3D( 4, 2, 0 ) );
 
 		// when
-		Bounds bounds = box.getVisualBounds();
+		Bounds bounds = box.getSelectBounds();
 
 		assertThat( bounds.getMinX() ).isEqualTo( 1.975, LOOSE_TOLERANCE );
 		assertThat( bounds.getMinY() ).isEqualTo( 0.975, LOOSE_TOLERANCE );
@@ -94,7 +94,7 @@ public class DesignBoxTest {
 		box.setDrawWidth( "1" );
 
 		// when
-		Bounds bounds = box.getVisualBounds();
+		Bounds bounds = box.getSelectBounds();
 
 		assertThat( bounds.getMinX() ).isEqualTo( 1.5, LOOSE_TOLERANCE );
 		assertThat( bounds.getMinY() ).isEqualTo( 0.5, LOOSE_TOLERANCE );
@@ -114,7 +114,7 @@ public class DesignBoxTest {
 		double b = 0.05 * CadMath.SQRT2;
 
 		// when
-		Bounds bounds = box.getVisualBounds();
+		Bounds bounds = box.getSelectBounds();
 
 		assertThat( bounds.getMinX() ).isEqualTo( 2 - (2 * CadMath.SQRT2_OVER_2) - a, LOOSE_TOLERANCE );
 		assertThat( bounds.getMaxX() ).isEqualTo( 2 + (4 * CadMath.SQRT2_OVER_2) + a, LOOSE_TOLERANCE );

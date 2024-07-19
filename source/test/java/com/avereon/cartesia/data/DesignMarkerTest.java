@@ -54,7 +54,7 @@ public class DesignMarkerTest {
 		//assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).getVisualBounds() ).isEqualTo( new BoundingBox( -2.5, 0.5, 1, 1 ) );
 
 		// But this is what is computed by JavaFX
-		assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).getVisualBounds() ).isEqualTo( new BoundingBox( -3.0, 0.0, 2, 2 ) );
+		assertThat( new DesignMarker( new Point3D( -2, 1, 0 ) ).getSelectBounds() ).isEqualTo( new BoundingBox( -3.0, 0.0, 2, 2 ) );
 	}
 
 	@Test

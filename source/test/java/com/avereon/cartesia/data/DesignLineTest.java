@@ -105,7 +105,7 @@ public class DesignLineTest {
 		line.setDrawWidth( "0.0" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		// This is the geometrically correct bounds
@@ -124,7 +124,7 @@ public class DesignLineTest {
 		line.setDrawWidth( "1.0" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( -2 - SQRT2_OVER_2, -2 - SQRT2_OVER_2, 4 + SQRT2, 4 + SQRT2 ), LOOSE_TOLERANCE );
@@ -137,7 +137,7 @@ public class DesignLineTest {
 		line.setDrawWidth( "0.0" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		// This is the geometrically correct bounds
@@ -155,7 +155,7 @@ public class DesignLineTest {
 		line.setDrawCap( "butt" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		// This is the geometrically correct bounds
@@ -173,7 +173,7 @@ public class DesignLineTest {
 		line.setDrawCap( "round" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		assertThat( bounds ).isEqualTo( new BoundingBox( 0.5, 1.5, 1, 1 ) );
@@ -187,7 +187,7 @@ public class DesignLineTest {
 		line.setDrawCap( "square" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		// This is the geometrically correct bounds
@@ -205,7 +205,7 @@ public class DesignLineTest {
 		line.setDrawCap( "square" );
 
 		// when
-		Bounds bounds = line.getVisualBounds();
+		Bounds bounds = line.getSelectBounds();
 
 		// then
 		// This is the geometrically correct bounds
