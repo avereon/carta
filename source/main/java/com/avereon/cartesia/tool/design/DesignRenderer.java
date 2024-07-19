@@ -97,7 +97,7 @@ public class DesignRenderer extends BorderPane {
 		// TODO Disconnect listeners
 
 		this.design = design;
-		setVisibleLayers( design.getAllLayers() );
+		visibleLayers.addAll( design.getAllLayers() );
 
 		// TODO Connect listeners
 
