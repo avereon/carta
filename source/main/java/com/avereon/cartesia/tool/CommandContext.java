@@ -17,6 +17,8 @@ import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
 import lombok.CustomLog;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.*;
 import java.util.concurrent.BlockingDeque;
@@ -47,12 +49,20 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private BaseDesignTool lastActiveDesignTool;
 
+	@Setter
+	@Getter
 	private Input inputMode;
 
+	@Getter
+	@Setter
 	private Point3D screenMouse;
 
+	@Getter
+	@Setter
 	private Point3D worldMouse;
 
+	@Getter
+	@Setter
 	private Point3D anchor;
 
 	private BaseDesignTool tool;
@@ -243,44 +253,12 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		this.tool = Objects.requireNonNull( tool );
 	}
 
-	public Point3D getScreenMouse() {
-		return screenMouse;
-	}
-
-	public void setScreenMouse( Point3D screenMouse ) {
-		this.screenMouse = screenMouse;
-	}
-
-	public Point3D getWorldMouse() {
-		return worldMouse;
-	}
-
-	void setWorldMouse( Point3D point ) {
-		worldMouse = point;
-	}
-
-	public Point3D getAnchor() {
-		return anchor;
-	}
-
-	void setAnchor( Point3D anchor ) {
-		this.anchor = anchor;
-	}
-
 	private void reset() {
 		setInputMode( CommandContext.Input.NONE );
 		Fx.run( () -> {
 			getLastActiveDesignTool().clearSelected();
 			getCommandPrompt().clear();
 		} );
-	}
-
-	public Input getInputMode() {
-		return inputMode;
-	}
-
-	public void setInputMode( Input inputMode ) {
-		this.inputMode = inputMode;
 	}
 
 	private void doEventCommand( InputEvent event ) {
@@ -351,7 +329,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
 		Collections.reverse( invertedCommandStack );
-		if( commandStack.size() != 0 ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
+		if( !commandStack.isEmpty() ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
 	}
 
 	private Object doProcessCommands() throws Exception {
@@ -389,12 +367,16 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		private final CommandContext context;
 
+		@Getter
 		private final BaseDesignTool tool;
 
+		@Getter
 		private final Command command;
 
+		@Getter
 		private Object[] parameters;
 
+		@Getter
 		private Object result;
 
 		public CommandExecuteRequest( CommandContext context, BaseDesignTool tool, Command command, Object... parameters ) {
@@ -402,18 +384,6 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			this.tool = Objects.requireNonNull( tool );
 			this.command = Objects.requireNonNull( command );
 			this.parameters = parameters;
-		}
-
-		public BaseDesignTool getTool() {
-			return tool;
-		}
-
-		public Command getCommand() {
-			return command;
-		}
-
-		public Object[] getParameters() {
-			return parameters;
 		}
 
 		public Object executeCommandStep( Object priorResult ) throws Exception {
@@ -429,8 +399,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 				context.setTool( tool );
 				result = command.execute( context, parameters );
 				if( result != Command.INVALID ) command.incrementStep();
-			} catch( Throwable throwable ) {
-				log.atWarn( throwable ).log( "Unhandled error executing command=%s", command );
+			} catch( Exception exception ) {
+				log.atWarn( exception ).log( "Unhandled error executing command=%s", command );
 			} finally {
 				if( result == Command.COMPLETE || result == Command.INVALID ) doComplete();
 				command.setStepExecuted();
@@ -439,10 +409,6 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			this.result = result;
 
 			return getResult();
-		}
-
-		public Object getResult() {
-			return result;
 		}
 
 		private void doComplete() {

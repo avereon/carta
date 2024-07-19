@@ -33,9 +33,7 @@ class SelectTestUIT extends BaseCartesiaUiTest {
 	@Test
 	void testExecute() throws Exception {
 		Object result;
-		result = command.execute( context, createEvent( MouseEvent.MOUSE_PRESSED ) );
-		assertThat( result ).isEqualTo( Command.INCOMPLETE );
-		result = command.execute( context, createEvent( MouseEvent.MOUSE_RELEASED ) );
+		result = command.execute( context, createEvent( MouseEvent.MOUSE_CLICKED ) );
 		assertThat( result ).isEqualTo( Command.COMPLETE );
 	}
 

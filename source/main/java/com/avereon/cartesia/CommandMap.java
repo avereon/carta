@@ -27,7 +27,7 @@ public class CommandMap {
 
 	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
-	private static final Map<CommandEventKey, String> eventActions = new ConcurrentHashMap<>();
+	private static final Map<CommandTrigger, String> eventActions = new ConcurrentHashMap<>();
 
 	public static void load( XenonProgramProduct product ) {
 		actionCommands.clear();
@@ -78,6 +78,7 @@ public class CommandMap {
 		// shape fill paint
 
 		// Basic commands
+		add( product, "anchor", Anchor.class );
 		add( product, "select", Select.class );
 
 		// View commands
@@ -178,23 +179,65 @@ public class CommandMap {
 		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 
-		// The Shift modifier is for panning and zooming (this is roughly how browsers work)
-		// The Ctrl modifier is for additional selecting
-		// The Ctrl-Shift modifier is for selecting by intersection
+		// NOTE: Can't use Alt-Drag on Linux because it is used to move the window
 
-		// Single select
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "select" );
-		// Add/remove select
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "select" );
-		// Snap nearest
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.SECONDARY ), "snap-auto-nearest" );
+		// NOTE to devs:
+		// How can we do this?
+		// - Click to select
+		// - Ctrl-Click to toggle select
+		// - Drag to window select
+		// - Shift-Drag to window select by intersection
+		// - Ctrl-Drag to move camara
+		// - Ctrl-Scroll to zoom camara
+		// - Ctrl-Shift-Drag to spin camara
+		// - Ctrl-Shift-Scroll to walk camara
+		//
+		// The one that doesn't work is the Ctrl-Click to toggle select. That's
+		// because we start a command based on the initial mouse event and modifiers.
+		// To fix that we need to trigger the command on the "latest" possible event
+		// that defines the command shortcut.
+
+		// Future code:
+		/*
 		// Camera move (aka pan)
-		add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-move" );
+		add( new CommandTrigger( MouseEvent.MOUSE_DRAGGED, MouseButton.PRIMARY, true, false, false, false ), "camera-move" );
+		// Camera zoom
+		add( new CommandTrigger( ScrollEvent.SCROLL, true, false, false, false ), "camera-zoom" );
+		add( new CommandTrigger( ZoomEvent.ZOOM, false, false, false, false ), "camera-zoom" );
+
+		// Camera 3D ---------------------------------------------------------------
+		// Camera spin
+		//add( new CommandEventKey( MouseEvent.MOUSE_DRAGGED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
+		// Camera walk (moving the camara forward and back)
+		//add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-walk" );
+		//add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-walk" );
+		 */
+
+		// Anchor ------------------------------------------------------------------
+		add( new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "anchor" );
+
+		// Selects -----------------------------------------------------------------
+		// Single select
+		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY ), "select" );
+		// Toggle select
+		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, true, false, false, false ), "select" );
+		// Window select
+		add( new CommandTrigger( MouseEvent.MOUSE_DRAGGED, MouseButton.PRIMARY, false, true, false, false ), "select" );
+
+		// Snaps -------------------------------------------------------------------
+		// Snap nearest
+		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.SECONDARY ), "snap-auto-nearest" );
+		// Snap midpoint
+		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.MIDDLE ), "snap-auto-midpoint" );
+
+		// Camera 2D ---------------------------------------------------------------
+		// Camera move (aka pan)
+		add( new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-move" );
 		// Camera spin
 		//add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
 		// Camera zoom
-		add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-zoom" );
-		add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-zoom" );
+		add( new CommandTrigger( ScrollEvent.SCROLL, true, false, false, false ), "camera-zoom" );
+		add( new CommandTrigger( ZoomEvent.ZOOM, false, false, false, false ), "camera-zoom" );
 		// Camera walk (moving the camara forward and back)
 		//add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-walk" );
 		//add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-walk" );
@@ -216,8 +259,8 @@ public class CommandMap {
 		// Event actions???
 	}
 
-	public static Map<String,CommandMetadata> getAll() {
-		return Collections.unmodifiableMap(actionCommands);
+	public static Map<String, CommandMetadata> getAll() {
+		return Collections.unmodifiableMap( actionCommands );
 	}
 
 	public static boolean hasCommand( String shortcut ) {
@@ -229,20 +272,19 @@ public class CommandMap {
 	}
 
 	public static CommandMetadata get( InputEvent event ) {
-		return getActionCommand( eventActions.getOrDefault( CommandEventKey.of( event ), TextUtil.EMPTY ) );
+		return getActionCommand( eventActions.getOrDefault( CommandTrigger.of( event ), TextUtil.EMPTY ) );
 	}
 
 	public static CommandMetadata getActionCommand( String action ) {
 		if( TextUtil.isEmpty( action ) ) return NONE;
-		CommandMetadata mapping = actionCommands.get( action );
-		if( mapping == null ) {
-			log.atWarning().log( "No command for action: %s", action );
-			mapping = NONE;
-		}
+
+		CommandMetadata mapping = actionCommands.getOrDefault( action, NONE );
+		if( mapping == NONE ) log.atWarning().log( "No command for action: %s", action );
+
 		return mapping;
 	}
 
-	private static void add( CommandEventKey key, String action ) {
+	private static void add( CommandTrigger key, String action ) {
 		eventActions.put( key, action );
 	}
 
@@ -271,10 +313,10 @@ public class CommandMap {
 			return;
 		}
 
-		if( !actionCommands.containsKey( action ) ) {
+		actionCommands.computeIfAbsent( action, k -> {
 			if( command != null ) commandActions.put( command, action );
-			actionCommands.put( action, new CommandMetadata( action, name, command, shortcut, tags, type, parameters ) );
-		}
+			return new CommandMetadata( action, name, command, shortcut, tags, type, parameters );
+		} );
 	}
 
 	public static final class Noop extends Command {}

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandEventKey;
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandContext;
@@ -11,7 +11,7 @@ import lombok.CustomLog;
 @CustomLog
 public class Select extends Command {
 
-	private CommandEventKey eventKey;
+	private CommandTrigger eventKey;
 
 	private Point3D dragAnchor;
 
@@ -25,21 +25,28 @@ public class Select extends Command {
 		if( parameters.length < 1 ) return COMPLETE;
 
 		// For this command the incoming parameter is the mouse event that triggered it
+		//		if( parameters[ 0 ] instanceof MouseEvent event ) {
+		//			if( event.getClickCount() > 1 ) return COMPLETE;
+		//			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+		//				return mousePressed( context, event );
+		//			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+		//				return mouseReleased( context, event );
+		//			}
+		//		}
+
 		if( parameters[ 0 ] instanceof MouseEvent event ) {
-			if( event.getClickCount() > 1 ) return COMPLETE;
-			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				return mousePressed( context, event );
-			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+			if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+				mousePressed( context, event );
 				return mouseReleased( context, event );
 			}
 		}
 
-		throw new IllegalArgumentException( "Invalid parameter=%s" + parameters[0] );
+		throw new IllegalArgumentException( "Invalid parameter=%s" + parameters[ 0 ] );
 	}
 
 	private Object mousePressed( CommandContext context, MouseEvent event ) {
 		dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
-		eventKey = CommandEventKey.of( event );
+		eventKey = CommandTrigger.of( event );
 		return INCOMPLETE;
 	}
 
@@ -51,7 +58,7 @@ public class Select extends Command {
 				tool.screenPointSelect( new Point3D( event.getX(), event.getY(), event.getZ() ), isSelectToggle( event ) );
 				return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
 			} else {
-				tool.screenWindowSelect( dragAnchor, point, isSelectByIntersect( event ), isSelectToggle( event ) );
+				tool.screenWindowSelect( dragAnchor, point, isSelectByIntersect( event ), false );
 				return CadGeometry.getBounds( dragAnchor, point );
 			}
 		} else if( context.isPenMode() ) {
@@ -78,12 +85,12 @@ public class Select extends Command {
 		}
 	}
 
-	private boolean isSelectToggle( MouseEvent event ) {
-		return event.isControlDown();
+	private boolean isSelectByIntersect( MouseEvent event ) {
+		return event.isShiftDown();
 	}
 
-	private boolean isSelectByIntersect( MouseEvent event ) {
-		return event.isAltDown();
+	private boolean isSelectToggle( MouseEvent event ) {
+		return event.isControlDown();
 	}
 
 }

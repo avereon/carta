@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandEventKey;
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandContext;
@@ -15,7 +15,7 @@ import java.text.ParseException;
 @CustomLog
 public class CameraMove extends CameraCommand {
 
-	private CommandEventKey eventKey;
+	private CommandTrigger eventKey;
 
 	private Point3D viewAnchor;
 
@@ -33,7 +33,7 @@ public class CameraMove extends CameraCommand {
 				return COMPLETE;
 			}
 			if( event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
-				eventKey = CommandEventKey.of( event );
+				eventKey = CommandTrigger.of( event );
 				viewAnchor = context.getTool().getViewPoint();
 				dragAnchor = new Point3D( event.getX(), event.getY(), 0 );
 				return INCOMPLETE;
@@ -55,7 +55,7 @@ public class CameraMove extends CameraCommand {
 	public void handle( MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
-			if( CommandEventKey.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {
+			if( CommandTrigger.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {
 				if( viewAnchor == null || dragAnchor == null ) return;
 				tool.pan( viewAnchor, dragAnchor, event.getX(), event.getY() );
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED && event.getButton() == eventKey.getButton() ) {
