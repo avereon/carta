@@ -292,62 +292,52 @@ public class CadGeometry {
 	}
 
 	public static Shape toFxShape( DesignShape shape ) {
-		return toFxShape( shape, 1.0 );
-	}
-
-	public static Shape toFxShape( DesignShape shape, double scale ) {
 		Shape fxShape = switch( shape.getType() ) {
 			case BOX -> {
 				DesignBox box = (DesignBox)shape;
-				yield new Rectangle( box.getOrigin().getX() * scale, box.getOrigin().getY() * scale, box.getSize().getX() * scale, box.getSize().getY() * scale );
+				yield new Rectangle( box.getOrigin().getX(), box.getOrigin().getY(), box.getSize().getX(), box.getSize().getY() );
 			}
 			case LINE -> {
 				DesignLine line = (DesignLine)shape;
-				yield new Line( line.getOrigin().getX() * scale, line.getOrigin().getY() * scale, line.getPoint().getX() * scale, line.getPoint().getY() * scale );
+				yield new Line( line.getOrigin().getX(), line.getOrigin().getY(), line.getPoint().getX(), line.getPoint().getY() );
 			}
 			case ELLIPSE -> {
 				DesignEllipse ellipse = (DesignEllipse)shape;
-				yield new Ellipse( ellipse.getOrigin().getX() * scale, ellipse.getOrigin().getY() * scale, ellipse.getXRadius() * scale, ellipse.getYRadius() * scale );
+				yield new Ellipse( ellipse.getOrigin().getX(), ellipse.getOrigin().getY(), ellipse.getXRadius(), ellipse.getYRadius() );
 			}
 			case ARC -> {
 				DesignArc arc = (DesignArc)shape;
-				yield new Arc( arc.getOrigin().getX() * scale, arc.getOrigin().getY() * scale, arc.getXRadius() * scale, arc.getYRadius() * scale, -arc.calcStart(), -arc.calcExtent() );
+				yield new Arc( arc.getOrigin().getX(), arc.getOrigin().getY(), arc.getXRadius(), arc.getYRadius(), -arc.calcStart(), -arc.calcExtent() );
 			}
 			case QUAD -> {
 				DesignQuad quad = (DesignQuad)shape;
-				yield new QuadCurve( quad.getOrigin().getX() * scale,
-					quad.getOrigin().getY() * scale,
-					quad.getControl().getX() * scale,
-					quad.getControl().getY() * scale,
-					quad.getPoint().getX() * scale,
-					quad.getPoint().getY() * scale
-				);
+				yield new QuadCurve( quad.getOrigin().getX(), quad.getOrigin().getY(), quad.getControl().getX(), quad.getControl().getY(), quad.getPoint().getX(), quad.getPoint().getY() );
 			}
 			case CUBIC -> {
 				DesignCubic cubic = (DesignCubic)shape;
-				yield new CubicCurve( cubic.getOrigin().getX() * scale,
-					cubic.getOrigin().getY() * scale,
-					cubic.getOriginControl().getX() * scale,
-					cubic.getOriginControl().getY() * scale,
-					cubic.getPointControl().getX() * scale,
-					cubic.getPointControl().getY() * scale,
-					cubic.getPoint().getX() * scale,
-					cubic.getPoint().getY() * scale
+				yield new CubicCurve( cubic.getOrigin().getX(),
+					cubic.getOrigin().getY(),
+					cubic.getOriginControl().getX(),
+					cubic.getOriginControl().getY(),
+					cubic.getPointControl().getX(),
+					cubic.getPointControl().getY(),
+					cubic.getPoint().getX(),
+					cubic.getPoint().getY()
 				);
 			}
 			case PATH -> {
 				DesignPath path = (DesignPath)shape;
-				yield mapToFxPath( scale, path.getSteps() );
+				yield mapToFxPath( path.getSteps() );
 			}
 			case MARKER -> {
 				DesignMarker marker = (DesignMarker)shape;
-				yield mapToFxPath( scale, marker.getElements() );
+				yield mapToFxPath( marker.getElements() );
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;
-				Text fxText = new Text( (text.getOrigin().getX()) * scale, -text.getOrigin().getY() * scale, text.getText() );
+				Text fxText = new Text( (text.getOrigin().getX()), -text.getOrigin().getY(), text.getText() );
 				fxText.getTransforms().add( Transform.scale( 1, -1 ) );
-				fxText.setFont( FontUtil.derive( text.calcFont(), text.calcTextSize() * scale ) );
+				fxText.setFont( FontUtil.derive( text.calcFont(), text.calcTextSize() ) );
 				yield fxText;
 			}
 		};
@@ -361,40 +351,36 @@ public class CadGeometry {
 		fxShape.setStroke( hasDraw ? Color.YELLOW : null );
 		fxShape.setFill( hasFill ? Color.RED : null );
 
-		fxShape.setStrokeWidth( shape.calcDrawWidth() * scale );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() );
 		fxShape.setStrokeType( StrokeType.CENTERED );
 		fxShape.setStrokeLineCap( shape.calcDrawCap() );
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
-		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() * scale );
-		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v * scale ).toList() );
+		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
+		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v ).toList() );
 
 		// Handle the rotate transform, if needed
 		double rotate = shape.calcRotate();
 		if( rotate != 0.0 ) {
 			if( Objects.requireNonNull( shape.getType() ) == DesignShape.Type.TEXT ) {
-				fxShape.getTransforms().add( Transform.rotate( -rotate, shape.getOrigin().getX() * scale, -shape.getOrigin().getY() * scale ) );
+				fxShape.getTransforms().add( Transform.rotate( -rotate, shape.getOrigin().getX(), -shape.getOrigin().getY() ) );
 			} else {
-				fxShape.getTransforms().add( Transform.rotate( rotate, shape.getOrigin().getX() * scale, shape.getOrigin().getY() * scale ) );
+				fxShape.getTransforms().add( Transform.rotate( rotate, shape.getOrigin().getX(), shape.getOrigin().getY() ) );
 			}
 		}
 
 		return fxShape;
 	}
 
-	private static Path mapToFxPath( double scale, List<DesignPath.Step> steps ) {
+	private static Path mapToFxPath( List<DesignPath.Step> steps ) {
 		Path fxPath = new Path();
 		for( DesignPath.Step step : steps ) {
 			switch( step.command() ) {
-				case M -> fxPath.getElements().add( new MoveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
-				case L -> fxPath.getElements().add( new LineTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale ) );
-				case Q -> fxPath.getElements().add( new QuadCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale ) );
-				case B -> fxPath
-					.getElements()
-					.add( new CubicCurveTo( step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, step.data()[ 4 ] * scale, step.data()[ 5 ] * scale ) );
-				case A -> fxPath
-					.getElements()
-					.add( new ArcTo( step.data()[ 2 ] * scale, step.data()[ 3 ] * scale, step.data()[ 4 ], step.data()[ 0 ] * scale, step.data()[ 1 ] * scale, step.data()[ 5 ] > 0, step.data()[ 6 ] > 0 ) );
+				case M -> fxPath.getElements().add( new MoveTo( step.data()[ 0 ], step.data()[ 1 ] ) );
+				case L -> fxPath.getElements().add( new LineTo( step.data()[ 0 ], step.data()[ 1 ] ) );
+				case Q -> fxPath.getElements().add( new QuadCurveTo( step.data()[ 0 ], step.data()[ 1 ], step.data()[ 2 ], step.data()[ 3 ] ) );
+				case B -> fxPath.getElements().add( new CubicCurveTo( step.data()[ 0 ], step.data()[ 1 ], step.data()[ 2 ], step.data()[ 3 ], step.data()[ 4 ], step.data()[ 5 ] ) );
+				case A -> fxPath.getElements().add( new ArcTo( step.data()[ 2 ], step.data()[ 3 ], step.data()[ 4 ], step.data()[ 0 ], step.data()[ 1 ], step.data()[ 5 ] > 0, step.data()[ 6 ] > 0 ) );
 				case Z -> fxPath.getElements().add( new ClosePath() );
 			}
 		}

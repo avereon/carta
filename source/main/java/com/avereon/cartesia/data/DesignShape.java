@@ -124,13 +124,9 @@ public abstract class DesignShape extends DesignDrawable {
 		return this;
 	}
 
-	private static final double INTERNAL_SHAPE_SCALE = 1.0;
-
 	public Shape getFxShape() {
-				if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
-				return fxShapeCache;
-
-//		return CadGeometry.toFxShape( this, INTERNAL_SHAPE_SCALE );
+		if( fxShapeCache == null ) fxShapeCache = CadGeometry.toFxShape( this );
+		return fxShapeCache;
 	}
 
 	/**
