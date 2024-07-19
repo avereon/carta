@@ -19,7 +19,6 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 	void screenPointSelect() throws Exception {
 		// given
 		useLineLayer();
-		useEllipseLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once
@@ -32,10 +31,25 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 	}
 
 	@Test
+	void screenPointNotSelect() throws Exception {
+		// given
+		useLineLayer();
+		usePathLayer();
+		useMarkerLayer();
+		Point3D mouse = getTool().worldToScreen( new Point3D( 1, 0, 0 ) );
+
+		// when - select once
+		getTool().screenPointSelect( mouse, false );
+
+		// then - the first line should be selected
+		List<DesignShape> selected = getTool().getSelectedGeometry();
+		assertThat( selected.size() ).isEqualTo( 0 );
+	}
+
+	@Test
 	void screenPointSelectWithMultipleSelectsMovingDownVisibleGeometry() throws Exception {
 		// given
 		useLineLayer();
-		useEllipseLayer();
 		Point3D mouse = getTool().worldToScreen( new Point3D( 0, 0, 0 ) );
 
 		// when - select once

@@ -765,8 +765,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
-		Bounds selectorBounds = localToParent( selector.getSelectBounds() );
-		Bounds shapeBounds = localToParent( shape.getSelectBounds() );
+		Bounds selectorBounds = selector.getSelectBounds();
+		Bounds shapeBounds = shape.getSelectBounds();
 
 		// This first test is an optimization to determine if the accurate test can be skipped
 		if( !selectorBounds.intersects( shapeBounds ) ) return false;
@@ -777,12 +777,12 @@ public class DesignRenderer extends BorderPane {
 		// This is the slow but accurate test if the shape is contained when the selector is not a box
 		Shape fxSelector = selector.getFxShape();
 		Shape fxShape = shape.getFxShape();
-		return !((javafx.scene.shape.Path)Shape.subtract( fxSelector, fxShape )).getElements().isEmpty();
+		return ((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
 	}
 
 	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
 		// This first test is an optimization to determine if the accurate test can be skipped
-		if( !localToParent( selector.getSelectBounds() ).intersects( localToParent( shape.getSelectBounds() ) ) ) return false;
+		if( !selector.getSelectBounds().intersects( shape.getSelectBounds() ) ) return false;
 
 		// This is the slow but accurate test if the shape is intersecting
 		Shape fxSelector = selector.getFxShape();
