@@ -572,11 +572,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public Shape nearestShape2d( Collection<Shape> shapes, Point3D point ) {
-		return null;
-	}
-
-	@Override
 	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
 		return null;
 	}
@@ -622,7 +617,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		if( visible ) {
-			if( !renderer.visibleLayers().contains( layer ) )renderer.visibleLayers().add( layer );
+			if( !renderer.visibleLayers().contains( layer ) ) renderer.visibleLayers().add( layer );
 		} else {
 			renderer.visibleLayers().remove( layer );
 		}
@@ -838,15 +833,32 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
+		worldPointSelect( renderer.parentToLocal( mouse ), toggle );
+	}
+
+	@Override
+	public void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
+		worldWindowSelect( renderer.parentToLocal( a ), renderer.parentToLocal( b ), intersect, toggle );
+	}
+
+	@Override
+	public void worldPointSelect( Point3D point ) {
+		worldPointSelect( point, false );
+	}
+
+	@Override
+	public void worldPointSelect( Point3D point, boolean toggle ) {
 		// Get the currently selected shapes
 		List<DesignShape> shapes = getSelectedGeometry();
 
 		// If toggling, clear the selected shapes in the renderer
 		if( !toggle ) renderer.clearSelectedShapes();
 
-		// Add and remove selected shapes as necessary
 		// TODO This should be updated to cascade through the selected shapes
-		renderer.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
+
+		// Add and remove selected shapes as necessary
+		double tolerance = renderer.realToWorld( getSelectTolerance() );
+		renderer.worldPointSelect( point, tolerance ).stream().findFirst().ifPresent( shape -> {
 			if( renderer.isShapeSelected( shape ) ) {
 				renderer.selectedShapes().remove( shape );
 			} else {
@@ -855,11 +867,15 @@ public class DesignToolV2 extends BaseDesignTool {
 		} );
 	}
 
-	@Override
-	public void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
+	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+		worldWindowSelect( a, b, intersect, false );
+	}
+
+	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
 		if( !toggle ) renderer.clearSelectedShapes();
 
-		List<DesignShape> shapes = renderer.screenWindowSelect( a, b, intersect );
+		List<DesignShape> shapes = renderer.worldWindowSelect( a, b, intersect );
+
 		if( toggle ) {
 			shapes.forEach( shape -> {
 				if( renderer.isShapeSelected( shape ) ) {
@@ -871,16 +887,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		} else {
 			renderer.selectedShapes().addAll( shapes );
 		}
-	}
-
-	@Override
-	public void worldPointSelect( Point3D point ) {
-		worldPointSelect( point, false );
-	}
-
-	@Override
-	public void worldPointSelect( Point3D point, boolean toggle ) {
-		// TODO Implement this
 	}
 
 	@Override

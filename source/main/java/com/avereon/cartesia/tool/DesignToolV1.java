@@ -268,26 +268,6 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public Shape nearestShape2d( Collection<Shape> shapes, Point3D point ) {
-		// Go through all the shapes and find the nearest
-		double distance;
-		double minDistance = Double.MAX_VALUE;
-		Shape nearest = null;
-
-		for( Shape shape : shapes ) {
-			DesignShape data = DesignShapeView.getDesignData( shape );
-			if( data == null || data.isReference() ) continue;
-			distance = data.distanceTo( point );
-			if( distance < minDistance ) {
-				nearest = shape;
-				minDistance = distance;
-			}
-		}
-
-		return nearest;
-	}
-
-	@Override
 	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
 		Point3D mouse = worldToScreen( point );
 

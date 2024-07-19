@@ -433,11 +433,13 @@ public class DesignRenderer extends BorderPane {
 		return renderer.parentToLocal( parentBounds );
 	}
 
+	@Deprecated
 	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
 		double size = realToWorld( tolerance );
 		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
 	}
 
+	@Deprecated
 	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
 		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
 	}
@@ -549,12 +551,12 @@ public class DesignRenderer extends BorderPane {
 					}
 				}
 
-//				// FIXME Temporary code to show the bounding box
-//				if( 1 == 1 ) {
-//					Bounds bounds = shape.getVisualBounds();
-//					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
-//					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
-//				}
+				//				// FIXME Temporary code to show the bounding box
+				//				if( 1 == 1 ) {
+				//					Bounds bounds = shape.getVisualBounds();
+				//					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
+				//					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
+				//				}
 			}
 		}
 	}
@@ -763,19 +765,19 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private boolean isContained( DesignShape selector, DesignShape shape ) {
-		Bounds selectorBounds = renderer.localToParent( selector.getSelectBounds() );
-		Bounds shapeBounds = renderer.localToParent( shape.getSelectBounds() );
+		Bounds selectorBounds = localToParent( selector.getSelectBounds() );
+		Bounds shapeBounds = localToParent( shape.getSelectBounds() );
 
 		// This first test is an optimization to determine if the accurate test can be skipped
-		if( !localToParent( selectorBounds ).intersects( shapeBounds ) ) return false;
+		if( !selectorBounds.intersects( shapeBounds ) ) return false;
 
 		// This second test is an optimization for fully contained shapes
-		if( localToParent( selectorBounds ).contains( shapeBounds ) ) return true;
+		if( selectorBounds.contains( shapeBounds ) ) return true;
 
 		// This is the slow but accurate test if the shape is contained when the selector is not a box
 		Shape fxSelector = selector.getFxShape();
 		Shape fxShape = shape.getFxShape();
-		return !((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
+		return !((javafx.scene.shape.Path)Shape.subtract( fxSelector, fxShape )).getElements().isEmpty();
 	}
 
 	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
