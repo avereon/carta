@@ -97,7 +97,7 @@ public class DesignRenderer extends BorderPane {
 		// TODO Disconnect listeners
 
 		this.design = design;
-		visibleLayers().addAll( design.getAllLayers() );
+		setVisibleLayers( design.getAllLayers() );
 
 		// TODO Connect listeners
 
@@ -549,12 +549,12 @@ public class DesignRenderer extends BorderPane {
 					}
 				}
 
-				// FIXME Temporary code to show the bounding box
-				if( 1 == 1 ) {
-					Bounds bounds = shape.getVisualBounds();
-					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
-					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
-				}
+//				// FIXME Temporary code to show the bounding box
+//				if( 1 == 1 ) {
+//					Bounds bounds = shape.getVisualBounds();
+//					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
+//					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
+//				}
 			}
 		}
 	}

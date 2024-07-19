@@ -8,7 +8,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e6" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#c0c0c0ff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e6",
       "layers" : { },
@@ -33,7 +33,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e7" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#8080ffff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e7",
       "layers" : { },
@@ -57,7 +57,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e8" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#c0c000ff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e8",
       "layers" : { },
@@ -86,7 +86,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0e9" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#8000c0ff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e9",
       "layers" : { },
@@ -111,7 +111,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ea" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#00ff80ff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ea",
       "layers" : { },
@@ -137,7 +137,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0eb" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#0080ffff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0eb",
       "layers" : { },
@@ -165,7 +165,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ec" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#c04000ff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ec",
       "layers" : { },
@@ -181,7 +181,7 @@
           "id" : "73717fa4-08bc-4720-9edc-df174479f7c2",
           "origin" : "-3,3,0",
           "shape" : "path",
-          "steps" : [ "M -3 3", "L -4 3", "A -3 4 1 1 0 0 0", "L -2 2", "Z" ]
+          "steps" : [ "M -3 3", "L -4 3", "A -3 4 1 1 0 0 0", "L -2.5 3.5", "Z" ]
         }
       },
       "text-draw-cap" : "round",
@@ -189,7 +189,7 @@
     },
     "a56cede9-ee12-40d0-a86c-b3701146c0ed" : {
       "draw-cap" : "round",
-      "draw-paint" : "#ff0000ff",
+      "draw-paint" : "#c040ffff",
       "draw-width" : "0.05",
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0ed",
       "layers" : { },

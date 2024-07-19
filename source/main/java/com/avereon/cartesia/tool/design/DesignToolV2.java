@@ -622,7 +622,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		if( visible ) {
-			renderer.visibleLayers().add( layer );
+			if( !renderer.visibleLayers().contains( layer ) )renderer.visibleLayers().add( layer );
 		} else {
 			renderer.visibleLayers().remove( layer );
 		}
