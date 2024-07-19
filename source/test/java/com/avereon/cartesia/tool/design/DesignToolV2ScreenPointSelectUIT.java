@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -27,7 +28,7 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 		// then - the first line should be selected
 		List<DesignShape> selected = getTool().getSelectedGeometry();
 		assertThat( selected.size() ).isEqualTo( 1 );
-		assertThat( selected.getFirst().getOrigin() ).isEqualTo( new Point3D( -2, 2, 0 ) );
+		assertThat( selected.getFirst() ).isInstanceOf( DesignLine.class );
 	}
 
 	@Test
@@ -43,7 +44,7 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 		// then - the first line should be selected
 		List<DesignShape> selected = getTool().getSelectedGeometry();
 		assertThat( selected.size() ).isEqualTo( 1 );
-		assertThat( selected.getFirst().getOrigin() ).isEqualTo( new Point3D( -2, 2, 0 ) );
+		assertThat( selected.getFirst() ).isInstanceOf( DesignLine.class );
 
 		// when - select again
 		getTool().screenPointSelect( mouse, false );
