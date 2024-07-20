@@ -52,7 +52,7 @@ public class CameraMove extends CameraCommand {
 	}
 
 	@Override
-	public void handle( MouseEvent event ) {
+	public void handle( CommandContext context, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
 			if( CommandTrigger.of( event ).matches( eventKey, MouseEvent.MOUSE_DRAGGED ) ) {

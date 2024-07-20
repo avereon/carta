@@ -223,7 +223,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		Iterator<CommandExecuteRequest> iterator = commandStack.iterator();
 		while( !event.isConsumed() && iterator.hasNext() ) {
 			request = iterator.next();
-			request.getCommand().handle( event );
+			request.getCommand().handle( this, event );
 		}
 	}
 
@@ -264,7 +264,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	private void doEventCommand( InputEvent event ) {
 		// NOTE This method does not handle key events, those are handled by the action infrastructure
 		CommandMetadata metadata = CommandMap.get( event );
-		if( metadata != CommandMap.NONE ) pushCommand( event, metadata.getType(), metadata.getParameters() );
+		if( metadata != CommandMap.NONE ) {
+			log.atConfig().log( "doEventCommand: %s -> %s", event, metadata );
+			pushCommand( event, metadata.getType(), metadata.getParameters() );
+		}
 	}
 
 	private CommandMetadata mapCommand( String input ) {

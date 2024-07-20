@@ -35,13 +35,26 @@ public class Select extends Command {
 		//		}
 
 		if( parameters[ 0 ] instanceof MouseEvent event ) {
-			if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
-				mousePressed( context, event );
-				return mouseReleased( context, event );
+			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED ) {
+				eventKey = CommandTrigger.of( event );
+			} else if( event.getEventType() == MouseEvent.MOUSE_CLICKED ) {
+				return selectGeometry( context, event );
 			}
 		}
 
 		throw new IllegalArgumentException( "Invalid parameter=%s" + parameters[ 0 ] );
+	}
+
+	private Object selectGeometry( CommandContext context, MouseEvent event ) {
+		BaseDesignTool tool = context.getTool();
+		Point3D point = new Point3D( event.getX(), event.getY(), event.getZ() );
+
+		if( event.isStillSincePress() ) {
+			tool.screenPointSelect( point, isSelectToggle( event ) );
+			return tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+		}
+
+		return COMPLETE;
 	}
 
 	private Object mousePressed( CommandContext context, MouseEvent event ) {
@@ -72,12 +85,13 @@ public class Select extends Command {
 	}
 
 	@Override
-	public void handle( MouseEvent event ) {
+	public void handle( CommandContext context, MouseEvent event ) {
+		log.atConfig().log( "Select.handle: %s", event );
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		if( eventKey != null ) {
 			Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 			if( event.getEventType() == MouseEvent.MOUSE_DRAGGED && event.getButton() == eventKey.getButton() ) {
-				tool.updateSelectAperture( dragAnchor, mouse );
+				tool.updateSelectAperture( context.getAnchor(), mouse );
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED && event.getButton() == eventKey.getButton() ) {
 				tool.updateSelectAperture( mouse, mouse );
 				tool.getCommandContext().resubmit( tool, this, event );

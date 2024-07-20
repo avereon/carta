@@ -59,7 +59,7 @@ public class MeasurePoint extends MeasureCommand {
 	}
 
 	@Override
-	public void handle( MouseEvent event ) {
+	public void handle( CommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			if( referenceLine != null ) {
 				BaseDesignTool tool = (BaseDesignTool)event.getSource();

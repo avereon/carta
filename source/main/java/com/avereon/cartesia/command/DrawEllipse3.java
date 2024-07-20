@@ -74,7 +74,7 @@ public class DrawEllipse3 extends DrawCommand {
 	}
 
 	@Override
-	public void handle( MouseEvent event ) {
+	public void handle( CommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );

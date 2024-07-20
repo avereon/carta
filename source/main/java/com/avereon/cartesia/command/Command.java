@@ -101,7 +101,7 @@ public class Command {
 
 	public void handle( CommandContext context, KeyEvent event ) {}
 
-	public void handle( MouseEvent event ) {}
+	public void handle( CommandContext context, MouseEvent event ) {}
 
 	@Override
 	public String toString() {
