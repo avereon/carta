@@ -28,6 +28,52 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Abstract class representing a command that can be executed in a design tool.
+ *
+ * <p>
+ * A Command is responsible for executing a specific action or operation in the
+ * design tool. It can perform operations such as creating or modifying design
+ * shapes, selecting or deselecting shapes, and handling user input events.
+ * </p>
+ *
+ * <p>
+ * The Command class provides methods for managing the execution of the command,
+ * such as setting the current step, waiting for a specific condition to be met,
+ * and marking a step as executed.
+ * </p>
+ *
+ * <p>
+ * The Command class also provides utility methods for converting values to
+ * specific data types, prompting for user input, and manipulating design
+ * shapes.
+ * </p>
+ *
+ * <h2>Writing Commands</h2>
+ *
+ * Writing a command class requires understanding the intent of commands. A
+ * command class need to handle three main use cases, scripted input,
+ * interactive input and interactive events. A user may choose any of these
+ * scenarios and the command must be able to interact with the user properly.
+ * <p>
+ * When a command is executed, it is given any parameters that might be
+ * available. If all parameters are available then the command should execute
+ * to completion. If all parameters are not available, the command should
+ * execute to the point it can and interact with the user for any missing
+ * parameters. The user may provide these parameters in the command prompt or
+ * through input events such as mouse or gesture events.
+ * <p>
+ * As new parameters are made available the execute method is called to see
+ * if the command can be executed to completion. If so, the command terminates
+ * and control is returned to the command context. The execute method may be
+ * called as many times as necessary while the user provides input. In the case
+ * of some commands, such as the {@link DrawPath} command, the number of
+ * parameters is undefined. For most commands, however, there are specific
+ * parameters expected.
+ *
+ * @see DesignShape
+ * @see CommandContext
+ */
 @CustomLog
 public abstract class Command {
 
