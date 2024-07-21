@@ -107,24 +107,29 @@ public abstract class DesignShape extends DesignDrawable {
 		return (T)this;
 	}
 
+	// Convenience method for rendering
 	public boolean isReference() {
 		return getValue( REFERENCE, false );
 	}
 
-	public DesignShape setReference( boolean preview ) {
-		setValue( REFERENCE, preview ? true : null );
+	// Convenience method for rendering
+	public DesignShape setReference( boolean reference ) {
+		setValue( REFERENCE, reference ? true : null );
 		return this;
 	}
 
+	// Convenience method for rendering
 	public boolean isSelected() {
 		return getValue( SELECTED, false );
 	}
 
+	// Convenience method for rendering
 	public DesignShape setSelected( boolean selected ) {
 		setValue( SELECTED, selected ? true : null );
 		return this;
 	}
 
+	// Convenience method for selecting
 	public Shape getFxShape() {
 		return (Shape)cache.computeIfAbsent( CACHE_FX_SHAPE, k -> CadGeometry.toFxShape( this ) );
 	}

@@ -256,20 +256,26 @@ public class DesignRenderer extends BorderPane {
 	// Selected Shapes -----------------------------------------------------------
 
 	public boolean isShapeSelected( DesignShape shape ) {
-		return selectedShapes.contains( shape );
+		// FIXME Both of these options should work, but the shape flag does not
+		//return selectedShapes.contains( shape );
+		return shape.isSelected();
 	}
 
-	public List<DesignShape> getSelectedShapes() {
-		return selectedShapes;
-	}
+//	public List<DesignShape> getSelectedShapes() {
+//		return selectedShapes;
+//	}
 
 	public void clearSelectedShapes() {
-		setSelectedShapes( null );
+		selectedShapes.forEach( s -> s.setSelected( false ) );
+		selectedShapes.clear();
 	}
 
 	public void setSelectedShapes( Collection<DesignShape> shapes ) {
-		selectedShapes.clear();
-		if( shapes != null ) selectedShapes.addAll( shapes );
+		clearSelectedShapes();
+		if( shapes != null ) {
+			shapes.forEach( s -> s.setSelected( true ) );
+			selectedShapes.addAll( shapes );
+		}
 	}
 
 	public ObservableList<DesignShape> selectedShapes() {
@@ -532,6 +538,7 @@ public class DesignRenderer extends BorderPane {
 			for( DesignShape shape : orderedShapes ) {
 				// TODO Would this be faster as a flag on the shape?
 				boolean selected = isShapeSelected( shape );
+//				boolean selected = shape.isSelected();
 
 				Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
 				Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
