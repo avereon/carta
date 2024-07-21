@@ -35,6 +35,7 @@ public class CommandTrigger {
 
 	private MouseButton mouseButton;
 
+	// TODO Can this constructor be deprecated?
 	private CommandTrigger( InputEvent event ) {
 		this.type = event.getEventType();
 		if( event instanceof MouseEvent mouse ) {
@@ -66,6 +67,7 @@ public class CommandTrigger {
 		this( type, button, false, false, false, false );
 	}
 
+	// TODO Can this constructor be improved by using mouse and gesture flags?
 	public CommandTrigger( EventType<?> type, MouseButton button, boolean isControl, boolean isShift, boolean isAlt, boolean isMeta ) {
 		this.type = type;
 		this.mouseButton = button;
@@ -90,7 +92,6 @@ public class CommandTrigger {
 	public boolean matchesWithType( InputEvent event, EventType<?> type ) {
 		boolean typeMatches = event.getEventType().equals( type );
 		if( event instanceof MouseEvent mouseEvent) {
-			mouseEvent.isAltDown();
 			boolean buttonMatches = mouseEvent.getButton() == mouseButton;
 			boolean controlMatches = mouseEvent.isControlDown() == isControl;
 			boolean shiftMatches = mouseEvent.isShiftDown() == isShift;

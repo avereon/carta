@@ -271,7 +271,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	private void doEventCommand( InputEvent event ) {
 		// NOTE This method does not handle key events
 		// those are handled by the action infrastructure
-		CommandMetadata metadata = CommandMap.get( event );
+		CommandMetadata metadata = CommandMap.getCommandByEvent( event );
 		if( metadata != CommandMap.NONE ) {
 			pushCommand( event, metadata.getType(), metadata.getParameters() );
 		}
@@ -280,7 +280,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	private CommandMetadata mapCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return null;
 
-		CommandMetadata mapping = CommandMap.get( input );
+		CommandMetadata mapping = CommandMap.getCommandByShortcut( input );
 		if( mapping == CommandMap.NONE ) throw new UnknownCommand( input );
 
 		return mapping;

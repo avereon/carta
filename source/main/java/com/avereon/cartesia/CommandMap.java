@@ -23,7 +23,7 @@ public class CommandMap {
 
 	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", List.of(), Noop.class );
 
-	private static final Map<String, String> commandActions = new ConcurrentHashMap<>();
+	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
 	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
@@ -31,7 +31,7 @@ public class CommandMap {
 
 	public static void load( XenonProgramProduct product ) {
 		actionCommands.clear();
-		commandActions.clear();
+		shortcutActions.clear();
 		eventActions.clear();
 
 		// High level letters
@@ -212,6 +212,9 @@ public class CommandMap {
 		// TODO Might consider setting the anchor on any mouse pressed event
 		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ) );
 		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, true, false ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true ) );
 
 		// Selects -----------------------------------------------------------------
 		// Single select
@@ -264,14 +267,14 @@ public class CommandMap {
 	}
 
 	public static boolean hasCommand( String shortcut ) {
-		return get( shortcut ) != NONE;
+		return getCommandByShortcut( shortcut ) != NONE;
 	}
 
-	public static CommandMetadata get( String shortcut ) {
-		return getActionCommand( commandActions.getOrDefault( shortcut.toLowerCase(), TextUtil.EMPTY ) );
+	public static CommandMetadata getCommandByShortcut( String shortcut ) {
+		return getActionCommand( shortcutActions.getOrDefault( shortcut.toLowerCase(), TextUtil.EMPTY ) );
 	}
 
-	public static CommandMetadata get( InputEvent event ) {
+	public static CommandMetadata getCommandByEvent( InputEvent event ) {
 		return getActionCommand( eventActions.getOrDefault( CommandTrigger.of( event ), TextUtil.EMPTY ) );
 	}
 
@@ -307,14 +310,14 @@ public class CommandMap {
 	}
 
 	private static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, List<String> tags, Object... parameters ) {
-		if( command != null && commandActions.containsKey( command ) ) {
-			CommandMetadata existing = actionCommands.get( commandActions.get( command ) );
+		if( command != null && shortcutActions.containsKey( command ) ) {
+			CommandMetadata existing = actionCommands.get( shortcutActions.get( command ) );
 			log.atSevere().log( "Shortcut already used [%s]: %s %s", command, LazyEval.of( existing::getAction ), action );
 			return;
 		}
 
 		actionCommands.computeIfAbsent( action, k -> {
-			if( command != null ) commandActions.put( command, action );
+			if( command != null ) shortcutActions.put( command, action );
 			return new CommandMetadata( action, name, command, shortcut, tags, type, parameters );
 		} );
 	}
