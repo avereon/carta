@@ -395,8 +395,8 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
-		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, x, y ) );
+	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
+		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, point ) );
 	}
 
 	@Override
@@ -888,7 +888,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public void updateSelectAperture( Point3D anchor, Point3D mouse ) {
+	public void setSelectWindow( Point3D anchor, Point3D mouse ) {
 		if( anchor == null ) return;
 		double x = Math.min( anchor.getX(), mouse.getX() );
 		double y = Math.min( anchor.getY(), mouse.getY() );

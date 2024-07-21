@@ -42,7 +42,10 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -100,7 +103,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private final ObjectProperty<DesignValue> selectTolerance;
 
-	private final ObjectProperty<DesignShape> selectAperture;
+	//private final ObjectProperty<DesignShape> selectAperture;
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
@@ -161,7 +164,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		this.reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		this.selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
-		this.selectAperture = new SimpleObjectProperty<>();
+		//this.selectAperture = new SimpleObjectProperty<>();
 		this.currentLayer = new SimpleObjectProperty<>();
 		this.currentView = new SimpleObjectProperty<>();
 		this.selectDrawPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_DRAW ) );
@@ -360,11 +363,11 @@ public class DesignToolV2 extends BaseDesignTool {
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 
 		// Update the select aperture when the mouse moves
-		addEventFilter( MouseEvent.MOUSE_MOVED, e -> updateSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> setSelectWindow( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
 
 		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
-		addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
+		//addEventFilter( MouseDragEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
@@ -563,7 +566,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	public ObjectProperty<DesignShape> selectAperture() {
-		return selectAperture;
+		return renderer.selectAperture();
 	}
 
 	@Override
@@ -700,8 +703,8 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
-		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, x, y ) );
+	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
+		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
 	}
 
 	@Override
@@ -786,8 +789,14 @@ public class DesignToolV2 extends BaseDesignTool {
 		return gridSnapEnabled;
 	}
 
+	/**
+	 * Set the select aperture window. Points are specified in screen coordinates.
+	 *
+	 * @param anchor The anchor point
+	 * @param mouse The mouse point
+	 */
 	@Override
-	public void updateSelectAperture( Point3D anchor, Point3D mouse ) {
+	public void setSelectWindow( Point3D anchor, Point3D mouse ) {
 		if( anchor == null || mouse == null ) return;
 
 		// Set the select aperture
@@ -807,7 +816,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		selectAperture.setFillPaint( selectFillPaint.get() );
 		selectAperture.setDrawPaint( selectDrawPaint.get() );
-		renderer.setSelectAperture( selectAperture );
 		selectAperture().set( selectAperture );
 	}
 

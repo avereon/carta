@@ -122,7 +122,7 @@ public class Command {
 
 	protected Point3D asPoint( CommandContext context, Object value ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
-		return CadShapes.parsePoint( String.valueOf( value ), context.getAnchor() );
+		return CadShapes.parsePoint( String.valueOf( value ), context.getWorldAnchor() );
 	}
 
 	protected Point3D asPoint( Point3D anchor, Object value ) throws Exception {

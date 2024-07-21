@@ -32,7 +32,7 @@ public class MeasurePoint extends MeasureCommand {
 		clearReferenceAndPreview( context );
 
 		try {
-			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );
+			Point3D p1 = asPoint( context.getWorldAnchor(), parameters[ 0 ] );
 			// TODO Run the point value through the design value formatter
 			String point = CadShapes.toString( p1 );
 

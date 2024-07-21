@@ -34,7 +34,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 		// Step 2
 		if( parameters.length < 2 ) {
-			reference = selectNearestShapeAtPoint( context, asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			reference = selectNearestShapeAtPoint( context, asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
 			if( reference == DesignShape.NONE ) return INVALID;
 
 			addPreview( context, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
@@ -53,9 +53,9 @@ public class DrawLinePerpendicular extends DrawCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			DesignShape shape = findNearestShapeAtPoint( context, asPoint( context.getAnchor(), parameters[ 0 ] ) );
-			Point3D origin = asPoint( context.getAnchor(), parameters[ 1 ] );
-			Point3D point = getPerpendicular( shape, origin, asPoint( context.getAnchor(), parameters[ 2 ] ) );
+			DesignShape shape = findNearestShapeAtPoint( context, asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
+			Point3D origin = asPoint( context.getWorldAnchor(), parameters[ 1 ] );
+			Point3D point = getPerpendicular( shape, origin, asPoint( context.getWorldAnchor(), parameters[ 2 ] ) );
 			// Start an undo multi-change
 			context.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
 			// Done with undo multi-change

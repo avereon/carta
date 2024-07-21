@@ -39,9 +39,10 @@
 		<curve.version>[0.5-SNAPSHOT,)</curve.version>
 		<marea.version>[0.3-SNAPSHOT,)</marea.version>
 		<zerra.version>[0.10-SNAPSHOT,)</zerra.version>
+		<cameo.version>2.10</cameo.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>21.0.2</monocle.version>
-		<cameo.version>2.10</cameo.version>
+		<mockito.version>3.12.4</mockito.version>
 		<images-folder>target/main/images</images-folder>
 	</properties>
 
@@ -84,6 +85,12 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

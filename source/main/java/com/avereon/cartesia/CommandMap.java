@@ -80,6 +80,7 @@ public class CommandMap {
 		// Basic commands
 		add( product, "anchor", Anchor.class );
 		add( product, "select", Select.class );
+		add( product, "select-window", SelectByWindow.class );
 
 		// View commands
 		add( product, "camera-move", CameraMove.class );
@@ -187,58 +188,57 @@ public class CommandMap {
 		// - Ctrl-Click to toggle select
 		// - Drag to window select
 		// - Shift-Drag to window select by intersection
-		// - Ctrl-Drag to move camara
-		// - Ctrl-Scroll to zoom camara
-		// - Ctrl-Shift-Drag to spin camara
-		// - Ctrl-Shift-Scroll to walk camara
+		// - Ctrl-Drag to move camera
+		// - Ctrl-Scroll to zoom camera
+		// - Ctrl-Shift-Drag to spin camera
+		// - Ctrl-Shift-Scroll to walk camera
+		//
+		// Ctrl-Click (toggle select) and Ctrl-Drag (move camera) collide in this situation.
 		//
 		// The one that doesn't work is the Ctrl-Click to toggle select. That's
 		// because we start a command based on the initial mouse event and modifiers.
 		// To fix that we need to trigger the command on the "latest" possible event
 		// that defines the command shortcut.
 
-		// Future code:
 		/*
-		// Camera move (aka pan)
-		add( new CommandTrigger( MouseEvent.MOUSE_DRAGGED, MouseButton.PRIMARY, true, false, false, false ), "camera-move" );
-		// Camera zoom
-		add( new CommandTrigger( ScrollEvent.SCROLL, true, false, false, false ), "camera-zoom" );
-		add( new CommandTrigger( ZoomEvent.ZOOM, false, false, false, false ), "camera-zoom" );
-
-		// Camera 3D ---------------------------------------------------------------
-		// Camera spin
-		//add( new CommandEventKey( MouseEvent.MOUSE_DRAGGED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
-		// Camera walk (moving the camara forward and back)
-		//add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-walk" );
-		//add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-walk" );
+		 * There are 4 key event flags, all 4 of which are clearly usable.
+		 */
+		/*
+		 * There are 12 mouse event flags, 10 of which are clearly usable. We only
+		 * support 9 of them in CommandTrigger. We are missing stillSincePress.
 		 */
 
 		// Anchor ------------------------------------------------------------------
-		add( new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ), "anchor" );
+		// TODO Might consider setting the anchor on any mouse pressed event
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ) );
 
 		// Selects -----------------------------------------------------------------
 		// Single select
-		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY ), "select" );
+		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY ) );
 		// Toggle select
-		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, true, false, false, false ), "select" );
+		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false ) );
 		// Window select
-		add( new CommandTrigger( MouseEvent.MOUSE_DRAGGED, MouseButton.PRIMARY, false, true, false, false ), "select" );
+		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false ) );
+		// Window select by intersection
+		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false ) );
 
 		// Snaps -------------------------------------------------------------------
 		// Snap nearest
-		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.SECONDARY ), "snap-auto-nearest" );
+		add( "snap-auto-nearest", new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.SECONDARY ) );
 		// Snap midpoint
-		add( new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.MIDDLE ), "snap-auto-midpoint" );
+		add( "snap-auto-midpoint", new CommandTrigger( MouseEvent.MOUSE_CLICKED, MouseButton.MIDDLE ) );
 
 		// Camera 2D ---------------------------------------------------------------
 		// Camera move (aka pan)
-		add( new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ), "camera-move" );
-		// Camera spin
-		//add( new CommandEventKey( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
+		add( "camera-move", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, true, false, false, false ) );
 		// Camera zoom
-		add( new CommandTrigger( ScrollEvent.SCROLL, true, false, false, false ), "camera-zoom" );
-		add( new CommandTrigger( ZoomEvent.ZOOM, false, false, false, false ), "camera-zoom" );
-		// Camera walk (moving the camara forward and back)
+		add( "camera-zoom", new CommandTrigger( ScrollEvent.SCROLL, true, false, false, false ) );
+		add( "camera-zoom", new CommandTrigger( ZoomEvent.ZOOM, false, false, false, false ) );
+
+		// Camera spin
+		//add( new CommandEventKey( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
+		// Camera walk (moving the camera forward and back)
 		//add( new CommandEventKey( ScrollEvent.SCROLL, false, true, false, false ), "camera-walk" );
 		//add( new CommandEventKey( ZoomEvent.ZOOM, false, true, false, false ), "camera-walk" );
 
@@ -284,7 +284,7 @@ public class CommandMap {
 		return mapping;
 	}
 
-	private static void add( CommandTrigger key, String action ) {
+	private static void add( String action, CommandTrigger key ) {
 		eventActions.put( key, action );
 	}
 

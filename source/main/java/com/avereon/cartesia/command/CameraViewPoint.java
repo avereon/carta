@@ -19,7 +19,7 @@ public class CameraViewPoint extends CameraCommand {
 		}
 
 		try {
-			context.getTool().setViewPoint( asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			context.getTool().setViewPoint( asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-move-to-viewpoint", exception );

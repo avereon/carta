@@ -42,6 +42,10 @@ public class CadPoints {
 		return new Point2D( point.getX(), point.getY() );
 	}
 
+	/**
+	 * @deprecated Use {@link #toPoint3d(Point2D)} instead.
+	 */
+	@Deprecated
 	public static Point3D toPoint3d( double x, double y, double z ) {
 		return new Point3D( x, y, z );
 	}

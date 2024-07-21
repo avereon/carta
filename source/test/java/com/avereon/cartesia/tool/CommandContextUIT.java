@@ -146,7 +146,7 @@ public class CommandContextUIT extends BaseCartesiaUIT {
 		MockCommand command = new MockCommand( 1 );
 		context.submit( tool, command );
 		command.waitFor();
-		context.setAnchor( new Point3D( 1, 1, 1 ) );
+		context.setWorldAnchor( new Point3D( 1, 1, 1 ) );
 		context.setInputMode( CommandContext.Input.POINT );
 		context.processText( "@4,3,2", true );
 		command.waitFor();

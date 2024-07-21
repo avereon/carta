@@ -248,10 +248,9 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 *
 	 * @param viewAnchor The view point location before being dragged (world)
 	 * @param dragAnchor The drag anchor (screen)
-	 * @param x The new X coordinate (screen)
-	 * @param y The new Y coordinate (screen)
+	 * @param point The new view point (screen)
 	 */
-	public abstract void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y );
+	public abstract void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
 
 	public abstract Point3D mouseToWorld( Point3D point );
 
@@ -285,7 +284,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract BooleanProperty gridSnapEnabled();
 
-	public abstract void updateSelectAperture( Point3D anchor, Point3D mouse );
+	public abstract void setSelectWindow( Point3D anchor, Point3D mouse );
 
 	public abstract List<Shape> screenPointFindOneAndWait( Point3D mouse );
 

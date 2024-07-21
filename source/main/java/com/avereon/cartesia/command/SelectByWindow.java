@@ -7,22 +7,23 @@ import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 @CustomLog
-public class CameraMove extends CameraCommand {
+public class SelectByWindow extends Command {
 
-	private Point3D viewAnchor;
+	@Override
+	public boolean clearSelectionWhenComplete() {
+		return false;
+	}
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) {
-			promptForPoint( context, "pan-point" );
-			return INCOMPLETE;
-		}
+		if( parameters.length < 1 ) return COMPLETE;
 
 		if( parameters[ 0 ] instanceof MouseEvent event ) {
 			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
-				viewAnchor = context.getTool().getViewPoint();
+				// This command is not complete until the mouse is released
 				return INCOMPLETE;
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+				// The command is complete when the handle method submits the command again with the mouse released event
 				return COMPLETE;
 			}
 		}
@@ -37,11 +38,18 @@ public class CameraMove extends CameraCommand {
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
-			tool.pan( viewAnchor, anchor, mouse );
+			tool.setSelectWindow( anchor, mouse );
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
+			tool.screenWindowSelect( anchor, mouse, isSelectByIntersect( event ), false );
+			tool.setSelectWindow( mouse, mouse );
 			// The command needs to be submitted again with this event to complete
 			tool.getCommandContext().submit( tool, this, event );
 		}
+	}
+
+	private boolean isSelectByIntersect( MouseEvent event ) {
+		// This needs to match the mouse flag in the trigger
+		return event.isShiftDown();
 	}
 
 }

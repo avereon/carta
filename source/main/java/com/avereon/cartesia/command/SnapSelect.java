@@ -21,7 +21,7 @@ public class SnapSelect extends SnapCommand {
 			return INCOMPLETE;
 		}
 
-		Point3D point = asPoint( context.getAnchor(), parameters[ 1 ] );
+		Point3D point = asPoint( context.getWorldAnchor(), parameters[ 1 ] );
 		Point3D snapPoint = snap.snap( context.getTool(), point );
 		return snapPoint != CadPoints.NONE ? snapPoint : COMPLETE;
 	}

@@ -360,15 +360,14 @@ public class DesignRenderer extends BorderPane {
 	 *
 	 * @param viewAnchor The view point location before being dragged (world)
 	 * @param dragAnchor The point where the mouse was pressed (screen)
-	 * @param x The mouse event X coordinate (screen)
-	 * @param y The mouse event Y coordinate (screen)
+	 * @param point The new view point (screen)
 	 */
-	public void pan( Point3D viewAnchor, Point3D dragAnchor, double x, double y ) {
+	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
 		// Convert the view anchor to screen coordinates
 		Point2D anchor = renderer.localToParent( CadPoints.toPoint2d( viewAnchor ) );
 
 		// Calculate the drag offset in screen coordinates
-		Point2D delta = new Point2D( dragAnchor.getX() - x, dragAnchor.getY() - y );
+		Point2D delta = new Point2D( dragAnchor.getX() - point.getX(), dragAnchor.getY() - point.getY() );
 
 		// Set the new viewpoint in world coordinates
 		renderer.setViewpoint( renderer.parentToLocal( anchor.add( delta ) ) );
@@ -435,12 +434,14 @@ public class DesignRenderer extends BorderPane {
 
 	@Deprecated
 	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
+		// NOTE The select logic is in screen coordinates, so this might be un-deprecated
 		double size = realToWorld( tolerance );
 		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
 	}
 
 	@Deprecated
 	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+		// NOTE The select logic is in screen coordinates, so this might be un-deprecated
 		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
 	}
 
@@ -473,6 +474,15 @@ public class DesignRenderer extends BorderPane {
 
 		DesignBox box = new DesignBox( x, y, w, h );
 		return doFindByShape( box, intersect );
+	}
+
+	double realToWorld( DesignValue value ) {
+		// Convert the provided value to design units and divide by the zoom factor
+		return value.to( design.calcDesignUnit() ).getValue() / getZoomX();
+	}
+
+	double realToScreen( DesignValue value ) {
+		return value.to( DesignUnit.INCH ).getValue() * getDpiX();
 	}
 
 	private void doRender() {
@@ -659,10 +669,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private List<Path.Step> toMareaPathSteps( DesignPath path ) {
-		return toMareaPathSteps( path.getSteps() );
-	}
-
-	private List<Path.Step> toMareaPathSteps( List<DesignPath.Step> steps ) {
+		List<DesignPath.Step> steps = path.getSteps();
 		if( steps.isEmpty() ) return List.of();
 
 		DesignPath.Step move = steps.getFirst();
@@ -671,20 +678,20 @@ public class DesignRenderer extends BorderPane {
 			return List.of();
 		}
 
-		Path path = new Path();
+		Path mareaPath = new Path();
 		for( DesignPath.Step step : steps ) {
 			double[] data = step.data();
 			switch( step.command() ) {
-				case M -> path.move( data[ 0 ], data[ 1 ] );
-				case A -> path.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ] );
-				case L -> path.line( data[ 0 ], data[ 1 ] );
-				case B -> path.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
-				case Q -> path.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
-				case Z -> path.close();
+				case M -> mareaPath.move( data[ 0 ], data[ 1 ] );
+				case A -> mareaPath.arc( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ], data[ 6 ] );
+				case L -> mareaPath.line( data[ 0 ], data[ 1 ] );
+				case B -> mareaPath.curve( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], data[ 4 ], data[ 5 ] );
+				case Q -> mareaPath.quad( data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ] );
+				case Z -> mareaPath.close();
 			}
 		}
 
-		return path.getSteps();
+		return mareaPath.getSteps();
 	}
 
 	private void renderHintGeometry() {
@@ -726,15 +733,6 @@ public class DesignRenderer extends BorderPane {
 			renderer.setDrawPen( drawColor, 1.0, LineCap.SQUARE, LineJoin.MITER, null, 0.0, false );
 			renderer.drawScreenBox( rectangle.getOrigin().getX(), rectangle.getOrigin().getY(), rectangle.getSize().getX(), rectangle.getSize().getY() );
 		}
-	}
-
-	double realToWorld( DesignValue value ) {
-		// Convert the provided value to design units and divide by the zoom factor
-		return value.to( design.calcDesignUnit() ).getValue() / getZoomX();
-	}
-
-	double realToScreen( DesignValue value ) {
-		return value.to( DesignUnit.INCH ).getValue() * getDpiX();
 	}
 
 	//	private double getInternalScale() {

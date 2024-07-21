@@ -202,7 +202,7 @@ public class DesignPaneTest extends BaseFxPlatformTestCase implements TestTimeou
 		Point3D viewAnchor = new Point3D( -2, -1, 0 );
 		Point3D dragAnchor = new Point3D( 1, 1, 0 );
 		Point3D mouse = new Point3D( 2, 0.5, 0 );
-		pane.mousePan( viewAnchor, dragAnchor.multiply( SCALE ), mouse.multiply( SCALE ).getX(), mouse.multiply( SCALE ).getY() );
+		pane.mousePan( viewAnchor, dragAnchor.multiply( SCALE ), mouse.multiply( SCALE ) );
 
 		double x = viewAnchor.getX() + (dragAnchor.getX() - mouse.getX());
 		double y = viewAnchor.getY() - (dragAnchor.getY() - mouse.getY());

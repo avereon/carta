@@ -80,16 +80,25 @@ public class CommandTrigger {
 	}
 
 	/**
-	 * This matches all the attributes of this event key with the specified event
-	 * key except for the event type which it matches with the specified type.
+	 * This matches all the attributes of the specified event with this trigger
+	 * except for the event type which it matches with the specified type.
 	 *
-	 * @param eventKey The event key to match against
+	 * @param event The event to match with this trigger
 	 * @param type The specific event type to match
-	 * @return True if this event key matches, false otherwise
+	 * @return true if this trigger matches, false otherwise
 	 */
-	public boolean matches( CommandTrigger eventKey, EventType<?> type ) {
-		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && this.type
-			.equals( type ) && mouseButton == eventKey.mouseButton;
+	public boolean matchesWithType( InputEvent event, EventType<?> type ) {
+		boolean typeMatches = event.getEventType().equals( type );
+		if( event instanceof MouseEvent mouseEvent) {
+			mouseEvent.isAltDown();
+			boolean buttonMatches = mouseEvent.getButton() == mouseButton;
+			boolean controlMatches = mouseEvent.isControlDown() == isControl;
+			boolean shiftMatches = mouseEvent.isShiftDown() == isShift;
+			boolean altMatches = mouseEvent.isAltDown() == isAlt;
+			boolean metaMatches = mouseEvent.isMetaDown() == isMeta;
+			return typeMatches && buttonMatches && controlMatches && shiftMatches && altMatches && metaMatches;
+		}
+		return false;
 	}
 
 	@Override

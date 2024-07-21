@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Select;
 import com.avereon.cartesia.command.Value;
@@ -49,6 +50,9 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private BaseDesignTool lastActiveDesignTool;
 
+	@Getter
+	private CommandTrigger trigger;
+
 	@Setter
 	@Getter
 	private Input inputMode;
@@ -63,7 +67,11 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	@Getter
 	@Setter
-	private Point3D anchor;
+	private Point3D worldAnchor;
+
+	@Getter
+	@Setter
+	private Point3D screenAnchor;
 
 	private BaseDesignTool tool;
 
@@ -88,12 +96,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public Command submit( BaseDesignTool tool, Command command, Object... parameters ) {
-		return pushCommand( tool, command, parameters );
-	}
-
-	public Command resubmit( BaseDesignTool tool, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
-		return submit( tool, command, parameters );
+		return pushCommand( tool, command, parameters );
 	}
 
 	public void cancel( KeyEvent event ) {
@@ -157,7 +161,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		if( force ) {
 			return switch( getInputMode() ) {
 				case NUMBER -> pushCommand( new Value(), CadShapes.parsePoint( input ).getX() );
-				case POINT -> pushCommand( new Value(), CadShapes.parsePoint( input, getAnchor() ) );
+				case POINT -> pushCommand( new Value(), CadShapes.parsePoint( input, getWorldAnchor() ) );
 				case TEXT -> pushCommand( new Value(), input );
 				default -> pushCommand( mapCommand( input ) );
 			};
@@ -217,7 +221,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	public void handle( MouseEvent event ) {
 		doEventCommand( event );
+		forwardCommandToCommandStack( event );
+	}
 
+	private void forwardCommandToCommandStack( MouseEvent event ) {
 		// Forward the mouse event to the other commands in the stack
 		CommandExecuteRequest request;
 		Iterator<CommandExecuteRequest> iterator = commandStack.iterator();
@@ -262,10 +269,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void doEventCommand( InputEvent event ) {
-		// NOTE This method does not handle key events, those are handled by the action infrastructure
+		// NOTE This method does not handle key events
+		// those are handled by the action infrastructure
 		CommandMetadata metadata = CommandMap.get( event );
 		if( metadata != CommandMap.NONE ) {
-			log.atConfig().log( "doEventCommand: %s -> %s", event, metadata );
 			pushCommand( event, metadata.getType(), metadata.getParameters() );
 		}
 	}
@@ -345,7 +352,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 					setInputMode( request.getCommand().getInputMode() );
 					result = request.executeCommandStep( result );
 					if( result == Command.INVALID ) break;
-					if( result instanceof Point3D ) setAnchor( (Point3D)result );
+					if( result instanceof Point3D ) setWorldAnchor( (Point3D)result );
 					if( result == Command.INCOMPLETE ) break;
 					commandStack.remove( request );
 				}

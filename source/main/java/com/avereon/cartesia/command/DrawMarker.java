@@ -34,7 +34,7 @@ public class DrawMarker extends DrawCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			context.getTool().getCurrentLayer().addShape( new DesignMarker( asPoint( context.getAnchor(), parameters[ 0 ] ) ) );
+			context.getTool().getCurrentLayer().addShape( new DesignMarker( asPoint( context.getWorldAnchor(), parameters[ 0 ] ) ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );

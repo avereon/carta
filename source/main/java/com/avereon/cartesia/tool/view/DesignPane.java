@@ -435,12 +435,11 @@ public class DesignPane extends StackPane {
 	 *
 	 * @param viewAnchor The view point location before being dragged (world)
 	 * @param dragAnchor The point where the mouse was pressed (screen)
-	 * @param mouseX The mouse event X coordinate (screen)
-	 * @param mouseY The mouse event Y coordinate (screen)
+	 * @param point The new view point (screen)
 	 */
-	public void mousePan( Point3D viewAnchor, Point3D dragAnchor, double mouseX, double mouseY ) {
+	public void mousePan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
 		Point3D anchor = localToParent( viewAnchor );
-		Point3D delta = new Point3D( dragAnchor.getX() - mouseX, dragAnchor.getY() - mouseY, 0 );
+		Point3D delta = new Point3D( dragAnchor.getX() - point.getX(), dragAnchor.getY() - point.getY(), 0 );
 		setViewPoint( parentToLocal( anchor.add( delta ) ) );
 	}
 

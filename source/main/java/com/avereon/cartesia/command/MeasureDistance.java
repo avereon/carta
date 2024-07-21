@@ -29,7 +29,7 @@ public class MeasureDistance extends MeasureCommand {
 		}
 
 		if( parameters.length < 2 ) {
-			referenceLine.setOrigin( asPoint( context.getAnchor(), parameters[ 0 ] ) );
+			referenceLine.setOrigin( asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
 			promptForPoint( context, "end-point" );
 			return INCOMPLETE;
 		}
@@ -37,8 +37,8 @@ public class MeasureDistance extends MeasureCommand {
 		clearReferenceAndPreview( context );
 
 		try {
-			Point3D p1 = asPoint( context.getAnchor(), parameters[ 0 ] );
-			Point3D p2 = asPoint( context.getAnchor(), parameters[ 1 ] );
+			Point3D p1 = asPoint( context.getWorldAnchor(), parameters[ 0 ] );
+			Point3D p2 = asPoint( context.getWorldAnchor(), parameters[ 1 ] );
 			double distance = p1.distance( p2 );
 
 			String title = Rb.text( RbKey.NOTICE, "measurement" );
