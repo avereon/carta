@@ -45,13 +45,14 @@ public class DrawLine2 extends DrawCommand {
 			// Start an undo multi-change
 			context.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
 			// Done with undo multi-change
+			return COMPLETE;
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return FAIL;
 	}
 
 	@Override

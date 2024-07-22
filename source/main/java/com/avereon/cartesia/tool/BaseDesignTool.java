@@ -284,7 +284,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract BooleanProperty gridSnapEnabled();
 
-	public abstract void setSelectWindow( Point3D anchor, Point3D mouse );
+	public abstract void setSelectAperture( Point3D anchor, Point3D mouse );
 
 	public abstract List<Shape> screenPointFindOneAndWait( Point3D mouse );
 
@@ -302,7 +302,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract void worldPointSelect( Point3D point, boolean toggle );
 
-	public abstract void clearSelected();
+	public abstract void clearSelectedShapes();
 
 	public abstract List<DesignShape> findShapesWithMouse( Point3D mouse );
 

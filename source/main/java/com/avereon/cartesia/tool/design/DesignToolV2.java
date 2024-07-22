@@ -90,8 +90,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private final DesignRenderer renderer;
 
-	private final DesignWorkplane workplane;
-
 	private final Stack<DesignPortal> portalStack;
 
 	private final DesignPropertiesMap designPropertiesMap;
@@ -147,49 +145,47 @@ public class DesignToolV2 extends BaseDesignTool {
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
 
-		this.commandActions = new ConcurrentHashMap<>();
-		this.designPropertiesMap = new DesignPropertiesMap( product );
+		commandActions = new ConcurrentHashMap<>();
+		designPropertiesMap = new DesignPropertiesMap( product );
 
-		this.layersGuide = new LayersGuide( product, this );
-		//		this.viewsGuide = new ViewsGuide( product, this );
-		//		this.printsGuide = new PrintsGuide( product, this );
+		layersGuide = new LayersGuide( product, this );
+		//		viewsGuide = new ViewsGuide( product, this );
+		//		printsGuide = new PrintsGuide( product, this );
 
-		// Create and associate the renderer and workplane
-		this.renderer = new DesignRenderer();
-		this.workplane = new DesignWorkplane();
-		this.renderer.setWorkplane( workplane );
+		// Create and associate the workplane and renderer
+		renderer = new DesignRenderer();
+		StackPane.setAlignment( renderer, Pos.CENTER );
+		//widthProperty().addListener( ( p, o, n ) -> renderer.setWidth( n.doubleValue() ) );
 
 		// TODO Move this to tool settings like reticle and aperture
-		this.workplane.setGridStyle( GridStyle.DOT );
+		renderer.getWorkplane().setGridStyle( GridStyle.DOT );
 
-		this.reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
-		this.selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
-		//this.selectAperture = new SimpleObjectProperty<>();
-		this.currentLayer = new SimpleObjectProperty<>();
-		this.currentView = new SimpleObjectProperty<>();
-		this.selectDrawPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_DRAW ) );
-		this.selectFillPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_FILL ) );
+		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
+		selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
+		//selectAperture = new SimpleObjectProperty<>();
+		currentLayer = new SimpleObjectProperty<>();
+		currentView = new SimpleObjectProperty<>();
+		selectDrawPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_DRAW ) );
+		selectFillPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_FILL ) );
 
 		// Actions
-		this.printAction = new PrintAction( product.getProgram() );
-		this.propertiesAction = new PropertiesAction( product.getProgram() );
-		this.deleteAction = new DeleteAction( product.getProgram() );
-		this.undoAction = new UndoAction( product.getProgram() );
-		this.redoAction = new RedoAction( product.getProgram() );
+		printAction = new PrintAction( product.getProgram() );
+		propertiesAction = new PropertiesAction( product.getProgram() );
+		deleteAction = new DeleteAction( product.getProgram() );
+		undoAction = new UndoAction( product.getProgram() );
+		redoAction = new RedoAction( product.getProgram() );
 
-		this.storePreviousViewAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::capturePreviousPortal );
-		this.storePreviousViewAction.setMinTriggerLimit( 1000 );
-		this.storePreviousViewAction.setMaxTriggerLimit( 5000 );
-		this.portalStack = new Stack<>();
+		storePreviousViewAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::capturePreviousPortal );
+		storePreviousViewAction.setMinTriggerLimit( 1000 );
+		storePreviousViewAction.setMaxTriggerLimit( 5000 );
+		portalStack = new Stack<>();
 
 		// Create the toast label
-		String loadingLabel = Rb.text( RbKey.LABEL, "loading" );
-		this.toast = new Label( loadingLabel + "..." );
+		toast = new Label( Rb.text( RbKey.LABEL, "loading" ) + "..." );
+		StackPane.setAlignment( toast, Pos.CENTER );
 
 		// Add the components to the parent
-		StackPane stack = new StackPane( renderer, toast );
-		stack.setAlignment( Pos.CENTER );
-		getChildren().addAll( stack );
+		getChildren().addAll( toast );
 
 		// NOTE Settings and settings listeners should go in the ready() method
 	}
@@ -205,7 +201,9 @@ public class DesignToolV2 extends BaseDesignTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		// Hide the toast message
-		toast.setVisible( false );
+		//toast.setVisible( false );
+		getChildren().remove( toast );
+		getChildren().add( renderer );
 
 		// Set the renderer design
 		renderer.setDesign( getDesign() );
@@ -363,7 +361,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 
 		// Update the select aperture when the mouse moves
-		addEventFilter( MouseEvent.MOUSE_MOVED, e -> setSelectWindow( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
 
 		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -408,7 +406,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Add asset switch listener to remove command prompt
 		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-			if( isDisplayed() && e.getOldAsset() == this.getAsset() && e.getNewAsset() != this.getAsset() ) {
+			if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
 				unregisterStatusBarItems();
 			}
 		} );
@@ -653,12 +651,12 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public List<Shape> getVisibleShapes() {
-		return null;
+		return List.of();
 	}
 
 	@Override
 	public List<DesignShape> getVisibleGeometry() {
-		return getVisibleLayers().stream().flatMap( layer -> layer.getShapes().stream() ).toList();
+		return renderer.getVisibleShapes();
 	}
 
 	@Override
@@ -704,6 +702,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
+		if( viewAnchor == null || dragAnchor == null || point == null ) throw new NullPointerException( "Anchor, drag anchor, and point cannot be null" );
 		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
 	}
 
@@ -796,12 +795,13 @@ public class DesignToolV2 extends BaseDesignTool {
 	 * @param mouse The mouse point
 	 */
 	@Override
-	public void setSelectWindow( Point3D anchor, Point3D mouse ) {
+	public void setSelectAperture( Point3D anchor, Point3D mouse ) {
 		if( anchor == null || mouse == null ) return;
 
 		// Set the select aperture
 		DesignShape selectAperture;
 		if( anchor.equals( mouse ) ) {
+			//selectAperture = null;
 			//renderer.setSelectAperture( null );
 			double size = renderer.realToScreen( getSelectTolerance() );
 			selectAperture = new DesignEllipse( mouse, size );
@@ -814,9 +814,11 @@ public class DesignToolV2 extends BaseDesignTool {
 			selectAperture = new DesignBox( x, y, w, h );
 		}
 
-		selectAperture.setFillPaint( selectFillPaint.get() );
-		selectAperture.setDrawPaint( selectDrawPaint.get() );
-		selectAperture().set( selectAperture );
+		if( selectAperture != null ) {
+			selectAperture.setFillPaint( selectFillPaint.get() );
+			selectAperture.setDrawPaint( selectDrawPaint.get() );
+		}
+		renderer.selectAperture().set( selectAperture );
 	}
 
 	@Override
@@ -856,23 +858,13 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void worldPointSelect( Point3D point, boolean toggle ) {
-		// Get the currently selected shapes
-		List<DesignShape> shapes = getSelectedGeometry();
+		List<DesignShape> shapes = renderer.worldPointSelect( point, getSelectTolerance() );
 
-		// If toggling, clear the selected shapes in the renderer
-		if( !toggle ) renderer.clearSelectedShapes();
-
-		// TODO This should be updated to cascade through the selected shapes
-
-		// Add and remove selected shapes as necessary
-		double tolerance = renderer.realToWorld( getSelectTolerance() );
-		renderer.worldPointSelect( point, tolerance ).stream().findFirst().ifPresent( shape -> {
-			if( renderer.isShapeSelected( shape ) ) {
-				renderer.selectedShapes().remove( shape );
-			} else {
-				renderer.selectedShapes().add( shape );
-			}
-		} );
+		if( shapes.isEmpty() ) {
+			setSelectedShapes( shapes, toggle );
+		} else {
+			setSelectedShapes( List.of( shapes.getFirst() ), toggle );
+		}
 	}
 
 	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect ) {
@@ -880,26 +872,34 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
-		if( !toggle ) renderer.clearSelectedShapes();
+		setSelectedShapes( renderer.worldWindowSelect( a, b, intersect ), toggle );
+	}
 
-		List<DesignShape> shapes = renderer.worldWindowSelect( a, b, intersect );
-
+	private void setSelectedShapes( List<DesignShape> shapes, boolean toggle ) {
+		// NOTE This method also has to set the isSelected flag on the shapes
 		if( toggle ) {
 			shapes.forEach( shape -> {
 				if( renderer.isShapeSelected( shape ) ) {
+					shape.setSelected( false );
 					renderer.selectedShapes().remove( shape );
 				} else {
+					shape.setSelected( true );
 					renderer.selectedShapes().add( shape );
 				}
 			} );
 		} else {
+			renderer.selectedShapes().forEach( shape -> shape.setSelected( false ) );
+			renderer.selectedShapes().clear();
 			renderer.selectedShapes().addAll( shapes );
+			shapes.forEach( shape -> shape.setSelected( true ) );
 		}
 	}
 
 	@Override
-	public void clearSelected() {
-		renderer.clearSelectedShapes();
+	public void clearSelectedShapes() {
+		// NOTE This method also has to set the isSelected flag on the shapes
+		renderer.selectedShapes().forEach( shape -> shape.setSelected( false ) );
+		renderer.selectedShapes().clear();
 	}
 
 	@Override

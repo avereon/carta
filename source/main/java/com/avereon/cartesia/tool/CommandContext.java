@@ -263,7 +263,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	private void reset() {
 		setInputMode( CommandContext.Input.NONE );
 		Fx.run( () -> {
-			getLastActiveDesignTool().clearSelected();
+			getLastActiveDesignTool().clearSelectedShapes();
 			getCommandPrompt().clear();
 		} );
 	}
@@ -422,7 +422,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		}
 
 		private void doComplete() {
-			if( command.clearSelectionWhenComplete() ) tool.clearSelected();
+			if( command.clearSelectionWhenComplete() ) tool.clearSelectedShapes();
 		}
 
 		public void cancel() {

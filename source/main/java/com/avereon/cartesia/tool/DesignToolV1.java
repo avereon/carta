@@ -351,7 +351,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	@Override
 	public List<DesignShape> getVisibleGeometry() {
-		return null;
+		return List.of();
 	}
 
 	@Override
@@ -888,7 +888,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public void setSelectWindow( Point3D anchor, Point3D mouse ) {
+	public void setSelectAperture( Point3D anchor, Point3D mouse ) {
 		if( anchor == null ) return;
 		double x = Math.min( anchor.getX(), mouse.getX() );
 		double y = Math.min( anchor.getY(), mouse.getY() );
@@ -966,7 +966,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public void clearSelected() {
+	public void clearSelectedShapes() {
 		selectedShapes().clear();
 	}
 

@@ -38,10 +38,10 @@ public class SelectByWindow extends Command {
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
-			tool.setSelectWindow( anchor, mouse );
+			tool.setSelectAperture( anchor, mouse );
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			tool.screenWindowSelect( anchor, mouse, isSelectByIntersect( event ), false );
-			tool.setSelectWindow( mouse, mouse );
+			tool.setSelectAperture( mouse, mouse );
 			// The command needs to be submitted again with this event to complete
 			tool.getCommandContext().submit( tool, this, event );
 		}

@@ -29,6 +29,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +42,7 @@ public class DesignRenderer extends BorderPane {
 
 	private Design design;
 
+	@Getter
 	private DesignWorkplane workplane;
 
 	private final FxRenderer2d renderer;
@@ -65,8 +67,10 @@ public class DesignRenderer extends BorderPane {
 		selectedShapes = FXCollections.observableArrayList();
 		selectAperture = new SimpleObjectProperty<>();
 
+		workplane = new DesignWorkplane();
+
 		// Create and add the renderer to the center
-		setCenter( this.renderer = new FxRenderer2d() );
+		setCenter( renderer = new FxRenderer2d() );
 
 		// Disable the default renderer mouse actions
 		renderer.setOnMousePressed( null );
@@ -239,7 +243,7 @@ public class DesignRenderer extends BorderPane {
 		return getVisibleLayers().stream().flatMap( l -> l.getShapes().stream() ).collect( Collectors.toList() );
 	}
 
-	// Visible Shapes ------------------------------------------------------------
+	// Select Aperture -----------------------------------------------------------
 
 	public void setSelectAperture( DesignShape aperture ) {
 		selectAperture.set( aperture );
@@ -256,27 +260,26 @@ public class DesignRenderer extends BorderPane {
 	// Selected Shapes -----------------------------------------------------------
 
 	public boolean isShapeSelected( DesignShape shape ) {
-		// FIXME Both of these options should work, but the shape flag does not
-		//return selectedShapes.contains( shape );
-		return shape.isSelected();
+		return selectedShapes.contains( shape );
+		//return shape.isSelected();
 	}
 
 //	public List<DesignShape> getSelectedShapes() {
-//		return selectedShapes;
+//		return List.copyOf( selectedShapes );
 //	}
 
-	public void clearSelectedShapes() {
-		selectedShapes.forEach( s -> s.setSelected( false ) );
-		selectedShapes.clear();
-	}
+//	public void clearSelectedShapes() {
+//		selectedShapes.forEach( s -> s.setSelected( false ) );
+//		selectedShapes.clear();
+//	}
 
-	public void setSelectedShapes( Collection<DesignShape> shapes ) {
-		clearSelectedShapes();
-		if( shapes != null ) {
-			shapes.forEach( s -> s.setSelected( true ) );
-			selectedShapes.addAll( shapes );
-		}
-	}
+//	public void setSelectedShapes( Collection<DesignShape> shapes ) {
+//		clearSelectedShapes();
+//		if( shapes != null ) {
+//			shapes.forEach( s -> s.setSelected( true ) );
+//			selectedShapes.addAll( shapes );
+//		}
+//	}
 
 	public ObservableList<DesignShape> selectedShapes() {
 		return selectedShapes;
@@ -451,8 +454,8 @@ public class DesignRenderer extends BorderPane {
 		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
 	}
 
-	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue v ) {
-		return worldPointSelect( anchor, v.getValue() );
+	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue tolerance ) {
+		return worldPointSelect( anchor, realToWorld( tolerance ) );
 	}
 
 	public List<DesignShape> worldPointSelect( Point3D anchor, double radius ) {
