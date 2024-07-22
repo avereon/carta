@@ -264,22 +264,22 @@ public class DesignRenderer extends BorderPane {
 		//return shape.isSelected();
 	}
 
-//	public List<DesignShape> getSelectedShapes() {
-//		return List.copyOf( selectedShapes );
-//	}
+	//	public List<DesignShape> getSelectedShapes() {
+	//		return List.copyOf( selectedShapes );
+	//	}
 
-//	public void clearSelectedShapes() {
-//		selectedShapes.forEach( s -> s.setSelected( false ) );
-//		selectedShapes.clear();
-//	}
+	//	public void clearSelectedShapes() {
+	//		selectedShapes.forEach( s -> s.setSelected( false ) );
+	//		selectedShapes.clear();
+	//	}
 
-//	public void setSelectedShapes( Collection<DesignShape> shapes ) {
-//		clearSelectedShapes();
-//		if( shapes != null ) {
-//			shapes.forEach( s -> s.setSelected( true ) );
-//			selectedShapes.addAll( shapes );
-//		}
-//	}
+	//	public void setSelectedShapes( Collection<DesignShape> shapes ) {
+	//		clearSelectedShapes();
+	//		if( shapes != null ) {
+	//			shapes.forEach( s -> s.setSelected( true ) );
+	//			selectedShapes.addAll( shapes );
+	//		}
+	//	}
 
 	public ObservableList<DesignShape> selectedShapes() {
 		return selectedShapes;
@@ -541,7 +541,7 @@ public class DesignRenderer extends BorderPane {
 			for( DesignShape shape : orderedShapes ) {
 				// TODO Would this be faster as a flag on the shape?
 				boolean selected = isShapeSelected( shape );
-//				boolean selected = shape.isSelected();
+				//				boolean selected = shape.isSelected();
 
 				Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
 				Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
@@ -813,8 +813,13 @@ public class DesignRenderer extends BorderPane {
 		private boolean cancelled;
 
 		public RenderTrigger() {
-			if( latest != null ) latest.next = this;
-			latest = this;
+			synchronized( RenderTrigger.class ) {
+				if( latest == null ) {
+					latest = this;
+				} else {
+					latest.next = this;
+				}
+			}
 		}
 
 		public void run() {

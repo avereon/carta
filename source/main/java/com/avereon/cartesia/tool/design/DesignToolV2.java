@@ -381,6 +381,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		} );
 
 		// Request the initial geometry render
+		// FIXME Why does this not appear to work???
 		renderer.render();
 	}
 
