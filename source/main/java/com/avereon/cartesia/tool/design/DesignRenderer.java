@@ -51,6 +51,8 @@ public class DesignRenderer extends BorderPane {
 
 	private final ObservableList<DesignLayer> visibleLayers;
 
+	// Shape selection is now handled by the DesignShape class
+	@Deprecated
 	private final ObservableList<DesignShape> selectedShapes;
 
 	private SimpleBooleanProperty gridVisible;
@@ -98,17 +100,15 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public void setDesign( Design design ) {
-		// TODO Disconnect listeners
-
 		this.design = design;
 		visibleLayers.addAll( design.getAllLayers() );
 
-		// TODO Connect listeners
-
-		// Temporary listener for testing
+		// Add listeners
 		design.register( NodeEvent.VALUE_CHANGED, e -> {
 			//log.atConfig().log( "Something changed in the design: " + e.getKey() );
-			render();
+
+			// If the selected flag changes on any geometry, render the design
+			if( e.getKey().equals( DesignShape.SELECTED ) ) render();
 		} );
 	}
 
@@ -260,8 +260,8 @@ public class DesignRenderer extends BorderPane {
 	// Selected Shapes -----------------------------------------------------------
 
 	public boolean isShapeSelected( DesignShape shape ) {
-		return selectedShapes.contains( shape );
-		//return shape.isSelected();
+		//return selectedShapes.contains( shape );
+		return shape.isSelected();
 	}
 
 	//	public List<DesignShape> getSelectedShapes() {
