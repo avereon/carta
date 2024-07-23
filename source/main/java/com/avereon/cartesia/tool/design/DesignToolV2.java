@@ -35,6 +35,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -359,6 +360,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Update the design context when the mouse moves
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+		getDesignContext().getPreviewShapes().addListener( this::onPreviewShapesChanged );
+		getDesignContext().getSelectedShapes().addListener( this::onSelectedShapesChanged );
 
 		// Update the select aperture when the mouse moves
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
@@ -702,7 +705,9 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
-		if( viewAnchor == null || dragAnchor == null || point == null ) throw new NullPointerException( "Anchor, drag anchor, and point cannot be null" );
+		if( viewAnchor == null ) throw new NullPointerException( "View anchor cannot be null" );
+		if( dragAnchor == null ) throw new NullPointerException( "Drag anchor cannot be null" );
+		if( point == null ) throw new NullPointerException( "Point cannot be null" );
 		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
 	}
 
@@ -1118,6 +1123,24 @@ public class DesignToolV2 extends BaseDesignTool {
 	private void doStoreVisibleLayers( ListChangeListener.Change<? extends DesignLayer> c ) {
 		c.next();
 		getSettings().set( VISIBLE_LAYERS, c.getList().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
+	}
+
+	private void onPreviewShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
+		if( change.wasAdded() ) {
+			change.getElementAdded().setPreview( true );
+		} else if( change.wasRemoved() ) {
+			change.getElementRemoved().setPreview( false );
+		}
+		renderer.render();
+	}
+
+	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
+		if( change.wasAdded() ) {
+			change.getElementAdded().setSelected( true );
+		} else if( change.wasRemoved() ) {
+			change.getElementRemoved().setSelected( false );
+		}
+		renderer.render();
 	}
 
 	private void showPropertiesPage( DesignDrawable drawable ) {

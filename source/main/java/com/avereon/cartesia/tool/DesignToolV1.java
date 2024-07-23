@@ -278,7 +278,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 		for( Shape shape : shapes ) {
 			DesignShape data = DesignShapeView.getDesignData( shape );
-			if( data == null || data.isReference() ) continue;
+			if( data == null || data.isPreview() ) continue;
 			List<ConstructionPoint> cps = DesignShapeView.getConstructionPoints( shape );
 			for( ConstructionPoint cp : cps ) {
 				distance = mouse.distance( worldToScreen( cp.getLayoutX(), cp.getLayoutY(), 0 ) );

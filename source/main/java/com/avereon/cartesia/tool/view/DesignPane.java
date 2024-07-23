@@ -739,7 +739,7 @@ public class DesignPane extends StackPane {
 
 			return selectStream
 				.map( DesignShapeView::getDesignData )
-				.filter( d -> !d.isReference() )
+				.filter( d -> !d.isPreview() )
 				.sorted( new NearestShapeComparator( center ) )
 				.flatMap( d -> ((Group)DesignShapeView.getShapeNode( d )).getChildren().stream().map( n -> (Shape)n ) )
 				.collect( Collectors.toList() );

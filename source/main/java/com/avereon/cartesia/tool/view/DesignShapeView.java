@@ -120,8 +120,6 @@ public class DesignShapeView extends DesignDrawableMeta {
 	@Override
 	void registerListeners() {
 		getDesignShape().register( NodeEvent.PARENT_CHANGED, parentChangedHandler = e -> Fx.run( this::updateShapeValues ) );
-		getDesignShape().register( DesignShape.SELECTED, selectedHandler = e -> Fx.run( () -> doSetSelected( e.getNewValue() != null && (Boolean)e.getNewValue() ) ) );
-
 		getDesignShape().register( DesignShape.DRAW_PAINT, drawPaintHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_WIDTH, drawWidthHandler = e -> Fx.run( this::updateShapeValues ) );
 		getDesignShape().register( DesignShape.DRAW_CAP, drawCapHandler = e -> Fx.run( this::updateShapeValues ) );
@@ -131,7 +129,6 @@ public class DesignShapeView extends DesignDrawableMeta {
 
 	@Override
 	void unregisterListeners() {
-		getDesignShape().unregister( DesignShape.SELECTED, selectedHandler );
 		getDesignShape().unregister( DesignShape.FILL_PAINT, fillPaintHandler );
 		getDesignShape().unregister( DesignShape.DRAW_PATTERN, drawPatternHandler );
 		getDesignShape().unregister( DesignShape.DRAW_CAP, drawCapHandler );

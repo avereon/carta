@@ -26,6 +26,12 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 
+/**
+ * The CommandContext class is a container for command specific information.
+ * <pre>
+ * DesignTool -> Design -> DesignContext -> CommandContext
+ * </pre>
+ */
 @CustomLog
 public class CommandContext implements EventHandler<KeyEvent> {
 

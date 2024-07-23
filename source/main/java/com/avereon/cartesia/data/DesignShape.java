@@ -11,6 +11,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -19,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import static com.avereon.data.NodeEvent.MODIFIED;
 
 @CustomLog
+@Accessors( chain = true )
 public abstract class DesignShape extends DesignDrawable {
 
 	// The shape types in order of simplicity:
@@ -44,9 +48,9 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static final String ROTATE = "rotate";
 
-	public static final String SELECTED = "selected";
+	//public static final String SELECTED = "selected";
 
-	public static final String REFERENCE = "reference";
+	//public static final String REFERENCE = "reference";
 
 	private final Map<String, Object> cache;
 
@@ -55,6 +59,26 @@ public abstract class DesignShape extends DesignDrawable {
 	private static final String CACHE_FX_SHAPE = "fx-shape";
 
 	private static final String CACHE_SELECT_BOUNDS = "select-bounds";
+
+	// Convenience method for rendering
+
+	/**
+	 * The preview flag is a special flag that indicates the shape is a preview
+	 * shape. This flag is used to optimize the rendering process.
+	 */
+	@Getter
+	@Setter
+	private boolean preview;
+
+	// Convenience method for rendering
+
+	/**
+	 * The selected flag is a special flag that indicates the shape is a selected
+	 * shape. This flag is used to optimize the rendering process.
+	 */
+	@Getter
+	@Setter
+	private boolean selected;
 
 	public DesignShape() {
 		this( null );
@@ -105,28 +129,6 @@ public abstract class DesignShape extends DesignDrawable {
 	public <T extends DesignShape> T setRotate( double value ) {
 		setRotate( String.valueOf( value ) );
 		return (T)this;
-	}
-
-	// Convenience method for rendering
-	public boolean isReference() {
-		return getValue( REFERENCE, false );
-	}
-
-	// Convenience method for rendering
-	public DesignShape setReference( boolean reference ) {
-		setValue( REFERENCE, reference ? true : null );
-		return this;
-	}
-
-	// Convenience method for rendering
-	public boolean isSelected() {
-		return getValue( SELECTED, false );
-	}
-
-	// Convenience method for rendering
-	public DesignShape setSelected( boolean selected ) {
-		setValue( SELECTED, selected ? true : null );
-		return this;
 	}
 
 	// Convenience method for selecting

@@ -4,12 +4,12 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.xenon.XenonProgramProduct;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.Getter;
 
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * The DesignContext class is a container for design specific information. It is
@@ -25,18 +25,21 @@ public class DesignContext {
 
 	private final Design design;
 
+	private final ObservableSet<DesignShape> previewShapes;
+
+	private final ObservableSet<DesignShape> selectedShapes;
+
 	private final CommandContext commandContext;
 
 	private final CoordinateStatus coordinateStatus;
 
-	private final ObservableList<DesignShape> selectedShapes;
-
 	public DesignContext( XenonProgramProduct product, Design design ) {
 		this.product = product;
 		this.design = design;
+		this.previewShapes = FXCollections.observableSet( new CopyOnWriteArraySet<>() );
+		this.selectedShapes = FXCollections.observableSet( new CopyOnWriteArraySet<>() );
 		this.commandContext = new CommandContext( product );
 		this.coordinateStatus = new CoordinateStatus();
-		this.selectedShapes = FXCollections.observableArrayList( new CopyOnWriteArrayList<>() );
 	}
 
 	public void setMouse( MouseEvent event ) {
@@ -49,5 +52,8 @@ public class DesignContext {
 		getCoordinateStatus().updatePosition( worldMouse );
 		getCoordinateStatus().updateZoom( tool.getZoom() );
 	}
-
 }
+
+
+
+

@@ -253,7 +253,7 @@ public abstract class Command {
 		this.reference.addAll( shapes );
 		final String referencePaint = Paints.toString( context.getTool().getSelectedDrawPaint() );
 		this.reference.forEach( s -> {
-			s.setReference( true );
+			s.setPreview( true );
 			s.setDrawPaint( referencePaint );
 			// FIXME Should there be a specific reference layer? UX says yes!
 			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
@@ -286,7 +286,7 @@ public abstract class Command {
 	protected void addPreview( CommandContext context, Collection<DesignShape> shapes ) {
 		this.preview.addAll( shapes );
 		this.preview.forEach( s -> {
-			s.setReference( true );
+			s.setPreview( true );
 			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
 		} );
 	}
@@ -429,9 +429,9 @@ public abstract class Command {
 		return angle;
 	}
 
-	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean reference ) {
+	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean preview ) {
 		return shapes.stream().map( s -> {
-			DesignShape clone = s.clone().setSelected( false ).setReference( reference );
+			DesignShape clone = s.clone().setSelected( false ).setPreview( preview );
 			previewMap.put( s, clone );
 			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
 			if( s.getLayer() != null ) s.getLayer().addShape( clone );

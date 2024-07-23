@@ -112,7 +112,7 @@ public abstract class EditCommand extends Command {
 		Collection<DesignShape> cloneShapes = Set.of();
 		if( copy ) {
 			cloneShapes = originalShapes.stream().map( s -> {
-				DesignShape clone = s.clone().setSelected( false ).setReference( false );
+				DesignShape clone = s.clone().setSelected( false ).setPreview( false );
 				clone.setValue( "clone-layer", NodeLink.of( s.getLayer() ) );
 				// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
 				//if( s.getLayer() != null ) s.getLayer().addShape( clone );

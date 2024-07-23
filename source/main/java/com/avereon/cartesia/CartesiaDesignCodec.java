@@ -414,7 +414,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		//		remapValue( map, DesignLayer.TEXT_DRAW_PATTERN, saveLayerPropertyMapping );
 
 		map.put( DesignLayer.LAYERS, layer.getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
-		map.put( DesignLayer.SHAPES, layer.getShapes().stream().filter( s -> !s.isReference() ).collect( Collectors.toMap( IdNode::getId, this::mapGeometry ) ) );
+		map.put( DesignLayer.SHAPES, layer.getShapes().stream().filter( s -> !s.isPreview() ).collect( Collectors.toMap( IdNode::getId, this::mapGeometry ) ) );
 		return map;
 	}
 

@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
@@ -21,6 +20,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.SetChangeListener;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -124,14 +124,6 @@ public class DesignRenderer extends BorderPane {
 	public void setDesign( Design design ) {
 		this.design = design;
 		visibleLayers.addAll( design.getAllLayers() );
-
-		// Add listeners
-		design.register( NodeEvent.VALUE_CHANGED, e -> {
-			//log.atConfig().log( "Something changed in the design: " + e.getKey() );
-
-			// If the selected flag changes on any geometry, render the design
-			if( e.getKey().equals( DesignShape.SELECTED ) ) render();
-		} );
 	}
 
 	public void setWorkplane( DesignWorkplane workplane ) {
@@ -378,12 +370,11 @@ public class DesignRenderer extends BorderPane {
 	 * @param factor The zoom factor
 	 */
 	public void zoom( Point3D anchor, double factor ) {
-		Point2D anchor2d = new Point2D( anchor.getX(), anchor.getY() );
-		Point2D offset2d = renderer.getViewpoint().subtract( anchor2d );
+		Point3D offset = renderer.getViewpoint().subtract( anchor );
 
 		// The zoom has to be set before the viewpoint
 		renderer.setZoom( renderer.getZoom().multiply( factor ) );
-		renderer.setViewpoint( anchor2d.add( offset2d.multiply( 1 / factor ) ) );
+		renderer.setViewpoint( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
 	/**
@@ -395,10 +386,10 @@ public class DesignRenderer extends BorderPane {
 	 */
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
 		// Convert the view anchor to screen coordinates
-		Point2D anchor = renderer.localToParent( CadPoints.toPoint2d( viewAnchor ) );
+		Point3D anchor = renderer.localToParent( viewAnchor );
 
 		// Calculate the drag offset in screen coordinates
-		Point2D delta = new Point2D( dragAnchor.getX() - point.getX(), dragAnchor.getY() - point.getY() );
+		Point3D delta = dragAnchor.subtract( point);
 
 		// Set the new viewpoint in world coordinates
 		renderer.setViewpoint( renderer.parentToLocal( anchor.add( delta ) ) );
@@ -522,7 +513,7 @@ public class DesignRenderer extends BorderPane {
 		// Update the workplane bounds to match this pane
 		// FIXME Probably should not be updating the bounds during the render process
 		// Listeners can be added to the width and height properties to update the bounds
-		workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
+		//workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
 
 		renderer.clear();
 		renderWorkplane();
@@ -557,13 +548,11 @@ public class DesignRenderer extends BorderPane {
 
 			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
 			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
-			Paint boundingDrawPaint = Colors.translucent( Color.RED, 0.5 );
+			//Paint boundingDrawPaint = Colors.translucent( Color.RED, 0.5 );
 
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
-				// TODO Would this be faster as a flag on the shape?
-				boolean selected = isShapeSelected( shape );
-				//				boolean selected = shape.isSelected();
+				boolean selected = shape.isSelected();
 
 				Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
 				Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
@@ -818,6 +807,24 @@ public class DesignRenderer extends BorderPane {
 		Shape fxSelector = selector.getFxShape();
 		Shape fxShape = shape.getFxShape();
 		return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
+	}
+
+	private void onPreviewShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
+		if( change.wasAdded() ) {
+			change.getElementAdded().setPreview( true );
+		} else if( change.wasRemoved() ) {
+			change.getElementRemoved().setPreview( false );
+		}
+		render();
+	}
+
+	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
+		if( change.wasAdded() ) {
+			change.getElementAdded().setSelected( true );
+		} else if( change.wasRemoved() ) {
+			change.getElementRemoved().setSelected( false );
+		}
+		render();
 	}
 
 	/**

@@ -111,8 +111,6 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		setFontPosture( DEFAULT_FONT_POSTURE );
 		setFontUnderline( DEFAULT_FONT_UNDERLINE );
 		setFontStrikethrough( DEFAULT_FONT_STRIKETHROUGH );
-
-		setSetModifyFilter( SHAPES, n -> n.isNotSet( DesignShape.REFERENCE ) );
 	}
 
 	/**
@@ -495,7 +493,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
-		map.put( SHAPES, getShapes().stream().filter( s -> !s.isReference() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
+		map.put( SHAPES, getShapes().stream().filter( s -> !s.isPreview() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
 		return map;
 	}
 
