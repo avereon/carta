@@ -292,6 +292,7 @@ public class CommandMap {
 		// NEXT Improve command triggers:
 		//  1. Improve the comparing an event to a command trigger (simple map lookup may not be enough)
 		//  2. Improve the command trigger to be more inclusive (e.g. include all modifiers)
+		//  3. This should fix the problem with MOUSE_RELEASED causing a spurious select command
 
 		return getActionCommand( eventActions.getOrDefault( CommandTrigger.of( event ), TextUtil.EMPTY ) );
 	}
