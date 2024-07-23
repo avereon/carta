@@ -107,7 +107,9 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 * @return The design context
 	 */
 	public final DesignContext getDesignContext() {
-		return getDesign().getDesignContext( getProduct() );
+		DesignContext context = getDesign().getDesignContext();
+		if( context == null ) context = getDesign().createDesignContext( getProduct() );
+		return context;
 	}
 
 	/**
@@ -182,6 +184,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 */
 	public abstract ObjectProperty<DesignValue> selectTolerance();
 
+	@Deprecated
 	public abstract ObservableList<Shape> selectedShapes();
 
 	public abstract Point3D nearestCp( Collection<Shape> shapes, Point3D point );

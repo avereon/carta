@@ -502,6 +502,9 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 		Design design = getDesign();
 		if( design != null ) {
+			// Create the design context
+			design.createDesignContext( getProduct() );
+
 			// Link the command context to this tool
 			getCommandContext().setTool( this );
 

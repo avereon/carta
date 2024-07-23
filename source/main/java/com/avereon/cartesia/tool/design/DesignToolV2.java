@@ -206,6 +206,9 @@ public class DesignToolV2 extends BaseDesignTool {
 		getChildren().remove( toast );
 		getChildren().add( renderer );
 
+		// Create the design context
+		getDesign().createDesignContext( getProduct() );
+
 		// Set the renderer design
 		renderer.setDesign( getDesign() );
 		renderer.setDpi( Screen.getPrimary().getDpi() );
@@ -572,6 +575,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public ObservableList<Shape> selectedShapes() {
+		// This is the old FX shape implementation, just return an empty list.
 		return FXCollections.observableArrayList();
 	}
 
@@ -881,29 +885,22 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void setSelectedShapes( List<DesignShape> shapes, boolean toggle ) {
-		// NOTE This method also has to set the isSelected flag on the shapes
 		if( toggle ) {
 			shapes.forEach( shape -> {
 				if( renderer.isShapeSelected( shape ) ) {
-					shape.setSelected( false );
 					renderer.selectedShapes().remove( shape );
 				} else {
-					shape.setSelected( true );
 					renderer.selectedShapes().add( shape );
 				}
 			} );
 		} else {
-			renderer.selectedShapes().forEach( shape -> shape.setSelected( false ) );
 			renderer.selectedShapes().clear();
 			renderer.selectedShapes().addAll( shapes );
-			shapes.forEach( shape -> shape.setSelected( true ) );
 		}
 	}
 
 	@Override
 	public void clearSelectedShapes() {
-		// NOTE This method also has to set the isSelected flag on the shapes
-		renderer.selectedShapes().forEach( shape -> shape.setSelected( false ) );
 		renderer.selectedShapes().clear();
 	}
 
@@ -1135,6 +1132,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
+		log.atConfig().log( "Selected shapes changed: %s", change );
 		if( change.wasAdded() ) {
 			change.getElementAdded().setSelected( true );
 		} else if( change.wasRemoved() ) {

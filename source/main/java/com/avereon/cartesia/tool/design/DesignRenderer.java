@@ -4,6 +4,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.marea.Font;
@@ -17,10 +18,7 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.SetChangeListener;
+import javafx.collections.*;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -51,32 +49,6 @@ public class DesignRenderer extends BorderPane {
 
 	private final ObservableList<DesignLayer> visibleLayers;
 
-	// Strategies for handling selected shapes:
-	//
-	// Desired outcome: The user can select shapes by clicking on them. Shapes
-	// show that they are selected in all views. This requires that the selected
-	// state be store somewhere that is accessible to all views:
-	//
-	// 1. Store the selected state in the DesignShape class. This is the most direct
-	// 	approach, but it requires that the DesignShape class be modified to support
-	// 	the selected state.
-	// 2. Store the selected state in the DesignContext class. This is a more indirect
-	// 	approach, but it does not require that the DesignShape class be modified.
-	// 3. Store the selected state in the DesignRenderer class. This is a more indirect
-	// 	approach, but it requires that each view maintain a set of selected shapes.
-
-	// If we choose the DesignContext approach, we need to add an observable
-	// collection to that class for the selected shapes. This collection would
-	// be updated by the DesignRenderer when shapes are selected or deselected.
-	// Listeners would need to be added to the collection to update the selected
-	// flag (used for optimization) on the shapes before rendering the views.
-	// The selected flag on the DesignShape class would be converted to a simple
-	// boolean property since it does not participate in model events.
-
-	// Shape selection is now handled by the DesignShape class
-	@Deprecated
-	private final ObservableList<DesignShape> selectedShapes;
-
 	private SimpleBooleanProperty gridVisible;
 
 	private final SimpleObjectProperty<DesignShape> selectAperture;
@@ -88,7 +60,7 @@ public class DesignRenderer extends BorderPane {
 	public DesignRenderer() {
 		enabledLayers = FXCollections.observableArrayList();
 		visibleLayers = FXCollections.observableArrayList();
-		selectedShapes = FXCollections.observableArrayList();
+		//selectedShapes = FXCollections.observableArrayList();
 		selectAperture = new SimpleObjectProperty<>();
 
 		workplane = new DesignWorkplane();
@@ -117,13 +89,17 @@ public class DesignRenderer extends BorderPane {
 
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
-		selectedShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
+		//selectedShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 	}
 
 	public void setDesign( Design design ) {
 		this.design = design;
 		visibleLayers.addAll( design.getAllLayers() );
+	}
+
+	public DesignContext getDesignContext() {
+		return design.getDesignContext();
 	}
 
 	public void setWorkplane( DesignWorkplane workplane ) {
@@ -295,8 +271,8 @@ public class DesignRenderer extends BorderPane {
 	//		}
 	//	}
 
-	public ObservableList<DesignShape> selectedShapes() {
-		return selectedShapes;
+	public ObservableSet<DesignShape> selectedShapes() {
+		return getDesignContext().getSelectedShapes();
 	}
 
 	// Other ---------------------------------------------------------------------
