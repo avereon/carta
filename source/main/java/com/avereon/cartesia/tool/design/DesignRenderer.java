@@ -91,6 +91,10 @@ public class DesignRenderer extends BorderPane {
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		//selectedShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
+
+		// Update the workplane bounds to match this pane
+		// FIXME Need to update the workplane with zoom and pan as well
+		renderer.boundsInParentProperty().addListener( ( p, o, n ) -> workplane.setBounds( renderer.parentToLocal( n ) ) );
 	}
 
 	public void setDesign( Design design ) {
@@ -365,7 +369,7 @@ public class DesignRenderer extends BorderPane {
 		Point3D anchor = renderer.localToParent( viewAnchor );
 
 		// Calculate the drag offset in screen coordinates
-		Point3D delta = dragAnchor.subtract( point);
+		Point3D delta = dragAnchor.subtract( point );
 
 		// Set the new viewpoint in world coordinates
 		renderer.setViewpoint( renderer.parentToLocal( anchor.add( delta ) ) );
@@ -485,11 +489,6 @@ public class DesignRenderer extends BorderPane {
 
 	private void doRender() {
 		//long startNs = System.nanoTime();
-
-		// Update the workplane bounds to match this pane
-		// FIXME Probably should not be updating the bounds during the render process
-		// Listeners can be added to the width and height properties to update the bounds
-		//workplane.setBounds( renderer.parentToLocal( Point2D.ZERO ), renderer.parentToLocal( new Point2D( getWidth(), getHeight() ) ) );
 
 		renderer.clear();
 		renderWorkplane();
@@ -650,7 +649,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void fillPath( DesignPath path ) {
-		renderer.fillPath( toMareaPathSteps( path ) );
+		//if( path.isClosed() ) renderer.fillPath( toMareaPathSteps( path ) );
 	}
 
 	private void drawPath( DesignPath path ) {

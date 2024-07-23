@@ -156,6 +156,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Create and associate the workplane and renderer
 		renderer = new DesignRenderer();
 		StackPane.setAlignment( renderer, Pos.CENTER );
+		// NEXT The renderer is not getting the correct size
 		//widthProperty().addListener( ( p, o, n ) -> renderer.setWidth( n.doubleValue() ) );
 
 		// TODO Move this to tool settings like reticle and aperture
