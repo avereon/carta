@@ -1132,7 +1132,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
-		log.atConfig().log( "Selected shapes changed: %s", change );
 		if( change.wasAdded() ) {
 			change.getElementAdded().setSelected( true );
 		} else if( change.wasRemoved() ) {

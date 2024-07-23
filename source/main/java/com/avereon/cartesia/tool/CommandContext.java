@@ -275,8 +275,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void doEventCommand( InputEvent event ) {
-		// NOTE This method does not handle key events
-		// those are handled by the action infrastructure
+		// NOTE This method does not handle key events,
+		//  those are handled by the action infrastructure
 		CommandMetadata metadata = CommandMap.getCommandByEvent( event );
 		if( metadata != CommandMap.NONE ) {
 			pushCommand( event, metadata.getType(), metadata.getParameters() );
