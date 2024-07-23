@@ -40,11 +40,11 @@ public class DesignPath extends DesignShape {
 
 	public static final String CLOSED = "closed";
 
-	private final List<Step> steps = new ArrayList<>();
+	//private final List<Step> steps = new ArrayList<>();
 
 	public DesignPath() {
 		super( null );
-		addModifyingKeys( CLOSED );
+		addModifyingKeys( STEPS );
 	}
 
 	public DesignPath( Point3D origin ) {
@@ -56,12 +56,12 @@ public class DesignPath extends DesignShape {
 		this();
 
 		List<Step> source = path.getSteps();
-		Step step = source.getFirst();
-		if( step.command() == Command.M ) {
+		if( !source.isEmpty() ) {
+			Step step = source.getFirst();
+			if( step.command() != Command.M ) throw new IllegalArgumentException( "DesignPath does not start with a move command" );
+
 			setOrigin( new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 ) );
-			steps.addAll( path.getSteps() );
-		} else {
-			throw new IllegalArgumentException( "DesignPath does not start with a move command" );
+			setSteps( path.getSteps() );
 		}
 	}
 
@@ -71,13 +71,11 @@ public class DesignPath extends DesignShape {
 	}
 
 	public List<Step> getSteps() {
-		return new ArrayList<>( steps );
+		return new ArrayList<>( getValue( STEPS, List.of() ) );
 	}
 
 	public void setSteps( List<Step> steps ) {
-		this.steps.clear();
-		this.steps.addAll( steps );
-		setModified( true );
+		setValue( STEPS, steps );
 	}
 
 	@Override
@@ -87,7 +85,7 @@ public class DesignPath extends DesignShape {
 		double[] start = Point.of();
 		double[] prior = Point.of();
 
-		for( Step step : steps ) {
+		for( Step step : getSteps() ) {
 			switch( step.command() ) {
 				case M -> {
 					distance = Math.min( distance, Geometry.distance( gPoint, Point.of( step.data()[ 0 ], step.data()[ 1 ] ) ) );
@@ -127,7 +125,7 @@ public class DesignPath extends DesignShape {
 		double length = 0;
 		double[] start = Point.of();
 		double[] prior = Point.of();
-		for( Step step : steps ) {
+		for( Step step : getSteps() ) {
 			switch( step.command() ) {
 				case M -> {
 					start = Point.of( step.data()[ 0 ], step.data()[ 1 ] );
@@ -168,14 +166,16 @@ public class DesignPath extends DesignShape {
 	public void apply( CadTransform transform ) {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( transform.apply( getOrigin() ) );
-			steps.forEach( step -> step.apply( transform ) );
+			getSteps().forEach( step -> step.apply( transform ) );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
 	}
 
 	public DesignPath add( DesignPath path ) {
+		List<Step> steps = getSteps();
 		steps.addAll( path.getSteps() );
+		setSteps( steps );
 		return this;
 	}
 
@@ -184,7 +184,9 @@ public class DesignPath extends DesignShape {
 	}
 
 	public DesignPath line( double x, double y ) {
+		List<Step> steps = getSteps();
 		steps.add( new Step( Command.L, x, y ) );
+		setSteps( steps );
 		return this;
 	}
 
@@ -205,7 +207,9 @@ public class DesignPath extends DesignShape {
 	 * @return The path
 	 */
 	public DesignPath arc( double x, double y, double rx, double ry, double rotate, double largeArc, double sweep ) {
+		List<Step> steps = getSteps();
 		steps.add( new Step( Command.A, x, y, rx, ry, rotate, largeArc, sweep ) );
+		setSteps( steps );
 		return this;
 	}
 
@@ -226,29 +230,37 @@ public class DesignPath extends DesignShape {
 	}
 
 	public DesignPath quad( double bx, double by, double cx, double cy ) {
+		List<Step> steps = getSteps();
 		steps.add( new Step( Command.Q, bx, by, cx, cy ) );
+		setSteps( steps );
 		return this;
 	}
 
 	public DesignPath cubic( double bx, double by, double cx, double cy, double dx, double dy ) {
+		List<Step> steps = getSteps();
 		steps.add( new Step( Command.B, bx, by, cx, cy, dx, dy ) );
+		setSteps( steps );
 		return this;
 	}
 
 	public DesignPath close() {
+		List<Step> steps = getSteps();
 		steps.add( new Step( Command.Z ) );
+		setSteps( steps );
 		return this;
 	}
 
 	public DesignPath move( double x, double y ) {
+		List<Step> steps = getSteps();
 		if( steps.isEmpty() ) setOrigin( new Point3D( x, y, 0.0 ) );
 		steps.add( new Step( Command.M, x, y ) );
+		setSteps( steps );
 		return this;
 	}
 
 	@Override
 	protected Map<String, Object> asMap() {
-		List<String> steps = this.steps.stream().map( Step::marshall ).toList();
+		List<String> steps = getSteps().stream().map( Step::marshall ).toList();
 
 		Map<String, Object> map = super.asMap();
 		map.put( SHAPE, PATH );
