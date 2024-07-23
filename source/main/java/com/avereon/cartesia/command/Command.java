@@ -1,6 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;

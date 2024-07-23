@@ -1,6 +1,20 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.camera.*;
+import com.avereon.cartesia.command.draw.*;
+import com.avereon.cartesia.command.edit.*;
+import com.avereon.cartesia.command.layer.*;
+import com.avereon.cartesia.command.measure.MeasureAngle;
+import com.avereon.cartesia.command.measure.MeasureDistance;
+import com.avereon.cartesia.command.measure.MeasureLength;
+import com.avereon.cartesia.command.measure.MeasurePoint;
+import com.avereon.cartesia.command.snap.SnapAuto;
+import com.avereon.cartesia.command.snap.SnapGridToggle;
+import com.avereon.cartesia.command.snap.SnapSelect;
+import com.avereon.cartesia.command.view.ViewCreate;
+import com.avereon.cartesia.command.view.ViewDelete;
+import com.avereon.cartesia.command.view.ViewUpdate;
 import com.avereon.cartesia.snap.SnapCenter;
 import com.avereon.cartesia.snap.SnapIntersection;
 import com.avereon.cartesia.snap.SnapMidpoint;
@@ -118,7 +132,7 @@ public class CommandMap {
 		add( product, "draw-line-2", DrawLine2.class ); // endpoint-endpoint
 		add( product, "draw-line-perpendicular", DrawLinePerpendicular.class ); // shape-endpoint-endpoint
 		add( product, "draw-marker", DrawMarker.class ); // point
-		add( product, "draw-path", Path.class );
+		add( product, "draw-path", DrawPath.class );
 		add( product, "draw-text", DrawText.class );
 
 		// Measure commands

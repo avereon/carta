@@ -43,6 +43,22 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.tool to org.testfx.junit5;
 	opens com.avereon.cartesia.tool.view to org.testfx.junit5;
 	opens com.avereon.cartesia.tool.design to org.testfx.junit5;
+	exports com.avereon.cartesia.command.camera;
+	opens com.avereon.cartesia.command.camera to org.testfx.junit5;
+	exports com.avereon.cartesia.command.draw;
+	opens com.avereon.cartesia.command.draw to org.testfx.junit5;
+	exports com.avereon.cartesia.command.layer;
+	opens com.avereon.cartesia.command.layer to org.testfx.junit5;
+	exports com.avereon.cartesia.command.measure;
+	opens com.avereon.cartesia.command.measure to org.testfx.junit5;
+	exports com.avereon.cartesia.command.view;
+	opens com.avereon.cartesia.command.view to org.testfx.junit5;
+	exports com.avereon.cartesia.command.print;
+	opens com.avereon.cartesia.command.print to org.testfx.junit5;
+	exports com.avereon.cartesia.command.snap;
+	opens com.avereon.cartesia.command.snap to org.testfx.junit5;
+	exports com.avereon.cartesia.command.edit;
+	opens com.avereon.cartesia.command.edit to org.testfx.junit5;
 
 	provides Module with CartesiaMod;
 
