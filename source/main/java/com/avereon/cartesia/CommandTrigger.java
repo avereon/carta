@@ -19,6 +19,10 @@ import java.util.Objects;
  */
 public class CommandTrigger {
 
+	public enum Modifier {
+		CONTROL, SHIFT, ALT, META, DIRECT, INERTIA, MOVING
+	}
+
 	private final EventType<?> type;
 
 	private boolean isControl;
@@ -39,11 +43,15 @@ public class CommandTrigger {
 	private CommandTrigger( InputEvent event ) {
 		this.type = event.getEventType();
 		if( event instanceof MouseEvent mouse ) {
+			this.mouseButton = mouse.getButton();
 			this.isControl = mouse.isControlDown();
 			this.isShift = mouse.isShiftDown();
 			this.isAlt = mouse.isAltDown();
 			this.isMeta = mouse.isMetaDown();
-			this.mouseButton = mouse.getButton();
+
+			// TODO Should not-drag automatically set the moving flag to false?
+			// TODO Should mouse drag automatically set the moving flag to true?
+			//this.isMoving = !mouse.isStillSincePress();
 		}
 		if( event instanceof GestureEvent gestureEvent ) {
 			this.isControl = gestureEvent.isControlDown();
