@@ -503,7 +503,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		Design design = getDesign();
 		if( design != null ) {
 			// Link the command context to this tool
-			design.getDesignContext( getProduct() ).getCommandContext().setTool( this );
+			getCommandContext().setTool( this );
 
 			// Link the guides before loading the design
 			layersGuide.link();
@@ -872,7 +872,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	private CommandPrompt getCommandPrompt() {
-		return getDesignContext().getCommandPrompt();
+		return getDesignContext().getCommandContext().getCommandPrompt();
 	}
 
 	private CoordinateStatus getCoordinateStatus() {

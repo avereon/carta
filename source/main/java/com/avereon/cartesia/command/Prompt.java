@@ -31,11 +31,11 @@ public class Prompt extends Command {
 		if( tool == null ) return INVALID;
 
 		if( parameters.length == 0 ) {
-			tool.getDesignContext().getCommandPrompt().setPrompt( prompt );
+			tool.getDesignContext().getCommandContext().getCommandPrompt().setPrompt( prompt );
 			return INCOMPLETE;
 		}
 
-		tool.getDesignContext().getCommandPrompt().clear();
+		tool.getDesignContext().getCommandContext().getCommandPrompt().clear();
 		tool.setCursor( null );
 
 		return parameters[ 0 ];

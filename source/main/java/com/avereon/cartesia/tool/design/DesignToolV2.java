@@ -518,7 +518,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private CommandPrompt getCommandPrompt() {
-		return getDesignContext().getCommandPrompt();
+		return getDesignContext().getCommandContext().getCommandPrompt();
 	}
 
 	private CoordinateStatus getCoordinateStatus() {

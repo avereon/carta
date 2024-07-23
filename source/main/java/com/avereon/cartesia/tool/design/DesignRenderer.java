@@ -65,6 +65,14 @@ public class DesignRenderer extends BorderPane {
 	// 3. Store the selected state in the DesignRenderer class. This is a more indirect
 	// 	approach, but it requires that each view maintain a set of selected shapes.
 
+	// If we choose the DesignContext approach, we need to add an observable
+	// collection to that class for the selected shapes. This collection would
+	// be updated by the DesignRenderer when shapes are selected or deselected.
+	// Listeners would need to be added to the collection to update the selected
+	// flag (used for optimization) on the shapes before rendering the views.
+	// The selected flag on the DesignShape class would be converted to a simple
+	// boolean property since it does not participate in model events.
+
 	// Shape selection is now handled by the DesignShape class
 	@Deprecated
 	private final ObservableList<DesignShape> selectedShapes;
