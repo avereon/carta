@@ -19,7 +19,10 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -422,18 +425,16 @@ public class DesignRenderer extends BorderPane {
 		return renderer.parentToLocal( parentBounds );
 	}
 
-	@Deprecated
-	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
-		// NOTE The select logic is in screen coordinates, so this might be un-deprecated
-		double size = realToWorld( tolerance );
-		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
-	}
+//	@Deprecated
+//	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
+//		double size = realToWorld( tolerance );
+//		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
+//	}
 
-	@Deprecated
-	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
-		// NOTE The select logic is in screen coordinates, so this might be un-deprecated
-		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
-	}
+//	@Deprecated
+//	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+//		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
+//	}
 
 	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue tolerance ) {
 		return worldPointSelect( anchor, realToWorld( tolerance ) );
@@ -444,8 +445,8 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public List<DesignShape> worldPointSelect( Point3D anchor, Point3D radii ) {
-		return doFindByShape( new DesignEllipse( anchor, radii ), true );
-		//return doFindByShape( new DesignBox( anchor.subtract( radii ), radii.multiply( 2 ) ), true );
+		DesignEllipse selector = new DesignEllipse( anchor, radii );
+		return doFindByShape( selector, true );
 	}
 
 	/**
@@ -462,8 +463,8 @@ public class DesignRenderer extends BorderPane {
 		double w = Math.abs( a.getX() - b.getX() );
 		double h = Math.abs( a.getY() - b.getY() );
 
-		DesignBox box = new DesignBox( x, y, w, h );
-		return doFindByShape( box, intersect );
+		DesignBox selector = new DesignBox( x, y, w, h );
+		return doFindByShape( selector, intersect );
 	}
 
 	double realToWorld( DesignValue value ) {
@@ -548,7 +549,7 @@ public class DesignRenderer extends BorderPane {
 					}
 				}
 
-				//				// FIXME Temporary code to show the bounding box
+				//				// NOTE Temporary code to show the bounding box
 				//				if( 1 == 1 ) {
 				//					Bounds bounds = shape.getVisualBounds();
 				//					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
@@ -730,6 +731,8 @@ public class DesignRenderer extends BorderPane {
 	 * Select nodes using a shape. The selecting shape can be any shape but it
 	 * usually a {@link DesignEllipse} or a {@link DesignBox}. Returns the list
 	 * of selected shapes in order from top to bottom.
+	 * <p>
+	 * The selector shape is defined in world coordinates.
 	 *
 	 * @param selector The selecting shape
 	 * @param intersect True to select shapes by intersection
@@ -745,6 +748,18 @@ public class DesignRenderer extends BorderPane {
 		return getVisibleShapes().stream().filter( shape -> matches( selector, shape, intersect ) ).collect( Collectors.toList() );
 	}
 
+	/**
+	 * Test if the selector shape should select the specific shape. The intersect
+	 * parameter indicates if the selector needs to contain or just intersect the
+	 * shape.
+	 * <p>
+	 * Both the selector and the shape are defined in world coordinates.
+	 *
+	 * @param selector The selector shape
+	 * @param shape The shape to test
+	 * @param intersect The intersect flag
+	 * @return True if the selector shape should select the shape
+	 */
 	private boolean matches( DesignShape selector, DesignShape shape, boolean intersect ) {
 		return intersect ? isIntersecting( selector, shape ) : isContained( selector, shape );
 	}

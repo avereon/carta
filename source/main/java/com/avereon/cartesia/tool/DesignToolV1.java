@@ -976,15 +976,15 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		selectedFxShapes().clear();
 	}
 
-	@Override
-	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
-		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
-	}
-
-	@Override
-	public List<DesignShape> findShapesWithPoint( Point3D point ) {
-		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
-	}
+//	@Override
+//	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
+//		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+//	}
+//
+//	@Override
+//	public List<DesignShape> findShapesWithPoint( Point3D point ) {
+//		return designPane.worldPointSelect( point, getSelectTolerance() ).stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+//	}
 
 	@Override
 	public List<DesignShape> getSelectedShapes() {

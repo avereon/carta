@@ -903,15 +903,22 @@ public class DesignToolV2 extends BaseDesignTool {
 		renderer.selectedShapes().clear();
 	}
 
-	@Override
-	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
-		return renderer.screenPointSelect( mouse, getSelectTolerance() );
-	}
-
-	@Override
-	public List<DesignShape> findShapesWithPoint( Point3D point ) {
-		return renderer.worldPointSelect( point, getSelectTolerance() );
-	}
+//	// FIXME This may be a duplicate with screenPointSelect
+//	@Override
+//	public List<DesignShape> findShapesWithMouse( Point3D mouse ) {
+//		screenPointSelect( mouse );
+//		return getSelectedShapes();
+////		double size = renderer.realToWorld( getSelectTolerance() );
+////		return renderer.worldPointSelect( parentToLocal( mouse ), new Point3D( size, size, 0 ) );
+//	}
+//
+//	// FIXME This may be a duplicate with worldPointSelect
+//	@Override
+//	public List<DesignShape> findShapesWithPoint( Point3D point ) {
+//		worldPointSelect( point );
+//		return getSelectedShapes();
+//		//return renderer.worldPointSelect( point, getSelectTolerance() );
+//	}
 
 	@Override
 	public List<DesignShape> getSelectedShapes() {

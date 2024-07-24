@@ -290,11 +290,16 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract void setSelectAperture( Point3D anchor, Point3D mouse );
 
+	@Deprecated
 	public abstract List<Shape> screenPointFindOneAndWait( Point3D mouse );
 
+	@Deprecated
 	public abstract List<Shape> screenPointFindAllAndWait( Point3D mouse );
 
+	@Deprecated
 	public abstract List<Shape> screenPointSelectAndWait( Point3D mouse );
+
+	public abstract void clearSelectedShapes();
 
 	public abstract void screenPointSelect( Point3D mouse );
 
@@ -306,11 +311,11 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract void worldPointSelect( Point3D point, boolean toggle );
 
-	public abstract void clearSelectedShapes();
-
-	public abstract List<DesignShape> findShapesWithMouse( Point3D mouse );
-
-	public abstract List<DesignShape> findShapesWithPoint( Point3D point );
+//	// FIXME This may be a duplicate with screenPointSelect
+//	public abstract List<DesignShape> findShapesWithMouse( Point3D mouse );
+//
+//	// FIXME This may be a duplicate with worldPointSelect
+//	public abstract List<DesignShape> findShapesWithPoint( Point3D point );
 
 	public abstract List<DesignShape> getSelectedShapes();
 
@@ -318,6 +323,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	protected abstract void showCommandPrompt();
 
+	@Deprecated
 	static DesignShape getDesignData( Shape s ) {
 		return DesignShapeView.getDesignData( s );
 	}
