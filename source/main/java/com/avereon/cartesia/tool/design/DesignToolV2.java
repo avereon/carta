@@ -917,7 +917,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public List<DesignShape> getSelectedGeometry() {
-		return new ArrayList<>( renderer.selectedShapes() );
+		return new ArrayList<>( getDesignContext().getSelectedShapes() );
 	}
 
 	@Override
@@ -1262,7 +1262,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		@Override
 		public boolean isEnabled() {
-			return !getSelectedGeometry().isEmpty();
+			return getDesignContext() != null && !getSelectedGeometry().isEmpty();
 		}
 
 		@Override
