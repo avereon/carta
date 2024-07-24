@@ -536,7 +536,10 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		//    delay.
 
 		// Workplane settings
-		configureWorkplane();
+		// The workplane values are stored in the asset settings
+		// However, a set of default workplane values may need to be put in the
+		// asset settings because when a tool is closed, the tool settings are deleted.
+		configureWorkplane( getWorkplane(), getAssetSettings() );
 
 		Settings productSettings = getProduct().getSettings();
 		Settings settings = getSettings();
@@ -988,13 +991,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		return selectedFxShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
-	private void configureWorkplane() {
-		// The workplane values are stored in the asset settings
-		// However, a set of default workplane values may need to be put in the
-		// asset settings because when a tool is closed, the tool settings are deleted.
-		DesignWorkplane workplane = getWorkplane();
-		Settings settings = getAssetSettings();
-
+	private void configureWorkplane( DesignWorkplane workplane, Settings settings ) {
 		workplane.setCoordinateSystem( Grid.valueOf( settings.get( DesignWorkplane.COORDINATE_SYSTEM, DesignWorkplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
 		workplane.setOrigin( settings.get( "workpane-origin", DesignWorkplane.DEFAULT_GRID_ORIGIN ) );
 

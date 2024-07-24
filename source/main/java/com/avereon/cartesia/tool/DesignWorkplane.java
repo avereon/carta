@@ -48,6 +48,8 @@ public class DesignWorkplane extends Node {
 
 	public static final String DEFAULT_GRID_SNAP_SIZE = "0.1";
 
+	public static final String WORKPANE_ORIGIN = "workpane-origin";
+
 	public static final String GRID_STYLE = "grid-style";
 
 	public static final String BOUNDARY_X1 = "boundary-x1";
