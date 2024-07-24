@@ -345,6 +345,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
 		Collections.reverse( invertedCommandStack );
+
 		if( !commandStack.isEmpty() ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
 	}
 
@@ -441,7 +442,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 		@Override
 		public String toString() {
-			return command + "{s=" + command.getStep() + " p=" + parameters.length + "}";
+			return command + "{step=" + command.getStep() + " parms=" + parameters.length + "}";
 		}
 	}
 

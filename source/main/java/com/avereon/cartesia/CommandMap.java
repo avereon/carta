@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @CustomLog
-public class CommandMap {
+public final class CommandMap {
 
 	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", List.of(), Noop.class );
 
@@ -196,49 +196,28 @@ public class CommandMap {
 
 		// NOTE: Can't use Alt-Drag on Linux because it is used to move the window
 
-		// NOTE to devs:
-		// How can we do this?
-		// - Click to select
-		// - Ctrl-Click to toggle select
-		// - Drag to window select
-		// - Shift-Drag to window select by intersection
-		// - Ctrl-Drag to move camera
-		// - Ctrl-Scroll to zoom camera
-		// - Ctrl-Shift-Drag to spin camera
-		// - Ctrl-Shift-Scroll to walk camera
-		//
-		// Ctrl-Click (toggle select) and Ctrl-Drag (move camera) collide in this situation.
-		//
-		// The one that doesn't work is the Ctrl-Click to toggle select. That's
-		// because we start a command based on the initial mouse event and modifiers.
-		// To fix that we need to trigger the command on the "latest" possible event
-		// that defines the command shortcut.
-
-		/*
-		 * There are 4 key event flags, all 4 of which are clearly usable.
-		 */
-		/*
-		 * There are 12 mouse event flags, 10 of which are clearly usable. We only
-		 * support 9 of them in CommandTrigger. We are missing stillSincePress.
-		 */
-
 		// Anchor ------------------------------------------------------------------
 		// TODO Might consider setting the anchor on any mouse pressed event
 		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, true, false ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.MOVED ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL, CommandTrigger.Modifier.MOVED ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT, CommandTrigger.Modifier.MOVED ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.ALT ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.ALT, CommandTrigger.Modifier.MOVED ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.META ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.META, CommandTrigger.Modifier.MOVED ) );
 
 		// Selects -----------------------------------------------------------------
 		// Single select
 		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY ) );
 		// Toggle select
-		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false ) );
+		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL ) );
 		// Window select
-		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false ) );
+		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.MOVED ) );
 		// Window select by intersection
-		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false ) );
+		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT, CommandTrigger.Modifier.MOVED ) );
 
 		// Snaps -------------------------------------------------------------------
 		// Snap nearest
@@ -248,10 +227,10 @@ public class CommandMap {
 
 		// Camera 2D ---------------------------------------------------------------
 		// Camera move (aka pan)
-		add( "camera-move", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, true, false, false, false ) );
+		add( "camera-move", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL, CommandTrigger.Modifier.MOVED ) );
 		// Camera zoom
-		add( "camera-zoom", new CommandTrigger( ScrollEvent.SCROLL, true, false, false, false ) );
-		add( "camera-zoom", new CommandTrigger( ZoomEvent.ZOOM, false, false, false, false ) );
+		add( "camera-zoom", new CommandTrigger( ScrollEvent.SCROLL, CommandTrigger.Modifier.CONTROL ) );
+		add( "camera-zoom", new CommandTrigger( ZoomEvent.ZOOM ) );
 
 		// Camera spin
 		//add( new CommandEventKey( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
@@ -267,7 +246,7 @@ public class CommandMap {
 		actionCommands.values().stream().sorted().forEach( k -> {
 			if( TextUtil.isEmpty( k.getCommand() ) ) return;
 			StringBuilder builder = new StringBuilder();
-			builder.append( k.getCommand() == null ? "  " : k.getCommand() ).append( " -> " ).append( k.getName() );
+			builder.append( k.getCommand() ).append( " -> " ).append( k.getName() );
 			builder.append( " [" ).append( k.getAction() ).append( "]" );
 			if( k.getShortcut() != null ) builder.append( " <" ).append( k.getShortcut() ).append( ">" );
 			System.out.println( builder );
@@ -289,12 +268,7 @@ public class CommandMap {
 	}
 
 	public static CommandMetadata getCommandByEvent( InputEvent event ) {
-		// NEXT Improve command triggers:
-		//  1. Improve the comparing an event to a command trigger (simple map lookup may not be enough)
-		//  2. Improve the command trigger to be more inclusive (e.g. include all modifiers)
-		//  3. This should fix the problem with MOUSE_RELEASED causing a spurious select command
-
-		return getActionCommand( eventActions.getOrDefault( CommandTrigger.of( event ), TextUtil.EMPTY ) );
+		return getActionCommand( eventActions.getOrDefault( CommandTrigger.from( event ), TextUtil.EMPTY ) );
 	}
 
 	public static CommandMetadata getActionCommand( String action ) {
@@ -339,6 +313,37 @@ public class CommandMap {
 			if( command != null ) shortcutActions.put( command, action );
 			return new CommandMetadata( action, name, command, shortcut, tags, type, parameters );
 		} );
+	}
+
+	private static String eventToString( InputEvent event ) {
+		String info = event.getEventType().getName();
+		if( event instanceof MouseEvent mouseEvent ) {
+			info += " button=" + mouseEvent.getButton();
+			info += " control=" + mouseEvent.isControlDown();
+			info += " shift=" + mouseEvent.isShiftDown();
+			info += " alt=" + mouseEvent.isAltDown();
+			info += " meta=" + mouseEvent.isMetaDown();
+			info += " moved=" + !mouseEvent.isStillSincePress();
+		} else if( event instanceof GestureEvent mouseEvent ) {
+			info += " control=" + mouseEvent.isControlDown();
+			info += " shift=" + mouseEvent.isShiftDown();
+			info += " alt=" + mouseEvent.isAltDown();
+			info += " meta=" + mouseEvent.isMetaDown();
+			info += " direct=" + !mouseEvent.isDirect();
+			info += " inertia=" + !mouseEvent.isInertia();
+		}
+		return info;
+	}
+
+	private static String triggerToString( CommandTrigger trigger ) {
+		String info = trigger.getEventType().getName();
+		info += " button=" + trigger.getButton();
+		info += " control=" + trigger.hasModifier( CommandTrigger.Modifier.CONTROL );
+		info += " shift=" + trigger.hasModifier( CommandTrigger.Modifier.SHIFT );
+		info += " alt=" + trigger.hasModifier( CommandTrigger.Modifier.ALT );
+		info += " meta=" + trigger.hasModifier( CommandTrigger.Modifier.META );
+		info += " moved=" + trigger.hasModifier( CommandTrigger.Modifier.MOVED );
+		return info;
 	}
 
 	public static final class Noop extends Command {}

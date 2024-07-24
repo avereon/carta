@@ -1,11 +1,13 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Command;
+import lombok.Getter;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
+@Getter
 public class CommandMetadata implements Comparable<CommandMetadata> {
 
 	public static final Comparator<CommandMetadata> BY_ACTION = new CommandActionComparator();
@@ -36,34 +38,6 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 		this.type = Objects.requireNonNull( type );
 		this.parameters = Objects.requireNonNull( parameters );
 		this.tags = tags;
-	}
-
-	public String getAction() {
-		return action;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getCommand() {
-		return command;
-	}
-
-	public String getShortcut() {
-		return shortcut;
-	}
-
-	public Class<? extends Command> getType() {
-		return type;
-	}
-
-	public Object[] getParameters() {
-		return parameters;
-	}
-
-	public List<String> getTags() {
-		return tags;
 	}
 
 	@Override

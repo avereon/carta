@@ -5,8 +5,12 @@ import javafx.scene.input.GestureEvent;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * The CommandTrigger class is used to define the user input combination to
@@ -17,115 +21,124 @@ import java.util.Objects;
  * trigger should be defined by the MouseEvent.MOUSE_CLICKED event type, instead
  * of the MouseEvent.MOUSE_PRESSED event type.
  */
+@CustomLog
 public class CommandTrigger {
 
 	public enum Modifier {
-		CONTROL, SHIFT, ALT, META, DIRECT, INERTIA, MOVING
+		CONTROL,
+		SHIFT,
+		ALT,
+		META,
+		DIRECT,
+		INERTIA,
+		MOVED
 	}
 
 	private final EventType<?> type;
 
-	private boolean isControl;
-
-	private boolean isShift;
-
-	private boolean isAlt;
-
-	private boolean isMeta;
-
-	private boolean isDirect;
-
-	private boolean isInertia;
-
+	// There can only be one mouse button
 	private MouseButton mouseButton;
 
-	// TODO Can this constructor be deprecated?
-	private CommandTrigger( InputEvent event ) {
-		this.type = event.getEventType();
-		if( event instanceof MouseEvent mouse ) {
-			this.mouseButton = mouse.getButton();
-			this.isControl = mouse.isControlDown();
-			this.isShift = mouse.isShiftDown();
-			this.isAlt = mouse.isAltDown();
-			this.isMeta = mouse.isMetaDown();
+	// There can be many modifiers
+	private final Set<Modifier> modifiers;
 
-			// TODO Should not-drag automatically set the moving flag to false?
-			// TODO Should mouse drag automatically set the moving flag to true?
-			//this.isMoving = !mouse.isStillSincePress();
-		}
-		if( event instanceof GestureEvent gestureEvent ) {
-			this.isControl = gestureEvent.isControlDown();
-			this.isShift = gestureEvent.isShiftDown();
-			this.isAlt = gestureEvent.isAltDown();
-			this.isMeta = gestureEvent.isMetaDown();
-			this.isDirect = gestureEvent.isDirect();
-			this.isInertia = gestureEvent.isInertia();
-		}
+	public CommandTrigger( EventType<?> type, Modifier... modifiers ) {
+		this( type, null, modifiers );
 	}
 
-	public CommandTrigger( EventType<?> type ) {
-		this( type, false, false, false, false );
-	}
-
-	public CommandTrigger( EventType<?> type, boolean isControl, boolean isShift, boolean isAlt, boolean isMeta ) {
-		this( type, null, isControl, isShift, isAlt, isMeta );
-	}
-
-	public CommandTrigger( EventType<?> type, MouseButton button ) {
-		this( type, button, false, false, false, false );
-	}
-
-	// TODO Can this constructor be improved by using mouse and gesture flags?
-	public CommandTrigger( EventType<?> type, MouseButton button, boolean isControl, boolean isShift, boolean isAlt, boolean isMeta ) {
+	public CommandTrigger( EventType<?> type, MouseButton button, Modifier... modifiers ) {
 		this.type = type;
 		this.mouseButton = button;
-		this.isControl = isControl;
-		this.isShift = isShift;
-		this.isAlt = isAlt;
-		this.isMeta = isMeta;
+		this.modifiers = new HashSet<>( Arrays.asList( modifiers ) );
+
+		log.atWarn().log( "is control=" + hasModifier( Modifier.CONTROL ) );
+
+		//		// If comparing against mouse drag events, always enable the MOVING modifier
+		//		if( type == MouseEvent.MOUSE_DRAGGED ) {
+		//			this.modifiers.add( Modifier.MOVING );
+		//		}
+	}
+
+	public EventType<?> getEventType() {
+		return type;
 	}
 
 	public MouseButton getButton() {
 		return mouseButton;
 	}
 
-	/**
-	 * This matches all the attributes of the specified event with this trigger
-	 * except for the event type which it matches with the specified type.
-	 *
-	 * @param event The event to match with this trigger
-	 * @param type The specific event type to match
-	 * @return true if this trigger matches, false otherwise
-	 */
-	public boolean matchesWithType( InputEvent event, EventType<?> type ) {
-		boolean typeMatches = event.getEventType().equals( type );
-		if( event instanceof MouseEvent mouseEvent) {
-			boolean buttonMatches = mouseEvent.getButton() == mouseButton;
-			boolean controlMatches = mouseEvent.isControlDown() == isControl;
-			boolean shiftMatches = mouseEvent.isShiftDown() == isShift;
-			boolean altMatches = mouseEvent.isAltDown() == isAlt;
-			boolean metaMatches = mouseEvent.isMetaDown() == isMeta;
-			return typeMatches && buttonMatches && controlMatches && shiftMatches && altMatches && metaMatches;
+	public Set<Modifier> getModifiers() {
+		return new HashSet<>( modifiers );
+	}
+
+	public boolean hasButton( MouseButton button ) {
+		return mouseButton == button;
+	}
+
+	public boolean hasModifier( Modifier modifier ) {
+		return modifiers != null && modifiers.contains( modifier );
+	}
+
+	@Deprecated
+	public boolean matches( InputEvent event ) {
+		if( type != null && !event.getEventType().equals( type ) ) return false;
+
+		if( event instanceof MouseEvent mouseEvent ) {
+			if( mouseButton != null && mouseButton != mouseEvent.getButton() ) return false;
+			if( checkCommonModifiers( mouseEvent.isControlDown(), mouseEvent.isShiftDown(), mouseEvent.isAltDown(), mouseEvent.isMetaDown() ) ) return false;
+			return hasModifier( Modifier.MOVED ) == !mouseEvent.isStillSincePress();
+		} else if( event instanceof GestureEvent gestureEvent ) {
+			if( checkCommonModifiers( gestureEvent.isControlDown(), gestureEvent.isShiftDown(), gestureEvent.isAltDown(), gestureEvent.isMetaDown() ) ) return false;
+			if( hasModifier( Modifier.DIRECT ) ^ gestureEvent.isDirect() ) return false;
+			return hasModifier( Modifier.INERTIA ) == gestureEvent.isInertia();
+		} else {
+			log.atWarn().log( "Unhandled event type" );
+			return false;
 		}
-		return false;
+	}
+
+	private boolean checkCommonModifiers( boolean controlDown, boolean shiftDown, boolean altDown, boolean metaDown ) {
+		if( hasModifier( Modifier.CONTROL ) ^ controlDown ) return true;
+		if( hasModifier( Modifier.SHIFT ) ^ shiftDown ) return true;
+		if( hasModifier( Modifier.ALT ) ^ altDown ) return true;
+		return hasModifier( Modifier.META ) ^ metaDown;
 	}
 
 	@Override
-	public boolean equals( Object other ) {
-		if( this == other ) return true;
-		if( other == null || getClass() != other.getClass() ) return false;
-		CommandTrigger eventKey = (CommandTrigger)other;
-		return isControl == eventKey.isControl && isShift == eventKey.isShift && isAlt == eventKey.isAlt && isMeta == eventKey.isMeta && isDirect == eventKey.isDirect && isInertia == eventKey.isInertia && type
-			.equals( eventKey.type ) && mouseButton == eventKey.mouseButton;
+	public boolean equals( Object object ) {
+		if( this == object ) return true;
+		if( object == null || getClass() != object.getClass() ) return false;
+		CommandTrigger that = (CommandTrigger)object;
+		return type.equals( that.type ) && mouseButton == that.mouseButton && modifiers.equals( that.modifiers );
 	}
 
 	@Override
 	public int hashCode() {
-		return Objects.hash( type, isControl, isShift, isAlt, isMeta, isDirect, isInertia, mouseButton );
+		return Objects.hash( type, mouseButton, modifiers );
 	}
 
-	public static CommandTrigger of( InputEvent event ) {
-		return new CommandTrigger( event );
+	public static CommandTrigger from( InputEvent event ) {
+		CommandTrigger trigger = new CommandTrigger( event.getEventType() );
+		if( event instanceof MouseEvent mouseEvent ) {
+			trigger.mouseButton = mouseEvent.getButton();
+			if( mouseEvent.isControlDown() ) trigger.modifiers.add( Modifier.CONTROL );
+			if( mouseEvent.isShiftDown() ) trigger.modifiers.add( Modifier.SHIFT );
+			if( mouseEvent.isAltDown() ) trigger.modifiers.add( Modifier.ALT );
+			if( mouseEvent.isMetaDown() ) trigger.modifiers.add( Modifier.META );
+			if( !mouseEvent.isStillSincePress() ) trigger.modifiers.add( Modifier.MOVED );
+		} else if( event instanceof GestureEvent gestureEvent ) {
+			if( gestureEvent.isControlDown() ) trigger.modifiers.add( Modifier.CONTROL );
+			if( gestureEvent.isShiftDown() ) trigger.modifiers.add( Modifier.SHIFT );
+			if( gestureEvent.isAltDown() ) trigger.modifiers.add( Modifier.ALT );
+			if( gestureEvent.isMetaDown() ) trigger.modifiers.add( Modifier.META );
+			if( gestureEvent.isDirect() ) trigger.modifiers.add( Modifier.DIRECT );
+			if( gestureEvent.isInertia() ) trigger.modifiers.add( Modifier.INERTIA );
+		} else {
+			log.atWarn().log( "Unhandled event type" );
+			return null;
+		}
+
+		return trigger;
 	}
 
 }
