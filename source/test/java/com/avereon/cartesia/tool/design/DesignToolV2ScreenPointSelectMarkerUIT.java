@@ -68,10 +68,7 @@ public class DesignToolV2ScreenPointSelectMarkerUIT extends DesignToolV2BaseUIT 
 		// Need to get the selector inside the stroke width of the line
 		// 0.02 is just under half the line stroke width
 
-		// FIXME Having trouble with circular markers
-		// The -0.3 offset below is not correct
-
-		Point3D offset = new Point3D( -0.3 + getWorldSelectTolerance(), 0, 0 );
+		Point3D offset = new Point3D( -0.2 + getWorldSelectTolerance(), 0, 0 );
 		Point3D point = new Point3D( 3.5, -3, 0 ).add( offset );
 		Point3D mouse = getTool().worldToScreen( point );
 
