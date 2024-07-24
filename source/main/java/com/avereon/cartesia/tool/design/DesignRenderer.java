@@ -10,6 +10,7 @@ import com.avereon.data.NodeEvent;
 import com.avereon.marea.Font;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.LineJoin;
+import com.avereon.marea.RenderUnit;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.Path;
 import com.avereon.zarra.color.Colors;
@@ -98,6 +99,12 @@ public class DesignRenderer extends BorderPane {
 
 	public void setDesign( Design design ) {
 		this.design = design;
+
+		// Configure the rendering unit
+		RenderUnit renderUnit = RenderUnit.valueOf( design.getDesignUnit().toUpperCase() );
+		renderer.setLengthUnit( renderUnit );
+		this.design.register( Design.UNIT, e -> setLengthUnit( e.getNewValue() ) );
+
 		visibleLayers.addAll( design.getAllLayers() );
 	}
 
@@ -768,22 +775,8 @@ public class DesignRenderer extends BorderPane {
 		return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
 	}
 
-	private void onPreviewShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
-		if( change.wasAdded() ) {
-			change.getElementAdded().setPreview( true );
-		} else if( change.wasRemoved() ) {
-			change.getElementRemoved().setPreview( false );
-		}
-		render();
-	}
-
-	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
-		if( change.wasAdded() ) {
-			change.getElementAdded().setSelected( true );
-		} else if( change.wasRemoved() ) {
-			change.getElementRemoved().setSelected( false );
-		}
-		render();
+	private void setLengthUnit( String value ) {
+		renderer.setLengthUnit( RenderUnit.valueOf( value.toUpperCase() ) );
 	}
 
 	/**

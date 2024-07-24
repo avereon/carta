@@ -184,7 +184,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		StackPane.setAlignment( toast, Pos.CENTER );
 
 		// Add the components to the parent
-		getChildren().addAll( toast );
+		getChildren().addAll( renderer, toast );
 
 		// NOTE Settings and settings listeners should go in the ready() method
 	}
@@ -200,9 +200,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		// Hide the toast message
-		//toast.setVisible( false );
-		getChildren().remove( toast );
-		getChildren().add( renderer );
+		toast.setVisible( false );
 
 		// Create the design context
 		getDesign().createDesignContext( getProduct() );
