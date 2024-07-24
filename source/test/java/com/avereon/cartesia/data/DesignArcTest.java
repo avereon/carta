@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.test.PointAssert;
+import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.cartesia.math.CadConstants;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Constants;
@@ -228,14 +228,14 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( -45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		// This ends up as 255 normalized to -135
 		assertThat( arc.getStart() ).isCloseTo( -135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
@@ -248,14 +248,14 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 135, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
@@ -267,7 +267,7 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
 		// The sum of the start and the arc rotate should be -135
 		assertThat( arc.getStart() ).isCloseTo( -45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
@@ -275,7 +275,7 @@ public class DesignArcTest {
 
 		// Mirror it back
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( -135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
@@ -287,14 +287,14 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 2, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 4, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
 
 		// Mirror it back
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
@@ -306,7 +306,7 @@ public class DesignArcTest {
 		CadTransform transform = CadTransform.mirror( new Point3D( 0, 0, 0 ), new Point3D( 2, 2, 0 ) );
 
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 0, 0 ) );
 		// The sum of the start and the arc rotate should be -135
 		assertThat( arc.getStart() ).isCloseTo( 45.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -90.0, TOLERANCE );
@@ -314,7 +314,7 @@ public class DesignArcTest {
 
 		// Mirror it back
 		arc.apply( transform );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 0, 2, 0 ) );
 		assertThat( arc.getStart() ).isCloseTo( 135.0, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( 90.0, TOLERANCE );
 		assertThat( arc.calcRotate() ).isCloseTo( 0.0, TOLERANCE );
@@ -339,7 +339,7 @@ public class DesignArcTest {
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, alpha, 180 - alpha, DesignArc.Type.OPEN );
 		arc.moveEndpoint( new Point3D( -4, 2, 0 ), new Point3D( -3, 5, 0 ) );
 
-		PointAssert.assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isEqualTo( new Point3D( 1, 2, 0 ) );
 		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
 		assertThat( arc.getStart() ).isEqualTo( alpha );
 		assertThat( arc.getExtent() ).isEqualTo( 180 - 2 * alpha );

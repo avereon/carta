@@ -38,10 +38,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -155,9 +152,13 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Create and associate the workplane and renderer
 		renderer = new DesignRenderer();
-		StackPane.setAlignment( renderer, Pos.CENTER );
-		// NEXT The renderer is not getting the correct size
-		//widthProperty().addListener( ( p, o, n ) -> renderer.setWidth( n.doubleValue() ) );
+//		renderer.setMinSize( 0, 0 );
+//		renderer.prefWidthProperty().bind( widthProperty() );
+//		renderer.prefHeightProperty().bind( heightProperty() );
+//		renderer.maxWidthProperty().bind( widthProperty() );
+//		renderer.maxHeightProperty().bind( heightProperty() );
+//		renderer.layoutXProperty().bind( translateXProperty() );
+//		renderer.layoutYProperty().bind( translateYProperty() );
 
 		// TODO Move this to tool settings like reticle and aperture
 		renderer.getWorkplane().setGridStyle( GridStyle.DOT );

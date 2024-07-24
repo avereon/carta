@@ -58,9 +58,13 @@ public class DesignRenderer extends BorderPane {
 	private SimpleBooleanProperty constructionPointsVisible;
 
 	public DesignRenderer() {
+		// Ensure the minimum layout size can go to zero
+		// This fixes a problem where the parentToLocal and localToParent methods
+		// did not work correctly.
+		setMinSize( 0, 0 );
+
 		enabledLayers = FXCollections.observableArrayList();
 		visibleLayers = FXCollections.observableArrayList();
-		//selectedShapes = FXCollections.observableArrayList();
 		selectAperture = new SimpleObjectProperty<>();
 
 		workplane = new DesignWorkplane();
@@ -89,12 +93,7 @@ public class DesignRenderer extends BorderPane {
 
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
-		//selectedShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
-
-		// Update the workplane bounds to match this pane
-		// FIXME Need to update the workplane with zoom and pan as well
-		renderer.boundsInParentProperty().addListener( ( p, o, n ) -> workplane.setBounds( renderer.parentToLocal( n ) ) );
 	}
 
 	public void setDesign( Design design ) {
@@ -254,26 +253,8 @@ public class DesignRenderer extends BorderPane {
 	// Selected Shapes -----------------------------------------------------------
 
 	public boolean isShapeSelected( DesignShape shape ) {
-		//return selectedShapes.contains( shape );
 		return shape.isSelected();
 	}
-
-	//	public List<DesignShape> getSelectedShapes() {
-	//		return List.copyOf( selectedShapes );
-	//	}
-
-	//	public void clearSelectedShapes() {
-	//		selectedShapes.forEach( s -> s.setSelected( false ) );
-	//		selectedShapes.clear();
-	//	}
-
-	//	public void setSelectedShapes( Collection<DesignShape> shapes ) {
-	//		clearSelectedShapes();
-	//		if( shapes != null ) {
-	//			shapes.forEach( s -> s.setSelected( true ) );
-	//			selectedShapes.addAll( shapes );
-	//		}
-	//	}
 
 	public ObservableSet<DesignShape> selectedShapes() {
 		return getDesignContext().getSelectedShapes();
@@ -385,11 +366,6 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	@Override
-	public Point3D localToParent( Point3D localPoint ) {
-		return renderer.localToParent( localPoint );
-	}
-
-	@Override
 	public Point2D localToParent( double localX, double localY ) {
 		return renderer.localToParent( localX, localY );
 	}
@@ -400,8 +376,13 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	@Override
-	public Point3D localToParent( double x, double y, double z ) {
-		return renderer.localToParent( x, y, z );
+	public Point3D localToParent( double localX, double localY, double localZ ) {
+		return renderer.localToParent( localX, localY, localZ );
+	}
+
+	@Override
+	public Point3D localToParent( Point3D localPoint ) {
+		return renderer.localToParent( localPoint );
 	}
 
 	@Override
@@ -420,13 +401,13 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	@Override
-	public Point3D parentToLocal( Point3D parentPoint ) {
-		return renderer.parentToLocal( parentPoint );
+	public Point3D parentToLocal( double parentX, double parentY, double parentZ ) {
+		return renderer.parentToLocal( parentX, parentY, parentZ );
 	}
 
 	@Override
-	public Point3D parentToLocal( double parentX, double parentY, double parentZ ) {
-		return renderer.parentToLocal( parentX, parentY, parentZ );
+	public Point3D parentToLocal( Point3D parentPoint ) {
+		return renderer.parentToLocal( parentPoint );
 	}
 
 	@Override
@@ -489,6 +470,9 @@ public class DesignRenderer extends BorderPane {
 
 	private void doRender() {
 		//long startNs = System.nanoTime();
+
+		// Update the workplane bounds to match the renderer pane
+		workplane.setBounds( renderer.parentToLocal( renderer.getBoundsInParent() ) );
 
 		renderer.clear();
 		renderWorkplane();

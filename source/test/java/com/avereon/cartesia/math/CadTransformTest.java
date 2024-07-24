@@ -1,6 +1,6 @@
 package com.avereon.cartesia.math;
 
-import com.avereon.cartesia.test.PointAssert;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -145,7 +145,7 @@ public class CadTransformTest {
 	@Test
 	void testRotationWithOrigin() {
 		CadTransform transform = CadTransform.rotation( new Point3D( 1, 1, 0 ), CadPoints.UNIT_Z, 90 );
-		PointAssert.assertThat( transform.apply( new Point3D( 2, 2, 0 ) ) ).isCloseTo( new Point3D( 0, 2, 0 ), 1e-15 );
+		Point3DAssert.assertThat( transform.apply( new Point3D( 2, 2, 0 ) ) ).isCloseTo( new Point3D( 0, 2, 0 ), 1e-15 );
 	}
 
 	@Test
@@ -282,7 +282,7 @@ public class CadTransformTest {
 	void testInverseRotation() {
 		CadTransform transform = CadTransform.rotation( new Point3D( 0, 0, 1 ), 90 );
 		transform = transform.inverse();
-		PointAssert.assertThat( transform.apply( new Point3D( 1, 0, 0 ) ) ).isCloseTo( new Point3D( 0, -1, 0 ), 1E-16 );
+		Point3DAssert.assertThat( transform.apply( new Point3D( 1, 0, 0 ) ) ).isCloseTo( new Point3D( 0, -1, 0 ), 1E-16 );
 	}
 
 	@Test

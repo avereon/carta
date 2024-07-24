@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.test.PointAssert;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;
@@ -14,32 +14,32 @@ public class GridOrthographicTest {
 	@Test
 	void testFindNearest() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "1", "1" );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 0.3, -0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 0.3, -0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
 
 		workplane.setSnapGridX( "0.2" );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -14.623984, 2.34873, 0 ) ) ).isCloseTo( new Point3D( -14.6, 2, 0 ) );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -4.623984, -6.34873, 0 ) ) ).isCloseTo( new Point3D( -4.6, -6, 0 ) );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 7.623984, -23.34873, 0 ) ) ).isCloseTo( new Point3D( 7.6, -23, 0 ) );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 67.623984, 13.34873, 0 ) ) ).isCloseTo( new Point3D( 67.6, 13, 0 ) );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -14.623984, 2.34873, 0 ) ) ).isCloseTo( new Point3D( -14.6, 2, 0 ) );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -4.623984, -6.34873, 0 ) ) ).isCloseTo( new Point3D( -4.6, -6, 0 ) );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 7.623984, -23.34873, 0 ) ) ).isCloseTo( new Point3D( 7.6, -23, 0 ) );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 67.623984, 13.34873, 0 ) ) ).isCloseTo( new Point3D( 67.6, 13, 0 ) );
 	}
 
 	@Test
 	void testFindNearestAtZero() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane();
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isEqualTo( Point3D.ZERO );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isEqualTo( Point3D.ZERO );
 	}
 
 	@Test
 	void testFindNearestOffsetOrigin() throws Exception {
 		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "1", "1" );
 		workplane.setOrigin( "0.3, 0.2, 0" );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( 0.3, 0.2, 0 ) );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( 0.3, 0.2, 0 ) );
 
 		workplane.setOrigin( "0.7, 0.8, 0" );
-		PointAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( -0.3, -0.2, 0 ) );
+		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( -0.3, -0.2, 0 ) );
 	}
 
 	@Test

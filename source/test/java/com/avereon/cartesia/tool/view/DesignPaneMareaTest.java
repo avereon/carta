@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.test.PointAssert;
+import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.cartesia.TestTimeouts;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
@@ -196,7 +196,7 @@ public class DesignPaneMareaTest implements TestTimeouts {
 
 		double x = viewAnchor.getX() + (dragAnchor.getX() - mouse.getX());
 		double y = viewAnchor.getY() - (dragAnchor.getY() - mouse.getY());
-		PointAssert.assertThat( pane.getViewPoint() ).isCloseTo( new Point3D( x, y, 0 ) );
+		Point3DAssert.assertThat( pane.getViewPoint() ).isCloseTo( new Point3D( x, y, 0 ) );
 	}
 
 	@Test

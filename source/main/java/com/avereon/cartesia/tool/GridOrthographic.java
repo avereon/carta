@@ -28,10 +28,10 @@ public class GridOrthographic implements Grid {
 	public Point3D getNearest( DesignWorkplane workplane, Point3D point ) {
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
 		point = point.subtract( origin );
-		point = new Point3D( Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
-			Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ),
-			Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() )
-		);
+		double x = Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() );
+		double y = Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() );
+		double z = Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() );
+		point = new Point3D( x, y, z );
 		point = point.add( origin );
 		return point;
 	}
@@ -39,12 +39,16 @@ public class GridOrthographic implements Grid {
 	@Override
 	public void drawMareaGeometryGrid( FxRenderer2d renderer, DesignWorkplane workplane ) {
 		switch( workplane.getGridStyle() ) {
-			case DOT -> drawMareaGridDots( renderer, workplane );
+			case DOT -> drawMareaGridDots1( renderer, workplane );
 			case LINE -> drawMareaGridLines( renderer, workplane );
 		}
 	}
 
-	private void drawMareaGridDots( FxRenderer2d renderer, DesignWorkplane workplane ) {
+	private void drawMareaGridDots2( FxRenderer2d renderer, DesignWorkplane workplane ) {
+		// TODO Try a new implementation with dashed lines
+	}
+
+	private void drawMareaGridDots1( FxRenderer2d renderer, DesignWorkplane workplane ) {
 		// TODO Can performance be improved by caching some things, the the pens?
 		// TODO Can improve performance by multi-threading the calculations?
 		// TODO Can improve performance by drawing the dots as dashed lines?
@@ -254,6 +258,7 @@ public class GridOrthographic implements Grid {
 	}
 
 	@Override
+	@Deprecated
 	public List<Shape> createFxGeometryGrid( DesignWorkplane workplane ) {
 		return switch( workplane.getGridStyle() ) {
 			case DOT -> createFxGridDots( workplane );
@@ -261,11 +266,13 @@ public class GridOrthographic implements Grid {
 		};
 	}
 
+	@Deprecated
 	private List<Shape> createFxGridDots( DesignWorkplane workplane ) {
 		// It is not practical to create a dotted grid with FX shapes
 		return List.of();
 	}
 
+	@Deprecated
 	private List<Shape> createFxGridLines( DesignWorkplane workplane ) {
 		List<Shape> grid = new ArrayList<>();
 

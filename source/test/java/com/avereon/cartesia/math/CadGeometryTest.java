@@ -1,7 +1,7 @@
 package com.avereon.cartesia.math;
 
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.test.PointAssert;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
@@ -107,13 +107,13 @@ public class CadGeometryTest {
 	@Test
 	void testArcFromThreePointsScenarioC() {
 		DesignArc arc = CadGeometry.arcFromThreePoints( new Point3D( 1, 1, 0 ), new Point3D( 2, 2 + Math.sqrt( 2 ), 0 ), new Point3D( 3, 1, 0 ) );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 2, 0 ) );
 		assertThat( arc.getRadius() ).isCloseTo( Math.sqrt( 2 ), TOLERANCE );
 		assertThat( arc.getStart() ).isCloseTo( -135, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -270, TOLERANCE );
 
 		arc = CadGeometry.arcFromThreePoints( new Point3D( -3, 1, 0 ), new Point3D( -2, 2 + Math.sqrt( 2 ), 0 ), new Point3D( -1, 1, 0 ) );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( -2, 2, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( -2, 2, 0 ) );
 		assertThat( arc.getRadius() ).isCloseTo( Math.sqrt( 2 ), TOLERANCE );
 		assertThat( arc.getStart() ).isCloseTo( -135, TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( -270, TOLERANCE );
@@ -124,7 +124,7 @@ public class CadGeometryTest {
 		double start = CadGeometry.cartesianToPolar360( new Point3D( -1, -0.75, 0 ) ).getY();
 		double extent = -(360 + 2 * (start + 90));
 		DesignArc arc = CadGeometry.arcFromThreePoints( new Point3D( 1, 1, 0 ), new Point3D( 2, 3, 0 ), new Point3D( 3, 1, 0 ) );
-		PointAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 1.75, 0 ) );
+		Point3DAssert.assertThat( arc.getOrigin() ).isCloseTo( new Point3D( 2, 1.75, 0 ) );
 		assertThat( arc.getRadius() ).isCloseTo( 1.25, TOLERANCE );
 		assertThat( arc.getStart() ).isCloseTo( CadGeometry.cartesianToPolar360( new Point3D( -1, -0.75, 0 ) ).getY(), TOLERANCE );
 		assertThat( arc.getExtent() ).isCloseTo( extent, TOLERANCE );
