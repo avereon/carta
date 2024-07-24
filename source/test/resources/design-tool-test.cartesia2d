@@ -12,16 +12,7 @@
       "id" : "a56cede9-ee12-40d0-a86c-b3701146c0e5",
       "layers" : { },
       "name" : "Layer 0 (empty)",
-      "shapes" : {
-        "df3842a5-437e-4991-97b0-7120397362a7" : {
-          "draw-paint" : "none",
-          "fill-paint" : "none",
-          "id" : "df3842a5-437e-4991-97b0-7120397362a7",
-          "origin" : "-5.33150790372234,-7.762250497769898,0.0",
-          "point" : "5.165960976501058,-11.528660291384686,0.0",
-          "shape" : "line"
-        }
-      },
+      "shapes" : { },
       "text-draw-cap" : "round",
       "text-draw-width" : "0.05",
       "text-size" : "1"
