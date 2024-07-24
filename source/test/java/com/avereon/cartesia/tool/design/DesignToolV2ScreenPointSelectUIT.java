@@ -25,7 +25,7 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then - the first line should be selected
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 1 );
 		assertThat( selected.getFirst() ).isInstanceOf( DesignLine.class );
 	}
@@ -42,7 +42,7 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then - the first line should be selected
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 0 );
 	}
 
@@ -56,7 +56,7 @@ public class DesignToolV2ScreenPointSelectUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then - the first line should be selected
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 1 );
 		assertThat( selected.getFirst() ).isInstanceOf( DesignLine.class );
 

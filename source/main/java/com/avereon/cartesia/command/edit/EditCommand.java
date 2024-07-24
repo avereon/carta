@@ -27,7 +27,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected Collection<DesignShape> getCommandShapes( BaseDesignTool tool ) {
-		return copy ? cloneAndAddShapes( tool.getSelectedGeometry() ) : tool.getSelectedGeometry();
+		return copy ? cloneAndAddShapes( tool.getSelectedShapes() ) : tool.getSelectedShapes();
 	}
 
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
@@ -99,7 +99,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void deleteShapes( BaseDesignTool tool ) {
-		Txn.run( () -> tool.getSelectedGeometry().stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) ) );
+		Txn.run( () -> tool.getSelectedShapes().stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) ) );
 	}
 
 	private void transformShapes( Collection<DesignShape> shapes, CadTransform transform ) {
@@ -107,7 +107,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void apply( BaseDesignTool tool, CadTransform transform ) {
-		Collection<DesignShape> originalShapes = tool.getSelectedGeometry();
+		Collection<DesignShape> originalShapes = tool.getSelectedShapes();
 
 		// Clone
 		Collection<DesignShape> cloneShapes = Set.of();

@@ -220,9 +220,9 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	@Deprecated
 	// FIXME This really should return design shapes and not FX shapes
-	public abstract List<Shape> getVisibleShapes();
+	public abstract List<Shape> getVisibleFxShapes();
 
-	public abstract List<DesignShape> getVisibleGeometry();
+	public abstract List<DesignShape> getVisibleShapes();
 
 	public abstract Paint getSelectedDrawPaint();
 
@@ -311,7 +311,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract List<DesignShape> findShapesWithPoint( Point3D point );
 
-	public abstract List<DesignShape> getSelectedGeometry();
+	public abstract List<DesignShape> getSelectedShapes();
 
 	public abstract DesignPortal getPriorPortal();
 

@@ -8,7 +8,7 @@ public class Delete extends EditCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( context.getTool().getSelectedGeometry().isEmpty() ) return COMPLETE;
+		if( context.getTool().getSelectedShapes().isEmpty() ) return COMPLETE;
 
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );

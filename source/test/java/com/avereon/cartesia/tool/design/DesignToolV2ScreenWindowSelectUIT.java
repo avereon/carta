@@ -30,7 +30,7 @@ public class DesignToolV2ScreenWindowSelectUIT extends DesignToolV2BaseUIT {
 		getTool().screenWindowSelect( anchor, mouse, false, false );
 
 		// then - the first line should be selected
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 1 );
 		assertThat( selected.getFirst() ).isInstanceOf( DesignPath.class );
 	}
@@ -49,7 +49,7 @@ public class DesignToolV2ScreenWindowSelectUIT extends DesignToolV2BaseUIT {
 		getTool().screenWindowSelect( anchor, mouse, true, false );
 
 		// then - the first line should be selected
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 2 );
 		assertThat( selected.getFirst() ).isInstanceOf( DesignBox.class );
 		assertThat( selected.get(1) ).isInstanceOf( DesignPath.class );
@@ -69,7 +69,7 @@ public class DesignToolV2ScreenWindowSelectUIT extends DesignToolV2BaseUIT {
 		getTool().screenWindowSelect( anchor, mouse, false, false );
 
 		// then - the first line should be selected
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 1 );
 	}
 

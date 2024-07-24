@@ -37,7 +37,7 @@ public class DesignToolV2ScreenPointSelectTextUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 1 );
 		assertThat( selected.getFirst() ).isInstanceOf( DesignText.class );
 	}
@@ -57,7 +57,7 @@ public class DesignToolV2ScreenPointSelectTextUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 0 );
 	}
 
@@ -76,7 +76,7 @@ public class DesignToolV2ScreenPointSelectTextUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 1 );
 		assertThat( selected.getFirst() ).isInstanceOf( DesignText.class );
 	}
@@ -96,7 +96,7 @@ public class DesignToolV2ScreenPointSelectTextUIT extends DesignToolV2BaseUIT {
 		getTool().screenPointSelect( mouse, false );
 
 		// then
-		List<DesignShape> selected = getTool().getSelectedGeometry();
+		List<DesignShape> selected = getTool().getSelectedShapes();
 		assertThat( selected.size() ).isEqualTo( 0 );
 	}
 

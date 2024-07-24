@@ -48,7 +48,7 @@ public class Rotate extends EditCommand {
 		if( parameters.length < 3 ) {
 			anchor = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( anchor ).setOrigin( center );
-			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedGeometry() ) );
+			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}

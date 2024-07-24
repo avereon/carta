@@ -658,12 +658,12 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public List<Shape> getVisibleShapes() {
+	public List<Shape> getVisibleFxShapes() {
 		return List.of();
 	}
 
 	@Override
-	public List<DesignShape> getVisibleGeometry() {
+	public List<DesignShape> getVisibleShapes() {
 		return renderer.getVisibleShapes();
 	}
 
@@ -916,7 +916,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public List<DesignShape> getSelectedGeometry() {
+	public List<DesignShape> getSelectedShapes() {
 		return new ArrayList<>( getDesignContext().getSelectedShapes() );
 	}
 
@@ -1262,7 +1262,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		@Override
 		public boolean isEnabled() {
-			return getDesignContext() != null && !getSelectedGeometry().isEmpty();
+			return getDesignContext() != null && !getSelectedShapes().isEmpty();
 		}
 
 		@Override

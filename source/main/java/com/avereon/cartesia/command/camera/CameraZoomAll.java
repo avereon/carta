@@ -6,7 +6,7 @@ public class CameraZoomAll extends CameraCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		return zoomShapes( context, context.getTool().getVisibleShapes() );
+		return zoomShapes( context, context.getTool().getVisibleFxShapes() );
 	}
 
 }

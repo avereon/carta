@@ -65,7 +65,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		assertThat( getTool().getZoom() ).isEqualTo( 2 );
 		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 0 );
 		assertThat( getTool().getEnabledLayers().size() ).isEqualTo( 0 );
-		assertThat( getTool().getVisibleGeometry().size() ).isEqualTo( 0 );
+		assertThat( getTool().getVisibleShapes().size() ).isEqualTo( 0 );
 
 		assertThat( getTool().getSelectTolerance().getValue() ).isEqualTo( 2 );
 		assertThat( getTool().getSelectTolerance().getUnit() ).isEqualTo( DesignUnit.MILLIMETER );

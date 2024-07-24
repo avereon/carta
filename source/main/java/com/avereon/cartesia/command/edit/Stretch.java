@@ -42,7 +42,7 @@ public class Stretch extends EditCommand {
 
 		// Ask for an anchor point
 		if( parameters.length < 2 ) {
-			Collection<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedGeometry() );
+			Collection<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedShapes() );
 			addPreview( context, preview );
 
 			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, parameters[ 0 ] ) );
@@ -67,7 +67,7 @@ public class Stretch extends EditCommand {
 			Bounds bounds = asBounds( context, parameters[ 0 ] );
 			Point3D anchor = asPoint( context, parameters[ 1 ] );
 			Point3D target = asPoint( context, parameters[ 2 ] );
-			stretchShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedGeometry(), bounds ), anchor, target );
+			stretchShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedShapes(), bounds ), anchor, target );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-stretch-shapes", exception );

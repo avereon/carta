@@ -345,12 +345,12 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	// FIXME This really should return design shapes and not FX shapes
 	@Override
-	public List<Shape> getVisibleShapes() {
+	public List<Shape> getVisibleFxShapes() {
 		return designPane.getVisibleShapes();
 	}
 
 	@Override
-	public List<DesignShape> getVisibleGeometry() {
+	public List<DesignShape> getVisibleShapes() {
 		return List.of();
 	}
 
@@ -984,7 +984,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public List<DesignShape> getSelectedGeometry() {
+	public List<DesignShape> getSelectedShapes() {
 		return selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
