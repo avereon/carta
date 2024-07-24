@@ -45,8 +45,9 @@ public class GridOrthographic implements Grid {
 	}
 
 	private void drawMareaGridDots( FxRenderer2d renderer, DesignWorkplane workplane ) {
-		// TODO Can performance be improved by caching some things, the the pens
-		// TODO Can improve performance by multi-threading the calculations
+		// TODO Can performance be improved by caching some things, the the pens?
+		// TODO Can improve performance by multi-threading the calculations?
+		// TODO Can improve performance by drawing the dots as dashed lines?
 
 		Point2D parentZero = renderer.parentToLocal( Point2D.ZERO ).add( workplane.calcSnapGridX(), -workplane.calcSnapGridY() );
 
@@ -94,12 +95,14 @@ public class GridOrthographic implements Grid {
 				Pen pen = new Pen( workplane.calcMinorGridPaint(), workplane.calcMinorGridWidth() );
 				for( double valueX : minorOffsetsX ) {
 					for( double valueY : snapSpacingOffsetsY ) {
-						renderer.draw( new com.avereon.marea.geom.Line( valueX, valueY, valueX, valueY ), pen );
+						renderer.setDrawPen( pen );
+						renderer.drawLine( valueX, valueY, valueX, valueY );
 					}
 				}
 				for( double valueX : snapSpacingOffsetsX ) {
 					for( double valueY : minorOffsetsY ) {
-						renderer.draw( new com.avereon.marea.geom.Line( valueX, valueY, valueX, valueY ), pen );
+						renderer.setDrawPen( pen );
+						renderer.drawLine( valueX, valueY, valueX, valueY );
 					}
 				}
 			}
@@ -119,12 +122,14 @@ public class GridOrthographic implements Grid {
 			if( allowMajorGrid ) {
 				for( double valueX : majorOffsetsX ) {
 					for( double valueY : majorSpacingOffsetsY ) {
-						renderer.draw( new com.avereon.marea.geom.Line( valueX, valueY, valueX, valueY ), pen );
+						renderer.setDrawPen( pen );
+						renderer.drawLine( valueX, valueY, valueX, valueY );
 					}
 				}
 				for( double valueX : majorSpacingOffsetsX ) {
 					for( double valueY : majorOffsetsY ) {
-						renderer.draw( new com.avereon.marea.geom.Line( valueX, valueY, valueX, valueY ), pen );
+						renderer.setDrawPen( pen );
+						renderer.drawLine( valueX, valueY, valueX, valueY );
 					}
 				}
 			}
@@ -142,20 +147,24 @@ public class GridOrthographic implements Grid {
 			if( allowAxisGrid ) {
 				for( double valueX : axisOffsetsX ) {
 					for( double valueY : axisSpacingOffsetsY ) {
-						renderer.draw( new com.avereon.marea.geom.Line( valueX, valueY, valueX, valueY ), pen );
+						renderer.setDrawPen( pen );
+						renderer.drawLine( valueX, valueY, valueX, valueY );
 					}
 				}
 				for( double valueX : axisSpacingOffsetsX ) {
 					for( double valueY : axisOffsetsY ) {
-						renderer.draw( new com.avereon.marea.geom.Line( valueX, valueY, valueX, valueY ), pen );
+						renderer.setDrawPen( pen );
+						renderer.drawLine( valueX, valueY, valueX, valueY );
 					}
 				}
 			} else {
 				for( double value : axisOffsetsX ) {
-					renderer.draw( new com.avereon.marea.geom.Line( value, boundaryY1, value, boundaryY2 ), pen );
+					renderer.setDrawPen( pen );
+					renderer.drawLine( boundaryX1, value, boundaryX2, value );
 				}
 				for( double value : axisOffsetsY ) {
-					renderer.draw( new com.avereon.marea.geom.Line( boundaryX1, value, boundaryX2, value ), pen );
+					renderer.setDrawPen( pen );
+					renderer.drawLine( boundaryX1, value, boundaryX2, value );
 				}
 			}
 		}
