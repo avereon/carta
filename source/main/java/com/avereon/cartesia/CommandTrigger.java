@@ -51,8 +51,6 @@ public class CommandTrigger {
 		this.mouseButton = button;
 		this.modifiers = new HashSet<>( Arrays.asList( modifiers ) );
 
-		log.atWarn().log( "is control=" + hasModifier( Modifier.CONTROL ) );
-
 		//		// If comparing against mouse drag events, always enable the MOVING modifier
 		//		if( type == MouseEvent.MOUSE_DRAGGED ) {
 		//			this.modifiers.add( Modifier.MOVING );
