@@ -311,12 +311,6 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	public abstract void worldPointSelect( Point3D point, boolean toggle );
 
-//	// FIXME This may be a duplicate with screenPointSelect
-//	public abstract List<DesignShape> findShapesWithMouse( Point3D mouse );
-//
-//	// FIXME This may be a duplicate with worldPointSelect
-//	public abstract List<DesignShape> findShapesWithPoint( Point3D point );
-
 	public abstract List<DesignShape> getSelectedShapes();
 
 	public abstract DesignPortal getPriorPortal();
