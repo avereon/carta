@@ -1138,6 +1138,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		} else if( change.wasRemoved() ) {
 			change.getElementRemoved().setSelected( false );
 		}
+		deleteAction.updateEnabled();
 		renderer.render();
 	}
 
@@ -1261,7 +1262,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		@Override
 		public boolean isEnabled() {
-			return !selectedShapes().isEmpty();
+			return !getSelectedGeometry().isEmpty();
 		}
 
 		@Override
