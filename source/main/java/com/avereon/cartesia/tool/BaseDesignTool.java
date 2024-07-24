@@ -185,8 +185,9 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	public abstract ObjectProperty<DesignValue> selectTolerance();
 
 	@Deprecated
-	public abstract ObservableList<Shape> selectedShapes();
+	public abstract ObservableList<Shape> selectedFxShapes();
 
+	@Deprecated
 	public abstract Point3D nearestCp( Collection<Shape> shapes, Point3D point );
 
 	public abstract void setCurrentLayer( DesignLayer layer );

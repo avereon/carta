@@ -19,7 +19,7 @@ public class Move extends EditCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( context.getTool().selectedShapes().isEmpty() ) return COMPLETE;
+		if( context.getTool().getSelectedShapes().isEmpty() ) return COMPLETE;
 
 		setCaptureUndoChanges( context, false );
 

@@ -575,7 +575,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public ObservableList<Shape> selectedShapes() {
+	public ObservableList<Shape> selectedFxShapes() {
 		// This is the old FX shape implementation, just return an empty list.
 		return FXCollections.observableArrayList();
 	}
@@ -1172,6 +1172,9 @@ public class DesignToolV2 extends BaseDesignTool {
 		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.HIDE, null ) );
 	}
 
+	/**
+	 * General class for commands linked to actions.
+	 */
 	private class CommandAction extends ProgramAction {
 
 		private final String shortcut;

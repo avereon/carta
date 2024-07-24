@@ -263,7 +263,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public ObservableList<Shape> selectedShapes() {
+	public ObservableList<Shape> selectedFxShapes() {
 		return selectedShapes;
 	}
 
@@ -918,7 +918,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
 		selectedShapes.clear();
 		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().toList() );
-		return selectedShapes();
+		return selectedFxShapes();
 	}
 
 	@Override
@@ -928,13 +928,13 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	@Override
 	public void screenPointSelect( Point3D mouse, boolean toggle ) {
-		if( !toggle ) selectedShapes().clear();
+		if( !toggle ) selectedFxShapes().clear();
 
 		designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().ifPresent( shape -> {
 			if( toggle && DesignShapeView.getDesignData( shape ).isSelected() ) {
-				selectedShapes().remove( shape );
+				selectedFxShapes().remove( shape );
 			} else {
-				selectedShapes().add( shape );
+				selectedFxShapes().add( shape );
 			}
 		} );
 	}
@@ -942,8 +942,8 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	@Override
 	public void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
 		Fx.run( () -> {
-			selectedShapes().clear();
-			selectedShapes().addAll( designPane.screenWindowSelect( a, b, intersect ) );
+			selectedFxShapes().clear();
+			selectedFxShapes().addAll( designPane.screenWindowSelect( a, b, intersect ) );
 		} );
 	}
 
@@ -955,14 +955,14 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	@Override
 	public void worldPointSelect( Point3D point, boolean toggle ) {
 		Fx.run( () -> {
-			if( !toggle ) selectedShapes().clear();
+			if( !toggle ) selectedFxShapes().clear();
 
 			List<Shape> selection = designPane.worldPointSelect( point, getSelectTolerance() );
 			selection.stream().findFirst().ifPresent( shape -> {
 				if( toggle && DesignShapeView.getDesignData( shape ).isSelected() ) {
-					selectedShapes().remove( shape );
+					selectedFxShapes().remove( shape );
 				} else {
-					selectedShapes().add( shape );
+					selectedFxShapes().add( shape );
 				}
 			} );
 		} );
@@ -970,7 +970,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	@Override
 	public void clearSelectedShapes() {
-		selectedShapes().clear();
+		selectedFxShapes().clear();
 	}
 
 	@Override
@@ -985,7 +985,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	@Override
 	public List<DesignShape> getSelectedShapes() {
-		return selectedShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
+		return selectedFxShapes().stream().map( DesignShapeView::getDesignData ).collect( Collectors.toList() );
 	}
 
 	private void configureWorkplane() {
@@ -1284,7 +1284,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 		@Override
 		public boolean isEnabled() {
-			return !selectedShapes().isEmpty();
+			return !selectedFxShapes().isEmpty();
 		}
 
 		@Override

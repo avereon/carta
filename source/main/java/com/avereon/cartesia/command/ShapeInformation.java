@@ -3,7 +3,6 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
@@ -25,7 +24,7 @@ public class ShapeInformation extends Command {
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
-		if( context.getTool().selectedShapes().isEmpty() ) {
+		if( context.getTool().getSelectedShapes().isEmpty() ) {
 			if( parameters.length < 1 ) {
 				promptForShape( context, "select-shape" );
 				return INCOMPLETE;
@@ -34,13 +33,12 @@ public class ShapeInformation extends Command {
 
 		try {
 			DesignShape shape;
-			if( context.getTool().selectedShapes().isEmpty() ) {
+			if( context.getTool().getSelectedShapes().isEmpty() ) {
 				Point3D point = context.getScreenMouse();
 				shape = selectNearestShapeAtMouse( context, point );
 			} else {
-				shape = DesignShapeView.getDesignData( context.getTool().selectedShapes().get( 0 ) );
+				shape = context.getTool().getSelectedShapes().getFirst();
 			}
-
 
 			Map<String, Object> information = shape.getInformation();
 			if( information.isEmpty() ) return COMPLETE;

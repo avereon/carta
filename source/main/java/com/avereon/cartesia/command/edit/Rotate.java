@@ -25,7 +25,7 @@ public class Rotate extends EditCommand {
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		BaseDesignTool tool = context.getTool();
-		if( tool.selectedShapes().isEmpty() ) return COMPLETE;
+		if( tool.selectedFxShapes().isEmpty() ) return COMPLETE;
 
 		setCaptureUndoChanges( context, false );
 
