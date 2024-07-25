@@ -372,6 +372,9 @@ public class DesignRenderer extends BorderPane {
 	 * call from any thread.
 	 */
 	public void render() {
+		// NOTE Using the RenderTrigger does work, but not consistently
+		//  for example, zooming in and out quickly renders smoothly
+		//  but panning quickly does not render smoothly.
 		Fx.run( new RenderTrigger() );
 	}
 
