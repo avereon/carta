@@ -1122,8 +1122,6 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
 		SettingsPage page = designPropertiesMap.getSettingsPage( type );
 		if( page != null ) {
-			page.setSettings( settings );
-
 			// Switch to a task thread to get the tool
 			getProgram().getTaskManager().submit( Task.of( () -> {
 				try {
@@ -1131,7 +1129,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
 
 					// Fire the event on the FX thread
-					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignToolV1.this, ShapePropertiesToolEvent.SHOW, page ) ) );
+					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignToolV1.this, ShapePropertiesToolEvent.SHOW, page, settings ) ) );
 				} catch( Exception exception ) {
 					log.atWarn( exception ).log();
 				}
@@ -1142,7 +1140,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	private void hidePropertiesPage() {
-		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignToolV1.this, ShapePropertiesToolEvent.HIDE, null ) );
+		getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( DesignToolV1.this, ShapePropertiesToolEvent.HIDE ) );
 	}
 
 	@Override

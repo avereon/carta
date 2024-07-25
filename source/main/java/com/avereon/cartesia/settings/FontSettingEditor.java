@@ -69,8 +69,12 @@ public class FontSettingEditor extends SettingEditor {
 		if( event.getEventType() != SettingsEvent.CHANGED || !getKey().equals( event.getKey() ) ) return;
 
 		Object value = event.getNewValue();
-		String paint = value == null ? null : String.valueOf( value );
-		fontPicker.setFontAsString( paint );
+		fontPicker.setFontAsString( value == null ? null : String.valueOf( value ) );
+	}
+
+	@Override
+	protected void pageSettingsChanged() {
+		fontPicker.setFontAsString( getCurrentValue() );
 	}
 
 	private void doPickerValueChanged( ObservableValue<? extends String> property, String oldValue, String newValue ) {

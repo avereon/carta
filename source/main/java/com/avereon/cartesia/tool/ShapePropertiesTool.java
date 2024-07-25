@@ -12,10 +12,12 @@ import com.avereon.xenon.tool.settings.SettingsPagePanel;
 import com.avereon.xenon.workpane.Workpane;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.control.ScrollPane;
+import lombok.CustomLog;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
+@CustomLog
 public class ShapePropertiesTool extends ProgramTool {
 
 	private final ScrollPane scroller;
@@ -24,7 +26,7 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	private final EventHandler<ShapePropertiesToolEvent> hideHandler;
 
-	private final Map<SettingsPage,SettingsPagePanel> settingsPagePanelCache;
+	private final Map<SettingsPage, SettingsPagePanel> settingsPagePanelCache;
 
 	public ShapePropertiesTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -32,11 +34,14 @@ public class ShapePropertiesTool extends ProgramTool {
 
 		settingsPagePanelCache = new WeakHashMap<>();
 
+		// UI components
 		scroller = new ScrollPane();
 		scroller.setFitToWidth( true );
 		getChildren().addAll( scroller );
-		this.showHandler = e -> Fx.run( () -> showPage( e.getPage() ) );
-		this.hideHandler = e -> Fx.run( this::hidePage );
+
+		// Event handlers
+		this.showHandler = this::showPage;
+		this.hideHandler = this::hidePage;
 	}
 
 	@Override
@@ -64,7 +69,7 @@ public class ShapePropertiesTool extends ProgramTool {
 	@Override
 	protected void activate() {
 		ShapePropertiesToolEvent event = getWorkspace().getEventBus().getPriorEvent( ShapePropertiesToolEvent.class );
-		if( event != null && event.getEventType() == ShapePropertiesToolEvent.SHOW && isEmpty() ) showPage( event.getPage() );
+		if( event != null && event.getEventType() == ShapePropertiesToolEvent.SHOW && isEmpty() ) showPage( event );
 	}
 
 	@Override
@@ -77,18 +82,20 @@ public class ShapePropertiesTool extends ProgramTool {
 		return scroller.getContent() == null;
 	}
 
-	private void showPage( SettingsPage page ) {
+	private void showPage( ShapePropertiesToolEvent event ) {
 		Fx.run( () -> {
-			SettingsPagePanel panel = settingsPagePanelCache.computeIfAbsent( page, p -> {
-				SettingsPagePanel pagePanel = new SettingsPagePanel( p, getProgram().getSettingsManager().getOptionProviders() );
-				scroller.setContent( pagePanel );
-				return pagePanel;
+			SettingsPagePanel panel = settingsPagePanelCache.computeIfAbsent( event.getPage(), p -> {
+				p.setSettings( event.getSettings() );
+				return new SettingsPagePanel( p, getProgram().getSettingsManager().getOptionProviders() );
 			} );
+			// NEXT This is not triggering consistently
+			log.atWarn().log( "Page settings should change: %s", event.getPage().getId() );
+			event.getPage().setSettings( event.getSettings() );
 			scroller.setContent( panel );
-		});
+		} );
 	}
 
-	private void hidePage() {
+	private void hidePage( ShapePropertiesToolEvent event ) {
 		Fx.run( () -> scroller.setContent( null ) );
 	}
 
