@@ -2,8 +2,8 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
-import com.avereon.xenon.RbKey;
 import com.avereon.xenon.ProgramTool;
+import com.avereon.xenon.RbKey;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
@@ -13,6 +13,9 @@ import com.avereon.xenon.workpane.Workpane;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.control.ScrollPane;
 
+import java.util.Map;
+import java.util.WeakHashMap;
+
 public class ShapePropertiesTool extends ProgramTool {
 
 	private final ScrollPane scroller;
@@ -21,9 +24,13 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	private final EventHandler<ShapePropertiesToolEvent> hideHandler;
 
+	private final Map<SettingsPage,SettingsPagePanel> settingsPagePanelCache;
+
 	public ShapePropertiesTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		setId( "tool-properties" );
+
+		settingsPagePanelCache = new WeakHashMap<>();
 
 		scroller = new ScrollPane();
 		scroller.setFitToWidth( true );
@@ -72,7 +79,11 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	private void showPage( SettingsPage page ) {
 		Fx.run( () -> {
-			SettingsPagePanel panel = new SettingsPagePanel( page, getProgram().getSettingsManager().getOptionProviders() );
+			SettingsPagePanel panel = settingsPagePanelCache.computeIfAbsent( page, p -> {
+				SettingsPagePanel pagePanel = new SettingsPagePanel( p, getProgram().getSettingsManager().getOptionProviders() );
+				scroller.setContent( pagePanel );
+				return pagePanel;
+			} );
 			scroller.setContent( panel );
 		});
 	}

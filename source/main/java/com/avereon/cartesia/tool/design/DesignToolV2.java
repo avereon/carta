@@ -348,6 +348,9 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Add current layer property listener
 		currentLayerProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_LAYER, n.getId() ) );
 
+		// Add selected layer property listener
+		selectedLayerProperty().addListener( ( p, o, n ) -> showPropertiesPage( n ) );
+
 		// Add current view property listener
 		currentViewProperty().addListener( ( p, o, n ) -> settings.set( CURRENT_VIEW, n.getId() ) );
 
@@ -402,7 +405,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
-		showPropertiesPage( getCurrentLayer() );
+
 	}
 
 	@Override
@@ -1190,25 +1193,25 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
-		//		SettingsPage page = designPropertiesMap.getSettingsPage( type );
-		//		if( page != null ) {
-		//			page.setSettings( settings );
-		//
-		//			// Switch to a task thread to get the tool
-		//			getProgram().getTaskManager().submit( Task.of( () -> {
-		//				try {
-		//					// Open the tool but don't make it the active tool
-		//					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
-		//
-		//					// Fire the event on the FX thread
-		//					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
-		//				} catch( Exception exception ) {
-		//					log.atWarn( exception ).log();
-		//				}
-		//			} ) );
-		//		} else {
-		//			log.atError().log( "Unable to find properties page for %s", type.getName() );
-		//		}
+		SettingsPage page = designPropertiesMap.getSettingsPage( type );
+		if( page != null ) {
+			page.setSettings( settings );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Open the tool but don't make it the active tool
+					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, true, false ).get();
+
+					// Fire the event on the FX thread
+					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page ) ) );
+				} catch( Exception exception ) {
+					log.atWarn( exception ).log();
+				}
+			} ) );
+		} else {
+			log.atError().log( "Unable to find properties page for %s", type.getName() );
+		}
 	}
 
 	private void hidePropertiesPage() {
