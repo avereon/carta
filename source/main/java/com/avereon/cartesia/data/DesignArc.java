@@ -138,11 +138,10 @@ public class DesignArc extends DesignEllipse {
 
 	@Override
 	public double distanceTo( Point3D point ) {
-		// FIXME Improve DesignArc.distanceTo()
-		// This implementation is a simple estimate based on the origin and radius
 		double[] o = CadPoints.asPoint( getOrigin() );
 		double[] p = CadPoints.asPoint( point );
-		return Math.abs( Geometry.distance( o, p ) - getRadius() );
+		double[] r = CadPoints.asPoint( getRadii() );
+		return Geometry.pointArcDistance( p, o, r, calcRotate(), calcStart(), calcExtent() );
 	}
 
 	@Override
