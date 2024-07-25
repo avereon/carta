@@ -1179,6 +1179,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
+		// NEXT When a shape is selected, we should show the properties page for that shape
 		if( change.wasAdded() ) {
 			change.getElementAdded().setSelected( true );
 		} else if( change.wasRemoved() ) {
