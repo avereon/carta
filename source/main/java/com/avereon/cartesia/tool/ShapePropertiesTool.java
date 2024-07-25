@@ -14,6 +14,7 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.scene.control.ScrollPane;
 import lombok.CustomLog;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -26,13 +27,15 @@ public class ShapePropertiesTool extends ProgramTool {
 
 	private final EventHandler<ShapePropertiesToolEvent> hideHandler;
 
-	private final Map<SettingsPage, SettingsPagePanel> settingsPagePanelCache;
+	private static final Map<SettingsPage, SettingsPagePanel> settingsPagePanelCache;
+
+	static {
+		settingsPagePanelCache = Collections.synchronizedMap( new WeakHashMap<>() );
+	}
 
 	public ShapePropertiesTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		setId( "tool-properties" );
-
-		settingsPagePanelCache = new WeakHashMap<>();
 
 		// UI components
 		scroller = new ScrollPane();
@@ -88,8 +91,6 @@ public class ShapePropertiesTool extends ProgramTool {
 				p.setSettings( event.getSettings() );
 				return new SettingsPagePanel( p, getProgram().getSettingsManager().getOptionProviders() );
 			} );
-			// NEXT This is not triggering consistently
-			log.atWarn().log( "Page settings should change: %s", event.getPage().getId() );
 			event.getPage().setSettings( event.getSettings() );
 			scroller.setContent( panel );
 		} );

@@ -9,8 +9,8 @@ import lombok.CustomLog;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 @CustomLog
 public class DesignPropertiesMap {
@@ -19,26 +19,28 @@ public class DesignPropertiesMap {
 
 	private static final String propertiesPageExt = ".xml";
 
-	private final Map<Class<? extends DesignDrawable>, SettingsPage> propertiesPages;
+	private static final Map<Class<? extends DesignDrawable>, SettingsPage> propertiesPageCache;
+
+	static {
+		propertiesPageCache = Collections.synchronizedMap( new WeakHashMap<>() );
+	}
 
 	public DesignPropertiesMap( XenonProgramProduct product ) {
-		Map<Class<? extends DesignDrawable>, SettingsPage> pages = new HashMap<>();
-		pages.put( DesignLayer.class, loadPage( product, "layer" ) );
-		pages.put( DesignShape.class, loadPage( product, "shape" ) );
-		pages.put( DesignEllipse.class, loadPage( product, "arc" ) );
-		pages.put( DesignArc.class, loadPage( product, "arc" ) );
-		pages.put( DesignLine.class, loadPage( product, "line" ) );
-		pages.put( DesignMarker.class, loadPage( product, "point" ) );
-		pages.put( DesignCubic.class, loadPage( product, "curve" ) );
-		pages.put( DesignText.class, loadPage( product, "text" ) );
-		propertiesPages = Collections.unmodifiableMap( pages );
+		propertiesPageCache.putIfAbsent( DesignLayer.class, loadPage( product, "layer" ) );
+		propertiesPageCache.putIfAbsent( DesignShape.class, loadPage( product, "shape" ) );
+		propertiesPageCache.putIfAbsent( DesignEllipse.class, loadPage( product, "arc" ) );
+		propertiesPageCache.putIfAbsent( DesignArc.class, loadPage( product, "arc" ) );
+		propertiesPageCache.putIfAbsent( DesignLine.class, loadPage( product, "line" ) );
+		propertiesPageCache.putIfAbsent( DesignMarker.class, loadPage( product, "point" ) );
+		propertiesPageCache.putIfAbsent( DesignCubic.class, loadPage( product, "curve" ) );
+		propertiesPageCache.putIfAbsent( DesignText.class, loadPage( product, "text" ) );
 	}
 
 	public SettingsPage getSettingsPage( Class<? extends DesignDrawable> type ) {
-		return propertiesPages.get( type );
+		return propertiesPageCache.get( type );
 	}
 
-	private static SettingsPage loadPage( XenonProgramProduct product, String key ) {
+	private SettingsPage loadPage( XenonProgramProduct product, String key ) {
 		try {
 			return loadSettingsPage( product, key );
 		} catch( IOException exception ) {
@@ -47,7 +49,7 @@ public class DesignPropertiesMap {
 		return null;
 	}
 
-	private static SettingsPage loadSettingsPage( XenonProgramProduct product, String key ) throws IOException {
+	private SettingsPage loadSettingsPage( XenonProgramProduct product, String key ) throws IOException {
 		String pagePath = propertiesPagePath + key + propertiesPageExt;
 		return SettingsPageParser.parse( product, pagePath, RbKey.PROPS ).get( key );
 	}

@@ -103,11 +103,11 @@ public class DesignPath extends DesignShape {
 					prior = Geometry.arcEndPoints( Point.of( step.data()[ 0 ], step.data()[ 1 ] ), Point.of( step.data()[ 2 ], step.data()[ 3 ] ), 0.0, step.data()[ 4 ], step.data()[ 5 ] )[ 1 ];
 				}
 				case Q -> {
-					// FIXME Calculate point quad distance
+					// TODO Calculate point quad distance
 					prior = Point.of( step.data()[ 2 ], step.data()[ 3 ] );
 				}
 				case B -> {
-					// FIXME Calculate point cubic distance
+					// TODO Calculate point cubic distance
 					prior = Point.of( step.data()[ 4 ], step.data()[ 5 ] );
 				}
 				case Z -> {
