@@ -1196,6 +1196,10 @@ public class DesignToolV2 extends BaseDesignTool {
 				showPropertiesPage( new MultiNodeSettings( c.getList() ), DesignShape.class );
 			}
 		}
+
+		// Request a render
+		renderer.render();
+
 		deleteAction.updateEnabled();
 	}
 

@@ -60,6 +60,8 @@ public class DesignRenderer extends BorderPane {
 
 	private SimpleBooleanProperty constructionPointsVisible;
 
+	private boolean renderingLock;
+
 	public DesignRenderer() {
 		// Ensure the minimum layout size can go to zero
 		// This fixes a problem where the parentToLocal and localToParent methods
@@ -371,10 +373,15 @@ public class DesignRenderer extends BorderPane {
 	 * call from any thread.
 	 */
 	public void render() {
-		// NOTE Using the RenderTrigger does work, but not consistently
-		//  for example, zooming in and out quickly renders smoothly
-		//  but panning quickly does not render smoothly.
-		Fx.run( new RenderTrigger() );
+		//		// NOTE Using the RenderTrigger does work, but not consistently
+		//		//  for example, zooming in and out quickly renders smoothly
+		//		//  but panning quickly does not render smoothly.
+		//		Fx.run( new RenderTrigger() );
+
+		// This implementation does not appear to improve performance
+		// May need to look elsewhere for performance improvements
+		if( renderingLock ) return;
+		Fx.run( this::doRender );
 	}
 
 	@Override
@@ -427,16 +434,16 @@ public class DesignRenderer extends BorderPane {
 		return renderer.parentToLocal( parentBounds );
 	}
 
-//	@Deprecated
-//	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
-//		double size = realToWorld( tolerance );
-//		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
-//	}
+	//	@Deprecated
+	//	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
+	//		double size = realToWorld( tolerance );
+	//		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
+	//	}
 
-//	@Deprecated
-//	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
-//		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
-//	}
+	//	@Deprecated
+	//	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+	//		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
+	//	}
 
 	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue tolerance ) {
 		return worldPointSelect( anchor, realToWorld( tolerance ) );
@@ -478,22 +485,36 @@ public class DesignRenderer extends BorderPane {
 		return value.to( DesignUnit.INCH ).getValue() * getDpiX();
 	}
 
+	// Rendering -----------------------------------------------------------------
+
+	/**
+	 * Should only be called on the FX application thread from the
+	 * {@link #render()} method.
+	 */
 	private void doRender() {
-		//long startNs = System.nanoTime();
+		long startNs = System.nanoTime();
 
-		// Update the workplane bounds to match the renderer pane
-		workplane.setBounds( renderer.parentToLocal( renderer.getBoundsInParent() ) );
+		try {
+			renderingLock = true;
 
-		renderer.clear();
-		renderWorkplane();
-		renderLayers();
-		renderReferenceGeometry();
-		renderHintGeometry();
-		renderSelectAperture();
+			// Update the workplane bounds to match the renderer pane
+			workplane.setBounds( renderer.parentToLocal( renderer.getBoundsInParent() ) );
 
-		//long endNs = System.nanoTime();
+			renderer.clear();
+			renderWorkplane();
+			renderLayers();
+			renderReferenceGeometry();
+			renderHintGeometry();
+			renderSelectAperture();
 
-		//log.atConfig().log( "Render time: {0} ns", (endNs - startNs) );
+		} finally {
+			// Ensure the rendering lock is cleared
+			renderingLock = false;
+		}
+		long endNs = System.nanoTime();
+		long duration = (long)(0.000001 * (endNs - startNs));
+
+		if( duration > 20 ) log.atWarn().log( "Render time: {0} ms", duration );
 	}
 
 	private void renderWorkplane() {
