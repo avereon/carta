@@ -11,6 +11,7 @@ import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapGrid;
 import com.avereon.cartesia.tool.*;
 import com.avereon.data.IdNode;
+import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeSettings;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
@@ -35,7 +36,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.SetChangeListener;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
@@ -1169,24 +1169,34 @@ public class DesignToolV2 extends BaseDesignTool {
 		getSettings().set( VISIBLE_LAYERS, c.getList().stream().map( IdNode::getId ).collect( Collectors.toSet() ) );
 	}
 
-	private void onPreviewShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
-		if( change.wasAdded() ) {
-			change.getElementAdded().setPreview( true );
-		} else if( change.wasRemoved() ) {
-			change.getElementRemoved().setPreview( false );
+	private void onPreviewShapesChanged( ListChangeListener.Change<? extends DesignShape> c ) {
+		// Set the preview property of the shape
+		while( c.next() ) {
+			c.getRemoved().forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().forEach( s -> s.setSelected( true ) );
 		}
+
+		// Request a render
 		renderer.render();
 	}
 
-	private void onSelectedShapesChanged( SetChangeListener.Change<? extends DesignShape> change ) {
-		// NEXT When a shape is selected, we should show the properties page for that shape
-		if( change.wasAdded() ) {
-			change.getElementAdded().setSelected( true );
-		} else if( change.wasRemoved() ) {
-			change.getElementRemoved().setSelected( false );
+	private void onSelectedShapesChanged( ListChangeListener.Change<? extends DesignShape> c ) {
+		while( c.next() ) {
+			c.getRemoved().forEach( s -> s.setSelected( false ) );
+			c.getAddedSubList().forEach( s -> s.setSelected( true ) );
+
+			int size = c.getList().size();
+
+			if( size == 0 ) {
+				showPropertiesPage( getSelectedLayer() );
+			} else if( size == 1 ) {
+				c.getList().stream().findFirst().ifPresent( this::showPropertiesPage );
+			} else {
+				// Show a combined properties page
+				showPropertiesPage( new MultiNodeSettings( c.getList() ), DesignShape.class );
+			}
 		}
 		deleteAction.updateEnabled();
-		renderer.render();
 	}
 
 	private void showPropertiesPage( DesignDrawable drawable ) {

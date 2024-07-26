@@ -22,7 +22,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.ObservableSet;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -266,7 +265,7 @@ public class DesignRenderer extends BorderPane {
 		return shape.isSelected();
 	}
 
-	public ObservableSet<DesignShape> selectedShapes() {
+	public ObservableList<DesignShape> selectedShapes() {
 		return getDesignContext().getSelectedShapes();
 	}
 
