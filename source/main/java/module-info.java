@@ -18,6 +18,14 @@ module com.avereon.cartesia {
 
 	// Public APIs
 	exports com.avereon.cartesia.command;
+	exports com.avereon.cartesia.command.camera;
+	exports com.avereon.cartesia.command.draw;
+	exports com.avereon.cartesia.command.layer;
+	exports com.avereon.cartesia.command.measure;
+	exports com.avereon.cartesia.command.view;
+	exports com.avereon.cartesia.command.print;
+	exports com.avereon.cartesia.command.snap;
+	exports com.avereon.cartesia.command.edit;
 	exports com.avereon.cartesia.data;
 	exports com.avereon.cartesia.math;
 	exports com.avereon.cartesia.snap;
@@ -43,21 +51,13 @@ module com.avereon.cartesia {
 	opens com.avereon.cartesia.tool to org.testfx.junit5;
 	opens com.avereon.cartesia.tool.view to org.testfx.junit5;
 	opens com.avereon.cartesia.tool.design to org.testfx.junit5;
-	exports com.avereon.cartesia.command.camera;
 	opens com.avereon.cartesia.command.camera to org.testfx.junit5;
-	exports com.avereon.cartesia.command.draw;
 	opens com.avereon.cartesia.command.draw to org.testfx.junit5;
-	exports com.avereon.cartesia.command.layer;
 	opens com.avereon.cartesia.command.layer to org.testfx.junit5;
-	exports com.avereon.cartesia.command.measure;
 	opens com.avereon.cartesia.command.measure to org.testfx.junit5;
-	exports com.avereon.cartesia.command.view;
 	opens com.avereon.cartesia.command.view to org.testfx.junit5;
-	exports com.avereon.cartesia.command.print;
 	opens com.avereon.cartesia.command.print to org.testfx.junit5;
-	exports com.avereon.cartesia.command.snap;
 	opens com.avereon.cartesia.command.snap to org.testfx.junit5;
-	exports com.avereon.cartesia.command.edit;
 	opens com.avereon.cartesia.command.edit to org.testfx.junit5;
 
 	provides Module with CartesiaMod;

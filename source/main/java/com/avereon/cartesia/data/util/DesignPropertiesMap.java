@@ -26,13 +26,21 @@ public class DesignPropertiesMap {
 	}
 
 	public DesignPropertiesMap( XenonProgramProduct product ) {
+		// Layer properties
 		propertiesPageCache.putIfAbsent( DesignLayer.class, loadPage( product, "layer" ) );
+
+		// Common shape properties
 		propertiesPageCache.putIfAbsent( DesignShape.class, loadPage( product, "shape" ) );
-		propertiesPageCache.putIfAbsent( DesignEllipse.class, loadPage( product, "arc" ) );
-		propertiesPageCache.putIfAbsent( DesignArc.class, loadPage( product, "arc" ) );
+
+		// Specific shape properties
+		propertiesPageCache.putIfAbsent( DesignBox.class, loadPage( product, "box" ) );
 		propertiesPageCache.putIfAbsent( DesignLine.class, loadPage( product, "line" ) );
-		propertiesPageCache.putIfAbsent( DesignMarker.class, loadPage( product, "point" ) );
+		propertiesPageCache.putIfAbsent( DesignEllipse.class, loadPage( product, "ellipse" ) );
+		propertiesPageCache.putIfAbsent( DesignArc.class, loadPage( product, "arc" ) );
+		propertiesPageCache.putIfAbsent( DesignQuad.class, loadPage( product, "curve" ) );
 		propertiesPageCache.putIfAbsent( DesignCubic.class, loadPage( product, "curve" ) );
+		propertiesPageCache.putIfAbsent( DesignPath.class, loadPage( product, "path" ) );
+		propertiesPageCache.putIfAbsent( DesignMarker.class, loadPage( product, "marker" ) );
 		propertiesPageCache.putIfAbsent( DesignText.class, loadPage( product, "text" ) );
 	}
 
@@ -44,7 +52,7 @@ public class DesignPropertiesMap {
 		try {
 			return loadSettingsPage( product, key );
 		} catch( IOException exception ) {
-			log.atError().withCause( exception).log( "Unable to load settings page for %s", key );
+			log.atError().withCause( exception).log( "Unable to load settings page=%s", propertiesPagePath + key + propertiesPageExt );
 		}
 		return null;
 	}

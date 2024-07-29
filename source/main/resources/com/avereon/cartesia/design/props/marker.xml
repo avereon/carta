@@ -2,8 +2,8 @@
 
 <pages version="1.0">
 
-	<page id="point">
-		<group id="point-title">
+	<page id="marker">
+		<group id="marker-title">
 			<setting key="layer" editor="combobox" provider="design-shape-layers"/>
 			<setting key="type" editor="combobox" provider="marker-type-option-provider"/>
 			<setting key="size" type="math-expression" editor="textline"/>

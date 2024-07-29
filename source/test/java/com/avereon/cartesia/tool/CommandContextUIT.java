@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.BaseCartesiaUIT;
+import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.command.Command;
@@ -21,7 +21,7 @@ import static com.avereon.xenon.test.ProgramTestConfig.LONG_TIMEOUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CommandContextUIT extends BaseCartesiaUIT {
+public class CommandContextUIT extends BaseCartesiaUiTest {
 
 	private CommandContext context;
 
