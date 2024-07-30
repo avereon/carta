@@ -6,6 +6,7 @@ import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.ConstructionPoint;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.zarra.font.FontMetrics;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.binding.Bindings;
 import javafx.geometry.Point3D;
@@ -168,7 +169,7 @@ public class DesignTextView extends DesignShapeView {
 	}
 
 	void updateTranslate( DesignText designText, Shape shape ) {
-		TextMetrics metrics = new TextMetrics( (Text)shape );
+		FontMetrics metrics = new FontMetrics( designText.calcFont() );
 		shape.setTranslateX( metrics.getLead() );
 		shape.setTranslateY( metrics.getAscent() + metrics.getDescent() );
 	}
