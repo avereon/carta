@@ -25,7 +25,7 @@ public class Split extends EditCommand {
 		}
 
 		if( parameters.length < 2 ) {
-			Point3D mousePoint = context.getScreenAnchor();
+			Point3D mousePoint = context.getScreenMouse();
 			splitShape = selectNearestShapeAtMouse( context, mousePoint );
 			if( splitShape == DesignShape.NONE ) return INVALID;
 			promptForPoint( context, "select-split-point" );

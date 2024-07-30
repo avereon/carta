@@ -33,7 +33,7 @@ public class CameraMove extends CameraCommand {
 	@Override
 	public void handle( CommandContext context, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = context.getScreenAnchor();
+		Point3D anchor = context.getScreenMouse();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {

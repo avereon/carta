@@ -26,7 +26,7 @@ public class MeasureLength extends MeasureCommand {
 		clearReferenceAndPreview( context );
 
 		try {
-			Point3D point = context.getScreenAnchor();
+			Point3D point = context.getScreenMouse();
 			DesignShape shape = selectNearestShapeAtMouse( context, point );
 
 			double length = shape.pathLength();

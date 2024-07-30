@@ -34,7 +34,7 @@ public class ShapeInformation extends Command {
 		try {
 			DesignShape shape;
 			if( context.getTool().getSelectedShapes().isEmpty() ) {
-				Point3D point = context.getScreenAnchor();
+				Point3D point = context.getScreenMouse();
 				shape = selectNearestShapeAtMouse( context, point );
 			} else {
 				shape = context.getTool().getSelectedShapes().getFirst();

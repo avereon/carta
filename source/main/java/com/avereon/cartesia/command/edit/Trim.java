@@ -25,14 +25,14 @@ public class Trim extends EditCommand {
 		}
 
 		if( parameters.length < 2 ) {
-			trimMouse = context.getScreenAnchor();
+			trimMouse = context.getScreenMouse();
 			trimShape = selectNearestShapeAtMouse( context, trimMouse );
 			if( trimShape == DesignShape.NONE ) return INVALID;
 			promptForShape( context, "select-trim-edge" );
 			return INCOMPLETE;
 		}
 
-		Point3D edgeMouse = context.getScreenAnchor();
+		Point3D edgeMouse = context.getScreenMouse();
 		DesignShape edgeShape = findNearestShapeAtMouse( context, edgeMouse );
 		if( edgeShape == DesignShape.NONE ) return INVALID;
 

@@ -65,19 +65,15 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	@Getter
 	@Setter
-	private Point3D screenAnchor;
+	private Point3D screenMouse;
+
+	@Getter
+	@Setter
+	private Point3D worldAnchor;
 
 	@Getter
 	@Setter
 	private Point3D worldMouse;
-
-	/**
-	 * @deprecated This is a duplicate of {@link #worldMouse}
-	 */
-	@Getter
-	@Setter
-	@Deprecated
-	private Point3D worldAnchor;
 
 	private BaseDesignTool tool;
 
