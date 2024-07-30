@@ -137,4 +137,8 @@ public class DesignPathTest extends BaseCartesiaUnitTest {
 		) );
 	}
 
+	@Test
+	void getReferencePoints() {
+	}
+
 }

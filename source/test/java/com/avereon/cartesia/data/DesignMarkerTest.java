@@ -80,4 +80,8 @@ public class DesignMarkerTest {
 		assertThat( steps.size() ).isEqualTo( 4 );
 	}
 
+	@Test
+	void getReferencePoints() {
+	}
+
 }

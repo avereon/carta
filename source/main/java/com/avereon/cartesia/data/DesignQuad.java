@@ -10,6 +10,7 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 
 @CustomLog
@@ -55,6 +56,11 @@ public class DesignQuad extends DesignShape {
 	public DesignShape setPoint( Point3D point ) {
 		setValue( POINT, point );
 		return this;
+	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		return List.of( getOrigin(), getControl(), getPoint() );
 	}
 
 	@Override

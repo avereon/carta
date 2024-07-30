@@ -702,4 +702,8 @@ public class DesignTextTest {
 		assertThat( text.calcFontStrikethrough() ).isEqualTo( false );
 	}
 
+	@Test
+	void getReferencePoints() {
+	}
+
 }

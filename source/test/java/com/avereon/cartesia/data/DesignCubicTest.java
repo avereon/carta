@@ -1,11 +1,13 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadConstants;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,24 @@ public class DesignCubicTest {
 
 		curve.setOrigin( new Point3D( 1, 2, 3 ) );
 		assertThat( curve.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+	}
+
+	@Test
+	void getOriginControl() {
+		DesignCubic curve = new DesignCubic( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		assertThat( curve.getOriginControl() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+
+		curve.setOriginControl( new Point3D( 1, 2, 3 ) );
+		assertThat( curve.getOriginControl() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+	}
+
+	@Test
+	void getPointControl() {
+		DesignCubic curve = new DesignCubic( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		assertThat( curve.getPointControl() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+
+		curve.setPointControl( new Point3D( 1, 2, 3 ) );
+		assertThat( curve.getPointControl() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
@@ -89,6 +109,21 @@ public class DesignCubicTest {
 		assertThat( curve.getOriginControl() ).isEqualTo( new Point3D( 0.5, 0.5, 0 ) );
 		assertThat( curve.getPointControl() ).isEqualTo( new Point3D( 0.5, -0.5, 0 ) );
 		assertThat( curve.getPoint() ).isEqualTo( new Point3D( 1, 0, 0 ) );
+	}
+
+	@Test
+	void getReferencePoints() {
+		// given
+		DesignCubic curve = new DesignCubic( new Point3D( 0, 0, 0 ), new Point3D( 0.5, 0.5, 0 ), new Point3D( 0.5, -0.5, 0 ), new Point3D( 1, 0, 0 ) );
+
+		// when
+		List<Point3D> points = curve.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 0, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 0.5, 0.5, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 0.5, -0.5, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 1, 0, 0 ) );
 	}
 
 }

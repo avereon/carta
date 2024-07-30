@@ -1,11 +1,13 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadConstants;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,15 @@ public class DesignQuadTest {
 
 		quad.setOrigin( new Point3D( 1, 2, 3 ) );
 		assertThat( quad.getOrigin() ).isEqualTo( new Point3D( 1, 2, 3 ) );
+	}
+
+	@Test
+	void testControlPoint() {
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) );
+		assertThat( quad.getControl() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+
+		quad.setControl( new Point3D( 1, 2, 3 ) );
+		assertThat( quad.getControl() ).isEqualTo( new Point3D( 1, 2, 3 ) );
 	}
 
 	@Test
@@ -86,6 +97,20 @@ public class DesignQuadTest {
 		assertThat( quad.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 		assertThat( quad.getControl() ).isEqualTo( new Point3D( 0.5, 0.5, 0 ) );
 		assertThat( quad.getPoint() ).isEqualTo( new Point3D( 1, 0, 0 ) );
+	}
+
+	@Test
+	void getReferencePoints() {
+		// given
+		DesignQuad quad = new DesignQuad( new Point3D( 0, 0, 0 ), new Point3D( 0.5, 0.5, 0 ), new Point3D( 1, 0, 0 ) );
+
+		// when
+		List<Point3D> points = quad.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 0, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 0.5, 0.5, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 1, 0, 0 ) );
 	}
 
 }
