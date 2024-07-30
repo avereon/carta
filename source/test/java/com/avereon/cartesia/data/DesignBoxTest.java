@@ -1,11 +1,14 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -122,6 +125,27 @@ public class DesignBoxTest {
 		assertThat( bounds.getMaxY() ).isEqualTo( 1 + (6 * CadMath.SQRT2_OVER_2) + a, LOOSE_TOLERANCE );
 		assertThat( bounds.getWidth() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, LOOSE_TOLERANCE );
 		assertThat( bounds.getHeight() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, LOOSE_TOLERANCE );
+	}
+
+	@Test
+	void getReferencePoints() {
+		// given
+		DesignBox box = new DesignBox( new Point3D( 1, 1, 0 ), new Point3D( 2, 1, 0 ) );
+		box.setRotate( 45 );
+		assertThat( box.getSize() ).isEqualTo( new Point3D( 2, 1, 0 ) );
+
+		double a = 2 * CadMath.SQRT2_OVER_2;
+		double b = 1 * CadMath.SQRT2_OVER_2;
+
+		// when
+		List<Point3D> points = box.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 1, 1, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 1 + a, 1 + a, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 1 + a - b, 1 + a + b, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 1 - b, 1 + b, 0 ) );
+		assertThat( points ).hasSize( 4 );
 	}
 
 }

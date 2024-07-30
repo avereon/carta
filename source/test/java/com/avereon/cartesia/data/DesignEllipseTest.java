@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.BoundingBox;
@@ -8,6 +9,7 @@ import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
@@ -269,6 +271,93 @@ public class DesignEllipseTest {
 		ellipse = new DesignEllipse( new Point3D( -3.0, -3.0, 0 ), 2.0, 4.0, 270.0 );
 		Point3DAssert.assertThat( ellipse.getRotateTransform().apply( ellipse.getOrigin() ) ).isCloseTo( new Point3D( 0, 0, 0 ) );
 		Point3DAssert.assertThat( ellipse.getRotateTransform().apply( new Point3D( -1, -1, 0 ) ) ).isCloseTo( new Point3D( -2, 1, 0 ) );
+	}
+
+	@Test
+	void getReferencePointsWithCircle() {
+		// given
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 5, 0, 0 ), 1.0 );
+
+		// when
+		List<Point3D> points = ellipse.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 6, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 5, 1, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 4, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 4 ) ).isCloseTo( new Point3D( 5, -1, 0 ) );
+		assertThat( points.size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void getReferencePointsWithFlatEllipse() {
+		// given
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 5, 0, 0 ), 2.0, 0.0 );
+
+		// when
+		List<Point3D> points = ellipse.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 7, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 3, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 4 ) ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		assertThat( points.size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void getReferencePointsWithThinEllipse() {
+		// given
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 5, 0, 0 ), 0.0, 1.0 );
+
+		// when
+		List<Point3D> points = ellipse.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 5, 1, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 4 ) ).isCloseTo( new Point3D( 5, -1, 0 ) );
+		assertThat( points.size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void getReferencePointsWithEllipse() {
+		// given
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0 );
+
+		// when
+		List<Point3D> points = ellipse.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 15, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 5, 5, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( -5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 4 ) ).isCloseTo( new Point3D( 5, -5, 0 ) );
+		assertThat( points.size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void getReferencePointsWithRotatedEllipse() {
+		// given
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0, 45.0 );
+		double a = 10 * CadMath.SQRT2_OVER_2;
+		double b = 5 * CadMath.SQRT2_OVER_2;
+
+		// when
+		List<Point3D> points = ellipse.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 5, 0, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 5 + a, a, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 5 - b, b, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 5 - a, -a, 0 ) );
+		Point3DAssert.assertThat( points.get( 4 ) ).isCloseTo( new Point3D( 5 + b, -b, 0 ) );
+		assertThat( points.size() ).isEqualTo( 5 );
 	}
 
 }

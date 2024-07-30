@@ -10,6 +10,7 @@ import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
@@ -215,6 +216,18 @@ public class DesignLineTest {
 
 		// But this is what is computed by JavaFX
 		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( -2 - SQRT2_OVER_2, -2 - SQRT2_OVER_2, 4 + SQRT2, 4 + SQRT2 ), LOOSE_TOLERANCE );
+	}
+
+	@Test
+	void getReferencePoints() {
+		// given
+		DesignLine line = new DesignLine( new Point3D( -2, -1, 0 ), new Point3D( 2, 3, 0 ) );
+
+		// when
+		List<Point3D> points = line.getReferencePoints();
+
+		// then
+		assertThat( points ).containsExactly( new Point3D( -2, -1, 0 ), new Point3D( 2, 3, 0 ) );
 	}
 
 }

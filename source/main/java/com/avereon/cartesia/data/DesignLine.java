@@ -57,7 +57,6 @@ public class DesignLine extends DesignShape {
 		return List.of( getOrigin(), getPoint() );
 	}
 
-
 	@Override
 	public double distanceTo( Point3D point ) {
 		return CadGeometry.linePointDistance( getOrigin(), getPoint(), point );

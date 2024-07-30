@@ -55,6 +55,14 @@ public class CadGeometry {
 		return toFxPoint( Vector.rotate( asPoint( axis ), asPoint( point ), Math.toRadians( angle ) ) );
 	}
 
+	public static List<Point3D> rotate360( Point3D axis, double angle, Point3D... points ) {
+		return Arrays.stream( points ).map( p -> rotate360( axis, p, angle ) ).toList();
+	}
+
+	public static List<Point3D> rotate360( Point3D axis, double angle, List<Point3D> points ) {
+		return points.stream().map( p -> rotate360( axis, p, angle ) ).toList();
+	}
+
 	public static double distance( Point3D a, Point3D b ) {
 		return Geometry.distance( asPoint( a ), asPoint( b ) );
 	}
@@ -150,6 +158,15 @@ public class CadGeometry {
 		double[] endpointData = new double[]{ p1[ 0 ], p1[ 1 ], data[ 0 ], data[ 1 ], data[ 2 ], data[ 3 ], Math.toRadians( data[ 4 ] ), data[ 5 ], data[ 6 ] };
 		double[] centerData = Geometry.arcEndpointToCenter( p1, endpointData );
 		return new double[]{ centerData[ 0 ], centerData[ 1 ], centerData[ 2 ], centerData[ 3 ], Math.toDegrees( centerData[ 4 ] ), Math.toDegrees( centerData[ 5 ] ) };
+	}
+
+	public static List<Point3D> arcReferencePoints( DesignArc arc ) {
+		return CadPoints.toFxPoints( Geometry.arcReferencePoints( asPoint( arc.getOrigin() ),
+			asPoint( arc.getRadii() ),
+			Math.toRadians( arc.calcRotate() ),
+			Math.toRadians( arc.calcStart() ),
+			Math.toRadians( arc.calcExtent() )
+		) );
 	}
 
 	public static double quadArcLength( DesignQuad quad ) {

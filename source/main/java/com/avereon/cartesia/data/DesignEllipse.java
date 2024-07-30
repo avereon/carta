@@ -15,9 +15,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @CustomLog
 public class DesignEllipse extends DesignShape {
@@ -153,9 +151,21 @@ public class DesignEllipse extends DesignShape {
 		double w = 2 * getXRadius();
 		double h = 2 * getYRadius();
 
-		// FIXME Need to take rotation into account
+		// TODO Need to take rotation into account
 
 		return new BoundingBox( x, y, w, h );
+	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		Point3D radii = getRadii();
+		Point3D p1 = getOrigin();
+		Point3D p2 = p1.add( radii.getX(), 0, 0 );
+		Point3D p3 = p1.add( 0, radii.getY(), 0 );
+		Point3D p4 = p1.add( -radii.getX(), 0, 0 );
+		Point3D p5 = p1.add( 0, -radii.getY(), 0 );
+
+		return CadGeometry.rotate360( p1, calcRotate(), p1, p2, p3, p4, p5 );
 	}
 
 	@Override

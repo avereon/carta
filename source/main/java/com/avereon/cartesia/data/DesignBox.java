@@ -8,6 +8,7 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 
 @CustomLog
@@ -119,6 +120,18 @@ public class DesignBox extends DesignShape {
 	//
 	//		return bounds;
 	//	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		Point3D size = getSize();
+		Point3D p1 = getOrigin();
+		Point3D p2 = p1.add( size.getX(), 0, 0 );
+		Point3D p3 = p1.add( size );
+		Point3D p4 = p1.add( 0, size.getY(), 0 );
+
+		//return List.of( p1, p2, p3, p4 );
+		return CadGeometry.rotate360( p1, calcRotate(), p1, p2, p3, p4 );
+	}
 
 	@Override
 	public double distanceTo( Point3D point ) {

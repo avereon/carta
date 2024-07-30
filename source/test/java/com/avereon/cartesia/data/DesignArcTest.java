@@ -1,14 +1,15 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.cartesia.math.CadConstants;
 import com.avereon.cartesia.math.CadTransform;
+import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
@@ -365,6 +366,20 @@ public class DesignArcTest {
 		assertThat( arc.calcRotate() ).isEqualTo( 0.0 );
 		assertThat( arc.getStart() ).isEqualTo( 90 + alpha );
 		assertThat( arc.getExtent() ).isEqualTo( 180 - 2 * alpha );
+	}
+
+	@Test
+	void getReferencePoints() {
+		// given
+		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 90.0, 180.0, DesignArc.Type.OPEN );
+
+		// when
+		List<Point3D> points = arc.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 1, 7, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( -4, 2, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 1, -3, 0 ) );
 	}
 
 }

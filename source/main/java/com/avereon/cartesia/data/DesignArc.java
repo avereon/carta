@@ -12,6 +12,7 @@ import javafx.scene.shape.ArcType;
 import lombok.CustomLog;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CustomLog
@@ -134,6 +135,12 @@ public class DesignArc extends DesignEllipse {
 	public DesignArc setType( DesignArc.Type value ) {
 		setValue( TYPE, value );
 		return this;
+	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		// TODO Should the center of the arc also be a reference point?
+		return CadGeometry.rotate360( getOrigin(), calcRotate(), CadGeometry.arcReferencePoints( this ) );
 	}
 
 	@Override
