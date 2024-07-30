@@ -42,12 +42,12 @@ public class DesignContext {
 
 	public void setMouse( MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D screenMouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-		getCommandContext().setScreenMouse( screenMouse );
+		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
+		getCommandContext().setScreenAnchor( mouse );
 
-		Point3D worldMouse = tool.mouseToWorkplane( screenMouse );
-		getCommandContext().setWorldMouse( worldMouse );
-		getCoordinateStatus().updatePosition( worldMouse );
+		Point3D point = tool.mouseToWorkplane( mouse );
+		getCommandContext().setWorldMouse( point );
+		getCoordinateStatus().updatePosition( point );
 		getCoordinateStatus().updateZoom( tool.getZoom() );
 	}
 }

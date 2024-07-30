@@ -20,14 +20,14 @@ public class Join extends EditCommand {
 		}
 
 		if( parameters.length < 2 ) {
-			trimMouse = context.getScreenMouse();
+			trimMouse = context.getScreenAnchor();
 			trim = selectNearestShapeAtMouse( context, trimMouse );
 			if( trim == DesignShape.NONE ) return INVALID;
 			promptForShape( context, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
-		Point3D edgeMouse = context.getScreenMouse();
+		Point3D edgeMouse = context.getScreenAnchor();
 		DesignShape edge = findNearestShapeAtMouse( context, edgeMouse );
 		if( edge == DesignShape.NONE ) return INVALID;
 
