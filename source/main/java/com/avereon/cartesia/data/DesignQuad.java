@@ -2,9 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
@@ -67,10 +65,7 @@ public class DesignQuad extends DesignShape {
 	public double distanceTo( Point3D point ) {
 		// TODO Improve DesignQuad.distanceTo()
 		// This implementation is a simple estimate based on the origin and point
-		double[] a = CadPoints.asPoint( getOrigin() );
-		double[] b = CadPoints.asPoint( getPoint() );
-		double[] p = CadPoints.asPoint( point );
-		return Geometry.linePointDistance( a, b, p );
+		return CadGeometry.linePointDistance( getOrigin(), getPoint(), point );
 	}
 
 	@Override
@@ -80,7 +75,7 @@ public class DesignQuad extends DesignShape {
 
 	@Override
 	public Map<String, Object> getInformation() {
-		return Map.of( ORIGIN, getOrigin(),CONTROL, getControl(), POINT, getPoint(), LENGTH, pathLength() );
+		return Map.of( ORIGIN, getOrigin(), CONTROL, getControl(), POINT, getPoint(), LENGTH, pathLength() );
 	}
 
 	@Override
