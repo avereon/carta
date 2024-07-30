@@ -71,12 +71,20 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	@Setter
 	private Point3D worldMouse;
 
+	/**
+	 * @deprecated This is a duplicate of {@link #worldMouse}
+	 */
 	@Getter
 	@Setter
+	@Deprecated
 	private Point3D worldAnchor;
 
+	/**
+	 * @deprecated This is a duplicate of {@link #screenMouse}
+	 */
 	@Getter
 	@Setter
+	@Deprecated
 	private Point3D screenAnchor;
 
 	private BaseDesignTool tool;
@@ -253,6 +261,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	// FIXME What is the difference between this method and setTool()?
+	//  Because these are both set at the same time, they are the same value
 	public void setLastActiveDesignTool( BaseDesignTool tool ) {
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
@@ -262,6 +271,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	// FIXME What is the difference between this method and setLastActiveDesignTool()?
+	//  Because these are both set at the same time, they are the same value
 	public void setTool( BaseDesignTool tool ) {
 		this.tool = Objects.requireNonNull( tool );
 	}

@@ -925,6 +925,36 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
+	public List<DesignShape> screenPointSyncFindOne( Point3D mouse ) {
+		throw new UnsupportedOperationException( "This class does not return DesignShapes" );
+	}
+
+	@Override
+	public List<DesignShape> worldPointSyncFindOne( Point3D mouse ) {
+		throw new UnsupportedOperationException( "This class does not return DesignShapes" );
+	}
+
+	@Override
+	public List<DesignShape> screenPointSyncFindAll( Point3D mouse ) {
+		throw new UnsupportedOperationException( "This class does not return DesignShapes" );
+	}
+
+	@Override
+	public List<DesignShape> worldPointSyncFindAll( Point3D mouse ) {
+		throw new UnsupportedOperationException( "This class does not return DesignShapes" );
+	}
+
+	@Override
+	public List<DesignShape> screenPointSyncSelect( Point3D mouse ) {
+		throw new UnsupportedOperationException( "This class does not return DesignShapes" );
+	}
+
+	@Override
+	public List<DesignShape> worldPointSyncSelect( Point3D mouse ) {
+		throw new UnsupportedOperationException( "This class does not return DesignShapes" );
+	}
+
+	@Override
 	public void screenPointSelect( Point3D mouse ) {
 		screenPointSelect( mouse, false );
 	}

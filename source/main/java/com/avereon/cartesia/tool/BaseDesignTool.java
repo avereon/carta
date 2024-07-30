@@ -299,6 +299,18 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	@Deprecated
 	public abstract List<Shape> screenPointSelectAndWait( Point3D mouse );
 
+	public abstract List<DesignShape> screenPointSyncFindOne( Point3D mouse );
+
+	public abstract List<DesignShape> worldPointSyncFindOne( Point3D mouse );
+
+	public abstract List<DesignShape> screenPointSyncFindAll( Point3D mouse );
+
+	public abstract List<DesignShape> worldPointSyncFindAll( Point3D mouse );
+
+	public abstract List<DesignShape> screenPointSyncSelect( Point3D mouse );
+
+	public abstract List<DesignShape> worldPointSyncSelect( Point3D mouse );
+
 	public abstract void clearSelectedShapes();
 
 	public abstract void screenPointSelect( Point3D mouse );

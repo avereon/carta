@@ -23,6 +23,7 @@ public class Select extends Command {
 		if( parameters[ 0 ] instanceof MouseEvent event ) {
 			Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
+			// FIXME This is leaving shapes selected after a command is complete
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
 				tool.screenPointSelect( mouse, isSelectToggle( event ) );
 				return COMPLETE;

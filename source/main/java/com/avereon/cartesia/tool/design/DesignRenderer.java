@@ -267,10 +267,6 @@ public class DesignRenderer extends BorderPane {
 		return shape.isSelected();
 	}
 
-	public ObservableList<DesignShape> selectedShapes() {
-		return getDesignContext().getSelectedShapes();
-	}
-
 	// Other ---------------------------------------------------------------------
 
 	/**
@@ -445,15 +441,15 @@ public class DesignRenderer extends BorderPane {
 	//		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
 	//	}
 
-	public List<DesignShape> worldPointSelect( Point3D anchor, DesignValue tolerance ) {
-		return worldPointSelect( anchor, realToWorld( tolerance ) );
+	public List<DesignShape> worldPointFind( Point3D anchor, DesignValue tolerance ) {
+		return worldPointFind( anchor, realToWorld( tolerance ) );
 	}
 
-	public List<DesignShape> worldPointSelect( Point3D anchor, double radius ) {
-		return worldPointSelect( anchor, new Point3D( radius, radius, 0 ) );
+	public List<DesignShape> worldPointFind( Point3D anchor, double radius ) {
+		return worldPointFind( anchor, new Point3D( radius, radius, 0 ) );
 	}
 
-	public List<DesignShape> worldPointSelect( Point3D anchor, Point3D radii ) {
+	public List<DesignShape> worldPointFind( Point3D anchor, Point3D radii ) {
 		DesignEllipse selector = new DesignEllipse( anchor, radii );
 		return doFindByShape( selector, true );
 	}
@@ -464,9 +460,9 @@ public class DesignRenderer extends BorderPane {
 	 * @param a One corner of the window
 	 * @param b The other corner of the window
 	 * @param intersect True to select shapes by intersection
-	 * @return The set of selected nodes
+	 * @return The set of discovered nodes
 	 */
-	public List<DesignShape> worldWindowSelect( Point3D a, Point3D b, boolean intersect ) {
+	public List<DesignShape> worldWindowFind( Point3D a, Point3D b, boolean intersect ) {
 		double x = Math.min( a.getX(), b.getX() );
 		double y = Math.min( a.getY(), b.getY() );
 		double w = Math.abs( a.getX() - b.getX() );
@@ -745,13 +741,13 @@ public class DesignRenderer extends BorderPane {
 	/**
 	 * Select nodes using a shape. The selecting shape can be any shape but it
 	 * usually a {@link DesignEllipse} or a {@link DesignBox}. Returns the list
-	 * of selected shapes in order from top to bottom.
+	 * of discovered shapes in order from top to bottom.
 	 * <p>
 	 * The selector shape is defined in world coordinates.
 	 *
 	 * @param selector The selecting shape
 	 * @param intersect True to select shapes by intersection
-	 * @return The list of selected shapes
+	 * @return The list of discovered shapes
 	 */
 	private List<DesignShape> doFindByShape( final DesignShape selector, final boolean intersect ) {
 		// Ensure the selector does not have a draw width

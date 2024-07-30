@@ -11,9 +11,9 @@ import lombok.CustomLog;
 @CustomLog
 public class Trim extends EditCommand {
 
-	private DesignShape trimShape;
-
 	private Point3D trimMouse;
+
+	private DesignShape trimShape;
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {

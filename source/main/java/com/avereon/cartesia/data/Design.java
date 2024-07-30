@@ -185,10 +185,6 @@ public abstract class Design extends IdNode {
 		return getPrints().stream().filter( l -> Objects.equals( l.getValue( key ), value ) ).collect( Collectors.toSet() );
 	}
 
-	public void clearSelected() {
-		getAllLayers().stream().flatMap( l -> l.getShapes().stream() ).forEach( s -> s.setSelected( false ) );
-	}
-
 	public Map<String, ?> asMap() {
 		return asMap( ID, NAME, AUTHOR, DESCRIPTION, UNIT );
 	}
@@ -196,8 +192,8 @@ public abstract class Design extends IdNode {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( DesignLayer.LAYERS, getLayers().getLayers().stream().collect( Collectors.toMap( DesignLayer::getId, DesignLayer::asDeepMap ) ) );
-		if( getViews().size() > 0 ) map.put( Design.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
-		if( getPrints().size() > 0 ) map.put( Design.PRINTS, getPrints().stream().collect( Collectors.toMap( DesignPrint::getId, DesignPrint::asDeepMap ) ) );
+		if( !getViews().isEmpty() ) map.put( Design.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
+		if( !getPrints().isEmpty() ) map.put( Design.PRINTS, getPrints().stream().collect( Collectors.toMap( DesignPrint::getId, DesignPrint::asDeepMap ) ) );
 		return map;
 	}
 

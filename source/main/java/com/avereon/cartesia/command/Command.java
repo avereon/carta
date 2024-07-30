@@ -6,7 +6,6 @@ import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.CommandContext;
-import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.product.Rb;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.FxUtil;
@@ -19,6 +18,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.util.Collection;
 import java.util.List;
@@ -51,7 +51,7 @@ import java.util.stream.Collectors;
  * </p>
  *
  * <h2>Writing Commands</h2>
- *
+ * <p>
  * Writing a command class requires understanding the intent of commands. A
  * command class need to handle three main use cases, scripted input,
  * interactive input and interactive events. A user may choose any of these
@@ -92,6 +92,7 @@ public abstract class Command {
 
 	private final Map<DesignShape, DesignShape> previewMap;
 
+	@Getter
 	private int step;
 
 	private boolean stepExecuted;
@@ -110,12 +111,8 @@ public abstract class Command {
 		if( context.getTool() != null ) {
 			clearReferenceAndPreview( context );
 			context.getTool().setCursor( Cursor.DEFAULT );
-			context.getTool().getDesign().clearSelected();
+			context.getTool().clearSelectedShapes();
 		}
-	}
-
-	public int getStep() {
-		return step;
 	}
 
 	public void incrementStep() {
@@ -213,21 +210,24 @@ public abstract class Command {
 	}
 
 	protected DesignShape findNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
-		List<Shape> shapes = context.getTool().screenPointFindOneAndWait( mouse );
-		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
+		List<DesignShape> shapes = context.getTool().screenPointSyncFindOne( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
 	protected DesignShape findNearestShapeAtPoint( CommandContext context, Point3D point ) {
-		return findNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
+		List<DesignShape> shapes = context.getTool().worldPointSyncFindOne( point );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
 	protected DesignShape selectNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
-		List<Shape> shapes = context.getTool().screenPointSelectAndWait( mouse );
-		return shapes.isEmpty() ? DesignShape.NONE : DesignShapeView.getDesignData( shapes.get( 0 ) );
+		List<DesignShape> shapes = context.getTool().screenPointSyncSelect( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
 	protected DesignShape selectNearestShapeAtPoint( CommandContext context, Point3D point ) {
-		return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
+		//return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
+		List<DesignShape> shapes = context.getTool().worldPointSyncSelect( point );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
 	protected Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {

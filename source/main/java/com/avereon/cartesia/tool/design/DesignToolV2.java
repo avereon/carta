@@ -834,17 +834,55 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		throw new UnsupportedOperationException( "This method has a bad interface for this class" );
+		throw new UnsupportedOperationException( "This class does not return FX Shapes" );
 	}
 
 	@Override
 	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		throw new UnsupportedOperationException( "This method has a bad interface for this class" );
+		throw new UnsupportedOperationException( "This class does not return FX Shapes" );
 	}
 
 	@Override
 	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
-		throw new UnsupportedOperationException( "This method has a bad interface for this class" );
+		throw new UnsupportedOperationException( "This class does not return FX Shapes" );
+	}
+
+	@Override
+	public List<DesignShape> screenPointSyncFindOne( Point3D mouse ) {
+		// This is a finding operation
+		return screenPointFind( mouse ).stream().findFirst().stream().collect( Collectors.toList() );
+	}
+
+	@Override
+	public List<DesignShape> worldPointSyncFindOne( Point3D point ) {
+		// This is a finding operation
+		return worldPointFind( point ).stream().findFirst().stream().collect( Collectors.toList() );
+	}
+
+	@Override
+	public List<DesignShape> screenPointSyncFindAll( Point3D mouse ) {
+		// This is a finding operation
+		return screenPointFind( mouse );
+	}
+
+	@Override
+	public List<DesignShape> worldPointSyncFindAll( Point3D point ) {
+		// This is a finding operation
+		return worldPointFind( point );
+	}
+
+	@Override
+	public List<DesignShape> screenPointSyncSelect( Point3D mouse ) {
+		// This is a selecting operation
+		screenPointSelect( mouse );
+		return getSelectedShapes().stream().findFirst().stream().collect( Collectors.toList() );
+	}
+
+	@Override
+	public List<DesignShape> worldPointSyncSelect( Point3D point ) {
+		// This is a selecting operation
+		worldPointSelect( point );
+		return getSelectedShapes().stream().findFirst().stream().collect( Collectors.toList() );
 	}
 
 	@Override
@@ -867,9 +905,17 @@ public class DesignToolV2 extends BaseDesignTool {
 		worldPointSelect( point, false );
 	}
 
+	private List<DesignShape> screenPointFind( Point3D mouse ) {
+		return worldPointFind( renderer.parentToLocal( mouse ) );
+	}
+
+	private List<DesignShape> worldPointFind( Point3D point ) {
+		return renderer.worldPointFind( point, getSelectTolerance() );
+	}
+
 	@Override
 	public void worldPointSelect( Point3D point, boolean toggle ) {
-		List<DesignShape> shapes = renderer.worldPointSelect( point, getSelectTolerance() );
+		List<DesignShape> shapes = worldPointFind( point );
 
 		if( shapes.isEmpty() ) {
 			setSelectedShapes( shapes, toggle );
@@ -878,32 +924,28 @@ public class DesignToolV2 extends BaseDesignTool {
 		}
 	}
 
-	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect ) {
-		worldWindowSelect( a, b, intersect, false );
-	}
-
 	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
-		setSelectedShapes( renderer.worldWindowSelect( a, b, intersect ), toggle );
+		setSelectedShapes( renderer.worldWindowFind( a, b, intersect ), toggle );
 	}
 
 	private void setSelectedShapes( List<DesignShape> shapes, boolean toggle ) {
+		ObservableList<DesignShape> selectedShapes = getDesignContext().getSelectedShapes();
 		if( toggle ) {
 			shapes.forEach( shape -> {
 				if( renderer.isShapeSelected( shape ) ) {
-					renderer.selectedShapes().remove( shape );
+					selectedShapes.remove( shape );
 				} else {
-					renderer.selectedShapes().add( shape );
+					selectedShapes.add( shape );
 				}
 			} );
 		} else {
-			renderer.selectedShapes().clear();
-			renderer.selectedShapes().addAll( shapes );
+			selectedShapes.setAll( shapes );
 		}
 	}
 
 	@Override
 	public void clearSelectedShapes() {
-		renderer.selectedShapes().clear();
+		getDesignContext().getSelectedShapes().clear();
 	}
 
 	@Override
