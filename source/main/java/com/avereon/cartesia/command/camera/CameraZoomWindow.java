@@ -5,11 +5,6 @@ import com.avereon.cartesia.tool.CommandContext;
 public class CameraZoomWindow extends CameraCommand {
 
 	@Override
-	public boolean clearSelectionWhenComplete() {
-		return false;
-	}
-
-	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
@@ -18,10 +13,20 @@ public class CameraZoomWindow extends CameraCommand {
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		// FIXME Zoom window works differently now that we have Anchor and Select commands
 
-		context.getTool().setViewport( asBounds( context, parameters[ 0 ] ) );
+//		if( parameters.length < 2 ) {
+//			return INCOMPLETE;
+//		}
+//
+//		clearReferenceAndPreview( context );
+//		setCaptureUndoChanges( context, true );
+//
+//		Point3D anchor = context.getScreenAnchor();
+//		Point3D point = context.getTool().worldToScreen( asPoint( context, parameters[ 0 ] ) );
+//		Bounds bounds = FxUtil.bounds( anchor, point );
+//
+//		context.getTool().setScreenViewport( bounds );
 
 		return COMPLETE;
 	}
