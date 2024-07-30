@@ -8,6 +8,7 @@ import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 
 @CustomLog
@@ -50,6 +51,12 @@ public class DesignLine extends DesignShape {
 		setValue( POINT, point );
 		return this;
 	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		return List.of( getOrigin(), getPoint() );
+	}
+
 
 	@Override
 	public double distanceTo( Point3D point ) {

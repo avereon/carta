@@ -5,14 +5,12 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadPoints;
-import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Shape;
 
 import java.util.List;
 
-public class SnapCenter  implements Snap{
+public class SnapCenter implements Snap {
 
 	@Override
 	public String getPromptKey() {
@@ -24,18 +22,17 @@ public class SnapCenter  implements Snap{
 		if( point == null ) return null;
 
 		Point3D mouse = tool.worldToScreen( point );
-		List<Shape> shapes = tool.screenPointFindOneAndWait( mouse );
+		List<DesignShape> shapes = tool.screenPointSyncFindOne( mouse );
 		if( shapes.isEmpty() ) return CadPoints.NONE;
 
-		DesignShape shape = DesignShapeView.getDesignData( shapes.get( 0 ) );
-		if( shape instanceof DesignLine ) {
-			DesignLine line = (DesignLine)shape;
+		DesignShape shape = shapes.getFirst();
+		if( shape instanceof DesignLine line ) {
 			return CadGeometry.midpoint( line.getOrigin(), line.getPoint() );
-		} else if( shape instanceof DesignEllipse ) {
-			DesignEllipse ellipse = (DesignEllipse)shape;
+		} else if( shape instanceof DesignEllipse ellipse ) {
 			return ellipse.getOrigin();
 		}
 
 		return CadPoints.NONE;
 	}
+
 }

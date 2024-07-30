@@ -581,9 +581,43 @@ public class DesignToolV2 extends BaseDesignTool {
 		return FXCollections.observableArrayList();
 	}
 
+	@Deprecated
 	@Override
 	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
 		return null;
+	}
+
+	@Override
+	public Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point ) {
+		// Use screen coordinates to determine "nearest" since that is what the user sees
+
+		// Convert the world point to screen coordinates
+		Point3D mouse = worldToScreen( point );
+
+		// Go through all the reference points, convert them to screen coordinates and find the nearest
+		double distance;
+		double minDistance = Double.MAX_VALUE;
+		Point3D nearest = CadPoints.NONE;
+
+		for( DesignShape shape : shapes ) {
+			if( shape == null || shape.isPreview() ) continue;
+
+			// NEXT Implement the new way of getting the construction points
+			//  using DesignShape.getReferencePoints method
+
+			//  Just need to finish implementing getReferencePoints() in all the shapes
+
+			List<Point3D> referencePoints = shape.getReferencePoints();
+			for( Point3D cp : referencePoints ) {
+				distance = mouse.distance( worldToScreen( cp ) );
+				if( distance < minDistance ) {
+					nearest = cp;
+					minDistance = distance;
+				}
+			}
+		}
+
+		return nearest;
 	}
 
 	public DesignLayer getSelectedLayer() {
@@ -830,21 +864,6 @@ public class DesignToolV2 extends BaseDesignTool {
 			selectAperture.setDrawPaint( selectDrawPaint.get() );
 		}
 		renderer.selectAperture().set( selectAperture );
-	}
-
-	@Override
-	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		throw new UnsupportedOperationException( "This class does not return FX Shapes" );
-	}
-
-	@Override
-	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		throw new UnsupportedOperationException( "This class does not return FX Shapes" );
-	}
-
-	@Override
-	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
-		throw new UnsupportedOperationException( "This class does not return FX Shapes" );
 	}
 
 	@Override

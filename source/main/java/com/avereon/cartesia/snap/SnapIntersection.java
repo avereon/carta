@@ -4,9 +4,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadIntersection;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.view.DesignShapeView;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.List;
@@ -24,11 +22,11 @@ public class SnapIntersection implements Snap {
 		if( point == null ) return CadPoints.NONE;
 
 		Point3D mouse = tool.worldToScreen( point );
-		List<Shape> shapes = tool.screenPointFindAllAndWait( mouse );
+		List<DesignShape> shapes = tool.screenPointSyncFindAll( mouse );
 		if( shapes.size() < 2 ) return CadPoints.NONE;
 
-		DesignShape shape1 = DesignShapeView.getDesignData( shapes.get( 0 ) );
-		DesignShape shape2 = DesignShapeView.getDesignData( shapes.get( 1 ) );
+		DesignShape shape1 = shapes.get( 0 );
+		DesignShape shape2 = shapes.get( 1 );
 		List<Point3D> points = CadIntersection.getIntersections( shape1, shape2 );
 
 		// Find the closest intersection point

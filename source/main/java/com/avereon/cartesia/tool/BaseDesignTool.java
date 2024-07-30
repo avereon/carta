@@ -190,6 +190,8 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	@Deprecated
 	public abstract Point3D nearestCp( Collection<Shape> shapes, Point3D point );
 
+	public abstract Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point );
+
 	public abstract void setCurrentLayer( DesignLayer layer );
 
 	public abstract DesignLayer getCurrentLayer();
@@ -289,15 +291,6 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	public abstract BooleanProperty gridSnapEnabled();
 
 	public abstract void setSelectAperture( Point3D anchor, Point3D mouse );
-
-	@Deprecated
-	public abstract List<Shape> screenPointFindOneAndWait( Point3D mouse );
-
-	@Deprecated
-	public abstract List<Shape> screenPointFindAllAndWait( Point3D mouse );
-
-	@Deprecated
-	public abstract List<Shape> screenPointSelectAndWait( Point3D mouse );
 
 	public abstract List<DesignShape> screenPointSyncFindOne( Point3D mouse );
 

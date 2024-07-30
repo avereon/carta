@@ -293,6 +293,11 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
+	public Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point ) {
+		return null;
+	}
+
+	@Override
 	public void setCurrentLayer( DesignLayer layer ) {
 		currentLayer.set( layer );
 	}
@@ -905,23 +910,6 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		} else {
 			Fx.run( () -> selectWindow.resizeRelocate( x, y, w, h ) );
 		}
-	}
-
-	@Override
-	public List<Shape> screenPointFindOneAndWait( Point3D mouse ) {
-		return designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().collect( Collectors.toList() );
-	}
-
-	@Override
-	public List<Shape> screenPointFindAllAndWait( Point3D mouse ) {
-		return new ArrayList<>( designPane.screenPointSelect( mouse, getSelectTolerance() ) );
-	}
-
-	@Override
-	public List<Shape> screenPointSelectAndWait( Point3D mouse ) {
-		selectedShapes.clear();
-		selectedShapes.addAll( designPane.screenPointSelect( mouse, getSelectTolerance() ).stream().findFirst().stream().toList() );
-		return selectedFxShapes();
 	}
 
 	@Override

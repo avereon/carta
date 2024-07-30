@@ -16,6 +16,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -168,6 +169,15 @@ public abstract class DesignShape extends DesignDrawable {
 		Shape shape = getFxShape();
 		shape.setStroke( hasDraw ? Color.YELLOW : null );
 		return shape.getBoundsInParent();
+	}
+
+	public List<Point3D> getReferencePoints() {
+		return List.of( getOrigin() );
+	}
+
+	public List<Point3D> getConstructionPoints() {
+		// A list of all the little points that make up the shape
+		return List.of();
 	}
 
 	public double distanceTo( Point3D point ) {
