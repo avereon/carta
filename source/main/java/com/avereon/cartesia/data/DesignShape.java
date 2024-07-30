@@ -7,8 +7,6 @@ import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -154,7 +152,7 @@ public abstract class DesignShape extends DesignDrawable {
 
 	protected Bounds computeGeometricBounds() {
 		Shape shape = getFxShape();
-		shape.setStroke( null );
+		shape.setStrokeWidth( 0 );
 		return shape.getBoundsInParent();
 	}
 
@@ -168,11 +166,8 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	protected Bounds computeSelectBounds() {
-		Paint drawPaint = calcDrawPaint();
-		boolean hasDraw = drawPaint != null && drawPaint != Color.TRANSPARENT;
-
 		Shape shape = getFxShape();
-		shape.setStroke( hasDraw ? Color.YELLOW : null );
+		shape.setStrokeWidth( calcDrawWidth() );
 		return shape.getBoundsInParent();
 	}
 

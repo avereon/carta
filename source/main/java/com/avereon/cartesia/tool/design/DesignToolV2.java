@@ -540,8 +540,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setView( Point3D center, double zoom ) {
-		renderer.setViewpoint( CadPoints.toPoint2d( center ) );
-		renderer.setZoom( CadPoints.toPoint2d( zoom, zoom ) );
+		setView( center, zoom, getViewRotate() );
 	}
 
 	@Override
@@ -552,8 +551,20 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public void setViewport( Bounds viewport ) {
+	public void setScreenViewport( Bounds viewport ) {
+		Point3D worldCenter = screenToWorld( new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() ) );
 
+		Bounds toolBounds = getLayoutBounds();
+		double xZoom = Math.abs( toolBounds.getWidth() / viewport.getWidth() );
+		double yZoom = Math.abs( toolBounds.getHeight() / viewport.getHeight() );
+		double zoom = Math.min( xZoom, yZoom ) * getZoom();
+
+		setView( worldCenter, zoom );
+	}
+
+	@Override
+	public void setWorldViewport( Bounds viewport ) {
+		setScreenViewport( worldToScreen( viewport ) );
 	}
 
 	@Override
@@ -584,7 +595,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Deprecated
 	@Override
 	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
-		return null;
+		throw new UnsupportedOperationException( "This method is not supported" );
 	}
 
 	@Override
@@ -601,11 +612,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		for( DesignShape shape : shapes ) {
 			if( shape == null || shape.isPreview() ) continue;
-
-			// NEXT Implement the new way of getting the construction points
-			//  using DesignShape.getReferencePoints method
-
-			//  Just need to finish implementing getReferencePoints() in all the shapes
 
 			List<Point3D> referencePoints = shape.getReferencePoints();
 			for( Point3D cp : referencePoints ) {

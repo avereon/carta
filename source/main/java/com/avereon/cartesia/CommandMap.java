@@ -108,10 +108,10 @@ public final class CommandMap {
 		add( product, "camera-view-rotate-right", CameraViewRotateRight.class );
 		//add( product, "camera-walk", CameraWalkCommand.class );
 		add( product, "camera-zoom", CameraZoom.class );
-		add( product, "camera-zoom-all", CameraZoomAll.class ); // FIXME camera-zoom-all not working
+		add( product, "camera-zoom-all", CameraZoomAll.class );
 		add( product, "camera-zoom-in", CameraZoomIn.class );
 		add( product, "camera-zoom-out", CameraZoomOut.class );
-		add( product, "camera-zoom-selected", CameraZoomSelected.class ); // FIXME camera-zoom-selected not working
+		add( product, "camera-zoom-selected", CameraZoomSelected.class );
 		add( product, "camera-zoom-window", CameraZoomWindow.class );  // FIXME camera-zoom-window not working
 
 		// Toggle commands
@@ -190,7 +190,7 @@ public final class CommandMap {
 		// Snap auto commands
 		add( product, "snap-auto-center", SnapAuto.class, new SnapCenter() );
 		add( product, "snap-auto-midpoint", SnapAuto.class, new SnapMidpoint() );
-		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearestCp() ); // FIXME snap-auto-nearest not working
+		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearestCp() );
 		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 

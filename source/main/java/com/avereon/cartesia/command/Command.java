@@ -176,6 +176,7 @@ public abstract class Command {
 
 	protected Bounds asBounds( CommandContext context, Object value ) {
 		if( value instanceof Bounds ) return (Bounds)value;
+		Point3D anchor = context.getScreenMouse();
 		//return CadShapes.parseBounds( String.valueOf( value ), anchor );
 		return null;
 	}
@@ -393,15 +394,13 @@ public abstract class Command {
 		return spin;
 	}
 
-	protected Bounds getLocalShapeBounds( Collection<Shape> shapes ) {
-		return getShapeBounds( shapes, Node::getBoundsInLocal );
+	@Deprecated
+	protected Bounds getParentFxShapeBounds( Collection<Shape> shapes, Node target ) {
+		return getFxShapeBounds( shapes, s -> FxUtil.localToParent( s, target ) );
 	}
 
-	protected Bounds getParentShapeBounds( Collection<Shape> shapes, Node target ) {
-		return getShapeBounds( shapes, s -> FxUtil.localToParent( s, target ) );
-	}
-
-	private Bounds getShapeBounds( Collection<Shape> shapes, Function<Shape, Bounds> operator ) {
+	@Deprecated
+	private Bounds getFxShapeBounds( Collection<Shape> shapes, Function<Shape, Bounds> operator ) {
 		if( shapes.isEmpty() ) return new BoundingBox( 0, 0, 0, 0 );
 
 		Bounds shapeBounds = null;

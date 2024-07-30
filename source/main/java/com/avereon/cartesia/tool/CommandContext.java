@@ -65,6 +65,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	@Getter
 	@Setter
+	private Point3D screenAnchor;
+
+	@Getter
+	@Setter
 	private Point3D screenMouse;
 
 	@Getter
@@ -357,7 +361,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 					setInputMode( request.getCommand().getInputMode() );
 					result = request.executeCommandStep( result );
 					if( result == Command.INVALID ) break;
-					if( result instanceof Point3D ) setWorldAnchor( (Point3D)result );
+					if( result instanceof Point3D ) {
+						setWorldAnchor( (Point3D)result );
+						setScreenAnchor( getTool().worldToScreen( (Point3D)result ) );
+					}
 					if( result == Command.INCOMPLETE ) break;
 					commandStack.remove( request );
 				}

@@ -6,7 +6,7 @@ public class CameraZoomSelected extends CameraCommand {
 
 	@Override
 	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		return zoomShapes( context, context.getTool().selectedFxShapes() );
+		return zoomShapes( context, context.getTool().getSelectedShapes() );
 	}
 
 }

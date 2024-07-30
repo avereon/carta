@@ -169,7 +169,9 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 *
 	 * @param viewport The screen viewport
 	 */
-	public abstract void setViewport( Bounds viewport );
+	public abstract void setScreenViewport( Bounds viewport );
+
+	public abstract void setWorldViewport( Bounds viewport );
 
 	public abstract DesignValue getSelectTolerance();
 

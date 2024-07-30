@@ -236,7 +236,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public void setViewport( Bounds viewport ) {
+	public void setScreenViewport( Bounds viewport ) {
 		Point3D worldCenter = screenToWorld( new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() ) );
 
 		Bounds toolBounds = getLayoutBounds();
@@ -245,6 +245,11 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		double zoom = Math.min( xZoom, yZoom ) * getZoom();
 
 		setView( worldCenter, zoom );
+	}
+
+	@Override
+	public void setWorldViewport( Bounds viewport ) {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
