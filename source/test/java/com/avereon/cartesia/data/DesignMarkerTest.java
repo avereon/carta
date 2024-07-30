@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
@@ -82,6 +83,14 @@ public class DesignMarkerTest {
 
 	@Test
 	void getReferencePoints() {
+		// given
+		DesignMarker marker = new DesignMarker( new Point3D( 5, -2, 0 ), DesignMarker.Type.CIRCLE );
+
+		// when
+		List<Point3D> points = marker.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 5, -2, 0 ) );
 	}
 
 }

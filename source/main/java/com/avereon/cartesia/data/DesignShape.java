@@ -111,6 +111,11 @@ public abstract class DesignShape extends DesignDrawable {
 		return (T)this;
 	}
 
+	/**
+	 * Evaluate the rotation of the shape in degrees.
+	 *
+	 * @return The rotation in degrees
+	 */
 	public double calcRotate() {
 		String rotate = getRotate();
 		return rotate == null ? 0.0 : CadMath.evalNoException( rotate );
@@ -172,7 +177,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	public List<Point3D> getReferencePoints() {
-		return List.of( getOrigin() );
+		return List.of();
 	}
 
 	public List<Point3D> getConstructionPoints() {
@@ -257,6 +262,10 @@ public abstract class DesignShape extends DesignDrawable {
 				return 0;
 			}
 		};
+	}
+
+	protected Map<String, Object> getCache() {
+		return cache;
 	}
 
 }

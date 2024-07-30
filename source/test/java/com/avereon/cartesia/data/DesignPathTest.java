@@ -2,6 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.BaseCartesiaUnitTest;
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Point;
 import javafx.geometry.Point3D;
@@ -139,6 +140,24 @@ public class DesignPathTest extends BaseCartesiaUnitTest {
 
 	@Test
 	void getReferencePoints() {
+		// given
+		DesignPath path = new DesignPath( new Point3D( 1, 1, 0 ) );
+		path.line( 2, 2 );
+		path.arc( 3, 3, 0.5, 0.5, 0, 0, 0 );
+		path.quad( 6, 6, 7, 7 );
+		path.cubic( 8, 8, 9, 9, 10, 11 );
+		path.close();
+
+		// when
+		List<Point3D> points = path.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 1, 1, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 2, 2, 0 ) );
+		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 3, 3, 0 ) );
+		Point3DAssert.assertThat( points.get( 3 ) ).isCloseTo( new Point3D( 7, 7, 0 ) );
+		Point3DAssert.assertThat( points.get( 4 ) ).isCloseTo( new Point3D( 10, 11, 0 ) );
+		assertThat( points ).hasSize( 5 );
 	}
 
 }

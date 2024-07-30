@@ -420,7 +420,25 @@ public class DesignMarker extends DesignShape {
 	}
 
 	public DesignMarker( Point3D origin ) {
+		this( origin, "1", DEFAULT_TYPE );
+	}
+
+	public DesignMarker( Point3D origin, String size ) {
+		this( origin, size, DEFAULT_TYPE );
+	}
+
+	public DesignMarker( Point3D origin, Type type ) {
+		this( origin, String.valueOf( DEFAULT_SIZE ), type );
+	}
+
+	public DesignMarker( Point3D origin, double size, Type type ) {
+		this( origin, String.valueOf( size ), type );
+	}
+
+	public DesignMarker( Point3D origin, String size, Type type ) {
 		super( origin );
+		setSize( size );
+		setType( type.name() );
 		addModifyingKeys( ORIGIN, SIZE, TYPE );
 	}
 
@@ -494,6 +512,11 @@ public class DesignMarker extends DesignShape {
 	@Override
 	public Paint calcFillPaint() {
 		return calcDrawPaint();
+	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		return List.of( getOrigin() );
 	}
 
 	@Override

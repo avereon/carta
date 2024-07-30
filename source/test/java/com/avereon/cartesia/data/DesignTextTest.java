@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadShapes;
+import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.StrokeLineCap;
@@ -10,6 +11,9 @@ import javafx.scene.text.FontWeight;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
+import static com.avereon.cartesia.math.CadMath.SQRT2_OVER_2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignTextTest {
@@ -119,11 +123,11 @@ public class DesignTextTest {
 		text.setModified( false );
 		assertThat( text.isModified() ).isFalse();
 
-//		// Backward compatibility
-//		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
-//		assertThat( text.isModified() ).isTrue();
-//		text.setModified( false );
-//		assertThat( text.isModified() ).isFalse();
+		//		// Backward compatibility
+		//		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
+		//		assertThat( text.isModified() ).isTrue();
+		//		text.setModified( false );
+		//		assertThat( text.isModified() ).isFalse();
 	}
 
 	@Test
@@ -221,88 +225,88 @@ public class DesignTextTest {
 		assertThat( text.calcFontStrikethrough() ).isEqualTo( false );
 	}
 
-//	@Test
-//	@Deprecated
-//	void testFont() {
-//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
-//		assertThat( text.getTextFont() ).isNull();
-//
-//		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
-//		assertThat( text.getTextFont() ).isEqualTo( FontUtil.encode( Font.font( "Serif", 24 ) ) );
-//	}
+	//	@Test
+	//	@Deprecated
+	//	void testFont() {
+	//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+	//		assertThat( text.getTextFont() ).isNull();
+	//
+	//		text.setTextFont( FontUtil.encode( Font.font( "Serif", 24 ) ) );
+	//		assertThat( text.getTextFont() ).isEqualTo( FontUtil.encode( Font.font( "Serif", 24 ) ) );
+	//	}
 
-//	@Test
-//	void testChangeTextFontModeFromDefaultToCustom() {
-//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
-//		DesignLayer layer = new DesignLayer();
-//		layer.addShape( text );
-//
-//		// Change mode to custom to copy current getTextFontWithInheritance value
-//		text.changeTextFontMode( DesignDrawable.MODE_CUSTOM );
-//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-//
-//		// Check that the pattern is a copy of the layer pattern value
-//		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
-//
-//		// Change the layer pattern to ensure that pattern value is still the custom value
-//		layer.setTextFont( "Serif|Regular|12.0" );
-//		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
-//	}
+	//	@Test
+	//	void testChangeTextFontModeFromDefaultToCustom() {
+	//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+	//		DesignLayer layer = new DesignLayer();
+	//		layer.addShape( text );
+	//
+	//		// Change mode to custom to copy current getTextFontWithInheritance value
+	//		text.changeTextFontMode( DesignDrawable.MODE_CUSTOM );
+	//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+	//
+	//		// Check that the pattern is a copy of the layer pattern value
+	//		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+	//
+	//		// Change the layer pattern to ensure that pattern value is still the custom value
+	//		layer.setTextFont( "Serif|Regular|12.0" );
+	//		assertThat( text.getTextFont() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FONT );
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+	//	}
 
-//	@Test
-//	void testChangeTextFontModeFromLayerToCustom() {
-//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
-//		DesignLayer layer = new DesignLayer();
-//		layer.addShape( text );
-//
-//		String font = FontUtil.encode( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
-//		layer.setTextFont( font );
-//
-//		// Change mode to custom to copy current getTextFontWithInheritance value
-//		text.changeTextFontMode( DesignDrawable.MODE_CUSTOM );
-//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-//
-//		// Check that the pattern value is a copy of the layer pattern value
-//		assertThat( text.getTextFont() ).isEqualTo( font );
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( font ) );
-//
-//		// Change the layer pattern to ensure that pattern value is still the custom value
-//		layer.setTextFont( "Serif|Regular|12.0" );
-//		assertThat( text.getTextFont() ).isEqualTo( font );
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( font ) );
-//	}
+	//	@Test
+	//	void testChangeTextFontModeFromLayerToCustom() {
+	//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+	//		DesignLayer layer = new DesignLayer();
+	//		layer.addShape( text );
+	//
+	//		String font = FontUtil.encode( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+	//		layer.setTextFont( font );
+	//
+	//		// Change mode to custom to copy current getTextFontWithInheritance value
+	//		text.changeTextFontMode( DesignDrawable.MODE_CUSTOM );
+	//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+	//
+	//		// Check that the pattern value is a copy of the layer pattern value
+	//		assertThat( text.getTextFont() ).isEqualTo( font );
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( font ) );
+	//
+	//		// Change the layer pattern to ensure that pattern value is still the custom value
+	//		layer.setTextFont( "Serif|Regular|12.0" );
+	//		assertThat( text.getTextFont() ).isEqualTo( font );
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( font ) );
+	//	}
 
-//	@Test
-//	void testSetTextFontWhenTextFontModeIsLayer() {
-//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
-//		DesignLayer layer = new DesignLayer();
-//		layer.addShape( text );
-//
-//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-//		assertThat( text.getTextFont() ).isNull();
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
-//
-//		//layer.setTextFont( "Serif|Regular|12.0" );
-//		layer.setFontName( "Serif" );
-//		layer.setFontWeight( "Normal" );
-//		layer.setFontPosture( "Regular" );
-//		layer.setTextSize( "12" );
-//
-//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-//		assertThat( text.getTextFont() ).isNull();
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( "Serif|Regular|12.0" ) );
-//
-//		//text.setTextFont( "SansSerif|Regular|16.0" );
-//		layer.setFontName( "SansSerif" );
-//		layer.setFontWeight( "Normal" );
-//		layer.setFontPosture( "Regular" );
-//		layer.setTextSize( "16" );
-//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-//		assertThat( text.getTextFont() ).isEqualTo( "SansSerif|Regular|16.0" );
-//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( "SansSerif|Regular|16.0" ) );
-//	}
+	//	@Test
+	//	void testSetTextFontWhenTextFontModeIsLayer() {
+	//		DesignText text = new DesignText( new Point3D( 0, 0, 0 ), "Empty" );
+	//		DesignLayer layer = new DesignLayer();
+	//		layer.addShape( text );
+	//
+	//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+	//		assertThat( text.getTextFont() ).isNull();
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( DesignLayer.DEFAULT_TEXT_FONT ) );
+	//
+	//		//layer.setTextFont( "Serif|Regular|12.0" );
+	//		layer.setFontName( "Serif" );
+	//		layer.setFontWeight( "Normal" );
+	//		layer.setFontPosture( "Regular" );
+	//		layer.setTextSize( "12" );
+	//
+	//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+	//		assertThat( text.getTextFont() ).isNull();
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( "Serif|Regular|12.0" ) );
+	//
+	//		//text.setTextFont( "SansSerif|Regular|16.0" );
+	//		layer.setFontName( "SansSerif" );
+	//		layer.setFontWeight( "Normal" );
+	//		layer.setFontPosture( "Regular" );
+	//		layer.setTextSize( "16" );
+	//		assertThat( text.getValueMode( text.getTextFont() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+	//		assertThat( text.getTextFont() ).isEqualTo( "SansSerif|Regular|16.0" );
+	//		assertThat( text.calcTextFont() ).isEqualTo( FontUtil.decode( "SansSerif|Regular|16.0" ) );
+	//	}
 
 	// ### Text size
 
@@ -425,7 +429,7 @@ public class DesignTextTest {
 
 		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
 		assertThat( text.getFontName() ).isNull();
-		assertThat( text.calcFontName() ).isEqualTo(  DesignLayer.DEFAULT_FONT_NAME );
+		assertThat( text.calcFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
 
 		layer.setFontName( "Cartwheel" );
 		assertThat( text.getValueMode( text.getFontName() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
@@ -704,6 +708,17 @@ public class DesignTextTest {
 
 	@Test
 	void getReferencePoints() {
+		// given
+		DesignText text = new DesignText( new Point3D( 3, -1, 0 ), "The quick red fox!", "45" );
+		double width = text.getLocalTextBounds().getWidth();
+		double a = width * SQRT2_OVER_2;
+
+		// when
+		List<Point3D> points = text.getReferencePoints();
+
+		// then
+		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 3, -1, 0 ) );
+		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( 3 + a, -1 + a, 0 ) );
 	}
 
 }

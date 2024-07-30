@@ -1,5 +1,6 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
@@ -76,6 +77,86 @@ public class DesignPath extends DesignShape {
 
 	public void setSteps( List<Step> steps ) {
 		setValue( STEPS, steps );
+	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		// TODO Implement DesignPath.getReferencePoints()
+
+		List<Point3D> points = new ArrayList<>();
+		Point3D start = Point3D.ZERO;
+		Point3D prior = Point3D.ZERO;
+
+		for( Step step : getSteps() ) {
+			switch( step.command() ) {
+				case M -> {
+					start = new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 );
+					prior = start;
+					points.add( start );
+				}
+				case L -> {
+					//distance = Math.min( distance, Geometry.pointLineDistance( gPoint, prior, Point.of( step.data()[ 0 ], step.data()[ 1 ] ) ) );
+
+					Point3D b = new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 );
+					Point3D m = CadGeometry.midpoint( prior, b );
+
+					// Should the midpoint be included in the reference points?
+					//points.add( m );
+					points.add( b );
+					prior = points.getLast();
+				}
+				case A -> {
+					// Convert from endpoint format to arc center format
+					double[] arcAsCenter = Geometry.arcEndpointToCenter( CadPoints.asPoint( prior ), step.data );
+					System.out.println( "arcAsCenter = " + Arrays.toString( arcAsCenter ) );
+					// Calculate the arc reference points
+					double[][] arcPoints = Geometry.arcReferencePoints( new double[]{ arcAsCenter[ 0 ], arcAsCenter[ 1 ], 0 },
+						new double[]{ arcAsCenter[ 2 ], arcAsCenter[ 3 ], 0 },
+						0,
+						arcAsCenter[ 4 ],
+						arcAsCenter[ 5 ]
+					);
+
+					Point3D b = CadPoints.toFxPoint( arcPoints[ 1 ] );
+					Point3D c = CadPoints.toFxPoint( arcPoints[ 2 ] );
+
+					// Should the midpoint be included in the reference points?
+					//points.add( b );
+					points.add( c );
+
+					prior = points.getLast();
+				}
+				case Q -> {
+					Point3D b = new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 );
+					Point3D c = new Point3D( step.data()[ 2 ], step.data()[ 3 ], 0 );
+
+					// Should the control point be part of the reference points?
+					//points.add( b );
+					points.add( c );
+
+					prior = points.getLast();
+				}
+				case B -> {
+					Point3D b = new Point3D( step.data()[ 0 ], step.data()[ 1 ], 0 );
+					Point3D c = new Point3D( step.data()[ 2 ], step.data()[ 3 ], 0 );
+					Point3D d = new Point3D( step.data()[ 4 ], step.data()[ 5 ], 0 );
+
+					// Should the control points be part of the reference points?
+					//points.add( b );
+					//points.add( c );
+					points.add( d );
+
+					prior = points.getLast();
+				}
+				case Z -> {
+					// The start point is already in the reference points
+				}
+			}
+		}
+
+		// This one is interesting because we want to include all the different
+		// reference points from all the geometry in the path.
+		return points;
 	}
 
 	@Override

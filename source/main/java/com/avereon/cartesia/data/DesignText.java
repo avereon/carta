@@ -4,12 +4,15 @@ import com.avereon.cartesia.math.*;
 import com.avereon.data.NodeEvent;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.font.FontMetrics;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import lombok.CustomLog;
 
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings( "UnusedReturnValue" )
@@ -36,6 +39,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	private static final String VIRTUAL_FONT_UNDERLINE_MODE = "font-underline-mode";
 
 	private static final String VIRTUAL_FONT_STRIKETHROUGH_MODE = "font-strikethrough-mode";
+
+	private static final String CACHE_TEXT_BOUNDS = "text-bounds";
 
 	public DesignText() {
 		this( null );
@@ -311,18 +316,35 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 		};
 	}
 
-//	@Override
-//	protected Bounds computeVisualBounds() {
-//		Bounds textBounds = new FontMetrics( calcFont() ).computeStringBounds( getText() );
-//		double x = getOrigin().getX() + textBounds.getMinX();
-//		double y = getOrigin().getY() - (textBounds.getMinY() + textBounds.getHeight());
-//		double w = textBounds.getWidth();
-//		double h = textBounds.getHeight();
-//
-//		Bounds bounds = new BoundingBox( x, y, w, h );
-//		CadTransform rotate = CadTransform.rotation( getOrigin().getX(), getOrigin().getY(), calcRotate() );
-//		return rotate.apply( bounds );
-//	}
+	//	@Override
+	//	protected Bounds computeVisualBounds() {
+	//		Bounds textBounds = new FontMetrics( calcFont() ).computeStringBounds( getText() );
+	//		double x = getOrigin().getX() + textBounds.getMinX();
+	//		double y = getOrigin().getY() - (textBounds.getMinY() + textBounds.getHeight());
+	//		double w = textBounds.getWidth();
+	//		double h = textBounds.getHeight();
+	//
+	//		Bounds bounds = new BoundingBox( x, y, w, h );
+	//		CadTransform rotate = CadTransform.rotation( getOrigin().getX(), getOrigin().getY(), calcRotate() );
+	//		return rotate.apply( bounds );
+	//	}
+
+	/**
+	 * Get the local (non-rotated) text bounds.
+	 *
+	 * @return The local text bounds.
+	 */
+	public Bounds getLocalTextBounds() {
+		return (Bounds)getCache().computeIfAbsent( CACHE_TEXT_BOUNDS, k -> new FontMetrics( calcFont() ).computeStringBounds( getText() ) );
+	}
+
+	@Override
+	public List<Point3D> getReferencePoints() {
+		Bounds bounds = getLocalTextBounds();
+		Point3D origin = getOrigin();
+		Point3D point = origin.add( bounds.getWidth(), 0, 0 );
+		return CadGeometry.rotate360( origin, calcRotate(), List.of( origin, point ) );
+	}
 
 	@Override
 	public double distanceTo( Point3D point ) {
