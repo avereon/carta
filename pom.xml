@@ -38,6 +38,7 @@
 		<!-- Version numbers updated 07 Mar 2023 -->
 		<curve.version>[0.5-SNAPSHOT,)</curve.version>
 		<marea.version>[0.3-SNAPSHOT,)</marea.version>
+		<zarra.version>[0.10-SNAPSHOT,)</zarra.version>
 		<zerra.version>[0.10-SNAPSHOT,)</zerra.version>
 		<cameo.version>2.10</cameo.version>
 		<jep.version>2.24</jep.version>
@@ -58,6 +59,13 @@
 			<groupId>com.avereon</groupId>
 			<artifactId>marea</artifactId>
 			<version>${marea.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.avereon</groupId>
+			<artifactId>zarra</artifactId>
+			<version>${zarra.version}</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
