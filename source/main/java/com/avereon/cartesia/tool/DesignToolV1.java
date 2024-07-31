@@ -410,23 +410,13 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D mouseToWorld( Point3D point ) {
-		return mouseToWorld( point.getX(), point.getY(), point.getZ() );
-	}
-
-	@Override
-	public Point3D mouseToWorld( double x, double y, double z ) {
-		return designPane == null ? Point3D.ZERO : designPane.parentToLocal( x, y, z );
-	}
-
-	@Override
 	public Point3D screenToWorkplane( Point3D point ) {
 		return screenToWorkplane( point.getX(), point.getY(), point.getZ() );
 	}
 
 	@Override
 	public Point3D screenToWorkplane( double x, double y, double z ) {
-		Point3D worldPoint = mouseToWorld( x, y, z );
+		Point3D worldPoint = screenToWorld( x, y, z );
 		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
 

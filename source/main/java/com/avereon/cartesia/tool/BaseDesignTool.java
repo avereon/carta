@@ -260,24 +260,6 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 */
 	public abstract void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
 
-	/**
-	 * @deprecated Use {@link #screenToWorld(Point3D)} instead.
-	 * @param point
-	 * @return
-	 */
-	@Deprecated
-	public abstract Point3D mouseToWorld( Point3D point );
-
-	/**
-	 * @deprecated Use {@link #screenToWorld(double,double,double)} instead.
-	 * @param x
-	 * @param y
-	 * @param z
-	 * @return
-	 */
-	@Deprecated
-	public abstract Point3D mouseToWorld( double x, double y, double z );
-
 	public abstract Point3D screenToWorkplane( Point3D point );
 
 	public abstract Point3D screenToWorkplane( double x, double y, double z );
