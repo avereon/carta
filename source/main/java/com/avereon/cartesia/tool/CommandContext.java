@@ -101,6 +101,10 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return commandPrompt;
 	}
 
+	public int getCommandStackDepth() {
+		return commandStack.size();
+	}
+
 	public Command submit( BaseDesignTool tool, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
 		return pushCommand( tool, command, parameters );

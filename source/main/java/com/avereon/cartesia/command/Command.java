@@ -165,8 +165,7 @@ public abstract class Command {
 	}
 
 	protected Point3D asPoint( CommandContext context, Object value ) throws Exception {
-		if( value instanceof Point3D ) return (Point3D)value;
-		return CadShapes.parsePoint( String.valueOf( value ), context.getWorldAnchor() );
+		return asPoint( context.getWorldAnchor(), value );
 	}
 
 	protected Point3D asPoint( Point3D anchor, Object value ) throws Exception {
@@ -174,9 +173,11 @@ public abstract class Command {
 		return CadShapes.parsePoint( String.valueOf( value ), anchor );
 	}
 
+	@Deprecated
 	protected Bounds asBounds( CommandContext context, Object value ) {
+		// NOTE Users cannot input bounds by hand so this method may not be necessary
 		if( value instanceof Bounds ) return (Bounds)value;
-		Point3D anchor = context.getScreenMouse();
+		//Point3D anchor = context.getScreenMouse();
 		//return CadShapes.parseBounds( String.valueOf( value ), anchor );
 		return null;
 	}

@@ -25,8 +25,12 @@ public class Select extends Command {
 
 			// FIXME This is leaving shapes selected after a command is complete
 			if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
-				tool.screenPointSelect( mouse, isSelectToggle( event ) );
-				return COMPLETE;
+				if( context.getCommandStackDepth() == 1 ) {
+					tool.screenPointSelect( mouse, isSelectToggle( event ) );
+					return COMPLETE;
+				} else {
+					return tool.screenToWorld( mouse );
+				}
 			}
 		}
 

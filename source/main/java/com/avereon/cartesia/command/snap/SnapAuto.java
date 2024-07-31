@@ -16,7 +16,7 @@ public class SnapAuto extends SnapCommand {
 		BaseDesignTool tool = context.getTool();
 		Point3D point = context.getWorldMouse();
 		MouseEvent event = (MouseEvent)parameters[ 1 ];
-		if( event != null ) point = tool.mouseToWorld( event.getX(), event.getY(), event.getZ() );
+		if( event != null ) point = tool.screenToWorld( event.getX(), event.getY(), event.getZ() );
 		return snap.snap( tool, point );
 	}
 

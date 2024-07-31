@@ -108,7 +108,6 @@ public class DesignPath extends DesignShape {
 				case A -> {
 					// Convert from endpoint format to arc center format
 					double[] arcAsCenter = Geometry.arcEndpointToCenter( CadPoints.asPoint( prior ), step.data );
-					System.out.println( "arcAsCenter = " + Arrays.toString( arcAsCenter ) );
 					// Calculate the arc reference points
 					double[][] arcPoints = Geometry.arcReferencePoints( new double[]{ arcAsCenter[ 0 ], arcAsCenter[ 1 ], 0 },
 						new double[]{ arcAsCenter[ 2 ], arcAsCenter[ 3 ], 0 },

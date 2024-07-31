@@ -17,7 +17,9 @@ public class Anchor extends Command {
 
 		if( parameters[ 0 ] instanceof MouseEvent event && event.getEventType() == MouseEvent.MOUSE_PRESSED ) {
 			Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-			return context.getTool().mouseToWorld( mouse );
+			context.setWorldAnchor( context.getTool().screenToWorld( mouse ) );
+			context.setScreenAnchor( mouse );
+			// This intentionally does not return a point
 		}
 
 		return COMPLETE;

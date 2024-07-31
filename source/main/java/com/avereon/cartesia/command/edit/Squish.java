@@ -71,7 +71,7 @@ public class Squish extends EditCommand {
 	public void handle( CommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
-			Point3D target = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D target = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( target ).setOrigin( target );
 				case 2 -> referenceLine.setPoint( target ).setOrigin( anchor );

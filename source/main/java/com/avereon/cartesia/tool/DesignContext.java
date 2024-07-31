@@ -48,7 +48,7 @@ public class DesignContext {
 		getCommandContext().setScreenMouse( mouse );
 
 		// Set the mouse position in world coordinates
-		Point3D point = tool.mouseToWorkplane( mouse );
+		Point3D point = tool.screenToWorkplane( mouse );
 		getCommandContext().setWorldMouse( point );
 
 		// Update the position

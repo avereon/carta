@@ -103,7 +103,7 @@ public class MeasureAngle extends MeasureCommand {
 	public void handle( CommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
-			Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			spin = referenceArc == null ? spin : getExtentSpin( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), referenceArc.getStart(), spinAnchor, point, spin );
 
 			switch( getStep() ) {

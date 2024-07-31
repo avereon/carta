@@ -757,23 +757,37 @@ public class DesignToolV2 extends BaseDesignTool {
 		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
 	}
 
+	/**
+	 * @deprecated Use {@link #screenToWorld(Point3D)} instead.
+	 * @param point
+	 * @return
+	 */
+	@Deprecated
 	@Override
 	public Point3D mouseToWorld( Point3D point ) {
 		return mouseToWorld( point.getX(), point.getY(), point.getZ() );
 	}
 
+	/**
+	 * @deprecated Use {@link #screenToWorld(double,double,double)} instead.
+	 * @param x
+	 * @param y
+	 * @param z
+	 * @return
+	 */
+	@Deprecated
 	@Override
 	public Point3D mouseToWorld( double x, double y, double z ) {
 		return renderer == null ? Point3D.ZERO : renderer.parentToLocal( x, y, z );
 	}
 
 	@Override
-	public Point3D mouseToWorkplane( Point3D point ) {
-		return mouseToWorkplane( point.getX(), point.getY(), point.getZ() );
+	public Point3D screenToWorkplane( Point3D point ) {
+		return screenToWorkplane( point.getX(), point.getY(), point.getZ() );
 	}
 
 	@Override
-	public Point3D mouseToWorkplane( double x, double y, double z ) {
+	public Point3D screenToWorkplane( double x, double y, double z ) {
 		Point3D worldPoint = mouseToWorld( x, y, z );
 		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}

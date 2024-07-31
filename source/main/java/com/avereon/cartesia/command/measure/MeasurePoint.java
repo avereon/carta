@@ -63,7 +63,7 @@ public class MeasurePoint extends MeasureCommand {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			if( referenceLine != null ) {
 				BaseDesignTool tool = (BaseDesignTool)event.getSource();
-				Point3D point = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+				Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 				switch( getStep() ) {
 					case 1 -> {
 						referenceLine.setOrigin( point );

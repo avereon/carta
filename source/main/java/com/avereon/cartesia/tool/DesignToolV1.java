@@ -420,12 +420,12 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D mouseToWorkplane( Point3D point ) {
-		return mouseToWorkplane( point.getX(), point.getY(), point.getZ() );
+	public Point3D screenToWorkplane( Point3D point ) {
+		return screenToWorkplane( point.getX(), point.getY(), point.getZ() );
 	}
 
 	@Override
-	public Point3D mouseToWorkplane( double x, double y, double z ) {
+	public Point3D screenToWorkplane( double x, double y, double z ) {
 		Point3D worldPoint = mouseToWorld( x, y, z );
 		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
@@ -991,6 +991,14 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 					selectedFxShapes().add( shape );
 				}
 			} );
+		} );
+	}
+
+	@Override
+	public void worldWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle ) {
+		Fx.run( () -> {
+			selectedFxShapes().clear();
+			selectedFxShapes().addAll( designPane.worldWindowSelect( a, b, intersect ) );
 		} );
 	}
 

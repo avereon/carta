@@ -26,7 +26,7 @@ public class CameraZoom extends CameraCommand {
 		}
 
 		if( parameters[ 0 ] instanceof GestureEvent event ) {
-			Point3D point = context.getTool().mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D point = context.getTool().screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 
 			if( event.getEventType() == ScrollEvent.SCROLL ) {
 				// NOTE Using the shift key causes the deltaX to change :-)

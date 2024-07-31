@@ -48,7 +48,7 @@ public class DrawMarker extends DrawCommand {
 	public void handle( CommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
-			Point3D mouse = tool.mouseToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D mouse = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			if( getStep() == 1 ) preview.setOrigin( mouse );
 		}
 	}
