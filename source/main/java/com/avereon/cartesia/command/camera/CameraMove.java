@@ -1,8 +1,10 @@
 package com.avereon.cartesia.command.camera;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
@@ -12,7 +14,7 @@ public class CameraMove extends CameraCommand {
 	private Point3D viewAnchor;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForPoint( context, "pan-point" );
 			return INCOMPLETE;
@@ -31,7 +33,7 @@ public class CameraMove extends CameraCommand {
 	}
 
 	@Override
-	public void handle( CommandContext context, MouseEvent event ) {
+	public void handle( DesignCommandContext context, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		Point3D anchor = context.getScreenMouse();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );

@@ -1,13 +1,15 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 @CustomLog
-public class SelectByWindow extends Command {
+public class SelectByWindow extends SelectCommand {
 
 	@Override
 	public boolean clearSelectionWhenComplete() {
@@ -15,33 +17,47 @@ public class SelectByWindow extends Command {
 	}
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) return COMPLETE;
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
+		// Should the trigger and the triggering event be part of the execute parameters?
 
-		if( parameters[ 0 ] instanceof MouseEvent event ) {
-			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
-				// This command is not complete until the mouse is released
-				return INCOMPLETE;
-			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
-				// The command is complete when the handle method submits the command again with the mouse released event
-				BaseDesignTool tool = context.getTool();
-				Point3D anchor = context.getWorldAnchor();
-				Point3D mouse = tool.screenToWorld( event.getX(), event.getY(), 0 );
+		// FIXME The anchor is not sent to the execute method
 
-				if( context.getCommandStackDepth() == 1 ) {
-					tool.worldWindowSelect( anchor, mouse, isSelectByIntersect( event ), false );
-					return COMPLETE;
-				} else {
-					return mouse;
-				}
-			}
+		if( parameters.length < 1 ) {
+			// Select window anchor
+			promptForWindow( context, "select-window-anchor" );
+			return INCOMPLETE;
 		}
+
+		if( parameters.length < 2 ) {
+			// Select window point
+			promptForWindow( context, "select-window-point" );
+			return INCOMPLETE;
+		}
+
+//		if( parameters[ 0 ] instanceof MouseEvent event ) {
+//			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
+//				// This command is not complete until the mouse is released
+//				return INCOMPLETE;
+//			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+//				// The command is complete when the handle method submits the command again with the mouse released event
+//				BaseDesignTool tool = context.getTool();
+//				Point3D anchor = context.getWorldAnchor();
+//				Point3D mouse = tool.screenToWorld( event.getX(), event.getY(), 0 );
+//
+//				if( context.getCommandStackDepth() == 1 ) {
+//					tool.worldWindowSelect( anchor, mouse, isSelectByIntersect( event ), false );
+//					return COMPLETE;
+//				} else {
+//					return mouse;
+//				}
+//			}
+//		}
 
 		return FAIL;
 	}
 
 	@Override
-	public void handle( CommandContext context, MouseEvent event ) {
+	public void handle( DesignCommandContext context, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		Point3D anchor = context.getScreenMouse();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );

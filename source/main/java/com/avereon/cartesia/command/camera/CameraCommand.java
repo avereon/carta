@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.zarra.javafx.FxUtil;
 import javafx.geometry.Bounds;
 import lombok.CustomLog;
@@ -17,7 +17,7 @@ public abstract class CameraCommand extends Command {
 		return false;
 	}
 
-	protected Object zoomShapes( CommandContext context, List<DesignShape> shapes ) {
+	protected Object zoomShapes( DesignCommandContext context, List<DesignShape> shapes ) {
 		if( shapes.isEmpty() ) return COMPLETE;
 
 		// Get the merged bounds of all the shapes

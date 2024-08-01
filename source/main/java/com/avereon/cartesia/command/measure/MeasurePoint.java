@@ -1,16 +1,18 @@
 package com.avereon.cartesia.command.measure;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadShapes;
-import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
@@ -22,7 +24,7 @@ public class MeasurePoint extends MeasureCommand {
 	private DesignLine referenceLine;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "start-point" );
@@ -59,7 +61,7 @@ public class MeasurePoint extends MeasureCommand {
 	}
 
 	@Override
-	public void handle( CommandContext context, MouseEvent event ) {
+	public void handle( DesignCommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			if( referenceLine != null ) {
 				BaseDesignTool tool = (BaseDesignTool)event.getSource();

@@ -4,8 +4,9 @@ import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
-import com.avereon.cartesia.command.Select;
+import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.Value;
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.log.LazyEval;
@@ -29,11 +30,11 @@ import java.util.logging.Level;
 /**
  * The CommandContext class is a container for command specific information.
  * <pre>
- * DesignTool -> Design -> DesignContext -> CommandContext
+ * {@link BaseDesignTool} -> {@link Design} -> {@link DesignContext} -> {@link DesignCommandContext}
  * </pre>
  */
 @CustomLog
-public class CommandContext implements EventHandler<KeyEvent> {
+public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	public enum Input {
 		NONE,
@@ -48,16 +49,13 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private final XenonProgramProduct product;
 
-	private final BlockingDeque<CommandExecuteRequest> commandStack;
+	private final BlockingDeque<CommandTask> commandStack;
 
 	private CommandPrompt commandPrompt;
 
 	private String priorCommand;
 
 	private BaseDesignTool lastActiveDesignTool;
-
-	@Getter
-	private CommandTrigger trigger;
 
 	@Setter
 	@Getter
@@ -81,11 +79,11 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private BaseDesignTool tool;
 
-	public CommandContext( XenonProgramProduct product ) {
+	public DesignCommandContext( XenonProgramProduct product ) {
 		this.product = product;
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorCommand = TextUtil.EMPTY;
-		this.inputMode = CommandContext.Input.NONE;
+		this.inputMode = DesignCommandContext.Input.NONE;
 	}
 
 	public final Xenon getProgram() {
@@ -105,9 +103,20 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return commandStack.size();
 	}
 
+	@Deprecated
 	public Command submit( BaseDesignTool tool, Command command, Object... parameters ) {
+		return submit( tool, null, null, command, parameters );
+	}
+
+	@Deprecated
+	public Command submit( BaseDesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
-		return pushCommand( tool, command, parameters );
+		return pushCommand( tool, trigger, event, command, parameters );
+	}
+
+	public Command submit( CommandTask request ) {
+		commandStack.removeIf( r -> r.getCommand() == request.getCommand() );
+		return pushCommand( request );
 	}
 
 	public void cancel( KeyEvent event ) {
@@ -116,7 +125,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void cancel() {
-		commandStack.forEach( CommandExecuteRequest::cancel );
+		commandStack.forEach( CommandTask::cancel );
 		commandStack.clear();
 		reset();
 	}
@@ -150,7 +159,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 				true,
 				null
 			);
-			pushCommand( new Select(), mouseEvent );
+			pushCommand( new SelectByPoint(), mouseEvent );
 		} else {
 			// Process text calls doCommand
 			processText( input, true );
@@ -167,7 +176,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	Command processText( String input, boolean force ) {
-		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
+		boolean isTextInput = getInputMode() == DesignCommandContext.Input.TEXT;
 		if( force ) {
 			return switch( getInputMode() ) {
 				case NUMBER -> pushCommand( new Value(), CadShapes.parsePoint( input ).getX() );
@@ -236,8 +245,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 
 	private void forwardCommandToCommandStack( MouseEvent event ) {
 		// Forward the mouse event to the other commands in the stack
-		CommandExecuteRequest request;
-		Iterator<CommandExecuteRequest> iterator = commandStack.iterator();
+		CommandTask request;
+		Iterator<CommandTask> iterator = commandStack.iterator();
 		while( !event.isConsumed() && iterator.hasNext() ) {
 			request = iterator.next();
 			request.getCommand().handle( this, event );
@@ -273,7 +282,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void reset() {
-		setInputMode( CommandContext.Input.NONE );
+		setInputMode( DesignCommandContext.Input.NONE );
 		Fx.run( () -> {
 			getLastActiveDesignTool().clearSelectedShapes();
 			getCommandPrompt().clear();
@@ -284,9 +293,8 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		// NOTE This method does not handle key events,
 		//  those are handled by the action infrastructure
 		CommandMetadata metadata = CommandMap.getCommandByEvent( event );
-		if( metadata != CommandMap.NONE ) {
-			pushCommand( event, metadata.getType(), metadata.getParameters() );
-		}
+		if( metadata != CommandMap.NONE ) pushCommand( event, metadata.getType(), metadata.getParameters() );
+
 	}
 
 	private CommandMetadata mapCommand( String input ) {
@@ -301,35 +309,40 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	private Command pushCommand( CommandMetadata metadata ) {
 		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
-		return pushCommand( getLastActiveDesignTool(), metadata.getType(), metadata.getParameters() );
+		return pushCommand( getLastActiveDesignTool(), null, null, metadata.getType(), metadata.getParameters() );
 	}
 
 	private Command pushCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
-		return pushCommand( (BaseDesignTool)event.getSource(), commandClass, ArrayUtil.concat( parameters, event ) );
+		return pushCommand( (BaseDesignTool)event.getSource(), null, null, commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
 	private Command pushCommand( Command command, Object... parameters ) {
-		return pushCommand( getLastActiveDesignTool(), command, parameters );
+		return pushCommand( getLastActiveDesignTool(), null, null, command, parameters );
 	}
 
 	private Command pushCommand( BaseDesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
-			return pushCommand( tool, commandClass.getConstructor().newInstance(), parameters );
+			return pushCommand( tool, null, null, commandClass.getConstructor().newInstance(), parameters );
 		} catch( Exception exception ) {
 			log.atSevere().withCause( exception ).log();
 		}
 		return null;
 	}
 
-	private Command pushCommand( BaseDesignTool tool, Command command, Object... parameters ) {
-		checkForCommonProblems( tool, command, parameters );
+	private Command pushCommand( BaseDesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
+		return pushCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
+	}
 
-		// Clear the prompt before executing the command, because one of the commands could be setting a new prompt
+	private Command pushCommand( CommandTask request ) {
+
+		checkForCommonProblems( request );
+
+		// Clear the prompt before executing the command,
+		// because one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
 		synchronized( commandStack ) {
-			CommandExecuteRequest request = new CommandExecuteRequest( this, tool, command, parameters );
 			log.atTrace().log( "Command submitted %s", request );
 
 			commandStack.push( request );
@@ -337,19 +350,20 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 
-		return command;
+		// TODO Might consider returning the command request
+		return request.getCommand();
 	}
 
-	private void checkForCommonProblems( BaseDesignTool tool, Command command, Object... parameters ) {
-		if( command instanceof Value && commandStack.isEmpty() ) {
-			log.atWarning().log( "There is not a command waiting for the value: %s", LazyEval.of( () -> Arrays.toString( parameters ) ) );
+	private void checkForCommonProblems( CommandTask request ) {
+		if( request.getCommand() instanceof Value && commandStack.isEmpty() ) {
+			log.atWarning().log( "There is not a command waiting for the value: %s", LazyEval.of( () -> Arrays.toString( request.getParameters() ) ) );
 		}
 	}
 
 	private void logCommandStack() {
 		if( !log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) return;
 
-		List<CommandExecuteRequest> invertedCommandStack = new ArrayList<>( commandStack );
+		List<CommandTask> invertedCommandStack = new ArrayList<>( commandStack );
 		Collections.reverse( invertedCommandStack );
 
 		if( !commandStack.isEmpty() ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
@@ -359,18 +373,14 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		Object result = Command.COMPLETE;
 		synchronized( commandStack ) {
 			try {
-				List<CommandExecuteRequest> requests = new ArrayList<>( commandStack );
-				for( CommandExecuteRequest request : requests ) {
+				List<CommandTask> requests = new ArrayList<>( commandStack );
+				for( CommandTask request : requests ) {
 					logCommandStack();
 					setInputMode( request.getCommand().getInputMode() );
 					result = request.executeCommandStep( result );
-					if( result == Command.INVALID ) break;
-					if( result instanceof Point3D ) {
-						setWorldAnchor( (Point3D)result );
-						setScreenAnchor( getTool().worldToScreen( (Point3D)result ) );
-					}
 					if( result == Command.INCOMPLETE ) break;
-					commandStack.remove( request );
+					if( result == Command.INVALID ) break;
+					if( !commandStack.remove( request ) ) return Command.INVALID;
 				}
 			} catch( Exception exception ) {
 				cancel();
@@ -380,79 +390,12 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		return result;
 	}
 
-	Command getCurrentCommand() {
-		CommandExecuteRequest request = commandStack.peek();
-		return request == null ? null : request.getCommand();
+	CommandTask getCurrentCommandTask() {
+		return commandStack.peek();
 	}
 
 	private String getPriorCommand() {
 		return priorCommand;
-	}
-
-	private static class CommandExecuteRequest {
-
-		private final CommandContext context;
-
-		@Getter
-		private final BaseDesignTool tool;
-
-		@Getter
-		private final Command command;
-
-		@Getter
-		private Object[] parameters;
-
-		@Getter
-		private Object result;
-
-		public CommandExecuteRequest( CommandContext context, BaseDesignTool tool, Command command, Object... parameters ) {
-			this.context = Objects.requireNonNull( context );
-			this.tool = Objects.requireNonNull( tool );
-			this.command = Objects.requireNonNull( command );
-			this.parameters = parameters;
-		}
-
-		public Object executeCommandStep( Object priorResult ) throws Exception {
-			// NOTE Be judicious adding logic in this method, it is called for every step in a command
-
-			if( result == Command.FAIL ) return Command.FAIL;
-			if( priorResult == null ) log.atWarning().log( "A prior result of null was passed to execute" );
-			if( priorResult == Command.INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
-			if( priorResult != null && priorResult != Command.COMPLETE ) parameters = ArrayUtil.append( parameters, priorResult );
-
-			Object result = Command.INVALID;
-			try {
-				context.setTool( tool );
-				result = command.execute( context, parameters );
-				if( result != Command.INVALID ) command.incrementStep();
-			} catch( Exception exception ) {
-				log.atWarn( exception ).log( "Unhandled error executing command=%s", command );
-			} finally {
-				if( result == Command.COMPLETE || result == Command.INVALID ) doComplete();
-				command.setStepExecuted();
-			}
-
-			this.result = result;
-
-			return getResult();
-		}
-
-		private void doComplete() {
-			if( command.clearSelectionWhenComplete() ) tool.clearSelectedShapes();
-		}
-
-		public void cancel() {
-			try {
-				command.cancel( context );
-			} catch( Exception exception ) {
-				log.atSevere().withCause( exception ).log();
-			}
-		}
-
-		@Override
-		public String toString() {
-			return command + "{step=" + command.getStep() + " parms=" + parameters.length + "}";
-		}
 	}
 
 }

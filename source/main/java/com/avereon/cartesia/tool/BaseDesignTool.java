@@ -117,8 +117,8 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 	 *
 	 * @return The command context
 	 */
-	public final CommandContext getCommandContext() {
-		return getDesignContext().getCommandContext();
+	public final DesignCommandContext getCommandContext() {
+		return getDesignContext().getDesignCommandContext();
 	}
 
 	public final DesignWorkplane getWorkplane() {

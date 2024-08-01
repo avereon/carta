@@ -1,11 +1,13 @@
 package com.avereon.cartesia.command.print;
 
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.tool.DesignCommandContext;
+import javafx.scene.input.InputEvent;
 
 public class PrintUpdate extends PrintCommand {
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 //		DesignPrint print = context.getTool().getSelectedPrint();
 //		if( print == null ) return COMPLETE;
 //

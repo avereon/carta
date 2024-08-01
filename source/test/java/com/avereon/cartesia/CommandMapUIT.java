@@ -2,7 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Anchor;
 import com.avereon.cartesia.command.Command;
-import com.avereon.cartesia.command.Select;
+import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.SelectByWindow;
 import com.avereon.cartesia.command.camera.CameraMove;
 import com.avereon.cartesia.command.camera.CameraZoom;
@@ -53,8 +53,8 @@ class CommandMapUIT extends BaseCartesiaUiTest {
 			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true, true ) ),
 
 			// Select
-			Arguments.of( createMetadata( "select", "select", Select.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false ) ),
-			Arguments.of( createMetadata( "select", "select", Select.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false, false ) ),
+			Arguments.of( createMetadata( "select", "select", SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false ) ),
+			Arguments.of( createMetadata( "select", "select", SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false, false ) ),
 			Arguments.of( createMetadata( "select-window", "select-window", SelectByWindow.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false, true ) ),
 			Arguments.of( createMetadata( "select-window", "select-window", SelectByWindow.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false, true ) ),
 

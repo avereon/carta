@@ -27,7 +27,7 @@ public class DesignContext {
 
 	private final ObservableList<DesignShape> selectedShapes;
 
-	private final CommandContext commandContext;
+	private final DesignCommandContext designCommandContext;
 
 	private final CoordinateStatus coordinateStatus;
 
@@ -36,7 +36,7 @@ public class DesignContext {
 		this.design = design;
 		this.previewShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
 		this.selectedShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
-		this.commandContext = new CommandContext( product );
+		this.designCommandContext = new DesignCommandContext( product );
 		this.coordinateStatus = new CoordinateStatus();
 	}
 
@@ -45,11 +45,11 @@ public class DesignContext {
 
 		// Set the mouse position in screen coordinates
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-		getCommandContext().setScreenMouse( mouse );
+		getDesignCommandContext().setScreenMouse( mouse );
 
 		// Set the mouse position in world coordinates
 		Point3D point = tool.screenToWorkplane( mouse );
-		getCommandContext().setWorldMouse( point );
+		getDesignCommandContext().setWorldMouse( point );
 
 		// Update the position
 		getCoordinateStatus().updatePosition( point );

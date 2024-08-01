@@ -1,8 +1,10 @@
 package com.avereon.cartesia.command.edit;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 
 /**
@@ -16,7 +18,7 @@ public class Trim extends EditCommand {
 	private DesignShape trimShape;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		if( parameters.length < 1 ) {

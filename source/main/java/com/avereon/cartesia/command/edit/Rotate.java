@@ -1,13 +1,15 @@
 package com.avereon.cartesia.command.edit;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
@@ -23,7 +25,7 @@ public class Rotate extends EditCommand {
 	private Point3D anchor;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		BaseDesignTool tool = context.getTool();
 		if( tool.selectedFxShapes().isEmpty() ) return COMPLETE;
 
@@ -80,7 +82,7 @@ public class Rotate extends EditCommand {
 	}
 
 	@Override
-	public void handle( CommandContext context, MouseEvent event ) {
+	public void handle( DesignCommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );

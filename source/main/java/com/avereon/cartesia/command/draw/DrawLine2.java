@@ -1,12 +1,14 @@
 package com.avereon.cartesia.command.draw;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
@@ -18,7 +20,7 @@ public class DrawLine2 extends DrawCommand {
 	private DesignLine preview;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Step 1
@@ -56,7 +58,7 @@ public class DrawLine2 extends DrawCommand {
 	}
 
 	@Override
-	public void handle( CommandContext context, MouseEvent event ) {
+	public void handle( DesignCommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );

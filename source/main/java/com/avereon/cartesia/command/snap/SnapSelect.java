@@ -1,9 +1,11 @@
 package com.avereon.cartesia.command.snap;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 
 @CustomLog
@@ -12,7 +14,7 @@ public class SnapSelect extends SnapCommand {
 	private Snap snap;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) return COMPLETE;
 
 		if( parameters.length < 2 ) {

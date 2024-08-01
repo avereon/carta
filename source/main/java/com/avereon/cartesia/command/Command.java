@@ -1,11 +1,12 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.FxUtil;
@@ -14,6 +15,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.Node;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.Shape;
@@ -73,7 +75,7 @@ import java.util.stream.Collectors;
  * parameters expected.
  *
  * @see DesignShape
- * @see CommandContext
+ * @see DesignCommandContext
  */
 @CustomLog
 public abstract class Command {
@@ -103,11 +105,11 @@ public abstract class Command {
 		this.previewMap = new ConcurrentHashMap<>();
 	}
 
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		return COMPLETE;
 	}
 
-	public void cancel( CommandContext context ) {
+	public void cancel( DesignCommandContext context ) {
 		if( context.getTool() != null ) {
 			clearReferenceAndPreview( context );
 			context.getTool().setCursor( Cursor.DEFAULT );
@@ -135,17 +137,17 @@ public abstract class Command {
 		notifyAll();
 	}
 
-	public CommandContext.Input getInputMode() {
-		return CommandContext.Input.NONE;
+	public DesignCommandContext.Input getInputMode() {
+		return DesignCommandContext.Input.NONE;
 	}
 
 	public boolean clearSelectionWhenComplete() {
 		return true;
 	}
 
-	public void handle( CommandContext context, KeyEvent event ) {}
+	public void handle( DesignCommandContext context, KeyEvent event ) {}
 
-	public void handle( CommandContext context, MouseEvent event ) {}
+	public void handle( DesignCommandContext context, MouseEvent event ) {}
 
 	@Override
 	public String toString() {
@@ -164,7 +166,7 @@ public abstract class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
-	protected Point3D asPoint( CommandContext context, Object value ) throws Exception {
+	protected Point3D asPoint( DesignCommandContext context, Object value ) throws Exception {
 		return asPoint( context.getWorldAnchor(), value );
 	}
 
@@ -174,7 +176,7 @@ public abstract class Command {
 	}
 
 	@Deprecated
-	protected Bounds asBounds( CommandContext context, Object value ) {
+	protected Bounds asBounds( DesignCommandContext context, Object value ) {
 		// NOTE Users cannot input bounds by hand so this method may not be necessary
 		if( value instanceof Bounds ) return (Bounds)value;
 		//Point3D anchor = context.getScreenMouse();
@@ -182,51 +184,51 @@ public abstract class Command {
 		return null;
 	}
 
-	protected String asText( CommandContext context, Object value ) throws Exception {
+	protected String asText( DesignCommandContext context, Object value ) throws Exception {
 		return String.valueOf( value );
 	}
 
-	protected void promptForNumber( CommandContext context, String key ) {
+	protected void promptForNumber( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( null );
-		promptForValue( context, key, CommandContext.Input.NUMBER );
+		promptForValue( context, key, DesignCommandContext.Input.NUMBER );
 	}
 
-	protected void promptForPoint( CommandContext context, String key ) {
+	protected void promptForPoint( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( context.getTool().getReticleCursor() );
-		promptForValue( context, key, CommandContext.Input.POINT );
+		promptForValue( context, key, DesignCommandContext.Input.POINT );
 	}
 
-	protected void promptForWindow( CommandContext context, String key ) {
+	protected void promptForWindow( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( context.getTool().getReticleCursor() );
-		promptForValue( context, key, CommandContext.Input.POINT );
+		promptForValue( context, key, DesignCommandContext.Input.POINT );
 	}
 
-	protected void promptForShape( CommandContext context, String key ) {
+	protected void promptForShape( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( Cursor.HAND );
-		promptForValue( context, key, CommandContext.Input.NONE );
+		promptForValue( context, key, DesignCommandContext.Input.NONE );
 	}
 
-	protected void promptForText( CommandContext context, String key ) {
+	protected void promptForText( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( Cursor.TEXT );
-		promptForValue( context, key, CommandContext.Input.TEXT );
+		promptForValue( context, key, DesignCommandContext.Input.TEXT );
 	}
 
-	protected DesignShape findNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
+	protected DesignShape findNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
 		List<DesignShape> shapes = context.getTool().screenPointSyncFindOne( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
-	protected DesignShape findNearestShapeAtPoint( CommandContext context, Point3D point ) {
+	protected DesignShape findNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
 		List<DesignShape> shapes = context.getTool().worldPointSyncFindOne( point );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
-	protected DesignShape selectNearestShapeAtMouse( CommandContext context, Point3D mouse ) {
+	protected DesignShape selectNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
 		List<DesignShape> shapes = context.getTool().screenPointSyncSelect( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
-	protected DesignShape selectNearestShapeAtPoint( CommandContext context, Point3D point ) {
+	protected DesignShape selectNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
 		//return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 		List<DesignShape> shapes = context.getTool().worldPointSyncSelect( point );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
@@ -240,7 +242,7 @@ public abstract class Command {
 		return cloneAndAddShapes( shapes, true );
 	}
 
-	protected void setCaptureUndoChanges( CommandContext context, boolean enabled ) {
+	protected void setCaptureUndoChanges( DesignCommandContext context, boolean enabled ) {
 		context.getTool().getAsset().setCaptureUndoChanges( enabled );
 	}
 
@@ -248,11 +250,11 @@ public abstract class Command {
 		return this.reference;
 	}
 
-	protected void addReference( CommandContext context, DesignShape... shapes ) {
+	protected void addReference( DesignCommandContext context, DesignShape... shapes ) {
 		addReference( context, List.of( shapes ) );
 	}
 
-	protected void addReference( CommandContext context, Collection<DesignShape> shapes ) {
+	protected void addReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		this.reference.addAll( shapes );
 		final String referencePaint = Paints.toString( context.getTool().getSelectedDrawPaint() );
 		this.reference.forEach( s -> {
@@ -263,16 +265,16 @@ public abstract class Command {
 		} );
 	}
 
-	protected void removeReference( CommandContext context, DesignShape... shapes ) {
+	protected void removeReference( DesignCommandContext context, DesignShape... shapes ) {
 		removeReference( context, List.of( shapes ) );
 	}
 
-	protected void removeReference( CommandContext context, Collection<DesignShape> shapeList ) {
+	protected void removeReference( DesignCommandContext context, Collection<DesignShape> shapeList ) {
 		shapeList.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		reference.removeAll( shapeList );
 	}
 
-	protected void clearReference( CommandContext context ) {
+	protected void clearReference( DesignCommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
 		removeReference( context, reference );
 		reference.clear();
@@ -282,11 +284,11 @@ public abstract class Command {
 		return this.preview;
 	}
 
-	protected void addPreview( CommandContext context, DesignShape... shapes ) {
+	protected void addPreview( DesignCommandContext context, DesignShape... shapes ) {
 		addPreview( context, List.of( shapes ) );
 	}
 
-	protected void addPreview( CommandContext context, Collection<DesignShape> shapes ) {
+	protected void addPreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		this.preview.addAll( shapes );
 		this.preview.forEach( s -> {
 			s.setPreview( true );
@@ -298,23 +300,23 @@ public abstract class Command {
 		previewMap.keySet().forEach( s -> previewMap.get( s ).updateFrom( s ) );
 	}
 
-	protected void removePreview( CommandContext context, DesignShape... shapes ) {
+	protected void removePreview( DesignCommandContext context, DesignShape... shapes ) {
 		removePreview( context, Set.of( shapes ) );
 	}
 
-	protected void removePreview( CommandContext context, Collection<DesignShape> shapes ) {
+	protected void removePreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		if( shapes == null ) return;
 		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		preview.removeAll( shapes );
 	}
 
-	protected void clearPreview( CommandContext context ) {
+	protected void clearPreview( DesignCommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
 		removePreview( context, preview );
 		preview.clear();
 	}
 
-	protected void clearReferenceAndPreview( CommandContext context ) {
+	protected void clearReferenceAndPreview( DesignCommandContext context ) {
 		clearReference( context );
 		clearPreview( context );
 	}
@@ -415,7 +417,7 @@ public abstract class Command {
 		return shapeBounds;
 	}
 
-	private void promptForValue( CommandContext context, String key, CommandContext.Input mode ) {
+	private void promptForValue( DesignCommandContext context, String key, DesignCommandContext.Input mode ) {
 		String text = Rb.text( RbKey.PROMPT, key );
 		context.submit( context.getTool(), new Prompt( text, mode ) );
 	}

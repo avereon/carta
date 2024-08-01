@@ -1,11 +1,13 @@
 package com.avereon.cartesia.command.draw;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignText;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import lombok.CustomLog;
 
@@ -19,7 +21,7 @@ public class DrawText extends DrawCommand {
 	private DesignText preview;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		setCaptureUndoChanges( context, false );
 
 		// Ask for an anchor point
@@ -53,7 +55,7 @@ public class DrawText extends DrawCommand {
 	}
 
 	@Override
-	public void handle( CommandContext context, KeyEvent event ) {
+	public void handle( DesignCommandContext context, KeyEvent event ) {
 		super.handle( context, event );
 		if( this.preview != null ) preview.setText( context.getCommandPrompt().getCommand() );
 	}

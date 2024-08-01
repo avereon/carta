@@ -1,14 +1,16 @@
 package com.avereon.cartesia.command.layer;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
+import javafx.scene.input.InputEvent;
 
 import java.util.List;
 
 public class LayerDelete extends LayerCommand {
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		DesignLayer layer = context.getTool().getSelectedLayer();
 		DesignLayer nextLayer = getNextValidLayer( layer );
 

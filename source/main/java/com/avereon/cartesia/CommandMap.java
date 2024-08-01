@@ -93,7 +93,7 @@ public final class CommandMap {
 
 		// Basic commands
 		add( product, "anchor", Anchor.class );
-		add( product, "select", Select.class );
+		add( product, "select", SelectByPoint.class );
 		add( product, "select-window", SelectByWindow.class );
 
 		// View commands
@@ -198,16 +198,7 @@ public final class CommandMap {
 
 		// Anchor ------------------------------------------------------------------
 		// TODO Might consider setting the anchor on any mouse pressed event
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.MOVED ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL, CommandTrigger.Modifier.MOVED ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT, CommandTrigger.Modifier.MOVED ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.ALT ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.ALT, CommandTrigger.Modifier.MOVED ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.META ) );
-		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.META, CommandTrigger.Modifier.MOVED ) );
+		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.ANY ) );
 
 		// Selects -----------------------------------------------------------------
 		// Single select
@@ -280,8 +271,12 @@ public final class CommandMap {
 		return mapping;
 	}
 
-	private static void add( String action, CommandTrigger key ) {
-		eventActions.put( key, action );
+	private static void add( String action, CommandTrigger trigger ) {
+		if( trigger.getEventType() == MouseEvent.MOUSE_PRESSED && !"anchor".equals( action ) ) {
+			log.atWarn().log( "Mouse pressed event should only be assigned to \"anchor\" command: %s", action );
+			return;
+		}
+		eventActions.put( trigger, action );
 	}
 
 	private static void add( XenonProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {

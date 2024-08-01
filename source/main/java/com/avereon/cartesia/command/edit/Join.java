@@ -1,8 +1,10 @@
 package com.avereon.cartesia.command.edit;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 
 @CustomLog
@@ -13,7 +15,7 @@ public class Join extends EditCommand {
 	private Point3D trimMouse;
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		if( parameters.length < 1 ) {
 			promptForShape( context, "select-meet-shape" );
 			return INCOMPLETE;

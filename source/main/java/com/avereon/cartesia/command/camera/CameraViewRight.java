@@ -1,11 +1,13 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.tool.DesignCommandContext;
+import javafx.scene.input.InputEvent;
 
 public class CameraViewRight extends CameraCommand {
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		context.getTool().setViewRotate( -90 );
 		return COMPLETE;
 	}

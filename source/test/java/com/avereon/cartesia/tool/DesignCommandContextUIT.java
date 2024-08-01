@@ -21,16 +21,16 @@ import static com.avereon.xenon.test.ProgramTestConfig.LONG_TIMEOUT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 
-public class CommandContextUIT extends BaseCartesiaUiTest {
+public class DesignCommandContextUIT extends BaseCartesiaUiTest {
 
-	private CommandContext context;
+	private DesignCommandContext context;
 
 	private BaseDesignTool tool;
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		this.context = new CommandContext( getMod() );
+		this.context = new DesignCommandContext( getMod() );
 
 		AssetType assetType = getProgram().getAssetManager().getAssetType( Design2dAssetType.class.getName() );
 		Asset asset = getProgram().getAssetManager().createAsset( assetType );
@@ -46,21 +46,21 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 
 	@Test
 	void testInputMode() throws Exception {
-		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
+		assertThat( context.getInputMode() ).isEqualTo( DesignCommandContext.Input.NONE );
 
 		MockCommand command = new MockCommand( 0 );
 		context.submit( tool, command ).waitFor( LONG_TIMEOUT );
 
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( LONG_TIMEOUT );
-		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) ).waitFor( LONG_TIMEOUT );
-		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NUMBER );
-		context.submit( tool, new Prompt( "", CommandContext.Input.POINT ) ).waitFor( LONG_TIMEOUT );
-		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.POINT );
-		context.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) ).waitFor( LONG_TIMEOUT );
-		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.TEXT );
-		context.submit( tool, new Prompt( "", CommandContext.Input.NONE ) ).waitFor( LONG_TIMEOUT );
-		assertThat( context.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
+		context.submit( tool, new Prompt( "", DesignCommandContext.Input.NONE ) ).waitFor( LONG_TIMEOUT );
+		assertThat( context.getInputMode() ).isEqualTo( DesignCommandContext.Input.NONE );
+		context.submit( tool, new Prompt( "", DesignCommandContext.Input.NUMBER ) ).waitFor( LONG_TIMEOUT );
+		assertThat( context.getInputMode() ).isEqualTo( DesignCommandContext.Input.NUMBER );
+		context.submit( tool, new Prompt( "", DesignCommandContext.Input.POINT ) ).waitFor( LONG_TIMEOUT );
+		assertThat( context.getInputMode() ).isEqualTo( DesignCommandContext.Input.POINT );
+		context.submit( tool, new Prompt( "", DesignCommandContext.Input.TEXT ) ).waitFor( LONG_TIMEOUT );
+		assertThat( context.getInputMode() ).isEqualTo( DesignCommandContext.Input.TEXT );
+		context.submit( tool, new Prompt( "", DesignCommandContext.Input.NONE ) ).waitFor( LONG_TIMEOUT );
+		assertThat( context.getInputMode() ).isEqualTo( DesignCommandContext.Input.NONE );
 	}
 
 	@Test
@@ -124,7 +124,7 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 		MockCommand command = new MockCommand( 1 );
 		context.submit( tool, command );
 		command.waitFor();
-		context.setInputMode( CommandContext.Input.NUMBER );
+		context.setInputMode( DesignCommandContext.Input.NUMBER );
 		context.processText( "4,3,2", true );
 		command.waitFor();
 		assertThat( command.getValues()[ 0 ] ).isEqualTo( 4.0 );
@@ -135,7 +135,7 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 		MockCommand command = new MockCommand( 1 );
 		context.submit( tool, command );
 		command.waitFor();
-		context.setInputMode( CommandContext.Input.POINT );
+		context.setInputMode( DesignCommandContext.Input.POINT );
 		context.processText( "4,3,2", true );
 		command.waitFor();
 		assertThat( command.getValues()[ 0 ] ).isEqualTo( new Point3D( 4, 3, 2 ) );
@@ -147,7 +147,7 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 		context.submit( tool, command );
 		command.waitFor();
 		context.setWorldAnchor( new Point3D( 1, 1, 1 ) );
-		context.setInputMode( CommandContext.Input.POINT );
+		context.setInputMode( DesignCommandContext.Input.POINT );
 		context.processText( "@4,3,2", true );
 		command.waitFor();
 		assertThat( command.getValues()[ 0 ] ).isEqualTo( new Point3D( 5, 4, 3 ) );
@@ -158,7 +158,7 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 		MockCommand command = new MockCommand( 1 );
 		context.submit( tool, command );
 		command.waitFor();
-		context.setInputMode( CommandContext.Input.TEXT );
+		context.setInputMode( DesignCommandContext.Input.TEXT );
 		context.processText( "test", true );
 		command.waitFor();
 		assertThat( command.getValues()[ 0 ] ).isEqualTo( "test" );
@@ -169,7 +169,7 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 		MockCommand command = new MockCommand( 1 );
 		context.submit( tool, command );
 		command.waitFor();
-		context.setInputMode( CommandContext.Input.NONE );
+		context.setInputMode( DesignCommandContext.Input.NONE );
 		try {
 			context.processText( "unknown", true );
 			fail();
@@ -187,7 +187,7 @@ public class CommandContextUIT extends BaseCartesiaUiTest {
 
 	@Test
 	void testNoAutoCommandWithTextInput() {
-		context.setInputMode( CommandContext.Input.TEXT );
+		context.setInputMode( DesignCommandContext.Input.TEXT );
 		CommandMap.add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = context.processText( "test", false );
 		assertThat( command ).isNull();

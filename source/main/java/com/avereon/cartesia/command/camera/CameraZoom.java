@@ -1,13 +1,15 @@
 package com.avereon.cartesia.command.camera;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.GestureEvent;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import lombok.CustomLog;
@@ -18,7 +20,7 @@ import java.text.ParseException;
 public class CameraZoom extends CameraCommand {
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		// This command requires one value as the zoom value
 		if( parameters.length < 1 ) {
 			promptForNumber( context, "zoom" );

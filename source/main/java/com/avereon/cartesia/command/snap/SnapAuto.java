@@ -1,15 +1,17 @@
 package com.avereon.cartesia.command.snap;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.snap.Snap;
-import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 public class SnapAuto extends SnapCommand {
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		Snap snap = (Snap)parameters[ 0 ];
 		if( snap == null ) return null;
 

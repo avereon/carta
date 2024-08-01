@@ -1,21 +1,23 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.tool.CommandContext;
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignCommandContext;
+import javafx.scene.input.InputEvent;
 
 public class Prompt extends Command {
 
 	private final String prompt;
 
-	private final CommandContext.Input mode;
+	private final DesignCommandContext.Input mode;
 
-	public Prompt( String prompt, CommandContext.Input mode ) {
+	public Prompt( String prompt, DesignCommandContext.Input mode ) {
 		this.prompt = prompt;
 		this.mode = mode;
 	}
 
 	@Override
-	public CommandContext.Input getInputMode() {
+	public DesignCommandContext.Input getInputMode() {
 		return mode;
 	}
 
@@ -25,17 +27,17 @@ public class Prompt extends Command {
 	}
 
 	@Override
-	public Object execute( CommandContext context, Object... parameters ) throws Exception {
+	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		BaseDesignTool tool = context.getTool();
 
 		if( tool == null ) return INVALID;
 
 		if( parameters.length == 0 ) {
-			tool.getDesignContext().getCommandContext().getCommandPrompt().setPrompt( prompt );
+			tool.getDesignContext().getDesignCommandContext().getCommandPrompt().setPrompt( prompt );
 			return INCOMPLETE;
 		}
 
-		tool.getDesignContext().getCommandContext().getCommandPrompt().clear();
+		tool.getDesignContext().getDesignCommandContext().getCommandPrompt().clear();
 		tool.setCursor( null );
 
 		return parameters[ 0 ];
