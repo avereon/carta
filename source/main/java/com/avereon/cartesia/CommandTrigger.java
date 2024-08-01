@@ -78,30 +78,30 @@ public class CommandTrigger {
 		return modifiers != null && modifiers.contains( modifier );
 	}
 
-//	@Deprecated
-//	public boolean matches( InputEvent event ) {
-//		if( type != null && !event.getEventType().equals( type ) ) return false;
-//
-//		if( event instanceof MouseEvent mouseEvent ) {
-//			if( mouseButton != null && mouseButton != mouseEvent.getButton() ) return false;
-//			if( checkCommonModifiers( mouseEvent.isControlDown(), mouseEvent.isShiftDown(), mouseEvent.isAltDown(), mouseEvent.isMetaDown() ) ) return false;
-//			return hasModifier( Modifier.MOVED ) == !mouseEvent.isStillSincePress();
-//		} else if( event instanceof GestureEvent gestureEvent ) {
-//			if( checkCommonModifiers( gestureEvent.isControlDown(), gestureEvent.isShiftDown(), gestureEvent.isAltDown(), gestureEvent.isMetaDown() ) ) return false;
-//			if( hasModifier( Modifier.DIRECT ) ^ gestureEvent.isDirect() ) return false;
-//			return hasModifier( Modifier.INERTIA ) == gestureEvent.isInertia();
-//		} else {
-//			log.atWarn().log( "Unhandled event type" );
-//			return false;
-//		}
-//	}
+	//	@Deprecated
+	//	public boolean matches( InputEvent event ) {
+	//		if( type != null && !event.getEventType().equals( type ) ) return false;
+	//
+	//		if( event instanceof MouseEvent mouseEvent ) {
+	//			if( mouseButton != null && mouseButton != mouseEvent.getButton() ) return false;
+	//			if( checkCommonModifiers( mouseEvent.isControlDown(), mouseEvent.isShiftDown(), mouseEvent.isAltDown(), mouseEvent.isMetaDown() ) ) return false;
+	//			return hasModifier( Modifier.MOVED ) == !mouseEvent.isStillSincePress();
+	//		} else if( event instanceof GestureEvent gestureEvent ) {
+	//			if( checkCommonModifiers( gestureEvent.isControlDown(), gestureEvent.isShiftDown(), gestureEvent.isAltDown(), gestureEvent.isMetaDown() ) ) return false;
+	//			if( hasModifier( Modifier.DIRECT ) ^ gestureEvent.isDirect() ) return false;
+	//			return hasModifier( Modifier.INERTIA ) == gestureEvent.isInertia();
+	//		} else {
+	//			log.atWarn().log( "Unhandled event type" );
+	//			return false;
+	//		}
+	//	}
 
-//	private boolean checkCommonModifiers( boolean controlDown, boolean shiftDown, boolean altDown, boolean metaDown ) {
-//		if( hasModifier( Modifier.CONTROL ) ^ controlDown ) return true;
-//		if( hasModifier( Modifier.SHIFT ) ^ shiftDown ) return true;
-//		if( hasModifier( Modifier.ALT ) ^ altDown ) return true;
-//		return hasModifier( Modifier.META ) ^ metaDown;
-//	}
+	//	private boolean checkCommonModifiers( boolean controlDown, boolean shiftDown, boolean altDown, boolean metaDown ) {
+	//		if( hasModifier( Modifier.CONTROL ) ^ controlDown ) return true;
+	//		if( hasModifier( Modifier.SHIFT ) ^ shiftDown ) return true;
+	//		if( hasModifier( Modifier.ALT ) ^ altDown ) return true;
+	//		return hasModifier( Modifier.META ) ^ metaDown;
+	//	}
 
 	@Override
 	public boolean equals( Object object ) {
@@ -122,14 +122,18 @@ public class CommandTrigger {
 
 		CommandTrigger trigger = new CommandTrigger( event.getEventType() );
 		if( event instanceof MouseEvent mouseEvent ) {
-			// Special handling for MOUSE_PRESSED events
-			if( mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED ) trigger.modifiers.add( Modifier.ANY );
 			trigger.mouseButton = mouseEvent.getButton();
-			if( mouseEvent.isControlDown() ) trigger.modifiers.add( Modifier.CONTROL );
-			if( mouseEvent.isShiftDown() ) trigger.modifiers.add( Modifier.SHIFT );
-			if( mouseEvent.isAltDown() ) trigger.modifiers.add( Modifier.ALT );
-			if( mouseEvent.isMetaDown() ) trigger.modifiers.add( Modifier.META );
-			if( !mouseEvent.isStillSincePress() ) trigger.modifiers.add( Modifier.MOVED );
+
+			if( mouseEvent.getEventType() == MouseEvent.MOUSE_PRESSED ) {
+				// Special handling for MOUSE_PRESSED events
+				trigger.modifiers.add( Modifier.ANY );
+			} else {
+				if( mouseEvent.isControlDown() ) trigger.modifiers.add( Modifier.CONTROL );
+				if( mouseEvent.isShiftDown() ) trigger.modifiers.add( Modifier.SHIFT );
+				if( mouseEvent.isAltDown() ) trigger.modifiers.add( Modifier.ALT );
+				if( mouseEvent.isMetaDown() ) trigger.modifiers.add( Modifier.META );
+				if( !mouseEvent.isStillSincePress() ) trigger.modifiers.add( Modifier.MOVED );
+			}
 		} else if( event instanceof GestureEvent gestureEvent ) {
 			if( gestureEvent.isControlDown() ) trigger.modifiers.add( Modifier.CONTROL );
 			if( gestureEvent.isShiftDown() ) trigger.modifiers.add( Modifier.SHIFT );

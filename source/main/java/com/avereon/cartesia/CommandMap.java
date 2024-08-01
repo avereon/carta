@@ -255,14 +255,14 @@ public final class CommandMap {
 	}
 
 	public static CommandMetadata getCommandByShortcut( String shortcut ) {
-		return getActionCommand( shortcutActions.getOrDefault( shortcut.toLowerCase(), TextUtil.EMPTY ) );
+		return getCommandByAction( shortcutActions.getOrDefault( shortcut.toLowerCase(), TextUtil.EMPTY ) );
 	}
 
 	public static CommandMetadata getCommandByEvent( InputEvent event ) {
-		return getActionCommand( eventActions.getOrDefault( CommandTrigger.from( event ), TextUtil.EMPTY ) );
+		return getCommandByAction( eventActions.getOrDefault( CommandTrigger.from( event ), TextUtil.EMPTY ) );
 	}
 
-	public static CommandMetadata getActionCommand( String action ) {
+	public static CommandMetadata getCommandByAction( String action ) {
 		if( TextUtil.isEmpty( action ) ) return NONE;
 
 		CommandMetadata mapping = actionCommands.getOrDefault( action, NONE );
