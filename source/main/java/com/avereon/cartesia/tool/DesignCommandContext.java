@@ -309,7 +309,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private Command pushCommand( CommandMetadata metadata ) {
 		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
-		return pushCommand( getLastActiveDesignTool(), null, null, metadata.getType(), metadata.getParameters() );
+		return pushCommand( getLastActiveDesignTool(), metadata.getType(), null, null, metadata.getParameters() );
 	}
 
 	private Command pushCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
