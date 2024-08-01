@@ -10,7 +10,7 @@ import lombok.Getter;
 import java.util.Objects;
 
 @CustomLog
-class CommandTask {
+public class CommandTask {
 
 	private final DesignCommandContext context;
 

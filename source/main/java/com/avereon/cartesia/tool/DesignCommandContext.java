@@ -103,11 +103,27 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return commandStack.size();
 	}
 
-	@Deprecated
+	/**
+	 * This is the script entrypoint for running commands.
+	 *
+	 * @param tool The tool that is running the command
+	 * @param command The command to run
+	 * @param parameters The command parameters
+	 * @return The command that was run
+	 */
 	public Command submit( BaseDesignTool tool, Command command, Object... parameters ) {
 		return submit( tool, null, null, command, parameters );
 	}
 
+	/**
+	 * @deprecated In favor of {@link #submit(CommandTask)}
+	 * @param tool
+	 * @param trigger
+	 * @param event
+	 * @param command
+	 * @param parameters
+	 * @return
+	 */
 	@Deprecated
 	public Command submit( BaseDesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
