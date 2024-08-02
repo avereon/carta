@@ -10,8 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.Test;
 
-import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
-import static com.avereon.cartesia.command.Command.Result.SUCCESS;
+import static com.avereon.cartesia.command.Command.Result.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -70,6 +69,19 @@ public class SelectByPointTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-	// NEXT Check bad parameters
+	@Test
+	void testExecuteWithBadParameter() throws Exception {
+		// Select by point with one parameter should cause select to be called
+
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
+
+		// when
+		Object result = command.execute( task );
+
+		// then
+		//verify( tool, times( 1 ) ).worldPointSelect( eq( new Point3D( 1, 1, 0 ) ), eq( false ) );
+		assertThat( result ).isEqualTo( FAILURE );
+	}
 
 }

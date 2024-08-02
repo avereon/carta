@@ -32,8 +32,10 @@ public class SelectByPoint extends SelectCommand {
 			if( task.getParameters().length == 1 ) {
 				// If there is a parameter, use that
 				Point3D worldPoint = asPoint( task, task.getParameters()[ 0 ] );
-				task.getTool().worldPointSelect( worldPoint, toggle );
-				return SUCCESS;
+				if( worldPoint != null ) {
+					task.getTool().worldPointSelect( worldPoint, toggle );
+					return SUCCESS;
+				}
 			} else if( task.getTrigger().matches( task.getEvent() ) && task.getEvent() instanceof MouseEvent event ) {
 				// Otherwise, if there is an event, use that
 				Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
