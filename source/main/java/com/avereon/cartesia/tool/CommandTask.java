@@ -67,7 +67,7 @@ public class CommandTask {
 
 	public void cancel() {
 		try {
-			command.cancel( context );
+			command.cancel( this );
 		} catch( Exception exception ) {
 			log.atSevere().withCause( exception ).log();
 		}

@@ -117,6 +117,16 @@ public abstract class Command {
 		return SUCCESS;
 	}
 
+	public void cancel( CommandTask task ) {
+		DesignCommandContext context = task.getContext();
+		if( context.getTool() != null ) {
+			clearReferenceAndPreview( context );
+			context.getTool().setCursor( Cursor.DEFAULT );
+			context.getTool().clearSelectedShapes();
+		}
+	}
+
+	@Deprecated
 	public void cancel( DesignCommandContext context ) {
 		if( context.getTool() != null ) {
 			clearReferenceAndPreview( context );
@@ -344,7 +354,7 @@ public abstract class Command {
 	 * @param point The point from which to derive the start angle
 	 * @return The start angle
 	 */
-	protected double deriveStart( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
+	protected static double deriveStart( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
 		return deriveRotatedArcAngle( center, xRadius, yRadius, rotate, point );
 	}
 
@@ -360,7 +370,7 @@ public abstract class Command {
 	 * @param spin The movement spin direction
 	 * @return The extent angle
 	 */
-	protected double deriveExtent( Point3D center, double xRadius, double yRadius, double rotate, double start, Point3D point, double spin ) {
+	protected static double deriveExtent( Point3D center, double xRadius, double yRadius, double rotate, double start, Point3D point, double spin ) {
 		double angle = deriveRotatedArcAngle( center, xRadius, yRadius, rotate, point ) - start;
 
 		if( angle < 0 && spin > 0 ) angle += 360;
@@ -385,7 +395,7 @@ public abstract class Command {
 	 * @param priorSpin The prior spin
 	 * @return 1.0 for CCW spin, -1.0 for CW spin or the prior spin
 	 */
-	protected double getExtentSpin( Point3D center, double xRadius, double yRadius, double rotate, double start, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
+	protected static double getExtentSpin( Point3D center, double xRadius, double yRadius, double rotate, double start, Point3D lastPoint, Point3D nextPoint, double priorSpin ) {
 		if( lastPoint == null || nextPoint == null ) return priorSpin;
 
 		// NOTE Rotate does not have eccentricity applied
@@ -435,7 +445,7 @@ public abstract class Command {
 		context.submit( context.getTool(), new Prompt( text, mode ) );
 	}
 
-	private double deriveRotatedArcAngle( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
+	private static double deriveRotatedArcAngle( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
 		CadTransform t = DesignEllipse.calcLocalTransform( center, xRadius, yRadius, rotate );
 
 		double angle = CadGeometry.angle360( t.apply( point ) );

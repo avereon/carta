@@ -5,11 +5,14 @@ import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.event.EventType;
 import javafx.scene.input.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith( MockitoExtension.class )
 public class CommandBaseTest extends BaseCartesiaUnitTest {
@@ -26,6 +29,12 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	@Mock
 	protected InputEvent event;
 
+	@BeforeEach
+	protected void setup() {
+		lenient().when( context.getTool() ).thenReturn( tool );
+		lenient().when( tool.getCommandContext() ).thenReturn( context );
+	}
+
 	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {
 		return new CommandMetadata( action, name, null, null, List.of(), type );
 	}
@@ -39,16 +48,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	}
 
 	protected static MouseEvent createMouseEvent(
-		EventType<MouseEvent> type,
-		MouseButton button,
-		boolean control,
-		boolean shift,
-		boolean alt,
-		boolean meta,
-		boolean moved,
-		double x,
-		double y,
-		int clicks
+		EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved, double x, double y, int clicks
 	) {
 		boolean primary = button == MouseButton.PRIMARY;
 		boolean secondary = button == MouseButton.SECONDARY;
