@@ -5,25 +5,43 @@ import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import org.junit.jupiter.api.Test;
 
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
 public class PromptTest extends CommandBaseTest {
 
 	@Test
-	void testExecute() throws Exception {
+	void testExecuteWithNoParameter() throws Exception {
+		// With no parameter it should set the prompt and return incomplete
+
 		// given
-		Prompt command = new Prompt("Hello world:", DesignCommandContext. Input.TEXT);
+		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
-		// Pretend the grid is visible
-		//when( tool.isGridVisible() ).thenReturn( true );
 
 		// when
 		Object result = command.execute( task );
 
-		// NEXT Verify the command results
-
 		// then
-		///verify( tool, times( 1 ) ).setGridVisible( false );
-		//assertThat( result ).isEqualTo( SUCCESS );
+		verify( commandPrompt, times( 1 ) ).setPrompt( eq( "Hello world:" ) );
+		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
+	@Test
+	void testExecute() throws Exception {
+		// given
+		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, "Hi!" );
+
+		// when
+		Object result = command.execute( task );
+
+		// then
+		verify( commandPrompt, times( 1 ) ).clear();
+		verify( tool ).setCursor( eq( null ) );
+		assertThat( result ).isEqualTo( "Hi!" );
+	}
 
 }

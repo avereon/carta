@@ -1,10 +1,9 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 
 public class Prompt extends Command {
 
@@ -28,20 +27,17 @@ public class Prompt extends Command {
 	}
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		DesignTool tool = context.getTool();
+	public Object execute( CommandTask task ) throws Exception {
 
-		if( tool == null ) return INVALID;
-
-		if( parameters.length == 0 ) {
-			tool.getDesignContext().getDesignCommandContext().getCommandPrompt().setPrompt( prompt );
+		if( task.getParameters().length < 1 ) {
+			task.getContext().getCommandPrompt().setPrompt( prompt );
 			return INCOMPLETE;
 		}
 
-		tool.getDesignContext().getDesignCommandContext().getCommandPrompt().clear();
-		tool.setCursor( null );
+		task.getContext().getCommandPrompt().clear();
+		task.getTool().setCursor( null );
 
-		return parameters[ 0 ];
+		return task.getParameters()[ 0 ];
 	}
 
 }

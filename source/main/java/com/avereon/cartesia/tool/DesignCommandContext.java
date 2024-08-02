@@ -192,9 +192,9 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		}
 	}
 
-	Command processText( String input, boolean force ) {
+	Command processText( String input, boolean strict ) {
 		boolean isTextInput = getInputMode() == DesignCommandContext.Input.TEXT;
-		if( force ) {
+		if( strict ) {
 			return switch( getInputMode() ) {
 				case NUMBER -> pushCommand( new Value(), CadShapes.parsePoint( input ).getX() );
 				case POINT -> pushCommand( new Value(), CadShapes.parsePoint( input, getWorldAnchor() ) );
