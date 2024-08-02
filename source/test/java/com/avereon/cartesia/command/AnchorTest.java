@@ -77,15 +77,12 @@ public class AnchorTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameter() throws Exception {
 		// given
-		CommandTask commandTask = new CommandTask( commandContext, tool, null, null, command, "badparameter" );
-		//when( tool.worldToScreen( eq( new Point3D( 0.5, -3, 0 ) ) ) ).thenReturn( new Point3D( 84, 127, 0 ) );
+		CommandTask commandTask = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
 		// when
 		Object result = command.execute( commandTask );
 
 		// then
-//		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 84, 127, 0 ) ) );
-//		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( 0.5, -3, 0 ) ) );
 		assertThat( result ).isEqualTo( FAILURE );
 	}
 }

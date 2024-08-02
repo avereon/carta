@@ -17,9 +17,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class SelectByPointTest extends CommandBaseTest {
+public class SelectToggleTest extends CommandBaseTest {
 
-	private final SelectByPoint command = new SelectByPoint();
+	private final SelectToggle command = new SelectToggle();
 
 	@Test
 	void testExecuteWithNoParameters() throws Exception {
@@ -48,7 +48,7 @@ public class SelectByPointTest extends CommandBaseTest {
 		Object result = command.execute( task );
 
 		// then
-		verify( tool, times( 1 ) ).worldPointSelect( eq( new Point3D( 1, 1, 0 ) ), eq( false ) );
+		verify( tool, times( 1 ) ).worldPointSelect( eq( new Point3D( 1, 1, 0 ) ), eq( true ) );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
@@ -65,7 +65,7 @@ public class SelectByPointTest extends CommandBaseTest {
 		Object result = command.execute( task );
 
 		// then
-		verify( tool, times( 1 ) ).screenPointSelect( eq( new Point3D( 48, 17, 0 ) ), eq( false ) );
+		verify( tool, times( 1 ) ).screenPointSelect( eq( new Point3D( 48, 17, 0 ) ), eq( true ) );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
