@@ -1,5 +1,6 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
@@ -7,8 +8,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
-import static com.avereon.cartesia.command.Command.Result.FAILURE;
-import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public abstract class SelectByWindow extends SelectCommand {
@@ -19,21 +19,58 @@ public abstract class SelectByWindow extends SelectCommand {
 	}
 
 	protected Object execute( CommandTask task, boolean toggle ) throws Exception {
-		// Should the trigger and the triggering event be part of the execute parameters?
+		System.out.println( "trigger=" +task.getTrigger() + " event=" + CommandTrigger.from( task.getEvent() ) );
+		if( task.getParameters().length == 0 ) {
+			if( task.getEvent() == null ) {
+				// Select window anchor
+				promptForWindow( task.getContext(), "select-window-anchor" );
+				return INCOMPLETE;
+			} else if( task.getTrigger().matches( task.getEvent() ) && task.getEvent() instanceof MouseEvent event && event.getEventType() == MouseEvent.DRAG_DETECTED ) {
+				// The mouse event indicates that the mouse was dragged
+				// and the command can use the world anchor as the first parameter
 
-		// FIXME The anchor is not sent to the execute method
+				System.out.println( "Setting anchor from drag detected event" );
 
-		if( task.getParameters().length < 1 ) {
-			// Select window anchor
-			promptForWindow( task.getContext(), "select-window-anchor" );
-			return INCOMPLETE;
+				// This pushes a Value command to the stack, which will return the
+				// world anchor as the first parameter to this command.
+				task.getContext().submit( task.getTool(), new Value(), task.getContext().getWorldAnchor() );
+				return INCOMPLETE;
+			} else {
+				System.out.println("Nothing matched up :-(");
+			}
 		}
 
-		if( task.getParameters().length < 2 ) {
-			// Select window point
-			promptForWindow( task.getContext(), "select-window-point" );
-			return INCOMPLETE;
+		if( task.getParameters().length == 1 ) {
+			if( task.getEvent() == null ) {
+				// If there is a parameter, use that as the first parameter
+				Point3D worldPoint = asPoint( task, task.getParameters()[ 0 ] );
+				if( worldPoint != null ) {
+					task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
+					task.getContext().setWorldAnchor( worldPoint );
+					promptForWindow( task.getContext(), "select-window-point" );
+					return INCOMPLETE;
+				}
+			} else if( task.getTrigger().matches( task.getEvent() ) && task.getEvent() instanceof MouseEvent event && event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+				// The mouse event indicates that the mouse was released
+				// and the command can use the mouse point as the second parameter
+				Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
+				Point3D worldPoint = task.getTool().screenToWorld( screenPoint );
+
+				// With both points, the command can now select the objects
+				task.getTool().worldWindowSelect( (Point3D)task.getParameters()[0], worldPoint, false, toggle );
+
+				return SUCCESS;
+			}
+
 		}
+
+//		if( task.getParameters().length < 3 || task.getEvent() != null ) {
+//			// TODO Might consider collapsing this logic if it is duplicated in other commands
+//			if( task.getParameters().length == 2 ) {
+//			} else if( task.getTrigger().matches( task.getEvent() ) && task.getEvent() instanceof MouseEvent event ) {
+//
+//			}
+//		}
 
 		//		if( parameters[ 0 ] instanceof MouseEvent event ) {
 		//			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
