@@ -67,8 +67,8 @@ public class CommandMapTest extends CommandMapBaseTest {
 			Arguments.of( createMetadata( "camera-move", "camera-move", CameraMove.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, true, false, false, false, true ) ),
 
 			// Camera Zoom
-			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createScrollEvent( ScrollEvent.SCROLL, true, false, false, false, false, false ) ),
-			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createZoomEvent( ZoomEvent.ZOOM, false, false, false, false, false, false ) )
+			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createScrollEvent( ScrollEvent.SCROLL, true, false, false, false, false, false ) )
+			//Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createZoomEvent( ZoomEvent.ZOOM, false, false, false, false, false, false ) )
 		);
 	}
 

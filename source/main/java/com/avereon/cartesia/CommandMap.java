@@ -39,7 +39,7 @@ public final class CommandMap {
 
 	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
-	private static final Map<CommandTrigger, String> eventActions = new ConcurrentHashMap<>();
+	private static final Map<CommandTrigger, String> actionByTrigger = new ConcurrentHashMap<>();
 
 	private static final Map<String, CommandTrigger> triggerByAction = new ConcurrentHashMap<>();
 
@@ -48,7 +48,7 @@ public final class CommandMap {
 	public static void load( XenonProgramProduct product ) {
 		actionCommands.clear();
 		shortcutActions.clear();
-		eventActions.clear();
+		actionByTrigger.clear();
 		triggerByAction.clear();
 
 		// High level letters
@@ -226,7 +226,7 @@ public final class CommandMap {
 		add( "camera-move", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL, CommandTrigger.Modifier.MOVED ) );
 		// Camera zoom
 		add( "camera-zoom", new CommandTrigger( ScrollEvent.SCROLL, CommandTrigger.Modifier.CONTROL ) );
-		add( "camera-zoom", new CommandTrigger( ZoomEvent.ZOOM ) );
+		//add( "camera-zoom", new CommandTrigger( ZoomEvent.ZOOM ) );
 
 		// Camera spin
 		//add( new CommandEventKey( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false ), "camera-spin" );
@@ -264,7 +264,8 @@ public final class CommandMap {
 	}
 
 	public static CommandMetadata getCommandByEvent( InputEvent event ) {
-		return getCommandByAction( eventActions.getOrDefault( CommandTrigger.from( event ), TextUtil.EMPTY ) );
+		String action = actionByTrigger.getOrDefault( CommandTrigger.from( event ), TextUtil.EMPTY );
+		return getCommandByAction( action );
 	}
 
 	public static CommandMetadata getCommandByAction( String action ) {
@@ -285,7 +286,16 @@ public final class CommandMap {
 			log.atWarn().log( "Mouse pressed event should only be assigned to \"anchor\" command: %s", action );
 			return;
 		}
-		eventActions.put( trigger, action );
+		if( actionByTrigger.containsKey( trigger ) ) {
+			log.atSevere().log( "Trigger already used [%s] by %s", trigger, action );
+			return;
+		}
+		if( triggerByAction.containsKey( action ) ) {
+			log.atSevere().log( "Action already used [%s] by %s", action, trigger );
+			return;
+		}
+
+		actionByTrigger.put( trigger, action );
 		triggerByAction.put( action, trigger );
 	}
 

@@ -104,6 +104,8 @@ public class CommandTrigger {
 		// This method creates a command trigger from an input event for the purpose
 		// of using the event trigger to look up a command in the command map.
 
+		if( event == null ) return null;
+
 		CommandTrigger trigger = new CommandTrigger( event.getEventType() );
 		if( event instanceof MouseEvent mouseEvent ) {
 			trigger.mouseButton = mouseEvent.getButton();

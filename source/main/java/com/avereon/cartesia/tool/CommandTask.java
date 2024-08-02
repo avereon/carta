@@ -7,6 +7,7 @@ import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.Objects;
 import static com.avereon.cartesia.command.Command.Result.*;
 
@@ -76,7 +77,7 @@ public class CommandTask {
 
 	@Override
 	public String toString() {
-		return command + "{step=" + command.getStep() + " parms=" + parameters.length + "}";
+		return command + "{step=" + command.getStep() + " parms=" + Arrays.toString( parameters ) + "}";
 	}
 
 }

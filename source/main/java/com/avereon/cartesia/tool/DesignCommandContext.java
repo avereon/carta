@@ -10,7 +10,6 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.log.LazyEval;
-import com.avereon.util.ArrayUtil;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
@@ -26,6 +25,7 @@ import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
+
 import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
@@ -117,18 +117,18 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	/**
-	 * @deprecated In favor of {@link #submit(CommandTask)}
 	 * @param tool
 	 * @param trigger
 	 * @param event
 	 * @param command
 	 * @param parameters
 	 * @return
+	 * @deprecated In favor of {@link #submit(CommandTask)}
 	 */
 	@Deprecated
 	public Command submit( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
-		return pushCommand( tool, trigger, event, command, parameters );
+		return pushCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
 	}
 
 	public Command submit( CommandTask request ) {
@@ -306,14 +306,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		} );
 	}
 
-	private void doEventCommand( InputEvent event ) {
-		// NOTE This method does not handle key events,
-		//  those are handled by the action infrastructure
-		CommandMetadata metadata = CommandMap.getCommandByEvent( event );
-		if( metadata != CommandMap.NONE ) pushCommand( event, metadata.getType(), metadata.getParameters() );
-
-	}
-
 	private CommandMetadata mapCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return null;
 
@@ -323,32 +315,34 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return mapping;
 	}
 
+	private void doEventCommand( InputEvent event ) {
+		// NOTE This method does not handle key events,
+		//  those are handled by the action infrastructure
+		CommandMetadata metadata = CommandMap.getCommandByEvent( event );
+		if( metadata == CommandMap.NONE ) return;
+
+		pushCommand( (DesignTool)event.getSource(), event, metadata.getType(), metadata.getParameters() );
+	}
+
 	private Command pushCommand( CommandMetadata metadata ) {
 		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
-		return pushCommand( getLastActiveDesignTool(), metadata.getType(), null, null, metadata.getParameters() );
-	}
+		return pushCommand( getLastActiveDesignTool(), null, metadata.getType(), metadata.getParameters() );
 
-	private Command pushCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
-		return pushCommand( (DesignTool)event.getSource(), null, null, commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
 	private Command pushCommand( Command command, Object... parameters ) {
-		return pushCommand( getLastActiveDesignTool(), null, null, command, parameters );
+		return pushCommand( new CommandTask( this, getLastActiveDesignTool(), null, null, command, parameters ) );
 	}
 
-	private Command pushCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command pushCommand( DesignTool tool, InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
-			return pushCommand( tool, null, null, commandClass.getConstructor().newInstance(), parameters );
+			return pushCommand( new CommandTask( this, tool, CommandTrigger.from( event ), event, commandClass.getConstructor().newInstance(), parameters ) );
 		} catch( Exception exception ) {
 			log.atSevere().withCause( exception ).log();
 		}
 		return null;
-	}
-
-	private Command pushCommand( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
-		return pushCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
 	}
 
 	private Command pushCommand( CommandTask request ) {
