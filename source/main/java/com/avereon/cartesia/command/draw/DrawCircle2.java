@@ -57,7 +57,7 @@ public class DrawCircle2 extends DrawCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return Command.COMPLETE;
+		return Command.SUCCESS;
 	}
 
 	@Override

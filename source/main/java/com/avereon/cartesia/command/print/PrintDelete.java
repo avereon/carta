@@ -13,7 +13,7 @@ public class PrintDelete extends PrintCommand {
 //
 //		context.getTool().getDesign().removePrint( print );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

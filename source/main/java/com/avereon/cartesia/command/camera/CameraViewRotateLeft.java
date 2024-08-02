@@ -12,7 +12,7 @@ public class CameraViewRotateLeft extends CameraCommand {
 		if( angle > 180 ) angle -= 360;
 		context.getTool().setViewRotate( angle );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

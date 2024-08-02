@@ -21,7 +21,7 @@ public class Flip extends EditCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().selectedFxShapes().isEmpty() ) return COMPLETE;
+		if( context.getTool().selectedFxShapes().isEmpty() ) return SUCCESS;
 
 		setCaptureUndoChanges( context, false );
 
@@ -55,7 +55,7 @@ public class Flip extends EditCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override

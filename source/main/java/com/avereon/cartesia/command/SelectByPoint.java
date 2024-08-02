@@ -30,10 +30,10 @@ public class SelectByPoint extends SelectCommand {
 		if( parameters.length < 2 ) {
 			Point3D point = asPoint( context, parameters[ 0 ] );
 			context.getTool().worldPointSelect( point, isSelectToggle( trigger, triggerEvent ) );
-			return COMPLETE;
+			return SUCCESS;
 		}
 
-		return FAIL;
+		return FAILURE;
 	}
 
 	private boolean isSelectToggle( CommandTrigger trigger, InputEvent event ) {

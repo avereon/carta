@@ -15,7 +15,7 @@ public class Undo extends EditCommand {
 //
 //		deleteShapes( getCommandShapes( context.getTool() ) );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

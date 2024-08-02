@@ -18,7 +18,7 @@ public class CameraZoomOut extends CameraZoom {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) {
 		zoomByFactor( context.getTool(), context.getTool().getViewPoint(), DesignPaneMarea.ZOOM_OUT_FACTOR );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

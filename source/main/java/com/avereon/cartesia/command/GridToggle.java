@@ -9,7 +9,7 @@ public class GridToggle extends Command {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		context.getTool().setGridVisible( !context.getTool().isGridVisible() );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

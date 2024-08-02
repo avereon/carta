@@ -1033,7 +1033,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getViewRotate() ) );
 	}
 
-	protected final void showCommandPrompt() {
+	public void showCommandPrompt() {
 		Fx.run( this::registerStatusBarItems );
 		Fx.run( this::requestFocus );
 	}

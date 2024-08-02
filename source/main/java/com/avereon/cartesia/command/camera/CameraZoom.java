@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import com.avereon.product.Rb;
@@ -42,7 +42,7 @@ public class CameraZoom extends CameraCommand {
 				double zoomFactor = ((ZoomEvent)event).getZoomFactor();
 				if( zoomFactor != 0.0 ) zoomByFactor( context.getTool(), point, zoomFactor );
 			}
-			return COMPLETE;
+			return SUCCESS;
 		}
 
 		try {
@@ -53,10 +53,10 @@ public class CameraZoom extends CameraCommand {
 			context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
-	protected void zoomByFactor( BaseDesignTool tool, Point3D point, double factor ) {
+	protected void zoomByFactor( DesignTool tool, Point3D point, double factor ) {
 		tool.zoom( point, factor );
 	}
 

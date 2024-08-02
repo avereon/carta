@@ -25,11 +25,11 @@ public class CameraMove extends CameraCommand {
 				viewAnchor = context.getTool().getViewPoint();
 				return INCOMPLETE;
 			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
-				return COMPLETE;
+				return SUCCESS;
 			}
 		}
 
-		return FAIL;
+		return FAILURE;
 	}
 
 	@Override

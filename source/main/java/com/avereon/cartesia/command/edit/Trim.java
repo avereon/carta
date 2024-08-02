@@ -43,7 +43,7 @@ public class Trim extends EditCommand {
 
 		com.avereon.cartesia.math.Trim.trim( context.getTool(), trimShape, edgeShape, trimMouse, edgeMouse );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

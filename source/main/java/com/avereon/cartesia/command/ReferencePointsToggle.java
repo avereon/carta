@@ -9,7 +9,7 @@ public class ReferencePointsToggle extends Command {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		context.getTool().setReferenceLayerVisible( !context.getTool().isReferenceLayerVisible() );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

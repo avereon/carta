@@ -4,7 +4,7 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
@@ -26,8 +26,8 @@ public class Rotate extends EditCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		BaseDesignTool tool = context.getTool();
-		if( tool.selectedFxShapes().isEmpty() ) return COMPLETE;
+		DesignTool tool = context.getTool();
+		if( tool.selectedFxShapes().isEmpty() ) return SUCCESS;
 
 		setCaptureUndoChanges( context, false );
 
@@ -62,7 +62,7 @@ public class Rotate extends EditCommand {
 			Point3D a = asPoint( context, parameters[ 0 ] );
 			Point3D s = asPoint( context, parameters[ 1 ] );
 
-			// FIXME Why does t appear to be relative to s, instead of a?
+			// FIXME Why does 't' appear to be relative to 's', instead of 'a'?
 			Point3D t = asPoint( a, parameters[ 2 ] );
 
 			// Furthermore, why, when using a relative coordinate, is a line not made?
@@ -78,13 +78,13 @@ public class Rotate extends EditCommand {
 			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override
 	public void handle( DesignCommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			BaseDesignTool tool = (BaseDesignTool)event.getSource();
+			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );

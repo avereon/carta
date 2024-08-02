@@ -16,7 +16,7 @@ public class SplitTest {
 		DesignLine b = new DesignLine( new Point3D( 1, 1, 0 ), new Point3D( 2, 1, 0 ) );
 		DesignLine c = new DesignLine( new Point3D( 2, 1, 0 ), new Point3D( 3, 1, 0 ) );
 
-		Set<DesignShape> shapes = Split.splitLine( null, a, new Point3D( 2, 0, 0 ) );
+		Set<DesignShape> shapes = Split.splitLine( a, new Point3D( 2, 0, 0 ) );
 
 		assertThat( containsLine( shapes, b ) ).isTrue();
 		assertThat( containsLine( shapes, c ) ).isTrue();
@@ -29,7 +29,7 @@ public class SplitTest {
 		DesignEllipse a = new DesignEllipse( new Point3D( 1, 2, 0 ), 5.0 );
 		DesignArc arc = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, start, 360.0, DesignArc.Type.OPEN );
 
-		Set<DesignShape> shapes = Split.splitEllipse( null, a, new Point3D( 9, 8, 0 ) );
+		Set<DesignShape> shapes = Split.splitEllipse( a, new Point3D( 9, 8, 0 ) );
 
 		assertThat( containsArc( shapes, arc ) ).isTrue();
 		assertThat( shapes.isEmpty() ).isFalse();
@@ -41,7 +41,7 @@ public class SplitTest {
 		DesignArc b = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 45.0, 90.0, DesignArc.Type.OPEN );
 		DesignArc c = new DesignArc( new Point3D( 1, 2, 0 ), 5.0, 135.0, 90.0, DesignArc.Type.OPEN );
 
-		Set<DesignShape> shapes = Split.splitArc( null, a, new Point3D( -9, 12, 0 ) );
+		Set<DesignShape> shapes = Split.splitArc( a, new Point3D( -9, 12, 0 ) );
 
 		assertThat( containsArc( shapes, b ) ).isTrue();
 		assertThat( containsArc( shapes, c ) ).isTrue();
@@ -55,7 +55,7 @@ public class SplitTest {
 		DesignCubic b = CadGeometry.cubicSubdivide( a, CadGeometry.getCubicParametricValueNear( a, mouse ) ).get( 0 );
 		DesignCubic c = CadGeometry.cubicSubdivide( a, CadGeometry.getCubicParametricValueNear( a, mouse ) ).get( 1 );
 
-		Set<DesignShape> shapes = Split.splitCurve( null, a, mouse );
+		Set<DesignShape> shapes = Split.splitCurve( a, mouse );
 
 		assertThat( containsCurve( shapes, b ) ).isTrue();
 		assertThat( containsCurve( shapes, c ) ).isTrue();

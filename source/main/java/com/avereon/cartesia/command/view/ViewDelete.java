@@ -10,11 +10,11 @@ public class ViewDelete extends ViewCommand {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		DesignView view = context.getTool().getCurrentView();
-		if( view == null ) return COMPLETE;
+		if( view == null ) return SUCCESS;
 
 		context.getTool().getDesign().removeView( view );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

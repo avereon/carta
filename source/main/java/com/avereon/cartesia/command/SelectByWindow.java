@@ -53,7 +53,7 @@ public class SelectByWindow extends SelectCommand {
 //			}
 //		}
 
-		return FAIL;
+		return FAILURE;
 	}
 
 	@Override

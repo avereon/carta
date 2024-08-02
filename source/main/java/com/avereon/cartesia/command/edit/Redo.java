@@ -15,7 +15,7 @@ public class Redo extends EditCommand {
 //
 //		deleteShapes( getCommandShapes( context.getTool() ) );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

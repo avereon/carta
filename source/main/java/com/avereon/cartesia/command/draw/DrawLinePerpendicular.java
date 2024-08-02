@@ -65,10 +65,10 @@ public class DrawLinePerpendicular extends DrawCommand {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
-			return FAIL;
+			return FAILURE;
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override

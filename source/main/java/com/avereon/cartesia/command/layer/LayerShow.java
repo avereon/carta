@@ -9,7 +9,7 @@ public class LayerShow extends LayerCommand {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		context.getTool().setLayerVisible( context.getTool().getSelectedLayer(), true );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

@@ -63,7 +63,7 @@ public class MeasureDistance extends MeasureCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override

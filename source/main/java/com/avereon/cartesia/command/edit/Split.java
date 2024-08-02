@@ -38,14 +38,14 @@ public class Split extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			com.avereon.cartesia.math.Split.split( context.getTool(), splitShape, asPoint( context, parameters[ 1 ] ) );
+			com.avereon.cartesia.math.Split.split( splitShape, asPoint( context, parameters[ 1 ] ) );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-move-shapes", exception );
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

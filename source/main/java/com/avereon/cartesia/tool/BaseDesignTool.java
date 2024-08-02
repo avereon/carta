@@ -1,33 +1,22 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.guide.GuidedTool;
-import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.event.EventTarget;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point3D;
-import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * The design tool is the base class for all design tools.
  */
-public abstract class BaseDesignTool extends GuidedTool implements EventTarget, WritableIdentity {
+public abstract class BaseDesignTool extends GuidedTool implements DesignTool, EventTarget, WritableIdentity {
 
 	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
 
@@ -89,7 +78,7 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 
 	private final DesignWorkplane workplane;
 
-	public BaseDesignTool( XenonProgramProduct product, Asset asset ) {
+	protected BaseDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
@@ -97,230 +86,55 @@ public abstract class BaseDesignTool extends GuidedTool implements EventTarget, 
 		this.workplane = new DesignWorkplane();
 	}
 
+	@Override
 	public final Design getDesign() {
 		return getAssetModel();
 	}
 
-	/**
-	 * A convenience method to get the design context.
-	 *
-	 * @return The design context
-	 */
+	@Override
 	public final DesignContext getDesignContext() {
 		DesignContext context = getDesign().getDesignContext();
 		if( context == null ) context = getDesign().createDesignContext( getProduct() );
 		return context;
 	}
 
-	/**
-	 * A convenience method to get the command context.
-	 *
-	 * @return The command context
-	 */
+	@Override
 	public final DesignCommandContext getCommandContext() {
 		return getDesignContext().getDesignCommandContext();
 	}
 
+	@Override
 	public final DesignWorkplane getWorkplane() {
 		return workplane;
 	}
 
-	/**
-	 * A convenience method to get the workplane coordinate system.
-	 *
-	 * @return The workplane coordinate system
-	 */
+	@Override
 	public final Grid getCoordinateSystem() {
 		return getWorkplane().getCoordinateSystem();
 	}
 
-	/**
-	 * A convenience method to set the workplane coordinate system.
-	 *
-	 * @param system The coordinate system
-	 */
+	@Override
 	public final void setCoordinateSystem( Grid system ) {
 		getWorkplane().setCoordinateSystem( system );
 	}
 
-	public abstract Point3D getViewPoint();
-
-	public abstract void setViewPoint( Point3D point );
-
-	public abstract double getViewRotate();
-
-	public abstract void setViewRotate( double angle );
-
-	public abstract double getZoom();
-
-	public abstract void setZoom( double zoom );
-
-	public abstract void setView( DesignPortal portal );
-
-	public abstract void setView( Point3D center, double zoom );
-
-	public abstract void setView( Point3D center, double zoom, double rotate );
-
-	public abstract ReticleCursor getReticleCursor();
-
-	/**
-	 * Set the camera viewport using a screen-based rectangular viewport. The
-	 * appropriate zoom and center will be calculated.
-	 *
-	 * @param viewport The screen viewport
-	 */
-	public abstract void setScreenViewport( Bounds viewport );
-
-	public abstract void setWorldViewport( Bounds viewport );
-
-	public abstract DesignValue getSelectTolerance();
-
-	public abstract void setSelectTolerance( DesignValue aperture );
-
-	/**
-	 * The select aperture is a design value (unit and value) for the selection
-	 * aperture size. The value is the aperture size as measured on the screen.
-	 * The aperture size is generally bound to the mod setting.
-	 *
-	 * @return The select aperture property
-	 */
-	public abstract ObjectProperty<DesignValue> selectTolerance();
-
-	@Deprecated
-	public abstract ObservableList<Shape> selectedFxShapes();
-
-	@Deprecated
-	public abstract Point3D nearestCp( Collection<Shape> shapes, Point3D point );
-
-	public abstract Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point );
-
-	public abstract void setCurrentLayer( DesignLayer layer );
-
-	public abstract DesignLayer getCurrentLayer();
-
-	public abstract ObjectProperty<DesignLayer> currentLayerProperty();
-
+	@Override
 	public DesignLayer getSelectedLayer() {
 		return getCurrentLayer();
 	}
 
+	@Override
 	public void setSelectedLayer( DesignLayer layer ) {
 		setCurrentLayer( layer );
 	}
 
+	@Override
 	public ObjectProperty<DesignLayer> selectedLayerProperty() {
 		return currentLayerProperty();
 	}
 
-	public abstract boolean isLayerVisible( DesignLayer layer );
-
-	public abstract void setLayerVisible( DesignLayer layer, boolean visible );
-
-	/**
-	 * Get a list of the visible layers. The list is ordered the same as the layers in the design.
-	 *
-	 * @return A list of the visible layers
-	 */
-	public abstract List<DesignLayer> getVisibleLayers();
-
-	@Deprecated
-	// FIXME This really should return design shapes and not FX shapes
-	public abstract List<Shape> getVisibleFxShapes();
-
-	public abstract List<DesignShape> getVisibleShapes();
-
-	public abstract Paint getSelectedDrawPaint();
-
-	public abstract Paint getSelectedFillPaint();
-
-	public abstract boolean isReferenceLayerVisible();
-
-	public abstract void setReferenceLayerVisible( boolean visible );
-
-	public abstract void setCurrentView( DesignView view );
-
-	public abstract DesignView getCurrentView();
-
-	public abstract ObjectProperty<DesignView> currentViewProperty();
-
-	/**
-	 * Change the zoom value by a factor.
-	 *
-	 * @param anchor The zoom anchor in world coordinates
-	 * @param factor The zoom factor
-	 */
-	public abstract void zoom( Point3D anchor, double factor );
-
-	/**
-	 * Pan the view by mouse coordinates.
-	 *
-	 * @param viewAnchor The view point location before being dragged (world)
-	 * @param dragAnchor The drag anchor (screen)
-	 * @param point The new view point (screen)
-	 */
-	public abstract void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
-
-	public abstract Point3D screenToWorkplane( Point3D point );
-
-	public abstract Point3D screenToWorkplane( double x, double y, double z );
-
-	public abstract Point3D worldToScreen( double x, double y, double z );
-
-	public abstract Point3D worldToScreen( Point3D point );
-
-	public abstract Bounds worldToScreen( Bounds bounds );
-
-	public abstract Point3D screenToWorld( double x, double y, double z );
-
-	public abstract Point3D screenToWorld( Point3D point );
-
-	public abstract Bounds screenToWorld( Bounds bounds );
-
-	public abstract boolean isGridVisible();
-
-	public abstract void setGridVisible( boolean visible );
-
-	public abstract BooleanProperty gridVisible();
-
-	public abstract boolean isGridSnapEnabled();
-
-	public abstract void setGridSnapEnabled( boolean enabled );
-
-	public abstract BooleanProperty gridSnapEnabled();
-
-	public abstract void setSelectAperture( Point3D anchor, Point3D mouse );
-
-	public abstract List<DesignShape> screenPointSyncFindOne( Point3D mouse );
-
-	public abstract List<DesignShape> worldPointSyncFindOne( Point3D mouse );
-
-	public abstract List<DesignShape> screenPointSyncFindAll( Point3D mouse );
-
-	public abstract List<DesignShape> worldPointSyncFindAll( Point3D mouse );
-
-	public abstract List<DesignShape> screenPointSyncSelect( Point3D mouse );
-
-	public abstract List<DesignShape> worldPointSyncSelect( Point3D mouse );
-
-	public abstract void clearSelectedShapes();
-
-	public abstract void screenPointSelect( Point3D mouse );
-
-	public abstract void screenPointSelect( Point3D mouse, boolean toggle );
-
-	public abstract void screenWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle );
-
-	public abstract void worldPointSelect( Point3D point );
-
-	public abstract void worldPointSelect( Point3D point, boolean toggle );
-
-	public abstract void worldWindowSelect( Point3D a, Point3D b, boolean intersect, boolean toggle );
-
-	public abstract List<DesignShape> getSelectedShapes();
-
-	public abstract DesignPortal getPriorPortal();
-
-	protected abstract void showCommandPrompt();
+	@Override
+	public abstract void showCommandPrompt();
 
 	@Deprecated
 	static DesignShape getDesignData( Shape s ) {

@@ -28,7 +28,7 @@ public class CameraViewPoint extends CameraCommand {
 			context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

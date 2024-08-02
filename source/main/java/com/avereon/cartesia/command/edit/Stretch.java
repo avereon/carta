@@ -6,7 +6,7 @@ import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.transaction.Txn;
@@ -33,7 +33,7 @@ public class Stretch extends EditCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().selectedFxShapes().isEmpty() ) return COMPLETE;
+		if( context.getTool().selectedFxShapes().isEmpty() ) return SUCCESS;
 
 		setCaptureUndoChanges( context, false );
 
@@ -76,13 +76,13 @@ public class Stretch extends EditCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override
 	public void handle( DesignCommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			BaseDesignTool tool = (BaseDesignTool)event.getSource();
+			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 2 -> referenceLine.setPoint( point ).setOrigin( point );
@@ -96,7 +96,7 @@ public class Stretch extends EditCommand {
 		}
 	}
 
-	private static Set<PointCoordinate> computePointsToMove( BaseDesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
+	private static Set<PointCoordinate> computePointsToMove( DesignTool tool, Collection<DesignShape> shapes, Bounds bounds ) {
 		Set<PointCoordinate> points = new HashSet<>();
 
 		for( DesignShape shape : shapes ) {

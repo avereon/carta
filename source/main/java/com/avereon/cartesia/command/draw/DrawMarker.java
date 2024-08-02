@@ -43,7 +43,7 @@ public class DrawMarker extends DrawCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override

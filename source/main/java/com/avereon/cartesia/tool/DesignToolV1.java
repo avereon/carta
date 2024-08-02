@@ -720,7 +720,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		return designPane;
 	}
 
-	protected final void showCommandPrompt() {
+	public void showCommandPrompt() {
 		Fx.run( this::registerStatusBarItems );
 		Fx.run( this::requestFocus );
 	}

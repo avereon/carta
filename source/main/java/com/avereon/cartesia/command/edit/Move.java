@@ -21,7 +21,7 @@ public class Move extends EditCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().getSelectedShapes().isEmpty() ) return COMPLETE;
+		if( context.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
 		setCaptureUndoChanges( context, false );
 
@@ -55,7 +55,7 @@ public class Move extends EditCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override

@@ -24,7 +24,7 @@ class MockCommand extends Command {
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) {
 		if( parameters.length < needed ) return INCOMPLETE;
 		this.values = parameters;
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

@@ -9,7 +9,7 @@ public class CameraViewTop extends CameraCommand {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		context.getTool().setViewRotate( 0 );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

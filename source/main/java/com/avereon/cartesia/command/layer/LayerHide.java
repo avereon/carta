@@ -9,7 +9,7 @@ public class LayerHide extends LayerCommand {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		context.getTool().setLayerVisible( context.getTool().getSelectedLayer(), false );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

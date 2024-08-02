@@ -12,7 +12,7 @@ public class DrawPath extends DrawCommand {
 		// Once started it can take SVG-like parameters to draw a path
 		// Of particular interest is that it can be open or closed
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

@@ -6,6 +6,7 @@ import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.zarra.color.Paints;
@@ -82,11 +83,13 @@ public abstract class Command {
 
 	public static final Object INCOMPLETE = new Object();
 
-	public static final Object COMPLETE = new Object();
+	public static final Object SUCCESS = new Object();
 
+	// Is there a difference between INVALID and FAILURE?
 	public static final Object INVALID = new Object();
 
-	public static final Object FAIL = new Object();
+	// Is there a difference between FAILURE and INVALID?
+	public static final Object FAILURE = new Object();
 
 	private final Collection<DesignShape> reference;
 
@@ -105,8 +108,13 @@ public abstract class Command {
 		this.previewMap = new ConcurrentHashMap<>();
 	}
 
+	public Object execute( CommandTask task ) throws Exception {
+		return execute( task.getContext(), task.getTrigger(), task.getEvent(), task.getParameters() );
+	}
+
+	@Deprecated
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	public void cancel( DesignCommandContext context ) {
@@ -166,8 +174,13 @@ public abstract class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
+	@Deprecated
 	protected Point3D asPoint( DesignCommandContext context, Object value ) throws Exception {
 		return asPoint( context.getWorldAnchor(), value );
+	}
+
+	protected Point3D asPoint( CommandTask task, Object value ) throws Exception {
+		return asPoint( task.getContext().getWorldAnchor(), value );
 	}
 
 	protected Point3D asPoint( Point3D anchor, Object value ) throws Exception {

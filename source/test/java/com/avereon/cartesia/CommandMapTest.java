@@ -1,20 +1,17 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Anchor;
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.SelectByWindow;
 import com.avereon.cartesia.command.camera.CameraMove;
 import com.avereon.cartesia.command.camera.CameraZoom;
 import com.avereon.cartesia.command.snap.SnapAuto;
-import javafx.event.EventType;
 import javafx.scene.input.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.List;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -75,46 +72,6 @@ public class CommandMapTest extends CommandMapBaseTest {
 			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createScrollEvent( ScrollEvent.SCROLL, true, false, false, false, false, false ) ),
 			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createZoomEvent( ZoomEvent.ZOOM, false, false, false, false, false, false ) )
 		);
-	}
-
-	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {
-		return new CommandMetadata( action, name, null, null, List.of(), type );
-	}
-
-	protected static MouseEvent createMouseEvent( EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved ) {
-		boolean primary = button == MouseButton.PRIMARY;
-		boolean secondary = button == MouseButton.SECONDARY;
-		boolean middle = button == MouseButton.MIDDLE;
-		return new MouseEvent( type, 0, 0, 0, 0, button, 0, shift, control, alt, meta, primary, middle, secondary, false, false, !moved, null );
-	}
-
-	protected static ScrollEvent createScrollEvent( EventType<ScrollEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia ) {
-		return new ScrollEvent( type,
-			0,
-			0,
-			0,
-			0,
-			shift,
-			control,
-			alt,
-			meta,
-			direct,
-			inertia,
-			0,
-			0,
-			0,
-			0,
-			ScrollEvent.HorizontalTextScrollUnits.CHARACTERS,
-			0,
-			ScrollEvent.VerticalTextScrollUnits.LINES,
-			0,
-			2,
-			null
-		);
-	}
-
-	protected static ZoomEvent createZoomEvent( EventType<ZoomEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia ) {
-		return new ZoomEvent( type, 0, 0, 0, 0, shift, control, alt, meta, direct, inertia, 0, 0, null );
 	}
 
 }

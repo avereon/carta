@@ -30,7 +30,7 @@ import java.util.logging.Level;
 /**
  * The CommandContext class is a container for command specific information.
  * <pre>
- * {@link BaseDesignTool} -> {@link Design} -> {@link DesignContext} -> {@link DesignCommandContext}
+ * {@link DesignTool} -> {@link Design} -> {@link DesignContext} -> {@link DesignCommandContext}
  * </pre>
  */
 @CustomLog
@@ -55,7 +55,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private String priorCommand;
 
-	private BaseDesignTool lastActiveDesignTool;
+	private DesignTool lastActiveDesignTool;
 
 	@Setter
 	@Getter
@@ -77,7 +77,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	@Setter
 	private Point3D worldMouse;
 
-	private BaseDesignTool tool;
+	private DesignTool tool;
 
 	public DesignCommandContext( XenonProgramProduct product ) {
 		this.product = product;
@@ -111,7 +111,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	 * @param parameters The command parameters
 	 * @return The command that was run
 	 */
-	public Command submit( BaseDesignTool tool, Command command, Object... parameters ) {
+	public Command submit( DesignTool tool, Command command, Object... parameters ) {
 		return submit( tool, null, null, command, parameters );
 	}
 
@@ -125,7 +125,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	 * @return
 	 */
 	@Deprecated
-	public Command submit( BaseDesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
+	public Command submit( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		commandStack.removeIf( r -> r.getCommand() == command );
 		return pushCommand( tool, trigger, event, command, parameters );
 	}
@@ -150,7 +150,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		event.consume();
 		String input = getCommandPrompt().getCommand();
 		if( input.isEmpty() ) {
-			BaseDesignTool tool = getLastActiveDesignTool();
+			DesignTool tool = getLastActiveDesignTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point3D screen = tool.worldToScreen( mouse );
 			MouseEvent mouseEvent = new MouseEvent(
@@ -277,23 +277,23 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		doEventCommand( event );
 	}
 
-	BaseDesignTool getLastActiveDesignTool() {
+	DesignTool getLastActiveDesignTool() {
 		return lastActiveDesignTool;
 	}
 
 	// FIXME What is the difference between this method and setTool()?
 	//  Because these are both set at the same time, they are the same value
-	public void setLastActiveDesignTool( BaseDesignTool tool ) {
+	public void setLastActiveDesignTool( DesignTool tool ) {
 		lastActiveDesignTool = Objects.requireNonNull( tool );
 	}
 
-	public final BaseDesignTool getTool() {
+	public final DesignTool getTool() {
 		return tool;
 	}
 
 	// FIXME What is the difference between this method and setLastActiveDesignTool()?
 	//  Because these are both set at the same time, they are the same value
-	public void setTool( BaseDesignTool tool ) {
+	public void setTool( DesignTool tool ) {
 		this.tool = Objects.requireNonNull( tool );
 	}
 
@@ -329,14 +329,14 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Command pushCommand( InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
-		return pushCommand( (BaseDesignTool)event.getSource(), null, null, commandClass, ArrayUtil.concat( parameters, event ) );
+		return pushCommand( (DesignTool)event.getSource(), null, null, commandClass, ArrayUtil.concat( parameters, event ) );
 	}
 
 	private Command pushCommand( Command command, Object... parameters ) {
 		return pushCommand( getLastActiveDesignTool(), null, null, command, parameters );
 	}
 
-	private Command pushCommand( BaseDesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command pushCommand( DesignTool tool, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
 			return pushCommand( tool, null, null, commandClass.getConstructor().newInstance(), parameters );
@@ -346,7 +346,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return null;
 	}
 
-	private Command pushCommand( BaseDesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
+	private Command pushCommand( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		return pushCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
 	}
 
@@ -386,7 +386,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Object doProcessCommands() throws Exception {
-		Object result = Command.COMPLETE;
+		Object result = Command.SUCCESS;
 		synchronized( commandStack ) {
 			try {
 				List<CommandTask> requests = new ArrayList<>( commandStack );

@@ -37,10 +37,10 @@ public class Join extends EditCommand {
 			com.avereon.cartesia.math.Meet.meet( context.getTool(), trim, edge, trimMouse, edgeMouse );
 		} catch( Exception exception ) {
 			log.atWarn( exception ).log( "Error meeting objects" );
-			return FAIL;
+			return FAILURE;
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

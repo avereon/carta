@@ -56,7 +56,7 @@ public class CameraZoomWindow extends CameraCommand {
 		// FIXME Because I changed the behavior of Anchor not to return a point, this is broken
 		//context.getTool().setWorldViewport( FxUtil.bounds( anchor, mouse ) );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

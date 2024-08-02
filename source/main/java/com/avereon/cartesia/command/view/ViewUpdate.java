@@ -10,14 +10,14 @@ public class ViewUpdate extends ViewCommand {
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		DesignView view = context.getTool().getCurrentView();
-		if( view == null ) return COMPLETE;
+		if( view == null ) return SUCCESS;
 
 		view.setOrigin( context.getTool().getViewPoint() );
 		view.setZoom( context.getTool().getZoom() );
 		view.setRotate( context.getTool().getViewRotate() );
 		view.setLayers( context.getTool().getVisibleLayers() );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

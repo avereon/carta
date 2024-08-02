@@ -17,7 +17,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
-abstract class CommandMapBaseTest extends BaseCartesiaUnitTest {
+abstract class CommandMapBaseTest extends CommandBaseTest {
 
 	static XenonProgramProduct product = Mockito.mock( XenonProgramProduct.class );
 

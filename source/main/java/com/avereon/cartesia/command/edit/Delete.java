@@ -10,14 +10,14 @@ public class Delete extends EditCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().getSelectedShapes().isEmpty() ) return COMPLETE;
+		if( context.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
 		clearReferenceAndPreview( context );
 		setCaptureUndoChanges( context, true );
 
 		deleteShapes( context.getTool() );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

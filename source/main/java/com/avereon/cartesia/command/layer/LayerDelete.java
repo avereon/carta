@@ -20,7 +20,7 @@ public class LayerDelete extends LayerCommand {
 
 
 		context.getTool().setCurrentLayer( nextLayer );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	private DesignLayer getNextValidLayer( DesignLayer layer ) {

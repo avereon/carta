@@ -18,21 +18,21 @@ public abstract class CameraCommand extends Command {
 	}
 
 	protected Object zoomShapes( DesignCommandContext context, List<DesignShape> shapes ) {
-		if( shapes.isEmpty() ) return COMPLETE;
+		if( shapes.isEmpty() ) return SUCCESS;
 
 		// Get the merged bounds of all the shapes
 		Bounds bounds = null;
 		for( DesignShape shape : shapes ) {
 			bounds = FxUtil.merge( bounds, shape.getBounds() );
 		}
-		if( bounds == null ) return FAIL;
+		if( bounds == null ) return FAILURE;
 
 		// Convert the bounds from world to screen coordinates
 		bounds = context.getTool().worldToScreen( bounds );
 
 		// Set the viewport to the bounds
 		context.getTool().setScreenViewport( bounds );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }

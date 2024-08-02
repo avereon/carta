@@ -4,8 +4,8 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadShapes;
-import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
@@ -57,14 +57,14 @@ public class MeasurePoint extends MeasureCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 	@Override
 	public void handle( DesignCommandContext context, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			if( referenceLine != null ) {
-				BaseDesignTool tool = (BaseDesignTool)event.getSource();
+				DesignTool tool = (DesignTool)event.getSource();
 				Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 				switch( getStep() ) {
 					case 1 -> {

@@ -37,7 +37,7 @@ public class CommandPrompt extends BorderPane {
 
 	public void setPrompt( String prompt ) {
 		final String effectivePrompt = !TextUtil.isEmpty( prompt ) ? prompt : Rb.text( "prompt", "command" );
-		final BaseDesignTool tool = context.getTool();
+		final DesignTool tool = context.getTool();
 		Fx.run( () -> {
 			if( tool != null ) tool.showCommandPrompt();
 			this.prompt.setText( effectivePrompt );

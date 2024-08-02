@@ -11,7 +11,7 @@ public class CameraViewPrevious extends CameraCommand {
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		//context.getTool().setView( context.getPreviousViewpoint(), context.getPreviousZoom(), context.getPreviousRotate() );
 		context.getTool().setView( context.getTool().getPriorPortal() );
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 

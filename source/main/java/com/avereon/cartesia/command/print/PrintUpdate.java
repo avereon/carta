@@ -16,7 +16,7 @@ public class PrintUpdate extends PrintCommand {
 //		print.setRotate( context.getTool().getViewRotate() );
 //		print.setLayers( context.getTool().getVisibleLayers() );
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 

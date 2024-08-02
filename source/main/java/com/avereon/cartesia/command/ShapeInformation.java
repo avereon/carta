@@ -43,7 +43,7 @@ public class ShapeInformation extends Command {
 			}
 
 			Map<String, Object> information = shape.getInformation();
-			if( information.isEmpty() ) return COMPLETE;
+			if( information.isEmpty() ) return SUCCESS;
 
 			Map<String, Object> view = information.keySet().stream().collect( Collectors.toMap( k -> Rb.text( RbKey.LABEL, k ), information::get ) );
 			List<String> labels = new ArrayList<>( view.keySet() );
@@ -79,7 +79,7 @@ public class ShapeInformation extends Command {
 			clearReferenceAndPreview( context );
 		}
 
-		return COMPLETE;
+		return SUCCESS;
 	}
 
 }
