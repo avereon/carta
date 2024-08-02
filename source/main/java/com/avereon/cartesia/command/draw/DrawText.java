@@ -12,6 +12,7 @@ import javafx.scene.input.KeyEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class DrawText extends DrawCommand {

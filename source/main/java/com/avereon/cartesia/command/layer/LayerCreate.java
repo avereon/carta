@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
  * This command adds a layer as a peer to the current layer

@@ -8,6 +8,8 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
+import static com.avereon.cartesia.command.Command.Result.*;
+
 @CustomLog
 public class CameraMove extends CameraCommand {
 

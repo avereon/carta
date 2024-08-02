@@ -6,6 +6,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class SelectByPoint extends SelectCommand {

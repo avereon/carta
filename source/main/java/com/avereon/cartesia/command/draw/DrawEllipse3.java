@@ -14,6 +14,7 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 public class DrawEllipse3 extends DrawCommand {
 

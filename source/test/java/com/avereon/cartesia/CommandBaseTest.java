@@ -1,7 +1,9 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.event.EventType;
 import javafx.scene.input.*;
@@ -18,10 +20,16 @@ import static org.mockito.Mockito.lenient;
 public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	@Mock
-	protected DesignCommandContext context;
+	protected DesignTool tool;
 
 	@Mock
-	protected DesignTool tool;
+	protected DesignContext designContext;
+
+	@Mock
+	protected DesignCommandContext commandContext;
+
+	@Mock
+	protected CommandPrompt commandPrompt;
 
 	@Mock
 	protected CommandTrigger trigger;
@@ -31,8 +39,11 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	@BeforeEach
 	protected void setup() {
-		lenient().when( context.getTool() ).thenReturn( tool );
-		lenient().when( tool.getCommandContext() ).thenReturn( context );
+		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
+		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
+		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
+		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
+		lenient().when( commandContext.getTool() ).thenReturn( tool );
 	}
 
 	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {

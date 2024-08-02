@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class MeasurePoint extends MeasureCommand {

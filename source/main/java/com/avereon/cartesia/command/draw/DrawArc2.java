@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
@@ -15,6 +14,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 public class DrawArc2 extends DrawCommand {
 
@@ -34,7 +36,7 @@ public class DrawArc2 extends DrawCommand {
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "center" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 2 - Get origin, prompt for start
@@ -44,7 +46,7 @@ public class DrawArc2 extends DrawCommand {
 			referenceLine.setPoint( origin );
 			addPreview( context, referenceArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
 			promptForPoint( context, "start" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 3 - Get start, prompt for extent
@@ -55,7 +57,7 @@ public class DrawArc2 extends DrawCommand {
 			referenceArc.setExtent( 0.0 );
 			spinAnchor = point;
 			promptForPoint( context, "extent" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		if( parameters.length > 3 ) {
@@ -80,7 +82,7 @@ public class DrawArc2 extends DrawCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return Command.SUCCESS;
+		return SUCCESS;
 	}
 
 	@Override

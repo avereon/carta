@@ -4,6 +4,8 @@ import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 
+import static com.avereon.cartesia.command.Command.Result.*;
+
 public class Anchor extends Command {
 
 	@Override

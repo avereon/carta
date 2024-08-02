@@ -15,6 +15,7 @@ import javafx.scene.input.ZoomEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class CameraZoom extends CameraCommand {

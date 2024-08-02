@@ -4,6 +4,7 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
 import javafx.scene.input.InputEvent;
 import lombok.Getter;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @Getter
 class MockCommand extends Command {

@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import javafx.scene.input.InputEvent;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 public class LayerToggle extends LayerCommand {
 

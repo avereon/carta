@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.BaseDesignTool;
@@ -15,6 +14,9 @@ import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 @CustomLog
 public class DrawCircle2 extends DrawCommand {
@@ -31,7 +33,7 @@ public class DrawCircle2 extends DrawCommand {
 		if( parameters.length < 1 ) {
 			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "center" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 2
@@ -41,7 +43,7 @@ public class DrawCircle2 extends DrawCommand {
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
 			promptForNumber( context, "radius" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		clearReferenceAndPreview( context );
@@ -57,7 +59,7 @@ public class DrawCircle2 extends DrawCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return Command.SUCCESS;
+		return SUCCESS;
 	}
 
 	@Override

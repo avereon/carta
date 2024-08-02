@@ -1,14 +1,13 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
+import com.avereon.cartesia.tool.CommandTask;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 public class GridToggle extends Command {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		context.getTool().setGridVisible( !context.getTool().isGridVisible() );
+	public Object execute( CommandTask task) throws Exception {
+		task.getTool().setGridVisible( !task.getTool().isGridVisible() );
 		return SUCCESS;
 	}
 

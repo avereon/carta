@@ -6,6 +6,7 @@ import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.scene.input.InputEvent;
 
 import java.util.List;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 public class LayerDelete extends LayerCommand {
 

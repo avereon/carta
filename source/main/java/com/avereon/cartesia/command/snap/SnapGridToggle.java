@@ -5,6 +5,7 @@ import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.scene.input.InputEvent;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 public class SnapGridToggle extends Command {
 

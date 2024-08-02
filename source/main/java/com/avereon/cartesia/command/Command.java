@@ -32,6 +32,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.avereon.cartesia.command.Command.Result.*;
+
 /**
  * Abstract class representing a command that can be executed in a design tool.
  *
@@ -81,15 +83,26 @@ import java.util.stream.Collectors;
 @CustomLog
 public abstract class Command {
 
-	public static final Object INCOMPLETE = new Object();
+	public enum Result {
+		INCOMPLETE,
+		SUCCESS,
+		INVALID,
+		FAILURE
+	}
 
-	public static final Object SUCCESS = new Object();
-
-	// Is there a difference between INVALID and FAILURE?
-	public static final Object INVALID = new Object();
-
-	// Is there a difference between FAILURE and INVALID?
-	public static final Object FAILURE = new Object();
+//	@Deprecated
+//	public static final Object INCOMPLETE = new Object();
+//
+//	@Deprecated
+//	public static final Object SUCCESS = new Object();
+//
+//	@Deprecated
+//	// Is there a difference between INVALID and FAILURE?
+//	public static final Object INVALID = new Object();
+//
+//	@Deprecated
+//	// Is there a difference between FAILURE and INVALID?
+//	public static final Object FAILURE = new Object();
 
 	private final Collection<DesignShape> reference;
 

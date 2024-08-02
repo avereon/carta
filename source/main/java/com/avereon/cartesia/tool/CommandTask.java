@@ -8,6 +8,7 @@ import lombok.CustomLog;
 import lombok.Getter;
 
 import java.util.Objects;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @Getter
 @CustomLog
@@ -39,20 +40,20 @@ public class CommandTask {
 	public Object executeCommandStep( Object priorResult ) throws Exception {
 		// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
-		if( result == Command.FAILURE ) return Command.FAILURE;
+		if( result == FAILURE ) return FAILURE;
 		if( priorResult == null ) log.atWarning().log( "A prior result of null was passed to execute" );
-		if( priorResult == Command.INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
-		if( priorResult != null && priorResult != Command.SUCCESS ) parameters = ArrayUtil.append( parameters, priorResult );
+		if( priorResult == INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
+		if( priorResult != null && priorResult != SUCCESS ) parameters = ArrayUtil.append( parameters, priorResult );
 
-		Object result = Command.INVALID;
+		Object result = INVALID;
 		try {
 			context.setTool( tool );
 			result = command.execute( this );
-			if( result != Command.INVALID ) command.incrementStep();
+			if( result != INVALID ) command.incrementStep();
 		} catch( Exception exception ) {
 			log.atWarn( exception ).log( "Unhandled error executing command=%s", command );
 		} finally {
-			if( result == Command.SUCCESS || result == Command.INVALID ) doComplete();
+			if( result == SUCCESS || result == INVALID ) doComplete();
 			command.setStepExecuted();
 		}
 

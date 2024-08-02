@@ -4,6 +4,7 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import javafx.scene.input.InputEvent;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
  * Zoom in to the design. This has the effect of making the design larger or

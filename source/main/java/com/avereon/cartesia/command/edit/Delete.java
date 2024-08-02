@@ -4,6 +4,7 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class Delete extends EditCommand {

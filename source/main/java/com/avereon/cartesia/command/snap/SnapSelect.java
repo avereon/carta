@@ -7,6 +7,7 @@ import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class SnapSelect extends SnapCommand {

@@ -9,6 +9,9 @@ import lombok.CustomLog;
 
 import java.util.List;
 
+import static com.avereon.cartesia.command.Command.Result.FAILURE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
+
 @CustomLog
 public abstract class CameraCommand extends Command {
 

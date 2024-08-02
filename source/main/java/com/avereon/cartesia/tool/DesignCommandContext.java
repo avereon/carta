@@ -26,6 +26,7 @@ import java.util.*;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
  * The CommandContext class is a container for command specific information.
@@ -386,7 +387,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Object doProcessCommands() throws Exception {
-		Object result = Command.SUCCESS;
+		Object result = SUCCESS;
 		synchronized( commandStack ) {
 			try {
 				List<CommandTask> requests = new ArrayList<>( commandStack );
@@ -394,9 +395,9 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 					logCommandStack();
 					setInputMode( request.getCommand().getInputMode() );
 					result = request.executeCommandStep( result );
-					if( result == Command.INCOMPLETE ) break;
-					if( result == Command.INVALID ) break;
-					if( !commandStack.remove( request ) ) return Command.INVALID;
+					if( result == INCOMPLETE ) break;
+					if( result == INVALID ) break;
+					if( !commandStack.remove( request ) ) return INVALID;
 				}
 			} catch( Exception exception ) {
 				cancel();

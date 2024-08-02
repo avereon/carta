@@ -6,6 +6,9 @@ import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
+
 /**
  * Zoom the view to the window defined by two points. The order of the points is
  * not important. The view will be zoomed to the window defined by the points.

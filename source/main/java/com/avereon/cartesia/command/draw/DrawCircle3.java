@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
@@ -16,6 +15,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 public class DrawCircle3 extends DrawCommand {
 
@@ -35,7 +37,7 @@ public class DrawCircle3 extends DrawCommand {
 		if( parameters.length < 1 ) {
 			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "start-point" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 2
@@ -43,7 +45,7 @@ public class DrawCircle3 extends DrawCommand {
 			start = asPoint( context, parameters[ 0 ] );
 			previewLine.setOrigin( start );
 			promptForPoint( context, "mid-point" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 3
@@ -54,7 +56,7 @@ public class DrawCircle3 extends DrawCommand {
 			addPreview( context, previewEllipse = CadGeometry.circleFromThreePoints( start, mid, mid ) );
 
 			promptForPoint( context, "end-point" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		clearReferenceAndPreview( context );
@@ -71,7 +73,7 @@ public class DrawCircle3 extends DrawCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return Command.SUCCESS;
+		return SUCCESS;
 	}
 
 	@Override

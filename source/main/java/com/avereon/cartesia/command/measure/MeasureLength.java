@@ -12,6 +12,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class MeasureLength extends MeasureCommand {

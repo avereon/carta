@@ -8,6 +8,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
+import static com.avereon.cartesia.command.Command.Result.FAILURE;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+
 @CustomLog
 public class SelectByWindow extends SelectCommand {
 
@@ -34,24 +37,24 @@ public class SelectByWindow extends SelectCommand {
 			return INCOMPLETE;
 		}
 
-//		if( parameters[ 0 ] instanceof MouseEvent event ) {
-//			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
-//				// This command is not complete until the mouse is released
-//				return INCOMPLETE;
-//			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
-//				// The command is complete when the handle method submits the command again with the mouse released event
-//				BaseDesignTool tool = context.getTool();
-//				Point3D anchor = context.getWorldAnchor();
-//				Point3D mouse = tool.screenToWorld( event.getX(), event.getY(), 0 );
-//
-//				if( context.getCommandStackDepth() == 1 ) {
-//					tool.worldWindowSelect( anchor, mouse, isSelectByIntersect( event ), false );
-//					return COMPLETE;
-//				} else {
-//					return mouse;
-//				}
-//			}
-//		}
+		//		if( parameters[ 0 ] instanceof MouseEvent event ) {
+		//			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
+		//				// This command is not complete until the mouse is released
+		//				return INCOMPLETE;
+		//			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+		//				// The command is complete when the handle method submits the command again with the mouse released event
+		//				BaseDesignTool tool = context.getTool();
+		//				Point3D anchor = context.getWorldAnchor();
+		//				Point3D mouse = tool.screenToWorld( event.getX(), event.getY(), 0 );
+		//
+		//				if( context.getCommandStackDepth() == 1 ) {
+		//					tool.worldWindowSelect( anchor, mouse, isSelectByIntersect( event ), false );
+		//					return COMPLETE;
+		//				} else {
+		//					return mouse;
+		//				}
+		//			}
+		//		}
 
 		return FAILURE;
 	}

@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
  * This command creates a view from the current view settings

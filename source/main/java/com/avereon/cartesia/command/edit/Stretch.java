@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class Stretch extends EditCommand {

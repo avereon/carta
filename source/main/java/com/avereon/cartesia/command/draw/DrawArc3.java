@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
@@ -15,6 +14,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 public class DrawArc3 extends DrawCommand {
 
@@ -34,7 +36,7 @@ public class DrawArc3 extends DrawCommand {
 		if( parameters.length < 1 ) {
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "start-point" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 2 - Get start, prompt for mid-point
@@ -42,7 +44,7 @@ public class DrawArc3 extends DrawCommand {
 			start = asPoint( context, parameters[ 0 ] );
 			referenceLine.setOrigin( start );
 			promptForPoint( context, "mid-point" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		// Step 3 - Get mid point, prompt for end
@@ -53,7 +55,7 @@ public class DrawArc3 extends DrawCommand {
 			addPreview( context, previewArc = CadGeometry.arcFromThreePoints( start, mid, mid ) );
 
 			promptForPoint( context, "end-point" );
-			return Command.INCOMPLETE;
+			return INCOMPLETE;
 		}
 
 		clearReferenceAndPreview( context );
@@ -70,7 +72,7 @@ public class DrawArc3 extends DrawCommand {
 			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
-		return Command.SUCCESS;
+		return SUCCESS;
 	}
 
 	@Override

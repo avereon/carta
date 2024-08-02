@@ -24,16 +24,18 @@ public class CommandTest extends CommandBaseTest {
 	@Test
 	void testCancel() {
 		// given
-		CommandTask task = new CommandTask( context, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 
 		// when
 		command.cancel( task );
 
 		// then
+		verify( command, times( 1 ) ).clearReferenceAndPreview( eq( commandContext ) );
 		verify( tool, times( 1 ) ).setCursor( eq( Cursor.DEFAULT ) );
 		verify( tool, times( 1 ) ).clearSelectedShapes();
-		verify( command, times( 1 ) ).clearReferenceAndPreview( eq( context ) );
 	}
+
+	// TODO Test more shared Command methods
 
 	@Test
 	void testDeriveStart() {
