@@ -31,12 +31,6 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	@Mock
 	protected CommandPrompt commandPrompt;
 
-	@Mock
-	protected CommandTrigger trigger;
-
-	@Mock
-	protected InputEvent event;
-
 	@BeforeEach
 	protected void setup() {
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );

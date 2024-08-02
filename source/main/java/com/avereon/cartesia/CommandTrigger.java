@@ -78,30 +78,10 @@ public class CommandTrigger {
 		return modifiers != null && modifiers.contains( modifier );
 	}
 
-	//	@Deprecated
-	//	public boolean matches( InputEvent event ) {
-	//		if( type != null && !event.getEventType().equals( type ) ) return false;
-	//
-	//		if( event instanceof MouseEvent mouseEvent ) {
-	//			if( mouseButton != null && mouseButton != mouseEvent.getButton() ) return false;
-	//			if( checkCommonModifiers( mouseEvent.isControlDown(), mouseEvent.isShiftDown(), mouseEvent.isAltDown(), mouseEvent.isMetaDown() ) ) return false;
-	//			return hasModifier( Modifier.MOVED ) == !mouseEvent.isStillSincePress();
-	//		} else if( event instanceof GestureEvent gestureEvent ) {
-	//			if( checkCommonModifiers( gestureEvent.isControlDown(), gestureEvent.isShiftDown(), gestureEvent.isAltDown(), gestureEvent.isMetaDown() ) ) return false;
-	//			if( hasModifier( Modifier.DIRECT ) ^ gestureEvent.isDirect() ) return false;
-	//			return hasModifier( Modifier.INERTIA ) == gestureEvent.isInertia();
-	//		} else {
-	//			log.atWarn().log( "Unhandled event type" );
-	//			return false;
-	//		}
-	//	}
-
-	//	private boolean checkCommonModifiers( boolean controlDown, boolean shiftDown, boolean altDown, boolean metaDown ) {
-	//		if( hasModifier( Modifier.CONTROL ) ^ controlDown ) return true;
-	//		if( hasModifier( Modifier.SHIFT ) ^ shiftDown ) return true;
-	//		if( hasModifier( Modifier.ALT ) ^ altDown ) return true;
-	//		return hasModifier( Modifier.META ) ^ metaDown;
-	//	}
+	@Override
+	public String toString() {
+		return "CommandTrigger{" + "type=" + type + ", mouseButton=" + mouseButton + ", modifiers=" + modifiers + '}';
+	}
 
 	@Override
 	public boolean equals( Object object ) {
@@ -114,6 +94,10 @@ public class CommandTrigger {
 	@Override
 	public int hashCode() {
 		return Objects.hash( type, mouseButton, modifiers );
+	}
+
+	public boolean matches(InputEvent event ) {
+		return this.equals( from( event ) );
 	}
 
 	public static CommandTrigger from( InputEvent event ) {

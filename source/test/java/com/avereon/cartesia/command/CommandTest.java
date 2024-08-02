@@ -24,7 +24,7 @@ public class CommandTest extends CommandBaseTest {
 	@Test
 	void testCancel() {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
 		command.cancel( task );

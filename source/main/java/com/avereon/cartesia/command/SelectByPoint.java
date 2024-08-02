@@ -1,11 +1,12 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
+
 import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
@@ -17,29 +18,34 @@ public class SelectByPoint extends SelectCommand {
 	}
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		// Should the trigger and the triggering event be part of the execute parameters?
-
-		// FIXME The anchor is not sent to the execute method
-
-		if( parameters.length < 1 ) {
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getParameters().length < 1 && task.getEvent() == null ) {
 			// Select window anchor
-			promptForPoint( context, "select-point" );
+			promptForPoint( task.getContext(), "select-point" );
 			return INCOMPLETE;
 		}
 
-		if( parameters.length < 2 ) {
-			Point3D point = asPoint( context, parameters[ 0 ] );
-			context.getTool().worldPointSelect( point, isSelectToggle( trigger, triggerEvent ) );
-			return SUCCESS;
+		if( task.getParameters().length < 2 || task.getEvent() != null ) {
+			// TODO Might consider collapsing this logic if it is duplicated in other commands
+			if( task.getParameters().length == 1 ) {
+				// If there is a parameter, use that
+				Point3D worldPoint = asPoint( task, task.getParameters()[ 0 ] );
+				task.getTool().worldPointSelect( worldPoint, isSelectToggle( task.getTrigger(), task.getEvent() ) );
+				return SUCCESS;
+			} else if( task.getTrigger().matches( task.getEvent() ) && task.getEvent() instanceof MouseEvent event ) {
+				// Otherwise, if there is an event, use that
+				Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
+				task.getTool().screenPointSelect( screenPoint, isSelectToggle( task.getTrigger(), task.getEvent() ) );
+				return SUCCESS;
+			}
 		}
 
 		return FAILURE;
 	}
 
 	private boolean isSelectToggle( CommandTrigger trigger, InputEvent event ) {
-		// TODO This needs to match the modifiers in the trigger
-		if( event instanceof MouseEvent mouseEvent) {
+		// FIXME This needs to match the modifiers in the trigger
+		if( event instanceof MouseEvent mouseEvent ) {
 			return mouseEvent.isControlDown();
 		}
 		return false;

@@ -19,7 +19,7 @@ public class PromptTest extends CommandBaseTest {
 
 		// given
 		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
 		Object result = command.execute( task );
@@ -33,7 +33,7 @@ public class PromptTest extends CommandBaseTest {
 	void testExecute() throws Exception {
 		// given
 		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, "Hi!" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "Hi!" );
 
 		// when
 		Object result = command.execute( task );

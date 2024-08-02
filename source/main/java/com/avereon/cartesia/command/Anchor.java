@@ -15,7 +15,7 @@ public class Anchor extends Command {
 
 	public Object execute( CommandTask task ) throws Exception {
 		if( task.getParameters().length < 1 && task.getEvent() == null ) {
-			// Prompt user for anchor point
+			promptForPoint( task.getContext(), "select-point" );
 			return INCOMPLETE;
 		}
 
@@ -24,10 +24,13 @@ public class Anchor extends Command {
 			if( task.getParameters().length == 1 ) {
 				// If there is a parameter, use that
 				Point3D worldPoint = asPoint( task, task.getParameters()[ 0 ] );
-				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
-				task.getContext().setWorldAnchor( worldPoint );
-				return SUCCESS;
-			} else if( task.getEvent() instanceof MouseEvent event ) {
+				if( worldPoint != null ) {
+					task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
+					task.getContext().setWorldAnchor( worldPoint );
+					return SUCCESS;
+				}
+			} else if( task.getEvent() instanceof MouseEvent event && task.getTrigger().matches( event ) ) {
+				// Otherwise, if there is an event, use that
 				Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
 				Point3D worldPoint = task.getTool().screenToWorld( screenPoint );
 				task.getContext().setScreenAnchor( screenPoint );

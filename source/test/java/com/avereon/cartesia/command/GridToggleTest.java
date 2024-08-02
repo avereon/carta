@@ -18,7 +18,7 @@ public class GridToggleTest extends CommandBaseTest {
 	@Test
 	void testExecute() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 		// Pretend the grid is visible
 		when( tool.isGridVisible() ).thenReturn( true );
 
@@ -33,7 +33,7 @@ public class GridToggleTest extends CommandBaseTest {
 	@Test
 	void executeIgnoresExtraParameter() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, "off" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "off" );
 		// Pretend the grid is visible
 		when( tool.isGridVisible() ).thenReturn( true );
 
@@ -49,7 +49,7 @@ public class GridToggleTest extends CommandBaseTest {
 	void executeIgnoresEvent() throws Exception {
 		// given
 		InputEvent event = createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, null, event, command );
 		// Pretend the grid is visible
 		when( tool.isGridVisible() ).thenReturn( true );
 

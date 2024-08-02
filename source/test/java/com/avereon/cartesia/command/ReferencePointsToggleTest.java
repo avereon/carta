@@ -14,7 +14,7 @@ public class ReferencePointsToggleTest extends CommandBaseTest {
 	void testExecute() throws Exception {
 		// given
 		ReferencePointsToggle command = new ReferencePointsToggle();
-		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 		when( tool.isReferenceLayerVisible() ).thenReturn( true );
 
 		// when

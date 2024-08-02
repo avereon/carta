@@ -39,14 +39,17 @@ public final class CommandMap {
 
 	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
-	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
-
 	private static final Map<CommandTrigger, String> eventActions = new ConcurrentHashMap<>();
+
+	private static final Map<String, CommandTrigger> triggerByAction = new ConcurrentHashMap<>();
+
+	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
 	public static void load( XenonProgramProduct product ) {
 		actionCommands.clear();
 		shortcutActions.clear();
 		eventActions.clear();
+		triggerByAction.clear();
 
 		// High level letters
 		// a - arc
@@ -271,12 +274,17 @@ public final class CommandMap {
 		return mapping;
 	}
 
+	public static CommandTrigger getTriggerByAction( String action ) {
+		return triggerByAction.get( action );
+	}
+
 	private static void add( String action, CommandTrigger trigger ) {
 		if( trigger.getEventType() == MouseEvent.MOUSE_PRESSED && !"anchor".equals( action ) ) {
 			log.atWarn().log( "Mouse pressed event should only be assigned to \"anchor\" command: %s", action );
 			return;
 		}
 		eventActions.put( trigger, action );
+		triggerByAction.put( action, trigger );
 	}
 
 	private static void add( XenonProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
