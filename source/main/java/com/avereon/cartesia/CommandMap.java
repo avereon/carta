@@ -96,8 +96,10 @@ public final class CommandMap {
 
 		// Basic commands
 		add( product, "anchor", Anchor.class );
-		add( product, "select", SelectByPoint.class );
-		add( product, "select-window", SelectByWindow.class );
+		add( product, "select-point", SelectByPoint.class );
+		add( product, "select-toggle", SelectToggle.class );
+		add( product, "select-window-contain", SelectByWindowContain.class );
+		add( product, "select-window-intersect", SelectByWindowIntersect.class );
 
 		// View commands
 		add( product, "camera-move", CameraMove.class );
@@ -205,13 +207,13 @@ public final class CommandMap {
 
 		// Selects -----------------------------------------------------------------
 		// Single select
-		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY ) );
+		add( "select-point", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY ) );
 		// Toggle select
-		add( "select", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL ) );
+		add( "select-toggle", new CommandTrigger( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, CommandTrigger.Modifier.CONTROL ) );
 		// Window select
-		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.MOVED ) );
+		add( "select-window-contain", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.MOVED ) );
 		// Window select by intersection
-		add( "select-window", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT, CommandTrigger.Modifier.MOVED ) );
+		add( "select-window-intersect", new CommandTrigger( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, CommandTrigger.Modifier.SHIFT, CommandTrigger.Modifier.MOVED ) );
 
 		// Snaps -------------------------------------------------------------------
 		// Snap nearest

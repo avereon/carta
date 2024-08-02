@@ -1,8 +1,13 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.CommandMap;
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
@@ -48,22 +53,23 @@ public class SelectByPointTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-//	@Test
-//	void testExecuteWithEvent() throws Exception {
-//		// Select by point with event should cause select to be called
-//
-//		// given
-//		// FIXME Non-unique trigger for action "select"
-//		CommandTrigger trigger = CommandMap.getTriggerByAction( "select" );
-//		InputEvent event = createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
-//		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
-//
-//		// when
-//		Object result = command.execute( task );
-//
-//		// then
-//		verify( tool, times( 1 ) ).screenPointSelect( eq( new Point3D( 48, 17, 0 ) ), eq( false ) );
-//		assertThat( result ).isEqualTo( SUCCESS );
-//	}
+	@Test
+	void testExecuteWithEvent() throws Exception {
+		// Select by point with event should cause select to be called
+
+		// given
+		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-point" );
+		InputEvent event = createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
+		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+
+		// when
+		Object result = command.execute( task );
+
+		// then
+		verify( tool, times( 1 ) ).screenPointSelect( eq( new Point3D( 48, 17, 0 ) ), eq( false ) );
+		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
+	// NEXT Check bad parameters
 
 }

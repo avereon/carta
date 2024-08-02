@@ -1,8 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.command.Anchor;
-import com.avereon.cartesia.command.SelectByPoint;
-import com.avereon.cartesia.command.SelectByWindow;
+import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.command.camera.CameraMove;
 import com.avereon.cartesia.command.camera.CameraZoom;
 import com.avereon.cartesia.command.snap.SnapAuto;
@@ -55,10 +53,10 @@ public class CommandMapTest extends CommandMapBaseTest {
 			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true, true ) ),
 
 			// Select
-			Arguments.of( createMetadata( "select", "select", SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false ) ),
-			Arguments.of( createMetadata( "select", "select", SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false, false ) ),
-			Arguments.of( createMetadata( "select-window", "select-window", SelectByWindow.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false, true ) ),
-			Arguments.of( createMetadata( "select-window", "select-window", SelectByWindow.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false, true ) ),
+			Arguments.of( createMetadata( "select-point", "select-point", SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false ) ),
+			Arguments.of( createMetadata( "select-toggle", "select-toggle", SelectToggle.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false, false ) ),
+			Arguments.of( createMetadata( "select-window-contain", "select-window-contain", SelectByWindowContain.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false, true ) ),
+			Arguments.of( createMetadata( "select-window-intersect", "select-window-intersect", SelectByWindowIntersect.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false, true ) ),
 
 			// Auto Snap
 			Arguments.of( createMetadata( "snap-auto-nearest", "snap-auto-nearest", SnapAuto.class ),

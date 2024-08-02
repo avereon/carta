@@ -31,7 +31,7 @@ abstract class CommandMapBaseTest extends CommandBaseTest {
 
 	@BeforeAll
 	public static void load() {
-		List<String> actions = List.of( "anchor", "select", "select-window", "snap-auto-nearest", "camera-move", "camera-zoom" );
+		List<String> actions = List.of( "anchor", "select-point", "select-toggle", "select-window-contain", "select-window-intersect", "snap-auto-nearest", "camera-move", "camera-zoom" );
 
 		for( String command : actions ) {
 			ActionProxy action = Mockito.mock( ActionProxy.class );
