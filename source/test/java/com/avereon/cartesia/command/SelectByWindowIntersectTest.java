@@ -15,9 +15,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class SelectByWindowContainTest extends CommandBaseTest {
+public class SelectByWindowIntersectTest extends CommandBaseTest {
 
-	private final SelectByWindowContain command = new SelectByWindowContain();
+	private final SelectByWindowIntersect command = new SelectByWindowIntersect();
 
 	/**
 	 * Select by window contain with no parameters or event, should prompt the
@@ -49,7 +49,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithNoParametersAndEvent() throws Exception {
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-window-contain" );
+		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-window-intersect" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		// Pretend the world anchor has been set
@@ -87,7 +87,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithOneParameterAndEvent() throws Exception {
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-window-contain" );
+		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-window-intersect" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, new Point3D( -3, 3, 0 ) );
 		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( 3, -3, 0 ) );
@@ -96,7 +96,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		Object result = command.execute( task );
 
 		// then
-		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( false ), eq( false ) );
+		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( true ), eq( false ) );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
@@ -115,7 +115,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		Object result = command.execute( task );
 
 		// then
-		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( false ), eq( false ) );
+		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( true ), eq( false ) );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 

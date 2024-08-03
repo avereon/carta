@@ -10,7 +10,10 @@ import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import javafx.event.EventType;
-import javafx.scene.input.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -85,6 +88,21 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {
 		return new CommandMetadata( action, name, null, null, List.of(), type );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	protected static MouseEvent createMouseEvent( CommandTrigger trigger, double x, double y ) {
+		return createMouseEvent(
+			(EventType<MouseEvent>)trigger.getEventType(),
+			trigger.getButton(),
+			trigger.hasModifier( CommandTrigger.Modifier.CONTROL ),
+			trigger.hasModifier( CommandTrigger.Modifier.SHIFT ),
+			trigger.hasModifier( CommandTrigger.Modifier.ALT ),
+			trigger.hasModifier( CommandTrigger.Modifier.META ),
+			trigger.hasModifier( CommandTrigger.Modifier.MOVED ),
+			x,
+			y
+		);
 	}
 
 	protected static MouseEvent createMouseEvent( EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved ) {

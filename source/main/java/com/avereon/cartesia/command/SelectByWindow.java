@@ -18,7 +18,7 @@ public abstract class SelectByWindow extends SelectCommand {
 		return false;
 	}
 
-	protected Object execute( CommandTask task, boolean toggle ) throws Exception {
+	protected Object execute( CommandTask task, boolean intersect ) throws Exception {
 		int paramCount = task.getParameters().length;
 		InputEvent event = task.getEvent();
 		boolean noEvent = event == null;
@@ -55,7 +55,7 @@ public abstract class SelectByWindow extends SelectCommand {
 			Point3D worldAnchor = asPoint( task, task.getParameter( 0 ) );
 			Point3D worldPoint = asPointFromEventOrParameter( task, event, task.getParameter( 1 ) );
 			if( worldAnchor != null && worldPoint != null ) {
-				task.getTool().worldWindowSelect( worldAnchor, worldPoint, false, toggle );
+				task.getTool().worldWindowSelect( worldAnchor, worldPoint, intersect, false );
 				return SUCCESS;
 			}
 		}
