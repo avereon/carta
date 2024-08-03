@@ -397,20 +397,24 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			try {
 				List<CommandTask> tasks = new ArrayList<>( commandStack );
 				for( CommandTask task : tasks ) {
-					setInputMode( task.getCommand().getInputMode() );
+					try {
+						setInputMode( task.getCommand().getInputMode() );
 
-					logCommandStack( "stack" );
-					thisResult = task.runTaskStep();
-					tool.setSelectAperture( null, null );
-					if( thisResult == INCOMPLETE ) break;
-					if( thisResult == INVALID ) break;
-					commandStack.remove( task );
+						logCommandStack( "stack" );
+						thisResult = task.runTaskStep();
+						if( thisResult == INCOMPLETE ) break;
+						if( thisResult == INVALID ) break;
 
-					if( !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
+						// Add the task result to the next task
+						if( commandStack.remove( task ) && !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
 
-					logCommandStack( "after" );
+						logCommandStack( "after" );
 
-					priorResult = thisResult;
+						priorResult = thisResult;
+					} catch( Exception exception ) {
+						log.atWarn( exception ).log( "Unhandled error executing command=%s", task );
+						throw exception;
+					}
 				}
 			} catch( Exception exception ) {
 				cancel();

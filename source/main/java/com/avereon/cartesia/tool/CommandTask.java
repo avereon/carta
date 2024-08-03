@@ -69,10 +69,9 @@ public class CommandTask {
 			context.setTool( tool );
 			result = command.execute( this );
 			if( result != INVALID ) command.incrementStep();
-		} catch( Exception exception ) {
-			log.atWarn( exception ).log( "Unhandled error executing command=%s", command );
 		} finally {
 			if( result == SUCCESS || result == INVALID ) doComplete();
+			tool.setSelectAperture( null, null );
 			command.setStepExecuted();
 		}
 
