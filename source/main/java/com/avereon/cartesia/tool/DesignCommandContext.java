@@ -117,6 +117,20 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	/**
+	 * When a command needs to resubmit itself, it should use this method. This
+	 * method is generally called from the event handler of a command when an
+	 * event value need to be passed to the command.
+	 *
+	 * @param tool The tool that is running the command
+	 * @param command The command to run
+	 * @param parameters The command parameters
+	 * @return The command that was run
+	 */
+	public Command resubmit( DesignTool tool, InputEvent event, Command command, Object... parameters ) {
+		return submit( tool, null, event, command, parameters );
+	}
+
+	/**
 	 * @param tool
 	 * @param trigger
 	 * @param event
@@ -262,11 +276,9 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private void forwardCommandToCommandStack( MouseEvent event ) {
 		// Forward the mouse event to the other commands in the stack
-		CommandTask request;
 		Iterator<CommandTask> iterator = commandStack.iterator();
 		while( !event.isConsumed() && iterator.hasNext() ) {
-			request = iterator.next();
-			request.getCommand().handle( this, event );
+			iterator.next().getCommand().handle( this, event );
 		}
 	}
 
@@ -355,13 +367,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 		synchronized( commandStack ) {
 			log.atTrace().log( "Command submitted %s", request );
-
 			commandStack.push( request );
-			//logCommandStack();
 			getProduct().task( "process-commands", this::doProcessCommands );
 		}
 
-		// TODO Might consider returning the command request
+		// TODO Consider returning the command request
 		return request.getCommand();
 	}
 
@@ -372,33 +382,42 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void logCommandStack() {
+		logCommandStack( "" );
+	}
+
+	private void logCommandStack( String prefix ) {
 		if( !log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) return;
-
-		List<CommandTask> invertedCommandStack = new ArrayList<>( commandStack );
-		Collections.reverse( invertedCommandStack );
-
-		if( !commandStack.isEmpty() ) log.at( COMMAND_STACK_LOG_LEVEL ).log( "commands=%s", invertedCommandStack );
+		log.at( COMMAND_STACK_LOG_LEVEL ).log( "%s tasks=%s", prefix, commandStack.reversed() );
 	}
 
 	private Object doProcessCommands() throws Exception {
-		Object result = SUCCESS;
+		Object priorResult = SUCCESS;
+		Object thisResult;
 		synchronized( commandStack ) {
 			try {
-				List<CommandTask> requests = new ArrayList<>( commandStack );
-				for( CommandTask request : requests ) {
-					logCommandStack();
-					setInputMode( request.getCommand().getInputMode() );
-					result = request.executeCommandStep( result );
-					if( result == INCOMPLETE ) break;
-					if( result == INVALID ) break;
-					if( !commandStack.remove( request ) ) return INVALID;
+				List<CommandTask> tasks = new ArrayList<>( commandStack );
+				for( CommandTask task : tasks ) {
+					setInputMode( task.getCommand().getInputMode() );
+
+					logCommandStack( "stack" );
+					thisResult = task.runTaskStep();
+					tool.setSelectAperture( null, null );
+					if( thisResult == INCOMPLETE ) break;
+					if( thisResult == INVALID ) break;
+					commandStack.remove( task );
+
+					if( !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
+
+					logCommandStack( "after" );
+
+					priorResult = thisResult;
 				}
 			} catch( Exception exception ) {
 				cancel();
 				throw exception;
 			}
 		}
-		return result;
+		return priorResult;
 	}
 
 	CommandTask getCurrentCommandTask() {

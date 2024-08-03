@@ -32,7 +32,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static com.avereon.cartesia.command.Command.Result.*;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 /**
  * Abstract class representing a command that can be executed in a design tool.
@@ -84,25 +84,15 @@ import static com.avereon.cartesia.command.Command.Result.*;
 public abstract class Command {
 
 	public enum Result {
+		// Indicates that the command need more parameters
 		INCOMPLETE,
+		// Indicates that the command executed successfully
 		SUCCESS,
+		// Indicates an invalid parameter was submitted
 		INVALID,
+		// Indicates that the command failed to execute
 		FAILURE
 	}
-
-//	@Deprecated
-//	public static final Object INCOMPLETE = new Object();
-//
-//	@Deprecated
-//	public static final Object SUCCESS = new Object();
-//
-//	@Deprecated
-//	// Is there a difference between INVALID and FAILURE?
-//	public static final Object INVALID = new Object();
-//
-//	@Deprecated
-//	// Is there a difference between FAILURE and INVALID?
-//	public static final Object FAILURE = new Object();
 
 	private final Collection<DesignShape> reference;
 
@@ -203,6 +193,11 @@ public abstract class Command {
 	}
 
 	protected Point3D asPoint( CommandTask task, Object value ) throws Exception {
+		return asPoint( task.getContext().getWorldAnchor(), value );
+	}
+
+	protected Point3D asPointFromEventOrParameter( CommandTask task, InputEvent event, Object value ) throws Exception {
+		if( event instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
 		return asPoint( task.getContext().getWorldAnchor(), value );
 	}
 

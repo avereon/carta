@@ -1,9 +1,9 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
+import com.avereon.cartesia.tool.CommandTask;
 import lombok.CustomLog;
+
+import static com.avereon.cartesia.command.Command.Result.INVALID;
 
 @CustomLog
 public class Value extends Command {
@@ -16,8 +16,9 @@ public class Value extends Command {
 	}
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) {
-		return parameters[0];
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getParameters().length < 1 ) return INVALID;
+		return task.getParameter( 0 );
 	}
 
 }

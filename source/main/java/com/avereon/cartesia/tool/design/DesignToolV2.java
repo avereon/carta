@@ -369,7 +369,11 @@ public class DesignToolV2 extends BaseDesignTool {
 		getDesignContext().getSelectedShapes().addListener( this::onSelectedShapesChanged );
 
 		// Update the select aperture when the mouse moves
-		addEventFilter( MouseEvent.MOUSE_MOVED, e -> setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) ) );
+		//		addEventFilter( MouseEvent.MOUSE_MOVED, e -> {
+		//			if( getCommandContext().getCommandStackDepth() == 0 ) {
+		//				setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) );
+		//			}
+		//		} );
 
 		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -837,7 +841,10 @@ public class DesignToolV2 extends BaseDesignTool {
 	 */
 	@Override
 	public void setSelectAperture( Point3D anchor, Point3D mouse ) {
-		if( anchor == null || mouse == null ) return;
+		if( anchor == null || mouse == null ) {
+			renderer.setSelectAperture( null );
+			return;
+		}
 
 		// Set the select aperture
 		DesignShape selectAperture;
