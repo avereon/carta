@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
@@ -92,8 +93,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	@SuppressWarnings( "unchecked" )
 	protected static MouseEvent createMouseEvent( CommandTrigger trigger, double x, double y ) {
-		return createMouseEvent(
-			(EventType<MouseEvent>)trigger.getEventType(),
+		MouseEvent event = createMouseEvent( (EventType<MouseEvent>)trigger.getEventType(),
 			trigger.getButton(),
 			trigger.hasModifier( CommandTrigger.Modifier.CONTROL ),
 			trigger.hasModifier( CommandTrigger.Modifier.SHIFT ),
@@ -103,6 +103,8 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 			x,
 			y
 		);
+		assertThat( CommandTrigger.from( event ) ).isEqualTo( trigger );
+		return event;
 	}
 
 	protected static MouseEvent createMouseEvent( EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved ) {

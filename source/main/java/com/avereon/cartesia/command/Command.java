@@ -229,9 +229,10 @@ public abstract class Command {
 		promptForValue( context, key, DesignCommandContext.Input.POINT );
 	}
 
-	protected void promptForWindow( DesignCommandContext context, String key ) {
-		context.getTool().setCursor( context.getTool().getReticleCursor() );
-		promptForValue( context, key, DesignCommandContext.Input.POINT );
+	protected void promptForWindow( CommandTask task, String key ) {
+		Cursor cursor = task.getTool().getReticleCursor();
+		task.getTool().setCursor( cursor );
+		promptForValue( task, key, DesignCommandContext.Input.POINT );
 	}
 
 	protected void promptForShape( DesignCommandContext context, String key ) {
@@ -448,6 +449,12 @@ public abstract class Command {
 		return shapeBounds;
 	}
 
+	private void promptForValue( CommandTask task, String key, DesignCommandContext.Input mode ) {
+		String text = Rb.text( RbKey.PROMPT, key );
+		task.getContext().submit( task.getTool(), new Prompt( text, mode ) );
+	}
+
+	@Deprecated
 	private void promptForValue( DesignCommandContext context, String key, DesignCommandContext.Input mode ) {
 		String text = Rb.text( RbKey.PROMPT, key );
 		context.submit( context.getTool(), new Prompt( text, mode ) );

@@ -3,6 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
@@ -27,8 +28,8 @@ public abstract class SelectByWindow extends SelectCommand {
 		// Nothing to do but prompt for the anchor point
 		if( paramCount == 0 && noEvent ) {
 			// Select window anchor
-			task.getTool().setSelectAperture( null, null );
-			promptForWindow( task.getContext(), "select-window-anchor" );
+			Fx.run( () -> task.getTool().setSelectAperture( null, null ) );
+			promptForWindow( task, "select-window-anchor" );
 			return INCOMPLETE;
 		}
 
@@ -45,7 +46,10 @@ public abstract class SelectByWindow extends SelectCommand {
 			if( worldPoint != null ) {
 				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
 				task.getContext().setWorldAnchor( worldPoint );
-				promptForWindow( task.getContext(), "select-window-point" );
+
+				log.atWarn().log( "Thread=%s", Thread.currentThread().getName() );
+
+				promptForWindow( task, "select-window-point" );
 				return INCOMPLETE;
 			}
 		}
@@ -74,9 +78,9 @@ public abstract class SelectByWindow extends SelectCommand {
 		} else if( getStep() == 2 && event.getEventType().equals( MouseEvent.MOUSE_MOVED ) ) {
 			tool.setSelectAperture( anchor, mouse );
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
-			tool.setSelectAperture( null, null );
 			// Submit a Value command to pass the point back to this command
 			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
+			event.consume();
 		}
 	}
 

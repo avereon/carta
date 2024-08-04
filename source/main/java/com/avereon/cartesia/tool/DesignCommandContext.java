@@ -117,20 +117,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	/**
-	 * When a command needs to resubmit itself, it should use this method. This
-	 * method is generally called from the event handler of a command when an
-	 * event value need to be passed to the command.
-	 *
-	 * @param tool The tool that is running the command
-	 * @param command The command to run
-	 * @param parameters The command parameters
-	 * @return The command that was run
-	 */
-	public Command resubmit( DesignTool tool, InputEvent event, Command command, Object... parameters ) {
-		return submit( tool, null, event, command, parameters );
-	}
-
-	/**
 	 * @param tool
 	 * @param trigger
 	 * @param event
@@ -150,6 +136,20 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return pushCommand( request );
 	}
 
+	//	/**
+	//	 * When a command needs to resubmit itself, it should use this method. This
+	//	 * method is generally called from the event handler of a command when an
+	//	 * event value need to be passed to the command.
+	//	 *
+	//	 * @param tool The tool that is running the command
+	//	 * @param command The command to run
+	//	 * @param parameters The command parameters
+	//	 * @return The command that was run
+	//	 */
+	//	public Command resubmit( DesignTool tool, InputEvent event, Command command, Object... parameters ) {
+	//		return submit( tool, null, event, command, parameters );
+	//	}
+
 	public void cancel( KeyEvent event ) {
 		event.consume();
 		cancel();
@@ -158,6 +158,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private void cancel() {
 		commandStack.forEach( CommandTask::cancel );
 		commandStack.clear();
+		logCommandStack( "cancl" );
 		reset();
 	}
 
@@ -311,9 +312,10 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private void reset() {
-		setInputMode( DesignCommandContext.Input.NONE );
 		Fx.run( () -> {
+			getLastActiveDesignTool().setSelectAperture( null, null );
 			getLastActiveDesignTool().clearSelectedShapes();
+			setInputMode( DesignCommandContext.Input.NONE );
 			getCommandPrompt().clear();
 		} );
 	}
@@ -340,7 +342,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
 		return pushCommand( getLastActiveDesignTool(), null, metadata.getType(), metadata.getParameters() );
-
 	}
 
 	private Command pushCommand( Command command, Object... parameters ) {

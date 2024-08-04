@@ -3,9 +3,11 @@ package com.avereon.cartesia.cursor;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.zarra.image.RenderedIcon;
 import com.avereon.zarra.javafx.Fx;
+import lombok.CustomLog;
 
 import java.util.concurrent.CompletableFuture;
 
+@CustomLog
 public enum Reticle {
 
 	DUPLEX( new DuplexReticle( 0.8 ) ),
@@ -28,12 +30,36 @@ public enum Reticle {
 		// Change the cursor color according to the theme
 		icon.setTheme( program.getWorkspaceManager().getThemeMetadata().getMotif() );
 
-		CompletableFuture<ReticleCursor> future = new CompletableFuture<>();
-		Fx.run( () -> future.complete( new ReticleCursor( icon ) ) );
+		final CompletableFuture<ReticleCursor> future = new CompletableFuture<>();
+
+		program.task( "Create reticle cursor", () -> Fx.run( new CursorBuilder( icon, future ) ) );
+
 		try {
+			// NEXT Why is it that calling this a second time causes the program to hang?
+			log.atWarn().log( "Thread=%s", Thread.currentThread().getName() );
+			Thread.yield();
 			return future.get();
 		} catch( Exception exception ) {
 			throw new RuntimeException( exception );
+		}
+	}
+
+	private static class CursorBuilder implements Runnable {
+
+		private final RenderedIcon icon;
+
+		private final CompletableFuture<ReticleCursor> future;
+
+		public CursorBuilder( RenderedIcon icon, CompletableFuture<ReticleCursor> future ) {
+			this.icon = icon;
+			this.future = future;
+		}
+
+		@Override
+		public void run() {
+			log.atConfig().log( "Step A" );
+			future.complete( new ReticleCursor( icon ) );
+			log.atConfig().log( "Step B" );
 		}
 	}
 

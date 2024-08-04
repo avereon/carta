@@ -1,19 +1,18 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.transaction.Txn;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
@@ -21,6 +20,7 @@ import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
@@ -33,22 +33,24 @@ public class Stretch extends EditCommand {
 	private Point3D anchor;
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
+	public Object execute( CommandTask task ) throws Exception {
+		DesignCommandContext context = task.getContext();
+
 		if( context.getTool().selectedFxShapes().isEmpty() ) return SUCCESS;
 
 		setCaptureUndoChanges( context, false );
 
-		if( parameters.length < 1 ) {
-			promptForWindow( context, "stretch-points" );
+		if( task.getParameters().length < 1 ) {
+			promptForWindow( task, "stretch-points" );
 			return INCOMPLETE;
 		}
 
 		// Ask for an anchor point
-		if( parameters.length < 2 ) {
+		if( task.getParameters().length < 2 ) {
 			Collection<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedShapes() );
 			addPreview( context, preview );
 
-			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, parameters[ 0 ] ) );
+			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, task.getParameter( 0 ) ) );
 
 			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
 			promptForPoint( context, "anchor" );
@@ -56,8 +58,8 @@ public class Stretch extends EditCommand {
 		}
 
 		// Ask for a target point
-		if( parameters.length < 3 ) {
-			anchor = asPoint( context, parameters[ 1 ] );
+		if( task.getParameters().length < 3 ) {
+			anchor = asPoint( context, task.getParameter( 1 ) );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
@@ -67,9 +69,9 @@ public class Stretch extends EditCommand {
 		setCaptureUndoChanges( context, true );
 
 		try {
-			Bounds bounds = asBounds( context, parameters[ 0 ] );
-			Point3D anchor = asPoint( context, parameters[ 1 ] );
-			Point3D target = asPoint( context, parameters[ 2 ] );
+			Bounds bounds = asBounds( context, task.getParameter( 0 ) );
+			Point3D anchor = asPoint( context, task.getParameter( 1 ) );
+			Point3D target = asPoint( context, task.getParameter( 2 ) );
 			stretchShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedShapes(), bounds ), anchor, target );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );

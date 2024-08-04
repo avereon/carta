@@ -1,9 +1,7 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
@@ -32,32 +30,31 @@ import static com.avereon.cartesia.command.Command.Result.SUCCESS;
  * This command zooms the view to the window defined by the two points (-4,3) and (2,7).
  * </p>
  */
-
 @CustomLog
 public class CameraZoomWindow extends CameraCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( context, false );
+	public Object execute( CommandTask task) throws Exception {
+		setCaptureUndoChanges( task.getContext(), false );
 
-		if( parameters.length < 1 ) {
+		if( task.getParameters().length < 1 ) {
 			// Zoom window anchor
-			promptForWindow( context, "zoom-window" );
-			//promptForWindow( context, "zoom-window-anchor" );
+			promptForWindow( task, "zoom-window" );
+			//promptForWindow( task.getContext(), "zoom-window-anchor" );
 			return INCOMPLETE;
 		}
 
-		if( parameters.length < 2 ) {
+		if( task.getParameters().length < 2 ) {
 			// Zoom window point
-			//promptForWindow( context, "zoom-window-point" );
+			//promptForWindow( task.getContext(), "zoom-window-point" );
 			return INCOMPLETE;
 		}
 
-		Point3D anchor = asPoint( context, parameters[ 0 ] );
-		Point3D mouse = asPoint( context, parameters[ 1 ] );
+		Point3D anchor = asPoint( task.getContext(), task.getParameter( 0 ) );
+		Point3D mouse = asPoint( task.getContext(), task.getParameter( 1 ) );
 
 		// FIXME Because I changed the behavior of Anchor not to return a point, this is broken
-		//context.getTool().setWorldViewport( FxUtil.bounds( anchor, mouse ) );
+		//task.getTool().setWorldViewport( FxUtil.bounds( anchor, mouse ) );
 
 		return SUCCESS;
 	}

@@ -19,20 +19,20 @@ public class Anchor extends Command {
 			return INCOMPLETE;
 		}
 
+		if( task.getEvent() instanceof MouseEvent event && task.getTrigger().matches( event ) ) {
+			// Otherwise, if there is an event, use that
+			Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
+			Point3D worldPoint = task.getTool().screenToWorld( screenPoint );
+			task.getContext().setScreenAnchor( screenPoint );
+			task.getContext().setWorldAnchor( worldPoint );
+			return SUCCESS;
+		}
+
 		if( task.getParameters().length < 2 || task.getEvent() != null ) {
-			// TODO Might consider collapsing this logic if it is duplicated in other commands
-			if( task.getParameters().length == 1 ) {
-				// If there is a parameter, use that
-				Point3D worldPoint = asPoint( task, task.getParameters()[ 0 ] );
-				if( worldPoint != null ) {
-					task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
-					task.getContext().setWorldAnchor( worldPoint );
-					return SUCCESS;
-				}
-			} else if( task.getEvent() instanceof MouseEvent event && task.getTrigger().matches( event ) ) {
-				// Otherwise, if there is an event, use that
-				Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
-				Point3D worldPoint = task.getTool().screenToWorld( screenPoint );
+			// If there is a parameter, use that
+			Point3D worldPoint = asPoint( task, task.getParameters()[ 0 ] );
+			Point3D screenPoint = task.getTool().worldToScreen( worldPoint );
+			if( worldPoint != null ) {
 				task.getContext().setScreenAnchor( screenPoint );
 				task.getContext().setWorldAnchor( worldPoint );
 				return SUCCESS;

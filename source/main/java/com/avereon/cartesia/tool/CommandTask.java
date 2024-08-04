@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
 import com.avereon.util.ArrayUtil;
+import com.avereon.zarra.javafx.Fx;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -61,6 +62,10 @@ public class CommandTask {
 	public Object runTaskStep() throws Exception {
 		// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
+		if( Fx.isFxThread() ) {
+			log.atError().log( "CommandTask.runTaskStep() called on FX thread" );
+		}
+
 		// If this task is already failed, do not run the step
 		if( result == FAILURE ) return FAILURE;
 
@@ -71,7 +76,6 @@ public class CommandTask {
 			if( result != INVALID ) command.incrementStep();
 		} finally {
 			if( result == SUCCESS || result == INVALID ) doComplete();
-			tool.setSelectAperture( null, null );
 			command.setStepExecuted();
 		}
 
