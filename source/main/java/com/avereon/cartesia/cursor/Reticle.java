@@ -32,7 +32,15 @@ public enum Reticle {
 
 		final CompletableFuture<ReticleCursor> future = new CompletableFuture<>();
 
-		program.task( "Create reticle cursor", () -> Fx.run( new CursorBuilder( icon, future ) ) );
+		program.task( "Create reticle cursor", () -> {
+			log.atConfig().log( "Step A" );
+			Fx.run( () -> {
+				//log.atConfig().log( "Step C" );
+
+				new CursorBuilder( icon, future );
+			} );
+			log.atConfig().log( "Step B" );
+		} );
 
 		try {
 			// NEXT Why is it that calling this a second time causes the program to hang?
@@ -57,9 +65,11 @@ public enum Reticle {
 
 		@Override
 		public void run() {
-			log.atConfig().log( "Step A" );
-			future.complete( new ReticleCursor( icon ) );
-			log.atConfig().log( "Step B" );
+			try {
+				future.complete( new ReticleCursor( icon ) );
+			} catch(Throwable throwable ) {
+				log.atError().withCause( throwable ).log("AHHH");
+			}
 		}
 	}
 
