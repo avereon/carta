@@ -23,7 +23,7 @@ public class GridToggleTest extends CommandBaseTest {
 		when( tool.isGridVisible() ).thenReturn( true );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).setGridVisible( false );
@@ -38,7 +38,7 @@ public class GridToggleTest extends CommandBaseTest {
 		when( tool.isGridVisible() ).thenReturn( true );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).setGridVisible( false );
@@ -54,7 +54,7 @@ public class GridToggleTest extends CommandBaseTest {
 		when( tool.isGridVisible() ).thenReturn( true );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).setGridVisible( false );

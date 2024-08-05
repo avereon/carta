@@ -121,20 +121,10 @@ public abstract class Command {
 	}
 
 	public void cancel( CommandTask task ) {
-		DesignCommandContext context = task.getContext();
-		if( context.getTool() != null ) {
-			clearReferenceAndPreview( context );
-			context.getTool().setCursor( Cursor.DEFAULT );
-			context.getTool().clearSelectedShapes();
-		}
-	}
-
-	@Deprecated
-	public void cancel( DesignCommandContext context ) {
-		if( context.getTool() != null ) {
-			clearReferenceAndPreview( context );
-			context.getTool().setCursor( Cursor.DEFAULT );
-			context.getTool().clearSelectedShapes();
+		if( task.getTool() != null ) {
+			task.getTool().setCursor( Cursor.DEFAULT );
+			task.getTool().clearSelectedShapes();
+			clearReferenceAndPreview( task );
 		}
 	}
 
@@ -163,6 +153,10 @@ public abstract class Command {
 	}
 
 	public boolean clearSelectionWhenComplete() {
+		return true;
+	}
+
+	public boolean clearReferenceAndPreviewWhenComplete() {
 		return true;
 	}
 
@@ -296,15 +290,33 @@ public abstract class Command {
 		} );
 	}
 
+	protected void removeReference( CommandTask task, DesignShape... shapes ) {
+		removeReference( task, List.of( shapes ) );
+	}
+
+	@Deprecated
 	protected void removeReference( DesignCommandContext context, DesignShape... shapes ) {
 		removeReference( context, List.of( shapes ) );
 	}
 
-	protected void removeReference( DesignCommandContext context, Collection<DesignShape> shapeList ) {
-		shapeList.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
-		reference.removeAll( shapeList );
+	protected void removeReference( CommandTask task, Collection<DesignShape> shapes ) {
+		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		reference.removeAll( shapes );
 	}
 
+	@Deprecated
+	protected void removeReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
+		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		reference.removeAll( shapes );
+	}
+
+	protected void clearReference( CommandTask task ) {
+		// The shapes have to be removed before capturing undo changes again
+		removeReference( task, reference );
+		reference.clear();
+	}
+
+	@Deprecated
 	protected void clearReference( DesignCommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
 		removeReference( context, reference );
@@ -331,23 +343,48 @@ public abstract class Command {
 		previewMap.keySet().forEach( s -> previewMap.get( s ).updateFrom( s ) );
 	}
 
+	protected void removePreview( CommandTask task, DesignShape... shapes ) {
+		removePreview( task.getContext(), Set.of( shapes ) );
+	}
+
+	@Deprecated
 	protected void removePreview( DesignCommandContext context, DesignShape... shapes ) {
 		removePreview( context, Set.of( shapes ) );
 	}
 
+	protected void removePreview( CommandTask task, Collection<DesignShape> shapes ) {
+		if( shapes == null ) return;
+		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		preview.removeAll( shapes );
+	}
+
+	@Deprecated
 	protected void removePreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		if( shapes == null ) return;
 		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		preview.removeAll( shapes );
 	}
 
+	protected void clearPreview( CommandTask task ) {
+		// The shapes have to be removed before capturing undo changes again
+		removePreview( task, preview );
+		preview.clear();
+	}
+
+	@Deprecated
 	protected void clearPreview( DesignCommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
 		removePreview( context, preview );
 		preview.clear();
 	}
 
-	protected void clearReferenceAndPreview( DesignCommandContext context ) {
+	public void clearReferenceAndPreview( CommandTask task ) {
+		clearReference( task );
+		clearPreview( task );
+	}
+
+	@Deprecated
+	public void clearReferenceAndPreview( DesignCommandContext context ) {
 		clearReference( context );
 		clearPreview( context );
 	}

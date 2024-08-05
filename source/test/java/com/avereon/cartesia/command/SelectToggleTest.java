@@ -26,7 +26,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
@@ -43,7 +43,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		when( commandContext.getCommandStackDepth() ).thenReturn( 1 );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).worldPointSelect( eq( new Point3D( 1, 1, 0 ) ), eq( true ) );
@@ -60,7 +60,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
@@ -78,7 +78,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		when( commandContext.getCommandStackDepth() ).thenReturn( 1 );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).screenPointSelect( eq( new Point3D( 48, 17, 0 ) ), eq( true ) );
@@ -98,7 +98,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		when( tool.screenToWorld( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
@@ -113,7 +113,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		assertThat( result ).isEqualTo( FAILURE );

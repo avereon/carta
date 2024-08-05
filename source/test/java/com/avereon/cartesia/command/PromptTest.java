@@ -22,7 +22,7 @@ public class PromptTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandPrompt, times( 1 ) ).setPrompt( eq( "Hello world:" ) );
@@ -36,7 +36,7 @@ public class PromptTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "Hi!" );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandPrompt, times( 1 ) ).clear();

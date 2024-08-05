@@ -31,7 +31,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
@@ -56,7 +56,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		when( commandContext.getWorldAnchor() ).thenReturn( new Point3D( -2, 1, 0 ) );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Value.class ), eq( new Point3D( -2, 1, 0 ) ) );
@@ -76,7 +76,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		when( tool.worldToScreen( eq( new Point3D( -1, 1, 0 ) ) ) ).thenReturn( new Point3D( 72, 144, 0 ) );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -1, 1, 0 ) ) );
@@ -93,7 +93,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( 3, -3, 0 ) );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( false ), eq( false ) );
@@ -112,7 +112,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( false ), eq( false ) );

@@ -30,7 +30,7 @@ public class CommandTest extends CommandBaseTest {
 		command.cancel( task );
 
 		// then
-		verify( command, times( 1 ) ).clearReferenceAndPreview( eq( commandContext ) );
+		verify( command, times( 1 ) ).clearReferenceAndPreview( eq( task ) );
 		verify( tool, times( 1 ) ).setCursor( eq( Cursor.DEFAULT ) );
 		verify( tool, times( 1 ) ).clearSelectedShapes();
 	}

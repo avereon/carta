@@ -28,10 +28,10 @@ public class AnchorTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithNoParameters() throws Exception {
 		// given
-		CommandTask commandTask = new CommandTask( commandContext, tool, null, null, command );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
-		Object result = command.execute( commandTask );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 0 ) ).setScreenAnchor( any() );
@@ -44,11 +44,11 @@ public class AnchorTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithParameter() throws Exception {
 		// given
-		CommandTask commandTask = new CommandTask( commandContext, tool, null, null, command, "1/2,-3" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1/2,-3" );
 		when( tool.worldToScreen( eq( new Point3D( 0.5, -3, 0 ) ) ) ).thenReturn( new Point3D( 84, 127, 0 ) );
 
 		// when
-		Object result = command.execute( commandTask );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 84, 127, 0 ) ) );
@@ -61,11 +61,11 @@ public class AnchorTest extends CommandBaseTest {
 		// given
 		CommandTrigger trigger = CommandMap.getTriggerByAction( "anchor" );
 		InputEvent event = createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
-		CommandTask commandTask = new CommandTask( commandContext, tool, trigger, event, command );
+		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( -2, 1, 0 ) );
 
 		// when
-		Object result = command.execute( commandTask );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 48, 17, 0 ) ) );
@@ -77,10 +77,10 @@ public class AnchorTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameter() throws Exception {
 		// given
-		CommandTask commandTask = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
 		// when
-		Object result = command.execute( commandTask );
+		Object result = task.runTaskStep();
 
 		// then
 		assertThat( result ).isEqualTo( FAILURE );

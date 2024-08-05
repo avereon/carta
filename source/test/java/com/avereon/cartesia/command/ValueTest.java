@@ -9,27 +9,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ValueTest extends CommandBaseTest {
 
+	private final Value command = new Value();
+
 	@Test
-	void testExecuteWithNothing() throws Exception {
+	void executeWithNothing() throws Exception {
 		// given
-		Value command = new Value();
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		assertThat( result ).isEqualTo( INVALID );
 	}
 
 	@Test
-	void testExecuteWithOneParameter() throws Exception {
+	void executeWithOneParameter() throws Exception {
 		// given
-		Value command = new Value();
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "one parameter" );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		assertThat( result ).isEqualTo( "one parameter" );

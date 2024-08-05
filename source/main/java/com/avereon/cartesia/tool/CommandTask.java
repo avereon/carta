@@ -85,6 +85,7 @@ public class CommandTask {
 	}
 
 	private void doComplete() {
+		if( command.clearReferenceAndPreviewWhenComplete() ) command.clearReferenceAndPreview(this);
 		if( command.clearSelectionWhenComplete() ) tool.clearSelectedShapes();
 		tool.setSelectAperture( null, null );
 	}

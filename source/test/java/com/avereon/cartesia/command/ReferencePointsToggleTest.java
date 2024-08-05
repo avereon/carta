@@ -18,7 +18,7 @@ public class ReferencePointsToggleTest extends CommandBaseTest {
 		when( tool.isReferenceLayerVisible() ).thenReturn( true );
 
 		// when
-		Object result = command.execute( task );
+		Object result = task.runTaskStep();
 
 		// then
 		verify( tool, times( 1 ) ).setReferenceLayerVisible( eq( false ) );
