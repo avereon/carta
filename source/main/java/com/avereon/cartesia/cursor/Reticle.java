@@ -4,9 +4,11 @@ import com.avereon.xenon.XenonProgram;
 import com.avereon.zarra.image.RenderedIcon;
 import com.avereon.zarra.javafx.Fx;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.util.concurrent.CompletableFuture;
 
+@Getter
 @CustomLog
 public enum Reticle {
 
@@ -20,7 +22,7 @@ public enum Reticle {
 	DUPLEX_CIRCLE( new DuplexCircleReticle( 0.8 ) ),
 	CROSSHAIR( new CrosshairReticle() );
 
-	private final RenderedIcon icon;
+	final RenderedIcon icon;
 
 	Reticle( RenderedIcon icon ) {
 		this.icon = icon;
@@ -32,44 +34,14 @@ public enum Reticle {
 
 		final CompletableFuture<ReticleCursor> future = new CompletableFuture<>();
 
-		program.task( "Create reticle cursor", () -> {
-			log.atConfig().log( "Step A" );
-			Fx.run( () -> {
-				//log.atConfig().log( "Step C" );
-
-				new CursorBuilder( icon, future );
-			} );
-			log.atConfig().log( "Step B" );
-		} );
+		Fx.run( () -> future.complete( new ReticleCursor( this ) ) );
 
 		try {
-			// NEXT Why is it that calling this a second time causes the program to hang?
-			log.atWarn().log( "Thread=%s", Thread.currentThread().getName() );
-			Thread.yield();
-			return future.get();
+			ReticleCursor cursor = future.get();
+			log.atWarn().log( "Reticle cursor is %s", cursor );
+			return cursor;
 		} catch( Exception exception ) {
 			throw new RuntimeException( exception );
-		}
-	}
-
-	private static class CursorBuilder implements Runnable {
-
-		private final RenderedIcon icon;
-
-		private final CompletableFuture<ReticleCursor> future;
-
-		public CursorBuilder( RenderedIcon icon, CompletableFuture<ReticleCursor> future ) {
-			this.icon = icon;
-			this.future = future;
-		}
-
-		@Override
-		public void run() {
-			try {
-				future.complete( new ReticleCursor( icon ) );
-			} catch(Throwable throwable ) {
-				log.atError().withCause( throwable ).log("AHHH");
-			}
 		}
 	}
 

@@ -230,8 +230,7 @@ public abstract class Command {
 	}
 
 	protected void promptForWindow( CommandTask task, String key ) {
-		Cursor cursor = task.getTool().getReticleCursor();
-		task.getTool().setCursor( cursor );
+		task.getTool().setCursor( task.getTool().getReticleCursor() );
 		promptForValue( task, key, DesignCommandContext.Input.POINT );
 	}
 

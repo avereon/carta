@@ -158,7 +158,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private void cancel() {
 		commandStack.forEach( CommandTask::cancel );
 		commandStack.clear();
-		logCommandStack( "cancl" );
+		logCommandStack( "cncl" );
 		reset();
 	}
 
@@ -359,18 +359,15 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Command pushCommand( CommandTask request ) {
-
 		checkForCommonProblems( request );
 
-		// Clear the prompt before executing the command,
-		// because one of the commands could be setting a new prompt
+		// Clear the prompt before executing the command, because
+		// one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
-		synchronized( commandStack ) {
-			log.atTrace().log( "Command submitted %s", request );
-			commandStack.push( request );
-			getProduct().task( "process-commands", this::doProcessCommands );
-		}
+		commandStack.push( request );
+		log.atTrace().log( "Command submitted %s", request );
+		getProduct().task( "process-commands", this::doProcessCommands );
 
 		// TODO Consider returning the command request
 		return request.getCommand();
@@ -392,36 +389,41 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Object doProcessCommands() throws Exception {
+		if( Fx.isFxThread() ) {
+			log.atSevere().log( "Command processing should not be run on the FX thread" );
+			return FAILURE;
+		}
+
 		Object priorResult = SUCCESS;
 		Object thisResult;
-		synchronized( commandStack ) {
-			try {
-				List<CommandTask> tasks = new ArrayList<>( commandStack );
-				for( CommandTask task : tasks ) {
-					try {
-						setInputMode( task.getCommand().getInputMode() );
 
-						logCommandStack( "stack" );
-						thisResult = task.runTaskStep();
-						if( thisResult == INCOMPLETE ) break;
-						if( thisResult == INVALID ) break;
+		try {
+			List<CommandTask> tasks = new ArrayList<>( commandStack );
+			for( CommandTask task : tasks ) {
+				try {
+					setInputMode( task.getCommand().getInputMode() );
 
-						// Add the task result to the next task
-						if( commandStack.remove( task ) && !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
+					logCommandStack( "push" );
+					thisResult = task.runTaskStep();
+					if( thisResult == INCOMPLETE ) break;
+					if( thisResult == INVALID ) break;
 
-						logCommandStack( "after" );
+					// Add the task result to the next task
+					if( commandStack.remove( task ) && !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
 
-						priorResult = thisResult;
-					} catch( Exception exception ) {
-						log.atWarn( exception ).log( "Unhandled error executing command=%s", task );
-						throw exception;
-					}
+					logCommandStack( "pull" );
+
+					priorResult = thisResult;
+				} catch( Exception exception ) {
+					log.atWarn( exception ).log( "Unhandled error executing command=%s", task );
+					throw exception;
 				}
-			} catch( Exception exception ) {
-				cancel();
-				throw exception;
 			}
+		} catch( Exception exception ) {
+			cancel();
+			throw exception;
 		}
+
 		return priorResult;
 	}
 

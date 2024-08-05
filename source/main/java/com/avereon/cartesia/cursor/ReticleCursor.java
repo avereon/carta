@@ -9,17 +9,23 @@ import lombok.CustomLog;
 @CustomLog
 public class ReticleCursor extends ImageCursor {
 
-	public ReticleCursor( RenderedIcon icon ) {
-		super( toImage( icon ), 0.5 * (icon.getWidth()) - 1, 0.5 * (icon.getHeight() - 1) );
+	private final Reticle reticle;
+
+	public ReticleCursor( Reticle reticle ) {
+		super( toImage( reticle.getIcon() ), 0.5 * (reticle.getIcon().getWidth()) - 1, 0.5 * (reticle.getIcon().getHeight() - 1) );
+		this.reticle = reticle;
 	}
 
 	protected static Image toImage( RenderedIcon icon ) {
 		Dimension2D size = ImageCursor.getBestSize( 64, 64 );
 		icon.regrid( size.getWidth(), size.getHeight() );
 		icon.resize( size.getWidth(), size.getHeight() );
-		Image image = icon.getImage();
+		return icon.getImage();
+	}
 
-		return image;
+	@Override
+	public String toString() {
+		return reticle.name();
 	}
 
 }

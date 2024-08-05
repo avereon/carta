@@ -44,9 +44,6 @@ public abstract class SelectByWindow extends SelectCommand {
 			if( worldPoint != null ) {
 				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
 				task.getContext().setWorldAnchor( worldPoint );
-
-				log.atWarn().log( "Thread=%s", Thread.currentThread().getName() );
-
 				promptForWindow( task, "select-window-point" );
 				return INCOMPLETE;
 			}
@@ -78,7 +75,6 @@ public abstract class SelectByWindow extends SelectCommand {
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			// Submit a Value command to pass the point back to this command
 			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
-			event.consume();
 		}
 	}
 

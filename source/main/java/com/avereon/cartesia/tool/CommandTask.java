@@ -75,7 +75,7 @@ public class CommandTask {
 			result = command.execute( this );
 			if( result != INVALID ) command.incrementStep();
 		} finally {
-			if( result == SUCCESS || result == INVALID ) doComplete();
+			if( result != INCOMPLETE ) doComplete();
 			command.setStepExecuted();
 		}
 
