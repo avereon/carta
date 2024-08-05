@@ -25,6 +25,7 @@ import com.avereon.zenna.icon.EyeIcon;
 import com.avereon.zenna.icon.PreferencesIcon;
 import com.avereon.zenna.icon.PrinterIcon;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.net.URI;
 import java.net.URL;
@@ -43,6 +44,9 @@ public class CartesiaMod extends Module {
 
 	private ShapePropertiesAssetType shapePropertiesAssetType;
 
+	@Getter
+	private CommandMap commandMap;
+
 	@Override
 	public void startup() throws Exception {
 		log.atFine().log( "%s starting...", LazyEval.of( () -> getCard().getName() ) );
@@ -58,6 +62,8 @@ public class CartesiaMod extends Module {
 		// Settings pages
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
+
+		commandMap = new CommandMap();
 
 		registerTools();
 

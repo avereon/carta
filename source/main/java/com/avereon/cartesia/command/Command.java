@@ -186,6 +186,10 @@ public abstract class Command {
 		return asPoint( context.getWorldAnchor(), value );
 	}
 
+	protected Point3D asPoint( CommandTask task, int index ) throws Exception {
+		return asPoint( task, task.getParameter( 0 ) );
+	}
+
 	protected Point3D asPoint( CommandTask task, Object value ) throws Exception {
 		return asPoint( task.getContext().getWorldAnchor(), value );
 	}
