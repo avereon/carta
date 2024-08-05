@@ -50,22 +50,22 @@ public class SelectToggleTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-//	@Test
-//	void testExecuteWithOneParameterAndCommandStack() throws Exception {
-//		// Select by point with one parameter, and commands on the command stack, should return a world point
-//
-//		// given
-//		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1" );
-//		// Pretend there is another command on the stack
-//		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
-//
-//		// when
-//		Object result = command.execute( task );
-//
-//		// then
-//		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
-//		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
-//	}
+	@Test
+	void testExecuteWithOneParameterAndCommandStack() throws Exception {
+		// Select by point with one parameter, and commands on the command stack, should return a world point
+
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1" );
+		// Pretend there is another command on the stack
+		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
+
+		// when
+		Object result = command.execute( task );
+
+		// then
+		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
+		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
+	}
 
 	@Test
 	void testExecuteWithEvent() throws Exception {
@@ -85,25 +85,25 @@ public class SelectToggleTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-//	@Test
-//	void testExecuteWithEventAndCommandStack() throws Exception {
-//		// Select by point with event, and commands on the command stack, should return a world point
-//
-//		// given
-//		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-point" );
-//		InputEvent event = createMouseEvent( trigger, 48, 17 );
-//		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
-//		// Pretend there is another command on the stack
-//		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
-//		when( tool.screenToWorld( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
-//
-//		// when
-//		Object result = command.execute( task );
-//
-//		// then
-//		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
-//		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
-//	}
+	@Test
+	void testExecuteWithEventAndCommandStack() throws Exception {
+		// Select by point with event, and commands on the command stack, should return a world point
+
+		// given
+		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-point" );
+		InputEvent event = createMouseEvent( trigger, 48, 17 );
+		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
+		// Pretend there is another command on the stack
+		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
+		when( tool.screenToWorld( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+
+		// when
+		Object result = command.execute( task );
+
+		// then
+		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
+		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
+	}
 
 	@Test
 	void testExecuteWithBadParameter() throws Exception {
