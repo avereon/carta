@@ -32,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+// FIXME CommandMap should not be a "static" class
+
 @CustomLog
 public final class CommandMap {
 
