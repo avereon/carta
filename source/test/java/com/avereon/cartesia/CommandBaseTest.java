@@ -9,6 +9,7 @@ import com.avereon.xenon.ActionLibrary;
 import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
+import com.avereon.xenon.notice.NoticeManager;
 import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -39,6 +40,8 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	static ActionLibrary actionLibrary = Mockito.mock( ActionLibrary.class );
 
+	protected static NoticeManager noticeManager = Mockito.mock( NoticeManager.class );
+
 	static ActionProxy other = Mockito.mock( ActionProxy.class );
 
 	static Map<String, ActionProxy> mockActionMap = new HashMap<>();
@@ -68,6 +71,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 		when( product.getProgram() ).thenReturn( program );
 		when( program.getActionLibrary() ).thenReturn( actionLibrary );
+		when( program.getNoticeManager() ).thenReturn( noticeManager );
 		when( actionLibrary.getAction( anyString() ) ).thenAnswer( i -> {
 			String name = String.valueOf( i.getArguments()[ 0 ] );
 			return mockActionMap.getOrDefault( name, other );
@@ -82,9 +86,12 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	protected void setup() {
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
+		lenient().when( designContext.getProduct() ).thenReturn( product );
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
+		lenient().when( commandContext.getProduct() ).thenReturn( product );
+		lenient().when( commandContext.getProgram() ).thenReturn( program );
 	}
 
 	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {

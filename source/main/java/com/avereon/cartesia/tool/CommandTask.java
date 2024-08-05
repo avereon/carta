@@ -44,6 +44,10 @@ public class CommandTask {
 		this.parameters = parameters;
 	}
 
+	public int getParameterCount() {
+		return parameters.length;
+	}
+
 	public Object getParameter( int index ) {
 		return parameters.length > index ? parameters[ index ] : null;
 	}

@@ -1,16 +1,14 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 
 import java.util.ArrayList;
@@ -18,34 +16,37 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 @CustomLog
 public class ShapeInformation extends Command {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( context, false );
-
-		if( context.getTool().getSelectedShapes().isEmpty() ) {
-			if( parameters.length < 1 ) {
-				promptForShape( context, "select-shape" );
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getTool().getSelectedShapes().isEmpty() ) {
+			if( task.getParameterCount() < 1 ) {
+				promptForShape( task.getContext(), "select-shape" );
 				return INCOMPLETE;
 			}
 		}
 
 		try {
+			// Limit the information to one shape
 			DesignShape shape;
-			if( context.getTool().getSelectedShapes().isEmpty() ) {
-				Point3D point = context.getScreenMouse();
-				shape = selectNearestShapeAtMouse( context, point );
+			if( task.getTool().getSelectedShapes().isEmpty() ) {
+				Point3D point = task.getContext().getScreenMouse();
+				shape = selectNearestShapeAtMouse( task.getContext(), point );
 			} else {
-				shape = context.getTool().getSelectedShapes().getFirst();
+				shape = task.getTool().getSelectedShapes().getFirst();
 			}
 
+			// Get the shape information
 			Map<String, Object> information = shape.getInformation();
 			if( information.isEmpty() ) return SUCCESS;
 
+			// Format and sort the information
 			Map<String, Object> view = information.keySet().stream().collect( Collectors.toMap( k -> Rb.text( RbKey.LABEL, k ), information::get ) );
 			List<String> labels = new ArrayList<>( view.keySet() );
 			Collections.sort( labels );
@@ -59,25 +60,26 @@ public class ShapeInformation extends Command {
 			} );
 			String description = infoString.toString().trim();
 
-			String title = Rb.text( RbKey.NOTICE, "measurement" );
-			String message = shape == DesignShape.NONE ? Rb.text( RbKey.NOTICE, "shape-not-selected" ) : description;
-			Notice notice = new Notice( title, message );
-			notice.setAction( () -> Fx.run( () -> {
-				Clipboard clipboard = Clipboard.getSystemClipboard();
-				ClipboardContent content = new ClipboardContent();
-				content.putString( message );
-				clipboard.setContent( content );
-			} ) );
-			if( context.isInteractive() ) context.getProduct().getProgram().getNoticeManager().addNotice( notice );
+			// Create the notice object
+			if( task.getContext().isInteractive() ) {
+				String title = Rb.text( RbKey.NOTICE, "measurement" );
+				String message = shape == DesignShape.NONE ? Rb.text( RbKey.NOTICE, "shape-not-selected" ) : description;
+				Notice notice = new Notice( title, message );
+				notice.setAction( () -> Fx.run( () -> {
+					Clipboard clipboard = Clipboard.getSystemClipboard();
+					ClipboardContent content = new ClipboardContent();
+					content.putString( message );
+					clipboard.setContent( content );
+				} ) );
+				task.getContext().getProgram().getNoticeManager().addNotice( notice );
+			}
 
 			log.atDebug().log( "Measured shape=%s", shape );
 			return shape;
 		} catch( Exception exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-measure-shape", exception.getMessage() );
-			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
-		} finally {
-			clearReferenceAndPreview( context );
+			if( task.getContext().isInteractive() ) task.getContext().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return SUCCESS;
