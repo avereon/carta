@@ -187,7 +187,7 @@ public abstract class Command {
 	}
 
 	protected Point3D asPoint( CommandTask task, int index ) throws Exception {
-		return asPoint( task, task.getParameter( 0 ) );
+		return asPoint( task, task.getParameter( index ) );
 	}
 
 	protected Point3D asPoint( CommandTask task, Object value ) throws Exception {
@@ -252,13 +252,24 @@ public abstract class Command {
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
+	protected DesignShape selectNearestShapeAtMouse( CommandTask task, Point3D mouse ) {
+		List<DesignShape> shapes = task.getTool().screenPointSyncSelect( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
+	}
+
+	@Deprecated
 	protected DesignShape selectNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
 		List<DesignShape> shapes = context.getTool().screenPointSyncSelect( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
+	protected DesignShape selectNearestShapeAtPoint( CommandTask task, Point3D point ) {
+		List<DesignShape> shapes = task.getTool().worldPointSyncSelect( point );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
+	}
+
+	@Deprecated
 	protected DesignShape selectNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
-		//return selectNearestShapeAtMouse( context, context.getTool().worldToScreen( point ) );
 		List<DesignShape> shapes = context.getTool().worldPointSyncSelect( point );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}

@@ -379,10 +379,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		}
 	}
 
-	private void logCommandStack() {
-		logCommandStack( "" );
-	}
-
 	private void logCommandStack( String prefix ) {
 		if( !log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) return;
 		log.at( COMMAND_STACK_LOG_LEVEL ).log( "%s tasks=%s", prefix, commandStack.reversed() );
@@ -403,15 +399,22 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				try {
 					setInputMode( task.getCommand().getInputMode() );
 
-					logCommandStack( "push" );
+					logCommandStack( "exec" );
 					thisResult = task.runTaskStep();
+
+					// Don't pass incomplete results to the next task
 					if( thisResult == INCOMPLETE ) break;
+
+					// Remove commands that are complete
+					commandStack.remove( task );
+
+					// Don't pass invalid results to the next task
 					if( thisResult == INVALID ) break;
 
 					// Add the task result to the next task
-					if( commandStack.remove( task ) && !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
+					if( !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
 
-					logCommandStack( "pull" );
+					logCommandStack( "rslt" );
 
 					priorResult = thisResult;
 				} catch( Exception exception ) {

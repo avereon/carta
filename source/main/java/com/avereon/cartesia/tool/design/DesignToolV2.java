@@ -897,14 +897,14 @@ public class DesignToolV2 extends BaseDesignTool {
 	public List<DesignShape> screenPointSyncSelect( Point3D mouse ) {
 		// This is a selecting operation
 		screenPointSelect( mouse );
-		return getSelectedShapes().stream().findFirst().stream().collect( Collectors.toList() );
+		return new ArrayList<>( getSelectedShapes() );
 	}
 
 	@Override
 	public List<DesignShape> worldPointSyncSelect( Point3D point ) {
 		// This is a selecting operation
 		worldPointSelect( point );
-		return getSelectedShapes().stream().findFirst().stream().collect( Collectors.toList() );
+		return new ArrayList<>( getSelectedShapes() );
 	}
 
 	@Override

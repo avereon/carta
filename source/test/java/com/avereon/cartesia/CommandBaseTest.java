@@ -40,11 +40,12 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	static ActionLibrary actionLibrary = Mockito.mock( ActionLibrary.class );
 
-	protected static NoticeManager noticeManager = Mockito.mock( NoticeManager.class );
-
 	static ActionProxy other = Mockito.mock( ActionProxy.class );
 
 	static Map<String, ActionProxy> mockActionMap = new HashMap<>();
+
+	@Mock
+	protected NoticeManager noticeManager ;
 
 	@Mock
 	protected DesignTool tool;
@@ -71,7 +72,6 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 		when( product.getProgram() ).thenReturn( program );
 		when( program.getActionLibrary() ).thenReturn( actionLibrary );
-		when( program.getNoticeManager() ).thenReturn( noticeManager );
 		when( actionLibrary.getAction( anyString() ) ).thenAnswer( i -> {
 			String name = String.valueOf( i.getArguments()[ 0 ] );
 			return mockActionMap.getOrDefault( name, other );
@@ -84,6 +84,8 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 
 	@BeforeEach
 	protected void setup() {
+		lenient().when( program.getNoticeManager() ).thenReturn( noticeManager );
+
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
 		lenient().when( designContext.getProduct() ).thenReturn( product );
