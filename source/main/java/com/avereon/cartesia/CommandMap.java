@@ -32,20 +32,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-// FIXME CommandMap should not be a "static" class
-
 @CustomLog
 public final class CommandMap {
 
 	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", List.of(), Noop.class );
 
-	private static final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
+	private final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
-	private static final Map<CommandTrigger, String> actionByTrigger = new ConcurrentHashMap<>();
+	private final Map<CommandTrigger, String> actionByTrigger = new ConcurrentHashMap<>();
 
-	private static final Map<String, CommandTrigger> triggerByAction = new ConcurrentHashMap<>();
+	private final Map<String, CommandTrigger> triggerByAction = new ConcurrentHashMap<>();
 
-	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
+	private final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
 	public CommandMap load( XenonProgramProduct product ) {
 		actionCommands.clear();
@@ -204,7 +202,6 @@ public final class CommandMap {
 		// NOTE: Can't use Alt-Drag on Linux because it is used to move the window
 
 		// Anchor ------------------------------------------------------------------
-		// TODO Might consider setting the anchor on any mouse pressed event
 		add( "anchor", new CommandTrigger( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, CommandTrigger.Modifier.ANY ) );
 
 		// Selects -----------------------------------------------------------------
@@ -242,6 +239,7 @@ public final class CommandMap {
 		return this;
 	}
 
+	@SuppressWarnings( "unused" )
 	private void printCommandMapByCommand() {
 		actionCommands.values().stream().sorted().forEach( k -> {
 			if( TextUtil.isEmpty( k.getCommand() ) ) return;
@@ -255,24 +253,24 @@ public final class CommandMap {
 		// Event actions???
 	}
 
-	public static Map<String, CommandMetadata> getAll() {
+	public Map<String, CommandMetadata> getAll() {
 		return Collections.unmodifiableMap( actionCommands );
 	}
 
-	public static boolean hasCommand( String shortcut ) {
+	public boolean hasCommand( String shortcut ) {
 		return getCommandByShortcut( shortcut ) != NONE;
 	}
 
-	public static CommandMetadata getCommandByShortcut( String shortcut ) {
+	public CommandMetadata getCommandByShortcut( String shortcut ) {
 		return getCommandByAction( shortcutActions.getOrDefault( shortcut.toLowerCase(), TextUtil.EMPTY ) );
 	}
 
-	public static CommandMetadata getCommandByEvent( InputEvent event ) {
+	public CommandMetadata getCommandByEvent( InputEvent event ) {
 		String action = actionByTrigger.getOrDefault( CommandTrigger.from( event ), TextUtil.EMPTY );
 		return getCommandByAction( action );
 	}
 
-	public static CommandMetadata getCommandByAction( String action ) {
+	public CommandMetadata getCommandByAction( String action ) {
 		if( TextUtil.isEmpty( action ) ) return NONE;
 
 		CommandMetadata mapping = actionCommands.getOrDefault( action, NONE );
@@ -334,6 +332,7 @@ public final class CommandMap {
 		} );
 	}
 
+	@SuppressWarnings( "unused" )
 	private String eventToString( InputEvent event ) {
 		String info = event.getEventType().getName();
 		if( event instanceof MouseEvent mouseEvent ) {
@@ -354,6 +353,7 @@ public final class CommandMap {
 		return info;
 	}
 
+	@SuppressWarnings( "unused" )
 	private String triggerToString( CommandTrigger trigger ) {
 		String info = trigger.getEventType().getName();
 		info += " button=" + trigger.getButton();

@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.CommandTrigger;
@@ -87,12 +88,16 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		this.inputMode = DesignCommandContext.Input.NONE;
 	}
 
+	public final XenonProgramProduct getProduct() {
+		return product;
+	}
+
 	public final Xenon getProgram() {
 		return product.getProgram();
 	}
 
-	public final XenonProgramProduct getProduct() {
-		return product;
+	public final CartesiaMod getMod() {
+		return (CartesiaMod)product;
 	}
 
 	public CommandPrompt getCommandPrompt() {
@@ -216,7 +221,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				case TEXT -> pushCommand( new Value(), input );
 				default -> pushCommand( mapCommand( input ) );
 			};
-		} else if( !isTextInput && isAutoCommandEnabled() && CommandMap.hasCommand( input ) ) {
+		} else if( !isTextInput && isAutoCommandEnabled() && getMod().getCommandMap().hasCommand( input ) ) {
 			return pushCommand( mapCommand( input ) );
 		}
 		return null;
@@ -323,7 +328,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private CommandMetadata mapCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return null;
 
-		CommandMetadata mapping = CommandMap.getCommandByShortcut( input );
+		CommandMetadata mapping = getMod().getCommandMap().getCommandByShortcut( input );
 		if( mapping == CommandMap.NONE ) throw new UnknownCommand( input );
 
 		return mapping;
@@ -332,7 +337,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private void doEventCommand( InputEvent event ) {
 		// NOTE This method does not handle key events,
 		//  those are handled by the action infrastructure
-		CommandMetadata metadata = CommandMap.getCommandByEvent( event );
+		CommandMetadata metadata = getMod().getCommandMap().getCommandByEvent( event );
 		if( metadata == CommandMap.NONE ) return;
 
 		pushCommand( (DesignTool)event.getSource(), event, metadata.getType(), metadata.getParameters() );

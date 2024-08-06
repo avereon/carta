@@ -318,7 +318,7 @@ public class CartesiaMod extends Module {
 	}
 
 	private void registerCommandHelpPages() {
-		Map<String, CommandMetadata> commands = CommandMap.getAll();
+		Map<String, CommandMetadata> commands = getCommandMap().getAll();
 		for( CommandMetadata command : commands.values() ) {
 			ActionProxy action = getProgram().getActionLibrary().getAction( command.getAction() );
 			String resourcePath = "/docs/manual/commands/" + command.getAction();

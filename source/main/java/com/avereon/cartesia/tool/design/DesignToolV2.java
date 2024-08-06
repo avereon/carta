@@ -1393,7 +1393,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getCommandContext().command( CommandMap.getCommandByAction( "delete" ).getCommand() );
+			getCommandContext().command( getMod().getCommandMap().getCommandByAction( "delete" ).getCommand() );
 		}
 
 	}

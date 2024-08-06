@@ -24,13 +24,13 @@ public class CommandMapTest extends CommandMapBaseTest {
 
 	@Test
 	void getCommandByAction() {
-		assertThat( CommandMap.getCommandByAction( "anchor" ).getType()).isEqualTo( Anchor.class );
+		assertThat( getMod().getCommandMap().getCommandByAction( "anchor" ).getType()).isEqualTo( Anchor.class );
 	}
 
 	@ParameterizedTest
 	@MethodSource( "provideCommandMetadataInputEventMatches" )
 	void getCommandByEvent( CommandMetadata expected, InputEvent event ) {
-		CommandMetadata actual = CommandMap.getCommandByEvent( event );
+		CommandMetadata actual = getMod().getCommandMap().getCommandByEvent( event );
 		assertThat( actual.getAction() ).isEqualTo( expected.getAction() );
 		assertThat( actual.getName() ).isEqualTo( expected.getName() );
 		assertThat( actual.getCommand() ).isEqualTo( expected.getCommand() );

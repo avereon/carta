@@ -87,6 +87,11 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
+	public final CartesiaMod getMod() {
+		return (CartesiaMod)getProduct();
+	}
+
+	@Override
 	public final Design getDesign() {
 		return getAssetModel();
 	}

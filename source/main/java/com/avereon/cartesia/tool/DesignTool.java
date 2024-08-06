@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
@@ -23,6 +24,8 @@ import java.util.List;
 public interface DesignTool {
 
 	XenonProgram getProgram();
+
+	CartesiaMod getMod();
 
 	Asset getAsset();
 
