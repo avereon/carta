@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
-import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
@@ -59,7 +58,7 @@ public class AnchorTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithEvent() throws Exception {
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "anchor" );
+		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "anchor" );
 		InputEvent event = createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( -2, 1, 0 ) );

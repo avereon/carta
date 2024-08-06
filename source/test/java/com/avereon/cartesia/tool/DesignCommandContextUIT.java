@@ -1,7 +1,6 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BaseCartesiaUiTest;
-import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
@@ -180,7 +179,7 @@ public class DesignCommandContextUIT extends BaseCartesiaUiTest {
 
 	@Test
 	void testAutoCommand() {
-		CommandMap.add( "test", MockCommand.class, "Test Command", "test", null );
+		getMod().getCommandMap().add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = context.processText( "test", false );
 		assertThat( command ).isInstanceOf( MockCommand.class );
 	}
@@ -188,7 +187,7 @@ public class DesignCommandContextUIT extends BaseCartesiaUiTest {
 	@Test
 	void testNoAutoCommandWithTextInput() {
 		context.setInputMode( DesignCommandContext.Input.TEXT );
-		CommandMap.add( "test", MockCommand.class, "Test Command", "test", null );
+		getMod().getCommandMap().add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = context.processText( "test", false );
 		assertThat( command ).isNull();
 	}

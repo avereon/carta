@@ -5,11 +5,6 @@ import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.xenon.ActionLibrary;
-import com.avereon.xenon.ActionProxy;
-import com.avereon.xenon.Xenon;
-import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.notice.NoticeManager;
 import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -18,35 +13,15 @@ import javafx.scene.input.ZoomEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
 public class CommandBaseTest extends BaseCartesiaUnitTest {
-
-	@Mock
-	protected XenonProgramProduct product;
-
-	@Mock
-	protected Xenon program;
-
-	@Mock
-	protected ActionLibrary actionLibrary;
-
-	@Mock
-	protected ActionProxy other;
-
-	@Mock
-	protected NoticeManager noticeManager;
 
 	@Mock
 	protected DesignTool tool;
@@ -60,32 +35,9 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	@Mock
 	protected CommandPrompt commandPrompt;
 
-	protected Map<String, ActionProxy> mockActionMap;
-
-	protected CommandMap commandMap;
-
 	@BeforeEach
-	protected void setup() {
-		List<String> actions = List.of( "anchor", "select-point", "select-toggle", "select-window-contain", "select-window-intersect", "snap-auto-nearest", "camera-move", "camera-zoom" );
-
-		// Generate mock action proxies for tested actions
-		mockActionMap = new HashMap<>();
-		for( String command : actions ) {
-			ActionProxy action = Mockito.mock( ActionProxy.class );
-			when( action.getName() ).thenReturn( command );
-			mockActionMap.put( command, action );
-		}
-
-		// Set up the mock when results
-		when( other.getName() ).thenReturn( "other" );
-		when( product.getProgram() ).thenReturn( program );
-		when( program.getActionLibrary() ).thenReturn( actionLibrary );
-		when( actionLibrary.getAction( anyString() ) ).thenAnswer( i -> {
-			String name = String.valueOf( i.getArguments()[ 0 ] );
-			return mockActionMap.getOrDefault( name, other );
-		} );
-
-		lenient().when( program.getNoticeManager() ).thenReturn( noticeManager );
+	protected void setup() throws Exception {
+		super.setup();
 
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
@@ -95,9 +47,6 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
 		lenient().when( commandContext.getProduct() ).thenReturn( product );
 		lenient().when( commandContext.getProgram() ).thenReturn( program );
-
-		// Load the command map for tested actions
-		commandMap = new CommandMap().load( product );
 	}
 
 	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {

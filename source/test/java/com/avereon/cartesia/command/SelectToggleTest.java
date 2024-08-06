@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
-import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
@@ -72,7 +71,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		// Select by point with event should cause select to be called
 
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-point" );
+		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "select-point" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		when( commandContext.getCommandStackDepth() ).thenReturn( 1 );
@@ -90,7 +89,7 @@ public class SelectToggleTest extends CommandBaseTest {
 		// Select by point with event, and commands on the command stack, should return a world point
 
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-point" );
+		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "select-point" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		// Pretend there is another command on the stack

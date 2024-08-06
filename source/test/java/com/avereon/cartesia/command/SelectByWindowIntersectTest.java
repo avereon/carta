@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
-import com.avereon.cartesia.CommandMap;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
@@ -49,7 +48,7 @@ public class SelectByWindowIntersectTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithNoParametersAndEvent() throws Exception {
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-window-intersect" );
+		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "select-window-intersect" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		// Pretend the world anchor has been set
@@ -87,7 +86,7 @@ public class SelectByWindowIntersectTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithOneParameterAndEvent() throws Exception {
 		// given
-		CommandTrigger trigger = CommandMap.getTriggerByAction( "select-window-intersect" );
+		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "select-window-intersect" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, new Point3D( -3, 3, 0 ) );
 		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( 3, -3, 0 ) );

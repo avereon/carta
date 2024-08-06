@@ -242,7 +242,7 @@ public final class CommandMap {
 		return this;
 	}
 
-	private static void printCommandMapByCommand() {
+	private void printCommandMapByCommand() {
 		actionCommands.values().stream().sorted().forEach( k -> {
 			if( TextUtil.isEmpty( k.getCommand() ) ) return;
 			StringBuilder builder = new StringBuilder();
@@ -281,11 +281,11 @@ public final class CommandMap {
 		return mapping;
 	}
 
-	public static CommandTrigger getTriggerByAction( String action ) {
+	public CommandTrigger getTriggerByAction( String action ) {
 		return triggerByAction.get( action );
 	}
 
-	private static void add( String action, CommandTrigger trigger ) {
+	private void add( String action, CommandTrigger trigger ) {
 		if( trigger.getEventType() == MouseEvent.MOUSE_PRESSED && !"anchor".equals( action ) ) {
 			log.atWarn().log( "Mouse pressed event should only be assigned to \"anchor\" command: %s", action );
 			return;
@@ -303,7 +303,7 @@ public final class CommandMap {
 		triggerByAction.put( action, trigger );
 	}
 
-	private static void add( XenonProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
+	private void add( XenonProgramProduct product, String action, Class<? extends Command> type, Object... parameters ) {
 		ActionLibrary library = product.getProgram().getActionLibrary();
 		library.register( product, action );
 		ActionProxy proxy = library.getAction( action );
@@ -317,11 +317,11 @@ public final class CommandMap {
 		add( action, type, name, command, shortcut, tags, parameters );
 	}
 
-	public static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
+	public void add( String action, Class<? extends Command> type, String name, String command, String shortcut, Object... parameters ) {
 		add( action, type, name, command, shortcut, List.of(), parameters );
 	}
 
-	private static void add( String action, Class<? extends Command> type, String name, String command, String shortcut, List<String> tags, Object... parameters ) {
+	private void add( String action, Class<? extends Command> type, String name, String command, String shortcut, List<String> tags, Object... parameters ) {
 		if( command != null && shortcutActions.containsKey( command ) ) {
 			CommandMetadata existing = actionCommands.get( shortcutActions.get( command ) );
 			log.atSevere().log( "Shortcut already used [%s]: %s %s", command, LazyEval.of( existing::getAction ), action );
@@ -334,7 +334,7 @@ public final class CommandMap {
 		} );
 	}
 
-	private static String eventToString( InputEvent event ) {
+	private String eventToString( InputEvent event ) {
 		String info = event.getEventType().getName();
 		if( event instanceof MouseEvent mouseEvent ) {
 			info += " button=" + mouseEvent.getButton();
@@ -354,7 +354,7 @@ public final class CommandMap {
 		return info;
 	}
 
-	private static String triggerToString( CommandTrigger trigger ) {
+	private String triggerToString( CommandTrigger trigger ) {
 		String info = trigger.getEventType().getName();
 		info += " button=" + trigger.getButton();
 		info += " control=" + trigger.hasModifier( CommandTrigger.Modifier.CONTROL );
