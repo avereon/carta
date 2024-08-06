@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -79,7 +78,7 @@ public interface DesignTool {
 
 	void setView( Point3D center, double zoom, double rotate );
 
-	ReticleCursor getReticleCursor();
+	Cursor getReticleCursor();
 
 	/**
 	 * Set the camera viewport using a screen-based rectangular viewport. The

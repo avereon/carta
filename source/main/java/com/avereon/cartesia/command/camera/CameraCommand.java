@@ -20,6 +20,11 @@ public abstract class CameraCommand extends Command {
 		return false;
 	}
 
+	@Override
+	public boolean clearReferenceAndPreviewWhenComplete() {
+		return false;
+	}
+
 	protected Object zoomShapes( DesignCommandContext context, List<DesignShape> shapes ) {
 		if( shapes.isEmpty() ) return SUCCESS;
 

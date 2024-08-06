@@ -1,7 +1,8 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.tool.BaseDesignTool;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
@@ -13,20 +14,41 @@ import static com.avereon.cartesia.command.Command.Result.*;
 @CustomLog
 public class CameraMove extends CameraCommand {
 
-	private Point3D viewAnchor;
-
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) {
-			promptForPoint( context, "pan-point" );
+	public Object execute( CommandTask task ) throws Exception {
+		int paramCount = task.getParameters().length;
+		InputEvent event = task.getEvent();
+		boolean noEvent = event == null;
+		boolean hasEvent = !noEvent;
+
+		if( task.getParameterCount() == 0 & noEvent ) {
+			promptForPoint( task, "pan-point" );
 			return INCOMPLETE;
 		}
 
-		if( parameters[ 0 ] instanceof MouseEvent event ) {
-			if( event.getEventType() == MouseEvent.DRAG_DETECTED ) {
-				viewAnchor = context.getTool().getViewPoint();
+		if( paramCount == 0 & hasEvent && event.getEventType() == MouseEvent.DRAG_DETECTED ) {
+			// Submit a Value command to pass the anchor back to this command
+			task.getContext().submit( task.getTool(), new Value(), task.getContext().getWorldAnchor() );
+			return INCOMPLETE;
+		}
+
+		if( paramCount == 1 & noEvent ) {
+			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
+			if( worldPoint != null ) {
+				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
+				task.getContext().setWorldAnchor( worldPoint );
+				promptForPoint( task, "pan-point" );
 				return INCOMPLETE;
-			} else if( event.getEventType() == MouseEvent.MOUSE_RELEASED ) {
+			}
+		}
+
+		// The situation of one parameter and an event should not occur
+
+		if( paramCount == 2 & noEvent ) {
+			Point3D worldAnchor = asPoint( task, task.getParameter( 0 ) );
+			Point3D worldCorner = asPointFromEventOrParameter( task, event, task.getParameter( 1 ) );
+			if( worldAnchor != null && worldCorner != null ) {
+				task.getTool().pan( worldAnchor, worldCorner, task.getContext().getScreenMouse() );
 				return SUCCESS;
 			}
 		}
@@ -41,10 +63,10 @@ public class CameraMove extends CameraCommand {
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
-			tool.pan( viewAnchor, anchor, mouse );
+			tool.pan( context.getWorldAnchor(), anchor, mouse );
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
-			// The command needs to be submitted again with this event to complete
-			tool.getCommandContext().submit( tool, this, event );
+			// Submit a Value command to pass the point back to this command
+			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
 		}
 	}
 

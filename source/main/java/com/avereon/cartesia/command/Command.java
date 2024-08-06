@@ -240,6 +240,12 @@ public abstract class Command {
 		promptForValue( context, key, DesignCommandContext.Input.NUMBER );
 	}
 
+	protected void promptForPoint( CommandTask task, String key ) {
+		task.getTool().setCursor( task.getTool().getReticleCursor() );
+		promptForValue( task, key, DesignCommandContext.Input.POINT );
+	}
+
+	@Deprecated
 	protected void promptForPoint( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( context.getTool().getReticleCursor() );
 		promptForValue( context, key, DesignCommandContext.Input.POINT );

@@ -27,9 +27,9 @@ public class SelectByPoint extends SelectCommand {
 		boolean noEvent = event == null;
 		boolean hasEvent = !noEvent;
 
-		if( paramCount < 1 && noEvent ) {
+		if( paramCount < 1 & noEvent ) {
 			// Select window anchor
-			promptForPoint( task.getContext(), "select-point" );
+			promptForPoint( task, "select-point" );
 			return INCOMPLETE;
 		}
 
@@ -46,7 +46,7 @@ public class SelectByPoint extends SelectCommand {
 			return SUCCESS;
 		}
 
-		if( paramCount < 2 ) {
+		if( task.hasParameter( 0 ) ) {
 			// If there is a parameter, use that
 			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
 			if( worldPoint != null ) {

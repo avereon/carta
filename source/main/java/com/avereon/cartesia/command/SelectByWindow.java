@@ -49,8 +49,10 @@ public abstract class SelectByWindow extends SelectCommand {
 			}
 		}
 
+		// The situation of one parameter and an event should not occur
+
 		// Get the world point from the event or the second parameter
-		if( paramCount == 2 || (paramCount == 1 & hasEvent) ) {
+		if( paramCount == 2 ) {
 			Point3D worldAnchor = asPoint( task, task.getParameter( 0 ) );
 			Point3D worldPoint = asPointFromEventOrParameter( task, event, task.getParameter( 1 ) );
 			if( worldAnchor != null && worldPoint != null ) {
