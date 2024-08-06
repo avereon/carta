@@ -1,4 +1,4 @@
-package com.avereon.cartesia.command;
+package com.avereon.cartesia.command.snap;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.tool.CommandTask;
@@ -11,37 +11,37 @@ import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class GridToggleTest extends CommandBaseTest {
+public class SnapGridToggleTest extends CommandBaseTest {
 
-	private final GridToggle command = new GridToggle();
+	private final SnapGridToggle command = new SnapGridToggle();
 
 	@Test
-	void testExecuteTrueToFalse() throws Exception {
+	void testRunTaskStepTrueToFalse() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		// Pretend the grid is visible
-		when( tool.isGridVisible() ).thenReturn( true );
+		// Pretend the grid snap is enabled
+		when( tool.isGridSnapEnabled() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setGridVisible( false );
+		verify( tool, times( 1 ) ).setGridSnapEnabled( false );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
 	@Test
-	void testExecuteFalseToTrue() throws Exception {
+	void testRunTaskStepFalseToTrue() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		// Pretend the grid is not visible
-		when( tool.isGridVisible() ).thenReturn( false );
+		// Pretend the grid snap is not enabled
+		when( tool.isGridSnapEnabled() ).thenReturn( false );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setGridVisible( true );
+		verify( tool, times( 1 ) ).setGridSnapEnabled( true );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
@@ -50,29 +50,29 @@ public class GridToggleTest extends CommandBaseTest {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "off" );
 		// Pretend the grid is visible
-		when( tool.isGridVisible() ).thenReturn( true );
+		when( tool.isGridSnapEnabled() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setGridVisible( false );
+		verify( tool, times( 1 ) ).setGridSnapEnabled( false );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
 	@Test
-	void executeIgnoresEvent() throws Exception {
+	void runTaskStepIgnoresEvent() throws Exception {
 		// given
-		InputEvent event = createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
+		InputEvent event = createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, false, false, false, false, false );
 		CommandTask task = new CommandTask( commandContext, tool, null, event, command );
 		// Pretend the grid is visible
-		when( tool.isGridVisible() ).thenReturn( true );
+		when( tool.isGridSnapEnabled() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setGridVisible( false );
+		verify( tool, times( 1 ) ).setGridSnapEnabled( false );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
