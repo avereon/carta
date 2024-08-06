@@ -1,11 +1,11 @@
 package com.avereon.cartesia.command.view;
 
-import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
+import com.avereon.cartesia.tool.CommandTask;
 import lombok.CustomLog;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.FAILURE;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 
 /**
  * This command creates a view from the current view settings
@@ -14,22 +14,30 @@ import static com.avereon.cartesia.command.Command.Result.*;
 public class ViewCreate extends ViewCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) {
-			promptForText( context, "view-name" );
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getParameterCount() == 0 ) {
+			promptForText( task, "view-name" );
 			return INCOMPLETE;
 		}
 
-		DesignView view = new DesignView().setName( String.valueOf( parameters[ 0 ] ) );
-		view.setOrigin( context.getTool().getViewPoint() );
-		view.setZoom( context.getTool().getZoom() );
-		view.setRotate( context.getTool().getViewRotate() );
-		view.setLayers( context.getTool().getVisibleLayers() );
+		if( task.hasParameter( 0 ) ) {
+			// Create a view from the current view settings
+			DesignView view = new DesignView().setName( String.valueOf( task.getParameter( 0 ) ) );
+			view.setOrigin( task.getTool().getViewPoint() );
+			view.setZoom( task.getTool().getZoom() );
+			view.setRotate( task.getTool().getViewRotate() );
+			view.setLayers( task.getTool().getVisibleLayers() );
 
-		context.getTool().getDesign().addView( view );
-		context.getTool().setCurrentView( view );
+			// Add the view to the design
+			task.getTool().getDesign().addView( view );
 
-		return view;
+			// Set the current view to the new view
+			task.getTool().setCurrentView( view );
+
+			return view;
+		}
+
+		return FAILURE;
 	}
 
 }

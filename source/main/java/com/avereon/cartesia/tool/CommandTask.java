@@ -48,6 +48,10 @@ public class CommandTask {
 		return parameters.length;
 	}
 
+	public boolean hasParameter( int index ) {
+		return index < parameters.length;
+	}
+
 	public Object getParameter( int index ) {
 		return parameters.length > index ? parameters[ index ] : null;
 	}

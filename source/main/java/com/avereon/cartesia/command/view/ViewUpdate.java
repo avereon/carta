@@ -1,22 +1,21 @@
 package com.avereon.cartesia.command.view;
 
-import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
-import static com.avereon.cartesia.command.Command.Result.*;
+import com.avereon.cartesia.tool.CommandTask;
+
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 public class ViewUpdate extends ViewCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		DesignView view = context.getTool().getCurrentView();
+	public Object execute( CommandTask task ) throws Exception {
+		DesignView view = task.getTool().getCurrentView();
 		if( view == null ) return SUCCESS;
 
-		view.setOrigin( context.getTool().getViewPoint() );
-		view.setZoom( context.getTool().getZoom() );
-		view.setRotate( context.getTool().getViewRotate() );
-		view.setLayers( context.getTool().getVisibleLayers() );
+		view.setOrigin( task.getTool().getViewPoint() );
+		view.setZoom( task.getTool().getZoom() );
+		view.setRotate( task.getTool().getViewRotate() );
+		view.setLayers( task.getTool().getVisibleLayers() );
 
 		return SUCCESS;
 	}

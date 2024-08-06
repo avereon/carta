@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
@@ -27,6 +28,9 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	protected DesignTool tool;
 
 	@Mock
+	protected Design design;
+
+	@Mock
 	protected DesignContext designContext;
 
 	@Mock
@@ -39,6 +43,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	protected void setup() throws Exception {
 		super.setup();
 
+		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
 		lenient().when( designContext.getProduct() ).thenReturn( product );
