@@ -63,8 +63,6 @@ public class CartesiaMod extends Module {
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
 
-		commandMap = new CommandMap();
-
 		registerTools();
 
 		getProgram().getSettingsManager().putSettingEditor( "font-cartesia", FontSettingEditor.class );
@@ -83,7 +81,7 @@ public class CartesiaMod extends Module {
 		registerSettingsPages();
 
 		// Load the command map
-		CommandMap.load( this );
+		commandMap = new CommandMap().load( this );
 
 		// Index the help pages
 		registerHelpPages();

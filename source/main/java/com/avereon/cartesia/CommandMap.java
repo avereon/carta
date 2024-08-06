@@ -47,7 +47,7 @@ public final class CommandMap {
 
 	private static final Map<String, CommandMetadata> actionCommands = new ConcurrentHashMap<>();
 
-	public static void load( XenonProgramProduct product ) {
+	public CommandMap load( XenonProgramProduct product ) {
 		actionCommands.clear();
 		shortcutActions.clear();
 		actionByTrigger.clear();
@@ -238,6 +238,8 @@ public final class CommandMap {
 
 		//printCommandMapByCommand();
 		//printCommandMapByName();
+
+		return this;
 	}
 
 	private static void printCommandMapByCommand() {
