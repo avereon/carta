@@ -9,7 +9,6 @@ import com.avereon.zerra.BaseModTestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashMap;
@@ -63,8 +62,11 @@ public class BaseCartesiaUnitTest extends BaseModTestCase<CartesiaMod> {
 		// Generate mock action proxies for tested actions
 		mockActionMap = new HashMap<>();
 		for( String command : actions ) {
-			ActionProxy action = Mockito.mock( ActionProxy.class );
-			when( action.getName() ).thenReturn( command );
+			ActionProxy action = new ActionProxy();
+			action.setName( command );
+
+			if( "select-window-contain".equals( command))action.setCommand( "ws" );
+
 			mockActionMap.put( command, action );
 		}
 

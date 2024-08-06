@@ -49,8 +49,8 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		lenient().when( commandContext.getProgram() ).thenReturn( program );
 	}
 
-	protected static CommandMetadata createMetadata( String action, String name, Class<? extends Command> type ) {
-		return new CommandMetadata( action, name, null, null, List.of(), type );
+	protected static CommandMetadata createMetadata( String action, String name, String command, Class<? extends Command> type ) {
+		return new CommandMetadata( action, name, command, null, List.of(), type );
 	}
 
 	@SuppressWarnings( "unchecked" )

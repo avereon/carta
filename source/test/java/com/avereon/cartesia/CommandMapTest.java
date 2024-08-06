@@ -4,7 +4,10 @@ import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.command.camera.CameraMove;
 import com.avereon.cartesia.command.camera.CameraZoom;
 import com.avereon.cartesia.command.snap.SnapAuto;
-import javafx.scene.input.*;
+import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,8 +21,7 @@ public class CommandMapTest extends CommandMapBaseTest {
 
 	@Test
 	void getCommandByShortcut() {
-		// FIXME Why does this return Noop?
-		//assertThat( CommandMap.getCommandByShortcut( "zw" ).getType()).isEqualTo( CameraZoomWindow.class );
+		assertThat( getMod().getCommandMap().getCommandByShortcut( "ws" ).getType()).isEqualTo( SelectByWindowContain.class );
 	}
 
 	@Test
@@ -41,34 +43,34 @@ public class CommandMapTest extends CommandMapBaseTest {
 	private static Stream<Arguments> provideCommandMetadataInputEventMatches() {
 		return Stream.of(
 			// Anchor
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, false ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false, false ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false, false ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, true, false, false ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true, false ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, true ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false, true ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false, true ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, true, false, true ) ),
-			Arguments.of( createMetadata( "anchor", "anchor", Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true, true ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, false ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false, false ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false, false ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, true, false, false ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true, false ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, true ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, true, false, false, false, true ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, true, false, false, true ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, true, false, true ) ),
+			Arguments.of( createMetadata( "anchor", "anchor", null, Anchor.class ), createMouseEvent( MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, true, true ) ),
 
 			// Select
-			Arguments.of( createMetadata( "select-point", "select-point", SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false ) ),
-			Arguments.of( createMetadata( "select-toggle", "select-toggle", SelectToggle.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false, false ) ),
-			Arguments.of( createMetadata( "select-window-contain", "select-window-contain", SelectByWindowContain.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false, true ) ),
-			Arguments.of( createMetadata( "select-window-intersect", "select-window-intersect", SelectByWindowIntersect.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false, true ) ),
+			Arguments.of( createMetadata( "select-point", "select-point", null, SelectByPoint.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, false, false, false, false, false ) ),
+			Arguments.of( createMetadata( "select-toggle", "select-toggle", null, SelectToggle.class ), createMouseEvent( MouseEvent.MOUSE_RELEASED, MouseButton.PRIMARY, true, false, false, false, false ) ),
+			Arguments.of( createMetadata( "select-window-contain", "select-window-contain", "ws", SelectByWindowContain.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, false, false, false, true ) ),
+			Arguments.of( createMetadata( "select-window-intersect", "select-window-intersect", null, SelectByWindowIntersect.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false, true ) ),
 
 			// Auto Snap
-			Arguments.of( createMetadata( "snap-auto-nearest", "snap-auto-nearest", SnapAuto.class ),
+			Arguments.of( createMetadata( "snap-auto-nearest", "snap-auto-nearest", null, SnapAuto.class ),
 				createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.SECONDARY, false, false, false, false, false )
 			),
 
 			// Camera Move
-			Arguments.of( createMetadata( "camera-move", "camera-move", CameraMove.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, true, false, false, false, true ) ),
+			Arguments.of( createMetadata( "camera-move", "camera-move", null, CameraMove.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, true, false, false, false, true ) ),
 
 			// Camera Zoom
-			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createScrollEvent( ScrollEvent.SCROLL, true, false, false, false, false, false ) )
-			//Arguments.of( createMetadata( "camera-zoom", "camera-zoom", CameraZoom.class ), createZoomEvent( ZoomEvent.ZOOM, false, false, false, false, false, false ) )
+			Arguments.of( createMetadata( "camera-zoom", "camera-zoom", null, CameraZoom.class ), createScrollEvent( ScrollEvent.SCROLL, true, false, false, false, false, false ) )
+			//Arguments.of( createMetadata( "camera-zoom", "camera-zoom", null, CameraZoom.class ), createZoomEvent( ZoomEvent.ZOOM, false, false, false, false, false, false ) )
 		);
 	}
 
