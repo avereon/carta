@@ -101,9 +101,10 @@ public abstract class Command {
 	private final Map<DesignShape, DesignShape> previewMap;
 
 	@Getter
-	private int step;
-
 	private boolean stepExecuted;
+
+	@Getter
+	private int step;
 
 	protected Command() {
 		this.reference = new CopyOnWriteArraySet<>();
