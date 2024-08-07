@@ -33,7 +33,7 @@ public class SelectByPoint extends SelectCommand {
 			return INCOMPLETE;
 		}
 
-		if( hasEvent && task.getTrigger().matches( event ) && event instanceof MouseEvent mouseEvent ) {
+		if( hasEvent && event instanceof MouseEvent mouseEvent && task.getTrigger().matches( mouseEvent ) ) {
 			// Otherwise, if there is an event, use that
 			Point3D screenPoint = new Point3D( mouseEvent.getX(), mouseEvent.getY(), mouseEvent.getZ() );
 			event.consume();

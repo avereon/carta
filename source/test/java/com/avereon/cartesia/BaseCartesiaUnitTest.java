@@ -5,6 +5,7 @@ import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.notice.NoticeManager;
+import com.avereon.xenon.task.TaskManager;
 import com.avereon.zerra.BaseModTestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,9 @@ public class BaseCartesiaUnitTest extends BaseModTestCase<CartesiaMod> {
 	protected Xenon program;
 
 	protected XenonProgramProduct product;
+
+	@Mock
+	protected TaskManager taskManager;
 
 	@Mock
 	protected ActionLibrary actionLibrary;
@@ -52,9 +56,9 @@ public class BaseCartesiaUnitTest extends BaseModTestCase<CartesiaMod> {
 		product = program;
 
 		lenient().when( product.getProgram() ).thenReturn( program );
-		lenient().when( program.getNoticeManager() ).thenReturn( noticeManager );
-		lenient().when( program.getNoticeManager() ).thenReturn( noticeManager );
+		lenient().when( program.getTaskManager() ).thenReturn( taskManager );
 		lenient().when( program.getActionLibrary() ).thenReturn( actionLibrary );
+		lenient().when( program.getNoticeManager() ).thenReturn( noticeManager );
 		lenient().when( module.getProgram() ).thenReturn( program );
 
 		List<String> actions = List.of( "anchor", "select-point", "select-toggle", "select-window-contain", "select-window-intersect", "snap-auto-nearest", "camera-move", "camera-zoom" );

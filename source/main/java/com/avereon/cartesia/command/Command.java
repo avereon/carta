@@ -101,10 +101,10 @@ public abstract class Command {
 	private final Map<DesignShape, DesignShape> previewMap;
 
 	@Getter
-	private boolean stepExecuted;
-
-	@Getter
 	private int step;
+
+	// Not to be exposed to the public API
+	private boolean stepExecuted;
 
 	protected Command() {
 		this.reference = new CopyOnWriteArraySet<>();

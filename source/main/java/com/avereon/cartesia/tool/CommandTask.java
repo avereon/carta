@@ -60,11 +60,22 @@ public class CommandTask {
 		if( priorResult == null ) log.atWarning().log( "A prior result of null was passed to execute" );
 		if( priorResult == INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
 		if( priorResult == null || priorResult instanceof Command.Result && RESULT_CACHE.contains( priorResult ) ) return;
-		parameters = ArrayUtil.append( parameters, priorResult );
+
+		if( priorResult instanceof Object[] priorResultArray ) {
+			parameters = concatArrays( parameters, priorResultArray );
+		} else {
+			parameters = ArrayUtil.append( parameters, priorResult );
+		}
 
 		// Clear the trigger and event when a prior result is added
 		trigger = null;
 		event = null;
+	}
+
+	private static <T> T[] concatArrays( T[] array1, T[] array2 ) {
+		T[] result = Arrays.copyOf( array1, array1.length + array2.length );
+		System.arraycopy( array2, 0, result, array1.length, array2.length );
+		return result;
 	}
 
 	public Object runTaskStep() throws Exception {
@@ -93,7 +104,7 @@ public class CommandTask {
 	}
 
 	private void doComplete() {
-		if( command.clearReferenceAndPreviewWhenComplete() ) command.clearReferenceAndPreview(this);
+		if( command.clearReferenceAndPreviewWhenComplete() ) command.clearReferenceAndPreview( this );
 		if( command.clearSelectionWhenComplete() ) tool.clearSelectedShapes();
 		tool.setSelectAperture( null, null );
 	}

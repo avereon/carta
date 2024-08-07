@@ -109,6 +109,10 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return commandStack.size();
 	}
 
+	public CommandTask getCommand( int index ) {
+		return new ArrayList<>( commandStack ).get( index );
+	}
+
 	/**
 	 * This is the script entrypoint for running commands.
 	 *
@@ -286,6 +290,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		while( !event.isConsumed() && iterator.hasNext() ) {
 			iterator.next().getCommand().handle( this, event );
 		}
+		event.consume();
 	}
 
 	public void handle( ScrollEvent event ) {
@@ -389,7 +394,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		log.at( COMMAND_STACK_LOG_LEVEL ).log( "%s tasks=%s", prefix, commandStack.reversed() );
 	}
 
-	private Object doProcessCommands() throws Exception {
+	Object doProcessCommands() throws Exception {
 		if( Fx.isFxThread() ) {
 			log.atSevere().log( "Command processing should not be run on the FX thread" );
 			return FAILURE;
@@ -399,6 +404,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		Object thisResult;
 
 		try {
+
+			// FIXME I could have multiple threads in the stack, and all of them try
+			//  to execute all the tasks given to them, even if they are complete
+			//  already.
+
 			List<CommandTask> tasks = new ArrayList<>( commandStack );
 			for( CommandTask task : tasks ) {
 				try {
@@ -407,8 +417,9 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 					logCommandStack( "exec" );
 					thisResult = task.runTaskStep();
 
-					// Don't pass incomplete results to the next task
-					if( thisResult == INCOMPLETE ) break;
+					// Don't pass incomplete results to the next task and
+					// allow the calling thread to exit with the INCOMPLETE result.
+					if( thisResult == INCOMPLETE ) return thisResult;
 
 					// Remove commands that are complete
 					commandStack.remove( task );
@@ -416,8 +427,8 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 					// Don't pass invalid results to the next task
 					if( thisResult == INVALID ) break;
 
-					// Add the task result to the next task
-					if( !commandStack.isEmpty() ) commandStack.peek().addParameter( thisResult );
+					// Pass the task result to the next task
+					passParameter( commandStack.peek(), thisResult );
 
 					logCommandStack( "rslt" );
 
@@ -433,6 +444,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		}
 
 		return priorResult;
+	}
+
+	private void passParameter( CommandTask task, Object parameter ) {
+		if( task == null ) return;
+		task.addParameter( parameter );
 	}
 
 	CommandTask getCurrentCommandTask() {
