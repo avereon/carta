@@ -328,6 +328,15 @@ public abstract class Command {
 		return cloneAndAddShapes( shapes, true );
 	}
 
+	protected void doNotCaptureUndoChanges( CommandTask task ) {
+		setCaptureUndoChanges( task, false );
+	}
+
+	protected void setCaptureUndoChanges( CommandTask task, boolean enabled ) {
+		task.getTool().getAsset().setCaptureUndoChanges( enabled );
+	}
+
+	@Deprecated
 	protected void setCaptureUndoChanges( DesignCommandContext context, boolean enabled ) {
 		context.getTool().getAsset().setCaptureUndoChanges( enabled );
 	}

@@ -35,9 +35,9 @@ public class CameraZoomWindow extends CameraCommand {
 
 	@Override
 	public Object execute( CommandTask task) throws Exception {
-		setCaptureUndoChanges( task.getContext(), false );
+		doNotCaptureUndoChanges( task );
 
-		if( task.getParameters().length < 1 ) {
+		if( task.getParameterCount() == 0 && task.getEvent() == null ) {
 			// Zoom window anchor
 			promptForWindow( task, "zoom-window" );
 			//promptForWindow( task.getContext(), "zoom-window-anchor" );
@@ -46,7 +46,7 @@ public class CameraZoomWindow extends CameraCommand {
 
 		if( task.getParameters().length < 2 ) {
 			// Zoom window point
-			//promptForWindow( task.getContext(), "zoom-window-point" );
+			//promptForWindow( task.getContext(), "zoom-window-corner" );
 			return INCOMPLETE;
 		}
 

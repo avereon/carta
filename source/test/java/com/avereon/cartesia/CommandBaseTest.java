@@ -6,6 +6,7 @@ import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignTool;
+import com.avereon.xenon.asset.Asset;
 import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -28,6 +29,9 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	protected DesignTool tool;
 
 	@Mock
+	protected Asset asset;
+
+	@Mock
 	protected Design design;
 
 	@Mock
@@ -43,6 +47,8 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	protected void setup() throws Exception {
 		super.setup();
 
+		lenient().when( asset.getModel() ).thenReturn( design );
+		lenient().when( tool.getAsset() ).thenReturn( asset );
 		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
@@ -151,8 +157,19 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		);
 	}
 
-
-	protected static ScrollEvent createScrollEvent( EventType<ScrollEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia, double x, double y, double deltaX, double deltaY ) {
+	protected static ScrollEvent createScrollEvent(
+		EventType<ScrollEvent> type,
+		boolean control,
+		boolean shift,
+		boolean alt,
+		boolean meta,
+		boolean direct,
+		boolean inertia,
+		double x,
+		double y,
+		double deltaX,
+		double deltaY
+	) {
 		return new ScrollEvent( type,
 			x,
 			y,
@@ -181,7 +198,18 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		return new ZoomEvent( type, 0, 0, 0, 0, shift, control, alt, meta, direct, inertia, 0, 0, null );
 	}
 
-	protected static ZoomEvent createZoomEvent( EventType<ZoomEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia, double x, double y, double factor ) {
+	protected static ZoomEvent createZoomEvent(
+		EventType<ZoomEvent> type,
+		boolean control,
+		boolean shift,
+		boolean alt,
+		boolean meta,
+		boolean direct,
+		boolean inertia,
+		double x,
+		double y,
+		double factor
+	) {
 		return new ZoomEvent( type, x, y, x, y, shift, control, alt, meta, direct, inertia, factor, factor, null );
 	}
 
