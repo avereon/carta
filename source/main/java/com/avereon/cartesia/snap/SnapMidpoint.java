@@ -21,11 +21,10 @@ public class SnapMidpoint implements Snap {
 	public Point3D snap( DesignTool tool, Point3D point ) {
 		if( point == null ) return CadPoints.NONE;
 
-		Point3D mouse = tool.worldToScreen( point );
-		List<DesignShape> shapes = tool.screenPointSyncFindOne( mouse );
+		List<DesignShape> shapes = tool.worldPointSyncFindOne( point );
 		if( shapes.isEmpty() ) return CadPoints.NONE;
 
-		DesignShape shape =  shapes.getFirst();
+		DesignShape shape = shapes.getFirst();
 		if( shape instanceof DesignLine line ) {
 			return CadGeometry.midpoint( line.getOrigin(), line.getPoint() );
 		} else if( shape instanceof DesignArc arc ) {
@@ -34,4 +33,5 @@ public class SnapMidpoint implements Snap {
 
 		return CadPoints.NONE;
 	}
+
 }

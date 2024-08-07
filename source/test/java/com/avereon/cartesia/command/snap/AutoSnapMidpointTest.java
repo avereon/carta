@@ -2,26 +2,28 @@ package com.avereon.cartesia.command.snap;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.snap.Snap;
-import com.avereon.cartesia.snap.SnapNearestCp;
+import com.avereon.cartesia.snap.SnapMidpoint;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import org.junit.jupiter.api.Test;
+import org.mockito.Spy;
 
 import java.util.List;
 
 import static com.avereon.cartesia.command.Command.Result.INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
-public class AutoSnapNearestTest extends CommandBaseTest {
+public class AutoSnapMidpointTest extends CommandBaseTest {
 
 	private final AutoSnap command = new AutoSnap();
 
-	private final Snap snap = new SnapNearestCp();
+	@Spy
+	private final Snap snap = new SnapMidpoint();
 
 	@Test
 	void testRunTaskStepNoParameters() throws Exception {
@@ -50,12 +52,11 @@ public class AutoSnapNearestTest extends CommandBaseTest {
 	@Test
 	void testRunTaskStepSnapAndEvent() throws Exception {
 		// given
-		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "snap-auto-nearest" );
+		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "snap-auto-midpoint" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, snap );
 		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( 0.75, 0.75, 0 ) );
-		when( tool.getVisibleShapes() ).thenReturn( List.of() );
-		when( tool.nearestReferencePoint( anyList(), eq( new Point3D( 0.75, 0.75, 0 ) ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+		when( tool.worldPointSyncFindOne( new Point3D( 0.75, 0.75, 0 ) ) ).thenReturn( List.of( new DesignLine( 0, 0, 2, 2 ) ) );
 
 		// when
 		Object result = task.runTaskStep();
@@ -68,8 +69,7 @@ public class AutoSnapNearestTest extends CommandBaseTest {
 	void testRunTaskStepSnapAndParameter() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, snap, "3/4,3/4" );
-		when( tool.getVisibleShapes() ).thenReturn( List.of() );
-		when( tool.nearestReferencePoint( anyList(), eq( new Point3D( 0.75, 0.75, 0 ) ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+		when( tool.worldPointSyncFindOne( new Point3D( 0.75, 0.75, 0 ) ) ).thenReturn( List.of( new DesignLine( 0, 0, 2, 2 ) ) );
 
 		// when
 		Object result = task.runTaskStep();
@@ -79,3 +79,4 @@ public class AutoSnapNearestTest extends CommandBaseTest {
 	}
 
 }
+
