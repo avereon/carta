@@ -1,11 +1,13 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Anchor;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.SelectByWindowContain;
 import javafx.geometry.Point3D;
+import javafx.scene.input.InputEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -88,10 +90,47 @@ public class DesignCommandContextTest extends CommandBaseTest {
 		assertThat( commandContext.getCommand( 1 ).getCommand() ).isInstanceOf( SelectByWindowContain.class );
 		assertThat( result1 ).isEqualTo( INCOMPLETE );
 
-		// So far so, so good.
+		// Add an Anchor triggered by a MOUSE_PRESSED event
 
+		// given
+		CommandTrigger anchorTrigger = getMod().getCommandMap().getTriggerByAction( "anchor" );
+		InputEvent anchorEvent = createMouseEvent( anchorTrigger, 5, 5 );
+		CommandTask anchorTask = new CommandTask( commandContext, tool, anchorTrigger, anchorEvent, new Anchor() );
+		commandContext.submit( anchorTask );
+		assertThat( commandContext.getCommand( 0 ).getCommand() ).isInstanceOf( Anchor.class );
+		assertThat( commandContext.getCommandStackDepth() ).isEqualTo( 3 );
+		verify( module, times( 3 ) ).task( eq( "process-commands" ), any( Callable.class ) );
+
+		// when
+		Object result2 = commandContext.doProcessCommands();
+
+		// then
+		// Should be back to the prompt command
+		assertThat( commandContext.getCommand( 0 ).getCommand() ).isInstanceOf( Prompt.class );
+		assertThat( commandContext.getCommandStackDepth() ).isEqualTo( 2 );
+		assertThat( result2 ).isEqualTo( INCOMPLETE );
+
+		// Add a SelectByPoint triggered by a MOUSE_RELEASED event
+
+		// given
+		CommandTrigger selectTrigger = getMod().getCommandMap().getTriggerByAction( "select-point" );
+		InputEvent selectEvent = createMouseEvent( selectTrigger, 48, 17 );
+		CommandTask selectTask = new CommandTask( commandContext, tool, selectTrigger, selectEvent, new SelectByPoint() );
+		commandContext.submit( selectTask );
+		assertThat( commandContext.getCommand( 0 ).getCommand() ).isInstanceOf( SelectByPoint.class );
+		assertThat( commandContext.getCommandStackDepth() ).isEqualTo( 3 );
+		verify( module, times( 4 ) ).task( eq( "process-commands" ), any( Callable.class ) );
+
+		// when
+		Object result3 = commandContext.doProcessCommands();
+
+		// then
+		assertThat( commandContext.getCommand( 0 ).getCommand() ).isInstanceOf( Prompt.class );
+		assertThat( commandContext.getCommandStackDepth() ).isEqualTo( 2 );
+		assertThat( result3 ).isEqualTo( INCOMPLETE );
+
+		// So far so, so good.
 		// NEXT Add the next layer of commands
-		// Add a SelectByPoint triggered by a mouse event
 	}
 
 }

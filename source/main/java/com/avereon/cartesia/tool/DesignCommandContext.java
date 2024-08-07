@@ -135,13 +135,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	 * @deprecated In favor of {@link #submit(CommandTask)}
 	 */
 	@Deprecated
-	public Command submit( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
-		commandStack.removeIf( r -> r.getCommand() == command );
+	Command submit( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		return pushCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
 	}
 
 	public Command submit( CommandTask request ) {
-		commandStack.removeIf( r -> r.getCommand() == request.getCommand() );
 		return pushCommand( request );
 	}
 
@@ -369,14 +367,20 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	private Command pushCommand( CommandTask request ) {
+		commandStack.removeIf( r -> r.getCommand() == request.getCommand() );
+
 		checkForCommonProblems( request );
 
 		// Clear the prompt before executing the command, because
 		// one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
-		commandStack.push( request );
-		log.atTrace().log( "Command submitted %s", request );
+		synchronized( commandStack ) {
+			commandStack.push( request );
+			log.atTrace().log( "Command submitted %s", request );
+		}
+
+		// Don't synchronize the processing
 		getProduct().task( "process-commands", this::doProcessCommands );
 
 		// TODO Consider returning the command request
