@@ -35,4 +35,16 @@ public class ValueTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( "one parameter" );
 	}
 
+	@Test
+	void executeWithArrayParameter() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, (Object)new String[]{ "one parameter", "two parameter" } );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		assertThat( result ).isEqualTo( new String[]{ "one parameter", "two parameter" } );
+	}
+
 }

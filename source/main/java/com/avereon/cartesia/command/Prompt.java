@@ -3,6 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 
+import static com.avereon.cartesia.command.Command.Result.FAILURE;
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 
 public class Prompt extends Command {
@@ -29,15 +30,18 @@ public class Prompt extends Command {
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
 
-		if( task.getParameters().length < 1 ) {
+		if( task.getParameterCount() == 0 ) {
 			task.getContext().getCommandPrompt().setPrompt( prompt );
 			return INCOMPLETE;
 		}
 
-		task.getContext().getCommandPrompt().clear();
-		task.getTool().setCursor( null );
+		if( task.hasParameter( 0 ) ) {
+			task.getContext().getCommandPrompt().clear();
+			task.getTool().setCursor( null );
+			return task.getParameter( 0 );
+		}
 
-		return task.getParameters()[ 0 ];
+		return FAILURE;
 	}
 
 }

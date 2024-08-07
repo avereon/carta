@@ -7,6 +7,7 @@ import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.xenon.asset.Asset;
+import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -105,6 +106,10 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		return createMouseEvent( type, button, control, shift, alt, meta, moved, x, y, 0 );
 	}
 
+	protected static MouseEvent createMouseEvent( Object source, EventTarget target,EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved, double x, double y ) {
+		return createMouseEvent( source, target, type, button, control, shift, alt, meta, moved, x, y, 0 );
+	}
+
 	protected static MouseEvent createMouseEvent(
 		EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved, double x, double y, int clicks
 	) {
@@ -112,6 +117,15 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		boolean secondary = button == MouseButton.SECONDARY;
 		boolean middle = button == MouseButton.MIDDLE;
 		return new MouseEvent( type, x, y, 0, 0, button, clicks, shift, control, alt, meta, primary, middle, secondary, false, false, !moved, null );
+	}
+
+	protected static MouseEvent createMouseEvent(
+		Object source, EventTarget target, EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved, double x, double y, int clicks
+	) {
+		boolean primary = button == MouseButton.PRIMARY;
+		boolean secondary = button == MouseButton.SECONDARY;
+		boolean middle = button == MouseButton.MIDDLE;
+		return new MouseEvent( source, target, type, x, y, 0, 0, button, clicks, shift, control, alt, meta, primary, middle, secondary, false, false, !moved, null );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -158,17 +172,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	}
 
 	protected static ScrollEvent createScrollEvent(
-		EventType<ScrollEvent> type,
-		boolean control,
-		boolean shift,
-		boolean alt,
-		boolean meta,
-		boolean direct,
-		boolean inertia,
-		double x,
-		double y,
-		double deltaX,
-		double deltaY
+		EventType<ScrollEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia, double x, double y, double deltaX, double deltaY
 	) {
 		return new ScrollEvent( type,
 			x,
@@ -199,16 +203,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	}
 
 	protected static ZoomEvent createZoomEvent(
-		EventType<ZoomEvent> type,
-		boolean control,
-		boolean shift,
-		boolean alt,
-		boolean meta,
-		boolean direct,
-		boolean inertia,
-		double x,
-		double y,
-		double factor
+		EventType<ZoomEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia, double x, double y, double factor
 	) {
 		return new ZoomEvent( type, x, y, x, y, shift, control, alt, meta, direct, inertia, factor, factor, null );
 	}

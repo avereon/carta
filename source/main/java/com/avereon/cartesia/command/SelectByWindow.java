@@ -56,13 +56,13 @@ public abstract class SelectByWindow extends SelectCommand {
 		if( paramCount == 2 ) {
 			Point3D worldAnchor = asPoint( task, 0 );
 			Point3D worldCorner = asPoint( task, 1 );
-
-			// NEXT Should this command return an array of points for the window if
-			//  the stack is not empty? If so, how should the command be modified?
-
 			if( worldAnchor != null && worldCorner != null ) {
-				task.getTool().worldWindowSelect( worldAnchor, worldCorner, intersect, false );
-				return SUCCESS;
+				if( task.getContext().getCommandStackDepth() < 2 ) {
+					task.getTool().worldWindowSelect( worldAnchor, worldCorner, intersect, false );
+					return SUCCESS;
+				} else {
+					return new Point3D[]{ worldAnchor, worldCorner };
+				}
 			}
 		}
 
@@ -78,13 +78,10 @@ public abstract class SelectByWindow extends SelectCommand {
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
 			tool.setSelectAperture( anchor, mouse );
 			event.consume();
-		} else if( getStep() == 3 && event.getEventType().equals( MouseEvent.MOUSE_MOVED ) ) {
-			// FIXME How did we get on step 3? I expected it to be step 2.
-			//  Because there is an Anchor command in between the two steps.
+		} else if( getStep() == 2 && event.getEventType().equals( MouseEvent.MOUSE_MOVED ) ) {
 			tool.setSelectAperture( anchor, mouse );
 			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
-			log.atError().log( "Adding Value command..." );
 			// Submit a Value command to pass the point back to this command
 			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
 			event.consume();

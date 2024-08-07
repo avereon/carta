@@ -136,11 +136,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	 */
 	@Deprecated
 	Command submit( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
-		return pushCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
+		return submitCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
 	}
 
 	public Command submit( CommandTask request ) {
-		return pushCommand( request );
+		return submitCommand( request );
 	}
 
 	//	/**
@@ -198,7 +198,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				true,
 				null
 			);
-			pushCommand( new SelectByPoint(), mouseEvent );
+			submitCommand( new SelectByPoint(), mouseEvent );
 		} else {
 			// Process text calls doCommand
 			processText( input, true );
@@ -209,7 +209,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	public void repeat( KeyEvent event ) {
 		event.consume();
 		if( TextUtil.isEmpty( getCommandPrompt().getCommand() ) ) {
-			pushCommand( mapCommand( getPriorCommand() ) );
+			submitCommand( mapCommand( getPriorCommand() ) );
 			reset();
 		}
 	}
@@ -218,19 +218,19 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		boolean isTextInput = getInputMode() == DesignCommandContext.Input.TEXT;
 		if( strict ) {
 			return switch( getInputMode() ) {
-				case NUMBER -> pushCommand( new Value(), CadShapes.parsePoint( input ).getX() );
-				case POINT -> pushCommand( new Value(), CadShapes.parsePoint( input, getWorldAnchor() ) );
-				case TEXT -> pushCommand( new Value(), input );
-				default -> pushCommand( mapCommand( input ) );
+				case NUMBER -> submitCommand( new Value(), CadShapes.parsePoint( input ).getX() );
+				case POINT -> submitCommand( new Value(), CadShapes.parsePoint( input, getWorldAnchor() ) );
+				case TEXT -> submitCommand( new Value(), input );
+				default -> submitCommand( mapCommand( input ) );
 			};
 		} else if( !isTextInput && isAutoCommandEnabled() && getMod().getCommandMap().hasCommand( input ) ) {
-			return pushCommand( mapCommand( input ) );
+			return submitCommand( mapCommand( input ) );
 		}
 		return null;
 	}
 
 	public void command( String input ) {
-		pushCommand( mapCommand( input ) );
+		submitCommand( mapCommand( input ) );
 	}
 
 	public boolean isPenMode() {
@@ -278,25 +278,24 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public void handle( MouseEvent event ) {
-		doEventCommand( event );
-		forwardCommandToCommandStack( event );
+		// If the event does not trigger a command, forward it to the command stack
+		if( !submitEventCommand( event ) ) forwardCommandToCommandStack( event );
 	}
 
-	private void forwardCommandToCommandStack( MouseEvent event ) {
-		// Forward the mouse event to the other commands in the stack
+	void forwardCommandToCommandStack( MouseEvent event ) {
 		Iterator<CommandTask> iterator = commandStack.iterator();
-		while( !event.isConsumed() && iterator.hasNext() ) {
+		while( iterator.hasNext() && !event.isConsumed() ) {
 			iterator.next().getCommand().handle( this, event );
 		}
 		event.consume();
 	}
 
 	public void handle( ScrollEvent event ) {
-		doEventCommand( event );
+		submitEventCommand( event );
 	}
 
 	public void handle( ZoomEvent event ) {
-		doEventCommand( event );
+		submitEventCommand( event );
 	}
 
 	DesignTool getLastActiveDesignTool() {
@@ -337,36 +336,37 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return mapping;
 	}
 
-	private void doEventCommand( InputEvent event ) {
+	boolean submitEventCommand( InputEvent event ) {
 		// NOTE This method does not handle key events,
 		//  those are handled by the action infrastructure
 		CommandMetadata metadata = getMod().getCommandMap().getCommandByEvent( event );
-		if( metadata == CommandMap.NONE ) return;
+		if( metadata == CommandMap.NONE ) return false;
 
-		pushCommand( (DesignTool)event.getSource(), event, metadata.getType(), metadata.getParameters() );
+		submitCommand( (DesignTool)event.getSource(), event, metadata.getType(), metadata.getParameters() );
+		return true;
 	}
 
-	private Command pushCommand( CommandMetadata metadata ) {
+	private Command submitCommand( CommandMetadata metadata ) {
 		if( metadata == CommandMap.NONE ) return null;
 		priorCommand = metadata.getCommand();
-		return pushCommand( getLastActiveDesignTool(), null, metadata.getType(), metadata.getParameters() );
+		return submitCommand( getLastActiveDesignTool(), null, metadata.getType(), metadata.getParameters() );
 	}
 
-	private Command pushCommand( Command command, Object... parameters ) {
-		return pushCommand( new CommandTask( this, getLastActiveDesignTool(), null, null, command, parameters ) );
+	private Command submitCommand( Command command, Object... parameters ) {
+		return submitCommand( new CommandTask( this, getLastActiveDesignTool(), null, null, command, parameters ) );
 	}
 
-	private Command pushCommand( DesignTool tool, InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
+	private Command submitCommand( DesignTool tool, InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
 		Objects.requireNonNull( commandClass, "Command class cannot be null" );
 		try {
-			return pushCommand( new CommandTask( this, tool, CommandTrigger.from( event ), event, commandClass.getConstructor().newInstance(), parameters ) );
+			return submitCommand( new CommandTask( this, tool, CommandTrigger.from( event ), event, commandClass.getConstructor().newInstance(), parameters ) );
 		} catch( Exception exception ) {
 			log.atSevere().withCause( exception ).log();
 		}
 		return null;
 	}
 
-	private Command pushCommand( CommandTask request ) {
+	Command submitCommand( CommandTask request ) {
 		commandStack.removeIf( r -> r.getCommand() == request.getCommand() );
 
 		checkForCommonProblems( request );
@@ -380,7 +380,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			log.atTrace().log( "Command submitted %s", request );
 		}
 
-		// Don't synchronize the processing
+		// Run the processing on a task thread
 		getProduct().task( "process-commands", this::doProcessCommands );
 
 		// TODO Consider returning the command request
@@ -408,11 +408,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		Object thisResult;
 
 		try {
-
-			// FIXME I could have multiple threads in the stack, and all of them try
-			//  to execute all the tasks given to them, even if they are complete
-			//  already.
-
 			List<CommandTask> tasks = new ArrayList<>( commandStack );
 			for( CommandTask task : tasks ) {
 				try {

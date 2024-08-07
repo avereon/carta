@@ -41,7 +41,22 @@ public class PromptTest extends CommandBaseTest {
 		// then
 		verify( commandPrompt, times( 1 ) ).clear();
 		verify( tool ).setCursor( eq( null ) );
-		assertThat( result ).isEqualTo( "Hi!" );
+		assertThat( result ).isEqualTo(  "Hi!" );
+	}
+
+	@Test
+	void testExecuteWithArrayParameter() throws Exception {
+		// given
+		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, (Object)new String[]{ "one", "two", "three" } );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandPrompt, times( 1 ) ).clear();
+		verify( tool ).setCursor( eq( null ) );
+		assertThat( result ).isEqualTo( new String[]{ "one", "two", "three" } );
 	}
 
 }

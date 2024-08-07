@@ -8,6 +8,8 @@ import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.SelectByWindowContain;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -25,8 +27,34 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		commandContext = spy( new DesignCommandContext( module ) );
+		this.commandContext = spy( new DesignCommandContext( module ) );
 		lenient().doReturn( commandPrompt ).when( commandContext ).getCommandPrompt();
+	}
+
+	@Test
+	void handleWithMouseEventAndTrigger() {
+		// given
+		MouseEvent event = createMouseEvent( tool, null, MouseEvent.MOUSE_PRESSED, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
+
+		// when
+		commandContext.handle( event );
+
+		// then
+		verify( commandContext, times( 1 ) ).submitCommand( any( CommandTask.class ) );
+		verify( commandContext, times( 0 ) ).forwardCommandToCommandStack( any() );
+	}
+
+	@Test
+	void handleWithMouseEventNoTrigger() {
+		// given
+		MouseEvent event = createMouseEvent( tool, null, MouseEvent.ANY, MouseButton.PRIMARY, false, false, false, false, false, 48, 17 );
+
+		// when
+		commandContext.handle( event );
+
+		// then
+		verify( commandContext, times( 0 ) ).submitCommand( any( CommandTask.class ) );
+		verify( commandContext, times( 1 ) ).forwardCommandToCommandStack( any() );
 	}
 
 	/**
@@ -130,7 +158,8 @@ public class DesignCommandContextTest extends CommandBaseTest {
 		assertThat( result3 ).isEqualTo( INCOMPLETE );
 
 		// So far so, so good.
-		// NEXT Add the next layer of commands
+
+		// TODO Add the next layer of commands
 	}
 
 }
