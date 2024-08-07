@@ -83,34 +83,6 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
-//	/**
-//	 * Select by window contain with one parameter and an event should set both
-//	 * the anchor and the corner, and then move the camera accordingly. The result
-//	 * should be success.
-//	 *
-//	 * @throws Exception If an error occurs during the test
-//	 */
-//	@Test
-//	void testExecuteWithOneParameterAndEvent() throws Exception {
-//		// FIXME Not sure this test is needed or correct
-//		// In theory, the command should not need one parameter and an event because
-//		// the event in question, the MOUSE_RELEASED event, would just be handled by
-//		// the value command.
-//
-//		// given
-//		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "select-window-contain" );
-//		InputEvent event = createMouseEvent( trigger, 48, 17 );
-//		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command, new Point3D( -3, 3, 0 ) );
-//		when( tool.screenToWorld( eq( new Point3D( 48, 17, 0 ) ) ) ).thenReturn( new Point3D( 3, -3, 0 ) );
-//
-//		// when
-//		Object result = task.runTaskStep();
-//
-//		// then
-//		verify( tool, times( 1 ) ).worldWindowSelect( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( false ), eq( false ) );
-//		assertThat( result ).isEqualTo( SUCCESS );
-//	}
-
 	/**
 	 * Select by window contain with two parameters should set both the anchor
 	 * and the point, and then select the geometry contained by the window. The
