@@ -199,11 +199,6 @@ public abstract class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
-	@Deprecated
-	protected Point3D asPoint( DesignCommandContext context, Object value ) throws Exception {
-		return asPoint( context.getWorldAnchor(), value );
-	}
-
 	protected Point3D asPoint( CommandTask task, int index ) throws Exception {
 		return asPoint( task, task.getParameter( index ) );
 	}
@@ -228,6 +223,11 @@ public abstract class Command {
 	}
 
 	@Deprecated
+	protected Point3D asPoint( DesignCommandContext context, Object value ) throws Exception {
+		return asPoint( context.getWorldAnchor(), value );
+	}
+
+	@Deprecated
 	protected Bounds asBounds( DesignCommandContext context, Object value ) {
 		// NOTE Users cannot input bounds by hand so this method may not be necessary
 		if( value instanceof Bounds ) return (Bounds)value;
@@ -236,10 +236,21 @@ public abstract class Command {
 		return null;
 	}
 
+	protected String asText( CommandTask task, Object value ) throws Exception {
+		return String.valueOf( value );
+	}
+
+	@Deprecated
 	protected String asText( DesignCommandContext context, Object value ) throws Exception {
 		return String.valueOf( value );
 	}
 
+	protected void promptForNumber( CommandTask task, String key ) {
+		task.getTool().setCursor( null );
+		promptForValue( task.getContext(), key, DesignCommandContext.Input.NUMBER );
+	}
+
+	@Deprecated
 	protected void promptForNumber( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( null );
 		promptForValue( context, key, DesignCommandContext.Input.NUMBER );

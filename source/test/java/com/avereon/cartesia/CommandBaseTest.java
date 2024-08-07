@@ -74,6 +74,23 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		return event;
 	}
 
+	@SuppressWarnings( "unchecked" )
+	protected static ZoomEvent createZoomEvent( CommandTrigger trigger, double x, double y, double factor ) {
+		ZoomEvent event = createZoomEvent( (EventType<ZoomEvent>)trigger.getEventType(),
+			trigger.hasModifier( CommandTrigger.Modifier.CONTROL ),
+			trigger.hasModifier( CommandTrigger.Modifier.SHIFT ),
+			trigger.hasModifier( CommandTrigger.Modifier.ALT ),
+			trigger.hasModifier( CommandTrigger.Modifier.META ),
+			trigger.hasModifier( CommandTrigger.Modifier.DIRECT ),
+			trigger.hasModifier( CommandTrigger.Modifier.INERTIA ),
+			x,
+			y,
+			factor
+		);
+		assertThat( CommandTrigger.from( event ) ).isEqualTo( trigger );
+		return event;
+	}
+
 	protected static MouseEvent createMouseEvent( EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved ) {
 		return createMouseEvent( type, button, control, shift, alt, meta, moved, 0, 0, 0 );
 	}
@@ -89,6 +106,24 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		boolean secondary = button == MouseButton.SECONDARY;
 		boolean middle = button == MouseButton.MIDDLE;
 		return new MouseEvent( type, x, y, 0, 0, button, clicks, shift, control, alt, meta, primary, middle, secondary, false, false, !moved, null );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	protected static ScrollEvent createScrollEvent( CommandTrigger trigger, double x, double y, double deltaX, double deltaY ) {
+		ScrollEvent event = createScrollEvent( (EventType<ScrollEvent>)trigger.getEventType(),
+			trigger.hasModifier( CommandTrigger.Modifier.CONTROL ),
+			trigger.hasModifier( CommandTrigger.Modifier.SHIFT ),
+			trigger.hasModifier( CommandTrigger.Modifier.ALT ),
+			trigger.hasModifier( CommandTrigger.Modifier.META ),
+			trigger.hasModifier( CommandTrigger.Modifier.DIRECT ),
+			trigger.hasModifier( CommandTrigger.Modifier.INERTIA ),
+			x,
+			y,
+			deltaX,
+			deltaY
+		);
+		assertThat( CommandTrigger.from( event ) ).isEqualTo( trigger );
+		return event;
 	}
 
 	protected static ScrollEvent createScrollEvent( EventType<ScrollEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia ) {
@@ -116,8 +151,38 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		);
 	}
 
+
+	protected static ScrollEvent createScrollEvent( EventType<ScrollEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia, double x, double y, double deltaX, double deltaY ) {
+		return new ScrollEvent( type,
+			x,
+			y,
+			x,
+			y,
+			shift,
+			control,
+			alt,
+			meta,
+			direct,
+			inertia,
+			deltaX,
+			deltaY,
+			deltaX,
+			deltaY,
+			ScrollEvent.HorizontalTextScrollUnits.CHARACTERS,
+			0,
+			ScrollEvent.VerticalTextScrollUnits.LINES,
+			0,
+			2,
+			null
+		);
+	}
+
 	protected static ZoomEvent createZoomEvent( EventType<ZoomEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia ) {
 		return new ZoomEvent( type, 0, 0, 0, 0, shift, control, alt, meta, direct, inertia, 0, 0, null );
+	}
+
+	protected static ZoomEvent createZoomEvent( EventType<ZoomEvent> type, boolean control, boolean shift, boolean alt, boolean meta, boolean direct, boolean inertia, double x, double y, double factor ) {
+		return new ZoomEvent( type, x, y, x, y, shift, control, alt, meta, direct, inertia, factor, factor, null );
 	}
 
 }
