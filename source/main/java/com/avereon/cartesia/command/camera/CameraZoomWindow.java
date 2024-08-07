@@ -82,6 +82,8 @@ public class CameraZoomWindow extends CameraCommand {
 		Point3D anchor = context.getScreenAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
+		// MouseEvent.MOUSE_DRAGGED starts a window select
+
 		//		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
 		//			tool.setSelectAperture( anchor, mouse );
 		//		} else

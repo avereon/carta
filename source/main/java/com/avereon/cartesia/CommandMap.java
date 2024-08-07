@@ -117,7 +117,7 @@ public final class CommandMap {
 		add( product, "camera-zoom-in", CameraZoomIn.class );
 		add( product, "camera-zoom-out", CameraZoomOut.class );
 		add( product, "camera-zoom-selected", CameraZoomSelected.class );
-		add( product, "camera-zoom-window", CameraZoomWindow.class );  // FIXME camera-zoom-window not working
+		add( product, "camera-zoom-window", CameraZoomWindow.class );
 
 		// Toggle commands
 		add( product, "grid-toggle", GridToggle.class );
