@@ -37,9 +37,7 @@ public enum Reticle {
 		Fx.run( () -> future.complete( new ReticleCursor( this ) ) );
 
 		try {
-			ReticleCursor cursor = future.get();
-			log.atWarn().log( "Reticle cursor is %s", cursor );
-			return cursor;
+			return future.get();
 		} catch( Exception exception ) {
 			throw new RuntimeException( exception );
 		}
