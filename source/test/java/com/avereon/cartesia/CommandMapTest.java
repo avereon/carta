@@ -3,7 +3,7 @@ package com.avereon.cartesia;
 import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.command.camera.CameraMove;
 import com.avereon.cartesia.command.camera.CameraZoom;
-import com.avereon.cartesia.command.snap.SnapAuto;
+import com.avereon.cartesia.command.snap.AutoSnap;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -61,7 +61,7 @@ public class CommandMapTest extends CommandMapBaseTest {
 			Arguments.of( createMetadata( "select-window-intersect", "select-window-intersect", null, SelectByWindowIntersect.class ), createMouseEvent( MouseEvent.DRAG_DETECTED, MouseButton.PRIMARY, false, true, false, false, true ) ),
 
 			// Auto Snap
-			Arguments.of( createMetadata( "snap-auto-nearest", "snap-auto-nearest", null, SnapAuto.class ),
+			Arguments.of( createMetadata( "snap-auto-nearest", "snap-auto-nearest", null, AutoSnap.class ),
 				createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.SECONDARY, false, false, false, false, false )
 			),
 

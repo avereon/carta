@@ -212,8 +212,13 @@ public abstract class Command {
 		return asPoint( task.getContext().getWorldAnchor(), value );
 	}
 
+	protected Point3D asPoint( CommandTask task ) {
+		if( task.getEvent() instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
+		return null;
+	}
+
 	protected Point3D asPointFromEventOrParameter( CommandTask task, InputEvent event, Object value ) throws Exception {
-		if( event instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
+		if( task.getEvent() instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
 		return asPoint( task.getContext().getWorldAnchor(), value );
 	}
 

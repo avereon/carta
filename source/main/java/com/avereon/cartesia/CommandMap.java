@@ -9,7 +9,7 @@ import com.avereon.cartesia.command.measure.MeasureAngle;
 import com.avereon.cartesia.command.measure.MeasureDistance;
 import com.avereon.cartesia.command.measure.MeasureLength;
 import com.avereon.cartesia.command.measure.MeasurePoint;
-import com.avereon.cartesia.command.snap.SnapAuto;
+import com.avereon.cartesia.command.snap.AutoSnap;
 import com.avereon.cartesia.command.snap.SnapGridToggle;
 import com.avereon.cartesia.command.snap.SnapSelect;
 import com.avereon.cartesia.command.view.ViewCreate;
@@ -193,10 +193,10 @@ public final class CommandMap {
 		//add( product, "snap-grid", SnapSelectCommand.class, new SnapGrid() ); // No one really does this
 
 		// Snap auto commands
-		add( product, "snap-auto-center", SnapAuto.class, new SnapCenter() );
-		add( product, "snap-auto-midpoint", SnapAuto.class, new SnapMidpoint() );
-		add( product, "snap-auto-nearest", SnapAuto.class, new SnapNearestCp() );
-		add( product, "snap-auto-intersection", SnapAuto.class, new SnapIntersection() );
+		add( product, "snap-auto-center", AutoSnap.class, new SnapCenter() );
+		add( product, "snap-auto-midpoint", AutoSnap.class, new SnapMidpoint() );
+		add( product, "snap-auto-nearest", AutoSnap.class, new SnapNearestCp() );
+		add( product, "snap-auto-intersection", AutoSnap.class, new SnapIntersection() );
 		//add( product, "snap-auto-grid", SnapAutoCommand.class, new SnapGrid() ); // No one really does this
 
 		// NOTE: Can't use Alt-Drag on Linux because it is used to move the window

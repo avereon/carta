@@ -81,7 +81,7 @@ public class CadShapes {
 				if( anchor != null ) {
 					point = anchor.add( point );
 				} else {
-					log.atWarn().log( "Missing anchor for relative point: %s", input );
+					log.atDebug().log( "Missing anchor for relative point: %s", input );
 					return null;
 				}
 			}

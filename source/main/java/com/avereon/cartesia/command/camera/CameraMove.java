@@ -45,8 +45,8 @@ public class CameraMove extends CameraCommand {
 		// The situation of one parameter and an event should not occur
 
 		if( paramCount == 2 & noEvent ) {
-			Point3D worldAnchor = asPoint( task, task.getParameter( 0 ) );
-			Point3D worldCorner = asPointFromEventOrParameter( task, event, task.getParameter( 1 ) );
+			Point3D worldAnchor = asPoint( task, 0 );
+			Point3D worldCorner = asPoint( task, 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				task.getTool().pan( worldAnchor, worldCorner, task.getContext().getScreenMouse() );
 				return SUCCESS;
