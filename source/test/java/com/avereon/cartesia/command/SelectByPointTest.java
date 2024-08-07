@@ -14,7 +14,7 @@ import static org.mockito.Mockito.*;
 
 public class SelectByPointTest extends CommandBaseTest {
 
-	private final SelectByPoint command = new SelectByPoint();
+	private final Command command = new SelectByPoint();
 
 	@Test
 	void testExecuteWithNoParameters() throws Exception {
@@ -80,6 +80,7 @@ public class SelectByPointTest extends CommandBaseTest {
 
 		// then
 		verify( tool, times( 1 ) ).screenPointSelect( eq( new Point3D( 48, 17, 0 ) ), eq( false ) );
+		assertThat( event.isConsumed() ).isTrue();
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
@@ -100,6 +101,7 @@ public class SelectByPointTest extends CommandBaseTest {
 
 		// then
 		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
+		assertThat( event.isConsumed() ).isTrue();
 		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
 	}
 

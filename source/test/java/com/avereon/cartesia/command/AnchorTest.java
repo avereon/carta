@@ -69,6 +69,7 @@ public class AnchorTest extends CommandBaseTest {
 		// then
 		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 48, 17, 0 ) ) );
 		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -2, 1, 0 ) ) );
+		assertThat( event.isConsumed() ).isTrue();
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 

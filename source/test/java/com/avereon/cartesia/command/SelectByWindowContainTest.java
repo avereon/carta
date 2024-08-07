@@ -59,6 +59,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Value.class ), eq( new Point3D( -2, 1, 0 ) ) );
+		assertThat( event.isConsumed() ).isTrue();
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
