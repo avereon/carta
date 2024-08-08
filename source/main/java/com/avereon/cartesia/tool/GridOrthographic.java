@@ -2,6 +2,8 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Arithmetic;
+import com.avereon.marea.LineCap;
+import com.avereon.marea.LineJoin;
 import com.avereon.marea.Pen;
 import com.avereon.marea.fx.FxRenderer2d;
 import javafx.geometry.Point2D;
@@ -41,20 +43,12 @@ public class GridOrthographic implements Grid {
 	@Override
 	public void drawMareaGeometryGrid( FxRenderer2d renderer, DesignWorkplane workplane ) {
 		switch( workplane.getGridStyle() ) {
-			case DOT -> drawMareaGridDots1( renderer, workplane );
+			case DOT -> drawMareaGridDots( renderer, workplane );
 			case LINE -> drawMareaGridLines( renderer, workplane );
 		}
 	}
 
-	private void drawMareaGridDots2( FxRenderer2d renderer, DesignWorkplane workplane ) {
-		// TODO Try a new implementation with dashed lines
-	}
-
-	private void drawMareaGridDots1( FxRenderer2d renderer, DesignWorkplane workplane ) {
-		// TODO Can performance be improved by caching some things, the the pens?
-		// TODO Can improve performance by multi-threading the calculations?
-		// TODO Can improve performance by drawing the dots as dashed lines?
-
+	private void drawMareaGridDots( FxRenderer2d renderer, DesignWorkplane workplane ) {
 		Point2D originInParent = renderer.parentToLocal( Point2D.ZERO ).add( workplane.calcSnapGridX(), -workplane.calcSnapGridY() );
 
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
@@ -86,83 +80,63 @@ public class GridOrthographic implements Grid {
 		List<Double> minorOffsetsX = Grid.getOffsets( origin.getX(), minorIntervalX, boundaryX1, boundaryX2 );
 		List<Double> minorOffsetsY = Grid.getOffsets( origin.getY(), minorIntervalY, boundaryY1, boundaryY2 );
 
-		List<Double> majorSpacingOffsetsX = null;
-		List<Double> majorSpacingOffsetsY = null;
-		List<Double> axisSpacingOffsetsX = null;
-		List<Double> axisSpacingOffsetsY = null;
-
 		// Draw the minor grid first so the major grid paints over it
 		if( minorVisible ) {
+			double[] dashSpacingX = new double[]{ 0, snapIntervalX };
+			double[] dashSpacingY = new double[]{ 0, snapIntervalY };
+
 			Point2D minorGridPixels = renderer.localToParent( originInParent.add( workplane.calcSnapGridX(), -workplane.calcSnapGridY() ) );
 			boolean allowMinorGrid = minorGridPixels.getX() >= PIXEL_THRESHOLD && minorGridPixels.getY() >= PIXEL_THRESHOLD;
-			List<Double> snapSpacingOffsetsX = Grid.getOffsets( origin.getX(), snapIntervalX, boundaryX1, boundaryX2 );
-			List<Double> snapSpacingOffsetsY = Grid.getOffsets( origin.getY(), snapIntervalY, boundaryY1, boundaryY2 );
 			if( allowMinorGrid ) {
-				renderer.setDrawPen( new Pen( workplane.calcMinorGridPaint(), workplane.calcMinorGridWidth() ) );
+				renderer.setDrawPen( workplane.calcMinorGridPaint(), workplane.calcMinorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingY, 0 );
 				for( double valueX : minorOffsetsX ) {
-					for( double valueY : snapSpacingOffsetsY ) {
-						renderer.drawLine( valueX, valueY, valueX, valueY );
-					}
+					renderer.drawLine( valueX, 0, valueX, boundaryY2 );
+					renderer.drawLine( valueX, 0, valueX, boundaryY1 );
 				}
-				for( double valueX : snapSpacingOffsetsX ) {
-					for( double valueY : minorOffsetsY ) {
-						renderer.drawLine( valueX, valueY, valueX, valueY );
-					}
+				renderer.setDrawPen( workplane.calcMinorGridPaint(), workplane.calcMinorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingX, 0 );
+				for( double valueY : minorOffsetsY ) {
+					renderer.drawLine( 0, valueY, boundaryX2, valueY );
+					renderer.drawLine( 0, valueY, boundaryX1, valueY );
 				}
 			}
-			majorSpacingOffsetsX = snapSpacingOffsetsX;
-			majorSpacingOffsetsY = snapSpacingOffsetsY;
-			axisSpacingOffsetsX = snapSpacingOffsetsX;
-			axisSpacingOffsetsY = snapSpacingOffsetsY;
 		}
 
 		// Draw the major grid next so the grid axes paint over it
 		if( majorVisible ) {
+			double[] dashSpacingX = new double[]{ 0, minorIntervalX };
+			double[] dashSpacingY = new double[]{ 0, minorIntervalY };
 			Point2D majorGridPixels = renderer.localToParent( originInParent.add( workplane.calcMinorGridX(), -workplane.calcMinorGridY() ) );
 			boolean allowMajorGrid = majorGridPixels.getX() >= PIXEL_THRESHOLD && majorGridPixels.getY() >= PIXEL_THRESHOLD;
-			if( majorSpacingOffsetsX == null ) majorSpacingOffsetsX = majorOffsetsX;
-			if( majorSpacingOffsetsY == null ) majorSpacingOffsetsY = minorOffsetsY;
 			if( allowMajorGrid ) {
-				renderer.setDrawPen( new Pen( workplane.calcMajorGridPaint(), workplane.calcMajorGridWidth() ) );
+				renderer.setDrawPen( workplane.calcMajorGridPaint(), workplane.calcMajorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingY, 0 );
 				for( double valueX : majorOffsetsX ) {
-					for( double valueY : majorSpacingOffsetsY ) {
-						renderer.drawLine( valueX, valueY, valueX, valueY );
-					}
+					renderer.drawLine( valueX, 0, valueX, boundaryY2 );
+					renderer.drawLine( valueX, 0, valueX, boundaryY1 );
 				}
-				for( double valueX : majorSpacingOffsetsX ) {
-					for( double valueY : majorOffsetsY ) {
-						renderer.drawLine( valueX, valueY, valueX, valueY );
-					}
+				renderer.setDrawPen( workplane.calcMajorGridPaint(), workplane.calcMajorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingX, 0 );
+				for( double valueY : majorOffsetsY ) {
+					renderer.drawLine( 0, valueY, boundaryX2, valueY );
+					renderer.drawLine( 0, valueY, boundaryX1, valueY );
 				}
 			}
-			if( axisSpacingOffsetsX == null ) axisSpacingOffsetsX = minorOffsetsX;
-			if( axisSpacingOffsetsY == null ) axisSpacingOffsetsY = minorOffsetsY;
 		}
 
 		// The grid axes are painted last
 		if( axisVisible ) {
+			double[] dashSpacingX = new double[]{ 0, majorIntervalX };
+			double[] dashSpacingY = new double[]{ 0, majorIntervalY };
 			Point2D axisGridPixels = renderer.localToParent( originInParent.add( workplane.calcMajorGridX(), -workplane.calcMajorGridY() ) );
 			boolean allowAxisGrid = axisGridPixels.getX() >= PIXEL_THRESHOLD && axisGridPixels.getY() >= PIXEL_THRESHOLD;
-			if( axisSpacingOffsetsX == null ) axisSpacingOffsetsX = majorOffsetsX;
-			if( axisSpacingOffsetsY == null ) axisSpacingOffsetsY = majorOffsetsY;
-			renderer.setDrawPen( new Pen( workplane.calcGridAxisPaint(), workplane.calcGridAxisWidth() ) );
 			if( allowAxisGrid ) {
+				renderer.setDrawPen( workplane.calcGridAxisPaint(), workplane.calcMajorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingY, 0 );
 				for( double valueX : axisOffsetsX ) {
-					for( double valueY : axisSpacingOffsetsY ) {
-						renderer.drawLine( valueX, valueY, valueX, valueY );
-					}
+					renderer.drawLine( valueX, 0, valueX, boundaryY2 );
+					renderer.drawLine( valueX, 0, valueX, boundaryY1 );
 				}
-				for( double valueX : axisSpacingOffsetsX ) {
-					for( double valueY : axisOffsetsY ) {
-						renderer.drawLine( valueX, valueY, valueX, valueY );
-					}
-				}
-			} else {
-				for( double value : axisOffsetsX ) {
-					renderer.drawLine( boundaryX1, value, boundaryX2, value );
-				}
-				for( double value : axisOffsetsY ) {
-					renderer.drawLine( boundaryX1, value, boundaryX2, value );
+				renderer.setDrawPen( workplane.calcGridAxisPaint(), workplane.calcMajorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingX, 0 );
+				for( double valueY : axisOffsetsY ) {
+					renderer.drawLine( 0, valueY, boundaryX2, valueY );
+					renderer.drawLine( 0, valueY, boundaryX1, valueY );
 				}
 			}
 		}

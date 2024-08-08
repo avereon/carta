@@ -101,7 +101,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
-		return CadMath.evalNoException( getDrawWidthWithInheritance() );
+		return (double)getCache().computeIfAbsent( DRAW_WIDTH, (k) -> CadMath.evalNoException( getDrawWidthWithInheritance() ) );
 	}
 
 	public String getDrawWidthWithInheritance() {
