@@ -81,9 +81,7 @@ public class CommandTask {
 	public Object runTaskStep() throws Exception {
 		// NOTE Be judicious adding logic in this method, it is called for every step in a command
 
-		if( Fx.isFxThread() ) {
-			log.atError().log( "CommandTask.runTaskStep() called on FX thread" );
-		}
+		if( Fx.isFxThread() ) log.atError().log( "CommandTask.runTaskStep() called on FX thread" );
 
 		// If this task is already failed, do not run the step
 		if( result == FAILURE ) return FAILURE;
@@ -94,8 +92,9 @@ public class CommandTask {
 			result = command.execute( this );
 			if( result != INVALID ) command.incrementStep();
 		} finally {
-			if( result != INCOMPLETE ) doComplete();
 			command.setStepExecuted();
+			if( getEvent() != null ) event.consume();
+			if( result != INCOMPLETE ) doComplete();
 		}
 
 		this.result = result;

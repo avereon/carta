@@ -35,7 +35,6 @@ public abstract class SelectByWindow extends SelectCommand {
 		if( paramCount == 0 & hasEvent && event.getEventType() == MouseEvent.DRAG_DETECTED ) {
 			// Submit a Value command to pass the anchor back to this command
 			task.getContext().submit( task.getTool(), new Value(), task.getContext().getWorldAnchor() );
-			event.consume();
 			return INCOMPLETE;
 		}
 
