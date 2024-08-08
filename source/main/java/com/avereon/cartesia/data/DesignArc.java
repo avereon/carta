@@ -8,6 +8,7 @@ import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import javafx.geometry.Point3D;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
 import lombok.CustomLog;
 
@@ -82,6 +83,11 @@ public class DesignArc extends DesignEllipse {
 		return DesignShape.Type.ARC;
 	}
 
+	/**
+	 * Calculate the start angle of the arc.
+	 *
+	 * @return The start angle of the arc
+	 */
 	public double calcStart() {
 		return hasKey( START ) ? getStart() : 0.0;
 	}
@@ -108,12 +114,22 @@ public class DesignArc extends DesignEllipse {
 		return this;
 	}
 
-	public Double calcMid() {
-		return getStart() + 0.5 * getExtent();
+	/**
+	 * Calculate the mid-angle of the arc.
+	 *
+	 * @return The mid-angle of the arc
+	 */
+	public double calcMid() {
+		return calcStart() + 0.5 * calcExtent();
 	}
 
-	public Double calcEnd() {
-		return getStart() + getExtent();
+	/**
+	 * Calculate the end angle of the arc.
+	 *
+	 * @return The end angle of the arc
+	 */
+	public double calcEnd() {
+		return calcStart() + calcExtent();
 	}
 
 	public Point3D calcStartPoint() {
@@ -135,6 +151,17 @@ public class DesignArc extends DesignEllipse {
 	public DesignArc setType( DesignArc.Type value ) {
 		setValue( TYPE, value );
 		return this;
+	}
+
+	/**
+	 * Optimization to avoid calculating the fill paint for arcs since arcs don't
+	 * have a fill.
+	 *
+	 * @return Null as the fill paint
+	 */
+	@Override
+	public Paint calcFillPaint() {
+		return null;
 	}
 
 	@Override

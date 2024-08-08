@@ -534,6 +534,7 @@ public class DesignRenderer extends BorderPane {
 
 			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
 			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
+			Paint boundingDrawPaint = Color.RED;
 
 			// Render the geometry for the layer
 			for( DesignShape shape : orderedShapes ) {
@@ -565,6 +566,13 @@ public class DesignRenderer extends BorderPane {
 						case PATH -> this.drawPath( (DesignPath)shape );
 						case TEXT -> this.drawText( (DesignText)shape );
 					}
+				}
+
+				// NOTE Temporary code to show the bounding box
+				if( 0 == 1 ) {
+					Bounds bounds = shape.getSelectBounds();
+					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
+					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
 				}
 			}
 		}
