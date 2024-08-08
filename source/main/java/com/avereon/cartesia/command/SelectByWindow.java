@@ -42,8 +42,6 @@ public abstract class SelectByWindow extends SelectCommand {
 		if( paramCount == 1 & noEvent ) {
 			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
 			if( worldPoint != null ) {
-				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
-				task.getContext().setWorldAnchor( worldPoint );
 				promptForWindow( task, "select-window-point" );
 				return INCOMPLETE;
 			}
