@@ -1,35 +1,51 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
-import javafx.scene.input.InputEvent;
+import javafx.geometry.Point3D;
+import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
 import java.text.ParseException;
+
 import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class CameraViewPoint extends CameraCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) {
-			promptForPoint( context, "select-viewpoint" );
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getParameterCount() < 1 && task.getEvent() == null ) {
+			promptForPoint( task, "select-viewpoint" );
 			return INCOMPLETE;
 		}
 
-		try {
-			context.getTool().setViewPoint( asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-move-to-viewpoint", exception );
-			context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+		if( task.getEvent() instanceof MouseEvent mouseEvent ) {
+			Point3D mouse = new Point3D( mouseEvent.getX(), mouseEvent.getY(), mouseEvent.getZ() );
+			task.getTool().setViewPoint( task.getTool().screenToWorld( mouse ) );
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		if( task.hasParameter( 0 ) ) {
+			try {
+				Point3D viewPoint = asPoint( task, task.getParameter( 0 ) );
+				if( viewPoint == null ) return INVALID;
+				task.getTool().setViewPoint( viewPoint );
+				return SUCCESS;
+			} catch( ParseException exception ) {
+				// TODO Maybe time to have a CommandException to use for the notice
+				// throw new InvalidParameterException( exception, "unable-to-move-to-viewpoint", task.getParameter( 0 ) );
+				// throw new CommandException( exception, "unable-to-move-to-viewpoint", task.getParameter( 0 ) );
+
+				String title = Rb.text( RbKey.NOTICE, "command-error" );
+				String message = Rb.text( RbKey.NOTICE, "unable-to-move-to-viewpoint", exception );
+				task.getContext().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			}
+		}
+
+		return FAILURE;
 	}
 
 }
