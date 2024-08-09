@@ -89,7 +89,7 @@ jobs:
           if [ $? -ne 0 ]; then exit 1; fi
           scp -B target/${AVN_PRODUCT}-*-javadoc.jar ${{env.AVN_REPO_USERNAME}}@avereon.com:${{env.JAVADOC_DEPLOY_PATH}}/javadoc.jar 2>&1
           if [ $? -ne 0 ]; then exit 1; fi
-          ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p ${{env.JAVADOC_TARGET_PATH}};rm -rf ${{env.JAVADOC_TARGET_PATH}}/*;jar -xf ${{env.JAVADOC_DEPLOY_PATH}}/javadoc.jar -C ${{env.JAVADOC_TARGET_PATH}}"
+          ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p ${{env.JAVADOC_TARGET_PATH}};rm -rf ${{env.JAVADOC_TARGET_PATH}}/*;cd ${{env.JAVADOC_TARGET_PATH}};jar -xf ${{env.JAVADOC_DEPLOY_PATH}}/javadoc.jar;cd -;"
           if [ $? -ne 0 ]; then exit 1; fi
 
       - name: UX Tests
