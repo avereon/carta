@@ -50,14 +50,14 @@ public class CameraZoomWindowTest extends CommandBaseTest {
 	void testExecuteWithOneParameter() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3" );
-		when( tool.worldToScreen( eq( new Point3D( -3, 3, 0 ) ) ) ).thenReturn( new Point3D( 72, 144, 0 ) );
+		//when( tool.worldToScreen( eq( new Point3D( -3, 3, 0 ) ) ) ).thenReturn( new Point3D( 72, 144, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -3, 3, 0 ) ) );
-		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 72, 144, 0 ) ) );
+		verify( commandContext, times( 0 ) ).setWorldAnchor( eq( new Point3D( -3, 3, 0 ) ) );
+		verify( commandContext, times( 0 ) ).setScreenAnchor( eq( new Point3D( 72, 144, 0 ) ) );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 

@@ -5,7 +5,6 @@ import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.zarra.javafx.FxUtil;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
@@ -42,9 +41,9 @@ public class CameraZoomWindow extends CameraCommand {
 		doNotCaptureUndoChanges( task );
 
 		int paramCount = task.getParameters().length;
-		InputEvent event = task.getEvent();
-		boolean noEvent = event == null;
-		boolean hasEvent = !noEvent;
+		//InputEvent event = task.getEvent();
+		//boolean noEvent = event == null;
+		//boolean hasEvent = !noEvent;
 
 		if( paramCount == 0 ) {
 			// Zoom window anchor
@@ -56,8 +55,8 @@ public class CameraZoomWindow extends CameraCommand {
 		if( paramCount == 1 ) {
 			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
 			if( worldPoint != null ) {
-				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
-				task.getContext().setWorldAnchor( worldPoint );
+				//task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
+				//task.getContext().setWorldAnchor( worldPoint );
 				promptForWindow( task, "zoom-window-corner" );
 				return INCOMPLETE;
 			}
