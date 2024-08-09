@@ -73,14 +73,11 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 	void testExecuteWithOneParameter() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-1,1" );
-		//when( tool.worldToScreen( eq( new Point3D( -1, 1, 0 ) ) ) ).thenReturn( new Point3D( 72, 144, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		//verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -1, 1, 0 ) ) );
-		//verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 72, 144, 0 ) ) );
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( any() );
 		assertThat( result ).isEqualTo( INCOMPLETE );

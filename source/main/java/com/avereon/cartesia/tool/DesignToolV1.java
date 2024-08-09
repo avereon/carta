@@ -34,10 +34,7 @@ import com.avereon.xenon.workspace.StatusBar;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -212,6 +209,16 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	@Override
 	public void setZoom( double zoom ) {
 		setView( getViewPoint(), zoom );
+	}
+
+	@Override
+	public DoubleProperty zoomXProperty() {
+		return null;
+	}
+
+	@Override
+	public DoubleProperty zoomYProperty() {
+		return null;
 	}
 
 	@Override

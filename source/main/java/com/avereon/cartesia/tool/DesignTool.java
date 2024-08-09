@@ -9,6 +9,7 @@ import com.avereon.cartesia.data.DesignView;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
@@ -71,6 +72,10 @@ public interface DesignTool {
 	double getZoom();
 
 	void setZoom( double zoom );
+
+	DoubleProperty zoomXProperty();
+
+	DoubleProperty zoomYProperty();
 
 	void setView( DesignPortal portal );
 

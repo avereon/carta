@@ -41,8 +41,6 @@ import java.util.stream.Collectors;
 @CustomLog
 public class DesignRenderer extends BorderPane {
 
-	private static final double INCH_PER_CENTIMETER = DesignUnit.INCH.per(DesignUnit.CENTIMETER);
-
 	private Design design;
 
 	@Getter
@@ -61,8 +59,6 @@ public class DesignRenderer extends BorderPane {
 	private SimpleBooleanProperty referencePointsVisible;
 
 	private SimpleBooleanProperty constructionPointsVisible;
-
-	private boolean renderingLock;
 
 	public DesignRenderer() {
 		// Ensure the minimum layout size can go to zero
@@ -372,15 +368,7 @@ public class DesignRenderer extends BorderPane {
 	 * call from any thread.
 	 */
 	public void render() {
-		//		// NOTE Using the RenderTrigger does work, but not consistently
-		//		//  for example, zooming in and out quickly renders smoothly
-		//		//  but panning quickly does not render smoothly.
-		//		Fx.run( new RenderTrigger() );
-
-		// This implementation does not appear to improve performance
-		// May need to look elsewhere for performance improvements
-		if( renderingLock ) return;
-		Fx.run( this::doRender );
+		Fx.run( new RenderTrigger() );
 	}
 
 	@Override
@@ -482,23 +470,16 @@ public class DesignRenderer extends BorderPane {
 	private void doRender() {
 		long startNs = System.nanoTime();
 
-		try {
-			renderingLock = true;
+		// Update the workplane bounds to match the renderer pane
+		workplane.setBounds( renderer.parentToLocal( renderer.getBoundsInParent() ) );
 
-			// Update the workplane bounds to match the renderer pane
-			workplane.setBounds( renderer.parentToLocal( renderer.getBoundsInParent() ) );
+		renderer.clear();
+		renderWorkplane();
+		renderLayers();
+		renderReferenceGeometry();
+		renderHintGeometry();
+		renderSelectAperture();
 
-			renderer.clear();
-			renderWorkplane();
-			renderLayers();
-			renderReferenceGeometry();
-			renderHintGeometry();
-			renderSelectAperture();
-
-		} finally {
-			// Ensure the rendering lock is cleared
-			renderingLock = false;
-		}
 		long endNs = System.nanoTime();
 		long duration = (long)(0.000001 * (endNs - startNs));
 
