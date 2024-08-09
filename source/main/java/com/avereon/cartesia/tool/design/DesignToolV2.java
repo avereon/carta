@@ -990,7 +990,10 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public DesignPortal getPriorPortal() {
+		// Remove the current portal
 		if( !portalStack.isEmpty() ) portalStack.pop();
+
+		// Return the prior portal
 		return portalStack.isEmpty() ? DesignPortal.DEFAULT : portalStack.pop();
 	}
 
