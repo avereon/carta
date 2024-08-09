@@ -26,25 +26,40 @@ public class ValueTest extends CommandBaseTest {
 	@Test
 	void executeWithOneParameter() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "one parameter" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "one" );
 
 		// when
 		Object result = task.runTaskStep();
+		// The result should be the parameter array
 
 		// then
-		assertThat( result ).isEqualTo( "one parameter" );
+		assertThat( result ).isEqualTo( new Object[]{ "one" } );
+	}
+
+	@Test
+	void executeWithMultipleParameter() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "one", "two", "three" );
+
+		// when
+		Object result = task.runTaskStep();
+		// The result should be the parameter array
+
+		// then
+		assertThat( result ).isEqualTo( new Object[]{ "one", "two", "three" } );
 	}
 
 	@Test
 	void executeWithArrayParameter() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, (Object)new String[]{ "one parameter", "two parameter" } );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, (Object)new String[]{ "one", "two", "three" } );
 
 		// when
 		Object result = task.runTaskStep();
+		// The result should be the parameter array
 
 		// then
-		assertThat( result ).isEqualTo( new String[]{ "one parameter", "two parameter" } );
+		assertThat( result ).isEqualTo( new Object[]{ new String[]{ "one", "two", "three" } } );
 	}
 
 }
