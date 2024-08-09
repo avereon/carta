@@ -14,6 +14,8 @@ import static com.avereon.cartesia.command.Command.Result.*;
 @CustomLog
 public class CameraMove extends CameraCommand {
 
+	private Point3D originalViewPoint;
+
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
 		int paramCount = task.getParameters().length;
@@ -27,16 +29,18 @@ public class CameraMove extends CameraCommand {
 		}
 
 		if( paramCount == 0 & hasEvent && event.getEventType() == MouseEvent.DRAG_DETECTED ) {
+			event.consume();
+
+			originalViewPoint = task.getTool().getViewPoint();
+
 			// Submit a Value command to pass the anchor back to this command
 			task.getContext().submit( task.getTool(), new Value(), task.getContext().getWorldAnchor() );
 			return INCOMPLETE;
 		}
 
 		if( paramCount == 1 & noEvent ) {
-			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
-			if( worldPoint != null ) {
-				task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
-				task.getContext().setWorldAnchor( worldPoint );
+			Point3D worldAnchor = asPoint( task, task.getParameter( 0 ) );
+			if( worldAnchor != null ) {
 				promptForPoint( task, "pan-point" );
 				return INCOMPLETE;
 			}
@@ -48,7 +52,7 @@ public class CameraMove extends CameraCommand {
 			Point3D worldAnchor = asPoint( task, 0 );
 			Point3D worldCorner = asPoint( task, 1 );
 			if( worldAnchor != null && worldCorner != null ) {
-				task.getTool().pan( worldAnchor, worldCorner, task.getContext().getScreenMouse() );
+				task.getTool().setViewPoint( originalViewPoint.add( worldAnchor.subtract( worldCorner ) ) );
 				return SUCCESS;
 			}
 		}
@@ -59,15 +63,29 @@ public class CameraMove extends CameraCommand {
 	@Override
 	public void handle( DesignCommandContext context, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = context.getScreenMouse();
+		Point3D anchor = context.getScreenAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
-			tool.pan( context.getWorldAnchor(), anchor, mouse );
+			Point3D screenOffset = anchor.subtract( mouse );
+			Point3D worldOffset = tool.scaleScreenToWorld( new Point3D( screenOffset.getX(), -1.0 * screenOffset.getY(), 0 ) );
+			tool.setViewPoint( originalViewPoint.add( worldOffset ) );
+			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
-			// Submit a Value command to pass the point back to this command
-			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
+			Point3D screenOffset = anchor.subtract( mouse );
+			Point3D worldOffset = tool.scaleScreenToWorld( new Point3D( screenOffset.getX(), -1.0 * screenOffset.getY(), 0 ) );
+			tool.getCommandContext().submit( tool, new Value(), context.getWorldAnchor().subtract( worldOffset ) );
+			event.consume();
 		}
+	}
+
+	/**
+	 * For testing purposes only.
+	 *
+	 * @param originalViewPoint The original view point
+	 */
+	void setOriginalViewPoint( Point3D originalViewPoint ) {
+		this.originalViewPoint = originalViewPoint;
 	}
 
 }

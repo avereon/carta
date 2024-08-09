@@ -754,11 +754,24 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
+	@Deprecated
 	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
 		if( viewAnchor == null ) throw new NullPointerException( "View anchor cannot be null" );
 		if( dragAnchor == null ) throw new NullPointerException( "Drag anchor cannot be null" );
 		if( point == null ) throw new NullPointerException( "Point cannot be null" );
 		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
+	}
+
+	public Point3D scaleScreenToWorld( Point3D point ) {
+		double scaleX = renderer.getInternalScaleX();
+		double scaleY = renderer.getInternalScaleY();
+		return new Point3D( point.getX() / scaleX, point.getY() / scaleY, point.getZ() );
+	}
+
+	public Point3D scaleWorldToScreen( Point3D point ) {
+		double scaleX = renderer.getInternalScaleX();
+		double scaleY = renderer.getInternalScaleY();
+		return new Point3D( point.getX() * scaleX, point.getY() * scaleY, point.getZ() );
 	}
 
 	@Override

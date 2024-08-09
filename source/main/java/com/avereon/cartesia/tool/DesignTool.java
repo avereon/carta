@@ -171,6 +171,10 @@ public interface DesignTool {
 	 */
 	void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
 
+	Point3D scaleScreenToWorld( Point3D point );
+
+	Point3D scaleWorldToScreen( Point3D point );
+
 	Point3D screenToWorkplane( Point3D point );
 
 	Point3D screenToWorkplane( double x, double y, double z );

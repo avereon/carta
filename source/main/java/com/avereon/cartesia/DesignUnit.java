@@ -39,4 +39,8 @@ public enum DesignUnit {
 		return value * unit.conversion / conversion;
 	}
 
+	public double per( DesignUnit unit ) {
+		return unit.conversion / conversion;
+	}
+
 }

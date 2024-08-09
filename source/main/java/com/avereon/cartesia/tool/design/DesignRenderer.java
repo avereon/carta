@@ -41,6 +41,8 @@ import java.util.stream.Collectors;
 @CustomLog
 public class DesignRenderer extends BorderPane {
 
+	private static final double INCH_PER_CENTIMETER = DesignUnit.INCH.per(DesignUnit.CENTIMETER);
+
 	private Design design;
 
 	@Getter
@@ -348,16 +350,17 @@ public class DesignRenderer extends BorderPane {
 	/**
 	 * Change the view point due to mouse movement.
 	 *
-	 * @param viewAnchor The view point location before being dragged (world)
+	 * @param viewpointAnchor The view point location before being dragged (world)
 	 * @param dragAnchor The point where the mouse was pressed (screen)
-	 * @param point The new view point (screen)
+	 * @param dragTarget The new view point (screen)
 	 */
-	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
+	@Deprecated
+	public void pan( Point3D viewpointAnchor, Point3D dragAnchor, Point3D dragTarget ) {
 		// Convert the view anchor to screen coordinates
-		Point3D anchor = renderer.localToParent( viewAnchor );
+		Point3D anchor = renderer.localToParent( viewpointAnchor );
 
 		// Calculate the drag offset in screen coordinates
-		Point3D delta = dragAnchor.subtract( point );
+		Point3D delta = dragAnchor.subtract( dragTarget );
 
 		// Set the new viewpoint in world coordinates
 		renderer.setViewpoint( renderer.parentToLocal( anchor.add( delta ) ) );
@@ -429,17 +432,6 @@ public class DesignRenderer extends BorderPane {
 	public Bounds parentToLocal( Bounds parentBounds ) {
 		return renderer.parentToLocal( parentBounds );
 	}
-
-	//	@Deprecated
-	//	public List<DesignShape> screenPointSelect( Point3D point, DesignValue tolerance ) {
-	//		double size = realToWorld( tolerance );
-	//		return worldPointSelect( parentToLocal( point ), new Point3D( size, size, 0 ) );
-	//	}
-
-	//	@Deprecated
-	//	public List<DesignShape> screenWindowSelect( Point3D a, Point3D b, boolean intersect ) {
-	//		return worldWindowSelect( parentToLocal( a ), parentToLocal( b ), intersect );
-	//	}
 
 	public List<DesignShape> worldPointFind( Point3D anchor, DesignValue tolerance ) {
 		return worldPointFind( anchor, realToWorld( tolerance ) );
@@ -742,9 +734,17 @@ public class DesignRenderer extends BorderPane {
 		}
 	}
 
-	//	private double getInternalScale() {
-	//		return this.getDpiX() * getZoomX();
-	//	}
+	double getInternalScaleX() {
+		// TODO This value can be cached
+		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
+		return scale * renderer.getPpiX() * getZoomX();
+	}
+
+	double getInternalScaleY() {
+		// TODO This value can be cached
+		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
+		return scale * renderer.getPpiY() * getZoomY();
+	}
 
 	/**
 	 * Select nodes using a shape. The selecting shape can be any shape but it

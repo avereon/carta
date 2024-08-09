@@ -35,10 +35,12 @@ public class Prompt extends Command {
 			return INCOMPLETE;
 		}
 
-		if( task.hasParameter( 0 ) ) {
+		if( task.getParameterCount() > 0 ) {
 			task.getContext().getCommandPrompt().clear();
 			task.getTool().setCursor( null );
-			return task.getParameter( 0 );
+
+			// Must return all parameters
+			return task.getParameters();
 		}
 
 		return FAILURE;

@@ -409,6 +409,14 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, point ) );
 	}
 
+	public Point3D scaleScreenToWorld( Point3D point ){
+		return null;
+	}
+
+	public Point3D scaleWorldToScreen( Point3D point ){
+		return null;
+	}
+
 	@Override
 	public Point3D screenToWorkplane( Point3D point ) {
 		return screenToWorkplane( point.getX(), point.getY(), point.getZ() );

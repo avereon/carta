@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.tool.CommandTask;
@@ -20,7 +19,7 @@ import static org.mockito.Mockito.*;
 
 public class CameraMoveTest extends CommandBaseTest {
 
-	private final Command command = new CameraMove();
+	private final CameraMove command = new CameraMove();
 
 	/**
 	 * Camera move with no parameters or event, should prompt the
@@ -78,7 +77,7 @@ public class CameraMoveTest extends CommandBaseTest {
 	void testExecuteWithOneParameter() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-1,1" );
-		when( tool.worldToScreen( eq( new Point3D( -1, 1, 0 ) ) ) ).thenReturn( new Point3D( 72, 144, 0 ) );
+		//when( tool.worldToScreen( eq( new Point3D( -1, 1, 0 ) ) ) ).thenReturn( new Point3D( 72, 144, 0 ) );
 		// Use the CLOSED_HAND cursor as a reticle cursor
 		when( tool.getReticleCursor() ).thenReturn( Cursor.CLOSED_HAND );
 
@@ -86,8 +85,8 @@ public class CameraMoveTest extends CommandBaseTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -1, 1, 0 ) ) );
-		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 72, 144, 0 ) ) );
+		//verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -1, 1, 0 ) ) );
+		//verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 72, 144, 0 ) ) );
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
 		assertThat( result ).isEqualTo( INCOMPLETE );
@@ -102,14 +101,14 @@ public class CameraMoveTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithTwoParameters() throws Exception {
 		// given
+		command.setOriginalViewPoint( new Point3D( 0, 0, 0 ) );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
-		when( commandContext.getScreenMouse() ).thenReturn( new Point3D( 47, 92, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).pan( eq( new Point3D( -3, 3, 0 ) ), eq( new Point3D( 3, -3, 0 ) ), eq( new Point3D( 47, 92, 0 ) ) );
+		verify( tool, times( 1 ) ).setViewPoint( eq( new Point3D( -6, 6, 0 ) ) );
 		verify( tool, times( 0 ) ).setCursor( any() );
 		verify( commandPrompt, times( 0 ) ).clear();
 		assertThat( result ).isEqualTo( SUCCESS );

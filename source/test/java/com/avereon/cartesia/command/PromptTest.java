@@ -37,11 +37,28 @@ public class PromptTest extends CommandBaseTest {
 
 		// when
 		Object result = task.runTaskStep();
+		// The result should be the parameter array
 
 		// then
 		verify( commandPrompt, times( 1 ) ).clear();
 		verify( tool ).setCursor( eq( null ) );
-		assertThat( result ).isEqualTo(  "Hi!" );
+		assertThat( result ).isEqualTo( new Object[]{ "Hi!" } );
+	}
+
+	@Test
+	void testExecuteWithMultipleParameters() throws Exception {
+		// given
+		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "one", "two", "three" );
+
+		// when
+		Object result = task.runTaskStep();
+		// The result should be the parameter array
+
+		// then
+		verify( commandPrompt, times( 1 ) ).clear();
+		verify( tool ).setCursor( eq( null ) );
+		assertThat( result ).isEqualTo( new Object[]{ "one", "two", "three" } );
 	}
 
 	@Test
@@ -52,11 +69,12 @@ public class PromptTest extends CommandBaseTest {
 
 		// when
 		Object result = task.runTaskStep();
+		// The result should be the parameter array
 
 		// then
 		verify( commandPrompt, times( 1 ) ).clear();
 		verify( tool ).setCursor( eq( null ) );
-		assertThat( result ).isEqualTo( new String[]{ "one", "two", "three" } );
+		assertThat( result ).isEqualTo( new Object[]{ new String[]{ "one", "two", "three" } } );
 	}
 
 }
