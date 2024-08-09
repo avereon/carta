@@ -1,10 +1,9 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.view.DesignPaneMarea;
-import javafx.scene.input.InputEvent;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 /**
  * Zoom out from the design. This has the effect of making the design smaller or
@@ -17,8 +16,8 @@ import static com.avereon.cartesia.command.Command.Result.*;
 public class CameraZoomOut extends CameraZoom {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) {
-		zoomByFactor( context.getTool(), context.getTool().getViewPoint(), DesignPaneMarea.ZOOM_OUT_FACTOR );
+	public Object execute( CommandTask task ) {
+		zoomByFactor( task.getTool(), task.getTool().getViewPoint(), DesignPaneMarea.ZOOM_OUT_FACTOR );
 		return SUCCESS;
 	}
 
