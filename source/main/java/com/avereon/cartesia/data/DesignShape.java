@@ -67,6 +67,7 @@ public abstract class DesignShape extends DesignDrawable {
 	 */
 	@Getter
 	@Setter
+	@Deprecated
 	private boolean preview;
 
 	// Convenience method for rendering

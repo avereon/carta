@@ -360,8 +360,12 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		return designPane.getLayers().stream().filter( filter ).map( y -> (DesignLayer)DesignShapeView.getDesignData( y ) ).collect( Collectors.toList() );
 	}
 
-	// FIXME This really should return design shapes and not FX shapes
+	public ObservableList<DesignShape> previewShapes() {
+		return null;
+	}
+
 	@Override
+	@Deprecated
 	public List<Shape> getVisibleFxShapes() {
 		return designPane.getVisibleShapes();
 	}

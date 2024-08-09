@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DrawCommandTest {
 
 	// Make a concrete class, so we can test the abstract methods
-	DrawCommand command = new DrawCommand() {};
+	private final DrawCommand command = new DrawCommand() {};
 
 	@Test
 	void testDeriveRotate() {

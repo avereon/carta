@@ -402,12 +402,16 @@ public abstract class Command {
 		addPreview( context, List.of( shapes ) );
 	}
 
-	protected void addPreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
+	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
+		task.getTool().previewShapes().addAll( shapes );
 		this.preview.addAll( shapes );
-		this.preview.forEach( s -> {
-			s.setPreview( true );
-			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
-		} );
+	}
+
+	@Deprecated
+	protected void addPreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
+		shapes.forEach( s -> s.setPreview( true ) );
+		context.getTool().previewShapes().addAll( shapes );
+		this.preview.addAll( shapes );
 	}
 
 	protected void resetPreviewGeometry() {

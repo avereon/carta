@@ -52,6 +52,8 @@ public class DesignRenderer extends BorderPane {
 
 	private final ObservableList<DesignLayer> visibleLayers;
 
+	private final ObservableList<DesignShape> previewShapes;
+
 	private SimpleBooleanProperty gridVisible;
 
 	private final SimpleObjectProperty<DesignShape> selectAperture;
@@ -68,6 +70,7 @@ public class DesignRenderer extends BorderPane {
 
 		enabledLayers = FXCollections.observableArrayList();
 		visibleLayers = FXCollections.observableArrayList();
+		previewShapes = FXCollections.observableArrayList();
 		selectAperture = new SimpleObjectProperty<>();
 
 		workplane = new DesignWorkplane();
@@ -96,6 +99,7 @@ public class DesignRenderer extends BorderPane {
 
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
+		previewShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 	}
 
@@ -237,6 +241,21 @@ public class DesignRenderer extends BorderPane {
 	 */
 	public ObservableList<DesignLayer> enabledLayers() {
 		return enabledLayers;
+	}
+
+	// Preview Shapes ------------------------------------------------------------
+	public List<DesignShape> getPreviewShapes() {
+		return previewShapes;
+	}
+
+	public void setPreviewShapes( Collection<DesignShape> layers ) {
+		previewShapes.clear();
+		previewShapes.addAll( layers );
+		render();
+	}
+
+	public ObservableList<DesignShape> previewShapes() {
+		return previewShapes;
 	}
 
 	// Visible Shapes ------------------------------------------------------------
@@ -504,49 +523,51 @@ public class DesignRenderer extends BorderPane {
 		for( DesignLayer layer : orderedLayers ) {
 			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
 			Collections.sort( orderedShapes );
+			renderShapes( orderedShapes );
+		}
+	}
 
-			Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
-			Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
-			Paint boundingDrawPaint = Color.RED;
+	private void renderShapes( List<DesignShape> orderedShapes ) {
+		Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
+		Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
 
-			// Render the geometry for the layer
-			for( DesignShape shape : orderedShapes ) {
-				boolean selected = shape.isSelected();
+		Paint boundingDrawPaint = Color.RED;
+		for( DesignShape shape : orderedShapes ) {
+			boolean selected = shape.isSelected();
 
-				Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
-				Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
+			Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
+			Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
 
-				// Fill the shape
-				if( fillPaint != null ) {
-					switch( shape.getType() ) {
-						case BOX -> this.fillBox( (DesignBox)shape );
-						case ELLIPSE -> this.fillEllipse( (DesignEllipse)shape );
-						case PATH -> this.fillPath( (DesignPath)shape );
-						case TEXT -> this.fillText( (DesignText)shape );
-					}
+			// Fill the shape
+			if( fillPaint != null ) {
+				switch( shape.getType() ) {
+					case BOX -> this.fillBox( (DesignBox)shape );
+					case ELLIPSE -> this.fillEllipse( (DesignEllipse)shape );
+					case PATH -> this.fillPath( (DesignPath)shape );
+					case TEXT -> this.fillText( (DesignText)shape );
 				}
+			}
 
-				// Draw the shape
-				if( drawPaint != null ) {
-					switch( shape.getType() ) {
-						case ARC -> this.drawArc( (DesignArc)shape );
-						case BOX -> this.drawBox( (DesignBox)shape );
-						case CUBIC -> this.drawCubic( (DesignCubic)shape );
-						case ELLIPSE -> this.drawEllipse( (DesignEllipse)shape );
-						case LINE -> this.drawLine( (DesignLine)shape );
-						case MARKER -> this.drawMarker( (DesignMarker)shape );
-						case QUAD -> this.drawQuad( (DesignQuad)shape );
-						case PATH -> this.drawPath( (DesignPath)shape );
-						case TEXT -> this.drawText( (DesignText)shape );
-					}
+			// Draw the shape
+			if( drawPaint != null ) {
+				switch( shape.getType() ) {
+					case ARC -> this.drawArc( (DesignArc)shape );
+					case BOX -> this.drawBox( (DesignBox)shape );
+					case CUBIC -> this.drawCubic( (DesignCubic)shape );
+					case ELLIPSE -> this.drawEllipse( (DesignEllipse)shape );
+					case LINE -> this.drawLine( (DesignLine)shape );
+					case MARKER -> this.drawMarker( (DesignMarker)shape );
+					case QUAD -> this.drawQuad( (DesignQuad)shape );
+					case PATH -> this.drawPath( (DesignPath)shape );
+					case TEXT -> this.drawText( (DesignText)shape );
 				}
+			}
 
-				// NOTE Temporary code to show the bounding box
-				if( 0 == 1 ) {
-					Bounds bounds = shape.getSelectBounds();
-					renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
-					renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
-				}
+			// NOTE Temporary code to show the bounding box
+			if( 0 == 1 ) {
+				Bounds bounds = shape.getSelectBounds();
+				renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
+				renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
 			}
 		}
 	}

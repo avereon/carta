@@ -139,8 +139,9 @@ public interface DesignTool {
 	 */
 	List<DesignLayer> getVisibleLayers();
 
+	ObservableList<DesignShape> previewShapes();
+
 	@Deprecated
-		// FIXME This really should return design shapes and not FX shapes
 	List<Shape> getVisibleFxShapes();
 
 	List<DesignShape> getVisibleShapes();
