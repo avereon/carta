@@ -18,10 +18,6 @@ import javafx.scene.shape.Shape;
  */
 public abstract class BaseDesignTool extends GuidedTool implements DesignTool, EventTarget, WritableIdentity {
 
-	public static final boolean DEFAULT_GRID_SNAP_ENABLED = true;
-
-	public static final boolean DEFAULT_GRID_VISIBLE = true;
-
 	protected static final String RETICLE = "reticle";
 
 	protected static final String SELECT_APERTURE_SIZE = "select-aperture-size";
@@ -51,6 +47,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected static final String GRID_VISIBLE = "grid-visible";
 
 	protected static final String GRID_SNAP_ENABLED = "grid-snap";
+
+	// TODO This is not connected to the grid pixel threshold yet
+	protected static final double MINIMUM_GRID_PIXELS = 3.0;
 
 	// FX properties (what others should be here?)
 

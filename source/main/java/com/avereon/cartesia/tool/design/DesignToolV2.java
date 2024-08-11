@@ -63,14 +63,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	// DEFAULTS
 
-	public static final Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
-
-	public static final DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MILLIMETER );
-
-	public static final Paint DEFAULT_SELECT_DRAW = Paints.parse( "#ff00c0ff" );
-
-	public static final Paint DEFAULT_SELECT_FILL = Paints.parse( "#ff00c040" );
-
 	// KEYS
 
 	private static final String CURRENT_LAYER = "current-layer";
@@ -102,13 +94,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private final ObjectProperty<DesignValue> selectTolerance;
 
-	//private final ObjectProperty<DesignShape> selectAperture;
-
 	private final ObjectProperty<DesignLayer> currentLayer;
-
-	private final StringProperty selectDrawPaint;
-
-	private final StringProperty selectFillPaint;
 
 	// OPTIONAL TOOL PROPERTIES
 	// The renderer might also have some properties that should be exposed
@@ -155,17 +141,21 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Create and associate the workplane and renderer
 		renderer = new DesignRenderer();
+		renderer.setApertureDrawPaint( DEFAULT_APERTURE_DRAW );
+		renderer.setApertureFillPaint( DEFAULT_APERTURE_FILL );
+		renderer.setPreviewDrawPaint( DEFAULT_PREVIEW_DRAW );
+		renderer.setPreviewFillPaint( DEFAULT_PREVIEW_FILL );
+		renderer.setSelectedDrawPaint( DEFAULT_SELECTED_DRAW );
+		renderer.setSelectedFillPaint( DEFAULT_SELECTED_FILL );
 
 		// TODO Move this to tool settings like reticle and aperture
 		renderer.getWorkplane().setGridStyle( GridStyle.DOT );
 
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
-		//selectAperture = new SimpleObjectProperty<>();
+
 		currentLayer = new SimpleObjectProperty<>();
 		currentView = new SimpleObjectProperty<>();
-		selectDrawPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_DRAW ) );
-		selectFillPaint = new SimpleStringProperty( Paints.toString( DEFAULT_SELECT_FILL ) );
 
 		// Actions
 		printAction = new PrintAction( product.getProgram() );
@@ -879,11 +869,7 @@ public class DesignToolV2 extends BaseDesignTool {
 			selectAperture = new DesignBox( x, y, w, h );
 		}
 
-		if( selectAperture != null ) {
-			selectAperture.setFillPaint( selectFillPaint.get() );
-			selectAperture.setDrawPaint( selectDrawPaint.get() );
-		}
-		renderer.selectAperture().set( selectAperture );
+		renderer.setSelectAperture( selectAperture );
 	}
 
 	@Override
@@ -971,7 +957,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		ObservableList<DesignShape> selectedShapes = getDesignContext().getSelectedShapes();
 		if( toggle ) {
 			shapes.forEach( shape -> {
-				if( renderer.isShapeSelected( shape ) ) {
+				if( shape.isSelected() ) {
 					selectedShapes.remove( shape );
 				} else {
 					selectedShapes.add( shape );

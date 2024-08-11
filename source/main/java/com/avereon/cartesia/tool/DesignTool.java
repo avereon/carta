@@ -1,7 +1,9 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
+import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -22,6 +24,26 @@ import java.util.Collection;
 import java.util.List;
 
 public interface DesignTool {
+
+	DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MILLIMETER );
+
+	Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
+
+	String DEFAULT_APERTURE_DRAW = "#c0c000ff";
+
+	String DEFAULT_APERTURE_FILL = "#c0c00040";
+
+	String DEFAULT_PREVIEW_DRAW = "#ff00c0ff";
+
+	String DEFAULT_PREVIEW_FILL = "#ff00c040";
+
+	String DEFAULT_SELECTED_DRAW = "#ff00c0ff";
+
+	String DEFAULT_SELECTED_FILL = "#ff00c040";
+
+	boolean DEFAULT_GRID_SNAP_ENABLED = true;
+
+	boolean DEFAULT_GRID_VISIBLE = true;
 
 	XenonProgram getProgram();
 

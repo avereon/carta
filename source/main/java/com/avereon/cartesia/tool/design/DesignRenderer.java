@@ -18,6 +18,7 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -63,6 +64,18 @@ public class DesignRenderer extends BorderPane {
 
 	private SimpleBooleanProperty constructionPointsVisible;
 
+	private final SimpleStringProperty apertureDrawPaint;
+
+	private final SimpleStringProperty apertureFillPaint;
+
+	private final SimpleStringProperty selectedDrawPaint;
+
+	private final SimpleStringProperty selectedFillPaint;
+
+	private final SimpleStringProperty previewDrawPaint;
+
+	private final SimpleStringProperty previewFillPaint;
+
 	public DesignRenderer() {
 		// Ensure the minimum layout size can go to zero
 		// This fixes a problem where the parentToLocal and localToParent methods
@@ -70,9 +83,19 @@ public class DesignRenderer extends BorderPane {
 		setMinSize( 0, 0 );
 
 		selectAperture = new SimpleObjectProperty<>();
+		apertureDrawPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.YELLOW, 0.8 ) ) );
+		apertureFillPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.YELLOW, 0.2 ) ) );
+		selectedDrawPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.MAGENTA, 0.8 ) ) );
+		selectedFillPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.MAGENTA, 0.2 ) ) );
+
 		enabledLayers = FXCollections.observableArrayList();
 		visibleLayers = FXCollections.observableArrayList();
+
+		previewDrawPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.MAGENTA, 0.8 ) ) );
+		previewFillPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.MAGENTA, 0.2 ) ) );
 		previewLayer = new DesignLayer();
+		previewLayer.setDrawPaint( getPreviewDrawPaint() );
+		previewLayer.setFillPaint( getPreviewFillPaint() );
 
 		workplane = new DesignWorkplane();
 
@@ -253,6 +276,10 @@ public class DesignRenderer extends BorderPane {
 	// Select Aperture -----------------------------------------------------------
 
 	public void setSelectAperture( DesignShape aperture ) {
+		if( aperture != null ) {
+			aperture.setDrawPaint( getApertureDrawPaint() );
+			aperture.setFillPaint( getApertureFillPaint() );
+		}
 		selectAperture.set( aperture );
 	}
 
@@ -264,10 +291,112 @@ public class DesignRenderer extends BorderPane {
 		return selectAperture;
 	}
 
-	// Selected Shapes -----------------------------------------------------------
+	public Paint calcApertureDrawPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getApertureDrawPaint() );
+	}
 
-	public boolean isShapeSelected( DesignShape shape ) {
-		return shape.isSelected();
+	public String getApertureDrawPaint() {
+		return apertureDrawPaint.get();
+	}
+
+	public void setApertureDrawPaint( String paint ) {
+		apertureDrawPaint.set( paint );
+		if( selectAperture.get() != null ) selectAperture.get().setDrawPaint( paint );
+	}
+
+	public SimpleStringProperty apertureDrawPaint() {
+		return apertureDrawPaint;
+	}
+
+	public Paint calcApertureFillPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getApertureFillPaint() );
+	}
+
+	public String getApertureFillPaint() {
+		return apertureFillPaint.get();
+	}
+
+	public void setApertureFillPaint( String paint ) {
+		apertureFillPaint.set( paint );
+		if( selectAperture.get() != null ) selectAperture.get().setFillPaint( paint );
+	}
+
+	public SimpleStringProperty apertureFillPaint() {
+		return apertureFillPaint;
+	}
+
+	// Selected Paints -----------------------------------------------------------
+
+	public Paint calcSelectedDrawPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getSelectedDrawPaint() );
+	}
+
+	public String getSelectedDrawPaint() {
+		return selectedDrawPaint.get();
+	}
+
+	public void setSelectedDrawPaint( String paint ) {
+		selectedDrawPaint.set( paint );
+	}
+
+	public SimpleStringProperty selectedDrawPaint() {
+		return selectedDrawPaint;
+	}
+
+	public Paint calcSelectedFillPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getSelectedFillPaint() );
+	}
+
+	public String getSelectedFillPaint() {
+		return selectedFillPaint.get();
+	}
+
+	public void setSelectedFillPaint( String paint ) {
+		selectedFillPaint.set( paint );
+	}
+
+	public SimpleStringProperty selectedFillPaint() {
+		return selectedFillPaint;
+	}
+
+	// Preview Paints -----------------------------------------------------------
+
+	public Paint calcPreviewDrawPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getPreviewDrawPaint() );
+	}
+
+	public String getPreviewDrawPaint() {
+		return previewDrawPaint.get();
+	}
+
+	public void setPreviewDrawPaint( String paint ) {
+		previewDrawPaint.set( paint );
+	}
+
+	public SimpleStringProperty previewDrawPaint() {
+		return previewDrawPaint;
+	}
+
+	public Paint calcPreviewFillPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getPreviewFillPaint() );
+	}
+
+	public String getPreviewFillPaint() {
+		return previewFillPaint.get();
+	}
+
+	public void setPreviewFillPaint( String paint ) {
+		previewFillPaint.set( paint );
+	}
+
+	public SimpleStringProperty previewFillPaint() {
+		return previewFillPaint;
 	}
 
 	// Other ---------------------------------------------------------------------
@@ -516,15 +645,12 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderShapes( List<DesignShape> orderedShapes ) {
-		Paint selectedFillPaint = Colors.translucent( Color.MAGENTA, 0.2 );
-		Paint selectedDrawPaint = Colors.translucent( Color.MAGENTA, 0.8 );
-
 		Paint boundingDrawPaint = Color.RED;
 		for( DesignShape shape : orderedShapes ) {
 			boolean selected = shape.isSelected();
 
-			Paint fillPaint = setFillPen( shape, selected, selectedFillPaint );
-			Paint drawPaint = setDrawPen( shape, selected, selectedDrawPaint );
+			Paint drawPaint = setDrawPen( shape, selected, calcSelectedDrawPaint() );
+			Paint fillPaint = setFillPen( shape, selected, calcSelectedFillPaint() );
 
 			// Fill the shape
 			if( fillPaint != null ) {
@@ -554,7 +680,7 @@ public class DesignRenderer extends BorderPane {
 			// NOTE Temporary code to show the bounding box
 			if( 0 == 1 ) {
 				Bounds bounds = shape.getSelectBounds();
-				renderer.setDrawPen( selected ? selectedDrawPaint : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
+				renderer.setDrawPen( selected ? calcSelectedDrawPaint() : boundingDrawPaint, 0.01, LineCap.valueOf( shape.calcDrawCap().name() ), LineJoin.ROUND, null, 0.0, false );
 				renderer.drawBox( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight(), 0 );
 			}
 		}
@@ -707,6 +833,7 @@ public class DesignRenderer extends BorderPane {
 		Paint drawColor = setDrawPen( aperture, false, null );
 
 		if( aperture instanceof DesignEllipse ellipse ) {
+			drawEllipse( ellipse );
 			double x = ellipse.getOrigin().getX() - ellipse.getRadii().getX();
 			double y = ellipse.getOrigin().getY() - ellipse.getRadii().getY();
 			double w = 2 * ellipse.getRadii().getX();
