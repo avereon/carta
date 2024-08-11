@@ -360,8 +360,8 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		return designPane.getLayers().stream().filter( filter ).map( y -> (DesignLayer)DesignShapeView.getDesignData( y ) ).collect( Collectors.toList() );
 	}
 
-	public ObservableList<DesignShape> previewShapes() {
-		return null;
+	public DesignLayer getPreviewLayer() {
+		return new DesignLayer();
 	}
 
 	@Override

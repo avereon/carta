@@ -139,7 +139,7 @@ public interface DesignTool {
 	 */
 	List<DesignLayer> getVisibleLayers();
 
-	ObservableList<DesignShape> previewShapes();
+	DesignLayer getPreviewLayer();
 
 	@Deprecated
 	List<Shape> getVisibleFxShapes();

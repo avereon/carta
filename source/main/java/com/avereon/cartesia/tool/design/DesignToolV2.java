@@ -702,12 +702,8 @@ public class DesignToolV2 extends BaseDesignTool {
 		}
 	}
 
-	public List<DesignShape> getPreviewShapes() {
-		return new ArrayList<>( previewShapes() );
-	}
-
-	public ObservableList<DesignShape> previewShapes() {
-		return renderer.previewShapes();
+	public DesignLayer getPreviewLayer() {
+		return renderer.getPreviewLayer();
 	}
 
 	@Override

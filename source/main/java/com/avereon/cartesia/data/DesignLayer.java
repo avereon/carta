@@ -237,6 +237,16 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		return this;
 	}
 
+	public DesignLayer addShapes( Collection<DesignShape> shapes ) {
+		addToSet( SHAPES, shapes );
+		return this;
+	}
+
+	public DesignLayer removeShapes( Collection<DesignShape> shapes ) {
+		removeFromSet( SHAPES, shapes );
+		return this;
+	}
+
 	@SuppressWarnings( "UnusedReturnValue" )
 	public <T extends DesignDrawable> T addDrawable( T drawable ) {
 		if( drawable instanceof DesignShape ) {

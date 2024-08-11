@@ -2,6 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
 public class CommandBaseTest extends BaseCartesiaUnitTest {
@@ -44,6 +46,12 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	@Mock
 	protected CommandPrompt commandPrompt;
 
+	@Mock
+	protected DesignLayer currentLayer;
+
+	@Mock
+	protected DesignLayer previewLayer;
+
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
@@ -53,6 +61,8 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
+		lenient().when( tool.getCurrentLayer() ).thenReturn( currentLayer );
+		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
 		lenient().when( designContext.getProduct() ).thenReturn( product );
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );

@@ -403,14 +403,15 @@ public abstract class Command {
 	}
 
 	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
-		task.getTool().previewShapes().addAll( shapes );
+		shapes.forEach( s -> s.setPreview( true ) );
+		task.getTool().getPreviewLayer().addShapes( shapes );
 		this.preview.addAll( shapes );
 	}
 
 	@Deprecated
 	protected void addPreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		shapes.forEach( s -> s.setPreview( true ) );
-		context.getTool().previewShapes().addAll( shapes );
+		context.getTool().getPreviewLayer().addShapes( shapes );
 		this.preview.addAll( shapes );
 	}
 
@@ -429,14 +430,14 @@ public abstract class Command {
 
 	protected void removePreview( CommandTask task, Collection<DesignShape> shapes ) {
 		if( shapes == null ) return;
-		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		task.getTool().getPreviewLayer().removeShapes( shapes );
 		preview.removeAll( shapes );
 	}
 
 	@Deprecated
 	protected void removePreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		if( shapes == null ) return;
-		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		context.getTool().getPreviewLayer().removeShapes( shapes );
 		preview.removeAll( shapes );
 	}
 

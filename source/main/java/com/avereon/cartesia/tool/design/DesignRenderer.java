@@ -48,15 +48,16 @@ public class DesignRenderer extends BorderPane {
 
 	private final FxRenderer2d renderer;
 
+	private final SimpleObjectProperty<DesignShape> selectAperture;
+
 	private final ObservableList<DesignLayer> enabledLayers;
 
 	private final ObservableList<DesignLayer> visibleLayers;
 
-	private final ObservableList<DesignShape> previewShapes;
+	@Getter
+	private final DesignLayer previewLayer;
 
 	private SimpleBooleanProperty gridVisible;
-
-	private final SimpleObjectProperty<DesignShape> selectAperture;
 
 	private SimpleBooleanProperty referencePointsVisible;
 
@@ -68,10 +69,10 @@ public class DesignRenderer extends BorderPane {
 		// did not work correctly.
 		setMinSize( 0, 0 );
 
+		selectAperture = new SimpleObjectProperty<>();
 		enabledLayers = FXCollections.observableArrayList();
 		visibleLayers = FXCollections.observableArrayList();
-		previewShapes = FXCollections.observableArrayList();
-		selectAperture = new SimpleObjectProperty<>();
+		previewLayer = new DesignLayer();
 
 		workplane = new DesignWorkplane();
 
@@ -97,10 +98,10 @@ public class DesignRenderer extends BorderPane {
 		renderer.widthProperty().addListener( ( p, o, n ) -> render() );
 		renderer.heightProperty().addListener( ( p, o, n ) -> render() );
 
+		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
-		previewShapes.addListener( (ListChangeListener<? super DesignShape>)( c ) -> render() );
-		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
+		previewLayer.register( NodeEvent.ANY, e -> render() );
 	}
 
 	public void setDesign( Design design ) {
@@ -241,21 +242,6 @@ public class DesignRenderer extends BorderPane {
 	 */
 	public ObservableList<DesignLayer> enabledLayers() {
 		return enabledLayers;
-	}
-
-	// Preview Shapes ------------------------------------------------------------
-	public List<DesignShape> getPreviewShapes() {
-		return previewShapes;
-	}
-
-	public void setPreviewShapes( Collection<DesignShape> layers ) {
-		previewShapes.clear();
-		previewShapes.addAll( layers );
-		render();
-	}
-
-	public ObservableList<DesignShape> previewShapes() {
-		return previewShapes;
 	}
 
 	// Visible Shapes ------------------------------------------------------------
@@ -520,11 +506,13 @@ public class DesignRenderer extends BorderPane {
 		// Render the layers in reverse order
 		orderedLayers.sort( Collections.reverseOrder() );
 
-		for( DesignLayer layer : orderedLayers ) {
-			List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
-			Collections.sort( orderedShapes );
-			renderShapes( orderedShapes );
-		}
+		orderedLayers.forEach( this::renderLayer );
+	}
+
+	private void renderLayer( DesignLayer layer ) {
+		List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
+		Collections.sort( orderedShapes );
+		renderShapes( orderedShapes );
 	}
 
 	private void renderShapes( List<DesignShape> orderedShapes ) {
@@ -702,6 +690,7 @@ public class DesignRenderer extends BorderPane {
 		//  - temporary geometry are things like preview geometry for commands
 
 		// TODO Render temporary geometry
+		renderLayer( previewLayer );
 	}
 
 	private void renderReferenceGeometry() {
