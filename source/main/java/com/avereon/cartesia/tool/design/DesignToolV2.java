@@ -441,6 +441,8 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Remove asset switch listener to unregister status bar items
 		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
 
+		if(renderer!= null ) renderer.setDesign( null );
+
 		super.deallocate();
 	}
 

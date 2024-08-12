@@ -97,6 +97,7 @@ public abstract class Command {
 
 	private final Collection<DesignShape> reference;
 
+	@Getter
 	private final Collection<DesignShape> preview;
 
 	private final Map<DesignShape, DesignShape> previewMap;
@@ -395,10 +396,6 @@ public abstract class Command {
 		reference.clear();
 	}
 
-	public Collection<DesignShape> getPreview() {
-		return this.preview;
-	}
-
 	protected void addPreview( CommandTask task, DesignShape... shapes ) {
 		addPreview( task, List.of( shapes ) );
 	}
@@ -408,22 +405,16 @@ public abstract class Command {
 		addPreview( context, List.of( shapes ) );
 	}
 
-	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
-		// In a prior version, the shape was added to the current layer to give it
-		// all the attributes it needed to render properly. With a preview layer,
-		// the shape would need to have all those attributes set here.
-		DesignLayer currentLayer = task.getTool().getCurrentLayer();
-		shapes.forEach( s -> {
-			s.setDrawPaint(  currentLayer.getDrawPaint() );
-			s.setDrawWidth( currentLayer.getDrawWidth() );
-			s.setDrawPattern( currentLayer.getDrawPattern() );
-			//s.setDrawPatternOffset( currentLayer.getDrawPatternOffset() );
-			s.setDrawCap( currentLayer.getDrawCap() );
-			s.setDrawJoin( currentLayer.getDrawJoin() );
-			//s.setDrawMiterLimit( currentLayer.getDrawMiterLimit() );
-		} );
+	protected DesignShape setAttributesFromLayer( DesignShape shape, DesignLayer layer ) {
+		shape.setDrawPaint( layer.getDrawPaint() );
+		shape.setDrawWidth( layer.getDrawWidth() );
+		shape.setDrawPattern( layer.getDrawPattern() );
+		shape.setDrawCap( layer.getDrawCap() );
+		shape.setDrawJoin( layer.getDrawJoin() );
+		return shape;
+	}
 
-		//shapes.forEach( s -> s.setPreview( true ) );
+	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
 		task.getTool().getPreviewLayer().addShapes( shapes );
 		this.preview.addAll( shapes );
 	}

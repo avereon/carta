@@ -7,6 +7,7 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.DesignWorkplane;
 import com.avereon.data.NodeEvent;
+import com.avereon.event.EventHandler;
 import com.avereon.marea.Font;
 import com.avereon.marea.LineCap;
 import com.avereon.marea.LineJoin;
@@ -58,6 +59,8 @@ public class DesignRenderer extends BorderPane {
 	@Getter
 	private final DesignLayer previewLayer;
 
+	// Properties ----------------------------------------------------------------
+
 	private SimpleBooleanProperty gridVisible;
 
 	private SimpleBooleanProperty referencePointsVisible;
@@ -75,6 +78,12 @@ public class DesignRenderer extends BorderPane {
 	private final SimpleStringProperty previewDrawPaint;
 
 	private final SimpleStringProperty previewFillPaint;
+
+	// Listeners -----------------------------------------------------------------
+
+	private final EventHandler<NodeEvent> designWatcher = e -> render();
+
+	private final EventHandler<NodeEvent> unitValueWatcher = e -> setLengthUnit( e.getNewValue() );
 
 	public DesignRenderer() {
 		// Ensure the minimum layout size can go to zero
@@ -128,14 +137,23 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	public void setDesign( Design design ) {
+		if( this.design != null ) {
+			this.design.unregister( NodeEvent.ANY, designWatcher );
+			this.design.unregister( Design.UNIT, unitValueWatcher );
+		}
+
 		this.design = design;
 
-		// Configure the rendering unit
-		RenderUnit renderUnit = RenderUnit.valueOf( design.getDesignUnit().toUpperCase() );
-		renderer.setLengthUnit( renderUnit );
-		this.design.register( Design.UNIT, e -> setLengthUnit( e.getNewValue() ) );
+		if( this.design != null ) {
+			// Configure the rendering unit
+			renderer.setLengthUnit( RenderUnit.valueOf( design.getDesignUnit().toUpperCase() ) );
 
-		visibleLayers.addAll( design.getAllLayers() );
+			// Add listeners
+			this.design.register( Design.UNIT, unitValueWatcher );
+			this.design.register( NodeEvent.ANY, designWatcher );
+
+			visibleLayers.addAll( design.getAllLayers() );
+		}
 	}
 
 	public DesignContext getDesignContext() {

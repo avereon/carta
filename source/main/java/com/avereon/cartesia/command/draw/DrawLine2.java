@@ -21,14 +21,14 @@ public class DrawLine2 extends DrawCommand {
 
 		// Step 1
 		if( task.getParameterCount() == 0 ) {
-			addPreview( task, preview = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() ) );
+			if( preview == null ) addPreview( task, preview = createPreviewLine( task ) );
 			promptForPoint( task, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
-			if( preview == null ) addPreview( task, preview = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() ) );
+			if( preview == null ) addPreview( task, preview = createPreviewLine( task ) );
 			preview.setOrigin( asPoint( task, 0 ) );
 			promptForPoint( task, "end-point" );
 			return INCOMPLETE;
@@ -62,13 +62,10 @@ public class DrawLine2 extends DrawCommand {
 		}
 	}
 
-	/**
-	 * For testing purposes only.
-	 *
-	 * @param preview The preview line
-	 */
-	void setPreview( DesignLine preview ) {
-		this.preview = preview;
+	private DesignLine createPreviewLine( CommandTask task ) {
+		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
+		addPreview( task, setAttributesFromLayer( line, task.getTool().getCurrentLayer() ) );
+		return line;
 	}
 
 }
