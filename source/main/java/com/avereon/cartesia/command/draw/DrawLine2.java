@@ -21,13 +21,14 @@ public class DrawLine2 extends DrawCommand {
 
 		// Step 1
 		if( task.getParameterCount() == 0 ) {
-			addPreview( task.getContext(), preview = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() ) );
+			addPreview( task, preview = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() ) );
 			promptForPoint( task, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
-		if( task.getParameterCount() < 2 ) {
+		if( task.getParameterCount() == 1 ) {
+			if( preview == null ) addPreview( task, preview = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() ) );
 			preview.setOrigin( asPoint( task, 0 ) );
 			promptForPoint( task, "end-point" );
 			return INCOMPLETE;

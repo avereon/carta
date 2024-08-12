@@ -10,6 +10,7 @@ import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.zarra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.shape.StrokeType;
 import lombok.CustomLog;
 
@@ -31,7 +32,11 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String DRAW_CAP = "draw-cap";
 
+	public static final String DRAW_JOIN = "draw-join";
+
 	public static final String DRAW_PATTERN = "draw-pattern";
+
+	// Do we want to do draw pattern offset or draw pattern alignment (start, middle, end)?
 
 	public static final String FILL_PAINT = "fill-paint";
 
@@ -168,6 +173,8 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
+	// Draw Cap ------------------------------------------------------------------
+
 	public StrokeLineCap calcDrawCap() {
 		return StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
 	}
@@ -188,6 +195,31 @@ public abstract class DesignDrawable extends DesignNode {
 		setValue( DRAW_CAP, cap );
 		return this;
 	}
+
+	// Draw Join -----------------------------------------------------------------
+
+	public StrokeLineJoin calcDrawJoin() {
+		return StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
+	}
+
+	public String getDrawJoinWithInheritance() {
+		String join = getDrawJoin();
+		if( isCustomValue( join ) ) return join;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_DRAW_JOIN : layer.getDrawJoin();
+	}
+
+	public String getDrawJoin() {
+		return getValue( DRAW_JOIN );
+	}
+
+	public DesignDrawable setDrawJoin( String join ) {
+		setValue( DRAW_JOIN, join );
+		return this;
+	}
+
+	// Fill Paint ----------------------------------------------------------------
 
 	public Paint calcFillPaint() {
 		String value = getFillPaintWithInheritance();
@@ -211,6 +243,8 @@ public abstract class DesignDrawable extends DesignNode {
 		setValue( FILL_PAINT, paint );
 		return this;
 	}
+
+	// Virtual values ------------------------------------------------------------
 
 	@Override
 	@SuppressWarnings( "unchecked" )

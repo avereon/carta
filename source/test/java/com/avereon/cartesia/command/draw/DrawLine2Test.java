@@ -4,7 +4,6 @@ import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandTask;
-import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
 
@@ -39,6 +38,8 @@ public class DrawLine2Test extends CommandBaseTest {
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
+		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
+		assertThat( command.getPreview() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
@@ -52,12 +53,13 @@ public class DrawLine2Test extends CommandBaseTest {
 	void testExecuteWithOneParameter() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3" );
-		command.setPreview( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
+		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
+		assertThat( command.getPreview() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
@@ -72,13 +74,13 @@ public class DrawLine2Test extends CommandBaseTest {
 	void testExecuteWithTwoParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
-		command.setPreview( new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 0, 0, 0 ) ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
+		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 

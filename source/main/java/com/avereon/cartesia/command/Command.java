@@ -4,6 +4,7 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.DesignEllipse;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.CommandTask;
@@ -394,16 +395,35 @@ public abstract class Command {
 		reference.clear();
 	}
 
-	protected Collection<DesignShape> getPreview() {
+	public Collection<DesignShape> getPreview() {
 		return this.preview;
 	}
 
+	protected void addPreview( CommandTask task, DesignShape... shapes ) {
+		addPreview( task, List.of( shapes ) );
+	}
+
+	@Deprecated
 	protected void addPreview( DesignCommandContext context, DesignShape... shapes ) {
 		addPreview( context, List.of( shapes ) );
 	}
 
 	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
-		shapes.forEach( s -> s.setPreview( true ) );
+		// In a prior version, the shape was added to the current layer to give it
+		// all the attributes it needed to render properly. With a preview layer,
+		// the shape would need to have all those attributes set here.
+		DesignLayer currentLayer = task.getTool().getCurrentLayer();
+		shapes.forEach( s -> {
+			s.setDrawPaint(  currentLayer.getDrawPaint() );
+			s.setDrawWidth( currentLayer.getDrawWidth() );
+			s.setDrawPattern( currentLayer.getDrawPattern() );
+			//s.setDrawPatternOffset( currentLayer.getDrawPatternOffset() );
+			s.setDrawCap( currentLayer.getDrawCap() );
+			s.setDrawJoin( currentLayer.getDrawJoin() );
+			//s.setDrawMiterLimit( currentLayer.getDrawMiterLimit() );
+		} );
+
+		//shapes.forEach( s -> s.setPreview( true ) );
 		task.getTool().getPreviewLayer().addShapes( shapes );
 		this.preview.addAll( shapes );
 	}
