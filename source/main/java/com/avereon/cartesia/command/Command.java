@@ -119,14 +119,14 @@ public abstract class Command {
 	 * <p>
 	 * The result of the command execution is one of the following:
 	 * </p>
-	 *   <ul>
-	 *     <li>An object - The result of the successful command execution</li>
-	 *     <li>{@link Result#SUCCESS} - The command executed successfully, but doesn't have a return value</li>
-	 *     <li>{@link Result#INCOMPLETE} - The command needs more parameters</li>
-	 *     <li>{@link Result#INVALID} - The command received an invalid parameter</li>
-	 *     <li>{@link Result#FAILURE} - The command failed to execute</li>
-	 *     <li>Exception - The command failed to execute</li>
-	 *    </ul>
+	 * <ul>
+	 *   <li>An object - The result of the successful command execution</li>
+	 *   <li>{@link Result#SUCCESS} - The command executed successfully, but doesn't have a return value</li>
+	 *   <li>{@link Result#INCOMPLETE} - The command needs more parameters</li>
+	 *   <li>{@link Result#INVALID} - The command received an invalid parameter</li>
+	 *   <li>{@link Result#FAILURE} - The command failed to execute</li>
+	 *   <li>Exception - The command failed to execute</li>
+	 *  </ul>
 	 *
 	 * @param task The command task to execute
 	 * @return The result of the command execution
@@ -348,11 +348,13 @@ public abstract class Command {
 		return this.reference;
 	}
 
+	@Deprecated
 	protected void addReference( DesignCommandContext context, DesignShape... shapes ) {
 		addReference( context, List.of( shapes ) );
 	}
 
-	protected void addReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
+	@Deprecated
+	private void addReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		this.reference.addAll( shapes );
 		final String referencePaint = Paints.toString( context.getTool().getSelectedDrawPaint() );
 		this.reference.forEach( s -> {
