@@ -7,21 +7,17 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.stream.Stream;
-
-import static com.avereon.cartesia.command.Command.Result.*;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class DrawArc2Test extends CommandBaseTest {
+public class DrawArc3Test extends CommandBaseTest {
 
-	private final DrawArc2 command = new DrawArc2();
+	private final DrawArc3 command = new DrawArc3();
 
 	/**
 	 * Draw arc with no parameters or event, should prompt the
@@ -63,21 +59,6 @@ public class DrawArc2Test extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-	@Test
-	void testRunTaskStepWithFourParameters() throws Exception {
-		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "8,3", "1,0", "1,1", "0" );
-
-		// when
-		Object result = task.runTaskStep();
-
-		// then
-		verify( currentLayer, times( 1 ) ).addShape( any( DesignArc.class ) );
-		assertThat( command.getReference() ).hasSize( 0 );
-		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( result ).isEqualTo( SUCCESS );
-	}
-
 	// Stepped tests -------------------------------------------------------------
 
 	@Test
@@ -96,10 +77,10 @@ public class DrawArc2Test extends CommandBaseTest {
 		// then
 		verify( commandContext, times( 2 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
+		// There is not enough information to provide a preview arc, so a reference line is used
 		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
 		assertThat( command.getReference() ).hasSize( 1 );
-		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignArc.class );
-		assertThat( command.getPreview() ).hasSize( 1 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
@@ -121,8 +102,8 @@ public class DrawArc2Test extends CommandBaseTest {
 		// then
 		verify( commandContext, times( 3 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
-		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
-		assertThat( command.getReference() ).hasSize( 1 );
+		// The reference line is replaced with a preview arc
+		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignArc.class );
 		assertThat( command.getPreview() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
@@ -151,46 +132,4 @@ public class DrawArc2Test extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-	// Bad Parameter Tests -------------------------------------------------------
-
-	@ParameterizedTest
-	@MethodSource("provideParametersForTestWithParameters")
-	void testRunTaskStepWithBadParameters(Object... parameters) throws Exception {
-		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, parameters );
-
-		// when
-		Object result = task.runTaskStep();
-
-		// then
-		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
-		verify( currentLayer, times( 0 ) ).addShape( any() );
-		assertThat( command.getReference() ).hasSize( 0 );
-		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( result ).isEqualTo( INVALID );
-	}
-
-	private static Stream<Arguments> provideParametersForTestWithParameters() {
-		return Stream.of(
-			Arguments.of( (Object)new String[] {"bad parameter" } ),
-			Arguments.of( (Object)new String[] {"8,3", "bad parameter"} ),
-			Arguments.of( (Object)new String[] {"8,3", "1,0", "bad parameter"} )
-			//Arguments.of( (Object)new String[] {"8,3", "1,0", "1,1", "bad parameter"} )
-		);
-	}
-
-	@Test
-	void testExecuteWithBadParameterFiveIsIgnored() throws Exception {
-		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "8,3", "1,0", "1,1", "0", "bad parameter" );
-
-		// when
-		Object result = task.runTaskStep();
-
-		// then
-		verify( currentLayer, times( 1 ) ).addShape( any( DesignArc.class ) );
-		assertThat( command.getReference() ).hasSize( 0 );
-		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( result ).isEqualTo( SUCCESS );
-	}
 }

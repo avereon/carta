@@ -39,10 +39,13 @@ public class DrawArc2 extends DrawCommand {
 
 		// Step 2 - Get origin, prompt for start
 		if( task.getParameterCount() == 1 ) {
-			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			Point3D origin = asPoint( task, 0 );
+			if( origin == null ) return INVALID;
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setOrigin( origin );
 			referenceLine.setPoint( origin );
+
 			if( previewArc == null ) previewArc = createPreviewArc( task, origin );
 			promptForPoint( task, "start" );
 			return INCOMPLETE;
@@ -51,16 +54,21 @@ public class DrawArc2 extends DrawCommand {
 		// Step 3 - Get start, prompt for extent
 		if( task.getParameterCount() == 2 ) {
 			Point3D origin = asPoint( task, 0 );
-			Point3D point = asPoint( task, 1 );
+			if( origin == null ) return INVALID;
+			Point3D startPoint = asPoint( task, 1 );
+			if( startPoint == null ) return INVALID;
+
 			if( previewArc == null ) addPreview( task, previewArc = createPreviewArc( task, origin ) );
-			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), point ) );
-			previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), point ) );
+			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), startPoint ) );
+			previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), startPoint ) );
 			previewArc.setExtent( 0.0 );
-			spinAnchor = point;
+			spinAnchor = startPoint;
+
 			promptForPoint( task, "extent" );
 			return INCOMPLETE;
 		}
 
+		// NEXT Make up my mind how I want to handle exceptions
 		if( task.hasParameter( 3 ) ) spin = asDouble( task.getParameter( 3 ) );
 
 		if( task.hasParameter( 2 ) ) {
@@ -69,8 +77,11 @@ public class DrawArc2 extends DrawCommand {
 
 			try {
 				Point3D origin = asPoint( task, 0 );
+				if( origin == null ) return INVALID;
 				Point3D startPoint = asPoint( task, 1 );
+				if( startPoint == null ) return INVALID;
 				Point3D extentPoint = asPoint( task, 2 );
+				if( extentPoint == null ) return INVALID;
 				double radius = CadGeometry.distance( origin, startPoint );
 				double start = deriveStart( origin, radius, radius, 0.0, startPoint );
 				double extent = deriveExtent( origin, radius, radius, 0.0, start, extentPoint, spin );
@@ -115,18 +126,6 @@ public class DrawArc2 extends DrawCommand {
 				}
 			}
 		}
-	}
-
-	private DesignLine createReferenceLine( CommandTask task ) {
-		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
-		addReference( task, line );
-		return line;
-	}
-
-	private DesignArc createPreviewArc( CommandTask task, Point3D origin ) {
-		DesignArc arc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
-		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );
-		return arc;
 	}
 
 }
