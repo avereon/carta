@@ -23,7 +23,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
-import static org.mockito.Mockito.when;
 
 @ExtendWith( MockitoExtension.class )
 public class CommandBaseTest extends BaseCartesiaUnitTest {
@@ -52,6 +51,9 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 	@Mock
 	protected DesignLayer previewLayer;
 
+	@Mock
+	protected DesignLayer referenceLayer;
+
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
@@ -63,6 +65,7 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
 		lenient().when( tool.getCurrentLayer() ).thenReturn( currentLayer );
 		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
+		lenient().when( tool.getReferenceLayer() ).thenReturn( referenceLayer );
 		lenient().when( designContext.getProduct() ).thenReturn( product );
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
@@ -116,7 +119,19 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		return createMouseEvent( type, button, control, shift, alt, meta, moved, x, y, 0 );
 	}
 
-	protected static MouseEvent createMouseEvent( Object source, EventTarget target,EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved, double x, double y ) {
+	protected static MouseEvent createMouseEvent(
+		Object source,
+		EventTarget target,
+		EventType<MouseEvent> type,
+		MouseButton button,
+		boolean control,
+		boolean shift,
+		boolean alt,
+		boolean meta,
+		boolean moved,
+		double x,
+		double y
+	) {
 		return createMouseEvent( source, target, type, button, control, shift, alt, meta, moved, x, y, 0 );
 	}
 

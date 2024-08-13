@@ -7,8 +7,7 @@ import com.avereon.cartesia.tool.CommandTask;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
 
-import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
-import static com.avereon.cartesia.command.Command.Result.SUCCESS;
+import static com.avereon.cartesia.command.Command.Result.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -80,6 +79,52 @@ public class DrawLine2Test extends CommandBaseTest {
 
 		// then
 		verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
+	@Test
+	void testRunTaskStepWithInvalidParameterOne() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INVALID );
+	}
+
+	@Test
+	void testRunTaskStepWithInvalidParameterTwo() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,3", "bad parameter" );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INVALID );
+	}
+
+	@Test
+	void testExecuteWithBadParameterThreeIsIgnored() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", "bad parameter" );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
+		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}

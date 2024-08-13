@@ -59,6 +59,9 @@ public class DesignRenderer extends BorderPane {
 	@Getter
 	private final DesignLayer previewLayer;
 
+	@Getter
+	private final DesignLayer referenceLayer;
+
 	// Properties ----------------------------------------------------------------
 
 	private SimpleBooleanProperty gridVisible;
@@ -78,6 +81,10 @@ public class DesignRenderer extends BorderPane {
 	private final SimpleStringProperty previewDrawPaint;
 
 	private final SimpleStringProperty previewFillPaint;
+
+	private final SimpleStringProperty referenceDrawPaint;
+
+	private final SimpleStringProperty referenceFillPaint;
 
 	// Listeners -----------------------------------------------------------------
 
@@ -105,6 +112,12 @@ public class DesignRenderer extends BorderPane {
 		previewLayer = new DesignLayer();
 		previewLayer.setDrawPaint( getPreviewDrawPaint() );
 		previewLayer.setFillPaint( getPreviewFillPaint() );
+
+		referenceDrawPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.MAGENTA, 0.8 ) ) );
+		referenceFillPaint = new SimpleStringProperty( Colors.toString( Colors.translucent( Color.MAGENTA, 0.2 ) ) );
+		referenceLayer = new DesignLayer();
+		referenceLayer.setDrawPaint( getReferenceDrawPaint() );
+		referenceLayer.setFillPaint( getReferenceFillPaint() );
 
 		workplane = new DesignWorkplane();
 
@@ -415,6 +428,42 @@ public class DesignRenderer extends BorderPane {
 
 	public SimpleStringProperty previewFillPaint() {
 		return previewFillPaint;
+	}
+
+	// Reference Paints ----------------------------------------------------------
+
+	public Paint calcReferenceDrawPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getReferenceDrawPaint() );
+	}
+
+	public String getReferenceDrawPaint() {
+		return referenceDrawPaint.get();
+	}
+
+	public void setReferenceDrawPaint( String paint ) {
+		referenceDrawPaint.set( paint );
+	}
+
+	public SimpleStringProperty referenceDrawPaint() {
+		return referenceDrawPaint;
+	}
+
+	public Paint calcReferenceFillPaint() {
+		// TODO Cache this value for rendering performance
+		return Colors.parse( getReferenceFillPaint() );
+	}
+
+	public String getReferenceFillPaint() {
+		return referenceFillPaint.get();
+	}
+
+	public void setReferenceFillPaint( String paint ) {
+		referenceFillPaint.set( paint );
+	}
+
+	public SimpleStringProperty referenceFillPaint() {
+		return referenceFillPaint;
 	}
 
 	// Other ---------------------------------------------------------------------

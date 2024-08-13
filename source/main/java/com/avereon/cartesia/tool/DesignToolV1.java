@@ -364,6 +364,10 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		return new DesignLayer();
 	}
 
+	public DesignLayer getReferenceLayer() {
+		return new DesignLayer();
+	}
+
 	@Override
 	@Deprecated
 	public List<Shape> getVisibleFxShapes() {

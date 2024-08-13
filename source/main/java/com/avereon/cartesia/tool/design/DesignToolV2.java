@@ -694,8 +694,14 @@ public class DesignToolV2 extends BaseDesignTool {
 		}
 	}
 
+	@Override
 	public DesignLayer getPreviewLayer() {
 		return renderer.getPreviewLayer();
+	}
+
+	@Override
+	public DesignLayer getReferenceLayer() {
+		return renderer.getReferenceLayer();
 	}
 
 	@Override

@@ -95,6 +95,7 @@ public abstract class Command {
 		FAILURE
 	}
 
+	@Getter
 	private final Collection<DesignShape> reference;
 
 	@Getter
@@ -109,9 +110,9 @@ public abstract class Command {
 	private boolean stepExecuted;
 
 	protected Command() {
-		this.reference = new CopyOnWriteArraySet<>();
 		this.preview = new CopyOnWriteArraySet<>();
 		this.previewMap = new ConcurrentHashMap<>();
+		this.reference = new CopyOnWriteArraySet<>();
 	}
 
 	/**
@@ -344,8 +345,17 @@ public abstract class Command {
 		context.getTool().getAsset().setCaptureUndoChanges( enabled );
 	}
 
-	protected Collection<DesignShape> getReference() {
-		return this.reference;
+	protected void addReference( CommandTask task, DesignShape... shapes ) {
+		addReference( task, List.of( shapes ) );
+	}
+
+	private void addReference( CommandTask task, Collection<DesignShape> shapes ) {
+		task.getTool().getReferenceLayer().addShapes( shapes );
+		this.reference.addAll( shapes );
+	}
+
+	protected void removeReference( CommandTask task, DesignShape... shapes ) {
+		removeReference( task, List.of( shapes ) );
 	}
 
 	@Deprecated
@@ -363,10 +373,6 @@ public abstract class Command {
 			// FIXME Should there be a specific reference layer? UX says yes!
 			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
 		} );
-	}
-
-	protected void removeReference( CommandTask task, DesignShape... shapes ) {
-		removeReference( task, List.of( shapes ) );
 	}
 
 	@Deprecated

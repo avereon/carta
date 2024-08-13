@@ -163,6 +163,8 @@ public interface DesignTool {
 
 	DesignLayer getPreviewLayer();
 
+	DesignLayer getReferenceLayer();
+
 	@Deprecated
 	List<Shape> getVisibleFxShapes();
 

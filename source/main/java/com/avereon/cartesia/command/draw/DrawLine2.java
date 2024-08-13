@@ -21,25 +21,29 @@ public class DrawLine2 extends DrawCommand {
 
 		// Step 1
 		if( task.getParameterCount() == 0 ) {
-			if( preview == null ) addPreview( task, preview = createPreviewLine( task ) );
+			if( preview == null ) preview = createPreviewLine( task );
 			promptForPoint( task, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
-			if( preview == null ) addPreview( task, preview = createPreviewLine( task ) );
-			preview.setOrigin( asPoint( task, 0 ) );
+			if( preview == null ) preview = createPreviewLine( task );
+			Point3D origin = asPoint( task, 0 );
+			if( origin == null ) return INVALID;
+			preview.setOrigin( origin );
 			promptForPoint( task, "end-point" );
 			return INCOMPLETE;
 		}
 
-		if( task.getParameterCount() == 2 ) {
+		if( task.hasParameter( 1 ) ) {
 			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
 			Point3D origin = asPoint( task, 0 );
+			if( origin == null ) return INVALID;
 			Point3D point = asPoint( task, 1 );
+			if( point == null ) return INVALID;
 
 			// Start an undo multi-change
 			task.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
