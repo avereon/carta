@@ -1,21 +1,20 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
+import com.avereon.cartesia.math.CadMathExpressionException;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
-import com.avereon.product.Rb;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
-
-import java.text.ParseException;
+import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.*;
 
+@CustomLog
 public class DrawArc2 extends DrawCommand {
 
 	private DesignLine referenceLine;
@@ -40,7 +39,8 @@ public class DrawArc2 extends DrawCommand {
 		// Step 2 - Get origin, prompt for start
 		if( task.getParameterCount() == 1 ) {
 			Point3D origin = asPoint( task, 0 );
-			if( origin == null ) return INVALID;
+
+			if( origin == null ) throw new InvalidInputException( task.getCommand(), "center", task.getParameter( 0 ) );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setOrigin( origin );
@@ -54,9 +54,9 @@ public class DrawArc2 extends DrawCommand {
 		// Step 3 - Get start, prompt for extent
 		if( task.getParameterCount() == 2 ) {
 			Point3D origin = asPoint( task, 0 );
-			if( origin == null ) return INVALID;
+			if( origin == null ) throw new InvalidInputException( task.getCommand(), "center", task.getParameter( 0 ) );
 			Point3D startPoint = asPoint( task, 1 );
-			if( startPoint == null ) return INVALID;
+			if( startPoint == null ) throw new InvalidInputException( task.getCommand(), "start", task.getParameter( 1 ) );
 
 			if( previewArc == null ) addPreview( task, previewArc = createPreviewArc( task, origin ) );
 			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), startPoint ) );
@@ -68,30 +68,29 @@ public class DrawArc2 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		// NEXT Make up my mind how I want to handle exceptions
-		if( task.hasParameter( 3 ) ) spin = asDouble( task.getParameter( 3 ) );
+		if( task.hasParameter( 3 ) ) {
+			try {
+				spin = asDouble( task.getParameter( 3 ) );
+			} catch( CadMathExpressionException exception ) {
+				throw new InvalidInputException( task.getCommand(), "spin", task.getParameter( 3 ) );
+			}
+		}
 
 		if( task.hasParameter( 2 ) ) {
 			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
-			try {
-				Point3D origin = asPoint( task, 0 );
-				if( origin == null ) return INVALID;
-				Point3D startPoint = asPoint( task, 1 );
-				if( startPoint == null ) return INVALID;
-				Point3D extentPoint = asPoint( task, 2 );
-				if( extentPoint == null ) return INVALID;
-				double radius = CadGeometry.distance( origin, startPoint );
-				double start = deriveStart( origin, radius, radius, 0.0, startPoint );
-				double extent = deriveExtent( origin, radius, radius, 0.0, start, extentPoint, spin );
+			Point3D origin = asPoint( task, 0 );
+			if( origin == null ) throw new InvalidInputException( task.getCommand(), "center", task.getParameter( 0 ) );
+			Point3D startPoint = asPoint( task, 1 );
+			if( startPoint == null ) throw new InvalidInputException( task.getCommand(), "start", task.getParameter( 1 ) );
+			Point3D extentPoint = asPoint( task, 2 );
+			if( extentPoint == null ) throw new InvalidInputException( task.getCommand(), "extent", task.getParameter( 2 ) );
+			double radius = CadGeometry.distance( origin, startPoint );
+			double start = deriveStart( origin, radius, radius, 0.0, startPoint );
+			double extent = deriveExtent( origin, radius, radius, 0.0, start, extentPoint, spin );
 
-				task.getTool().getCurrentLayer().addShape( new DesignArc( origin, radius, start, extent, DesignArc.Type.OPEN ) );
-			} catch( ParseException exception ) {
-				String title = Rb.text( RbKey.NOTICE, "command-error" );
-				String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
-				if( task.getContext().isInteractive() ) task.getContext().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
-			}
+			task.getTool().getCurrentLayer().addShape( new DesignArc( origin, radius, start, extent, DesignArc.Type.OPEN ) );
 
 			return SUCCESS;
 		}

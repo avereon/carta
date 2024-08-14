@@ -13,7 +13,8 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import static com.avereon.cartesia.command.Command.Result.*;
+import static com.avereon.cartesia.command.Command.Result.FAILURE;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 
 @Getter
 @CustomLog
@@ -57,8 +58,6 @@ public class CommandTask {
 	}
 
 	public void addParameter( Object priorResult ) {
-		if( priorResult == null ) log.atWarning().log( "A prior result of null was passed to execute" );
-		if( priorResult == INCOMPLETE ) log.atWarning().log( "A prior result of INCOMPLETE was passed to execute" );
 		if( priorResult == null || priorResult instanceof Command.Result && RESULT_CACHE.contains( priorResult ) ) return;
 
 		if( priorResult instanceof Object[] priorResultArray ) {
@@ -86,11 +85,10 @@ public class CommandTask {
 		// If this task is already failed, do not run the step
 		if( result == FAILURE ) return FAILURE;
 
-		Object result = INVALID;
+		Object result = FAILURE;
 		try {
 			context.setTool( tool );
 			result = command.execute( this );
-			if( result != INVALID ) command.incrementStep();
 		} finally {
 			command.setStepExecuted();
 			if( getEvent() != null ) event.consume();

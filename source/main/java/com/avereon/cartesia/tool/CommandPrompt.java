@@ -84,7 +84,7 @@ public class CommandPrompt extends BorderPane {
 		// Capture special keys, except do not capture the SPACE key here
 		if( command.isFocused() && event.getEventType() == KeyEvent.KEY_PRESSED ) {
 			switch( event.getCode() ) {
-				case ESCAPE -> context.cancel( event );
+				case ESCAPE -> context.cancelAllCommands( event );
 				case ENTER -> context.enter( event );
 			}
 		}

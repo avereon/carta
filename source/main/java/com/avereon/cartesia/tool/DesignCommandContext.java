@@ -1,19 +1,18 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CartesiaMod;
-import com.avereon.cartesia.CommandMap;
-import com.avereon.cartesia.CommandMetadata;
-import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.*;
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
-import com.avereon.cartesia.math.CadShapes;
 import com.avereon.log.LazyEval;
+import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
+import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
@@ -22,7 +21,10 @@ import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Objects;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
@@ -157,12 +159,12 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	//		return submit( tool, null, event, command, parameters );
 	//	}
 
-	public void cancel( KeyEvent event ) {
+	public void cancelAllCommands( KeyEvent event ) {
 		event.consume();
-		cancel();
+		cancelAllCommands();
 	}
 
-	private void cancel() {
+	private void cancelAllCommands() {
 		commandStack.forEach( CommandTask::cancel );
 		commandStack.clear();
 		logCommandStack( "cncl" );
@@ -218,9 +220,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		boolean isTextInput = getInputMode() == DesignCommandContext.Input.TEXT;
 		if( strict ) {
 			return switch( getInputMode() ) {
-				case NUMBER -> submitCommand( new Value(), CadShapes.parsePoint( input ).getX() );
-				case POINT -> submitCommand( new Value(), CadShapes.parsePoint( input, getWorldAnchor() ) );
-				case TEXT -> submitCommand( new Value(), input );
+				case NUMBER, POINT, TEXT -> submitCommand( new Value(), input );
 				default -> submitCommand( mapCommand( input ) );
 			};
 		} else if( !isTextInput && isAutoCommandEnabled() && getMod().getCommandMap().hasCommand( input ) ) {
@@ -265,7 +265,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		// If SPACE was pressed, then the last command should be repeated
 		if( event.getEventType() == KeyEvent.KEY_PRESSED ) {
 			switch( event.getCode() ) {
-				case ESCAPE -> cancel( event );
+				case ESCAPE -> cancelAllCommands( event );
 				case ENTER -> enter( event );
 				case SPACE -> repeat( event );
 			}
@@ -375,6 +375,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		// one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
+		// FIXME We think that this synchronized block is not necessary
 		synchronized( commandStack ) {
 			commandStack.push( request );
 			log.atTrace().log( "Command submitted %s", request );
@@ -398,55 +399,68 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		log.at( COMMAND_STACK_LOG_LEVEL ).log( "%s tasks=%s", prefix, commandStack.reversed() );
 	}
 
-	Object doProcessCommands() throws Exception {
+	// THREAD Task Thread
+	Object doProcessCommands() {
 		if( Fx.isFxThread() ) {
 			log.atSevere().log( "Command processing should not be run on the FX thread" );
 			return FAILURE;
 		}
 
-		Object priorResult = SUCCESS;
-		Object thisResult;
+		CommandTask task = null;
+		Object result = SUCCESS;
 
 		try {
-			List<CommandTask> tasks = new ArrayList<>( commandStack );
-			for( CommandTask task : tasks ) {
-				try {
-					setInputMode( task.getCommand().getInputMode() );
+			// This loop tries to execute as many steps as possible on the command
+			// stack. It is possible that the command stack will grow, if user input
+			// is required, or shrink as commands are completed.
+			while( !commandStack.isEmpty() ) {
+				task = commandStack.peek();
+				logCommandStack( "exec" );
+				setInputMode( task.getCommand().getInputMode() );
 
-					logCommandStack( "exec" );
-					thisResult = task.runTaskStep();
+				// Run the next task step
+				Object stepResult = task.runTaskStep();
 
-					// Don't pass incomplete results to the next task and
-					// allow the calling thread to exit with the INCOMPLETE result.
-					if( thisResult == INCOMPLETE ) return thisResult;
+				// Don't pass incomplete results to the next task and
+				// allow the calling thread to exit with the INCOMPLETE result.
+				if( stepResult == INCOMPLETE ) return stepResult;
 
-					// Remove commands that are complete
-					commandStack.remove( task );
+				// Remove the command if it has completed
+				commandStack.pop();
 
-					// Don't pass invalid results to the next task
-					if( thisResult == INVALID ) break;
+				// Pass the task result to the next task
+				passParameter( commandStack.peek(), stepResult );
 
-					// Pass the task result to the next task
-					passParameter( commandStack.peek(), thisResult );
+				logCommandStack( "rslt" );
 
-					logCommandStack( "rslt" );
-
-					priorResult = thisResult;
-				} catch( Exception exception ) {
-					log.atWarn( exception ).log( "Unhandled error executing command=%s", task );
-					throw exception;
-				}
+				result = stepResult;
+			}
+		} catch( InvalidInputException exception ) {
+			commandStack.pop();
+			String title = Rb.text( RbKey.NOTICE, "invalid-input" );
+			String message = Rb.text( RbKey.PROMPT, exception.getInputRbKey() ) + " " + exception.getValue();
+			if( task.getContext().isInteractive() ) {
+				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
+			} else {
+				log.atWarn( exception ).log( "Invalid input=%s", task );
 			}
 		} catch( Exception exception ) {
-			cancel();
-			throw exception;
+			cancelAllCommands();
+			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			String message = Rb.text( RbKey.NOTICE, "unexpected-error", exception );
+			if( task != null && task.getContext().isInteractive() ) {
+				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
+			} else {
+				log.atWarn( exception ).log( "Unexpected error=%s", task );
+			}
 		}
 
-		return priorResult;
+		return result;
 	}
 
-	private void passParameter( CommandTask task, Object parameter ) {
+	private void passParameter( CommandTask task, Object parameter ) throws InvalidInputException {
 		if( task == null ) return;
+		if( parameter == null ) throw new InvalidInputException( task.getCommand(), "step-result", "null" );
 		task.addParameter( parameter );
 	}
 

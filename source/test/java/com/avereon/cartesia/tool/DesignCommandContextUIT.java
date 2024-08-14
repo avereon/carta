@@ -6,11 +6,9 @@ import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.data.Design2D;
-import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetType;
-import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +16,6 @@ import java.util.concurrent.Future;
 
 import static com.avereon.xenon.test.ProgramTestConfig.LONG_TIMEOUT;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class DesignCommandContextUIT extends BaseCartesiaUiTest {
 
@@ -116,65 +113,6 @@ public class DesignCommandContextUIT extends BaseCartesiaUiTest {
 		command.waitFor();
 		assertThat( command.getValues()[ 0 ] ).isEqualTo( "0" );
 		assertThat( command.getValues()[ 1 ] ).isEqualTo( "1" );
-	}
-
-	@Test
-	void testNumberInput() throws Exception {
-		MockCommand command = new MockCommand( 1 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.setInputMode( DesignCommandContext.Input.NUMBER );
-		context.processText( "4,3,2", true );
-		command.waitFor();
-		assertThat( command.getValues()[ 0 ] ).isEqualTo( 4.0 );
-	}
-
-	@Test
-	void testPointInput() throws Exception {
-		MockCommand command = new MockCommand( 1 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.setInputMode( DesignCommandContext.Input.POINT );
-		context.processText( "4,3,2", true );
-		command.waitFor();
-		assertThat( command.getValues()[ 0 ] ).isEqualTo( new Point3D( 4, 3, 2 ) );
-	}
-
-	@Test
-	void testRelativePointInput() throws Exception {
-		MockCommand command = new MockCommand( 1 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.setWorldAnchor( new Point3D( 1, 1, 1 ) );
-		context.setInputMode( DesignCommandContext.Input.POINT );
-		context.processText( "@4,3,2", true );
-		command.waitFor();
-		assertThat( command.getValues()[ 0 ] ).isEqualTo( new Point3D( 5, 4, 3 ) );
-	}
-
-	@Test
-	void testTextInput() throws Exception {
-		MockCommand command = new MockCommand( 1 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.setInputMode( DesignCommandContext.Input.TEXT );
-		context.processText( "test", true );
-		command.waitFor();
-		assertThat( command.getValues()[ 0 ] ).isEqualTo( "test" );
-	}
-
-	@Test
-	void testUnknownInput() throws Exception {
-		MockCommand command = new MockCommand( 1 );
-		context.submit( tool, command );
-		command.waitFor();
-		context.setInputMode( DesignCommandContext.Input.NONE );
-		try {
-			context.processText( "unknown", true );
-			fail();
-		} catch( UnknownCommand exception ) {
-			assertThat( exception.getMessage() ).isEqualTo( "unknown" );
-		}
 	}
 
 	@Test
