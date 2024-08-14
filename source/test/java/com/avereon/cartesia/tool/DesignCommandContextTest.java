@@ -40,7 +40,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 
 		// then
 		verify( commandContext, times( 1 ) ).submitCommand( any( CommandTask.class ) );
-		verify( commandContext, times( 0 ) ).forwardCommandToCommandStack( any() );
+		verify( commandContext, times( 0 ) ).forwardCommandToCommandStack( any(MouseEvent.class) );
 	}
 
 	@Test
@@ -53,7 +53,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 
 		// then
 		verify( commandContext, times( 0 ) ).submitCommand( any( CommandTask.class ) );
-		verify( commandContext, times( 1 ) ).forwardCommandToCommandStack( any() );
+		verify( commandContext, times( 1 ) ).forwardCommandToCommandStack( any(MouseEvent.class) );
 	}
 
 	/**

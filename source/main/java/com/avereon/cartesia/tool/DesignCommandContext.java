@@ -271,10 +271,19 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			}
 		}
 
-		commandStack.forEach( r -> r.getCommand().handle( this, event ) );
+		forwardCommandToCommandStack( event );
 
 		// If the event is not consumed here, it will bubble up to the event
 		// handling of the scene which should trigger the appropriate action.
+	}
+
+	void forwardCommandToCommandStack( KeyEvent event ) {
+		Iterator<CommandTask> iterator = commandStack.iterator();
+		while( iterator.hasNext() && !event.isConsumed() ) {
+			CommandTask task = iterator.next();
+			task.getCommand().handle( task, event );
+		}
+		// Do not consume key events here, let them bubble up
 	}
 
 	public void handle( MouseEvent event ) {
@@ -285,7 +294,8 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	void forwardCommandToCommandStack( MouseEvent event ) {
 		Iterator<CommandTask> iterator = commandStack.iterator();
 		while( iterator.hasNext() && !event.isConsumed() ) {
-			iterator.next().getCommand().handle( this, event );
+			CommandTask task = iterator.next();
+			task.getCommand().handle( task, event );
 		}
 		event.consume();
 	}

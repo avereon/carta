@@ -183,6 +183,14 @@ public abstract class Command {
 		return true;
 	}
 
+	public void handle( CommandTask task, KeyEvent event ) {
+		handle( task.getContext(), event );
+	}
+
+	public void handle( CommandTask task, MouseEvent event ) {
+		handle( task.getContext(), event );
+	}
+
 	@Deprecated
 	public void handle( DesignCommandContext context, KeyEvent event ) {}
 
