@@ -89,10 +89,11 @@ public class CommandTask {
 		try {
 			context.setTool( tool );
 			result = command.execute( this );
+			command.incrementStep();
 		} finally {
-			command.setStepExecuted();
 			if( getEvent() != null ) event.consume();
 			if( result != INCOMPLETE ) doComplete();
+			command.setStepExecuted();
 		}
 
 		this.result = result;

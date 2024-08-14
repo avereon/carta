@@ -250,6 +250,11 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		return this;
 	}
 
+	public DesignLayer clearShapes() {
+		removeFromSet( SHAPES, new HashSet<>( getShapes() ) );
+		return this;
+	}
+
 	@SuppressWarnings( "UnusedReturnValue" )
 	public <T extends DesignDrawable> T addDrawable( T drawable ) {
 		if( drawable instanceof DesignShape ) {
@@ -486,8 +491,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	@Override
 	public Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap(
-			NAME,
+		map.putAll( asMap( NAME,
 			TEXT_FILL_PAINT,
 			TEXT_DRAW_PAINT,
 			TEXT_DRAW_WIDTH,

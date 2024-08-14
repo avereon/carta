@@ -3,7 +3,6 @@ package com.avereon.cartesia.command.draw;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
@@ -29,8 +28,7 @@ public class DrawLine2 extends DrawCommand {
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
 			if( preview == null ) preview = createPreviewLine( task );
-			Point3D origin = asPoint( task, 0 );
-			if( origin == null ) return INVALID;
+			Point3D origin = asPoint( task, "start-point", 0 );
 			preview.setOrigin( origin );
 			promptForPoint( task, "end-point" );
 			return INCOMPLETE;
@@ -40,10 +38,8 @@ public class DrawLine2 extends DrawCommand {
 			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
-			Point3D origin = asPoint( task, 0 );
-			if( origin == null ) return INVALID;
-			Point3D point = asPoint( task, 1 );
-			if( point == null ) return INVALID;
+			Point3D origin = asPoint( task, "start-point", 0 );
+			Point3D point = asPoint( task, "end-point", 1 );
 
 			// Start an undo multi-change
 			task.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
@@ -55,8 +51,8 @@ public class DrawLine2 extends DrawCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
-		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
+	public void handle( CommandTask task, MouseEvent event ) {
+		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {

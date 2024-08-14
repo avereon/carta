@@ -146,7 +146,9 @@ public class DesignRenderer extends BorderPane {
 		selectAperture.addListener( (ChangeListener<? super DesignShape>)( p, o, n ) -> render() );
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
+
 		previewLayer.register( NodeEvent.ANY, e -> render() );
+		referenceLayer.register( NodeEvent.ANY, e -> render() );
 	}
 
 	public void setDesign( Design design ) {
@@ -887,8 +889,9 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderReferenceGeometry() {
-		// TODO Render reference geometry
 		// reference points, construction points, etc.
+		// TODO Render reference geometry
+		renderLayer( referenceLayer );
 	}
 
 	private void renderSelectAperture() {

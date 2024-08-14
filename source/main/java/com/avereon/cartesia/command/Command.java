@@ -517,14 +517,14 @@ public abstract class Command {
 
 	protected void clearPreview( CommandTask task ) {
 		// The shapes have to be removed before capturing undo changes again
-		removePreview( task, preview );
+		task.getTool().getPreviewLayer().clearShapes();
 		preview.clear();
 	}
 
 	@Deprecated
 	protected void clearPreview( DesignCommandContext context ) {
 		// The shapes have to be removed before capturing undo changes again
-		removePreview( context, preview );
+		context.getTool().getPreviewLayer().clearShapes();
 		preview.clear();
 	}
 
