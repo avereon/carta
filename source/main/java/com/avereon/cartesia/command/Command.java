@@ -91,8 +91,7 @@ public abstract class Command {
 		SUCCESS,
 		// Indicates an invalid parameter was submitted
 		// In favor of InvalidInputException
-		@Deprecated
-		INVALID,
+		@Deprecated INVALID,
 		// Indicates that the command failed to execute
 		FAILURE
 	}
@@ -193,6 +192,22 @@ public abstract class Command {
 		return getClass().getSimpleName();
 	}
 
+	protected double asDouble( CommandTask task, String rbKey, int index ) throws Exception {
+		Object value = task.getParameter( index );
+		if( value instanceof Double ) return (Double)value;
+
+		// TODO Do we want distance from ZERO or just the X coordinate, or neither?
+		//if( value instanceof Point3D ) return ((Point3D)value).getX();
+		//if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
+
+		try {
+			return CadMath.eval( String.valueOf( value ) );
+		} catch( CadMathExpressionException exception ) {
+			throw new InvalidInputException( task.getCommand(), rbKey, value );
+		}
+	}
+
+	@Deprecated
 	protected double asDouble( Object value ) throws Exception {
 		if( value instanceof Double ) return (Double)value;
 		if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
@@ -205,12 +220,19 @@ public abstract class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
+	@Deprecated
 	protected Point3D asPoint( CommandTask task, int index ) throws Exception {
-		return asPoint( task, task.getParameter( index ) );
+		return asPoint( task.getContext().getWorldAnchor(), task.getParameter( index ) );
 	}
 
-	protected Point3D asPoint( CommandTask task, Object value ) throws Exception {
-		return asPoint( task.getContext().getWorldAnchor(), value );
+	protected Point3D asPoint( CommandTask task, String rbKey, int index ) throws Exception {
+		return asPoint( task, rbKey, task.getParameter( index ) );
+	}
+
+	private Point3D asPoint( CommandTask task, String rbKey, Object value ) throws Exception {
+		Point3D point = asPoint( task.getContext().getWorldAnchor(), value );
+		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
+		return point;
 	}
 
 	protected Point3D asPoint( CommandTask task ) {

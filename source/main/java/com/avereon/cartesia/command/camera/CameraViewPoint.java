@@ -30,7 +30,7 @@ public class CameraViewPoint extends CameraCommand {
 
 		if( task.hasParameter( 0 ) ) {
 			try {
-				Point3D viewPoint = asPoint( task, task.getParameter( 0 ) );
+				Point3D viewPoint = asPoint( task, 0 );
 				if( viewPoint == null ) return INVALID;
 				task.getTool().setViewPoint( viewPoint );
 				return SUCCESS;

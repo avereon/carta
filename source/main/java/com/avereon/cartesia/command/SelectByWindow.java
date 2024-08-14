@@ -40,7 +40,7 @@ public abstract class SelectByWindow extends SelectCommand {
 
 		// Get the world anchor point from the first parameter
 		if( paramCount == 1 & noEvent ) {
-			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
+			Point3D worldPoint = asPoint( task, 0 );
 			if( worldPoint != null ) {
 				promptForWindow( task, "select-window-point" );
 				return INCOMPLETE;

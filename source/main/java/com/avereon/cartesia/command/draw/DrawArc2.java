@@ -1,10 +1,8 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadMathExpressionException;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
@@ -38,9 +36,7 @@ public class DrawArc2 extends DrawCommand {
 
 		// Step 2 - Get origin, prompt for start
 		if( task.getParameterCount() == 1 ) {
-			Point3D origin = asPoint( task, 0 );
-
-			if( origin == null ) throw new InvalidInputException( task.getCommand(), "center", task.getParameter( 0 ) );
+			Point3D origin = asPoint( task, "center", 0 );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setOrigin( origin );
@@ -53,10 +49,8 @@ public class DrawArc2 extends DrawCommand {
 
 		// Step 3 - Get start, prompt for extent
 		if( task.getParameterCount() == 2 ) {
-			Point3D origin = asPoint( task, 0 );
-			if( origin == null ) throw new InvalidInputException( task.getCommand(), "center", task.getParameter( 0 ) );
-			Point3D startPoint = asPoint( task, 1 );
-			if( startPoint == null ) throw new InvalidInputException( task.getCommand(), "start", task.getParameter( 1 ) );
+			Point3D origin = asPoint( task, "center", 0 );
+			Point3D startPoint = asPoint( task, "start", 1 );
 
 			if( previewArc == null ) addPreview( task, previewArc = createPreviewArc( task, origin ) );
 			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), startPoint ) );
@@ -68,24 +62,15 @@ public class DrawArc2 extends DrawCommand {
 			return INCOMPLETE;
 		}
 
-		if( task.hasParameter( 3 ) ) {
-			try {
-				spin = asDouble( task.getParameter( 3 ) );
-			} catch( CadMathExpressionException exception ) {
-				throw new InvalidInputException( task.getCommand(), "spin", task.getParameter( 3 ) );
-			}
-		}
+		if( task.hasParameter( 3 ) ) spin = asDouble( task, "spin", 3 );
 
 		if( task.hasParameter( 2 ) ) {
 			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
-			Point3D origin = asPoint( task, 0 );
-			if( origin == null ) throw new InvalidInputException( task.getCommand(), "center", task.getParameter( 0 ) );
-			Point3D startPoint = asPoint( task, 1 );
-			if( startPoint == null ) throw new InvalidInputException( task.getCommand(), "start", task.getParameter( 1 ) );
-			Point3D extentPoint = asPoint( task, 2 );
-			if( extentPoint == null ) throw new InvalidInputException( task.getCommand(), "extent", task.getParameter( 2 ) );
+			Point3D origin = asPoint( task, "center", 0 );
+			Point3D startPoint = asPoint( task, "start", 1 );
+			Point3D extentPoint = asPoint( task, "extent", 2 );
 			double radius = CadGeometry.distance( origin, startPoint );
 			double start = deriveStart( origin, radius, radius, 0.0, startPoint );
 			double extent = deriveExtent( origin, radius, radius, 0.0, start, extentPoint, spin );

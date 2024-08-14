@@ -53,7 +53,7 @@ public class CameraZoomWindow extends CameraCommand {
 
 		// Get the world anchor point from the first parameter
 		if( paramCount == 1 ) {
-			Point3D worldPoint = asPoint( task, task.getParameter( 0 ) );
+			Point3D worldPoint = asPoint( task, 0 );
 			if( worldPoint != null ) {
 				//task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
 				//task.getContext().setWorldAnchor( worldPoint );

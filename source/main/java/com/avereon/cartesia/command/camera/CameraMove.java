@@ -39,7 +39,7 @@ public class CameraMove extends CameraCommand {
 		}
 
 		if( paramCount == 1 & noEvent ) {
-			Point3D worldAnchor = asPoint( task, task.getParameter( 0 ) );
+			Point3D worldAnchor = asPoint( task, 0 );
 			if( worldAnchor != null ) {
 				promptForPoint( task, "pan-point" );
 				return INCOMPLETE;

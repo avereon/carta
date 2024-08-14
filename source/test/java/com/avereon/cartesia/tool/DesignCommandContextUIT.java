@@ -6,6 +6,7 @@ import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.tool.design.DesignToolV2;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetType;
@@ -34,7 +35,7 @@ public class DesignCommandContextUIT extends BaseCartesiaUiTest {
 		//this.tool = new Design2dEditor( getMod(), asset );
 
 		assertThat( getProgram().getTaskManager().isRunning() ).isTrue();
-		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( asset );
+		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( asset, DesignToolV2.class );
 		this.tool = (BaseDesignTool)future.get();
 
 		context.setLastActiveDesignTool( tool );
