@@ -24,10 +24,10 @@ public class AutoSnap extends SnapCommand {
 		DesignTool tool = task.getTool();
 
 		// Get the snap point from the parameter
-		if( task.hasParameter( 1 ) ) return snap.snap( tool, asPoint( task, 1 ) );
+		if( task.hasParameter( 1 ) ) return snap.snap( tool, asPoint( task, "snap", 1 ) );
 
 		// Get the snap point from the event
-		if( task.getEvent() != null ) return snap.snap( tool, asPoint( task ) );
+		if( task.getEvent() != null ) return snap.snap( tool, asPoint( task, "snap", task.getEvent() ) );
 
 		return FAILURE;
 	}

@@ -183,8 +183,10 @@ public abstract class Command {
 		return true;
 	}
 
+	@Deprecated
 	public void handle( DesignCommandContext context, KeyEvent event ) {}
 
+	@Deprecated
 	public void handle( DesignCommandContext context, MouseEvent event ) {}
 
 	@Override
@@ -214,6 +216,7 @@ public abstract class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
+	@Deprecated
 	protected double asDouble( Point3D anchor, Object value ) throws Exception {
 		if( value instanceof Double ) return (Double)value;
 		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
@@ -229,22 +232,33 @@ public abstract class Command {
 		return asPoint( task, rbKey, task.getParameter( index ) );
 	}
 
-	private Point3D asPoint( CommandTask task, String rbKey, Object value ) throws Exception {
-		Point3D point = asPoint( task.getContext().getWorldAnchor(), value );
+	private Point3D asPoint( CommandTask task, String rbKey, Object value ) throws InvalidInputException {
+		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, value );
+	}
+
+	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value ) throws InvalidInputException {
+		if( value instanceof Point3D ) return (Point3D)value;
+		Point3D point = CadShapes.parsePoint( String.valueOf( value ), anchor );
 		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		return point;
 	}
 
-	protected Point3D asPoint( CommandTask task ) {
+	protected Point3D asPoint(CommandTask task, String rbKey, InputEvent event ) throws InvalidInputException {
+		Point3D point = null;
+		if( event instanceof MouseEvent mouseEvent ) {
+			point = task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
+		}
+		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, event );
+		return point;
+	}
+
+	@Deprecated
+	protected Point3D asPointFromEvent( CommandTask task ) {
 		if( task.getEvent() instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
 		return null;
 	}
 
-	protected Point3D asPointFromEventOrParameter( CommandTask task, InputEvent event, Object value ) throws Exception {
-		if( task.getEvent() instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
-		return asPoint( task.getContext().getWorldAnchor(), value );
-	}
-
+	@Deprecated
 	protected Point3D asPoint( Point3D anchor, Object value ) throws Exception {
 		if( value instanceof Point3D ) return (Point3D)value;
 		return CadShapes.parsePoint( String.valueOf( value ), anchor );
@@ -264,7 +278,8 @@ public abstract class Command {
 		return null;
 	}
 
-	protected String asText( CommandTask task, Object value ) throws Exception {
+	protected String asText( CommandTask task, String rbKey, Object value ) throws Exception {
+		if( value == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		return String.valueOf( value );
 	}
 
@@ -300,6 +315,12 @@ public abstract class Command {
 		promptForValue( task, key, DesignCommandContext.Input.POINT );
 	}
 
+	protected void promptForShape( CommandTask task, String key ) {
+		task.getTool().setCursor( Cursor.HAND );
+		promptForValue( task, key, DesignCommandContext.Input.NONE );
+	}
+
+	@Deprecated
 	protected void promptForShape( DesignCommandContext context, String key ) {
 		context.getTool().setCursor( Cursor.HAND );
 		promptForValue( context, key, DesignCommandContext.Input.NONE );
@@ -316,11 +337,13 @@ public abstract class Command {
 		promptForValue( context, key, DesignCommandContext.Input.TEXT );
 	}
 
+	@Deprecated
 	protected DesignShape findNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
 		List<DesignShape> shapes = context.getTool().screenPointSyncFindOne( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
+	@Deprecated
 	protected DesignShape findNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
 		List<DesignShape> shapes = context.getTool().worldPointSyncFindOne( point );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
