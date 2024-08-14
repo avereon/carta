@@ -3,9 +3,9 @@ package com.avereon.cartesia.command.camera;
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
-import com.avereon.cartesia.math.CadMathExpressionException;
 import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import javafx.geometry.Point3D;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -142,8 +142,15 @@ public class CameraZoomTest extends CommandBaseTest {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
+		// when
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
+
 		// then
-		assertThatThrownBy( task::runTaskStep ).isInstanceOf( CadMathExpressionException.class );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( "zoom" );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 }

@@ -42,7 +42,7 @@ public class CameraZoom extends CameraCommand {
 		}
 
 		if( task.hasParameter( 0 ) ) {
-			task.getTool().setZoom( asDouble( task.getParameter( 0 ) ) );
+			task.getTool().setZoom( asDouble( task, "zoom", 0 ) );
 			return SUCCESS;
 		}
 
