@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
@@ -40,7 +39,7 @@ public abstract class SelectByWindow extends SelectCommand {
 
 		// Get the world anchor point from the first parameter
 		if( paramCount == 1 & noEvent ) {
-			Point3D worldPoint = asPoint( task, 0 );
+			Point3D worldPoint = asPoint( task, "select-window-anchor", 0 );
 			if( worldPoint != null ) {
 				promptForWindow( task, "select-window-point" );
 				return INCOMPLETE;
@@ -51,8 +50,8 @@ public abstract class SelectByWindow extends SelectCommand {
 
 		// Get the world point from the event or the second parameter
 		if( paramCount == 2 ) {
-			Point3D worldAnchor = asPoint( task, 0 );
-			Point3D worldCorner = asPoint( task, 1 );
+			Point3D worldAnchor = asPoint( task, "select-window-anchor", 0 );
+			Point3D worldCorner = asPoint( task, "select-window-point", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				if( task.getContext().getCommandStackDepth() < 2 ) {
 					task.getTool().worldWindowSelect( worldAnchor, worldCorner, intersect, false );
@@ -67,9 +66,9 @@ public abstract class SelectByWindow extends SelectCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = context.getScreenAnchor();
+		Point3D anchor = task.getContext().getScreenAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
