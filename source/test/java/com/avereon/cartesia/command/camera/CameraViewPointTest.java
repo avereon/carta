@@ -3,6 +3,8 @@ package com.avereon.cartesia.command.camera;
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.command.InvalidInputException;
+import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
@@ -11,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -61,16 +64,19 @@ public class CameraViewPointTest extends CommandBaseTest {
 	}
 
 	@Test
-	void executeWithBadParameter() throws Exception {
+	void executeWithBadParameter() {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
 		// when
-		Object result = task.runTaskStep();
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
 
 		// then
-		verify( tool, times( 0 ) ).setViewPoint( any() );
-		assertThat( result ).isEqualTo( Command.Result.INVALID );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( "select-viewpoint" );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 }
