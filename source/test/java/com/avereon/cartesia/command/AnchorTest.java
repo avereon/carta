@@ -12,8 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.avereon.cartesia.command.Command.Result.*;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -73,16 +75,20 @@ public class AnchorTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
-
 	@Test
-	void testExecuteWithBadParameter() throws Exception {
+	void testExecuteWithBadParameter() {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
 		// when
-		Object result = task.runTaskStep();
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
 
 		// then
-		assertThat( result ).isEqualTo( FAILURE );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( "select-point" );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 	}
+
 }

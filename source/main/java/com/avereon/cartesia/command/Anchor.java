@@ -30,7 +30,7 @@ public class Anchor extends Command {
 		}
 
 		if( task.hasParameter( 0 ) ) {
-			Point3D worldPoint = asPoint( task, 0 );
+			Point3D worldPoint = asPoint( task, "select-point", 0 );
 			Point3D screenPoint = task.getTool().worldToScreen( worldPoint );
 			if( worldPoint != null ) {
 				task.getContext().setScreenAnchor( screenPoint );
