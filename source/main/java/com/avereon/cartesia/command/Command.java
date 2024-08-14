@@ -286,7 +286,8 @@ public abstract class Command {
 		return null;
 	}
 
-	protected String asText( CommandTask task, String rbKey, Object value ) throws Exception {
+	protected String asText( CommandTask task, String rbKey, int index ) throws Exception {
+		Object value = task.getParameter( index );
 		if( value == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		return String.valueOf( value );
 	}
