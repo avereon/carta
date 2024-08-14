@@ -3,7 +3,6 @@ package com.avereon.cartesia.command.camera;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +23,7 @@ public class CameraMove extends CameraCommand {
 		boolean hasEvent = !noEvent;
 
 		if( task.getParameterCount() == 0 & noEvent ) {
-			promptForPoint( task, "pan-point" );
+			promptForPoint( task, "pan-anchor" );
 			return INCOMPLETE;
 		}
 
@@ -39,9 +38,9 @@ public class CameraMove extends CameraCommand {
 		}
 
 		if( paramCount == 1 & noEvent ) {
-			Point3D worldAnchor = asPoint( task, 0 );
+			Point3D worldAnchor = asPoint( task,"pan-anchor", 0 );
 			if( worldAnchor != null ) {
-				promptForPoint( task, "pan-point" );
+				promptForPoint( task, "pan-target" );
 				return INCOMPLETE;
 			}
 		}
@@ -49,8 +48,8 @@ public class CameraMove extends CameraCommand {
 		// The situation of one parameter and an event should not occur
 
 		if( paramCount == 2 & noEvent ) {
-			Point3D worldAnchor = asPoint( task, 0 );
-			Point3D worldCorner = asPoint( task, 1 );
+			Point3D worldAnchor = asPoint( task,"pan-anchor", 0 );
+			Point3D worldCorner = asPoint( task,"pan-target", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				task.getTool().setViewPoint( originalViewPoint.add( worldAnchor.subtract( worldCorner ) ) );
 				return SUCCESS;
@@ -61,9 +60,9 @@ public class CameraMove extends CameraCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = context.getScreenAnchor();
+		Point3D anchor = task.getContext().getScreenAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
@@ -74,7 +73,7 @@ public class CameraMove extends CameraCommand {
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			Point3D screenOffset = anchor.subtract( mouse );
 			Point3D worldOffset = tool.scaleScreenToWorld( new Point3D( screenOffset.getX(), -1.0 * screenOffset.getY(), 0 ) );
-			tool.getCommandContext().submit( tool, new Value(), context.getWorldAnchor().subtract( worldOffset ) );
+			tool.getCommandContext().submit( tool, new Value(), task.getContext().getWorldAnchor().subtract( worldOffset ) );
 			event.consume();
 		}
 	}

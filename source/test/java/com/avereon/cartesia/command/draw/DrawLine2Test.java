@@ -95,7 +95,7 @@ public class DrawLine2Test extends CommandBaseTest {
 
 	@ParameterizedTest
 	@MethodSource( "provideParametersForTestWithParameters" )
-	void testRunTaskStepWithBadParameters( Object[] parameters, String rbKey ) throws Exception {
+	void testRunTaskStepWithBadParameters( Object[] parameters, String rbKey ) {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, parameters );
 
