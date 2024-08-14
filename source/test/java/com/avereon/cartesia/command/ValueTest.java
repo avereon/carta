@@ -16,7 +16,7 @@ public class ValueTest extends CommandBaseTest {
 	private final Value command = new Value();
 
 	@Test
-	void executeWithNothing() throws Exception {
+	void executeWithNothing() {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
