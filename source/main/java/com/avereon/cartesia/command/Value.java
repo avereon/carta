@@ -3,8 +3,6 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.tool.CommandTask;
 import lombok.CustomLog;
 
-import static com.avereon.cartesia.command.Command.Result.INVALID;
-
 @CustomLog
 public class Value extends Command {
 
@@ -17,11 +15,8 @@ public class Value extends Command {
 
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
-		if( task.getParameterCount() == 0 ) {
-			return INVALID;
-		} else {
-			return task.getParameters();
-		}
+		if( task.getParameterCount() == 0 ) throw new InvalidInputException( this, "value", null );
+		return task.getParameters();
 	}
 
 }
