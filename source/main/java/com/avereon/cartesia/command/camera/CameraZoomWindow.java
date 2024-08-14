@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.zarra.javafx.FxUtil;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
@@ -53,10 +52,8 @@ public class CameraZoomWindow extends CameraCommand {
 
 		// Get the world anchor point from the first parameter
 		if( paramCount == 1 ) {
-			Point3D worldPoint = asPoint( task, 0 );
+			Point3D worldPoint = asPoint( task, "zoom-window-anchor", 0 );
 			if( worldPoint != null ) {
-				//task.getContext().setScreenAnchor( task.getTool().worldToScreen( worldPoint ) );
-				//task.getContext().setWorldAnchor( worldPoint );
 				promptForWindow( task, "zoom-window-corner" );
 				return INCOMPLETE;
 			}
@@ -64,8 +61,8 @@ public class CameraZoomWindow extends CameraCommand {
 
 		// Get the world point from the second parameter
 		if( paramCount == 2 ) {
-			Point3D worldAnchor = asPoint( task, 0 );
-			Point3D worldCorner = asPoint( task, 1 );
+			Point3D worldAnchor = asPoint( task, "zoom-window-anchor", 0 );
+			Point3D worldCorner = asPoint( task, "zoom-window-corner", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				task.getTool().setWorldViewport( FxUtil.bounds( worldAnchor, worldCorner ) );
 				return SUCCESS;
@@ -76,25 +73,14 @@ public class CameraZoomWindow extends CameraCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = context.getScreenAnchor();
+		Point3D anchor = task.getContext().getScreenAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-
-		// MouseEvent.MOUSE_DRAGGED starts a window select
-
-		//		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
-		//			tool.setSelectAperture( anchor, mouse );
-		//		} else
 
 		if( getStep() == 2 && event.getEventType().equals( MouseEvent.MOUSE_MOVED ) ) {
 			tool.setSelectAperture( anchor, mouse );
 		}
-
-		//			else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
-		//			// Submit a Value command to pass the point back to this command
-		//			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
-		//		}
 	}
 
 }
