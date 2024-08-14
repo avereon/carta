@@ -12,6 +12,7 @@ import java.util.List;
 
 import static com.avereon.cartesia.command.Command.Result.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -85,12 +86,14 @@ public class ShapeInformationTest extends CommandBaseTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "bad parameter" );
 
 		// when
-		Object result = task.runTaskStep();
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
 
 		// then
-		verify( command, times( 1 ) ).clearReferenceAndPreviewWhenComplete();
-		//verify( noticeManager, times( 1 ) ).addNotice( any() );
-		assertThat( result ).isEqualTo( INVALID );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( "select-shape" );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 }

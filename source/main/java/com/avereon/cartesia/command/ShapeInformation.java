@@ -24,23 +24,22 @@ public class ShapeInformation extends Command {
 	public Object execute( CommandTask task ) throws Exception {
 		if( task.getParameterCount() == 0 & task.getTool().getSelectedShapes().isEmpty() ) {
 			if( task.getParameterCount() < 1 ) {
-				promptForShape( task.getContext(), "select-shape" );
+				promptForShape( task, "select-shape" );
 				return INCOMPLETE;
 			}
 		}
 
-		try {
-			// Limit the information to one shape
-			DesignShape shape;
+		DesignShape shape;
 
-			if( task.getParameterCount() == 1 ) {
-				shape = selectNearestShapeAtPoint( task, asPoint( task, 0 ) );
-				if( shape == DesignShape.NONE ) return INVALID;
-			} else {
-				shape = task.getTool().getSelectedShapes().getFirst();
-				if( shape == DesignShape.NONE ) return SUCCESS;
-			}
+		// Limit the information to one shape
+		if( task.hasParameter( 0 ) ) {
+			shape = selectNearestShapeAtPoint( task, asPoint( task, "select-shape", 0 ) );
+		} else {
+			shape = task.getTool().getSelectedShapes().getFirst();
+			if( shape == DesignShape.NONE ) return SUCCESS;
+		}
 
+		if( shape != null ) {
 			// Get the shape information
 			Map<String, Object> information = shape.getInformation();
 
@@ -60,13 +59,7 @@ public class ShapeInformation extends Command {
 			// Fire the notice object
 			if( task.getContext().isInteractive() ) fireNotice( task, shape, description );
 
-			log.atDebug().log( "Measured shape=%s", shape );
 			return shape;
-		} catch( Exception exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-measure-shape", exception.getMessage() );
-			log.atWarn( exception ).log( message );
-			if( task.getContext().isInteractive() ) task.getContext().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 		}
 
 		return FAILURE;
