@@ -26,11 +26,11 @@ public class CommandTask {
 
 	private final DesignTool tool;
 
+	private final Command command;
+
 	private CommandTrigger trigger;
 
 	private InputEvent event;
-
-	private final Command command;
 
 	private Object[] parameters;
 
@@ -39,9 +39,9 @@ public class CommandTask {
 	public CommandTask( DesignCommandContext context, DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		this.context = Objects.requireNonNull( context );
 		this.tool = Objects.requireNonNull( tool );
+		this.command = Objects.requireNonNull( command );
 		this.trigger = trigger;
 		this.event = event;
-		this.command = Objects.requireNonNull( command );
 		this.parameters = parameters;
 	}
 
@@ -88,12 +88,14 @@ public class CommandTask {
 		Object result = FAILURE;
 		try {
 			context.setTool( tool );
+			command.setExecuting( true );
 			result = command.execute( this );
 			command.incrementStep();
 		} finally {
-			if( getEvent() != null ) event.consume();
+			log.atConfig().log( "command=%s result=%s", command.getClass().getSimpleName(), result );
+			command.setExecuting( false );
+			if( event != null ) event.consume();
 			if( result != INCOMPLETE ) doComplete();
-			command.setStepExecuted();
 		}
 
 		this.result = result;
@@ -102,7 +104,10 @@ public class CommandTask {
 	}
 
 	private void doComplete() {
-		if( command.clearReferenceAndPreviewWhenComplete() ) command.clearReferenceAndPreview( this );
+		if( command.clearReferenceAndPreviewWhenComplete() ) {
+			command.clearReferenceAndPreview( this );
+			log.atWarn().log( "CommandTask.doComplete() cleared reference and preview" );
+		}
 		if( command.clearSelectionWhenComplete() ) tool.clearSelectedShapes();
 		tool.setSelectAperture( null, null );
 	}

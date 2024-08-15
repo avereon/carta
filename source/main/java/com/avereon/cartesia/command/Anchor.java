@@ -13,6 +13,11 @@ public class Anchor extends Command {
 		return false;
 	}
 
+	@Override
+	public boolean clearReferenceAndPreviewWhenComplete() {
+		return false;
+	}
+
 	public Object execute( CommandTask task ) throws Exception {
 		if( task.getParameters().length < 1 && task.getEvent() == null ) {
 			promptForPoint( task, "select-point" );

@@ -51,10 +51,10 @@ public class DrawArc2 extends DrawCommand {
 			Point3D origin = asPoint( task, "center", 0 );
 			Point3D startPoint = asPoint( task, "start", 1 );
 
-			if( previewArc == null ) addPreview( task, previewArc = createPreviewArc( task, origin ) );
+			if( previewArc == null ) previewArc = createPreviewArc( task, origin );
+			double start = deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), startPoint );
 			previewArc.setRadius( CadGeometry.distance( previewArc.getOrigin(), startPoint ) );
-			previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), startPoint ) );
-			previewArc.setExtent( 0.0 );
+			previewArc.setStart( start );
 			spinAnchor = startPoint;
 
 			promptForPoint( task, "extent" );
@@ -84,7 +84,6 @@ public class DrawArc2 extends DrawCommand {
 
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
-		// FIXME Is the event making it here?
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
@@ -99,13 +98,14 @@ public class DrawArc2 extends DrawCommand {
 					// Arc radius and start
 					referenceLine.setPoint( point );
 					previewArc.setRadius( point.distance( previewArc.getOrigin() ) );
-					previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), point ) );
+					//previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), point ) );
 				}
 				case 3 -> {
 					// Arc extent
 					referenceLine.setPoint( point );
 					spin = getExtentSpin( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), previewArc.getStart(), spinAnchor, point, spin );
-					previewArc.setExtent( deriveExtent( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), previewArc.getStart(), point, spin ) );
+					double extent = deriveExtent( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), previewArc.getStart(), point, spin );
+					previewArc.setExtent( extent );
 					spinAnchor = point;
 				}
 			}

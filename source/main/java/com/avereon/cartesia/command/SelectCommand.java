@@ -7,4 +7,14 @@ public abstract class SelectCommand extends Command {
 		WINDOW
 	}
 
+	@Override
+	public boolean clearSelectionWhenComplete() {
+		return false;
+	}
+
+	@Override
+	public boolean clearReferenceAndPreviewWhenComplete() {
+		return false;
+	}
+
 }

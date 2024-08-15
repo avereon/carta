@@ -17,13 +17,18 @@ public class Prompt extends Command {
 	}
 
 	@Override
-	public DesignCommandContext.Input getInputMode() {
-		return mode;
+	public boolean clearSelectionWhenComplete() {
+		return false;
 	}
 
 	@Override
-	public boolean clearSelectionWhenComplete() {
+	public boolean clearReferenceAndPreviewWhenComplete() {
 		return false;
+	}
+
+	@Override
+	public DesignCommandContext.Input getInputMode() {
+		return mode;
 	}
 
 	@Override

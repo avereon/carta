@@ -12,11 +12,6 @@ import static com.avereon.cartesia.command.Command.Result.*;
 @CustomLog
 public abstract class SelectByWindow extends SelectCommand {
 
-	@Override
-	public boolean clearSelectionWhenComplete() {
-		return false;
-	}
-
 	protected Object execute( CommandTask task, boolean intersect ) throws Exception {
 		int paramCount = task.getParameters().length;
 		InputEvent event = task.getEvent();

@@ -14,6 +14,11 @@ public class Value extends Command {
 	}
 
 	@Override
+	public boolean clearReferenceAndPreviewWhenComplete() {
+		return false;
+	}
+
+	@Override
 	public Object execute( CommandTask task ) throws Exception {
 		if( task.getParameterCount() == 0 ) throw new InvalidInputException( this, "value", null );
 		return task.getParameters();

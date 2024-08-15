@@ -12,11 +12,6 @@ import static com.avereon.cartesia.command.Command.Result.*;
 public class SelectByPoint extends SelectCommand {
 
 	@Override
-	public boolean clearSelectionWhenComplete() {
-		return false;
-	}
-
-	@Override
 	public Object execute( CommandTask task ) throws Exception {
 		return execute( task, false );
 	}

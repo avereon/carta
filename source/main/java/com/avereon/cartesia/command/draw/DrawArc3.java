@@ -91,11 +91,11 @@ public class DrawArc3 extends DrawCommand {
 				}
 				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
-					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
-					previewArc.setOrigin( next.getOrigin() );
-					previewArc.setRadius( next.getRadius() );
-					previewArc.setStart( next.getStart() );
-					previewArc.setExtent( next.getExtent() );
+					DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, point );
+					previewArc.setOrigin( arc.getOrigin() );
+					previewArc.setRadius( arc.getRadius() );
+					previewArc.setStart( arc.getStart() );
+					previewArc.setExtent( arc.getExtent() );
 				}
 			}
 		}

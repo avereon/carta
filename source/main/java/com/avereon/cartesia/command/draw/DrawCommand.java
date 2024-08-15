@@ -30,6 +30,7 @@ public abstract class DrawCommand extends Command {
 	protected DesignArc createPreviewArc( CommandTask task, Point3D origin ) {
 		DesignArc arc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
 		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );
+		arc.setDrawPaint( "#ff0000" );
 		return arc;
 	}
 

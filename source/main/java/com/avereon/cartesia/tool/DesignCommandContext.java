@@ -410,7 +410,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	// THREAD Task Thread
-	Object doProcessCommands() {
+	Object doProcessCommands() throws Exception {
 		if( Fx.isFxThread() ) {
 			log.atSevere().log( "Command processing should not be run on the FX thread" );
 			return FAILURE;
@@ -436,7 +436,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				if( stepResult == INCOMPLETE ) return stepResult;
 
 				// Remove the command if it has completed
-				commandStack.pop();
+				commandStack.remove(task);
 
 				// Pass the task result to the next task
 				passParameter( commandStack.peek(), stepResult );
@@ -446,7 +446,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				result = stepResult;
 			}
 		} catch( InvalidInputException exception ) {
-			commandStack.pop();
+			commandStack.remove(task);
 			String title = Rb.text( RbKey.NOTICE, "invalid-input" );
 			String message = Rb.text( RbKey.PROMPT, exception.getInputRbKey() ) + " " + exception.getValue();
 			if( task.getContext().isInteractive() ) {
@@ -456,13 +456,14 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			}
 		} catch( Exception exception ) {
 			cancelAllCommands();
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unexpected-error", exception );
-			if( task != null && task.getContext().isInteractive() ) {
-				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
-			} else {
-				log.atWarn( exception ).log( "Unexpected error=%s", task );
-			}
+//			String title = Rb.text( RbKey.NOTICE, "command-error" );
+//			String message = Rb.text( RbKey.NOTICE, "unexpected-error", exception );
+//			if( task != null && task.getContext().isInteractive() ) {
+//				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
+//			} else {
+//				log.atWarn( exception ).log( "Unexpected error=%s", task );
+//			}
+			throw exception;
 		}
 
 		return result;
