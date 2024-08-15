@@ -2,6 +2,8 @@ package com.avereon.cartesia.command.snap;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.command.InvalidInputException;
+import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapMidpoint;
@@ -13,10 +15,11 @@ import org.mockito.Spy;
 
 import java.util.List;
 
-import static com.avereon.cartesia.command.Command.Result.INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AutoSnapMidpointTest extends CommandBaseTest {
 
@@ -26,27 +29,35 @@ public class AutoSnapMidpointTest extends CommandBaseTest {
 	private final Snap snap = new SnapMidpoint();
 
 	@Test
-	void testRunTaskStepNoParameters() throws Exception {
+	void testRunTaskStepNoParameters() {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command /* no parameters */ );
 
 		// when
-		Object result = task.runTaskStep();
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
 
 		// then
-		assertThat( result ).isEqualTo( INVALID );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( "snap" );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 	@Test
-	void testRunTaskStepWithSnapOnly() throws Exception {
+	void testRunTaskStepWithSnapOnly() {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, snap );
 
 		// when
-		Object result = task.runTaskStep();
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
 
 		// then
-		assertThat( result ).isEqualTo( INVALID );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( "snap" );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 	@Test
