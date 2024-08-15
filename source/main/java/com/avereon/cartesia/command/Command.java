@@ -24,10 +24,7 @@ import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 import lombok.Getter;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.function.Function;
@@ -402,7 +399,7 @@ public abstract class Command {
 	}
 
 	protected void addReference( CommandTask task, DesignShape... shapes ) {
-		addReference( task, List.of( shapes ) );
+		addReference( task, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	private void addReference( CommandTask task, Collection<DesignShape> shapes ) {
@@ -411,12 +408,12 @@ public abstract class Command {
 	}
 
 	protected void removeReference( CommandTask task, DesignShape... shapes ) {
-		removeReference( task, List.of( shapes ) );
+		removeReference( task, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	@Deprecated
 	protected void addReference( DesignCommandContext context, DesignShape... shapes ) {
-		addReference( context, List.of( shapes ) );
+		addReference( context, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	@Deprecated
@@ -433,7 +430,7 @@ public abstract class Command {
 
 	@Deprecated
 	protected void removeReference( DesignCommandContext context, DesignShape... shapes ) {
-		removeReference( context, List.of( shapes ) );
+		removeReference( context, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	protected void removeReference( CommandTask task, Collection<DesignShape> shapes ) {
@@ -461,12 +458,12 @@ public abstract class Command {
 	}
 
 	protected void addPreview( CommandTask task, DesignShape... shapes ) {
-		addPreview( task, List.of( shapes ) );
+		addPreview( task, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	@Deprecated
 	protected void addPreview( DesignCommandContext context, DesignShape... shapes ) {
-		addPreview( context, List.of( shapes ) );
+		addPreview( context, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	protected DesignShape setAttributesFromLayer( DesignShape shape, DesignLayer layer ) {
@@ -495,12 +492,12 @@ public abstract class Command {
 	}
 
 	protected void removePreview( CommandTask task, DesignShape... shapes ) {
-		removePreview( task.getContext(), Set.of( shapes ) );
+		removePreview( task.getContext(), Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	@Deprecated
 	protected void removePreview( DesignCommandContext context, DesignShape... shapes ) {
-		removePreview( context, Set.of( shapes ) );
+		removePreview( context, Arrays.stream(shapes).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	protected void removePreview( CommandTask task, Collection<DesignShape> shapes ) {

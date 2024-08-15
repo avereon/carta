@@ -6,7 +6,6 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.CommandTask;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -40,8 +39,7 @@ public class DrawArc3 extends DrawCommand {
 		// Step 2 - Get start, prompt for mid-point
 		if( task.getParameterCount() < 2 ) {
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
-			start = asPoint( task, 0 );
-			if( start == null ) return INVALID;
+			start = asPoint( task, "start-point", 0 );
 			referenceLine.setOrigin( start );
 			promptForPoint( task, "mid-point" );
 			return INCOMPLETE;
@@ -51,8 +49,7 @@ public class DrawArc3 extends DrawCommand {
 		if( task.getParameterCount() < 3 ) {
 			removeReference( task, referenceLine );
 
-			mid = asPoint( task, 1 );
-			if( mid == null ) return INVALID;
+			mid = asPoint( task, "mid-point", 1 );
 			if( previewArc == null ) previewArc = createPreviewArc3( task, start, mid );
 
 			promptForPoint( task, "end-point" );
@@ -64,12 +61,9 @@ public class DrawArc3 extends DrawCommand {
 			setCaptureUndoChanges( task, true );
 
 			try {
-				start = asPoint( task, 0 );
-				if( start == null ) return INVALID;
-				mid = asPoint( task, 1 );
-				if( mid == null ) return INVALID;
-				Point3D end = asPoint( task, 2 );
-				if( end == null ) return INVALID;
+				start = asPoint( task, "start-point", 0 );
+				mid = asPoint( task, "mid-point", 1 );
+				Point3D end = asPoint( task, "end-point", 2 );
 
 				task.getTool().getCurrentLayer().addShape( CadGeometry.arcFromThreePoints( start, mid, end ) );
 			} catch( ParseException exception ) {
@@ -85,7 +79,7 @@ public class DrawArc3 extends DrawCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
