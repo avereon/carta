@@ -1,8 +1,6 @@
-package com.avereon.cartesia.command.snap;
+package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.command.Command;
-
-public abstract class SnapCommand extends Command {
+public class ToggleCommand extends Command {
 
 	@Override
 	public boolean clearSelectionWhenComplete() {
