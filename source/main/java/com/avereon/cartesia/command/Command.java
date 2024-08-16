@@ -103,9 +103,6 @@ public abstract class Command {
 	@Getter
 	private int step;
 
-	// For testing purposes only, not to be exposed to the public API
-	private boolean executed;
-
 	protected Command() {
 		this.preview = new CopyOnWriteArraySet<>();
 		this.previewMap = new ConcurrentHashMap<>();
@@ -149,23 +146,6 @@ public abstract class Command {
 
 	public void incrementStep() {
 		step++;
-	}
-
-//	public synchronized void waitFor() throws InterruptedException {
-//		waitFor( 200 );
-//	}
-//
-//	public synchronized void waitFor( long length ) throws InterruptedException {
-//		// FIXME There is trouble afoot with this method
-//		while( !executed ) {
-//			wait( length );
-//		}
-//	}
-
-	public synchronized void setExecuted( boolean executed ) {
-		// Yeah, this seems a bit backward, but it has better meaning outside the class
-		this.executed = executed;
-		notifyAll();
 	}
 
 	public DesignCommandContext.Input getInputMode() {
