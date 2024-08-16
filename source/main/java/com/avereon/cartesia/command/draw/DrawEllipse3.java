@@ -33,17 +33,17 @@ public class DrawEllipse3 extends DrawCommand {
 
 		// Step 2 - Get center, prompt for x-radius
 		if( task.getParameterCount() == 1 ) {
-			removeReference( task, referenceLine );
-
 			origin = asPoint( task, "center", 0 );
 
-			if( previewEllipse == null ) previewEllipse = createPreviewEllipse( task, origin );
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			promptForPoint( task, "radius" );
 			return INCOMPLETE;
 		}
 
 		// Step 3 - Get x-point, prompt for y-radius
 		if( task.getParameterCount() == 2 ) {
+			removeReference( task, referenceLine );
+
 			origin = asPoint( task, "center", 0 );
 			xPoint = asPoint( task, "radius", 1 );
 
@@ -84,10 +84,8 @@ public class DrawEllipse3 extends DrawCommand {
 				}
 				case 2 -> {
 					referenceLine.setPoint( point );
-					previewEllipse.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
 				}
 				case 3 -> {
-					referenceLine.setPoint( point );
 					previewEllipse.setRadii( new Point3D( previewEllipse.getXRadius(), deriveYRadius( origin, xPoint, point ), 0 ) );
 				}
 			}
