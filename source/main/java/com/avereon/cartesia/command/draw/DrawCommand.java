@@ -3,6 +3,7 @@ package com.avereon.cartesia.command.draw;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
@@ -40,7 +41,7 @@ public abstract class DrawCommand extends Command {
 		return arc;
 	}
 
-	protected DesignEllipse createPreviewEllipse(CommandTask task, Point3D origin) {
+	protected DesignEllipse createPreviewEllipse( CommandTask task, Point3D origin ) {
 		DesignEllipse ellipse = new DesignEllipse( origin, 0.0, 0.0 );
 		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
 		return ellipse;
@@ -51,6 +52,13 @@ public abstract class DrawCommand extends Command {
 		DesignEllipse ellipse = new DesignEllipse( arc.getOrigin(), arc.getXRadius(), arc.getYRadius() );
 		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
 		return ellipse;
+	}
+
+	protected DesignCubic createPreviewCubic( CommandTask task ) {
+		Point3D worldMouse = task.getContext().getWorldMouse();
+		DesignCubic cubic = new DesignCubic( worldMouse, worldMouse, worldMouse, worldMouse );
+		addPreview( task, setAttributesFromLayer( cubic, task.getTool().getCurrentLayer() ) );
+		return cubic;
 	}
 
 }
