@@ -5,7 +5,7 @@ import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.Value;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.InputEvent;

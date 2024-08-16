@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
@@ -35,7 +35,6 @@ public class DrawLine2 extends DrawCommand {
 		}
 
 		if( task.hasParameter( 1 ) ) {
-			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
 			Point3D origin = asPoint( task, "start-point", 0 );

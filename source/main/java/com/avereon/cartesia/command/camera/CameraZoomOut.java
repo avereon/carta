@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.tool.view.DesignPaneMarea;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;

@@ -2,7 +2,6 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zarra.javafx.Fx;

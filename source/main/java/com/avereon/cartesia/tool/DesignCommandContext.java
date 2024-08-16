@@ -1,10 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.*;
-import com.avereon.cartesia.command.Command;
-import com.avereon.cartesia.command.InvalidInputException;
-import com.avereon.cartesia.command.SelectByPoint;
-import com.avereon.cartesia.command.Value;
+import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.log.LazyEval;

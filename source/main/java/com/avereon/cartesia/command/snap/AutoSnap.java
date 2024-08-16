@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.snap;
 
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.snap.Snap;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.tool.DesignTool;
 
 import static com.avereon.cartesia.command.Command.Result.FAILURE;

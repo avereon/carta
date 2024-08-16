@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
-import com.avereon.cartesia.tool.CommandTask;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;

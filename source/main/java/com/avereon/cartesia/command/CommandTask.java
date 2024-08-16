@@ -1,7 +1,8 @@
-package com.avereon.cartesia.tool;
+package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.ArrayUtil;
 import com.avereon.zarra.javafx.Fx;
 import javafx.scene.input.InputEvent;
@@ -104,10 +105,7 @@ public class CommandTask {
 	}
 
 	private void doComplete() {
-		if( command.clearReferenceAndPreviewWhenComplete() ) {
-			command.clearReferenceAndPreview( this );
-			log.atWarn().log( "CommandTask.doComplete() cleared reference and preview" );
-		}
+		if( command.clearReferenceAndPreviewWhenComplete() ) command.clearReferenceAndPreview( this );
 		if( command.clearSelectionWhenComplete() ) tool.clearSelectedShapes();
 		tool.setSelectAperture( null, null );
 	}

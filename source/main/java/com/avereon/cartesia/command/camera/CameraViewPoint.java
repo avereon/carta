@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;

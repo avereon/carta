@@ -5,7 +5,7 @@ import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -59,8 +59,8 @@ public class DrawArc2Test extends CommandBaseTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( currentLayer, times( 1 ) ).addShape( any( DesignArc.class ) );
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( SUCCESS );

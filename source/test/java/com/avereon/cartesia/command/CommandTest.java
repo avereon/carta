@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
-import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;

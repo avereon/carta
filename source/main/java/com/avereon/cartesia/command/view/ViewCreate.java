@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command.view;
 
 import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.FAILURE;

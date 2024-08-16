@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 
 public class CameraZoomSelected extends CameraCommand {
 

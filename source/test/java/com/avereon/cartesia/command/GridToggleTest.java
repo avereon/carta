@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandBaseTest;
-import com.avereon.cartesia.tool.CommandTask;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;

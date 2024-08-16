@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;

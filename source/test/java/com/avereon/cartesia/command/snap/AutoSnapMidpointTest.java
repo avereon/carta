@@ -7,7 +7,7 @@ import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.snap.Snap;
 import com.avereon.cartesia.snap.SnapMidpoint;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import org.junit.jupiter.api.Test;

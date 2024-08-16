@@ -4,7 +4,7 @@ import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
@@ -64,7 +64,6 @@ public class DrawArc2 extends DrawCommand {
 		if( task.hasParameter( 3 ) ) spin = asDouble( task, "spin", 3 );
 
 		if( task.hasParameter( 2 ) ) {
-			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
 			Point3D origin = asPoint( task, "center", 0 );

@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.Anchor;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.error.UnknownCommand;
@@ -63,7 +64,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	 */
 	@Test
 	@SuppressWarnings( "unchecked" )
-	void doProcessCommandsWithAnchor() {
+	void doProcessCommandsWithAnchor() throws Exception {
 		// given
 		// Submitting Anchor without any parameters
 		// will cause a Prompt to be added to the stack
@@ -96,7 +97,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testNumberInput() {
+	void testNumberInput() throws Exception {
 		// given
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
@@ -113,7 +114,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testPointInput() {
+	void testPointInput() throws Exception {
 		// given
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
@@ -130,7 +131,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testRelativePointInput() {
+	void testRelativePointInput() throws Exception {
 		// given
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
@@ -147,7 +148,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testTextInput() {
+	void testTextInput() throws Exception {
 		// given
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
@@ -164,7 +165,7 @@ public class DesignCommandContextTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testUnknownInput() {
+	void testUnknownInput() throws Exception {
 		// given
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );

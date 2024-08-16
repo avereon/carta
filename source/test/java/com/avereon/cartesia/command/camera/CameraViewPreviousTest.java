@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.Command;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

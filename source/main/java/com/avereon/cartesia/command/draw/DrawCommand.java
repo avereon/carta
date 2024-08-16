@@ -1,10 +1,11 @@
 package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignArc;
+import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 
 public abstract class DrawCommand extends Command {
@@ -30,7 +31,6 @@ public abstract class DrawCommand extends Command {
 	protected DesignArc createPreviewArc( CommandTask task, Point3D origin ) {
 		DesignArc arc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
 		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );
-		arc.setDrawPaint( "#ff0000" );
 		return arc;
 	}
 
@@ -38,6 +38,12 @@ public abstract class DrawCommand extends Command {
 		DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, mid );
 		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );
 		return arc;
+	}
+
+	protected DesignEllipse createPreviewEllipse(CommandTask task, Point3D origin, double radius) {
+		DesignEllipse ellipse = new DesignEllipse( origin, radius, radius );
+		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
+		return ellipse;
 	}
 
 }

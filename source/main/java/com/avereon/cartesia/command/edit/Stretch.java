@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;

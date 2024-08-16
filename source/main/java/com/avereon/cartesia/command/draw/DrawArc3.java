@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandTask;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -57,7 +57,6 @@ public class DrawArc3 extends DrawCommand {
 		}
 
 		if( task.hasParameter( 2 ) ) {
-			clearReferenceAndPreview( task );
 			setCaptureUndoChanges( task, true );
 
 			try {

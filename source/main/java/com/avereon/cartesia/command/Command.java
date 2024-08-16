@@ -7,7 +7,6 @@ import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.*;
-import com.avereon.cartesia.tool.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
 import com.avereon.zarra.color.Paints;
@@ -199,13 +198,23 @@ public abstract class Command {
 	}
 
 	protected double asDouble( CommandTask task, String rbKey, int index ) throws Exception {
+		return asDouble( task, rbKey, Point3D.ZERO, index );
+	}
+
+	protected double asDouble( CommandTask task, String rbKey, Point3D anchor, int index ) throws Exception {
 		Object value = task.getParameter( index );
+
+		// The value may already be a number
 		if( value instanceof Double ) return (Double)value;
+		// The value may already be a point
+		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
 
-		// TODO Do we want distance from ZERO or just the X coordinate, or neither?
-		//if( value instanceof Point3D ) return ((Point3D)value).getX();
-		//if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
+		// The value may parse to be a point
+		Point3D point = CadShapes.parsePoint( String.valueOf( value ), anchor );
+		// If it is a point, return the distance from the anchor
+		if( point != null ) return point.distance( anchor );
 
+		// The value may parse to be a number
 		try {
 			return CadMath.eval( String.valueOf( value ) );
 		} catch( CadMathExpressionException exception ) {
@@ -525,7 +534,8 @@ public abstract class Command {
 		preview.clear();
 	}
 
-	public void clearReferenceAndPreview( CommandTask task ) {
+	// NOTE Only for use by CommandTask
+	void clearReferenceAndPreview( CommandTask task ) {
 		clearReference( task );
 		clearPreview( task );
 	}

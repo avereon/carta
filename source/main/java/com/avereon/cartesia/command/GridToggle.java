@@ -1,6 +1,5 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.tool.CommandTask;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 public class GridToggle extends ToggleCommand {

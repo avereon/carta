@@ -1,7 +1,6 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
