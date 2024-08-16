@@ -1,21 +1,15 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import com.avereon.product.Rb;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
-import java.text.ParseException;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
@@ -26,54 +20,55 @@ public class DrawLinePerpendicular extends DrawCommand {
 	private DesignLine preview;
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( context, false );
+	public Object execute( CommandTask task ) throws Exception {
+		setCaptureUndoChanges( task, false );
 
 		// Step 1
-		if( parameters.length < 1 ) {
-			promptForShape( context, "reference-shape-perpendicular" );
+		if( task.getParameterCount() == 0 ) {
+			promptForShape( task, "reference-shape-perpendicular" );
 			return INCOMPLETE;
 		}
 
 		// Step 2
-		if( parameters.length < 2 ) {
-			reference = selectNearestShapeAtPoint( context, asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
+		if( task.getParameterCount() == 1 ) {
+			Point3D point = asPoint( task, "reference-shape-perpendicular", 0 );
+			reference = selectNearestShapeAtPoint( task, point );
 			if( reference == DesignShape.NONE ) return INVALID;
 
-			addPreview( context, preview = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "start-point" );
+			if( preview == null ) preview = createReferenceLine( task );
+			promptForPoint( task, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
-		if( parameters.length < 3 ) {
-			preview.setOrigin( asPoint( context, parameters[ 1 ] ) );
-			promptForPoint( context, "end-point" );
+		if( task.getParameterCount() == 2 ) {
+			if( preview == null ) preview = createReferenceLine( task );
+			preview.setOrigin( asPoint( task, "start-point", 1 ) );
+			promptForPoint( task, "end-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		if( task.hasParameter( 2 ) ) {
+			setCaptureUndoChanges( task, true );
 
-		try {
-			DesignShape shape = findNearestShapeAtPoint( context, asPoint( context.getWorldAnchor(), parameters[ 0 ] ) );
-			Point3D origin = asPoint( context.getWorldAnchor(), parameters[ 1 ] );
-			Point3D point = getPerpendicular( shape, origin, asPoint( context.getWorldAnchor(), parameters[ 2 ] ) );
+			Point3D shapePoint = asPoint( task, "start-point", 0 );
+			Point3D origin = asPoint( task, "origin",1 );
+			Point3D secondPoint = asPoint( task, "end-point", 2 );
+
+			DesignShape shape = findNearestShapeAtPoint( task.getContext(), shapePoint );
+			Point3D point = getPerpendicular( shape, origin, secondPoint );
 			// Start an undo multi-change
-			context.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
+			task.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
 			// Done with undo multi-change
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
-			return FAILURE;
+
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		return FAILURE;
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
@@ -88,15 +83,14 @@ public class DrawLinePerpendicular extends DrawCommand {
 	}
 
 	private Point3D getPerpendicular( DesignShape reference, Point3D origin, Point3D mouse ) {
-		if( reference instanceof DesignLine ) {
-			DesignLine line = (DesignLine)reference;
+		if( reference instanceof DesignLine line ) {
 			Point3D u = line.getPoint().subtract( line.getOrigin() );
 			Point3D v = new Point3D( -u.getY(), u.getX(), 0 ).normalize();
 			double m = mouse.subtract( origin ).dotProduct( v );
 			return origin.add( v.multiply( m ) );
-		} else if( reference instanceof DesignEllipse ) {
-			// This works well for circles and circle arcs, not for ellipses and ellipse arcs
-			DesignEllipse ellipse = (DesignEllipse)reference;
+		} else if( reference instanceof DesignEllipse ellipse ) {
+			// FIXME This works well for circles and circle arcs,
+			//  not for ellipses and ellipse arcs
 			Point3D v = ellipse.getOrigin().subtract( origin ).normalize();
 			double m = mouse.subtract( origin ).dotProduct( v );
 			return origin.add( v.multiply( m ) );
