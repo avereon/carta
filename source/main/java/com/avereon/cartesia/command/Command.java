@@ -283,6 +283,7 @@ public abstract class Command {
 	}
 
 	@Deprecated
+	@SuppressWarnings( "unused" )
 	protected Bounds asBounds( DesignCommandContext context, Object value ) {
 		// NOTE Users cannot input bounds by hand so this method may not be necessary
 		if( value instanceof Bounds ) return (Bounds)value;
@@ -298,7 +299,8 @@ public abstract class Command {
 	}
 
 	@Deprecated
-	protected String asText( DesignCommandContext context, Object value ) throws Exception {
+	@SuppressWarnings( "unused" )
+	protected String asText( DesignCommandContext context, Object value ) {
 		return String.valueOf( value );
 	}
 
@@ -441,12 +443,14 @@ public abstract class Command {
 		removeReference( context, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
+	@SuppressWarnings( "unused" )
 	protected void removeReference( CommandTask task, Collection<DesignShape> shapes ) {
 		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		reference.removeAll( shapes );
 	}
 
 	@Deprecated
+	@SuppressWarnings( "unused" )
 	protected void removeReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
 		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
 		reference.removeAll( shapes );
@@ -475,6 +479,7 @@ public abstract class Command {
 	}
 
 	protected DesignShape setAttributesFromLayer( DesignShape shape, DesignLayer layer ) {
+		shape.setFillPaint( layer.getFillPaint() );
 		shape.setDrawPaint( layer.getDrawPaint() );
 		shape.setDrawWidth( layer.getDrawWidth() );
 		shape.setDrawPattern( layer.getDrawPattern() );

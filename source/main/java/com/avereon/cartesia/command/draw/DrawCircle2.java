@@ -23,7 +23,7 @@ public class DrawCircle2 extends DrawCommand {
 
 		// Step 1
 		if( task.getParameterCount() == 0 ) {
-			previewLine = createReferenceLine( task );
+			if( previewLine == null ) previewLine = createReferenceLine( task );
 			promptForPoint( task, "center" );
 			return INCOMPLETE;
 		}
@@ -31,9 +31,12 @@ public class DrawCircle2 extends DrawCommand {
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
 			Point3D origin = asPoint( task, "center", 0 );
-			if( previewEllipse == null ) previewEllipse = createPreviewEllipse( task, origin, 0.0 );
+
+			if( previewLine == null ) previewLine = createReferenceLine( task );
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
+
+			if( previewEllipse == null ) previewEllipse = createPreviewEllipse( task, origin, 0.0 );
 			promptForNumber( task, "radius" );
 			return INCOMPLETE;
 		}
