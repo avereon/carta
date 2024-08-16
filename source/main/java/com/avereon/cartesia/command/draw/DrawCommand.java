@@ -15,10 +15,12 @@ public abstract class DrawCommand extends Command {
 		return CadGeometry.angle360( point.subtract( origin ) );
 	}
 
-	protected double deriveYRadius( Point3D origin, Point3D xPoint, Point3D yPoint ) {
-		// This is the origin y-point distance
-		//return origin.distance( yPoint );
+	protected double deriveXRadius( Point3D origin, Point3D xPoint ) {
+		// This is the x-point distance from the origin
+		return CadGeometry.distance( origin, xPoint );
+	}
 
+	protected double deriveYRadius( Point3D origin, Point3D xPoint, Point3D yPoint ) {
 		// This is the y-point distance perpendicular to the origin x-point line
 		return CadGeometry.linePointDistance( origin, xPoint, yPoint );
 	}

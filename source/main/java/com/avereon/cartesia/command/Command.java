@@ -184,8 +184,10 @@ public abstract class Command {
 	}
 
 	protected double asDouble( CommandTask task, String rbKey, Point3D anchor, int index ) throws Exception {
-		Object value = task.getParameter( index );
+		return asDouble( task, rbKey, anchor, task.getParameter( index ) );
+	}
 
+	protected double asDouble( CommandTask task, String rbKey, Point3D anchor, Object value ) throws Exception {
 		// The value may already be a number
 		if( value instanceof Double ) return (Double)value;
 		// The value may already be a point

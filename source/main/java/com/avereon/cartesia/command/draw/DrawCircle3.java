@@ -43,7 +43,7 @@ public class DrawCircle3 extends DrawCommand {
 
 		// Step 3
 		if( task.getParameterCount() == 2 ) {
-			removePreview( task, referenceLine );
+			removeReference( task, referenceLine );
 
 			start = asPoint( task, "start-point", 0 );
 			mid = asPoint( task, "mid-point", 1 );
