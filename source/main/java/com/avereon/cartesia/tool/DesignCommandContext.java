@@ -1,6 +1,9 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.*;
+import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.CommandMetadata;
+import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
@@ -26,6 +29,7 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.logging.Level;
 
+import static com.avereon.cartesia.CommandMap.NONE;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
@@ -110,6 +114,19 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	public CommandTask getCommand( int index ) {
 		return new ArrayList<>( commandStack ).get( index );
+	}
+
+	public Command submit( DesignTool tool, String command ) {
+		String[] parts = command.split( " " );
+
+		String shortcut = parts[ 0 ];
+
+		CommandMetadata metadata = getMod().getCommandMap().getCommandByShortcut( shortcut );
+		if( metadata == NONE ) return null;
+
+		// Add the parameters to the metadata, or create a new one
+
+		return submitCommand( metadata );
 	}
 
 	/**
@@ -234,13 +251,13 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return commandStack.size() > 1;
 	}
 
+	public boolean isSelectMode() {
+		return commandStack.size() == 1;
+	}
+
 	public boolean isInteractive() {
 		// TODO Turn off when running a script
 		return true;
-	}
-
-	public boolean isSelectMode() {
-		return commandStack.size() == 1;
 	}
 
 	public boolean isAutoCommandEnabled() {
@@ -338,7 +355,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		if( TextUtil.isEmpty( input ) ) return null;
 
 		CommandMetadata mapping = getMod().getCommandMap().getCommandByShortcut( input );
-		if( mapping == CommandMap.NONE ) throw new UnknownCommand( input );
+		if( mapping == NONE ) throw new UnknownCommand( input );
 
 		return mapping;
 	}
@@ -347,14 +364,14 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		// NOTE This method does not handle key events,
 		//  those are handled by the action infrastructure
 		CommandMetadata metadata = getMod().getCommandMap().getCommandByEvent( event );
-		if( metadata == CommandMap.NONE ) return false;
+		if( metadata == NONE ) return false;
 
 		submitCommand( (DesignTool)event.getSource(), event, metadata.getType(), metadata.getParameters() );
 		return true;
 	}
 
 	private Command submitCommand( CommandMetadata metadata ) {
-		if( metadata == CommandMap.NONE ) return null;
+		if( metadata == NONE ) return null;
 		priorCommand = metadata.getCommand();
 		return submitCommand( getLastActiveDesignTool(), null, metadata.getType(), metadata.getParameters() );
 	}
@@ -382,11 +399,8 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		// one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
-		// FIXME We think that this synchronized block is not necessary
-		synchronized( commandStack ) {
-			commandStack.push( request );
-			log.atTrace().log( "Command submitted %s", request );
-		}
+		commandStack.push( request );
+		log.atTrace().log( "Command submitted %s", request );
 
 		// Run the processing on a task thread
 		getProduct().task( "process-commands", this::doProcessCommands );
@@ -433,7 +447,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				if( stepResult == INCOMPLETE ) return stepResult;
 
 				// Remove the command if it has completed
-				commandStack.remove(task);
+				commandStack.remove( task );
 
 				// Pass the task result to the next task
 				passParameter( commandStack.peek(), stepResult );
@@ -443,7 +457,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				result = stepResult;
 			}
 		} catch( InvalidInputException exception ) {
-			commandStack.remove(task);
+			commandStack.remove( task );
 			String title = Rb.text( RbKey.NOTICE, "invalid-input" );
 			String message = Rb.text( RbKey.PROMPT, exception.getInputRbKey() ) + " " + exception.getValue();
 			if( task.getContext().isInteractive() ) {
@@ -453,13 +467,13 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			}
 		} catch( Exception exception ) {
 			cancelAllCommands();
-//			String title = Rb.text( RbKey.NOTICE, "command-error" );
-//			String message = Rb.text( RbKey.NOTICE, "unexpected-error", exception );
-//			if( task != null && task.getContext().isInteractive() ) {
-//				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
-//			} else {
-//				log.atWarn( exception ).log( "Unexpected error=%s", task );
-//			}
+			//			String title = Rb.text( RbKey.NOTICE, "command-error" );
+			//			String message = Rb.text( RbKey.NOTICE, "unexpected-error", exception );
+			//			if( task != null && task.getContext().isInteractive() ) {
+			//				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
+			//			} else {
+			//				log.atWarn( exception ).log( "Unexpected error=%s", task );
+			//			}
 			throw exception;
 		}
 

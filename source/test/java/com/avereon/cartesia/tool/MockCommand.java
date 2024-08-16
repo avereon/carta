@@ -1,10 +1,11 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
-import javafx.scene.input.InputEvent;
+import com.avereon.cartesia.command.CommandTask;
 import lombok.Getter;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 @Getter
 class MockCommand extends Command {
@@ -22,9 +23,9 @@ class MockCommand extends Command {
 	}
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) {
-		if( parameters.length < expected ) return INCOMPLETE;
-		this.values = parameters;
+	public Object execute( CommandTask task) {
+		if( task.getParameterCount() < expected ) return INCOMPLETE;
+		this.values = task.getParameters();
 		return SUCCESS;
 	}
 

@@ -103,8 +103,8 @@ public abstract class Command {
 	@Getter
 	private int step;
 
-	// Not to be exposed to the public API
-	private boolean executing;
+	// For testing purposes only, not to be exposed to the public API
+	private boolean executed;
 
 	protected Command() {
 		this.preview = new CopyOnWriteArraySet<>();
@@ -151,18 +151,20 @@ public abstract class Command {
 		step++;
 	}
 
-	public synchronized void waitFor() throws InterruptedException {
-		waitFor( 1000 );
-	}
+//	public synchronized void waitFor() throws InterruptedException {
+//		waitFor( 200 );
+//	}
+//
+//	public synchronized void waitFor( long length ) throws InterruptedException {
+//		// FIXME There is trouble afoot with this method
+//		while( !executed ) {
+//			wait( length );
+//		}
+//	}
 
-	public synchronized void waitFor( long length ) throws InterruptedException {
-		while( executing ) {
-			wait( length );
-		}
-	}
-
-	public synchronized void setExecuting( boolean executing ) {
-		this.executing = executing;
+	public synchronized void setExecuted( boolean executed ) {
+		// Yeah, this seems a bit backward, but it has better meaning outside the class
+		this.executed = executed;
 		notifyAll();
 	}
 

@@ -89,12 +89,9 @@ public class CommandTask {
 		Object result = FAILURE;
 		try {
 			context.setTool( tool );
-			command.setExecuting( true );
 			result = command.execute( this );
 			command.incrementStep();
 		} finally {
-			log.atConfig().log( "command=%s result=%s", command.getClass().getSimpleName(), result );
-			command.setExecuting( false );
 			if( event != null ) event.consume();
 			if( result != INCOMPLETE ) doComplete();
 		}
