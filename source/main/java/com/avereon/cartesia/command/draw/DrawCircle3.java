@@ -47,7 +47,7 @@ public class DrawCircle3 extends DrawCommand {
 
 			start = asPoint( task, "start-point", 0 );
 			mid = asPoint( task, "mid-point", 1 );
-			if( previewEllipse == null ) previewEllipse = createPreviewArc3( task, start, mid );
+			if( previewEllipse == null ) previewEllipse = createPreviewEllipse3( task, start, mid );
 
 			promptForPoint( task, "end-point" );
 			return INCOMPLETE;
@@ -80,9 +80,9 @@ public class DrawCircle3 extends DrawCommand {
 				}
 				case 2 -> referenceLine.setPoint( point );
 				case 3 -> {
-					DesignArc next = CadGeometry.arcFromThreePoints( start, mid, point );
-					previewEllipse.setOrigin( next.getOrigin() );
-					previewEllipse.setRadius( next.getRadius() );
+					DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, point );
+					previewEllipse.setOrigin( arc.getOrigin() );
+					previewEllipse.setRadius( arc.getRadius() );
 				}
 			}
 		}

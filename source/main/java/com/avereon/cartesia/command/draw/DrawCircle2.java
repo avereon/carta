@@ -36,7 +36,7 @@ public class DrawCircle2 extends DrawCommand {
 			previewLine.setOrigin( origin );
 			previewLine.setPoint( origin );
 
-			if( previewEllipse == null ) previewEllipse = createPreviewEllipse( task, origin, 0.0 );
+			if( previewEllipse == null ) previewEllipse = createPreviewEllipse( task, origin );
 			promptForNumber( task, "radius" );
 			return INCOMPLETE;
 		}

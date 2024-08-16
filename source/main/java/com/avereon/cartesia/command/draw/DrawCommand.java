@@ -40,8 +40,15 @@ public abstract class DrawCommand extends Command {
 		return arc;
 	}
 
-	protected DesignEllipse createPreviewEllipse(CommandTask task, Point3D origin, double radius) {
-		DesignEllipse ellipse = new DesignEllipse( origin, radius, radius );
+	protected DesignEllipse createPreviewEllipse(CommandTask task, Point3D origin) {
+		DesignEllipse ellipse = new DesignEllipse( origin, 0.0, 0.0 );
+		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
+		return ellipse;
+	}
+
+	protected DesignEllipse createPreviewEllipse3( CommandTask task, Point3D start, Point3D mid ) {
+		DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, mid );
+		DesignEllipse ellipse = new DesignEllipse( arc.getOrigin(), arc.getXRadius(), arc.getYRadius() );
 		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
 		return ellipse;
 	}
