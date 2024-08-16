@@ -1,26 +1,20 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import com.avereon.product.Rb;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.text.ParseException;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 public class DrawEllipseArc5 extends DrawCommand {
 
-	private DesignLine previewLine;
+	private DesignLine referenceLine;
 
-	private DesignArc referenceArc;
+	private DesignArc previewArc;
 
 	private Point3D origin;
 
@@ -33,83 +27,99 @@ public class DrawEllipseArc5 extends DrawCommand {
 	private double spin;
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		setCaptureUndoChanges( context, false );
+	public Object execute( CommandTask task ) throws Exception {
+		setCaptureUndoChanges( task, false );
 
 		// Step 1 - Prompt for the origin
-		if( parameters.length < 1 ) {
-			addPreview( context, previewLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "center" );
+		if( task.getParameterCount() == 0 ) {
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			promptForPoint( task, "center" );
 			return INCOMPLETE;
 		}
 
 		// Step 2 - Get the origin, prompt for the x-radius
-		if( parameters.length < 2 ) {
-			origin = asPoint( context, parameters[ 0 ] );
-			previewLine.setOrigin( origin );
-			previewLine.setPoint( origin );
-			addPreview( context, referenceArc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN ) );
-			promptForNumber( context, "radius" );
+		if( task.getParameterCount() == 1 ) {
+			origin = asPoint( task, "center", 0 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			referenceLine.setOrigin( origin );
+			referenceLine.setPoint( origin );
+
+			promptForPoint( task, "radius" );
 			return INCOMPLETE;
 		}
 
 		// Step 3 - Get the x-point and rotate angle, prompt for the y-radius
-		if( parameters.length < 3 ) {
-			xPoint = asPoint( context, parameters[ 1 ] );
-			referenceArc.setRadii( new Point3D( CadGeometry.distance( origin, xPoint ), 0, 0 ) );
-			referenceArc.setRotate( String.valueOf( deriveRotate( origin, xPoint ) ) );
-			promptForNumber( context, "radius" );
+		if( task.getParameterCount() == 2 ) {
+			origin = asPoint( task, "center", 0 );
+			xPoint = asPoint( task, "radius", 1 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			if( previewArc == null ) previewArc= createPreviewArc( task, origin );
+			previewArc.setRadii( new Point3D( CadGeometry.distance( origin, xPoint ), 0, 0 ) );
+			previewArc.setRotate( String.valueOf( deriveRotate( origin, xPoint ) ) );
+			promptForPoint( task, "radius" );
 			return INCOMPLETE;
 		}
 
 		// Step 4 - Get the second radius, prompt for the start angle
-		if( parameters.length < 4 ) {
-			yPoint = asPoint( context, parameters[ 2 ] );
-			referenceArc.setRadii( new Point3D( referenceArc.getXRadius(), deriveYRadius( origin, xPoint, yPoint ), 0 ) );
-			addPreview( context, referenceArc );
-			promptForPoint( context, "start" );
+		if( task.getParameterCount() == 3 ) {
+			origin = asPoint( task, "center", 0 );
+			xPoint = asPoint( task, "radius", 1 );
+			yPoint = asPoint( task, "radius", 2 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			if( previewArc == null ) previewArc= createPreviewArc( task, origin );
+			previewArc.setRadii( new Point3D( previewArc.getXRadius(), deriveYRadius( origin, xPoint, yPoint ), 0 ) );
+			addPreview( task, previewArc );
+			promptForPoint( task, "start" );
 			return INCOMPLETE;
 		}
 
 		// Step 5 - Get the start angle, prompt for the extent angle
-		if( parameters.length < 5 ) {
-			Point3D start = asPoint( context, parameters[ 3 ] );
-			referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), start ) );
-			referenceArc.setExtent( 0.0 );
+		if( task.getParameterCount() == 4 ) {
+			origin = asPoint( task, "center", 0 );
+			xPoint = asPoint( task, "radius", 1 );
+			yPoint = asPoint( task, "radius", 2 );
+			Point3D start = asPoint( task, "start", 3 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			if( previewArc == null ) previewArc= createPreviewArc( task, origin );
+			previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), start ) );
+			previewArc.setExtent( 0.0 );
 			spinAnchor = start;
-			promptForPoint( context, "extent" );
+			promptForPoint( task, "extent" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		if( task.hasParameter( 5 ) ) spin = asDouble( task, "spin", 3 );
 
-		try {
-			origin = asPoint( context, parameters[ 0 ] );
-			xPoint = asPoint( context, parameters[ 1 ] );
-			Point3D yPoint = asPoint( context, parameters[ 2 ] );
-			Point3D startPoint = asPoint( context, parameters[ 3 ] );
-			Point3D extentPoint = asPoint( context, parameters[ 4 ] );
-			if( parameters.length > 5 ) spin = asDouble( parameters[ 5 ] );
+		if( task.hasParameter( 4 ) ) {
+			setCaptureUndoChanges( task, true );
 
-			double xRadius = asDouble( origin, xPoint );
+			origin = asPoint( task, "center", 0 );
+			xPoint = asPoint( task, "radius", 1 );
+			Point3D yPoint = asPoint( task, "radius", 2 );
+			Point3D startPoint = asPoint( task, "start", 3 );
+			Point3D extentPoint = asPoint( task, "extent", 4 );
+			if( task.hasParameter( 5 ) ) spin = asDouble( task, "spin", 5 );
+
+			double xRadius = deriveXRadius( origin, xPoint );
 			double yRadius = deriveYRadius( origin, xPoint, yPoint );
 			double rotate = deriveRotate( origin, xPoint );
-			double start = deriveStart( origin, xRadius, yRadius, rotate, asPoint( context, startPoint ) );
-			double extent = deriveExtent( origin, xRadius, yRadius, rotate, start, asPoint( context, extentPoint ), spin );
+			double start = deriveStart( origin, xRadius, yRadius, rotate, asPoint( task, "start", startPoint ) );
+			double extent = deriveExtent( origin, xRadius, yRadius, rotate, start, asPoint( task, "extent", extentPoint ), spin );
 
-			context.getTool().getCurrentLayer().addShape( new DesignArc( origin, xRadius, yRadius, rotate, start, extent, DesignArc.Type.OPEN ) );
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			task.getTool().getCurrentLayer().addShape( new DesignArc( origin, xRadius, yRadius, rotate, start, extent, DesignArc.Type.OPEN ) );
+
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		return FAILURE;
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
@@ -117,30 +127,30 @@ public class DrawEllipseArc5 extends DrawCommand {
 			switch( getStep() ) {
 				case 1 -> {
 					// Arc origin
-					previewLine.setOrigin( point );
-					previewLine.setPoint( point );
+					referenceLine.setOrigin( point );
+					referenceLine.setPoint( point );
 				}
 				case 2 -> {
 					// Arc X radius and rotate
-					previewLine.setPoint( point );
-					referenceArc.setRadii( new Point3D( point.distance( referenceArc.getOrigin() ), 0, 0 ) );
-					referenceArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
+					referenceLine.setPoint( point );
+					//referenceArc.setRadii( new Point3D( point.distance( referenceArc.getOrigin() ), 0, 0 ) );
+					//referenceArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
 				}
 				case 3 -> {
 					// Arc Y radius
-					previewLine.setPoint( point );
-					referenceArc.setRadii( new Point3D( referenceArc.getXRadius(), deriveYRadius( origin, xPoint, point ), 0 ) );
+					referenceLine.setPoint( point );
+					previewArc.setRadii( new Point3D( previewArc.getXRadius(), deriveYRadius( origin, xPoint, point ), 0 ) );
 				}
 				case 4 -> {
 					// Arc start
-					previewLine.setPoint( point );
-					referenceArc.setStart( deriveStart( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), point ) );
+					referenceLine.setPoint( point );
+					previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), point ) );
 				}
 				case 5 -> {
 					// Arc extent
-					previewLine.setPoint( point );
-					spin = getExtentSpin( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), referenceArc.getStart(), spinAnchor, point, spin );
-					referenceArc.setExtent( deriveExtent( referenceArc.getOrigin(), referenceArc.getXRadius(), referenceArc.getYRadius(), referenceArc.calcRotate(), referenceArc.getStart(), point, spin ) );
+					referenceLine.setPoint( point );
+					spin = getExtentSpin( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), previewArc.getStart(), spinAnchor, point, spin );
+					previewArc.setExtent( deriveExtent( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), previewArc.getStart(), point, spin ) );
 					spinAnchor = point;
 				}
 			}

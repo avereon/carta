@@ -229,7 +229,7 @@ public abstract class Command {
 		return asPoint( task, rbKey, task.getParameter( index ) );
 	}
 
-	private Point3D asPoint( CommandTask task, String rbKey, Object value ) throws InvalidInputException {
+	protected Point3D asPoint( CommandTask task, String rbKey, Object value ) throws InvalidInputException {
 		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, value );
 	}
 
