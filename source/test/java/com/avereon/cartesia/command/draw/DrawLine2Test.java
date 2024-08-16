@@ -24,6 +24,32 @@ public class DrawLine2Test extends CommandBaseTest {
 
 	private final DrawLine2 command = new DrawLine2();
 
+	// Script Tests --------------------------------------------------------------
+
+	/**
+	 * Draw line with two parameters should set both the origin
+	 * and the point, and then add the line to the current layer. The
+	 * result should be success.
+	 *
+	 * @throws Exception If an error occurs during the test
+	 */
+	@Test
+	void testExecuteWithTwoParameters() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
+	// Interactive Tests ---------------------------------------------------------
+
 	/**
 	 * Draw line with no parameters or event, should prompt the
 	 * user to select an origin point. The result should be incomplete.
@@ -67,28 +93,6 @@ public class DrawLine2Test extends CommandBaseTest {
 		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
 		assertThat( command.getPreview() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
-	}
-
-	/**
-	 * Draw line with two parameters should set both the origin
-	 * and the point, and then add the line to the current layer. The
-	 * result should be success.
-	 *
-	 * @throws Exception If an error occurs during the test
-	 */
-	@Test
-	void testExecuteWithTwoParameters() throws Exception {
-		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
-
-		// when
-		Object result = task.runTaskStep();
-
-		// then
-		verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
-		assertThat( command.getReference() ).hasSize( 0 );
-		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
 	// Bad Parameter Tests -------------------------------------------------------
