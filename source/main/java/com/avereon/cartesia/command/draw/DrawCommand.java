@@ -2,10 +2,7 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.data.DesignArc;
-import com.avereon.cartesia.data.DesignCubic;
-import com.avereon.cartesia.data.DesignEllipse;
-import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadGeometry;
 import javafx.geometry.Point3D;
 
@@ -67,6 +64,12 @@ public abstract class DrawCommand extends Command {
 		DesignCubic cubic = new DesignCubic( worldMouse, worldMouse, worldMouse, worldMouse );
 		addPreview( task, setAttributesFromLayer( cubic, task.getTool().getCurrentLayer() ) );
 		return cubic;
+	}
+
+	protected DesignMarker createPreviewMarker( CommandTask task ) {
+		DesignMarker marker = new DesignMarker( task.getContext().getWorldMouse() );
+		addPreview( task, setAttributesFromLayer( marker, task.getTool().getCurrentLayer() ) );
+		return marker;
 	}
 
 }
