@@ -15,7 +15,9 @@ import static com.avereon.cartesia.command.Command.Result.*;
 @CustomLog
 public class DrawLinePerpendicular extends DrawCommand {
 
-	private DesignShape reference;
+	private DesignShape referenceShape;
+
+	private DesignLine referenceLine;
 
 	private DesignLine preview;
 
@@ -25,6 +27,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 		// Step 1
 		if( task.getParameterCount() == 0 ) {
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			promptForShape( task, "reference-shape-perpendicular" );
 			return INCOMPLETE;
 		}
@@ -32,17 +35,18 @@ public class DrawLinePerpendicular extends DrawCommand {
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
 			Point3D point = asPoint( task, "reference-shape-perpendicular", 0 );
-			reference = selectNearestShapeAtPoint( task, point );
-			if( reference == DesignShape.NONE ) return INVALID;
+			referenceShape = selectNearestShapeAtPoint( task, point );
+			if( referenceShape == DesignShape.NONE ) return INCOMPLETE;
 
-			if( preview == null ) preview = createReferenceLine( task );
+			if( preview == null ) preview = createPreviewLine( task );
 			promptForPoint( task, "start-point" );
 			return INCOMPLETE;
 		}
 
 		// Step 3
 		if( task.getParameterCount() == 2 ) {
-			if( preview == null ) preview = createReferenceLine( task );
+			removeReference( task, referenceLine );
+			if( preview == null ) preview = createPreviewLine( task );
 			preview.setOrigin( asPoint( task, "start-point", 1 ) );
 			promptForPoint( task, "end-point" );
 			return INCOMPLETE;
@@ -55,7 +59,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 			Point3D origin = asPoint( task, "origin",1 );
 			Point3D secondPoint = asPoint( task, "end-point", 2 );
 
-			DesignShape shape = findNearestShapeAtPoint( task.getContext(), shapePoint );
+			DesignShape shape = findNearestShapeAtPoint( task, shapePoint );
 			Point3D point = getPerpendicular( shape, origin, secondPoint );
 			// Start an undo multi-change
 			task.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );
@@ -73,11 +77,17 @@ public class DrawLinePerpendicular extends DrawCommand {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
+				case 1 -> {
+					referenceLine.setOrigin( point );
+					referenceLine.setPoint( point );
+				}
 				case 2 -> {
 					preview.setOrigin( point );
 					preview.setPoint( point );
 				}
-				case 3 -> preview.setPoint( getPerpendicular( reference, preview.getOrigin(), point ) );
+				case 3 -> {
+					preview.setPoint( getPerpendicular( referenceShape, preview.getOrigin(), point ) );
+				}
 			}
 		}
 	}

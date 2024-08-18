@@ -31,6 +31,12 @@ public abstract class DrawCommand extends Command {
 		return line;
 	}
 
+	protected DesignLine createPreviewLine( CommandTask task ) {
+		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
+		addPreview( task, setAttributesFromLayer( line, task.getTool().getCurrentLayer() ) );
+		return line;
+	}
+
 	protected DesignArc createPreviewArc( CommandTask task, Point3D origin ) {
 		DesignArc arc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
 		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );

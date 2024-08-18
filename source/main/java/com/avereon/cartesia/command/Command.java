@@ -337,9 +337,19 @@ public abstract class Command {
 		promptForValue( context, key, DesignCommandContext.Input.TEXT );
 	}
 
+	protected DesignShape findNearestShapeAtMouse( CommandTask task, Point3D mouse ) {
+		List<DesignShape> shapes = task.getTool().screenPointSyncFindOne( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
+	}
+
 	@Deprecated
 	protected DesignShape findNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
 		List<DesignShape> shapes = context.getTool().screenPointSyncFindOne( mouse );
+		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
+	}
+
+	protected DesignShape findNearestShapeAtPoint( CommandTask task, Point3D point ) {
+		List<DesignShape> shapes = task.getTool().worldPointSyncFindOne( point );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
@@ -429,7 +439,7 @@ public abstract class Command {
 
 	@SuppressWarnings( "unused" )
 	protected void removeReference( CommandTask task, Collection<DesignShape> shapes ) {
-		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
+		task.getTool().getReferenceLayer().removeShapes( shapes );
 		reference.removeAll( shapes );
 	}
 

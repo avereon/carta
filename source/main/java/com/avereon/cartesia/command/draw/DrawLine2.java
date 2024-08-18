@@ -61,10 +61,4 @@ public class DrawLine2 extends DrawCommand {
 		}
 	}
 
-	private DesignLine createPreviewLine( CommandTask task ) {
-		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
-		addPreview( task, setAttributesFromLayer( line, task.getTool().getCurrentLayer() ) );
-		return line;
-	}
-
 }

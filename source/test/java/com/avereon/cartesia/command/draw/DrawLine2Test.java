@@ -34,7 +34,7 @@ public class DrawLine2Test extends CommandBaseTest {
 	 * @throws Exception If an error occurs during the test
 	 */
 	@Test
-	void testExecuteWithTwoParameters() throws Exception {
+	void testExecuteWithAllParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
 
