@@ -4,47 +4,49 @@ import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
-import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
+import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class MeasureAngleTest extends CommandBaseTest {
+public class MeasureLengthTest extends CommandBaseTest {
 
-	private final MeasureAngle command = new MeasureAngle();
+	private final MeasureLength command = new MeasureLength();
 
 	// Script Tests --------------------------------------------------------------
 
 	/**
-	 * Measure angle with three parameters should calculate the angle and display
-	 * it as a notice. The result should be success.
+	 * Measure length with all parameters should calculate the length of the
+	 * selected shape and display it as a notice. The result should be success.
 	 *
 	 * @throws Exception If an error occurs during the test
 	 */
 	@Test
 	void testExecuteWithAllParameters() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", "3,3" );
+		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1" );
 		when( commandContext.isInteractive() ).thenReturn( true );
+		when( tool.worldPointSyncFindOne( new Point3D( 1, 1, 0 ) ) ).thenReturn( List.of( line ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( noticeManager, times( 1 ) ).addNotice( any() );
-		assertThat( result ).isEqualTo( 45.0 );
+		assertThat( result ).isEqualTo( 5.656854249492381 );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 	}
@@ -52,8 +54,8 @@ public class MeasureAngleTest extends CommandBaseTest {
 	// Interactive Tests ---------------------------------------------------------
 
 	/**
-	 * Measure arc with no parameters or event, should prompt the
-	 * user to select an origin point. The result should be incomplete.
+	 * Measure length with no parameters or event, should prompt the
+	 * user to select a shape. The result should be incomplete.
 	 *
 	 * @throws Exception If an error occurs during the test
 	 */
@@ -61,36 +63,15 @@ public class MeasureAngleTest extends CommandBaseTest {
 	void testRunTaskStepNoParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		// Use the CLOSED_HAND cursor as a reticle cursor
-		when( tool.getReticleCursor() ).thenReturn( Cursor.CLOSED_HAND );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
-		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
-		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
-		assertThat( command.getReference() ).hasSize( 1 );
-		assertThat( result ).isEqualTo( INCOMPLETE );
-	}
-
-	@Test
-	void testRunTaskStepWithOneParameters() throws Exception {
-		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "8,3" );
-		// Use the CLOSED_HAND cursor as a reticle cursor
-		when( tool.getReticleCursor() ).thenReturn( Cursor.CLOSED_HAND );
-
-		// when
-		Object result = task.runTaskStep();
-
-		// then
-		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
-		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
-		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
-		assertThat( command.getReference().get( 1 ) ).isInstanceOf( DesignArc.class );
-		assertThat( command.getReference() ).hasSize( 2 );
+		verify( tool, times( 1 ) ).setCursor( Cursor.HAND );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
@@ -114,26 +95,23 @@ public class MeasureAngleTest extends CommandBaseTest {
 	}
 
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
-		return Stream.of(
-			Arguments.of( new String[]{ "bad parameter" }, "center" ),
-			Arguments.of( new String[]{ "-3,3", "bad parameter" }, "start" ),
-			Arguments.of( new String[]{ "-3,3", "3,-3", "bad parameter" }, "extent" ),
-			Arguments.of( new String[]{ "-3,3", "3,-3", "3,3", "bad parameter" }, "spin" )
-		);
+		return Stream.of( Arguments.of( new String[]{ "bad parameter" }, "select-shape" ) );
 	}
 
 	@Test
-	void testExecuteWithBadParameterFiveIsIgnored() throws Exception {
+	void testExecuteWithBadParameterThreeIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", "3,3", "0", "bad parameter" );
+		DesignLine line = new DesignLine( new Point3D( -2, -2, 0 ), new Point3D( 2, 2, 0 ) );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1", "bad parameter" );
 		when( commandContext.isInteractive() ).thenReturn( true );
+		when( tool.worldPointSyncFindOne( new Point3D( 1, 1, 0 ) ) ).thenReturn( List.of( line ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( noticeManager, times( 1 ) ).addNotice( any() );
-		assertThat( result ).isEqualTo( 45.0 );
+		assertThat( result ).isEqualTo( 5.656854249492381 );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 	}

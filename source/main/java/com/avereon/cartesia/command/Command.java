@@ -335,11 +335,6 @@ public abstract class Command {
 		promptForValue( context, key, DesignCommandContext.Input.TEXT );
 	}
 
-	protected DesignShape findNearestShapeAtMouse( CommandTask task, Point3D mouse ) {
-		List<DesignShape> shapes = task.getTool().screenPointSyncFindOne( mouse );
-		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
-	}
-
 	@Deprecated
 	protected DesignShape findNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
 		List<DesignShape> shapes = context.getTool().screenPointSyncFindOne( mouse );
@@ -354,11 +349,6 @@ public abstract class Command {
 	@Deprecated
 	protected DesignShape findNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
 		List<DesignShape> shapes = context.getTool().worldPointSyncFindOne( point );
-		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
-	}
-
-	protected DesignShape selectNearestShapeAtMouse( CommandTask task, Point3D mouse ) {
-		List<DesignShape> shapes = task.getTool().screenPointSyncSelect( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 

@@ -42,9 +42,9 @@ public class MeasureDistanceTest extends CommandBaseTest {
 
 		// then
 		verify( noticeManager, times( 1 ) ).addNotice( any() );
+		assertThat( result ).isEqualTo( 8.48528137423857 );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( result ).isEqualTo( 8.48528137423857 );
 	}
 
 	// Interactive Tests ---------------------------------------------------------
@@ -125,9 +125,9 @@ public class MeasureDistanceTest extends CommandBaseTest {
 
 		// then
 		verify( noticeManager, times( 1 ) ).addNotice( any() );
+		assertThat( result ).isEqualTo( 8.48528137423857 );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( result ).isEqualTo( 8.48528137423857 );
 	}
 
 }
