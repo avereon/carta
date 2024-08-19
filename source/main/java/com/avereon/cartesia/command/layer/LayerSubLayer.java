@@ -7,12 +7,12 @@ public class LayerSubLayer extends LayerCreate {
 	/**
 	 * This implementation adds the new layer to the current layer as a child.
 	 *
-	 * @param currentLayer The current layer
+	 * @param layer The parent layer
 	 * @param yy The new layer
 	 */
-	DesignLayer addLayer( DesignLayer currentLayer, DesignLayer yy ) {
+	DesignLayer addLayer( DesignLayer layer, DesignLayer yy ) {
 		// Add yy as a child to currentLayer
-		return currentLayer.addLayer( yy );
+		return layer.addLayer( yy );
 	}
 
 }

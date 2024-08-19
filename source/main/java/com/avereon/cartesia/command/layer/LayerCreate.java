@@ -1,11 +1,11 @@
 package com.avereon.cartesia.command.layer;
 
-import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.FAILURE;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 
 /**
  * This command adds a layer as a peer to the current layer
@@ -14,29 +14,32 @@ import static com.avereon.cartesia.command.Command.Result.*;
 public class LayerCreate extends LayerCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) {
-			promptForText( context, "layer-name" );
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getParameterCount() == 0 ) {
+			promptForText( task, "layer-name" );
 			return INCOMPLETE;
 		}
 
-		DesignLayer yy = new DesignLayer().setName( String.valueOf( parameters[ 0 ] ) );
+		if( task.hasParameter(0 ) ) {
+			String name = asText( task, "layer-name", 0 );
+			DesignLayer yy = new DesignLayer().setName( name );
+			yy = addLayer( task.getTool().getSelectedLayer(), yy );
+			task.getTool().setLayerVisible( yy, true );
+			return yy;
+		}
 
-		yy = addLayer( context.getTool().getSelectedLayer(), yy );
-		context.getTool().setLayerVisible( yy, true );
-
-		return yy;
+		return FAILURE;
 	}
 
 	/**
 	 * This implementation adds the new layer as a peer to the current layer.
 	 *
-	 * @param currentLayer The current layer
-	 * @param yy The new layer
+	 * @param layer The layer to add the new layer as a peer
+	 * @param yy The new peer layer
 	 */
-	DesignLayer addLayer( DesignLayer currentLayer, DesignLayer yy ) {
+	DesignLayer addLayer( DesignLayer layer, DesignLayer yy ) {
 		// Add yy as a peer (child of parent) of the currentLayer
-		return currentLayer.getLayer().addLayerBeforeOrAfter( yy, currentLayer, true );
+		return layer.getLayer().addLayerBeforeOrAfter( yy, layer, true );
 	}
 
 }

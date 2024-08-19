@@ -38,6 +38,9 @@ public class CommandBaseTest extends DesignToolBaseTest {
 	protected CommandPrompt commandPrompt;
 
 	@Mock
+	protected DesignLayer selectedLayer;
+
+	@Mock
 	protected DesignLayer currentLayer;
 
 	@Mock
@@ -54,6 +57,7 @@ public class CommandBaseTest extends DesignToolBaseTest {
 		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
+		lenient().when( tool.getSelectedLayer() ).thenReturn( selectedLayer );
 		lenient().when( tool.getCurrentLayer() ).thenReturn( currentLayer );
 		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
 		lenient().when( tool.getReferenceLayer() ).thenReturn( referenceLayer );
@@ -61,7 +65,7 @@ public class CommandBaseTest extends DesignToolBaseTest {
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
-		lenient().when( commandContext.getProduct() ).thenReturn( program );
+		lenient().when( commandContext.getProduct() ).thenReturn( module );
 		lenient().when( commandContext.getProgram() ).thenReturn( program );
 	}
 
