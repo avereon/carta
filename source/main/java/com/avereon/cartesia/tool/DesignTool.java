@@ -209,6 +209,10 @@ public interface DesignTool {
 
 	Point3D screenToWorkplane( double x, double y, double z );
 
+	Point3D snapToWorkplane( Point3D point );
+
+	Point3D snapToWorkplane( double x, double y, double z );
+
 	Point3D worldToScreen( double x, double y, double z );
 
 	Point3D worldToScreen( Point3D point );

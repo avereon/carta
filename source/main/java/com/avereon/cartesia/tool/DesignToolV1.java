@@ -424,11 +424,11 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		Fx.run( () -> designPane.mousePan( viewAnchor, dragAnchor, point ) );
 	}
 
-	public Point3D scaleScreenToWorld( Point3D point ){
+	public Point3D scaleScreenToWorld( Point3D point ) {
 		return null;
 	}
 
-	public Point3D scaleWorldToScreen( Point3D point ){
+	public Point3D scaleWorldToScreen( Point3D point ) {
 		return null;
 	}
 
@@ -441,6 +441,16 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	public Point3D screenToWorkplane( double x, double y, double z ) {
 		Point3D worldPoint = screenToWorld( x, y, z );
 		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
+	}
+
+	@Override
+	public Point3D snapToWorkplane( Point3D point ) {
+		return point;
+	}
+
+	@Override
+	public Point3D snapToWorkplane( double x, double y, double z ) {
+		return snapToWorkplane( new Point3D( x, y, z ) );
 	}
 
 	@Override
