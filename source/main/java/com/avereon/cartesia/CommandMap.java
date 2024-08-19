@@ -126,6 +126,7 @@ public final class CommandMap {
 		// Draw commands
 		add( product, "draw-arc-2", DrawArc2.class ); // center-radius/start-extent
 		add( product, "draw-arc-3", DrawArc3.class ); // endpoint-midpoint-endpoint
+		add( product, "draw-box-2", DrawBox2.class ); // corner-corner
 		add( product, "draw-circle-2", DrawCircle2.class ); // center-radius
 		add( product, "draw-circle-3", DrawCircle3.class ); // point-point-point
 		add( product, "draw-circle-diameter-2", DrawCircleDiameter2.class ); // point-diameter

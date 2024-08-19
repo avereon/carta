@@ -6,9 +6,11 @@ import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.*;
 
+@CustomLog
 public class DrawBox2 extends DrawCommand {
 
 	private DesignLine reference;
@@ -32,7 +34,7 @@ public class DrawBox2 extends DrawCommand {
 			Point3D origin = asPoint( task, "anchor", 0 );
 			preview.setOrigin( origin );
 
-			promptForPoint( task, "point" );
+			promptForPoint( task, "corner" );
 			return INCOMPLETE;
 		}
 
@@ -41,7 +43,7 @@ public class DrawBox2 extends DrawCommand {
 			setCaptureUndoChanges( task, true );
 
 			Point3D origin = asPoint( task, "anchor", 0 );
-			Point3D point = asPoint( task, "point", 1 );
+			Point3D point = asPoint( task, "corner", 1 );
 			Point3D size = new Point3D( point.getX() - origin.getX(), point.getY() - origin.getY(), point.getZ() - origin.getZ() );
 
 			// Start an undo multi-change
@@ -55,14 +57,23 @@ public class DrawBox2 extends DrawCommand {
 
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
-		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
+		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
-			Point3D origin = preview.getOrigin();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
-			Point3D size = new Point3D( point.getX() - origin.getX(), point.getY() - origin.getY(), point.getZ() - origin.getZ() );
-			switch( getStep() ) {
-				case 1 -> reference.setPoint( point ).setOrigin( point );
-				case 2 -> preview.setSize( size );
+			int step = getStep();
+			if( reference != null ) {
+				if( step == 1 ) {
+					log.atConfig().log( "Step=" + getStep() );
+					reference.setPoint( point ).setOrigin( point );
+				}
+			}
+			if( preview != null ) {
+				Point3D origin = preview.getOrigin();
+				Point3D size = new Point3D( point.getX() - origin.getX(), point.getY() - origin.getY(), point.getZ() - origin.getZ() );
+				if( step == 2 ) {
+					log.atConfig().log( "Step=" + getStep() );
+					preview.setSize( size );
+				}
 			}
 		}
 	}

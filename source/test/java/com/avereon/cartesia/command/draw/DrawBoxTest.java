@@ -119,7 +119,7 @@ public class DrawBoxTest extends CommandBaseTest {
 	}
 
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
-		return Stream.of( Arguments.of( new String[]{ "bad parameter" }, "anchor" ), Arguments.of( new String[]{ "-3,3", "bad parameter" }, "point" ) );
+		return Stream.of( Arguments.of( new String[]{ "bad parameter" }, "anchor" ), Arguments.of( new String[]{ "-3,3", "bad parameter" }, "corner" ) );
 	}
 
 	@Test

@@ -35,7 +35,7 @@ public abstract class DrawCommand extends Command {
 	}
 
 	protected DesignBox createPreviewBox( CommandTask task ) {
-		DesignBox box = new DesignBox( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
+		DesignBox box = new DesignBox( task.getContext().getWorldMouse(), Point3D.ZERO );
 		addPreview( task, setAttributesFromLayer( box, task.getTool().getCurrentLayer() ) );
 		return box;
 	}
