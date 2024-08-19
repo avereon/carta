@@ -77,9 +77,8 @@ public class BaseCartesiaUnitTest extends BaseModTestCase<CartesiaMod> {
 
 		if( module == null ) {
 			module = new CartesiaMod();
-			module.setProgram( program );
-			module.setParent( program );
 			module.init( program, module.getCard() );
+			module.setParent( program );
 			module.startup();
 		}
 	}
