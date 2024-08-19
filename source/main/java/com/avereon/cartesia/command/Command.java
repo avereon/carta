@@ -3,10 +3,7 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.draw.DrawPath;
-import com.avereon.cartesia.data.DesignEllipse;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.data.DesignText;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
@@ -26,7 +23,7 @@ import lombok.Getter;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -94,10 +91,10 @@ public abstract class Command {
 	}
 
 	@Getter
-	private final Collection<DesignShape> reference;
+	private final List<DesignShape> reference;
 
 	@Getter
-	private final Collection<DesignShape> preview;
+	private final List<DesignShape> preview;
 
 	private final Map<DesignShape, DesignShape> previewMap;
 
@@ -105,9 +102,9 @@ public abstract class Command {
 	private int step;
 
 	protected Command() {
-		this.preview = new CopyOnWriteArraySet<>();
+		this.reference = new CopyOnWriteArrayList<>();
+		this.preview = new CopyOnWriteArrayList<>();
 		this.previewMap = new ConcurrentHashMap<>();
-		this.reference = new CopyOnWriteArraySet<>();
 	}
 
 	/**
@@ -117,9 +114,8 @@ public abstract class Command {
 	 * </p>
 	 * <ul>
 	 *   <li>An object - The result of the successful command execution</li>
-	 *   <li>{@link Result#SUCCESS} - The command executed successfully, but doesn't have a return value</li>
 	 *   <li>{@link Result#INCOMPLETE} - The command needs more parameters</li>
-	 *   <li>{@link Result#INVALID} - The command received an invalid parameter</li>
+	 *   <li>{@link Result#SUCCESS} - The command executed successfully, but doesn't have a return value</li>
 	 *   <li>{@link Result#FAILURE} - The command failed to execute</li>
 	 *   <li>Exception - The command failed to execute</li>
 	 *  </ul>
@@ -561,6 +557,18 @@ public abstract class Command {
 	public void clearReferenceAndPreview( DesignCommandContext context ) {
 		clearReference( context );
 		clearPreview( context );
+	}
+
+	protected DesignLine createReferenceLine( CommandTask task ) {
+		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
+		addReference( task, line );
+		return line;
+	}
+
+	protected DesignArc createReferenceArc( CommandTask task, Point3D origin ) {
+		DesignArc arc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
+		addReference( task, arc );
+		return arc;
 	}
 
 	/**

@@ -22,12 +22,6 @@ public abstract class DrawCommand extends Command {
 		return CadGeometry.linePointDistance( origin, xPoint, yPoint );
 	}
 
-	protected DesignLine createReferenceLine( CommandTask task ) {
-		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
-		addReference( task, line );
-		return line;
-	}
-
 	protected DesignLine createPreviewLine( CommandTask task ) {
 		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
 		addPreview( task, setAttributesFromLayer( line, task.getTool().getCurrentLayer() ) );
