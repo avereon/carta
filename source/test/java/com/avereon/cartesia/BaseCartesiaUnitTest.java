@@ -69,7 +69,6 @@ public class BaseCartesiaUnitTest extends BaseModTestCase<CartesiaMod> {
 			String name = String.valueOf( i.getArguments()[ 0 ] );
 			ActionProxy action = new ActionProxy();
 			action.setName( name );
-			action.setCommand( name );
 			if( "select-window-contain".equals( name ) ) action.setCommand( "ws" );
 			return action;
 		} );

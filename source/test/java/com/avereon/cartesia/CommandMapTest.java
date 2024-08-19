@@ -8,7 +8,6 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -30,7 +29,6 @@ public class CommandMapTest extends CommandMapBaseTest {
 		assertThat( getMod().getCommandMap().getCommandByAction( "anchor" ).getType()).isEqualTo( Anchor.class );
 	}
 
-	@Disabled
 	@ParameterizedTest
 	@MethodSource( "provideCommandMetadataInputEventMatches" )
 	void getCommandByEvent( CommandMetadata expected, InputEvent event ) {
