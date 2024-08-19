@@ -441,7 +441,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Remove asset switch listener to unregister status bar items
 		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
 
-		if( renderer != null ) renderer.setDesign( null );
+		if(renderer!= null ) renderer.setDesign( null );
 
 		super.deallocate();
 	}
@@ -777,23 +777,24 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D screenToWorkplane( double x, double y, double z ) {
-		return screenToWorkplane( new Point3D( x, y, z ) );
-	}
-
-	@Override
 	public Point3D screenToWorkplane( Point3D point ) {
-		return snapToWorkplane( point );
+		return screenToWorkplane( point.getX(), point.getY(), point.getZ() );
 	}
 
 	@Override
-	public Point3D snapToWorkplane( double x, double y, double z ) {
-		return snapToWorkplane( new Point3D( x, y, z ) );
+	public Point3D screenToWorkplane( double x, double y, double z ) {
+		Point3D worldPoint = screenToWorld( x, y, z );
+		return isGridSnapEnabled() ? gridSnap.snap( this, worldPoint ) : worldPoint;
 	}
 
 	@Override
 	public Point3D snapToWorkplane( Point3D point ) {
 		return isGridSnapEnabled() ? gridSnap.snap( this, point ) : point;
+	}
+
+	@Override
+	public Point3D snapToWorkplane( double x, double y, double z ) {
+		return snapToWorkplane( new Point3D( x, y, z ) );
 	}
 
 	@Override

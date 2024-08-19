@@ -6,8 +6,6 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
-import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.xenon.asset.Asset;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.scene.input.MouseButton;
@@ -25,13 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith( MockitoExtension.class )
-public class CommandBaseTest extends BaseCartesiaUnitTest {
-
-	@Mock
-	protected DesignTool tool;
-
-	@Mock
-	protected Asset asset;
+public class CommandBaseTest extends DesignToolBaseTest {
 
 	@Mock
 	protected Design design;
@@ -59,18 +51,17 @@ public class CommandBaseTest extends BaseCartesiaUnitTest {
 		super.setup();
 
 		lenient().when( asset.getModel() ).thenReturn( design );
-		lenient().when( tool.getAsset() ).thenReturn( asset );
 		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
 		lenient().when( tool.getCurrentLayer() ).thenReturn( currentLayer );
 		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
 		lenient().when( tool.getReferenceLayer() ).thenReturn( referenceLayer );
-		lenient().when( designContext.getProduct() ).thenReturn( product );
+		lenient().when( designContext.getProduct() ).thenReturn( program );
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
-		lenient().when( commandContext.getProduct() ).thenReturn( product );
+		lenient().when( commandContext.getProduct() ).thenReturn( program );
 		lenient().when( commandContext.getProgram() ).thenReturn( program );
 	}
 
