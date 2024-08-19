@@ -55,7 +55,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 			xPoint = asPoint( task, "radius", 1 );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
-			if( previewArc == null ) previewArc= createPreviewArc( task, origin );
+			if( previewArc == null ) previewArc = createPreviewArc( task, origin );
 			previewArc.setRadii( new Point3D( CadGeometry.distance( origin, xPoint ), 0, 0 ) );
 			previewArc.setRotate( String.valueOf( deriveRotate( origin, xPoint ) ) );
 			promptForPoint( task, "radius" );
@@ -69,9 +69,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 			yPoint = asPoint( task, "radius", 2 );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
-			if( previewArc == null ) previewArc= createPreviewArc( task, origin );
+			if( previewArc == null ) previewArc = createPreviewArc( task, origin );
 			previewArc.setRadii( new Point3D( previewArc.getXRadius(), deriveYRadius( origin, xPoint, yPoint ), 0 ) );
-			addPreview( task, previewArc );
 			promptForPoint( task, "start" );
 			return INCOMPLETE;
 		}
@@ -84,7 +83,7 @@ public class DrawEllipseArc5 extends DrawCommand {
 			Point3D start = asPoint( task, "start", 3 );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
-			if( previewArc == null ) previewArc= createPreviewArc( task, origin );
+			if( previewArc == null ) previewArc = createPreviewArc( task, origin );
 			previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), start ) );
 			previewArc.setExtent( 0.0 );
 			spinAnchor = start;
@@ -133,8 +132,8 @@ public class DrawEllipseArc5 extends DrawCommand {
 				case 2 -> {
 					// Arc X radius and rotate
 					referenceLine.setPoint( point );
-					//referenceArc.setRadii( new Point3D( point.distance( referenceArc.getOrigin() ), 0, 0 ) );
-					//referenceArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
+					previewArc.setRadii( new Point3D( point.distance( previewArc.getOrigin() ), 0, 0 ) );
+					previewArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
 				}
 				case 3 -> {
 					// Arc Y radius
