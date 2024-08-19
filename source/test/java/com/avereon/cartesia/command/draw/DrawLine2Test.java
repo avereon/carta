@@ -70,8 +70,9 @@ public class DrawLine2Test extends CommandBaseTest {
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
-		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
-		assertThat( command.getPreview() ).hasSize( 1 );
+		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
@@ -90,6 +91,7 @@ public class DrawLine2Test extends CommandBaseTest {
 		Object result = task.runTaskStep();
 
 		// then
+		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
 		assertThat( command.getPreview() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
@@ -117,7 +119,7 @@ public class DrawLine2Test extends CommandBaseTest {
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
 		return Stream.of(
 			Arguments.of( new String[]{ "bad parameter" }, "start-point" ),
-			Arguments.of( new String[]{ "1,3", "bad parameter" }, "end-point" )
+			Arguments.of( new String[]{ "-3,3", "bad parameter" }, "end-point" )
 		);
 	}
 

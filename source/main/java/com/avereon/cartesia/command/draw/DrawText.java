@@ -62,11 +62,8 @@ public class DrawText extends DrawCommand {
 	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
-			Point3D mouse = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
-			if( getStep() == 1 ) {
-				reference.setOrigin( mouse );
-				reference.setPoint( mouse );
-			}
+			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
+			if( getStep() == 1 ) reference.setPoint( point ).setOrigin( point );
 		}
 	}
 
