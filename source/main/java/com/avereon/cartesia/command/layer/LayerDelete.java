@@ -23,7 +23,7 @@ public class LayerDelete extends LayerCommand {
 		return layer;
 	}
 
-	private DesignLayer getNextValidLayer( DesignLayer layer ) {
+	DesignLayer getNextValidLayer( DesignLayer layer ) {
 		DesignLayer parent = layer.getLayer();
 		List<DesignLayer> layers = parent.getLayers();
 		int count = layers.size();
