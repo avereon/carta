@@ -62,18 +62,12 @@ public class DrawBox2 extends DrawCommand {
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			int step = getStep();
 			if( reference != null ) {
-				if( step == 1 ) {
-					log.atConfig().log( "Step=" + getStep() );
-					reference.setPoint( point ).setOrigin( point );
-				}
+				if( step == 1 ) reference.setPoint( point ).setOrigin( point );
 			}
 			if( preview != null ) {
 				Point3D origin = preview.getOrigin();
 				Point3D size = new Point3D( point.getX() - origin.getX(), point.getY() - origin.getY(), point.getZ() - origin.getZ() );
-				if( step == 2 ) {
-					log.atConfig().log( "Step=" + getStep() );
-					preview.setSize( size );
-				}
+				if( step == 2 ) preview.setSize( size );
 			}
 		}
 	}
