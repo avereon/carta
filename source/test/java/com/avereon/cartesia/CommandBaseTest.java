@@ -25,6 +25,8 @@ import static org.mockito.Mockito.lenient;
 @ExtendWith( MockitoExtension.class )
 public class CommandBaseTest extends DesignToolBaseTest {
 
+	protected static final Object BAD_PARAMETER = null;
+
 	@Mock
 	protected Design design;
 

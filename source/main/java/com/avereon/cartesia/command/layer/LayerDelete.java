@@ -1,27 +1,26 @@
 package com.avereon.cartesia.command.layer;
 
-import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
 
 import java.util.List;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 public class LayerDelete extends LayerCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		DesignLayer layer = context.getTool().getSelectedLayer();
-		DesignLayer nextLayer = getNextValidLayer( layer );
+	public Object execute( CommandTask task ) throws Exception {
+		DesignLayer layer = task.getTool().getSelectedLayer();
+		if( layer == null ) return SUCCESS;
+
+		task.getTool().setCurrentLayer( getNextValidLayer( layer ) );
 
 		layer.getLayer().removeLayer( layer );
 		// FIXME Remove the layer from any views
 		// FIXME Remove the layer from any prints
 
-
-		context.getTool().setCurrentLayer( nextLayer );
-		return SUCCESS;
+		return layer;
 	}
 
 	private DesignLayer getNextValidLayer( DesignLayer layer ) {

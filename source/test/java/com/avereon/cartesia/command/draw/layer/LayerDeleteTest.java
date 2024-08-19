@@ -2,39 +2,37 @@ package com.avereon.cartesia.command.draw.layer;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.command.layer.LayerCurrent;
+import com.avereon.cartesia.command.layer.LayerDelete;
+import com.avereon.cartesia.data.DesignLayer;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-public class LayerCurrentTest extends CommandBaseTest {
+public class LayerDeleteTest extends CommandBaseTest {
 
-	private final LayerCurrent command = new LayerCurrent();
+	private final LayerDelete command = new LayerDelete();
+
+	@Mock
+	private DesignLayer parent;
 
 	// Script Tests --------------------------------------------------------------
 
-	/**
-	 * Layer current with all parameters should make the selected layer the
-	 * current. The result should be success.
-	 *
-	 * @throws Exception If an error occurs during the test
-	 */
 	@Test
 	void testExecuteWithAllParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+		when( selectedLayer.getLayer() ).thenReturn( parent );
+		when( parent.getLayers() ).thenReturn( List.of( currentLayer ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setCurrentLayer( eq( selectedLayer ) );
 		assertThat( result ).isEqualTo( selectedLayer );
-		assertThat( command.getReference() ).hasSize( 0 );
-		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 	// Bad Parameter Tests -------------------------------------------------------
@@ -43,15 +41,14 @@ public class LayerCurrentTest extends CommandBaseTest {
 	void testExecuteWithBadParameterOneIsIgnored() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_PARAMETER );
+		when( selectedLayer.getLayer() ).thenReturn( parent );
+		when( parent.getLayers() ).thenReturn( List.of( currentLayer ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setCurrentLayer( eq( selectedLayer ) );
 		assertThat( result ).isEqualTo( selectedLayer );
-		assertThat( command.getReference() ).hasSize( 0 );
-		assertThat( command.getPreview() ).hasSize( 0 );
 	}
 
 }
