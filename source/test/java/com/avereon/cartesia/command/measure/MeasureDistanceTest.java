@@ -59,17 +59,17 @@ public class MeasureDistanceTest extends CommandBaseTest {
 	void testRunTaskStepNoParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		// Use the CLOSED_HAND cursor as a reticle cursor
-		when( tool.getReticleCursor() ).thenReturn( Cursor.CLOSED_HAND );
+		when( tool.getReticleCursor() ).thenReturn( Cursor.CROSSHAIR );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
-		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
+		verify( tool, times( 1 ) ).setCursor( Cursor.CROSSHAIR );
 		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
 		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
@@ -77,15 +77,14 @@ public class MeasureDistanceTest extends CommandBaseTest {
 	void testRunTaskStepWithOneParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "8,3" );
-		// Use the CLOSED_HAND cursor as a reticle cursor
-		when( tool.getReticleCursor() ).thenReturn( Cursor.CLOSED_HAND );
+		when( tool.getReticleCursor() ).thenReturn( Cursor.CROSSHAIR );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
-		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
+		verify( tool, times( 1 ) ).setCursor( Cursor.CROSSHAIR );
 		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
 		assertThat( command.getReference() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
