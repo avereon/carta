@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.List;
 
 /*
-NEXT - This class currently has three return types for grid geometry.
+FIXME - This class currently has three return types for grid geometry.
 Not sure if this is the approach I want to take. The other option is to generate
 design geometry and map it to native geometry for the renderer, but that "just"
 slows it down.
