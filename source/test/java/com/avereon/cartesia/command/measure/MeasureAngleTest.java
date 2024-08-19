@@ -2,14 +2,21 @@ package com.avereon.cartesia.command.measure;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.CommandTask;
+import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -45,7 +52,7 @@ public class MeasureAngleTest extends CommandBaseTest {
 	// Interactive Tests ---------------------------------------------------------
 
 	/**
-	 * Draw arc with no parameters or event, should prompt the
+	 * Measure arc with no parameters or event, should prompt the
 	 * user to select an origin point. The result should be incomplete.
 	 *
 	 * @throws Exception If an error occurs during the test
@@ -85,6 +92,50 @@ public class MeasureAngleTest extends CommandBaseTest {
 		assertThat( command.getReference().get( 1 ) ).isInstanceOf( DesignArc.class );
 		assertThat( command.getReference() ).hasSize( 2 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
+
+	// Bad Parameter Tests -------------------------------------------------------
+
+	@ParameterizedTest
+	@MethodSource( "provideParametersForTestWithParameters" )
+	void testRunTaskStepWithBadParameters( Object[] parameters, String rbKey ) {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, parameters );
+
+		// when
+		InvalidInputException exception = catchThrowableOfType( InvalidInputException.class, task::runTaskStep );
+
+		// then
+		verify( commandContext, times( 0 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( currentLayer, times( 0 ) ).addShape( any() );
+		assertThat( exception.getInputRbKey() ).isEqualTo( rbKey );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+	}
+
+	private static Stream<Arguments> provideParametersForTestWithParameters() {
+		return Stream.of(
+			Arguments.of( new String[]{ "bad parameter" }, "center" ),
+			Arguments.of( new String[]{ "-3,3", "bad parameter" }, "start" ),
+			Arguments.of( new String[]{ "-3,3", "3,-3", "bad parameter" }, "extent" ),
+			Arguments.of( new String[]{ "-3,3", "3,-3", "3,3", "bad parameter" }, "spin" )
+		);
+	}
+
+	@Test
+	void testExecuteWithBadParameterFiveIsIgnored() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", "3,3", "0", "bad parameter" );
+		when( commandContext.isInteractive() ).thenReturn( true );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( noticeManager, times( 1 ) ).addNotice( any() );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( 45.0 );
 	}
 
 }
