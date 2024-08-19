@@ -19,7 +19,7 @@ public class SnapMidpoint implements Snap {
 
 	@Override
 	public Point3D snap( DesignTool tool, Point3D point ) {
-		if( point == null ) return CadPoints.NONE;
+		if( point == null || point == CadPoints.NONE ) return CadPoints.NONE;
 
 		List<DesignShape> shapes = tool.worldPointSyncFindOne( point );
 		if( shapes.isEmpty() ) return CadPoints.NONE;

@@ -13,7 +13,7 @@ public class SnapNearestCp implements Snap {
 
 	@Override
 	public Point3D snap( DesignTool tool, Point3D point ) {
-		if( point == null ) return CadPoints.NONE;
+		if( point == null || point == CadPoints.NONE ) return CadPoints.NONE;
 		return tool.nearestReferencePoint( tool.getVisibleShapes(), point );
 	}
 

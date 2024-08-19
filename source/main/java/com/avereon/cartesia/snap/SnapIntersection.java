@@ -19,7 +19,7 @@ public class SnapIntersection implements Snap {
 
 	@Override
 	public Point3D snap( DesignTool tool, Point3D point ) {
-		if( point == null ) return CadPoints.NONE;
+		if( point == null || point == CadPoints.NONE ) return CadPoints.NONE;
 
 		Point3D mouse = tool.worldToScreen( point );
 		List<DesignShape> shapes = tool.screenPointSyncFindAll( mouse );
