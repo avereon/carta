@@ -226,6 +226,10 @@ public abstract class Command {
 	}
 
 	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value ) throws InvalidInputException {
+		return asPoint( task, anchor, rbKey, value, true );
+	}
+
+	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value, boolean snap ) throws InvalidInputException {
 		Point3D point = null;
 
 		if( value instanceof Point3D ) {
@@ -235,7 +239,7 @@ public abstract class Command {
 			if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		}
 
-		return task.getTool().snapToWorkplane( point );
+		return snap ? task.getTool().snapToWorkplane( point ) : point;
 	}
 
 	protected Point3D asPoint( CommandTask task, String rbKey, InputEvent event ) throws InvalidInputException {
@@ -245,6 +249,10 @@ public abstract class Command {
 		}
 		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, event );
 		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, point );
+	}
+
+	protected Point3D asPointWithoutSnap( CommandTask task, String rbKey, int index ) throws Exception {
+		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, task.getParameter( index ), false );
 	}
 
 	@Deprecated
