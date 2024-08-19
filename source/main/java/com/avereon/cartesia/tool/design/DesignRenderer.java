@@ -679,8 +679,8 @@ public class DesignRenderer extends BorderPane {
 		renderer.clear();
 		renderWorkplane();
 		renderLayers();
-		renderReferenceGeometry();
 		renderHintGeometry();
+		renderReferenceGeometry();
 		renderSelectAperture();
 
 		long endNs = System.nanoTime();

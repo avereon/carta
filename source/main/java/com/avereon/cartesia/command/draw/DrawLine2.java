@@ -29,8 +29,12 @@ public class DrawLine2 extends DrawCommand {
 
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
-			if( preview == null ) preview = createPreviewLine( task );
 			Point3D origin = asPoint( task, "start-point", 0 );
+
+			if( reference == null ) reference = createReferenceLine( task );
+			reference.setPoint( origin ).setOrigin( origin );
+
+			if( preview == null ) preview = createPreviewLine( task );
 			preview.setOrigin( origin );
 
 			promptForPoint( task, "end-point" );
@@ -55,12 +59,15 @@ public class DrawLine2 extends DrawCommand {
 
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
-		if( preview != null && event.getEventType() == MouseEvent.MOUSE_MOVED ) {
+		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
-			switch( getStep() ) {
-				case 1 -> reference.setPoint( point ).setOrigin( point );
-				case 2 -> preview.setPoint( point );
+			int step = getStep();
+			if( reference != null ) {
+				if( step == 1 ) reference.setPoint( point ).setOrigin( point );
+			}
+			if( preview != null ) {
+				if( step == 2 ) preview.setPoint( point );
 			}
 		}
 	}

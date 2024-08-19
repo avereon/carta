@@ -93,7 +93,8 @@ public class DrawBoxTest extends CommandBaseTest {
 		Object result = task.runTaskStep();
 
 		// then
-		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
 		assertThat( command.getPreview().stream().findFirst().orElse( null ) ).isInstanceOf( DesignBox.class );
 		assertThat( command.getPreview() ).hasSize( 1 );
 		assertThat( result ).isEqualTo( INCOMPLETE );

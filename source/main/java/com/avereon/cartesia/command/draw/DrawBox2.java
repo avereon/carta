@@ -34,6 +34,9 @@ public class DrawBox2 extends DrawCommand {
 			Point3D origin = asPoint( task, "anchor", 0 );
 			preview.setOrigin( origin );
 
+			if( reference == null ) reference = createReferenceLine( task );
+			reference.setPoint( origin ).setOrigin( origin );
+
 			promptForPoint( task, "corner" );
 			return INCOMPLETE;
 		}

@@ -38,11 +38,11 @@ public class DrawArc2 extends DrawCommand {
 			Point3D origin = asPoint( task, "center", 0 );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
-			referenceLine.setOrigin( origin );
-			referenceLine.setPoint( origin );
+			referenceLine.setPoint( origin ).setOrigin( origin );
 
 			if( previewArc == null ) previewArc = createPreviewArc( task, origin );
 			promptForPoint( task, "start" );
+
 			return INCOMPLETE;
 		}
 
@@ -97,7 +97,7 @@ public class DrawArc2 extends DrawCommand {
 					// Arc radius and start
 					referenceLine.setPoint( point );
 					previewArc.setRadius( point.distance( previewArc.getOrigin() ) );
-					//previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), point ) );
+					previewArc.setStart( deriveStart( previewArc.getOrigin(), previewArc.getXRadius(), previewArc.getYRadius(), previewArc.calcRotate(), point ) );
 				}
 				case 3 -> {
 					// Arc extent
