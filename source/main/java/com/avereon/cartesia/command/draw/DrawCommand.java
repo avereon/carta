@@ -72,4 +72,10 @@ public abstract class DrawCommand extends Command {
 		return marker;
 	}
 
+	protected DesignText createPreviewText( CommandTask task ) {
+		DesignText text = new DesignText( task.getContext().getWorldMouse() );
+		addPreview( task, setTextAttributesFromLayer( text, task.getTool().getCurrentLayer() ) );
+		return text;
+	}
+
 }

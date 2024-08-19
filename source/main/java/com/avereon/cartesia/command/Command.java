@@ -6,6 +6,7 @@ import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.DesignText;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
@@ -480,6 +481,22 @@ public abstract class Command {
 		shape.setDrawCap( layer.getDrawCap() );
 		shape.setDrawJoin( layer.getDrawJoin() );
 		return shape;
+	}
+
+	protected DesignText setTextAttributesFromLayer( DesignText text, DesignLayer layer ) {
+		text.setFillPaint( layer.getTextFillPaint() );
+		text.setDrawPaint( layer.getTextDrawPaint() );
+		text.setDrawWidth( layer.getTextDrawWidth() );
+		text.setDrawPattern( layer.getTextDrawPattern() );
+
+		text.setTextSize( layer.getTextSize() );
+		text.setFontName( layer.getFontName() );
+		text.setFontWeight( layer.getFontWeight() );
+		text.setFontPosture( layer.getFontPosture() );
+		text.setFontUnderline( layer.getFontUnderline() );
+		text.setFontStrikethrough( layer.getFontStrikethrough() );
+
+		return text;
 	}
 
 	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
