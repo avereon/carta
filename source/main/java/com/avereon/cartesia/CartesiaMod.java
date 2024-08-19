@@ -49,7 +49,7 @@ public class CartesiaMod extends Module {
 
 	@Override
 	public void startup() throws Exception {
-		log.atFine().log( "%s starting...", LazyEval.of( () -> getCard().getName() ) );
+		log.atDebug().log( "%s starting...", LazyEval.of( () -> getCard().getName() ) );
 
 		super.startup();
 		registerIcons();
