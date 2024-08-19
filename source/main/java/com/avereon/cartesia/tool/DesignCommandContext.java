@@ -91,6 +91,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		this.inputMode = DesignCommandContext.Input.NONE;
 	}
 
+	@Deprecated
 	public final XenonProgramProduct getProduct() {
 		return product;
 	}

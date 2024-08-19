@@ -3,6 +3,7 @@ package com.avereon.cartesia.command.measure;
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.Prompt;
+import com.avereon.cartesia.data.DesignArc;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
@@ -29,14 +30,15 @@ public class MeasureAngleTest extends CommandBaseTest {
 	void testExecuteWithAllParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", "3,3" );
+		when( commandContext.isInteractive() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
-		//verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
+		verify( noticeManager, times( 1 ) ).addNotice( any() );
 		assertThat( command.getReference() ).hasSize( 0 );
-		//assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( 45.0 );
 	}
 
@@ -79,8 +81,8 @@ public class MeasureAngleTest extends CommandBaseTest {
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
-		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
-		//assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference().get( 1 ) ).isInstanceOf( DesignArc.class );
 		assertThat( command.getReference() ).hasSize( 2 );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
