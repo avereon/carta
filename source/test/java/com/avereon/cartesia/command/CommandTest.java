@@ -3,14 +3,15 @@ package com.avereon.cartesia.command;
 import com.avereon.cartesia.CommandBaseTest;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import org.junit.jupiter.api.Test;
 import org.mockito.Spy;
 
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 /**
  * Test shared command functionality.
@@ -32,6 +33,46 @@ public class CommandTest extends CommandBaseTest {
 		verify( command, times( 1 ) ).clearReferenceAndPreview( eq( task ) );
 		verify( tool, times( 1 ) ).setCursor( eq( Cursor.DEFAULT ) );
 		verify( tool, times( 1 ) ).clearSelectedShapes();
+	}
+
+	@Test
+	void testAsPointWithInput() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
+
+		// when
+		Point3D result = command.asPoint( task, task.getContext().getWorldAnchor(), "point", "1.01,2.01" );
+
+		// then
+		assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+	}
+
+	@Test
+	void testAsPointWithPoint() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
+
+		// when
+		Point3D result = command.asPoint( task, task.getContext().getWorldAnchor(), "point", new Point3D( 1.01, 2.01, 0 ) );
+
+		// then
+		assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+	}
+
+	@Test
+	void testAsPointWithInputEvent() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+		when( tool.screenToWorld( new Point3D( 72, 72, 0 ) ) ).thenReturn( new Point3D( 1.01, 2.01, 0 ) );
+		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
+
+		// when
+		Point3D result = command.asPoint( task, "point", createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, false, false, false, false, false, 72, 72 ) );
+
+		// then
+		assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
 	}
 
 	// TODO Test more shared Command methods

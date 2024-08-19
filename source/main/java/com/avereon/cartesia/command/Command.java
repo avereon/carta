@@ -221,11 +221,6 @@ public abstract class Command {
 		return CadMath.eval( String.valueOf( value ) );
 	}
 
-	@Deprecated
-	protected Point3D asPoint( CommandTask task, int index ) throws Exception {
-		return asPoint( task.getContext().getWorldAnchor(), task.getParameter( index ) );
-	}
-
 	protected Point3D asPoint( CommandTask task, String rbKey, int index ) throws Exception {
 		return asPoint( task, rbKey, task.getParameter( index ) );
 	}
@@ -235,10 +230,16 @@ public abstract class Command {
 	}
 
 	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value ) throws InvalidInputException {
-		if( value instanceof Point3D ) return (Point3D)value;
-		Point3D point = CadShapes.parsePoint( String.valueOf( value ), anchor );
-		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
-		return point;
+		Point3D point = null;
+
+		if( value instanceof Point3D ) {
+			point = (Point3D)value;
+		} else if( value instanceof String ) {
+			point = CadShapes.parsePoint( (String)value, anchor );
+			if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
+		}
+
+		return task.getTool().snapToWorkplane( point );
 	}
 
 	protected Point3D asPoint( CommandTask task, String rbKey, InputEvent event ) throws InvalidInputException {
@@ -247,7 +248,7 @@ public abstract class Command {
 			point = task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
 		}
 		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, event );
-		return point;
+		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, point );
 	}
 
 	@Deprecated

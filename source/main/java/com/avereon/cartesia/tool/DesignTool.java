@@ -201,8 +201,22 @@ public interface DesignTool {
 	 */
 	void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
 
+	/**
+	 * Scale a point from screen size to world size. This transform only applies
+	 * the rendering scale to the point, but not the translation or rotation.
+	 *
+	 * @param point The point to transform
+	 * @return The transformed point
+	 */
 	Point3D scaleScreenToWorld( Point3D point );
 
+	/**
+	 * Scale a point from world size to screen size. This transform only applies
+	 * the rendering scale to the point, but not the translation or rotation.
+	 *
+	 * @param point The point to transform
+	 * @return The transformed point
+	 */
 	Point3D scaleWorldToScreen( Point3D point );
 
 	Point3D screenToWorkplane( Point3D point );
@@ -225,8 +239,18 @@ public interface DesignTool {
 
 	Bounds screenToWorld( Bounds bounds );
 
+	/**
+	 * Is the workplane grid visible?
+	 *
+	 * @return True if the grid is visible, false otherwise
+	 */
 	boolean isGridVisible();
 
+	/**
+	 * Set the workplane grid visibility.
+	 *
+	 * @param visible True to show the grid, false to hide the grid
+	 */
 	void setGridVisible( boolean visible );
 
 	BooleanProperty gridVisible();
@@ -272,4 +296,5 @@ public interface DesignTool {
 	void showCommandPrompt();
 
 	void setCursor( Cursor cursor );
+
 }
