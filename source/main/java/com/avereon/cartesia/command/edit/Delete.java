@@ -1,22 +1,19 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import javafx.scene.input.InputEvent;
+import com.avereon.cartesia.command.CommandTask;
 import lombok.CustomLog;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 @CustomLog
 public class Delete extends EditCommand {
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
-
-		deleteShapes( context.getTool() );
+		setCaptureUndoChanges( task, true );
+		deleteShapes( task.getTool() );
 
 		return SUCCESS;
 	}
