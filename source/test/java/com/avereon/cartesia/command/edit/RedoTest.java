@@ -49,7 +49,7 @@ public class RedoTest  extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameterOneIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_PARAMETER );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_TEXT_PARAMETER );
 		when( asset.getUndoManager() ).thenReturn( undoManager );
 
 		// when

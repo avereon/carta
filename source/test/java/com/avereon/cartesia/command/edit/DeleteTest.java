@@ -28,7 +28,6 @@ public class DeleteTest extends CommandBaseTest {
 		Object result = task.runTaskStep();
 
 		// then
-		//verify( currentLayer, times( 1 ) ).addShape( any( DesignLine.class ) );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( SUCCESS );
@@ -58,7 +57,7 @@ public class DeleteTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameterOneIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_PARAMETER );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_TEXT_PARAMETER );
 
 		// when
 		Object result = task.runTaskStep();

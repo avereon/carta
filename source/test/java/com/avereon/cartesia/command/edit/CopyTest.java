@@ -56,6 +56,20 @@ public class CopyTest extends CommandBaseTest {
 
 	// Interactive Tests ---------------------------------------------------------
 
+	@Test
+	void testExecuteWithNoSelectedShapes() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
 	// Bad Parameter Tests -------------------------------------------------------
 
 }

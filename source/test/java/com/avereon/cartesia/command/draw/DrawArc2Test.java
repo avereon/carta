@@ -175,17 +175,17 @@ public class DrawArc2Test extends CommandBaseTest {
 
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
 		return Stream.of(
-			Arguments.of( new String[]{ "bad parameter" }, "center" ),
-			Arguments.of( new String[]{ "8,3", "bad parameter" }, "start" ),
-			Arguments.of( new String[]{ "8,3", "1,0", "bad parameter" }, "extent" ),
-			Arguments.of( new String[]{ "8,3", "1,0", "1,1", "bad parameter" }, "spin" )
+			Arguments.of( new Object[]{ BAD_POINT_PARAMETER }, "center" ),
+			Arguments.of( new Object[]{ "8,3", BAD_POINT_PARAMETER }, "start" ),
+			Arguments.of( new Object[]{ "8,3", "1,0", BAD_POINT_PARAMETER }, "extent" ),
+			Arguments.of( new Object[]{ "8,3", "1,0", "1,1", BAD_NUMBER_PARAMETER }, "spin" )
 		);
 	}
 
 	@Test
 	void testExecuteWithBadParameterFiveIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "8,3", "1,0", "1,1", "0", "bad parameter" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "8,3", "1,0", "1,1", "0", BAD_PARAMETER );
 
 		// when
 		Object result = task.runTaskStep();

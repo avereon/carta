@@ -116,8 +116,8 @@ public class DrawLine2Test extends CommandBaseTest {
 
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
 		return Stream.of(
-			Arguments.of( new String[]{ "bad parameter" }, "start-point" ),
-			Arguments.of( new String[]{ "-3,3", "bad parameter" }, "end-point" )
+			Arguments.of( new Object[]{ BAD_POINT_PARAMETER }, "start-point" ),
+			Arguments.of( new Object[]{ "-3,3", BAD_POINT_PARAMETER }, "end-point" )
 		);
 	}
 

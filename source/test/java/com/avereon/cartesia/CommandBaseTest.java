@@ -28,6 +28,12 @@ public class CommandBaseTest extends DesignToolBaseTest {
 
 	protected static final Cursor RETICLE = Cursor.CROSSHAIR;
 
+	protected static final Object BAD_NUMBER_PARAMETER = "bad number parameter";
+
+	protected static final Object BAD_POINT_PARAMETER = "bad point parameter";
+
+	protected static final Object BAD_TEXT_PARAMETER = null;
+
 	protected static final Object BAD_PARAMETER = null;
 
 	@Mock

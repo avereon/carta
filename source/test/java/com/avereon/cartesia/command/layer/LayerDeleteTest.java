@@ -42,7 +42,7 @@ public class LayerDeleteTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameterOneIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_PARAMETER );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_TEXT_PARAMETER );
 		when( selectedLayer.getLayer() ).thenReturn( parent );
 		when( parent.getLayers() ).thenReturn( List.of( currentLayer ) );
 

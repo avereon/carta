@@ -2,7 +2,6 @@ package com.avereon.cartesia.command.layer;
 
 import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.command.layer.LayerCurrent;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,7 +41,7 @@ public class LayerCurrentTest extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameterOneIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_PARAMETER );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_TEXT_PARAMETER );
 
 		// when
 		Object result = task.runTaskStep();
