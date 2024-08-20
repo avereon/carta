@@ -1,21 +1,12 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import com.avereon.product.Rb;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.text.ParseException;
-
-import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
-import static com.avereon.cartesia.command.Command.Result.SUCCESS;
+import static com.avereon.cartesia.command.Command.Result.*;
 
 public class Flip extends EditCommand {
 
@@ -24,42 +15,43 @@ public class Flip extends EditCommand {
 	private Point3D anchor;
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
-		setCaptureUndoChanges( context, false );
+		setCaptureUndoChanges( task, false );
 
 		// Ask for an anchor point
-		if( parameters.length < 1 ) {
-			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "axis-anchor" );
+		if( task.getParameterCount() == 0 ) {
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			promptForPoint( task, "axis-anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
-		if( parameters.length < 2 ) {
-			anchor = asPoint( context, parameters[ 0 ] );
+		if( task.getParameterCount() == 1 ) {
+			anchor = asPoint( task, "axis-anchor", 0 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, createPreviewShapes( context.getTool().getSelectedShapes() ) );
-			promptForPoint( context, "axis-point" );
+
+			createPreviewShapes( task, task.getTool().getSelectedShapes() );
+
+			promptForPoint( task, "axis-point" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		if( task.hasParameter( 1 ) ) {
+			setCaptureUndoChanges( task, true );
 
-		try {
-			final Point3D anchor = asPoint( context, parameters[ 0 ] );
-			final Point3D point = asPoint( context, parameters[ 1 ] );
+			Point3D anchor = asPoint( task, "axis-anchor", 0 );
+			Point3D point = asPoint( task, "axis-point", 1 );
 
-			flipShapes( context.getTool(), anchor, point );
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			flipShapes( task.getTool(), anchor, point );
+
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		return FAILURE;
 	}
 
 	@Override
