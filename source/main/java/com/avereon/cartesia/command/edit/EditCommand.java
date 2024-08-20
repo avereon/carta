@@ -14,20 +14,17 @@ import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
 import java.util.Collection;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @CustomLog
 public abstract class EditCommand extends Command {
+
+	private static final String CLONE_LAYER_KEY = "clone-layer";
 
 	private boolean copy;
 
 	protected void setCloneShapeOnExecute() {
 		this.copy = true;
-	}
-
-	protected Collection<DesignShape> getCommandShapes( DesignTool tool ) {
-		return copy ? cloneAndAddShapes( tool.getSelectedShapes() ) : tool.getSelectedShapes();
 	}
 
 	protected void flipShapes( Collection<DesignShape> shapes, Point3D origin, Point3D point ) {
@@ -107,33 +104,32 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void apply( DesignTool tool, CadTransform transform ) {
-		Collection<DesignShape> originalShapes = tool.getSelectedShapes();
+		//oldApply( tool, transform );
 
-		// Clone
-		Collection<DesignShape> cloneShapes = Set.of();
-		if( copy ) {
-			cloneShapes = originalShapes.stream().map( s -> {
-				DesignShape clone = s.clone().setSelected( false ).setPreview( false );
-				clone.setValue( "clone-layer", NodeLink.of( s.getLayer() ) );
-				// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
-				//if( s.getLayer() != null ) s.getLayer().addShape( clone );
-				return clone;
-			} ).collect( Collectors.toList() );
-		}
+		// Determine what shapes to transform
+		List<DesignShape> shapes = copy ? clone( tool.getSelectedShapes() ) : tool.getSelectedShapes();
 
-		// Transform
-		Collection<DesignShape> shapes = copy ? cloneShapes : originalShapes;
+		// Transform the shapes
 		Txn.run( () -> shapes.forEach( s -> s.apply( transform ) ) );
 
-		// Add
-		if( copy ) {
-			Txn.run( () -> {
-				shapes.forEach( s -> {
-					((NodeLink<DesignLayer>)s.getValue( "clone-layer" )).getNode().addShape( s );
-					s.setValue( "clone-layer", null );
-				} );
-			} );
-		}
+		// Add the shapes to their respective layers if needed
+		if( copy ) store( shapes );
+	}
+
+	private List<DesignShape> clone( List<DesignShape> shapes ) {
+		return shapes.stream().map( shape -> {
+			DesignShape clone = shape.clone();
+			clone.setValue( CLONE_LAYER_KEY, NodeLink.of( shape.getLayer() ) );
+			return clone;
+		} ).toList();
+	}
+
+	private void store( List<DesignShape> shapes ) {
+		shapes.forEach( shape -> {
+			NodeLink<DesignLayer> link = shape.getValue( CLONE_LAYER_KEY );
+			link.getNode().addShape( shape );
+			shape.setValue( CLONE_LAYER_KEY, null );
+		} );
 	}
 
 }

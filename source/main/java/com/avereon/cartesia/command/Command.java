@@ -96,6 +96,9 @@ public abstract class Command {
 	@Getter
 	private final List<DesignShape> preview;
 
+	// The preview map is used to store the original geometry of preview shapes
+	// so that they can be reset when requested, usually when the user is
+	// interacting with preview geometry.
 	private final Map<DesignShape, DesignShape> previewMap;
 
 	@Getter
@@ -299,12 +302,6 @@ public abstract class Command {
 		promptForValue( task.getContext(), key, DesignCommandContext.Input.NUMBER );
 	}
 
-	@Deprecated
-	protected void promptForNumber( DesignCommandContext context, String key ) {
-		context.getTool().setCursor( null );
-		promptForValue( context, key, DesignCommandContext.Input.NUMBER );
-	}
-
 	protected void promptForPoint( CommandTask task, String key ) {
 		task.getTool().setCursor( task.getTool().getReticleCursor() );
 		promptForValue( task, key, DesignCommandContext.Input.POINT );
@@ -335,12 +332,6 @@ public abstract class Command {
 	protected void promptForText( CommandTask task, String key ) {
 		task.getTool().setCursor( Cursor.TEXT );
 		promptForValue( task, key, DesignCommandContext.Input.TEXT );
-	}
-
-	@Deprecated
-	protected void promptForText( DesignCommandContext context, String key ) {
-		context.getTool().setCursor( Cursor.TEXT );
-		promptForValue( context, key, DesignCommandContext.Input.TEXT );
 	}
 
 	@Deprecated
@@ -377,11 +368,8 @@ public abstract class Command {
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
-	protected Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes ) {
-		return cloneAndAddShapes( shapes, false );
-	}
-
-	protected Collection<DesignShape> cloneAndAddReferenceShapes( Collection<DesignShape> shapes ) {
+	@Deprecated
+	protected Collection<DesignShape> createPreviewShapes( Collection<DesignShape> shapes ) {
 		return cloneAndAddShapes( shapes, true );
 	}
 
@@ -459,42 +447,103 @@ public abstract class Command {
 		reference.clear();
 	}
 
-	protected void addPreview( CommandTask task, DesignShape... shapes ) {
-		addPreview( task, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
-	}
-
-	@Deprecated
-	protected void addPreview( DesignCommandContext context, DesignShape... shapes ) {
-		addPreview( context, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
-	}
-
 	protected DesignShape setAttributesFromLayer( DesignShape shape, DesignLayer layer ) {
+		if( layer == null ) return shape;
+
 		shape.setFillPaint( layer.getFillPaint() );
 		shape.setDrawPaint( layer.getDrawPaint() );
 		shape.setDrawWidth( layer.getDrawWidth() );
 		shape.setDrawPattern( layer.getDrawPattern() );
 		shape.setDrawCap( layer.getDrawCap() );
 		shape.setDrawJoin( layer.getDrawJoin() );
+
+		if( shape instanceof DesignText text ) {
+			text.setFillPaint( layer.getTextFillPaint() );
+			text.setDrawPaint( layer.getTextDrawPaint() );
+			text.setDrawWidth( layer.getTextDrawWidth() );
+			text.setDrawPattern( layer.getTextDrawPattern() );
+
+			text.setTextSize( layer.getTextSize() );
+			text.setFontName( layer.getFontName() );
+			text.setFontWeight( layer.getFontWeight() );
+			text.setFontPosture( layer.getFontPosture() );
+			text.setFontUnderline( layer.getFontUnderline() );
+			text.setFontStrikethrough( layer.getFontStrikethrough() );
+		}
+
 		return shape;
 	}
 
-	protected DesignText setTextAttributesFromLayer( DesignText text, DesignLayer layer ) {
-		text.setFillPaint( layer.getTextFillPaint() );
-		text.setDrawPaint( layer.getTextDrawPaint() );
-		text.setDrawWidth( layer.getTextDrawWidth() );
-		text.setDrawPattern( layer.getTextDrawPattern() );
+	protected DesignLine createPreviewLine( CommandTask task ) {
+		DesignLine line = new DesignLine( task.getContext().getWorldMouse(), task.getContext().getWorldMouse() );
+		addPreview( task, setAttributesFromLayer( line, task.getTool().getCurrentLayer() ) );
+		return line;
+	}
 
-		text.setTextSize( layer.getTextSize() );
-		text.setFontName( layer.getFontName() );
-		text.setFontWeight( layer.getFontWeight() );
-		text.setFontPosture( layer.getFontPosture() );
-		text.setFontUnderline( layer.getFontUnderline() );
-		text.setFontStrikethrough( layer.getFontStrikethrough() );
+	protected DesignBox createPreviewBox( CommandTask task ) {
+		DesignBox box = new DesignBox( task.getContext().getWorldMouse(), Point3D.ZERO );
+		addPreview( task, setAttributesFromLayer( box, task.getTool().getCurrentLayer() ) );
+		return box;
+	}
 
+	protected DesignArc createPreviewArc( CommandTask task, Point3D origin ) {
+		DesignArc arc = new DesignArc( origin, 0.0, 0.0, 360.0, DesignArc.Type.OPEN );
+		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );
+		return arc;
+	}
+
+	protected DesignArc createPreviewArc3( CommandTask task, Point3D start, Point3D mid ) {
+		DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, mid );
+		addPreview( task, setAttributesFromLayer( arc, task.getTool().getCurrentLayer() ) );
+		return arc;
+	}
+
+	protected DesignEllipse createPreviewEllipse( CommandTask task, Point3D origin ) {
+		DesignEllipse ellipse = new DesignEllipse( origin, 0.0, 0.0 );
+		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
+		return ellipse;
+	}
+
+	protected DesignEllipse createPreviewEllipse3( CommandTask task, Point3D start, Point3D mid ) {
+		DesignArc arc = CadGeometry.arcFromThreePoints( start, mid, mid );
+		DesignEllipse ellipse = new DesignEllipse( arc.getOrigin(), arc.getXRadius(), arc.getYRadius() );
+		addPreview( task, setAttributesFromLayer( ellipse, task.getTool().getCurrentLayer() ) );
+		return ellipse;
+	}
+
+	protected DesignCubic createPreviewCubic( CommandTask task ) {
+		Point3D worldMouse = task.getContext().getWorldMouse();
+		DesignCubic cubic = new DesignCubic( worldMouse, worldMouse, worldMouse, worldMouse );
+		addPreview( task, setAttributesFromLayer( cubic, task.getTool().getCurrentLayer() ) );
+		return cubic;
+	}
+
+	protected DesignMarker createPreviewMarker( CommandTask task ) {
+		DesignMarker marker = new DesignMarker( task.getContext().getWorldMouse() );
+		addPreview( task, setAttributesFromLayer( marker, task.getTool().getCurrentLayer() ) );
+		return marker;
+	}
+
+	protected DesignText createPreviewText( CommandTask task ) {
+		DesignText text = new DesignText( task.getContext().getWorldMouse() );
+		addPreview( task, setAttributesFromLayer( text, task.getTool().getCurrentLayer() ) );
 		return text;
 	}
 
-	protected void addPreview( CommandTask task, List<DesignShape> shapes ) {
+	protected void createPreviewShapes( CommandTask task, List<DesignShape> shapes ) {
+		List<DesignShape> preview = shapes.stream().map( shape -> {
+			DesignShape clone = setAttributesFromLayer( shape.clone(), shape.getLayer() );
+			previewMap.put( shape, clone );
+			return clone;
+		} ).toList();
+		addPreview( task, preview );
+	}
+
+	private void addPreview( CommandTask task, DesignShape... shapes ) {
+		addPreview( task, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+	}
+
+	private void addPreview( CommandTask task, List<DesignShape> shapes ) {
 		task.getTool().getPreviewLayer().addShapes( shapes );
 		this.preview.addAll( shapes );
 	}
@@ -686,6 +735,7 @@ public abstract class Command {
 		return angle;
 	}
 
+	@Deprecated
 	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean preview ) {
 		return shapes.stream().map( s -> {
 			DesignShape clone = s.clone().setSelected( false ).setPreview( preview );

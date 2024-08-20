@@ -694,11 +694,13 @@ public class DesignToolV2 extends BaseDesignTool {
 		}
 	}
 
+	// FIXME Should this be converted to getter/setter?
 	@Override
 	public DesignLayer getPreviewLayer() {
 		return renderer.getPreviewLayer();
 	}
 
+	// FIXME Should this be converted to getter/setter?
 	@Override
 	public DesignLayer getReferenceLayer() {
 		return renderer.getReferenceLayer();
@@ -991,6 +993,12 @@ public class DesignToolV2 extends BaseDesignTool {
 		getDesignContext().getSelectedShapes().clear();
 	}
 
+	/**
+	 * Get a copy of the selected shapes list. The returned list is safe to modify
+	 * and will not affect the internal selected shapes list.
+	 *
+	 * @return A copy of the selected shapes list.
+	 */
 	@Override
 	public List<DesignShape> getSelectedShapes() {
 		return new ArrayList<>( getDesignContext().getSelectedShapes() );

@@ -49,7 +49,7 @@ public class Squish extends EditCommand {
 		if( parameters.length < 3 ) {
 			source = asPoint( context, parameters[ 1 ] );
 			referenceLine.setPoint( source ).setOrigin( source );
-			addPreview( context, cloneAndAddReferenceShapes( tool.getSelectedShapes() ) );
+			addPreview( context, createPreviewShapes( tool.getSelectedShapes() ) );
 			promptForPoint( context, "target" );
 			return INCOMPLETE;
 		}

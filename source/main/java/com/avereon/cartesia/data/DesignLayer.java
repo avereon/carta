@@ -200,14 +200,14 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		if( after ) insert++;
 		if( insert < 0 || insert > size ) insert = size;
 		layers.add( insert, layer );
-		updateOrder( layers );
+		updateLayerOrder( layers );
 		addLayer( layer );
 
 		return this;
 	}
 
 	@SuppressWarnings( "UnusedReturnValue" )
-	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
+	private <T extends DesignDrawable> List<T> updateLayerOrder( List<T> list ) {
 		AtomicInteger counter = new AtomicInteger( 0 );
 		list.forEach( i -> i.setOrder( counter.getAndIncrement() ) );
 		return list;

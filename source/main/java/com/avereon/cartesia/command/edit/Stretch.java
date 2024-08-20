@@ -47,7 +47,7 @@ public class Stretch extends EditCommand {
 
 		// Ask for an anchor point
 		if( task.getParameters().length < 2 ) {
-			Collection<DesignShape> preview = cloneAndAddReferenceShapes( context.getTool().getSelectedShapes() );
+			Collection<DesignShape> preview = createPreviewShapes( context.getTool().getSelectedShapes() );
 			addPreview( context, preview );
 
 			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, task.getParameter( 0 ) ) );

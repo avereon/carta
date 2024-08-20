@@ -1,17 +1,10 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import com.avereon.product.Rb;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.text.ParseException;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 public class Move extends EditCommand {
@@ -21,54 +14,53 @@ public class Move extends EditCommand {
 	private Point3D anchor;
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
-		setCaptureUndoChanges( context, false );
+		setCaptureUndoChanges( task, false );
 
 		// Ask for an anchor point
-		if( parameters.length < 1 ) {
-			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "reference" );
+		if( task.getParameterCount() == 0 ) {
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			promptForPoint( task, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
-		if( parameters.length < 2 ) {
-			anchor = asPoint( context, parameters[ 0 ] );
+		if( task.getParameterCount() == 1 ) {
+			anchor = asPoint( task, "anchor", 0 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			addPreview( context, cloneAndAddReferenceShapes( context.getTool().getSelectedShapes() ) );
-			promptForPoint( context, "target" );
+
+			createPreviewShapes( task, task.getTool().getSelectedShapes() );
+
+			promptForPoint( task, "target" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		if( task.hasParameter( 1 ) ) {
+			setCaptureUndoChanges( task, true );
 
-		try {
-			final Point3D anchor = asPoint( context, parameters[ 0 ] );
-			final Point3D target = asPoint( context, parameters[ 1 ] );
-			moveShapes( context.getTool(), anchor, target );
-			//edit( context.getTool(), CadTransform.translation( target.subtract( anchor ) ) );
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-move-shapes", exception );
-			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			Point3D anchor = asPoint( task, "anchor", 0 );
+			Point3D target = asPoint( task, "target", 1 );
+
+			moveShapes( task.getTool(), anchor, target );
+
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		return FAILURE;
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
-			BaseDesignTool tool = (BaseDesignTool)event.getSource();
-			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
+			Point3D point = task.getTool().screenToWorkplane( event.getX(), event.getY(), event.getZ() );
 			switch( getStep() ) {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> {
 					referenceLine.setPoint( point ).setOrigin( anchor );
-
 					resetPreviewGeometry();
 					moveShapes( getPreview(), anchor, point );
 				}
