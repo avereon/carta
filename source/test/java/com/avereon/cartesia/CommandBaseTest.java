@@ -8,6 +8,7 @@ import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
+import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
@@ -24,6 +25,8 @@ import static org.mockito.Mockito.lenient;
 
 @ExtendWith( MockitoExtension.class )
 public class CommandBaseTest extends DesignToolBaseTest {
+
+	protected static final Cursor RETICLE = Cursor.CROSSHAIR;
 
 	protected static final Object BAD_PARAMETER = null;
 
@@ -63,6 +66,7 @@ public class CommandBaseTest extends DesignToolBaseTest {
 		lenient().when( tool.getCurrentLayer() ).thenReturn( currentLayer );
 		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
 		lenient().when( tool.getReferenceLayer() ).thenReturn( referenceLayer );
+		lenient().when( tool.getReticleCursor() ).thenReturn( RETICLE );
 		lenient().when( designContext.getProduct() ).thenReturn( program );
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
@@ -117,17 +121,7 @@ public class CommandBaseTest extends DesignToolBaseTest {
 	}
 
 	protected static MouseEvent createMouseEvent(
-		Object source,
-		EventTarget target,
-		EventType<MouseEvent> type,
-		MouseButton button,
-		boolean control,
-		boolean shift,
-		boolean alt,
-		boolean meta,
-		boolean moved,
-		double x,
-		double y
+		Object source, EventTarget target, EventType<MouseEvent> type, MouseButton button, boolean control, boolean shift, boolean alt, boolean meta, boolean moved, double x, double y
 	) {
 		return createMouseEvent( source, target, type, button, control, shift, alt, meta, moved, x, y, 0 );
 	}

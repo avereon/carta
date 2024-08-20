@@ -1,11 +1,10 @@
 package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.command.CommandTask;
-import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,7 +12,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static com.avereon.cartesia.command.Command.Result.*;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -59,17 +59,14 @@ public class DrawLine2Test extends CommandBaseTest {
 	@Test
 	void testRunTaskStepNoParameters() throws Exception {
 		// given
-		//DesignLayer preview = new DesignLayer();
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		// Use the CLOSED_HAND cursor as a reticle cursor
-		when( tool.getReticleCursor() ).thenReturn( Cursor.CLOSED_HAND );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
-		verify( tool, times( 1 ) ).setCursor( Cursor.CLOSED_HAND );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
 		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
 		assertThat( command.getReference() ).hasSize( 1 );
 		assertThat( command.getPreview() ).hasSize( 0 );
@@ -127,7 +124,7 @@ public class DrawLine2Test extends CommandBaseTest {
 	@Test
 	void testExecuteWithBadParameterThreeIsIgnored() throws Exception {
 		// given
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", "bad parameter" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3", BAD_PARAMETER );
 
 		// when
 		Object result = task.runTaskStep();
