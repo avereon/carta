@@ -85,7 +85,30 @@ public class TrimTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
-	// NEXT Add interactive tests for Trim
+
+	/**
+	 * Trim with one parameter, should prompt the user to select a shape to use
+	 * as the trim edge. The result should be incomplete.
+	 *
+	 * @throws Exception If an error occurs during the test
+	 */
+	@Test
+	void testExecuteWithOneParameter() throws Exception {
+		// given
+		DesignLine trim = new DesignLine( new Point3D( 2, 0, 0 ), new Point3D( 0, 2, 0 ) );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1" );
+		when( tool.worldPointSyncSelect( eq( new Point3D( 1, 1, 0 ) ) ) ).thenReturn( List.of( trim ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( Cursor.HAND );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
 
 	// Bad Parameter Tests -------------------------------------------------------
 
