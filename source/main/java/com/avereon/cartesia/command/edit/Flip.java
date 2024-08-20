@@ -2,6 +2,7 @@ package com.avereon.cartesia.command.edit;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
@@ -12,7 +13,9 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
-import static com.avereon.cartesia.command.Command.Result.*;
+
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
 public class Flip extends EditCommand {
 
@@ -22,7 +25,7 @@ public class Flip extends EditCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( context.getTool().selectedFxShapes().isEmpty() ) return SUCCESS;
+		if( context.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
 		setCaptureUndoChanges( context, false );
 
@@ -60,7 +63,7 @@ public class Flip extends EditCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			BaseDesignTool tool = (BaseDesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
@@ -68,7 +71,6 @@ public class Flip extends EditCommand {
 				case 1 -> referenceLine.setPoint( point ).setOrigin( point );
 				case 2 -> {
 					referenceLine.setPoint( point );
-
 					resetPreviewGeometry();
 					flipShapes( getPreview(), anchor, point );
 				}

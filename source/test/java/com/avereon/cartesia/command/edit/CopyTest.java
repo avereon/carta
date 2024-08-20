@@ -29,7 +29,7 @@ public class CopyTest extends CommandBaseTest {
 	// Script Tests --------------------------------------------------------------
 
 	/**
-	 * Move should move the selected shapes. The result should be success.
+	 * Copy should copy the selected shapes. The result should be success.
 	 *
 	 * @throws Exception If an error occurs during the test
 	 */
