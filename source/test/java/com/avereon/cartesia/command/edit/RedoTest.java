@@ -24,7 +24,7 @@ public class RedoTest  extends CommandBaseTest {
 	// Script Tests --------------------------------------------------------------
 
 	/**
-	 * Undo should undo the last edit. The result should be success.
+	 * Redo should redo the last undo. The result should be success.
 	 *
 	 * @throws Exception If an error occurs during the test
 	 */
