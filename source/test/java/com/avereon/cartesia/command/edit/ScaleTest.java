@@ -35,10 +35,29 @@ public class ScaleTest extends CommandBaseTest {
 	 * @throws Exception If an error occurs during the test
 	 */
 	@Test
-	void testExecuteWithAllParameters() throws Exception {
+	void testExecuteWithAnchorReferenceTarget() throws Exception {
 		// given
 		DesignLine line = new DesignLine( 1, 1, 2, 2 );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "1,0", "2,0" );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		assertThat( result ).isEqualTo( SUCCESS );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 2, 2, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 4, 4, 0 ) );
+	}
+
+	@Test
+	void testExecuteWithAnchorScale() throws Exception {
+		// given
+		DesignLine line = new DesignLine( 1, 1, 2, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "2.0" );
 		// Selected shapes are required for this command
 		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
 
@@ -159,10 +178,29 @@ public class ScaleTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testExecuteWithBadParameterThreeIsIgnored() throws Exception {
+	void testExecuteWithAnchorReferenceTargetAndBadParameterIsIgnored() throws Exception {
 		// given
 		DesignLine line = new DesignLine( 1, 1, 2, 2 );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "1,0", "2,0", BAD_PARAMETER );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		assertThat( result ).isEqualTo( SUCCESS );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 2, 2, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 4, 4, 0 ) );
+	}
+
+	@Test
+	void testExecuteWithAnchorScaleAndBadParameterIsIgnored() throws Exception {
+		// given
+		DesignLine line = new DesignLine( 1, 1, 2, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "2.0", BAD_PARAMETER );
 		// Selected shapes are required for this command
 		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
 

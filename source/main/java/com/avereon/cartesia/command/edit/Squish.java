@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import java.text.ParseException;
 import static com.avereon.cartesia.command.Command.Result.*;
 
+// FIXME How is Squish different from Scale and Stretch?
 public class Squish extends EditCommand {
 
 	private DesignLine referenceLine;

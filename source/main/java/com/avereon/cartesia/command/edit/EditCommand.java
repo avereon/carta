@@ -34,7 +34,7 @@ public abstract class EditCommand extends Command {
 
 	protected void flipShapes( DesignTool tool, Point3D origin, Point3D point ) {
 		if( CadGeometry.areSamePoint( origin, point ) ) return;
-		apply( tool, CadTransform.mirror( origin, point ) );
+		applyToSelected( tool, CadTransform.mirror( origin, point ) );
 	}
 
 	protected void moveShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D target ) {
@@ -42,7 +42,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void moveShapes( DesignTool tool, Point3D anchor, Point3D target ) {
-		apply( tool, CadTransform.translation( target.subtract( anchor ) ) );
+		applyToSelected( tool, CadTransform.translation( target.subtract( anchor ) ) );
 	}
 
 	protected void rotateShapes( Collection<DesignShape> shapes, Point3D center, double angle ) {
@@ -54,28 +54,19 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void rotateShapes( DesignTool tool, Point3D center, double angle ) {
-		apply( tool, CadTransform.rotation( center, CadPoints.UNIT_Z, angle ) );
+		applyToSelected( tool, CadTransform.rotation( center, CadPoints.UNIT_Z, angle ) );
 	}
 
 	protected void scaleShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
-		transformShapes( shapes, getScaleTransform( anchor, source, target ) );
+		transformShapes( shapes, CadTransform.scale( anchor, source, target ) );
 	}
 
 	protected void scaleShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
-		apply( tool, getScaleTransform( anchor, source, target ) );
+		applyToSelected( tool, CadTransform.scale( anchor, source, target ) );
 	}
 
-	private CadTransform getScaleTransform( Point3D anchor, Point3D source, Point3D target ) {
-		// This implementation uses a rotate/scale/-rotate transform
-		Point3D base = source.subtract( anchor );
-		Point3D stretch = target.subtract( anchor );
-
-		// Create an orientation such that the x-axis is aligned with the base
-		CadOrientation orientation = new CadOrientation( anchor, CadOrientation.Z_UNIT, base );
-
-		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
-
-		return orientation.getLocalToWorldTransform().combine( CadTransform.scale( scale, scale, 1 ) ).combine( orientation.getWorldToLocalTransform() );
+	protected void scaleShapes( DesignTool tool, Point3D anchor, double scale ) {
+		applyToSelected( tool, CadTransform.scale( anchor, scale ) );
 	}
 
 	protected void squishShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
@@ -83,7 +74,7 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void squishShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
-		apply( tool, getSquishTransform( anchor, source, target ) );
+		applyToSelected( tool, getSquishTransform( anchor, source, target ) );
 	}
 
 	private CadTransform getSquishTransform( Point3D anchor, Point3D source, Point3D target ) {
@@ -107,15 +98,19 @@ public abstract class EditCommand extends Command {
 		Txn.run( () -> shapes.forEach( s -> s.apply( transform ) ) );
 	}
 
-	protected void apply( DesignTool tool, CadTransform transform ) {
+	protected void applyToSelected( DesignTool tool, CadTransform transform ) {
+		apply( tool.getSelectedShapes(), transform );
+	}
+
+	protected void apply( List<DesignShape> shapes, CadTransform transform ) {
 		// Determine what shapes to transform
-		List<DesignShape> shapes = copy ? clone( tool.getSelectedShapes() ) : tool.getSelectedShapes();
+		List<DesignShape> transformingShapes = copy ? clone( shapes ) : shapes;
 
 		// Transform the shapes
-		Txn.run( () -> shapes.forEach( s -> s.apply( transform ) ) );
+		Txn.run( () -> transformingShapes.forEach( s -> s.apply( transform ) ) );
 
 		// Add the shapes to their respective layers if needed
-		if( copy ) store( shapes );
+		if( copy ) store( transformingShapes );
 	}
 
 	private List<DesignShape> clone( List<DesignShape> shapes ) {

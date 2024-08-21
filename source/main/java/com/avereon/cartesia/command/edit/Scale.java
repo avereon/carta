@@ -42,6 +42,15 @@ public class Scale extends EditCommand {
 			return INCOMPLETE;
 		}
 
+		if( task.hasParameter( 1 ) ) {
+			double scale = asDoubleOrNan( task, 1 );
+			if( !Double.isNaN( scale ) ) {
+				Point3D anchor = asPoint( task, "anchor", 0 );
+				scaleShapes( tool, anchor, scale );
+				return SUCCESS;
+			}
+		}
+
 		// Ask for a target point
 		if( task.getParameterCount() == 2 ) {
 			anchor = asPoint( task, "anchor", 0 );

@@ -114,6 +114,18 @@ public class CadTransform {
 		return new CadTransform( Transform.scale( CadPoints.asPoint( origin ), scaleX, scaleY, scaleZ ) );
 	}
 
+	public static CadTransform scale( Point3D anchor, Point3D source, Point3D target ) {
+		Point3D base = source.subtract( anchor );
+		Point3D stretch = target.subtract( anchor );
+
+		// Create an orientation such that the x-axis is aligned with the base
+		CadOrientation orientation = new CadOrientation( anchor, CadPoints.UNIT_Z, base );
+
+		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
+
+		return orientation.getLocalToWorldTransform().combine( scale( scale, scale, 1 ) ).combine( orientation.getWorldToLocalTransform() );
+	}
+
 	public static CadTransform translation( Point3D offset ) {
 		return new CadTransform( Transform.translation( CadPoints.asPoint( offset ) ) );
 	}
