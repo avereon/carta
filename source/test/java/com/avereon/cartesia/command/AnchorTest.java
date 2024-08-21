@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 
 // NEXT Rename CommandBaseTest?
 // NEXT Replace Point3D checks with Point3DAssert.assertThat( ... )
+// NEXT Double check that shape selections are using non-snap version fo asPoint
 
 @CustomLog
 @ExtendWith( MockitoExtension.class )
