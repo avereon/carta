@@ -179,6 +179,19 @@ public abstract class Command {
 		return getClass().getSimpleName();
 	}
 
+	protected double asDoubleOrNan( CommandTask task, int index ) {
+		return asDoubleOrNan( task, task.getParameter( index ) );
+	}
+
+	protected double asDoubleOrNan( CommandTask task, Object value ) {
+		if( value instanceof Double ) return (Double)value;
+		try {
+			return CadMath.eval( String.valueOf( value ) );
+		} catch( CadMathExpressionException exception ) {
+			return Double.NaN;
+		}
+	}
+
 	protected double asDouble( CommandTask task, String rbKey, int index ) throws Exception {
 		return asDouble( task, rbKey, Point3D.ZERO, index );
 	}
@@ -226,6 +239,10 @@ public abstract class Command {
 
 	protected Point3D asPoint( CommandTask task, String rbKey, Object value ) throws InvalidInputException {
 		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, value );
+	}
+
+	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, int index ) throws InvalidInputException {
+		return asPoint( task, anchor, rbKey, task.getParameter( index ) );
 	}
 
 	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value ) throws InvalidInputException {

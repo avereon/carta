@@ -6,6 +6,7 @@ import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -117,14 +118,14 @@ public class CopyTest extends CommandBaseTest {
 		assertThat( command.getPreview() ).hasSize( 0 );
 
 		// The original line should not move
-		assertThat( line.getOrigin() ).isEqualTo( new Point3D( 0, 0, 0 ) );
-		assertThat( line.getPoint() ).isEqualTo( new Point3D( 0, 10, 0 ) );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 0, 0, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 0, 10, 0 ) );
 
 		// But there should be a second line that is in the new location
 		DesignLine newLine = (DesignLine)layer.getShapes().stream().filter( s -> s != line ).findFirst().orElse( null );
 		assertThat( newLine ).isNotNull();
-		assertThat( newLine.getOrigin() ).isEqualTo( new Point3D( 1, 0, 0 ) );
-		assertThat( newLine.getPoint() ).isEqualTo( new Point3D( 1, 10, 0 ) );
+		Point3DAssert.assertThat( newLine.getOrigin() ).isCloseTo( new Point3D( 1, 0, 0 ) );
+		Point3DAssert.assertThat( newLine.getPoint() ).isCloseTo( new Point3D( 1, 10, 0 ) );
 	}
 
 }

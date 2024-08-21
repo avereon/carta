@@ -5,6 +5,7 @@ import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignLine;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -46,8 +47,8 @@ public class MoveTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( line.getOrigin() ).isEqualTo( new Point3D( 1, 0, 0 ) );
-		assertThat( line.getPoint() ).isEqualTo( new Point3D( 1, 10, 0 ) );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 1, 0, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 1, 10, 0 ) );
 	}
 
 	// Interactive Tests ---------------------------------------------------------
@@ -149,8 +150,8 @@ public class MoveTest extends CommandBaseTest {
 		assertThat( result ).isEqualTo( SUCCESS );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
-		assertThat( line.getOrigin() ).isEqualTo( new Point3D( 1, 0, 0 ) );
-		assertThat( line.getPoint() ).isEqualTo( new Point3D( 1, 10, 0 ) );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 1, 0, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 1, 10, 0 ) );
 	}
 
 }

@@ -50,7 +50,11 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void rotateShapes( DesignTool tool, Point3D center, Point3D anchor, Point3D target ) {
-		apply( tool, CadTransform.rotation( center, CadPoints.UNIT_Z, CadGeometry.pointAngle360( anchor, center, target ) ) );
+		rotateShapes( tool, center, CadGeometry.pointAngle360( anchor, center, target ) );
+	}
+
+	protected void rotateShapes( DesignTool tool, Point3D center, double angle ) {
+		apply( tool, CadTransform.rotation( center, CadPoints.UNIT_Z, angle ) );
 	}
 
 	protected void scaleShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
