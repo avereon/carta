@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -65,6 +66,47 @@ public class CopyTest extends CommandBaseTest {
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndNoParameters() throws Exception {
+		// given
+		DesignLine line = new DesignLine( 0, 0, 0, 10 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference().stream().findFirst().orElse( null ) ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndOneParameter() throws Exception {
+		// given
+		DesignLine line = new DesignLine( 0, 0, 0, 10 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,2" );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview().getFirst() ).isInstanceOf( DesignLine.class );
+		assertThat( command.getPreview() ).hasSize( 1 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
 	// Bad Parameter Tests -------------------------------------------------------

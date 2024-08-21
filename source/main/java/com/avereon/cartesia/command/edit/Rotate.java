@@ -44,23 +44,25 @@ public class Rotate extends EditCommand {
 			return INCOMPLETE;
 		}
 
-		if( task.getParameterCount() == 2 ) {
+		if( task.hasParameter( 1 ) ) {
 			double angle = asDoubleOrNan( task, 1 );
 			if( !Double.isNaN( angle ) ) {
 				center = asPoint( task, "anchor", 0 );
 				rotateShapes( tool, center, angle );
 				return SUCCESS;
-			} else {
-				anchor = asPoint( task,"start-point", 1 );
-
-				if( referenceLine == null ) referenceLine = createReferenceLine( task );
-				referenceLine.setPoint( anchor ).setOrigin( center );
-
-				createPreviewShapes( task, task.getTool().getSelectedShapes() );
-
-				promptForPoint( task, "target" );
-				return INCOMPLETE;
 			}
+		}
+
+		if( task.getParameterCount() == 2 ) {
+			anchor = asPoint( task, "start-point", 1 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			referenceLine.setPoint( anchor ).setOrigin( center );
+
+			createPreviewShapes( task, task.getTool().getSelectedShapes() );
+
+			promptForPoint( task, "target" );
+			return INCOMPLETE;
 		}
 
 		if( task.hasParameter( 2 ) ) {
