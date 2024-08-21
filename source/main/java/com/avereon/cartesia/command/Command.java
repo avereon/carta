@@ -237,12 +237,20 @@ public abstract class Command {
 		return asPoint( task, rbKey, task.getParameter( index ) );
 	}
 
+	protected Point3D asPoint( CommandTask task, String rbKey, int index, boolean snap ) throws Exception {
+		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, task.getParameter( index ), snap );
+	}
+
 	protected Point3D asPoint( CommandTask task, String rbKey, Object value ) throws InvalidInputException {
 		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, value );
 	}
 
 	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, int index ) throws InvalidInputException {
 		return asPoint( task, anchor, rbKey, task.getParameter( index ) );
+	}
+
+	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, int index, boolean snap ) throws InvalidInputException {
+		return asPoint( task, anchor, rbKey, task.getParameter( index ), snap );
 	}
 
 	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value ) throws InvalidInputException {

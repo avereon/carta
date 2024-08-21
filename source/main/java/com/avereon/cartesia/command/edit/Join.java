@@ -1,47 +1,46 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
+
 import static com.avereon.cartesia.command.Command.Result.*;
 
 @CustomLog
 public class Join extends EditCommand {
 
-	private DesignShape trim;
-
-	private Point3D trimMouse;
-
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		if( parameters.length < 1 ) {
-			promptForShape( context, "select-meet-shape" );
+	public Object execute( CommandTask task ) throws Exception {
+		if( task.getParameterCount() == 0 ) {
+			promptForShape( task, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
-		if( parameters.length < 2 ) {
-			trimMouse = context.getScreenMouse();
-			trim = selectNearestShapeAtMouse( context, trimMouse );
-			if( trim == DesignShape.NONE ) return INVALID;
-			promptForShape( context, "select-meet-shape" );
+		if( task.getParameterCount() == 1 ) {
+			Point3D trimPoint = asPoint( task, "select-meet-shape", 0, false );
+			DesignShape trim = selectNearestShapeAtPoint( task, trimPoint );
+			if( trim == null ) return SUCCESS;
+			promptForShape( task, "select-meet-shape" );
 			return INCOMPLETE;
 		}
 
-		Point3D edgeMouse = context.getScreenMouse();
-		DesignShape edge = findNearestShapeAtMouse( context, edgeMouse );
-		if( edge == DesignShape.NONE ) return INVALID;
+		if( task.hasParameter( 1 ) ) {
+			Point3D trimPoint = asPoint( task, "select-meet-shape", 0, false );
+			Point3D edgePoint = asPoint( task, "select-meet-shape", 1, false );
+			DesignShape trim = selectNearestShapeAtPoint( task, trimPoint );
+			DesignShape edge = findNearestShapeAtPoint( task, edgePoint );
+			Point3D trimMouse = task.getTool().worldToScreen( trimPoint );
+			Point3D edgeMouse = task.getTool().worldToScreen( edgePoint );
 
-		try {
-			com.avereon.cartesia.math.Meet.meet( context.getTool(), trim, edge, trimMouse, edgeMouse );
-		} catch( Exception exception ) {
-			log.atWarn( exception ).log( "Error meeting objects" );
-			return FAILURE;
+			System.out.println( "trim: " + trim + " edge: " + edge + " trimPoint: " + trimMouse + " edgePoint: " + edgeMouse );
+
+			com.avereon.cartesia.math.Meet.meet( task.getTool(), trim, edge, trimMouse, edgeMouse );
+
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		return FAILURE;
 	}
 
 }
