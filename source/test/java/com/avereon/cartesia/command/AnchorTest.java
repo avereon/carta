@@ -19,6 +19,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+// NEXT Rename CommandBaseTest?
+// NEXT Replace Point3D checks with Point3DAssert.assertThat( ... )
+
 @CustomLog
 @ExtendWith( MockitoExtension.class )
 public class AnchorTest extends CommandBaseTest {
