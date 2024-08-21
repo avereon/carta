@@ -183,7 +183,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	 * @return The child layers of this layer
 	 */
 	public List<DesignLayer> getLayers() {
-		return getValueList( LAYERS, getComparator() );
+		return getValueList( LAYERS, getNaturalComparator() );
 	}
 
 	public DesignLayer addLayer( DesignLayer layer ) {
@@ -194,23 +194,16 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	@SuppressWarnings( "UnusedReturnValue" )
 	public DesignLayer addLayerBeforeOrAfter( DesignLayer layer, DesignLayer anchor, boolean after ) {
 		List<DesignLayer> layers = getLayers();
-
 		int size = layers.size();
 		int insert = anchor == null ? -1 : layers.indexOf( anchor );
 		if( after ) insert++;
 		if( insert < 0 || insert > size ) insert = size;
 		layers.add( insert, layer );
-		updateLayerOrder( layers );
+		updateOrder( layers );
+
 		addLayer( layer );
 
 		return this;
-	}
-
-	@SuppressWarnings( "UnusedReturnValue" )
-	private <T extends DesignDrawable> List<T> updateLayerOrder( List<T> list ) {
-		AtomicInteger counter = new AtomicInteger( 0 );
-		list.forEach( i -> i.setOrder( counter.getAndIncrement() ) );
-		return list;
 	}
 
 	@SuppressWarnings( "UnusedReturnValue" )
@@ -225,12 +218,31 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		return this;
 	}
 
-	public Set<DesignShape> getShapes() {
+	@Deprecated
+	public Set<DesignShape> getShapeSet() {
 		return getValues( SHAPES );
+	}
+
+	public List<DesignShape> getShapes() {
+		return getValueList( SHAPES, DesignShape.getComparator() );
 	}
 
 	public DesignLayer addShape( DesignShape shape ) {
 		addToSet( SHAPES, shape );
+		return this;
+	}
+
+	public DesignLayer addShapeBeforeOrAfter( DesignShape shape, DesignShape anchor, boolean after ) {
+		List<DesignShape> shapes = new ArrayList<>( getShapes() );
+		int insert = anchor == null ? -1 : shapes.indexOf( anchor );
+		if( after ) insert++;
+		int size = shapes.size();
+		if( insert < 0 || insert > size ) insert = size;
+		shapes.add( insert, shape );
+		updateOrder( shapes );
+
+		addShape( shape );
+
 		return this;
 	}
 
@@ -251,7 +263,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	public DesignLayer clearShapes() {
-		removeFromSet( SHAPES, new HashSet<>( getShapes() ) );
+		removeFromSet( SHAPES, new HashSet<>( getShapeSet() ) );
 		return this;
 	}
 
@@ -510,7 +522,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( LAYERS, getLayers().stream().collect( Collectors.toMap( IdNode::getId, DesignLayer::asDeepMap ) ) );
-		map.put( SHAPES, getShapes().stream().filter( s -> !s.isPreview() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
+		map.put( SHAPES, getShapeSet().stream().filter( s -> !s.isPreview() ).collect( Collectors.toMap( IdNode::getId, DesignShape::asMap ) ) );
 		return map;
 	}
 
@@ -542,13 +554,19 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	@Override
-	public <T extends Node> Comparator<T> getComparator() {
+	public <T extends Node> Comparator<T> getNaturalComparator() {
 		return new NodeOrderNameComparator<>();
 	}
 
 	@Override
 	public String toString() {
 		return super.toString( NAME );
+	}
+
+	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
+		AtomicInteger counter = new AtomicInteger( 0 );
+		list.forEach( i -> i.setOrder( counter.getAndIncrement() ) );
+		return list;
 	}
 
 }

@@ -303,7 +303,7 @@ public class DesignRenderer extends BorderPane {
 	// Visible Shapes ------------------------------------------------------------
 
 	public List<DesignShape> getVisibleShapes() {
-		return getVisibleLayers().stream().flatMap( l -> l.getShapes().stream() ).collect( Collectors.toList() );
+		return getVisibleLayers().stream().flatMap( l -> l.getShapeSet().stream() ).collect( Collectors.toList() );
 	}
 
 	// Select Aperture -----------------------------------------------------------
@@ -708,7 +708,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderLayer( DesignLayer layer ) {
-		List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
+		List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapeSet() );
 		Collections.sort( orderedShapes );
 		renderShapes( orderedShapes );
 	}

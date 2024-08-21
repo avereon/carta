@@ -166,7 +166,7 @@ public class MirrorTest extends CommandBaseTest {
 		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 0, 10, 0 ) );
 
 		// But there should be a second line that is in the new location
-		DesignLine newLine = (DesignLine)layer.getShapes().stream().filter( s -> s != line ).findFirst().orElse( null );
+		DesignLine newLine = (DesignLine)layer.getShapeSet().stream().filter( s -> s != line ).findFirst().orElse( null );
 		assertThat( newLine ).isNotNull();
 		Point3DAssert.assertThat( newLine.getOrigin() ).isCloseTo( new Point3D( 0, 0, 0 ) );
 		Point3DAssert.assertThat( newLine.getPoint() ).isCloseTo( new Point3D( 10, 0, 0 ) );

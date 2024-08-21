@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.*;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -16,7 +17,7 @@ public class SplitTest {
 		DesignLine b = new DesignLine( new Point3D( 1, 1, 0 ), new Point3D( 2, 1, 0 ) );
 		DesignLine c = new DesignLine( new Point3D( 2, 1, 0 ), new Point3D( 3, 1, 0 ) );
 
-		Set<DesignShape> shapes = Split.splitLine( a, new Point3D( 2, 0, 0 ) );
+		Collection<DesignShape> shapes = Split.splitLine( a, new Point3D( 2, 0, 0 ) );
 
 		assertThat( containsLine( shapes, b ) ).isTrue();
 		assertThat( containsLine( shapes, c ) ).isTrue();
@@ -62,21 +63,21 @@ public class SplitTest {
 		assertThat( shapes.isEmpty() ).isFalse();
 	}
 
-	private static boolean containsLine( Set<DesignShape> shapes, DesignShape shape ) {
+	private static boolean containsLine( Collection<DesignShape> shapes, DesignShape shape ) {
 		for( DesignShape test : shapes ) {
 			if( test.equals( shape, DesignLine.ORIGIN, DesignLine.POINT ) ) return true;
 		}
 		return false;
 	}
 
-	private static boolean containsArc( Set<DesignShape> shapes, DesignShape shape ) {
+	private static boolean containsArc( Collection<DesignShape> shapes, DesignShape shape ) {
 		for( DesignShape test : shapes ) {
 			if( test.equals( shape, DesignArc.ORIGIN, DesignArc.RADII, DesignArc.ROTATE, DesignArc.START, DesignArc.EXTENT ) ) return true;
 		}
 		return false;
 	}
 
-	private static boolean containsCurve( Set<DesignShape> shapes, DesignShape shape ) {
+	private static boolean containsCurve( Collection<DesignShape> shapes, DesignShape shape ) {
 		for( DesignShape test : shapes ) {
 			if( test.equals( shape, DesignCubic.ORIGIN, DesignCubic.ORIGIN_CONTROL, DesignCubic.POINT_CONTROL, DesignLine.POINT ) ) return true;
 		}

@@ -660,11 +660,11 @@ public class DesignPane extends StackPane {
 	}
 
 	private void doAddLayerShapes( DesignLayer yy ) {
-		yy.getShapes().forEach( this::doAddNode );
+		yy.getShapeSet().forEach( this::doAddNode );
 	}
 
 	private void doRemoveLayer( DesignLayer yy ) {
-		yy.getShapes().forEach( this::doRemoveShape );
+		yy.getShapeSet().forEach( this::doRemoveShape );
 		layerMap.computeIfPresent( yy, ( k, v ) -> {
 			v.removeLayerGeometry();
 			return null;

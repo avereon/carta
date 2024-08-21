@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.data.util.DesignShapeOrderComparator;
 import com.avereon.cartesia.math.*;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
@@ -250,7 +251,7 @@ public abstract class DesignShape extends DesignDrawable {
 	}
 
 	@Override
-	public <T extends Node> Comparator<T> getComparator() {
+	public <T extends Node> Comparator<T> getNaturalComparator() {
 		return ( a, b ) -> {
 			if( a instanceof DesignShape && b instanceof DesignShape ) {
 				return ((DesignShape)b).getOrder() - ((DesignShape)a).getOrder();
@@ -258,6 +259,10 @@ public abstract class DesignShape extends DesignDrawable {
 				return 0;
 			}
 		};
+	}
+
+	public static Comparator<DesignShape> getComparator() {
+		return new DesignShapeOrderComparator();
 	}
 
 	protected Map<String, Object> getCache() {

@@ -5,42 +5,49 @@ import com.avereon.transaction.Txn;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
 @CustomLog
 public class Split {
 
-	public static void split( DesignShape shape, Point3D mousePoint ) {
-		Set<DesignShape> shapes = Set.of();
+	/**
+	 * Split a shape at a point
+	 *
+	 * @param shape The shape to split
+	 * @param splitPoint The split point in world coordinates
+	 */
+	public static void split( DesignShape shape, Point3D splitPoint ) {
+		Collection<DesignShape> shapes = List.of();
 
 		if( shape instanceof DesignLine ) {
-			shapes = splitLine( (DesignLine)shape, mousePoint );
+			shapes = splitLine( (DesignLine)shape, splitPoint );
 		} else if( shape instanceof DesignEllipse ) {
 			if( shape instanceof DesignArc ) {
-				shapes = splitArc( (DesignArc)shape, mousePoint );
+				shapes = splitArc( (DesignArc)shape, splitPoint );
 			} else {
-				shapes = splitEllipse( (DesignEllipse)shape, mousePoint );
+				shapes = splitEllipse( (DesignEllipse)shape, splitPoint );
 			}
 		} else if( shape instanceof DesignCubic ) {
-			shapes = splitCurve( (DesignCubic)shape, mousePoint );
+			shapes = splitCurve( (DesignCubic)shape, splitPoint );
 		}
 
 		// Replace the old shape with the new shapes
 		if( !shapes.isEmpty() ) {
-			DesignLayer y = shape.getLayer();
-			final Set<DesignShape> finalShapes = shapes;
+			DesignLayer layer = shape.getLayer();
+			final Collection<DesignShape> finalShapes = shapes;
 			Txn.run( () -> {
-				y.removeShape( shape );
-				finalShapes.forEach( y::addShape );
+				finalShapes.forEach( s -> layer.addShapeBeforeOrAfter(s, shape, false) );
+				layer.removeShape( shape );
 			} );
 		}
 	}
 
-	static Set<DesignShape> splitLine( DesignLine line, Point3D point ) {
+	static List<DesignShape> splitLine( DesignLine line, Point3D point ) {
 		// Find the point "on the line"
 		Point3D nearest = CadGeometry.nearestBoundLinePoint( line.getOrigin(), line.getPoint(), point );
-		if( nearest == null ) return Set.of();
+		if( nearest == null ) return List.of();
 
 		// Make two new lines
 		DesignLine a = new DesignLine( line.getOrigin(), nearest );
@@ -48,7 +55,7 @@ public class Split {
 		DesignLine b = new DesignLine( nearest, line.getPoint() );
 		b.copyFrom( line );
 
-		return Set.of( a, b );
+		return List.of( a, b );
 	}
 
 	static Set<DesignShape> splitEllipse( DesignEllipse ellipse, Point3D point ) {
