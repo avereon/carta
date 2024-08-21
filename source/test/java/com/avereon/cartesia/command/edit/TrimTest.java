@@ -47,10 +47,11 @@ public class TrimTest extends CommandBaseTest {
 		when( tool.worldPointSyncFindOne( eq( new Point3D( 0.5, 1.5, 0 ) ) ) ).thenReturn( List.of( edge ) );
 		//when( tool.worldToScreen( eq( new Point3D( 0, 0, 0 ) ) ) ).thenReturn( new Point3D( 0, 0, 0 ) );
 		//when( tool.worldToScreen( eq( new Point3D( 2, 2, 0 ) ) ) ).thenReturn( new Point3D( 20, 20, 0 ) );
-		when( tool.worldToScreen( eq( new Point3D( 2, 0, 0 ) ) ) ).thenReturn( new Point3D( 20, 0, 0 ) );
-		when( tool.worldToScreen( eq( new Point3D( 0, 2, 0 ) ) ) ).thenReturn( new Point3D( 0, 20, 0 ) );
 		when( tool.worldToScreen( eq( new Point3D( 1, 1, 0 ) ) ) ).thenReturn( new Point3D( 10, 10, 0 ) );
 		when( tool.worldToScreen( eq( new Point3D( 0.5, 1.5, 0 ) ) ) ).thenReturn( new Point3D( 5, 15, 0 ) );
+
+		when( tool.worldToScreen( eq( new Point3D( 2, 0, 0 ) ) ) ).thenReturn( new Point3D( 20, 0, 0 ) );
+		when( tool.worldToScreen( eq( new Point3D( 0, 2, 0 ) ) ) ).thenReturn( new Point3D( 0, 20, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
