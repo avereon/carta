@@ -108,8 +108,6 @@ public abstract class EditCommand extends Command {
 	}
 
 	protected void apply( DesignTool tool, CadTransform transform ) {
-		//oldApply( tool, transform );
-
 		// Determine what shapes to transform
 		List<DesignShape> shapes = copy ? clone( tool.getSelectedShapes() ) : tool.getSelectedShapes();
 

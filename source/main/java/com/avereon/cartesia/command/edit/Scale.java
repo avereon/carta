@@ -1,17 +1,11 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.tool.DesignCommandContext;
-import com.avereon.product.Rb;
-import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.text.ParseException;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 public class Scale extends EditCommand {
@@ -23,55 +17,64 @@ public class Scale extends EditCommand {
 	private Point3D source;
 
 	@Override
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		DesignTool tool = context.getTool();
+	public Object execute( CommandTask task ) throws Exception {
+		DesignTool tool = task.getTool();
 
-		if( tool.selectedFxShapes().isEmpty() ) return SUCCESS;
+		if( tool.getSelectedShapes().isEmpty() ) return SUCCESS;
 
-		setCaptureUndoChanges( context, false );
+		setCaptureUndoChanges( task, false );
 
 		// Ask for a center point
-		if( parameters.length < 1 ) {
-			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
+		if( task.getParameterCount() == 0 ) {
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			promptForPoint( task, "anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a start point
-		if( parameters.length < 2 ) {
-			anchor = asPoint( context, parameters[ 0 ] );
+		if( task.getParameterCount() == 1 ) {
+			anchor = asPoint( task, "anchor", 0 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			promptForPoint( context, "reference" );
+
+			promptForPoint( task, "reference" );
 			return INCOMPLETE;
 		}
 
 		// Ask for a target point
-		if( parameters.length < 3 ) {
-			source = asPoint( context, parameters[ 1 ] );
-			referenceLine.setPoint( source ).setOrigin( source );
-			addPreview( context, createPreviewShapes( tool.getSelectedShapes() ) );
-			promptForPoint( context, "target" );
+		if( task.getParameterCount() == 2 ) {
+			anchor = asPoint( task, "anchor", 0 );
+			source = asPoint( task, "reference", 1 );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			referenceLine.setPoint( source ).setOrigin( anchor );
+
+			createPreviewShapes( task, task.getTool().getSelectedShapes() );
+
+			promptForPoint( task, "target" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		if( task.hasParameter( 2 ) ) {
+			setCaptureUndoChanges( task, true );
 
-		try {
+			Point3D anchor = asPoint( task, "anchor", 0 );
+			Point3D reference = asPoint( task, "reference", 1 );
+			Point3D point = asPoint( task, "target", 2 );
+
 			// Start an undo multi-change
-			scaleShapes( tool, asPoint( context, parameters[ 0 ] ), asPoint( context, parameters[ 1 ] ), asPoint( context, parameters[ 2 ] ) );
+			scaleShapes( tool, anchor, reference, point );
 			// Done with undo multi-change
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
-			if( context.isInteractive() ) tool.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+
+			return SUCCESS;
 		}
 
-		return SUCCESS;
+		return FAILURE;
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D target = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );

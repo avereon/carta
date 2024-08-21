@@ -4,7 +4,6 @@ import com.avereon.cartesia.CommandBaseTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
-import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
@@ -24,32 +23,34 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class CopyTest extends CommandBaseTest {
+public class ScaleTest extends CommandBaseTest {
 
-	private final Copy command = new Copy();
+	private final Scale command = new Scale();
 
 	// Script Tests --------------------------------------------------------------
 
 	/**
-	 * Copy should copy the selected shapes. The result should be success.
+	 * Scale should scale the selected shapes. The result should be success.
 	 *
 	 * @throws Exception If an error occurs during the test
 	 */
 	@Test
 	void testExecuteWithAllParameters() throws Exception {
 		// given
-		DesignLine line = new DesignLine( 0, 0, 0, 10 );
-		DesignLayer layer = new DesignLayer();
-		layer.addShape( line );
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,2", "2,2" );
-
+		DesignLine line = new DesignLine( 1, 1, 2, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "1,0", "2,0" );
 		// Selected shapes are required for this command
 		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
 
 		// when
 		Object result = task.runTaskStep();
 
-		assertSuccessfulCopy( result, layer, line );
+		// then
+		assertThat( result ).isEqualTo( SUCCESS );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 2, 2, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 4, 4, 0 ) );
 	}
 
 	// Interactive Tests ---------------------------------------------------------
@@ -92,7 +93,27 @@ public class CopyTest extends CommandBaseTest {
 	void testExecuteWithSelectedShapesAndOneParameter() throws Exception {
 		// given
 		DesignLine line = new DesignLine( 0, 0, 0, 10 );
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,2" );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0" );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndTwoParameter() throws Exception {
+		// given
+		DesignLine line = new DesignLine( 0, 0, 0, 10 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "1,0" );
 		// Selected shapes are required for this command
 		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
 
@@ -132,17 +153,16 @@ public class CopyTest extends CommandBaseTest {
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
 		return Stream.of(
 			Arguments.of( new Object[]{ BAD_POINT_PARAMETER }, "anchor" ),
-			Arguments.of( new Object[]{ "-3,3", BAD_POINT_PARAMETER }, "target" )
+			Arguments.of( new Object[]{ "0,0", BAD_POINT_PARAMETER }, "reference" ),
+			Arguments.of( new Object[]{ "0,0", "1,0", BAD_POINT_PARAMETER }, "target" )
 		);
 	}
 
 	@Test
 	void testExecuteWithBadParameterThreeIsIgnored() throws Exception {
-		DesignLine line = new DesignLine( 0, 0, 0, 10 );
-		DesignLayer layer = new DesignLayer();
-		layer.addShape( line );
-		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,2", "2,2", BAD_PARAMETER );
-
+		// given
+		DesignLine line = new DesignLine( 1, 1, 2, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "0,0", "1,0", "2,0", BAD_PARAMETER );
 		// Selected shapes are required for this command
 		when( tool.getSelectedShapes() ).thenReturn( List.of( line ) );
 
@@ -150,25 +170,11 @@ public class CopyTest extends CommandBaseTest {
 		Object result = task.runTaskStep();
 
 		// then
-		assertSuccessfulCopy( result, layer, line );
-	}
-
-	private void assertSuccessfulCopy( Object result, DesignLayer layer, DesignLine line ) {
-		// then
 		assertThat( result ).isEqualTo( SUCCESS );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
-
-		// The original line should not move
-		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 0, 0, 0 ) );
-		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 0, 10, 0 ) );
-
-		// But there should be a second line that is in the new location
-		DesignLine newLine = (DesignLine)layer.getShapes().stream().filter( s -> s != line ).findFirst().orElse( null );
-		assertThat( newLine ).isNotNull();
-		Point3DAssert.assertThat( newLine.getOrigin() ).isCloseTo( new Point3D( 1, 0, 0 ) );
-		Point3DAssert.assertThat( newLine.getPoint() ).isCloseTo( new Point3D( 1, 10, 0 ) );
+		Point3DAssert.assertThat( line.getOrigin() ).isCloseTo( new Point3D( 2, 2, 0 ) );
+		Point3DAssert.assertThat( line.getPoint() ).isCloseTo( new Point3D( 4, 4, 0 ) );
 	}
 
 }
-
