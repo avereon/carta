@@ -33,8 +33,6 @@ public class Join extends EditCommand {
 			Point3D trimMouse = task.getTool().worldToScreen( trimPoint );
 			Point3D edgeMouse = task.getTool().worldToScreen( edgePoint );
 
-			System.out.println( "trim: " + trim + " edge: " + edge + " trimPoint: " + trimMouse + " edgePoint: " + edgeMouse );
-
 			com.avereon.cartesia.math.Meet.meet( task.getTool(), trim, edge, trimMouse, edgeMouse );
 
 			return SUCCESS;
