@@ -1,22 +1,19 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.CommandTask;
+import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.product.Rb;
 import com.avereon.transaction.Txn;
-import com.avereon.xenon.notice.Notice;
+import com.avereon.zarra.javafx.FxUtil;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.CustomLog;
 
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,56 +45,68 @@ public class MovePoints extends EditCommand {
 
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
-		DesignCommandContext context = task.getContext();
+		if( task.getTool().getSelectedShapes().isEmpty() ) return SUCCESS;
 
-		if( context.getTool().selectedFxShapes().isEmpty() ) return SUCCESS;
+		setCaptureUndoChanges( task, false );
 
-		setCaptureUndoChanges( context, false );
-
-		if( task.getParameters().length < 1 ) {
-			promptForWindow( task, "select-points" );
+		if( task.getParameterCount() == 0 ) {
+			promptForWindow( task, "select-window-anchor" );
 			return INCOMPLETE;
 		}
 
 		// Ask for an anchor point
-		if( task.getParameters().length < 2 ) {
-			Collection<DesignShape> preview = createPreviewShapes( context.getTool().getSelectedShapes() );
-			addPreview( context, preview );
-
-			pointsToMove = computePointsToMove( context.getTool(), preview, asBounds( context, task.getParameter( 0 ) ) );
-
-			addReference( context, referenceLine = new DesignLine( context.getWorldMouse(), context.getWorldMouse() ) );
-			promptForPoint( context, "anchor" );
-			return pointsToMove.isEmpty() ? INVALID : INCOMPLETE;
-		}
-
-		// Ask for a target point
-		if( task.getParameters().length < 3 ) {
-			anchor = asPoint( context, task.getParameter( 1 ) );
-			referenceLine.setPoint( anchor ).setOrigin( anchor );
-			promptForPoint( context, "target" );
+		if( task.getParameterCount() == 1 ) {
+			asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
+			promptForWindow( task, "select-window-corner" );
 			return INCOMPLETE;
 		}
 
-		clearReferenceAndPreview( context );
-		setCaptureUndoChanges( context, true );
+		if( task.getParameterCount() == 2 ) {
+			// We have window corners
+			Point3D windowAnchor = asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
+			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
+			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
 
-		try {
-			Bounds bounds = asBounds( context, task.getParameter( 0 ) );
-			Point3D anchor = asPoint( context, task.getParameter( 1 ) );
-			Point3D target = asPoint( context, task.getParameter( 2 ) );
-			modifyShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedShapes(), bounds ), anchor, target );
-		} catch( ParseException exception ) {
-			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			String message = Rb.text( RbKey.NOTICE, "unable-to-stretch-shapes", exception );
-			if( context.isInteractive() ) context.getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+			createPreviewShapes( task, task.getTool().getSelectedShapes() );
+			pointsToMove = computePointsToMove( task.getTool(), getPreview(), bounds );
+			if( pointsToMove.isEmpty() ) throw new InvalidInputException( this, "no-movable-points", "" );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+
+			promptForPoint( task, "anchor" );
+			return INCOMPLETE;
 		}
 
-		return SUCCESS;
+		// Ask for a target point
+		if( task.getParameterCount() == 3 ) {
+			anchor = asPoint( task, "anchor", task.getParameter( 2 ) );
+
+			if( referenceLine == null ) referenceLine = createReferenceLine( task );
+			referenceLine.setPoint( anchor ).setOrigin( anchor );
+
+			promptForPoint( task, "target" );
+			return INCOMPLETE;
+		}
+
+		if( task.hasParameter( 3 ) ) {
+			setCaptureUndoChanges( task, true );
+
+			Point3D windowAnchor = asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
+			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
+			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
+			Point3D anchor = asPoint( task, "anchor", task.getParameter( 2 ) );
+			Point3D target = asPoint( task, "target", task.getParameter( 3 ) );
+
+			modifyShapes( computePointsToMove( task.getTool(), task.getTool().getSelectedShapes(), bounds ), anchor, target );
+
+			return SUCCESS;
+		}
+
+		return FAILURE;
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D point = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );
@@ -118,7 +127,7 @@ public class MovePoints extends EditCommand {
 
 		for( DesignShape shape : shapes ) {
 			for( String key : getShapePointKeys( shape ) ) {
-				Point3D point = tool.worldToScreen( (Point3D)shape.getValue( key ) );
+				Point3D point = shape.getValue( key );
 				if( bounds.contains( point ) ) points.add( new PointCoordinate( shape, key ) );
 			}
 		}
