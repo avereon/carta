@@ -15,6 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -54,6 +55,106 @@ public class MovePointsTest extends CommandBaseTest {
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
 		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
+	// Interactive Tests ---------------------------------------------------------
+
+	@Test
+	void testExecuteWithNoSelectedShapes() throws Exception {
+		// given
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( SUCCESS );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndNoParameters() throws Exception {
+		// given
+		DesignLine line1 = new DesignLine( 1, 0, 2, 2 );
+		DesignLine line2 = new DesignLine( 4, 0, 3, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line1, line2 ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndOneParameter() throws Exception {
+		// given
+		DesignLine line1 = new DesignLine( 1, 0, 2, 2 );
+		DesignLine line2 = new DesignLine( 4, 0, 3, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,2" );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line1, line2 ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference() ).hasSize( 0 );
+		assertThat( command.getPreview() ).hasSize( 0 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndTwoParameters() throws Exception {
+		// given
+		DesignLine line1 = new DesignLine( 1, 0, 2, 2 );
+		DesignLine line2 = new DesignLine( 4, 0, 3, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,3", "4,1" );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line1, line2 ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview() ).allSatisfy( shape -> assertThat( shape ).isInstanceOf( DesignLine.class ) );
+		assertThat( command.getPreview() ).hasSize( 2 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
+	}
+
+	@Test
+	void testExecuteWithSelectedShapesAndThreeParameters() throws Exception {
+		// given
+		DesignLine line1 = new DesignLine( 1, 0, 2, 2 );
+		DesignLine line2 = new DesignLine( 4, 0, 3, 2 );
+		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,3", "4,1", "4,3" );
+		// Selected shapes are required for this command
+		when( tool.getSelectedShapes() ).thenReturn( List.of( line1, line2 ) );
+
+		// when
+		Object result = task.runTaskStep();
+
+		// then
+		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
+		verify( tool, times( 1 ) ).setCursor( RETICLE );
+		assertThat( command.getReference().getFirst() ).isInstanceOf( DesignLine.class );
+		assertThat( command.getReference() ).hasSize( 1 );
+		assertThat( command.getPreview() ).allSatisfy( shape -> assertThat( shape ).isInstanceOf( DesignLine.class ) );
+		assertThat( command.getPreview() ).hasSize( 2 );
+		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 
 	// Bad Parameter Tests -------------------------------------------------------

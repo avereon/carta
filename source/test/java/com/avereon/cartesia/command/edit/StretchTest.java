@@ -115,7 +115,7 @@ public class StretchTest extends CommandBaseTest {
 	}
 
 	@Test
-	void testExecuteWithSelectedShapesAndTwoParameter() throws Exception {
+	void testExecuteWithSelectedShapesAndTwoParameters() throws Exception {
 		// given
 		DesignLine line1 = new DesignLine( 1, 0, 2, 2 );
 		DesignLine line2 = new DesignLine( 3, 0, 2, 2 );

@@ -67,8 +67,8 @@ public class MovePoints extends EditCommand {
 			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
 			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
 
-			createPreviewShapes( task, task.getTool().getSelectedShapes() );
-			pointsToMove = computePointsToMove( task.getTool(), getPreview(), bounds );
+			if( getPreview().isEmpty() ) createPreviewShapes( task, task.getTool().getSelectedShapes() );
+			if( pointsToMove == null ) pointsToMove = computePointsToMove( task.getTool(), getPreview(), bounds );
 			if( pointsToMove.isEmpty() ) throw new InvalidInputException( this, "no-movable-points", "" );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
@@ -79,7 +79,14 @@ public class MovePoints extends EditCommand {
 
 		// Ask for a target point
 		if( task.getParameterCount() == 3 ) {
+			Point3D windowAnchor = asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
+			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
+			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
 			anchor = asPoint( task, "anchor", task.getParameter( 2 ) );
+
+			if( getPreview().isEmpty() ) createPreviewShapes( task, task.getTool().getSelectedShapes() );
+			if( pointsToMove == null ) pointsToMove = computePointsToMove( task.getTool(), getPreview(), bounds );
+			if( pointsToMove.isEmpty() ) throw new InvalidInputException( this, "no-movable-points", "" );
 
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			referenceLine.setPoint( anchor ).setOrigin( anchor );
