@@ -35,7 +35,7 @@ public abstract class SelectByWindow extends SelectCommand {
 		if( paramCount == 1 & noEvent ) {
 			Point3D worldPoint = asPoint( task, "select-window-anchor", 0 );
 			if( worldPoint != null ) {
-				promptForWindow( task, "select-window-point" );
+				promptForWindow( task, "select-window-corner" );
 				return INCOMPLETE;
 			}
 		}
@@ -45,7 +45,7 @@ public abstract class SelectByWindow extends SelectCommand {
 		// Get the world point from the event or the second parameter
 		if( paramCount == 2 ) {
 			Point3D worldAnchor = asPoint( task, "select-window-anchor", 0 );
-			Point3D worldCorner = asPoint( task, "select-window-point", 1 );
+			Point3D worldCorner = asPoint( task, "select-window-corner", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				if( task.getContext().getCommandStackDepth() < 2 ) {
 					task.getTool().worldWindowSelect( worldAnchor, worldCorner, intersect, false );

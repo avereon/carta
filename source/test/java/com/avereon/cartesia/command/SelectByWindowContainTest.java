@@ -130,7 +130,7 @@ public class SelectByWindowContainTest extends CommandBaseTest {
 	private static Stream<Arguments> provideParametersForTestWithParameters() {
 		return Stream.of(
 			Arguments.of( new String[]{ "bad parameter" }, "select-window-anchor" ),
-			Arguments.of( new String[]{ "1,3", "bad parameter" }, "select-window-point" )
+			Arguments.of( new String[]{ "1,3", "bad parameter" }, "select-window-corner" )
 		);
 	}
 
