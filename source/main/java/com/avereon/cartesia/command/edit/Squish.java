@@ -2,9 +2,10 @@ package com.avereon.cartesia.command.edit;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLine;
-import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
 import com.avereon.xenon.notice.Notice;
 import javafx.geometry.Point3D;
@@ -12,10 +13,14 @@ import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
 
 import java.text.ParseException;
-import static com.avereon.cartesia.command.Command.Result.*;
 
-// FIXME How is Squish different from Scale and Stretch?
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
+
 public class Squish extends EditCommand {
+
+	// FIXME I don't like the name of this command. It doesn't really match well
+	//  with what it does. This command is more like a "stretch" command.
 
 	private DesignLine referenceLine;
 
@@ -72,7 +77,7 @@ public class Squish extends EditCommand {
 	}
 
 	@Override
-	public void handle( DesignCommandContext context, MouseEvent event ) {
+	public void handle( CommandTask task, MouseEvent event ) {
 		if( event.getEventType() == MouseEvent.MOUSE_MOVED ) {
 			DesignTool tool = (DesignTool)event.getSource();
 			Point3D target = tool.screenToWorkplane( event.getX(), event.getY(), event.getZ() );

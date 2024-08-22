@@ -114,6 +114,14 @@ public class CadTransform {
 		return new CadTransform( Transform.scale( CadPoints.asPoint( origin ), scaleX, scaleY, scaleZ ) );
 	}
 
+	/**
+	 * Create a transform that scales geometry in both the x and y directions.
+	 *
+	 * @param anchor The anchor point
+	 * @param source The source point
+	 * @param target The target point
+	 * @return The scale transform
+	 */
 	public static CadTransform scale( Point3D anchor, Point3D source, Point3D target ) {
 		Point3D base = source.subtract( anchor );
 		Point3D stretch = target.subtract( anchor );
@@ -124,6 +132,28 @@ public class CadTransform {
 		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
 
 		return orientation.getLocalToWorldTransform().combine( scale( scale, scale, 1 ) ).combine( orientation.getWorldToLocalTransform() );
+	}
+
+	/**
+	 * Create a transform that scales geometry in only one direction, aligned with
+	 * the vector defined from the anchor point to the source point.
+	 *
+	 * @param anchor The anchor point
+	 * @param source The source point
+	 * @param target The target point
+	 * @return The squish transform
+	 */
+	public static CadTransform squish( Point3D anchor, Point3D source, Point3D target ) {
+		// This implementation uses a rotate/scale/-rotate transform
+		Point3D base = source.subtract( anchor );
+		Point3D stretch = target.subtract( anchor );
+
+		// Create an orientation such that the z-axis is aligned with the base
+		CadOrientation orientation = new CadOrientation( anchor, base );
+
+		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
+
+		return orientation.getLocalToWorldTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getWorldToLocalTransform() );
 	}
 
 	public static CadTransform translation( Point3D offset ) {
@@ -137,6 +167,7 @@ public class CadTransform {
 	public static CadTransform rotation( double angle ) {
 		return new CadTransform( Transform.rotation( UNIT_Z, Math.toRadians( angle ) ) );
 	}
+
 	public static CadTransform rotation( double x, double y, double angle ) {
 		return new CadTransform( Transform.rotation( Point.of( x, y, 0 ), UNIT_Z, Math.toRadians( angle ) ) );
 	}

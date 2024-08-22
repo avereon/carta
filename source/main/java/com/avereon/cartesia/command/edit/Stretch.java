@@ -26,6 +26,9 @@ import static com.avereon.cartesia.command.Command.Result.*;
 @CustomLog
 public class Stretch extends EditCommand {
 
+	// FIXME I don't like the name of this command. It doesn't really match well
+	//  with what it does.
+
 	private Set<PointCoordinate> pointsToMove;
 
 	private DesignLine referenceLine;
