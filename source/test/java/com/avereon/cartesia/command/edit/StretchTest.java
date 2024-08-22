@@ -23,9 +23,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class SquishTest extends CommandBaseTest {
+public class StretchTest extends CommandBaseTest {
 
-	private final Squish command = new Squish();
+	private final Stretch command = new Stretch();
 
 	// Script Tests --------------------------------------------------------------
 

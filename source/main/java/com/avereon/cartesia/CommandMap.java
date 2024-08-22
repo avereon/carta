@@ -164,8 +164,8 @@ public final class CommandMap {
 		add( product, "rotate", Rotate.class );
 		add( product, "scale", Scale.class );
 		add( product, "split", Split.class );
-		add( product, "squish", Squish.class );
 		add( product, "stretch", Stretch.class );
+		add( product, "move-points", MovePoints.class );
 		add( product, "trim", Trim.class );
 		add( product, "undo", Undo.class );
 
