@@ -1,11 +1,11 @@
 package com.avereon.cartesia.command.edit;
 
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignCubic;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.Rb;
@@ -23,11 +23,22 @@ import java.util.Set;
 
 import static com.avereon.cartesia.command.Command.Result.*;
 
+/**
+ * <p>
+ * The Move Points command allows the user to move a selected set of points on
+ * selected geometry to a new location. The command requires the user to select
+ * geometry before starting the command. The command will prompt the user to
+ * select a window to define the area to move points, then the user will be
+ * prompted to select an anchor point and a target point. The command will move
+ * the selected points by the offset defined by the anchor and target points.
+ * </p>
+ *
+ * <p>
+ * This command is an efficient way to move points on multiple shapes at once.
+ * </p>
+ */
 @CustomLog
 public class MovePoints extends EditCommand {
-
-	// FIXME I don't like the name of this command. It doesn't really match well
-	//  with what it does.
 
 	private Set<PointCoordinate> pointsToMove;
 
@@ -44,7 +55,7 @@ public class MovePoints extends EditCommand {
 		setCaptureUndoChanges( context, false );
 
 		if( task.getParameters().length < 1 ) {
-			promptForWindow( task, "stretch-points" );
+			promptForWindow( task, "select-points" );
 			return INCOMPLETE;
 		}
 
@@ -75,7 +86,7 @@ public class MovePoints extends EditCommand {
 			Bounds bounds = asBounds( context, task.getParameter( 0 ) );
 			Point3D anchor = asPoint( context, task.getParameter( 1 ) );
 			Point3D target = asPoint( context, task.getParameter( 2 ) );
-			stretchShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedShapes(), bounds ), anchor, target );
+			modifyShapes( computePointsToMove( context.getTool(), context.getTool().getSelectedShapes(), bounds ), anchor, target );
 		} catch( ParseException exception ) {
 			String title = Rb.text( RbKey.NOTICE, "command-error" );
 			String message = Rb.text( RbKey.NOTICE, "unable-to-stretch-shapes", exception );
@@ -96,7 +107,7 @@ public class MovePoints extends EditCommand {
 					referenceLine.setPoint( point ).setOrigin( anchor );
 
 					resetPreviewGeometry();
-					stretchShapes( pointsToMove, anchor, point );
+					modifyShapes( pointsToMove, anchor, point );
 				}
 			}
 		}
@@ -126,7 +137,7 @@ public class MovePoints extends EditCommand {
 		return Set.of();
 	}
 
-	private static void stretchShapes( Set<PointCoordinate> points, Point3D anchor, Point3D target ) {
+	private static void modifyShapes( Set<PointCoordinate> points, Point3D anchor, Point3D target ) {
 		// Get an offset vector
 		Point3D offset = target.subtract( anchor );
 

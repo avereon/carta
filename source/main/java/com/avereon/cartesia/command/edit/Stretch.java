@@ -10,9 +10,6 @@ import static com.avereon.cartesia.command.Command.Result.*;
 
 public class Stretch extends EditCommand {
 
-	// FIXME I don't like the name of this command. It doesn't really match well
-	//  with what it does. This command is more like a "stretch" command.
-
 	private DesignLine referenceLine;
 
 	private Point3D anchor;
