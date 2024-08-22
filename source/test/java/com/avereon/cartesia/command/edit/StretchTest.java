@@ -30,7 +30,7 @@ public class StretchTest extends CommandBaseTest {
 	// Script Tests --------------------------------------------------------------
 
 	/**
-	 * Squish should squish the selected shapes. The result should be success.
+	 * Stretch should stretch the selected shapes. The result should be success.
 	 *
 	 * @throws Exception If an error occurs during the test
 	 */

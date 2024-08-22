@@ -4,7 +4,6 @@ import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.math.CadGeometry;
-import com.avereon.cartesia.math.CadOrientation;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignTool;
@@ -69,25 +68,12 @@ public abstract class EditCommand extends Command {
 		applyToSelected( tool, CadTransform.scale( anchor, scale ) );
 	}
 
-	protected void squishShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
-		transformShapes( shapes, getSquishTransform( anchor, source, target ) );
+	protected void stretchShapes( Collection<DesignShape> shapes, Point3D anchor, Point3D source, Point3D target ) {
+		transformShapes( shapes, CadTransform.stretch( anchor, source, target ) );
 	}
 
-	protected void squishShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
-		applyToSelected( tool, getSquishTransform( anchor, source, target ) );
-	}
-
-	private CadTransform getSquishTransform( Point3D anchor, Point3D source, Point3D target ) {
-		// This implementation uses a rotate/scale/-rotate transform
-		Point3D base = source.subtract( anchor );
-		Point3D stretch = target.subtract( anchor );
-
-		// Create an orientation such that the z-axis is aligned with the base
-		CadOrientation orientation = new CadOrientation( anchor, base );
-
-		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
-
-		return orientation.getLocalToWorldTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getWorldToLocalTransform() );
+	protected void stretchShapes( DesignTool tool, Point3D anchor, Point3D source, Point3D target ) {
+		applyToSelected( tool, CadTransform.stretch( anchor, source, target ) );
 	}
 
 	protected void deleteShapes( DesignTool tool ) {

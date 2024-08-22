@@ -63,7 +63,7 @@ public class Stretch extends EditCommand {
 			Point3D target = asPoint( task, "target", 2 );
 
 			// Start an undo multi-change
-			squishShapes( tool, anchor, reference, target );
+			stretchShapes( tool, anchor, reference, target );
 			// Done with undo multi-change
 
 			return SUCCESS;
@@ -84,7 +84,7 @@ public class Stretch extends EditCommand {
 					referenceLine.setPoint( target ).setOrigin( anchor );
 
 					resetPreviewGeometry();
-					squishShapes( getPreview(), anchor, source, target );
+					stretchShapes( getPreview(), anchor, source, target );
 				}
 			}
 		}

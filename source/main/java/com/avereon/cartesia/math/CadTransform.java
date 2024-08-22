@@ -141,9 +141,9 @@ public class CadTransform {
 	 * @param anchor The anchor point
 	 * @param source The source point
 	 * @param target The target point
-	 * @return The squish transform
+	 * @return The stretch transform
 	 */
-	public static CadTransform squish( Point3D anchor, Point3D source, Point3D target ) {
+	public static CadTransform stretch( Point3D anchor, Point3D source, Point3D target ) {
 		// This implementation uses a rotate/scale/-rotate transform
 		Point3D base = source.subtract( anchor );
 		Point3D stretch = target.subtract( anchor );
