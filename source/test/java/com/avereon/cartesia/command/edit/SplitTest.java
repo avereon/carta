@@ -153,26 +153,23 @@ public class SplitTest extends CommandBaseTest {
 		assertThat( layer.getShapes() ).doesNotContain( line );
 		assertThat( layer.getShapes() ).hasSize( 2 );
 
-		// The original line should not move
-		//		DesignLine line1 = (DesignLine)layer.getShapes().stream().findFirst().orElse( null );
-		//		DesignLine line2 = (DesignLine)layer.getShapes().stream().filter( s -> s != line1 ).findFirst().orElse( null );
-
-		// FIXME Make this test consistent
-
-//		List<DesignShape> shapes = new ArrayList<>( layer.getShapes() );
-//		shapes.sort( DesignShape.getComparator() );
-//
-//		DesignLine line1 = (DesignLine)shapes.get( 0 );
-//		DesignLine line2 = (DesignLine)shapes.get( 1 );
-//
-//		assertThat( line1 ).isNotNull();
-//		Point3DAssert.assertThat( line1.getOrigin() ).isEqualTo( new Point3D( 1, 1, 0 ) );
-//		Point3DAssert.assertThat( line1.getPoint() ).isEqualTo( new Point3D( 2, 1, 0 ) );
-//
-//		// But there should be a second line that is in the new location
-//		assertThat( line2 ).isNotNull();
-//		Point3DAssert.assertThat( line2.getOrigin() ).isCloseTo( new Point3D( 2, 1, 0 ) );
-//		Point3DAssert.assertThat( line2.getPoint() ).isCloseTo( new Point3D( 4, 1, 0 ) );
+		// Ensure the new lines are in the layer
+		assertThat( layer.getShapes() ).matches( shapes -> {
+			for( var shape : shapes ) {
+				if( shape instanceof DesignLine line1 ) {
+					if( line1.getOrigin().equals( new Point3D( 1, 1, 0 ) ) && line1.getPoint().equals( new Point3D( 2, 1, 0 ) ) ) return Boolean.TRUE;
+				}
+			}
+			return Boolean.FALSE;
+		});
+		assertThat( layer.getShapes() ).matches( shapes -> {
+			for( var shape : shapes ) {
+				if( shape instanceof DesignLine line1 ) {
+					if( line1.getOrigin().equals( new Point3D( 2, 1, 0 ) ) && line1.getPoint().equals( new Point3D( 4, 1, 0 ) ) ) return Boolean.TRUE;
+				}
+			}
+			return Boolean.FALSE;
+		});
 	}
 
 }
