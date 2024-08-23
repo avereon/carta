@@ -147,8 +147,8 @@ public class DesignPaneMarea extends StackPane {
 		zoomProperty().addListener( ( p, o, n ) -> updateView() );
 		parentProperty().addListener( ( p, o, n ) -> updateView() );
 
-		renderer.ppiXProperty().bind( dpiProperty() );
-		renderer.ppiYProperty().bind( dpiProperty() );
+		renderer.dpiXProperty().bind( dpiProperty() );
+		renderer.dpiYProperty().bind( dpiProperty() );
 		renderer.zoomXProperty().bind( zoomProperty() );
 		renderer.zoomYProperty().bind( zoomProperty() );
 		viewPointProperty().addListener( (p,o,n) -> renderer.setViewpoint( n.getX(), n.getY() ) );

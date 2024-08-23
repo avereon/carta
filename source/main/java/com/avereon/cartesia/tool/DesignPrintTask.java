@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignPrint;
-import com.avereon.cartesia.tool.design.DesignRenderer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.asset.Asset;
@@ -10,8 +9,9 @@ import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.color.Paints;
-import com.avereon.zarra.javafx.Fx;
 import javafx.print.*;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import lombok.CustomLog;
@@ -39,6 +39,23 @@ public class DesignPrintTask extends Task<Void> {
 
 	@Override
 	public Void call() throws Exception {
+		log.atDebug().log( "Starting design print task..." );
+
+		// NEXT Tactic is to try a bunch of small canvases contained in a GridPane
+
+		//		boolean successful = job.printPage( layout, renderer ) && job.endJob();
+		//		if( successful ) {
+		//			getProgram().getNoticeManager().addNotice( new Notice( "Print Job Success", this.getName() ) );
+		//		} else {
+		//			getProgram().getNoticeManager().addNotice( new Notice( "Print Job Failure", this.getName() ) );
+		//		}
+
+		log.atInfo().log( "Design print task complete." );
+
+		return null;
+	}
+
+	private Void printWithSingleRenderPane() throws Exception {
 		log.atDebug().log( "Starting design print task..." );
 		// TODO This should come from the DesignPrint setup
 		// There is no concept of custom paper sizes in FX.
@@ -90,54 +107,83 @@ public class DesignPrintTask extends Task<Void> {
 		//				boolean print = job.showPrintDialog( getScene().getWindow() );
 		//				if( !print ) return;
 
-		double factor = 3;
-
-		// The NEW way
-		final DesignRenderer renderer = new DesignRenderer();
-		//renderer.setBackground( Background.fill( Color.LIGHTGRAY ) );
-		renderer.setDesign( asset.getModel() );
-		renderer.setDpi( factor * 72 );
-		//renderer.setReferenceLayerVisible( false );
-		renderer.setVisibleLayers( tool.getVisibleLayers() );
-		renderer.setViewpoint( tool.getViewpoint() );
-		renderer.setZoom( tool.getZoom(), tool.getZoom() );
-		renderer.setRotate( tool.getViewRotate() );
-
-		// Setting needed to render the design
-		renderer.setPrefWidth( layout.getPrintableWidth() );
-		renderer.setPrefHeight( layout.getPrintableHeight() );
-
-		// FIXME This is changing the actual geometry colors...not just copying them to the print
-		// Invert the colors if using a dark theme
-		// TODO This should eventually be a user preference
-		//		if( getProgram().getWorkspaceManager().getThemeMetadata().isDark() ) {
-		//			Fx.run( () -> renderer.getVisibleShapes().forEach( s -> {
-		//				s.setDrawPaint( invertLuminance( s.calcDrawPaint() ) );
-		//				s.setFillPaint( invertLuminance( s.calcFillPaint() ) );
-		//			} ) );
-		//		}
-
-		// Do the actual rendering
-		// It is NOT required to do this on the FX thread
-		Fx.run( () -> renderer.printRender( factor ) );
-		Fx.waitFor( 10000 );
-
-		//		// FIXME Can't seem to get the factor above 3.2, about 230 dpi
-		//		double factor = 3.2;
+		//		double factor = 4;
 		//
-		//		Canvas renderer = new Canvas();
+		//		// The NEW way
+		//		final DesignRenderer renderer = new DesignRenderer();
+		//		//renderer.setBackground( Background.fill( Color.LIGHTGRAY ) );
+		//		renderer.setDesign( asset.getModel() );
+		//		renderer.setVisibleLayers( tool.getVisibleLayers() );
 		//
-		//		renderer.setScaleX( 1.0 / factor );
-		//		renderer.setScaleY( 1.0 / factor );
-		//		renderer.setTranslateX( -0.5 * (factor - 1) * layout.getPrintableWidth() );
-		//		renderer.setTranslateY( -0.5 * (factor - 1) * layout.getPrintableHeight() );
-		//		renderer.setWidth( factor * layout.getPrintableWidth() );
-		//		renderer.setHeight( factor * layout.getPrintableHeight() );
+		//		renderer.setDpi( factor * 72 );
+		//		renderer.setPrefWidth( layout.getPrintableWidth() );
+		//		renderer.setPrefHeight( layout.getPrintableHeight() );
+		//		renderer.setViewpoint( tool.getViewpoint() );
+		//		renderer.setRotate( tool.getViewRotate() );
+		//		renderer.setZoom( tool.getZoom(), tool.getZoom() );
+		//
+		//		//renderer.setReferenceLayerVisible( false );
+		//
+		//		// FIXME This is changing the actual geometry colors...not just copying them to the print
+		//		// Invert the colors if using a dark theme
+		//		// TODO This should eventually be a user preference
+		//		//		if( getProgram().getWorkspaceManager().getThemeMetadata().isDark() ) {
+		//		//			Fx.run( () -> renderer.getVisibleShapes().forEach( s -> {
+		//		//				s.setDrawPaint( invertLuminance( s.calcDrawPaint() ) );
+		//		//				s.setFillPaint( invertLuminance( s.calcFillPaint() ) );
+		//		//			} ) );
+		//		//		}
+		//
+		//		// Do the actual rendering
+		//		// It is NOT required to do this on the FX thread
+		//		renderer.printRender( factor );
+		//		//Fx.run( () -> renderer.printRender( factor ) );
+		//		//Fx.waitFor( 10000 );
+
+		// FIXME Can't seem to get the factor above 3.2, about 230 dpi
+		//  ...and it inconsistently prints nothing
+		// The goal is to match the DPI requested by the printer/user
+		// 300 dpi is a factor of 4.166666666666667
+		// 2024 Aug 23 - Been as high as 13 today
+		// Well, I think this is the issue: https://bugs.openjdk.org/browse/JDK-8090178
+		// Which eventually leads to this:  https://bugs.openjdk.org/browse/JDK-8090822
+
+		double factor = 10; // 720 dpi
+
+		GridPane grid = new GridPane();
+		grid.setPrefWidth( factor * layout.getPrintableWidth() );
+		grid.setPrefHeight( factor * layout.getPrintableHeight() );
+
+		Canvas renderer = new Canvas();
+		//		renderer.setScaleX( 1.0 / factor ); // 0.1
+		//		renderer.setScaleY( 1.0 / factor ); // 0.1
+		//
+		//		double vFactor = 36;
+		//
+		//		// Changing the width and height also caused it to be moved
+		//		renderer.setWidth( factor * layout.getPrintableWidth() ); // 1440
+		//		renderer.setHeight( factor * 2*vFactor ); // 1440
+		//		renderer.setLayoutX( -((factor - 1) * (0.5*layout.getPrintableWidth())) ); // -648
+		//		renderer.setLayoutY( -((factor - 1) * vFactor) ); // -648
+
+		//		renderer.setTranslateX( -((factor - 1) * 72) );
+		//		renderer.setTranslateY( -((factor - 1) * 72) );
 		//		renderer.getGraphicsContext2D().setFill( Color.BLACK );
 		//		renderer.getGraphicsContext2D().fillRect( 0, 0, factor * layout.getPrintableWidth(), factor * layout.getPrintableHeight() );
 		//		renderer.getGraphicsContext2D().setFill( Color.YELLOW );
 		//		renderer.getGraphicsContext2D().fillOval( 0, 0, factor * layout.getPrintableWidth(), factor * layout.getPrintableHeight() );
-		//		log.atConfig().log( "Print size: " + renderer.getWidth() + "x" + renderer.getHeight() );
+
+		renderer.getGraphicsContext2D().setFill( Color.BLACK );
+		renderer.getGraphicsContext2D().fillRect( 0, 0, factor * 144, factor * 144 );
+		renderer.getGraphicsContext2D().beginPath();
+		renderer.getGraphicsContext2D().moveTo( 0, 0 );
+		renderer.getGraphicsContext2D().lineTo( factor * 72, 0 );
+		renderer.getGraphicsContext2D().lineTo( 0, factor * 72 );
+		renderer.getGraphicsContext2D().closePath();
+		renderer.getGraphicsContext2D().setFill( Color.YELLOW );
+		renderer.getGraphicsContext2D().fill();
+		log.atConfig().log( "Job size: " + layout.getPrintableWidth() + "x" + layout.getPrintableHeight() );
+		log.atConfig().log( "Print size: " + renderer.getWidth() + "x" + renderer.getHeight() + " = " + (renderer.getWidth() * renderer.getHeight()) );
 
 		boolean successful = job.printPage( layout, renderer ) && job.endJob();
 		if( successful ) {

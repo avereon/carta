@@ -14,6 +14,7 @@ import com.avereon.marea.LineJoin;
 import com.avereon.marea.RenderUnit;
 import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.Path;
+import com.avereon.util.ThreadUtil;
 import com.avereon.zarra.color.Colors;
 import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
@@ -124,7 +125,6 @@ public class DesignRenderer extends Pane {
 		// Create and add the renderer to the center
 		renderer = new FxRenderer2d();
 		getChildren().add( renderer );
-		//setCenter( renderer = new FxRenderer2d() );
 
 		// Disable the default renderer mouse actions
 		renderer.setOnMousePressed( null );
@@ -132,7 +132,7 @@ public class DesignRenderer extends Pane {
 		renderer.setOnMouseReleased( null );
 		renderer.setOnScroll( null );
 
-		// Bind the renderer width and height to the parent
+		// Bind the underlying renderer width and height
 		renderer.widthProperty().bind( this.widthProperty() );
 		renderer.heightProperty().bind( this.heightProperty() );
 
@@ -173,11 +173,6 @@ public class DesignRenderer extends Pane {
 		}
 	}
 
-	@Deprecated
-	public FxRenderer2d getFxRenderer2d() {
-		return renderer;
-	}
-
 	public DesignContext getDesignContext() {
 		return design.getDesignContext();
 	}
@@ -202,15 +197,15 @@ public class DesignRenderer extends Pane {
 	 * @return The DPI for the renderer
 	 */
 	public Point2D getDpi() {
-		return new Point2D( renderer.getPpiX(), renderer.getPpiY() );
+		return new Point2D( renderer.getDpiX(), renderer.getDpiY() );
 	}
 
 	public double getDpiX() {
-		return renderer.getPpiX();
+		return renderer.getDpiX();
 	}
 
 	public double getDpiY() {
-		return renderer.getPpiY();
+		return renderer.getDpiY();
 	}
 
 	/**
@@ -231,11 +226,11 @@ public class DesignRenderer extends Pane {
 	 * @param dpiY The DPI to set for the Y axis
 	 */
 	public void setDpi( double dpiX, double dpiY ) {
-		renderer.setPpi( dpiX, dpiY );
+		renderer.setDpi( dpiX, dpiY );
 	}
 
 	public void setDpi( Point2D dpi ) {
-		renderer.setPpi( dpi.getX(), dpi.getY() );
+		renderer.setDpi( dpi.getX(), dpi.getY() );
 	}
 
 	public boolean isGridVisible() {
@@ -681,25 +676,31 @@ public class DesignRenderer extends Pane {
 		double zoomX = renderer.getZoomX();
 		double zoomY = renderer.getZoomY();
 
-		renderer.setZoomX( zoomX );
-		renderer.setZoomY( zoomY );
-		renderer.setScaleX( 1.0 / factor );
-		renderer.setScaleY( 1.0 / factor );
-
 		renderer.setWidth( factor * this.getPrefWidth() );
 		renderer.setHeight( factor * this.getPrefHeight() );
 		renderer.setTranslateX( -0.5 * (factor - 1) * this.getPrefWidth() );
 		renderer.setTranslateY( -0.5 * (factor - 1) * this.getPrefHeight() );
 
+		renderer.setScaleX( 1.0 / factor );
+		renderer.setScaleY( 1.0 / factor );
+		renderer.setZoomX( zoomX );
+		renderer.setZoomY( zoomY );
+
 		log.atConfig().log( "Print size: " + renderer.getWidth() + "x" + renderer.getHeight() );
+
+		long startNs = System.nanoTime();
 		doRender();
+		ThreadUtil.pause( 1000 );
+		long endNs = System.nanoTime();
+		long duration = (long)(0.000001 * (endNs - startNs));
+		log.atWarn().log( "Print render time: {0} ms", duration );
 	}
 
 	/**
 	 * Should only be called on the FX application thread from the
 	 * {@link #render()} method.
 	 */
-	private void doRender() {
+	private synchronized void doRender() {
 		long startNs = System.nanoTime();
 
 		// Update the workplane bounds to match the renderer pane
@@ -711,6 +712,9 @@ public class DesignRenderer extends Pane {
 		renderHintGeometry();
 		renderReferenceGeometry();
 		renderSelectAperture();
+
+		//		renderer.setFillPen( Color.RED );
+		//		renderer.fillScreenBox( 0, 0, 100, 100 );
 
 		long endNs = System.nanoTime();
 		long duration = (long)(0.000001 * (endNs - startNs));
@@ -954,13 +958,13 @@ public class DesignRenderer extends Pane {
 	double getInternalScaleX() {
 		// TODO This value can be cached
 		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
-		return scale * renderer.getPpiX() * getZoomX();
+		return scale * renderer.getDpiX() * getZoomX();
 	}
 
 	double getInternalScaleY() {
 		// TODO This value can be cached
 		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
-		return scale * renderer.getPpiY() * getZoomY();
+		return scale * renderer.getDpiY() * getZoomY();
 	}
 
 	/**
