@@ -17,7 +17,7 @@ public class CameraZoomOut extends CameraZoom {
 
 	@Override
 	public Object execute( CommandTask task ) {
-		zoomByFactor( task.getTool(), task.getTool().getViewPoint(), DesignPaneMarea.ZOOM_OUT_FACTOR );
+		zoomByFactor( task.getTool(), task.getTool().getViewpoint(), DesignPaneMarea.ZOOM_OUT_FACTOR );
 		return SUCCESS;
 	}
 

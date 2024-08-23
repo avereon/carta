@@ -12,7 +12,7 @@ public class ViewUpdate extends ViewCommand {
 		DesignView view = task.getTool().getCurrentView();
 		if( view == null ) return SUCCESS;
 
-		view.setOrigin( task.getTool().getViewPoint() );
+		view.setOrigin( task.getTool().getViewpoint() );
 		view.setZoom( task.getTool().getZoom() );
 		view.setRotate( task.getTool().getViewRotate() );
 		view.setLayers( task.getTool().getVisibleLayers() );

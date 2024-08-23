@@ -182,7 +182,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D getViewPoint() {
+	public Point3D getViewpoint() {
 		return designPane == null ? Point3D.ZERO : designPane.getViewPoint();
 	}
 
@@ -198,7 +198,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	@Override
 	public void setViewRotate( double angle ) {
-		setView( getViewPoint(), getZoom(), angle );
+		setView( getViewpoint(), getZoom(), angle );
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 
 	@Override
 	public void setZoom( double zoom ) {
-		setView( getViewPoint(), zoom );
+		setView( getViewpoint(), zoom );
 	}
 
 	@Override
@@ -1204,7 +1204,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	private void capturePreviousPortal() {
-		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getViewRotate() ) );
+		portalStack.push( new DesignPortal( getViewpoint(), getZoom(), getViewRotate() ) );
 	}
 
 	private static class SelectWindow extends Rectangle {

@@ -83,7 +83,7 @@ public interface DesignTool {
 	 */
 	void setCoordinateSystem( Grid system );
 
-	Point3D getViewPoint();
+	Point3D getViewpoint();
 
 	void setViewPoint( Point3D point );
 

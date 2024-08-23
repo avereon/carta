@@ -27,7 +27,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CustomLog
-public class DesignRenderer extends BorderPane {
+public class DesignRenderer extends Pane {
 
 	private Design design;
 
@@ -122,7 +122,9 @@ public class DesignRenderer extends BorderPane {
 		workplane = new DesignWorkplane();
 
 		// Create and add the renderer to the center
-		setCenter( renderer = new FxRenderer2d() );
+		renderer = new FxRenderer2d();
+		getChildren().add( renderer );
+		//setCenter( renderer = new FxRenderer2d() );
 
 		// Disable the default renderer mouse actions
 		renderer.setOnMousePressed( null );
@@ -169,6 +171,11 @@ public class DesignRenderer extends BorderPane {
 
 			visibleLayers.addAll( design.getAllLayers() );
 		}
+	}
+
+	@Deprecated
+	public FxRenderer2d getFxRenderer2d() {
+		return renderer;
 	}
 
 	public DesignContext getDesignContext() {
@@ -484,7 +491,7 @@ public class DesignRenderer extends BorderPane {
 	 *
 	 * @param viewpoint The viewpoint to set
 	 */
-	public void setViewpoint( Point2D viewpoint ) {
+	public void setViewpoint( Point3D viewpoint ) {
 		renderer.setViewpoint( viewpoint.getX(), viewpoint.getY() );
 	}
 
@@ -508,10 +515,11 @@ public class DesignRenderer extends BorderPane {
 	/**
 	 * Convenience method to set the zoom of the renderer.
 	 *
-	 * @param zoom The zoom to set
+	 * @param zoomX The zoom to set for the X axis
+	 * @param zoomY The zoom to set for the Y axis
 	 */
-	public void setZoom( Point2D zoom ) {
-		renderer.setZoom( zoom.getX(), zoom.getY() );
+	public void setZoom( double zoomX, double zoomY ) {
+		renderer.setZoom( zoomX, zoomY );
 	}
 
 	public double getZoomX() {
@@ -666,6 +674,27 @@ public class DesignRenderer extends BorderPane {
 
 	// Rendering -----------------------------------------------------------------
 
+	public void printRender( double factor ) {
+		renderer.widthProperty().unbind();
+		renderer.heightProperty().unbind();
+
+		double zoomX = renderer.getZoomX();
+		double zoomY = renderer.getZoomY();
+
+		renderer.setZoomX( zoomX );
+		renderer.setZoomY( zoomY );
+		renderer.setScaleX( 1.0 / factor );
+		renderer.setScaleY( 1.0 / factor );
+
+		renderer.setWidth( factor * this.getPrefWidth() );
+		renderer.setHeight( factor * this.getPrefHeight() );
+		renderer.setTranslateX( -0.5 * (factor - 1) * this.getPrefWidth() );
+		renderer.setTranslateY( -0.5 * (factor - 1) * this.getPrefHeight() );
+
+		log.atConfig().log( "Print size: " + renderer.getWidth() + "x" + renderer.getHeight() );
+		doRender();
+	}
+
 	/**
 	 * Should only be called on the FX application thread from the
 	 * {@link #render()} method.
@@ -708,7 +737,7 @@ public class DesignRenderer extends BorderPane {
 	}
 
 	private void renderLayer( DesignLayer layer ) {
-		List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapeSet() );
+		List<DesignShape> orderedShapes = new ArrayList<>( layer.getShapes() );
 		Collections.sort( orderedShapes );
 		renderShapes( orderedShapes );
 	}

@@ -447,13 +447,13 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D getViewPoint() {
+	public Point3D getViewpoint() {
 		return CadPoints.toPoint3d( renderer.getViewpoint() );
 	}
 
 	@Override
 	public void setViewPoint( Point3D point ) {
-		renderer.setViewpoint( CadPoints.toPoint2d( point ) );
+		renderer.setViewpoint(  point );
 	}
 
 	public DoubleProperty viewpointXProperty() {
@@ -479,7 +479,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setZoom( double zoom ) {
-		renderer.setZoom( new Point2D( zoom, zoom ) );
+		renderer.setZoom(  zoom, zoom );
 	}
 
 	public DoubleProperty zoomXProperty() {
@@ -541,8 +541,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setView( Point3D center, double zoom, double rotate ) {
-		renderer.setViewpoint( CadPoints.toPoint2d( center ) );
-		renderer.setZoom( CadPoints.toPoint2d( zoom, zoom ) );
+		renderer.setViewpoint( center );
+		renderer.setZoom( zoom, zoom );
 		renderer.setRotate( rotate );
 	}
 
@@ -1069,7 +1069,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void capturePreviousPortal() {
-		portalStack.push( new DesignPortal( getViewPoint(), getZoom(), getViewRotate() ) );
+		portalStack.push( new DesignPortal( getViewpoint(), getZoom(), getViewRotate() ) );
 	}
 
 	public void showCommandPrompt() {

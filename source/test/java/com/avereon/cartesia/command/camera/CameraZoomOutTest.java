@@ -19,7 +19,7 @@ public class CameraZoomOutTest extends CommandBaseTest {
 	void execute() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		when( tool.getViewPoint() ).thenReturn( new Point3D( 1, 2, 3 ) );
+		when( tool.getViewpoint() ).thenReturn( new Point3D( 1, 2, 3 ) );
 
 		// when
 		Object result = task.runTaskStep();

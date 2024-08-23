@@ -30,7 +30,7 @@ public class CameraMove extends CameraCommand {
 		if( paramCount == 0 & hasEvent && event.getEventType() == MouseEvent.DRAG_DETECTED ) {
 			event.consume();
 
-			originalViewPoint = task.getTool().getViewPoint();
+			originalViewPoint = task.getTool().getViewpoint();
 
 			// Submit a Value command to pass the anchor back to this command
 			task.getContext().submit( task.getTool(), new Value(), task.getContext().getWorldAnchor() );

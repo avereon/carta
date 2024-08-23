@@ -23,7 +23,7 @@ public class ViewCreate extends ViewCommand {
 		if( task.hasParameter( 0 ) ) {
 			// Create a view from the current view settings
 			DesignView view = new DesignView().setName( asText( task, "view-name", 0 ) );
-			view.setOrigin( task.getTool().getViewPoint() );
+			view.setOrigin( task.getTool().getViewpoint() );
 			view.setZoom( task.getTool().getZoom() );
 			view.setRotate( task.getTool().getViewRotate() );
 			view.setLayers( task.getTool().getVisibleLayers() );
