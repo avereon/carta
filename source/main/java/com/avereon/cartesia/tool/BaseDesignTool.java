@@ -12,10 +12,12 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import javafx.beans.property.ObjectProperty;
 import javafx.event.EventTarget;
 import javafx.scene.shape.Shape;
+import lombok.CustomLog;
 
 /**
  * The design tool is the base class for all design tools.
  */
+@CustomLog
 public abstract class BaseDesignTool extends GuidedTool implements DesignTool, EventTarget, WritableIdentity {
 
 	protected static final String RETICLE = "reticle";
@@ -92,7 +94,21 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public final Design getDesign() {
-		return getAssetModel();
+		Design design = getAssetModel();
+
+		// FIXME This initialization should be done
+		//  - in the asset manager (but how would it know)
+		//  - or in UiRegenerator
+		if( design == null ) {
+			try {
+				getAsset().getType().assetNew( getProgram(), getAsset() );
+				design = getAssetModel();
+			} catch( Exception exception ) {
+				log.atWarn().withCause( exception ).log();
+			}
+		}
+
+		return design;
 	}
 
 	@Override
