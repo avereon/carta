@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static com.avereon.data.NodeEvent.MODIFIED;
-
 @CustomLog
 @Accessors( chain = true )
 public abstract class DesignShape extends DesignDrawable {
@@ -90,11 +88,6 @@ public abstract class DesignShape extends DesignDrawable {
 		setOrigin( origin );
 
 		cache = new ConcurrentHashMap<>();
-
-		// Register a listener to clear caches
-		register( MODIFIED, e -> {
-			if( e.getNewValue() == Boolean.TRUE ) cache.clear();
-		} );
 	}
 
 	public Type getType() {
@@ -135,6 +128,12 @@ public abstract class DesignShape extends DesignDrawable {
 	public <T extends DesignShape> T setRotate( double value ) {
 		setRotate( String.valueOf( value ) );
 		return (T)this;
+	}
+
+	@Override
+	public <T> T setValue( String key, T newValue ) {
+		if( getModifyingKeys().contains( key ) ) cache.clear();
+		return super.setValue( key, newValue );
 	}
 
 	// Convenience method for selecting
