@@ -7,24 +7,17 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.*;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import com.avereon.product.Rb;
-import com.avereon.zarra.color.Paints;
-import com.avereon.zarra.javafx.FxUtil;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 import lombok.Getter;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
@@ -160,19 +153,9 @@ public abstract class Command {
 		return true;
 	}
 
-	public void handle( CommandTask task, KeyEvent event ) {
-		handle( task.getContext(), event );
-	}
+	public void handle( CommandTask task, KeyEvent event ) {}
 
-	public void handle( CommandTask task, MouseEvent event ) {
-		handle( task.getContext(), event );
-	}
-
-	@Deprecated
-	public void handle( DesignCommandContext context, KeyEvent event ) {}
-
-	@Deprecated
-	public void handle( DesignCommandContext context, MouseEvent event ) {}
+	public void handle( CommandTask task, MouseEvent event ) {}
 
 	@Override
 	public String toString() {
@@ -215,20 +198,6 @@ public abstract class Command {
 		if( point != null ) return point.distance( anchor );
 
 		throw new InvalidInputException( task.getCommand(), rbKey, value );
-	}
-
-	@Deprecated
-	protected double asDouble( Object value ) throws Exception {
-		if( value instanceof Double ) return (Double)value;
-		if( value instanceof Point3D ) return ((Point3D)value).distance( Point3D.ZERO );
-		return CadMath.eval( String.valueOf( value ) );
-	}
-
-	@Deprecated
-	protected double asDouble( Point3D anchor, Object value ) throws Exception {
-		if( value instanceof Double ) return (Double)value;
-		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
-		return CadMath.eval( String.valueOf( value ) );
 	}
 
 	protected Point3D asPoint( CommandTask task, String rbKey, int index ) throws Exception {
@@ -281,59 +250,20 @@ public abstract class Command {
 		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, task.getParameter( index ), false );
 	}
 
-	@Deprecated
-	protected Point3D asPointFromEvent( CommandTask task ) {
-		if( task.getEvent() instanceof MouseEvent mouseEvent ) return task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
-		return null;
-	}
-
-	@Deprecated
-	protected Point3D asPoint( Point3D anchor, Object value ) throws Exception {
-		if( value instanceof Point3D ) return (Point3D)value;
-		return CadShapes.parsePoint( String.valueOf( value ), anchor );
-	}
-
-	@Deprecated
-	protected Point3D asPoint( DesignCommandContext context, Object value ) throws Exception {
-		return asPoint( context.getWorldAnchor(), value );
-	}
-
-	@Deprecated
-	@SuppressWarnings( "unused" )
-	protected Bounds asBounds( DesignCommandContext context, Object value ) {
-		// NOTE Users cannot input bounds by hand so this method may not be necessary
-		if( value instanceof Bounds ) return (Bounds)value;
-		//Point3D anchor = context.getScreenMouse();
-		//return CadShapes.parseBounds( String.valueOf( value ), anchor );
-		return null;
-	}
-
 	protected String asText( CommandTask task, String rbKey, int index ) throws Exception {
 		Object value = task.getParameter( index );
 		if( value == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		return String.valueOf( value );
 	}
 
-	@Deprecated
-	@SuppressWarnings( "unused" )
-	protected String asText( DesignCommandContext context, Object value ) {
-		return String.valueOf( value );
-	}
-
 	protected void promptForNumber( CommandTask task, String key ) {
 		task.getTool().setCursor( null );
-		promptForValue( task.getContext(), key, DesignCommandContext.Input.NUMBER );
+		promptForValue( task, key, DesignCommandContext.Input.NUMBER );
 	}
 
 	protected void promptForPoint( CommandTask task, String key ) {
 		task.getTool().setCursor( task.getTool().getReticleCursor() );
 		promptForValue( task, key, DesignCommandContext.Input.POINT );
-	}
-
-	@Deprecated
-	protected void promptForPoint( DesignCommandContext context, String key ) {
-		context.getTool().setCursor( context.getTool().getReticleCursor() );
-		promptForValue( context, key, DesignCommandContext.Input.POINT );
 	}
 
 	protected void promptForWindow( CommandTask task, String key ) {
@@ -346,37 +276,13 @@ public abstract class Command {
 		promptForValue( task, key, DesignCommandContext.Input.NONE );
 	}
 
-	@Deprecated
-	protected void promptForShape( DesignCommandContext context, String key ) {
-		context.getTool().setCursor( Cursor.HAND );
-		promptForValue( context, key, DesignCommandContext.Input.NONE );
-	}
-
 	protected void promptForText( CommandTask task, String key ) {
 		task.getTool().setCursor( Cursor.TEXT );
 		promptForValue( task, key, DesignCommandContext.Input.TEXT );
 	}
 
-	@Deprecated
-	protected DesignShape findNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
-		List<DesignShape> shapes = context.getTool().screenPointSyncFindOne( mouse );
-		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
-	}
-
 	protected DesignShape findNearestShapeAtPoint( CommandTask task, Point3D point ) {
 		List<DesignShape> shapes = task.getTool().worldPointSyncFindOne( point );
-		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
-	}
-
-	@Deprecated
-	protected DesignShape findNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
-		List<DesignShape> shapes = context.getTool().worldPointSyncFindOne( point );
-		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
-	}
-
-	@Deprecated
-	protected DesignShape selectNearestShapeAtMouse( DesignCommandContext context, Point3D mouse ) {
-		List<DesignShape> shapes = context.getTool().screenPointSyncSelect( mouse );
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
@@ -385,28 +291,12 @@ public abstract class Command {
 		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
 	}
 
-	@Deprecated
-	protected DesignShape selectNearestShapeAtPoint( DesignCommandContext context, Point3D point ) {
-		List<DesignShape> shapes = context.getTool().worldPointSyncSelect( point );
-		return shapes.isEmpty() ? DesignShape.NONE : shapes.getFirst();
-	}
-
-	@Deprecated
-	protected Collection<DesignShape> createPreviewShapes( Collection<DesignShape> shapes ) {
-		return cloneAndAddShapes( shapes, true );
-	}
-
 	protected void doNotCaptureUndoChanges( CommandTask task ) {
 		setCaptureUndoChanges( task, false );
 	}
 
 	protected void setCaptureUndoChanges( CommandTask task, boolean enabled ) {
 		task.getTool().getAsset().setCaptureUndoChanges( enabled );
-	}
-
-	@Deprecated
-	protected void setCaptureUndoChanges( DesignCommandContext context, boolean enabled ) {
-		context.getTool().getAsset().setCaptureUndoChanges( enabled );
 	}
 
 	protected void addReference( CommandTask task, DesignShape... shapes ) {
@@ -422,51 +312,15 @@ public abstract class Command {
 		removeReference( task, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
-	@Deprecated
-	protected void addReference( DesignCommandContext context, DesignShape... shapes ) {
-		addReference( context, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
-	}
-
-	@Deprecated
-	private void addReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
-		this.reference.addAll( shapes );
-		final String referencePaint = Paints.toString( context.getTool().getSelectedDrawPaint() );
-		this.reference.forEach( s -> {
-			s.setPreview( true );
-			s.setDrawPaint( referencePaint );
-			// FIXME Should there be a specific reference layer? UX says yes!
-			if( s.getLayer() == null ) context.getTool().getCurrentLayer().addShape( s );
-		} );
-	}
-
-	@Deprecated
-	protected void removeReference( DesignCommandContext context, DesignShape... shapes ) {
-		removeReference( context, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
-	}
-
 	@SuppressWarnings( "unused" )
 	protected void removeReference( CommandTask task, Collection<DesignShape> shapes ) {
 		task.getTool().getReferenceLayer().removeShapes( shapes );
 		reference.removeAll( shapes );
 	}
 
-	@Deprecated
-	@SuppressWarnings( "unused" )
-	protected void removeReference( DesignCommandContext context, Collection<DesignShape> shapes ) {
-		shapes.stream().filter( s -> s.getLayer() != null ).forEach( s -> s.getLayer().removeShape( s ) );
-		reference.removeAll( shapes );
-	}
-
 	protected void clearReference( CommandTask task ) {
 		// The shapes have to be removed before capturing undo changes again
 		removeReference( task, reference );
-		reference.clear();
-	}
-
-	@Deprecated
-	protected void clearReference( DesignCommandContext context ) {
-		// The shapes have to be removed before capturing undo changes again
-		removeReference( context, reference );
 		reference.clear();
 	}
 
@@ -571,36 +425,17 @@ public abstract class Command {
 		this.preview.addAll( shapes );
 	}
 
-	@Deprecated
-	protected void addPreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
-		shapes.forEach( s -> s.setPreview( true ) );
-		context.getTool().getPreviewLayer().addShapes( shapes );
-		this.preview.addAll( shapes );
-	}
-
 	protected void resetPreviewGeometry() {
 		previewMap.keySet().forEach( s -> previewMap.get( s ).updateFrom( s ) );
 	}
 
 	protected void removePreview( CommandTask task, DesignShape... shapes ) {
-		removePreview( task.getContext(), Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
-	}
-
-	@Deprecated
-	protected void removePreview( DesignCommandContext context, DesignShape... shapes ) {
-		removePreview( context, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
+		removePreview( task, Arrays.stream( shapes ).filter( Objects::nonNull ).collect( Collectors.toList() ) );
 	}
 
 	protected void removePreview( CommandTask task, Collection<DesignShape> shapes ) {
 		if( shapes == null ) return;
 		task.getTool().getPreviewLayer().removeShapes( shapes );
-		preview.removeAll( shapes );
-	}
-
-	@Deprecated
-	protected void removePreview( DesignCommandContext context, Collection<DesignShape> shapes ) {
-		if( shapes == null ) return;
-		context.getTool().getPreviewLayer().removeShapes( shapes );
 		preview.removeAll( shapes );
 	}
 
@@ -610,23 +445,9 @@ public abstract class Command {
 		preview.clear();
 	}
 
-	@Deprecated
-	protected void clearPreview( DesignCommandContext context ) {
-		// The shapes have to be removed before capturing undo changes again
-		context.getTool().getPreviewLayer().clearShapes();
-		preview.clear();
-	}
-
-	// NOTE Only for use by CommandTask
 	void clearReferenceAndPreview( CommandTask task ) {
 		clearReference( task );
 		clearPreview( task );
-	}
-
-	@Deprecated
-	public void clearReferenceAndPreview( DesignCommandContext context ) {
-		clearReference( context );
-		clearPreview( context );
 	}
 
 	protected DesignLine createReferenceLine( CommandTask task ) {
@@ -717,35 +538,9 @@ public abstract class Command {
 		return spin;
 	}
 
-	@Deprecated
-	protected Bounds getParentFxShapeBounds( Collection<Shape> shapes, Node target ) {
-		return getFxShapeBounds( shapes, s -> FxUtil.localToParent( s, target ) );
-	}
-
-	@Deprecated
-	private Bounds getFxShapeBounds( Collection<Shape> shapes, Function<Shape, Bounds> operator ) {
-		if( shapes.isEmpty() ) return new BoundingBox( 0, 0, 0, 0 );
-
-		Bounds shapeBounds = null;
-		for( Shape s : shapes ) {
-			shapeBounds = FxUtil.merge( shapeBounds, operator.apply( s ) );
-		}
-
-		// WORKAROUND for JDK-8145499: https://bugs.openjdk.java.net/browse/JDK-8145499
-		shapeBounds = new BoundingBox( shapeBounds.getMinX() + 0.5, shapeBounds.getMinY() + 0.5, shapeBounds.getWidth() - 1, shapeBounds.getHeight() - 1 );
-
-		return shapeBounds;
-	}
-
 	private void promptForValue( CommandTask task, String key, DesignCommandContext.Input mode ) {
 		String text = Rb.text( RbKey.PROMPT, key );
 		task.getContext().submit( task.getTool(), new Prompt( text, mode ) );
-	}
-
-	@Deprecated
-	private void promptForValue( DesignCommandContext context, String key, DesignCommandContext.Input mode ) {
-		String text = Rb.text( RbKey.PROMPT, key );
-		context.submit( context.getTool(), new Prompt( text, mode ) );
 	}
 
 	private static double deriveRotatedArcAngle( Point3D center, double xRadius, double yRadius, double rotate, Point3D point ) {
@@ -756,17 +551,6 @@ public abstract class Command {
 		if( angle > 180 ) angle -= 360;
 
 		return angle;
-	}
-
-	@Deprecated
-	private Collection<DesignShape> cloneAndAddShapes( Collection<DesignShape> shapes, boolean preview ) {
-		return shapes.stream().map( s -> {
-			DesignShape clone = s.clone().setSelected( false ).setPreview( preview );
-			previewMap.put( s, clone );
-			// NOTE Reference flag should be set before adding shape to layer, otherwise reference shapes will trigger the modified flag
-			if( s.getLayer() != null ) s.getLayer().addShape( clone );
-			return clone;
-		} ).collect( Collectors.toList() );
 	}
 
 }
