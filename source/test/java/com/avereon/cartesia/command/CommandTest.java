@@ -1,6 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
+import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
@@ -45,7 +46,7 @@ public class CommandTest extends BaseCommandTest {
 		Point3D result = command.asPoint( task, task.getContext().getWorldAnchor(), "point", "1.01,2.01" );
 
 		// then
-		assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
 	}
 
 	@Test
@@ -58,7 +59,7 @@ public class CommandTest extends BaseCommandTest {
 		Point3D result = command.asPoint( task, task.getContext().getWorldAnchor(), "point", new Point3D( 1.01, 2.01, 0 ) );
 
 		// then
-		assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
 	}
 
 	@Test
@@ -72,7 +73,7 @@ public class CommandTest extends BaseCommandTest {
 		Point3D result = command.asPoint( task, "point", createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, false, false, false, false, false, 72, 72 ) );
 
 		// then
-		assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
 	}
 
 	// TODO Test more shared Command methods
