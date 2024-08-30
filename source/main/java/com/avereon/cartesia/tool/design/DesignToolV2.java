@@ -31,6 +31,7 @@ import com.avereon.xenon.workspace.StatusBar;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zarra.color.Paints;
 import com.avereon.zarra.javafx.Fx;
+import com.avereon.zarra.javafx.FxUtil;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -38,10 +39,7 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -120,6 +118,8 @@ public class DesignToolV2 extends BaseDesignTool {
 	private final DelayedAction storePreviousViewAction;
 
 	private BooleanProperty gridSnapEnabled;
+
+	private BooleanProperty showHotspotEnabled;
 
 	private ChangeListener<Boolean> gridVisibleToggleHandler;
 
@@ -860,6 +860,19 @@ public class DesignToolV2 extends BaseDesignTool {
 		return gridSnapEnabled;
 	}
 
+	public boolean isShowHotspotEnabled() {
+		return showHotspotEnabled == null ? DEFAULT_SHOW_HOTSPOT_ENABLED : showHotspotEnabled().get();
+	}
+
+	public void setShowHotspotEnabled( boolean enabled ) {
+		showHotspotEnabled.set( enabled );
+	}
+
+	public BooleanProperty showHotspotEnabled() {
+		if( showHotspotEnabled == null ) showHotspotEnabled = new SimpleBooleanProperty( DEFAULT_SHOW_HOTSPOT_ENABLED );
+		return showHotspotEnabled;
+	}
+
 	/**
 	 * Set the select aperture window. Points are specified in screen coordinates.
 	 *
@@ -876,17 +889,15 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Set the select aperture
 		DesignShape selectAperture;
 		if( anchor.equals( mouse ) ) {
-			//selectAperture = null;
-			//renderer.setSelectAperture( null );
-			double size = renderer.realToScreen( getSelectTolerance() );
-			selectAperture = new DesignEllipse( mouse, size );
+			if( isShowHotspotEnabled() ) {
+				double size = renderer.realToScreen( getSelectTolerance() );
+				selectAperture = new DesignEllipse( mouse, size );
+			} else {
+				selectAperture = null;
+			}
 		} else {
-			// Calculate the bounds of the select window
-			double x = Math.min( anchor.getX(), mouse.getX() );
-			double y = Math.min( anchor.getY(), mouse.getY() );
-			double w = Math.abs( anchor.getX() - mouse.getX() );
-			double h = Math.abs( anchor.getY() - mouse.getY() );
-			selectAperture = new DesignBox( x, y, w, h );
+			Bounds box = FxUtil.bounds( anchor, mouse );
+			selectAperture = new DesignBox( box);
 		}
 
 		renderer.setSelectAperture( selectAperture );

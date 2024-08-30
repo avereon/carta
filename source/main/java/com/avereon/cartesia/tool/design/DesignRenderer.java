@@ -312,7 +312,11 @@ public class DesignRenderer extends Pane {
 
 	public void setSelectAperture( DesignShape aperture ) {
 		if( aperture != null ) {
-			aperture.setDrawPaint( getApertureDrawPaint() );
+			if( aperture instanceof DesignEllipse ) {
+				aperture.setDrawPaint( "#00000000" );
+			} else if( aperture instanceof DesignBox ) {
+				aperture.setDrawPaint( getApertureDrawPaint() );
+			}
 			aperture.setFillPaint( getApertureFillPaint() );
 		}
 		selectAperture.set( aperture );

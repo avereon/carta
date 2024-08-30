@@ -43,6 +43,8 @@ public interface DesignTool {
 
 	boolean DEFAULT_GRID_SNAP_ENABLED = true;
 
+	boolean DEFAULT_SHOW_HOTSPOT_ENABLED = false;
+
 	boolean DEFAULT_GRID_VISIBLE = true;
 
 	XenonProgram getProgram();
