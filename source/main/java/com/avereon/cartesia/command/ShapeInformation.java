@@ -47,10 +47,12 @@ public class ShapeInformation extends Command {
 			Collections.sort( labels );
 
 			StringBuilder infoString = new StringBuilder();
-			labels.forEach( l -> {
-				infoString.append( l );
+			labels.forEach( key -> {
+				String label = Rb.textOr( RbKey.LABEL, key, key );
+				infoString.append( label );
+				infoString.append( " " );
 				// TODO Need to format values "nicely"
-				infoString.append( information.get( l ) );
+				infoString.append( information.get( key ) );
 				infoString.append( "\n" );
 			} );
 			String description = infoString.toString().trim();
