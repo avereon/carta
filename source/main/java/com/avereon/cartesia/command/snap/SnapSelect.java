@@ -17,7 +17,7 @@ public class SnapSelect extends SnapCommand {
 		if( task.getParameterCount() == 0 ) throw new InvalidInputException( this, "snap", null );
 
 		if( task.getParameterCount() == 1 ) {
-			if( !(task.getParameter( 0 ) instanceof Snap) ) throw new InvalidInputException( this, "snap", null );;
+			if( !(task.getParameter( 0 ) instanceof Snap) ) throw new InvalidInputException( this, "snap", null );
 			promptForShape( task, "select-snap-shape" );
 			return INCOMPLETE;
 		}
