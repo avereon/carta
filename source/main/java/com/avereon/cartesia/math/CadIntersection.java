@@ -65,14 +65,14 @@ public class CadIntersection {
 		// Check for skew lines
 		double skewDistance = CadGeometry.lineLineDistance( p1, p2, p3, p4 );
 		if( skewDistance > CadConstants.RESOLUTION_LENGTH ) {
-			log.atWarning().log( "Lines are too far apart to intersect: %s > separation limit(%s)", skewDistance, CadConstants.RESOLUTION_LENGTH );
+			log.atDebug().log( "Lines are too far apart to intersect: %s > separation limit(%s)", skewDistance, CadConstants.RESOLUTION_LENGTH );
 			return List.of();
 		}
 
 		// Check for parallel lines
 		double parallelAngle = CadGeometry.lineLineAngle( p1, p2, p3, p4 );
 		if( parallelAngle < CadConstants.RESOLUTION_ANGLE ) {
-			log.atWarning().log( "Lines are too parallel to intersect: %s < separation angle(%s)", parallelAngle, CadConstants.RESOLUTION_ANGLE );
+			log.atDebug().log( "Lines are too parallel to intersect: %s < separation angle(%s)", parallelAngle, CadConstants.RESOLUTION_ANGLE );
 			return List.of();
 		}
 

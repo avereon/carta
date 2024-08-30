@@ -19,11 +19,17 @@ import static org.mockito.Mockito.*;
 
 public class DesignCommandContextTest extends BaseCommandTest {
 
+	private static boolean configured;
+
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
 		this.commandContext = spy( new DesignCommandContext( getMod() ) );
 		lenient().doReturn( commandPrompt ).when( commandContext ).getCommandPrompt();
+		if( !configured ) {
+			getMod().getCommandMap().add( "test", MockCommand.class, "Test Command", "test", null );
+			configured = true;
+		}
 	}
 
 	@Test
@@ -36,7 +42,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 
 		// then
 		verify( commandContext, times( 1 ) ).submitCommand( any( CommandTask.class ) );
-		verify( commandContext, times( 0 ) ).forwardCommandToCommandStack( any(MouseEvent.class) );
+		verify( commandContext, times( 0 ) ).forwardCommandToCommandStack( any( MouseEvent.class ) );
 	}
 
 	@Test
@@ -49,7 +55,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 
 		// then
 		verify( commandContext, times( 0 ) ).submitCommand( any( CommandTask.class ) );
-		verify( commandContext, times( 1 ) ).forwardCommandToCommandStack( any(MouseEvent.class) );
+		verify( commandContext, times( 1 ) ).forwardCommandToCommandStack( any( MouseEvent.class ) );
 	}
 
 	/**
@@ -227,8 +233,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 	void testAutoCommand() throws Exception {
 		// given
 		commandContext.setLastActiveDesignTool( tool );
-		getMod().getCommandMap().add( "test", MockCommand.class, "Test Command", "test", null );
-		when( getMod().getSettings()).thenReturn( new MapSettings() );
+		when( getMod().getSettings() ).thenReturn( new MapSettings() );
 
 		Command command = commandContext.processText( "test", false );
 		commandContext.doProcessCommands();
@@ -239,7 +244,6 @@ public class DesignCommandContextTest extends BaseCommandTest {
 	void testNoAutoCommandWithTextInput() throws Exception {
 		commandContext.setLastActiveDesignTool( tool );
 		commandContext.setInputMode( DesignCommandContext.Input.TEXT );
-		getMod().getCommandMap().add( "test", MockCommand.class, "Test Command", "test", null );
 		Command command = commandContext.processText( "test", false );
 		commandContext.doProcessCommands();
 		assertThat( command ).isNull();
