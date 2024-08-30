@@ -58,6 +58,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+// NEXT Remove DesignToolV1
+
 @Deprecated
 @CustomLog
 public abstract class DesignToolV1 extends BaseDesignTool {
