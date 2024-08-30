@@ -16,6 +16,7 @@ import lombok.CustomLog;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Deprecated
 @CustomLog
 public class DesignToolPrintsGuide extends Guide {
 
