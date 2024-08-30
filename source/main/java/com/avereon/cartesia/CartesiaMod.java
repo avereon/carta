@@ -7,7 +7,6 @@ import com.avereon.cartesia.icon.*;
 import com.avereon.cartesia.rb.CartesiaHelp;
 import com.avereon.cartesia.settings.FontSettingEditor;
 import com.avereon.cartesia.tool.Design2dEditor;
-import com.avereon.cartesia.tool.DesignToolV1;
 import com.avereon.cartesia.tool.ShapePropertiesTool;
 import com.avereon.cartesia.tool.design.DesignToolV2;
 import com.avereon.index.Document;
@@ -182,17 +181,18 @@ public class CartesiaMod extends Module {
 	}
 
 	private void registerTools() {
-		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxShapeDesignTool", DesignToolV1.class );
+		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.DesignToolV1", DesignToolV2.class );
 		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxRenderDesignTool", DesignToolV2.class );
+		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxShapeDesignTool", DesignToolV2.class );
 
 		// Default tool registration
-		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
-		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (Deprecated)" );
-		registerTool( design2dAssetType, design2dEditorRegistration );
-		// Other tool registrations
 		ToolRegistration designToolRegistration = new ToolRegistration( this, DesignToolV2.class );
 		designToolRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, designToolRegistration );
+		// Other tool registrations
+		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
+		design2dEditorRegistration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (Deprecated)" );
+		registerTool( design2dAssetType, design2dEditorRegistration );
 
 		// Register Design3D asset type and tools
 		//registerAssetType( design3dAssetType = new Design3dAssetType( this ) );
@@ -302,7 +302,7 @@ public class CartesiaMod extends Module {
 		document.content( null );
 		document.values( replacementValues );
 		document.tags( tags );
-		document.properties().put( IndexService.STORE_CONTENT, true);
+		document.properties().put( IndexService.STORE_CONTENT, true );
 
 		try {
 			// Create the resource content URL
