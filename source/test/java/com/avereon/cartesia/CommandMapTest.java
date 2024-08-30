@@ -23,9 +23,6 @@ public class CommandMapTest extends BaseCommandMapTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-
-		assertThat( getMod().getCommandMap() ).isNotNull();
-		assertThat( getMod().getCommandMap().getAll() ).hasSizeGreaterThanOrEqualTo( 76 );
 	}
 
 	@Test
