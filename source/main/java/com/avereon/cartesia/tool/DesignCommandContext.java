@@ -138,40 +138,12 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	 * @return The command that was run
 	 */
 	public Command submit( DesignTool tool, Command command, Object... parameters ) {
-		return submit( tool, null, null, command, parameters );
-	}
-
-	/**
-	 * @param tool
-	 * @param trigger
-	 * @param event
-	 * @param command
-	 * @param parameters
-	 * @return
-	 * @deprecated In favor of {@link #submit(CommandTask)}
-	 */
-	@Deprecated
-	Command submit( DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
-		return submitCommand( new CommandTask( this, tool, trigger, event, command, parameters ) );
+		return submitCommand( new CommandTask( this, tool, null, null, command, parameters ) );
 	}
 
 	public Command submit( CommandTask request ) {
 		return submitCommand( request );
 	}
-
-	//	/**
-	//	 * When a command needs to resubmit itself, it should use this method. This
-	//	 * method is generally called from the event handler of a command when an
-	//	 * event value need to be passed to the command.
-	//	 *
-	//	 * @param tool The tool that is running the command
-	//	 * @param command The command to run
-	//	 * @param parameters The command parameters
-	//	 * @return The command that was run
-	//	 */
-	//	public Command resubmit( DesignTool tool, InputEvent event, Command command, Object... parameters ) {
-	//		return submit( tool, null, event, command, parameters );
-	//	}
 
 	public void cancelAllCommands( KeyEvent event ) {
 		event.consume();
@@ -467,13 +439,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			}
 		} catch( Exception exception ) {
 			cancelAllCommands();
-			//			String title = Rb.text( RbKey.NOTICE, "command-error" );
-			//			String message = Rb.text( RbKey.NOTICE, "unexpected-error", exception );
-			//			if( task != null && task.getContext().isInteractive() ) {
-			//				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
-			//			} else {
-			//				log.atWarn( exception ).log( "Unexpected error=%s", task );
-			//			}
 			throw exception;
 		}
 
@@ -484,10 +449,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		if( task == null ) return;
 		if( parameter == null ) throw new InvalidInputException( task.getCommand(), "step-result", "null" );
 		task.addParameter( parameter );
-	}
-
-	CommandTask getCurrentCommandTask() {
-		return commandStack.peek();
 	}
 
 	private String getPriorCommand() {
