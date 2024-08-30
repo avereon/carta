@@ -34,7 +34,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 
 		// Step 2
 		if( task.getParameterCount() == 1 ) {
-			Point3D point = asPoint( task, "reference-shape-perpendicular", 0, false );
+			Point3D point = asPointWithoutSnap( task, "reference-shape-perpendicular", 0 );
 			referenceShape = selectNearestShapeAtPoint( task, point );
 			if( referenceShape == DesignShape.NONE ) return INCOMPLETE;
 
@@ -55,7 +55,7 @@ public class DrawLinePerpendicular extends DrawCommand {
 		if( task.hasParameter( 2 ) ) {
 			setCaptureUndoChanges( task, true );
 
-			Point3D shapePoint = asPoint( task, "start-point", 0, false );
+			Point3D shapePoint = asPointWithoutSnap( task, "start-point", 0 );
 			Point3D origin = asPoint( task, "origin",1 );
 			Point3D secondPoint = asPoint( task, "end-point", 2 );
 

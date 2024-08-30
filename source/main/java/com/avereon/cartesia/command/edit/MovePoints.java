@@ -56,15 +56,15 @@ public class MovePoints extends EditCommand {
 
 		// Ask for an anchor point
 		if( task.getParameterCount() == 1 ) {
-			asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
+			asPoint( task, "select-window-anchor", 0 );
 			promptForWindow( task, "select-window-corner" );
 			return INCOMPLETE;
 		}
 
 		if( task.getParameterCount() == 2 ) {
 			// We have window corners
-			Point3D windowAnchor = asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
-			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
+			Point3D windowAnchor = asPoint( task, "select-window-anchor", 0 );
+			Point3D windowCorner = asPoint( task, "select-window-corner", 1 );
 			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
 
 			if( getPreview().isEmpty() ) createPreviewShapes( task, task.getTool().getSelectedShapes() );
@@ -79,10 +79,10 @@ public class MovePoints extends EditCommand {
 
 		// Ask for a target point
 		if( task.getParameterCount() == 3 ) {
-			Point3D windowAnchor = asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
-			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
+			Point3D windowAnchor = asPoint( task, "select-window-anchor", 0 );
+			Point3D windowCorner = asPoint( task, "select-window-corner", 1 );
 			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
-			anchor = asPoint( task, "anchor", task.getParameter( 2 ) );
+			anchor = asPoint( task, "anchor", 2 );
 
 			if( getPreview().isEmpty() ) createPreviewShapes( task, task.getTool().getSelectedShapes() );
 			if( pointsToMove == null ) pointsToMove = computePointsToMove( task.getTool(), getPreview(), bounds );
@@ -98,11 +98,11 @@ public class MovePoints extends EditCommand {
 		if( task.hasParameter( 3 ) ) {
 			setCaptureUndoChanges( task, true );
 
-			Point3D windowAnchor = asPoint( task, "select-window-anchor", task.getParameter( 0 ) );
-			Point3D windowCorner = asPoint( task, "select-window-corner", task.getParameter( 1 ) );
+			Point3D windowAnchor = asPoint( task, "select-window-anchor", 0 );
+			Point3D windowCorner = asPoint( task, "select-window-corner", 1 );
 			Bounds bounds = FxUtil.bounds( windowAnchor, windowCorner );
-			Point3D anchor = asPoint( task, "anchor", task.getParameter( 2 ) );
-			Point3D target = asPoint( task, "target", task.getParameter( 3 ) );
+			Point3D anchor = asPoint( task, "anchor", 2 );
+			Point3D target = asPoint( task, "target", 3 );
 
 			modifyShapes( computePointsToMove( task.getTool(), task.getTool().getSelectedShapes(), bounds ), anchor, target );
 

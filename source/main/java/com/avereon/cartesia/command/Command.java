@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
-// NEXT Double check that secondary calls to asPoint are using the prior point as the anchor
-
 /**
  * Abstract class representing a command that can be executed in a design tool.
  *
@@ -203,40 +201,27 @@ public abstract class Command {
 	}
 
 	protected Point3D asPoint( CommandTask task, String rbKey, int index ) throws Exception {
-		return asPoint( task, rbKey, task.getParameter( index ) );
-	}
-
-	protected Point3D asPoint( CommandTask task, String rbKey, int index, boolean snap ) throws Exception {
-		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, task.getParameter( index ), snap );
+		return asPoint( task, rbKey, task.getParameter( index ), true );
 	}
 
 	protected Point3D asPoint( CommandTask task, String rbKey, Object value ) throws InvalidInputException {
-		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, value );
+		return asPoint( task, rbKey, value, true );
 	}
 
-	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, int index ) throws InvalidInputException {
-		return asPoint( task, anchor, rbKey, task.getParameter( index ) );
-	}
-
-	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, int index, boolean snap ) throws InvalidInputException {
-		return asPoint( task, anchor, rbKey, task.getParameter( index ), snap );
-	}
-
-	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value ) throws InvalidInputException {
-		return asPoint( task, anchor, rbKey, value, true );
-	}
-
-	protected Point3D asPoint( CommandTask task, Point3D anchor, String rbKey, Object value, boolean snap ) throws InvalidInputException {
+	protected Point3D asPoint( CommandTask task, String rbKey, Object value, boolean snap ) throws InvalidInputException {
 		Point3D point = null;
 
 		if( value instanceof Point3D ) {
 			point = (Point3D)value;
 		} else if( value instanceof String ) {
-			point = CadShapes.parsePoint( (String)value, anchor );
+			point = CadShapes.parsePoint( (String)value, task.getContext().getWorldAnchor() );
 			if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		}
 
-		return snap ? task.getTool().snapToWorkplane( point ) : point;
+		point = snap ? task.getTool().snapToWorkplane( point ) : point;
+		task.getContext().setWorldAnchor( point );
+
+		return point;
 	}
 
 	protected Point3D asPoint( CommandTask task, String rbKey, InputEvent event ) throws InvalidInputException {
@@ -245,16 +230,16 @@ public abstract class Command {
 			point = task.getTool().screenToWorld( new Point3D( mouseEvent.getX(), mouseEvent.getY(), 0 ) );
 		}
 		if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, event );
-		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, point );
+		return asPoint( task, rbKey, point, true );
 	}
 
 	protected Point3D asPointWithoutSnap( CommandTask task, String rbKey, int index ) throws Exception {
-		return asPoint( task, task.getContext().getWorldAnchor(), rbKey, task.getParameter( index ), false );
+		return asPoint( task, rbKey, task.getParameter( index ), false );
 	}
 
 	protected String asText( CommandTask task, String rbKey, int index ) throws Exception {
 		Object value = task.getParameter( index );
-		if( value == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
+		if( value == null ) throw new InvalidInputException( task.getCommand(), rbKey, null );
 		return String.valueOf( value );
 	}
 

@@ -70,7 +70,7 @@ public class Rotate extends EditCommand {
 
 			Point3D a = asPoint( task, "anchor", 0 );
 			Point3D s = asPoint( task, "start-point", 1 );
-			Point3D t = asPoint( task, a, "target", 2 );
+			Point3D t = asPoint( task, "target", 2 );
 
 			// Start an undo multi-change
 			rotateShapes( tool, a, s, t );

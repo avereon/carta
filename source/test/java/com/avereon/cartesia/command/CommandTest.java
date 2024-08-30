@@ -43,7 +43,7 @@ public class CommandTest extends BaseCommandTest {
 		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
 
 		// when
-		Point3D result = command.asPoint( task, task.getContext().getWorldAnchor(), "point", "1.01,2.01" );
+		Point3D result = command.asPoint( task, "point", "1.01,2.01" );
 
 		// then
 		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
@@ -56,7 +56,7 @@ public class CommandTest extends BaseCommandTest {
 		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
 
 		// when
-		Point3D result = command.asPoint( task, task.getContext().getWorldAnchor(), "point", new Point3D( 1.01, 2.01, 0 ) );
+		Point3D result = command.asPoint( task, "point", new Point3D( 1.01, 2.01, 0 ) );
 
 		// then
 		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );

@@ -18,7 +18,7 @@ public class Join extends EditCommand {
 		}
 
 		if( task.getParameterCount() == 1 ) {
-			Point3D trimPoint = asPoint( task, "select-meet-shape", 0, false );
+			Point3D trimPoint = asPointWithoutSnap( task, "select-meet-shape", 0 );
 			DesignShape trim = selectNearestShapeAtPoint( task, trimPoint );
 			if( trim == null ) return SUCCESS;
 			promptForShape( task, "select-meet-shape" );
@@ -26,8 +26,8 @@ public class Join extends EditCommand {
 		}
 
 		if( task.hasParameter( 1 ) ) {
-			Point3D trimPoint = asPoint( task, "select-meet-shape", 0, false );
-			Point3D edgePoint = asPoint( task, "select-meet-shape", 1, false );
+			Point3D trimPoint = asPointWithoutSnap( task, "select-meet-shape", 0 );
+			Point3D edgePoint = asPointWithoutSnap( task, "select-meet-shape", 1 );
 			DesignShape trim = selectNearestShapeAtPoint( task, trimPoint );
 			DesignShape edge = findNearestShapeAtPoint( task, edgePoint );
 			Point3D trimMouse = task.getTool().worldToScreen( trimPoint );

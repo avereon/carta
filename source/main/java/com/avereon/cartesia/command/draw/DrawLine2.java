@@ -46,7 +46,7 @@ public class DrawLine2 extends DrawCommand {
 			setCaptureUndoChanges( task, true );
 
 			Point3D origin = asPoint( task, "start-point", 0 );
-			Point3D point = asPoint( task, origin, "end-point", 1 );
+			Point3D point = asPoint( task, "end-point", 1 );
 
 			// Start an undo multi-change
 			task.getTool().getCurrentLayer().addShape( new DesignLine( origin, point ) );

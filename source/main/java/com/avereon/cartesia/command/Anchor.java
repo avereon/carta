@@ -38,7 +38,6 @@ public class Anchor extends Command {
 			Point3D screenPoint = task.getTool().worldToScreen( worldPoint );
 			if( worldPoint != null ) {
 				task.getContext().setScreenAnchor( screenPoint );
-				task.getContext().setWorldAnchor( worldPoint );
 				return SUCCESS;
 			}
 		}

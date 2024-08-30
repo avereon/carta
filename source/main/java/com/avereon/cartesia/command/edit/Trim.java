@@ -23,7 +23,7 @@ public class Trim extends EditCommand {
 		}
 
 		if( task.getParameterCount() == 1 ) {
-			Point3D trimPoint = asPoint( task, "select-trim-shape", 0, false );
+			Point3D trimPoint = asPointWithoutSnap( task, "select-trim-shape", 0 );
 			DesignShape trimShape = selectNearestShapeAtPoint( task, trimPoint );
 			if( trimShape == DesignShape.NONE ) return SUCCESS;
 
@@ -32,8 +32,8 @@ public class Trim extends EditCommand {
 		}
 
 		if( task.hasParameter( 1 ) ) {
-			Point3D trimPoint = asPoint( task, "select-trim-shape", 0, false );
-			Point3D edgePoint = asPoint( task, "select-trim-edge", 1, false );
+			Point3D trimPoint = asPointWithoutSnap( task, "select-trim-shape", 0 );
+			Point3D edgePoint = asPointWithoutSnap( task, "select-trim-edge", 1 );
 
 			DesignShape trimShape = selectNearestShapeAtPoint( task, trimPoint );
 			DesignShape edgeShape = findNearestShapeAtPoint( task, edgePoint );

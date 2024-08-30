@@ -42,7 +42,7 @@ public class SelectByPoint extends SelectCommand {
 
 		if( task.hasParameter( 0 ) ) {
 			// If there is a parameter, use that
-			Point3D worldPoint = asPoint( task, "select-point", 0, false );
+			Point3D worldPoint = asPointWithoutSnap( task, "select-point", 0 );
 
 			if( task.getContext().getCommandStackDepth() < 2 ) {
 				task.getTool().worldPointSelect( worldPoint, toggle );

@@ -46,7 +46,7 @@ public class SplitTest extends BaseCommandTest {
 		when( tool.worldPointSyncSelect( eq( new Point3D( 3, 1, 0 ) ) ) ).thenReturn( List.of( line ) );
 
 		// The mouse clicks
-		when( tool.worldToScreen( eq( new Point3D( 2, 1, 0 ) ) ) ).thenReturn( new Point3D( 20, 10, 0 ) );
+		//when( tool.worldToScreen( eq( new Point3D( 2, 1, 0 ) ) ) ).thenReturn( new Point3D( 20, 10, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
@@ -135,7 +135,7 @@ public class SplitTest extends BaseCommandTest {
 		when( tool.worldPointSyncSelect( eq( new Point3D( 3, 1, 0 ) ) ) ).thenReturn( List.of( line ) );
 
 		// The mouse clicks
-		when( tool.worldToScreen( eq( new Point3D( 2, 1, 0 ) ) ) ).thenReturn( new Point3D( 20, 10, 0 ) );
+		//when( tool.worldToScreen( eq( new Point3D( 2, 1, 0 ) ) ) ).thenReturn( new Point3D( 20, 10, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
