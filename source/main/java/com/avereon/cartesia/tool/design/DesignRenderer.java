@@ -1005,14 +1005,10 @@ public class DesignRenderer extends Pane {
 	 * @return True if the selector shape should select the shape
 	 */
 	private boolean matches( DesignShape selector, DesignShape shape, boolean intersect ) {
-		return intersect ? isIntersecting( selector, shape ) : isContained( selector, shape );
-	}
-
-	private boolean isContained( DesignShape selector, DesignShape shape ) {
 		Bounds selectorBounds = selector.getSelectBounds();
 		Bounds shapeBounds = shape.getSelectBounds();
 
-		// This first test is an optimization to determine if the accurate test can be skipped
+		// This first test is an optimization for fully excluded shapes
 		if( !selectorBounds.intersects( shapeBounds ) ) return false;
 
 		// This second test is an optimization for fully contained shapes
@@ -1021,17 +1017,12 @@ public class DesignRenderer extends Pane {
 		// This is the slow but accurate test if the shape is contained when the selector is not a box
 		Shape fxSelector = selector.getFxShape();
 		Shape fxShape = shape.getFxShape();
-		return ((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
-	}
 
-	private boolean isIntersecting( DesignShape selector, DesignShape shape ) {
-		// This first test is an optimization to determine if the accurate test can be skipped
-		if( !selector.getSelectBounds().intersects( shape.getSelectBounds() ) ) return false;
-
-		// This is the slow but accurate test if the shape is intersecting
-		Shape fxSelector = selector.getFxShape();
-		Shape fxShape = shape.getFxShape();
-		return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
+		if( intersect ) {
+			return !((javafx.scene.shape.Path)Shape.intersect( fxShape, fxSelector )).getElements().isEmpty();
+		} else {
+			return ((javafx.scene.shape.Path)Shape.subtract( fxShape, fxSelector )).getElements().isEmpty();
+		}
 	}
 
 	private void setLengthUnit( String value ) {
