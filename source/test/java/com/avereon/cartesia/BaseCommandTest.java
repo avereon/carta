@@ -23,6 +23,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 
+// NEXT Replace Point3D checks with Point3DAssert.assertThat( ... )
+
 @ExtendWith( MockitoExtension.class )
 public class BaseCommandTest extends DesignToolBaseTest {
 

@@ -22,6 +22,9 @@ import java.util.stream.Collectors;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
+// NEXT Double check that shape selections are using non-snap version of asPoint
+// NEXT Double check that secondary calls to asPoint are using the prior point as the anchor
+
 /**
  * Abstract class representing a command that can be executed in a design tool.
  *
