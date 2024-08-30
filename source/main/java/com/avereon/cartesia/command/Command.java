@@ -206,17 +206,15 @@ public abstract class Command {
 		// The value may already be a point
 		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
 
-		// The value may parse to be a point
-		Point3D point = CadShapes.parsePoint( String.valueOf( value ), anchor );
-		// If it is a point, return the distance from the anchor
-		if( point != null ) return point.distance( anchor );
-
-		// The value may parse to be a number
 		try {
 			return CadMath.eval( String.valueOf( value ) );
-		} catch( CadMathExpressionException exception ) {
-			throw new InvalidInputException( task.getCommand(), rbKey, value );
-		}
+		} catch( CadMathExpressionException ignored ) {}
+
+		// If it is a point, return the distance from the anchor
+		Point3D point = CadShapes.parsePoint( String.valueOf( value ), anchor );
+		if( point != null ) return point.distance( anchor );
+
+		throw new InvalidInputException( task.getCommand(), rbKey, value );
 	}
 
 	@Deprecated
