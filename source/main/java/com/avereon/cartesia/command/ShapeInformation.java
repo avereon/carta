@@ -32,7 +32,7 @@ public class ShapeInformation extends Command {
 
 		// Limit the information to one shape
 		if( task.hasParameter( 0 ) ) {
-			shape = selectNearestShapeAtPoint( task, asPoint( task, "select-shape", 0 ) );
+			shape = selectNearestShapeAtPoint( task, asPoint( task, "select-shape", 0, false ) );
 		} else {
 			shape = task.getTool().getSelectedShapes().getFirst();
 			if( shape == DesignShape.NONE ) return SUCCESS;

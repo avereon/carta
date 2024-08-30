@@ -32,7 +32,6 @@ public class Split extends EditCommand {
 
 			Point3D shapePoint = asPoint( task, "select-split-shape", 0, false );
 			Point3D splitPoint = asPoint( task, "select-split-point", 1 );
-			Point3D splitMouse = task.getTool().worldToScreen( splitPoint );
 			DesignShape shape = selectNearestShapeAtPoint( task, shapePoint );
 
 			com.avereon.cartesia.math.Split.split( shape, splitPoint );
