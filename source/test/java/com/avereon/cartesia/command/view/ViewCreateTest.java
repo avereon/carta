@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.view;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignView;
@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class ViewCreateTest extends CommandBaseTest {
+public class ViewCreateTest extends BaseCommandTest {
 
 	private final ViewCreate command = new ViewCreate();
 

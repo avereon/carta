@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.input.MouseButton;
@@ -16,7 +16,7 @@ import static org.mockito.Mockito.*;
 /**
  * Test shared command functionality.
  */
-public class CommandTest extends CommandBaseTest {
+public class CommandTest extends BaseCommandTest {
 
 	@Spy
 	private final Command command = new Command() {};

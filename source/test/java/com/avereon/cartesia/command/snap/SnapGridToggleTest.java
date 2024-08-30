@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.snap;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
@@ -11,7 +11,7 @@ import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class SnapGridToggleTest extends CommandBaseTest {
+public class SnapGridToggleTest extends BaseCommandTest {
 
 	private final SnapGridToggle command = new SnapGridToggle();
 

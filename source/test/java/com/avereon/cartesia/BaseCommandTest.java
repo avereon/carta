@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.lenient;
 
 @ExtendWith( MockitoExtension.class )
-public class CommandBaseTest extends DesignToolBaseTest {
+public class BaseCommandTest extends DesignToolBaseTest {
 
 	protected static final Cursor RETICLE = Cursor.CROSSHAIR;
 

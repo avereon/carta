@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.xenon.undo.NodeChange;
 import org.fxmisc.undo.UndoManager;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
 
-public class RedoTest  extends CommandBaseTest {
+public class RedoTest  extends BaseCommandTest {
 
 	@Mock
 	private UndoManager<List<NodeChange>> undoManager;

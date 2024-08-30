@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.Mockito.*;
 
-public class MoveTest extends CommandBaseTest {
+public class MoveTest extends BaseCommandTest {
 
 	private final Move command = new Move();
 

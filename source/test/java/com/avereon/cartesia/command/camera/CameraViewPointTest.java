@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.InvalidInputException;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class CameraViewPointTest extends CommandBaseTest {
+public class CameraViewPointTest extends BaseCommandTest {
 
 	private final Command command = new CameraViewPoint();
 

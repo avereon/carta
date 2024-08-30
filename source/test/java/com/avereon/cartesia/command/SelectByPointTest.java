@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-public class SelectByPointTest extends CommandBaseTest {
+public class SelectByPointTest extends BaseCommandTest {
 
 	private final Command command = new SelectByPoint();
 

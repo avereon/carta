@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -24,7 +24,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class SplitTest extends CommandBaseTest {
+public class SplitTest extends BaseCommandTest {
 
 	private final Split command = new Split();
 

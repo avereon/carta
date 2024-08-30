@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.snap;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class SnapSelectTest extends CommandBaseTest {
+public class SnapSelectTest extends BaseCommandTest {
 
 	private final SnapSelect command = new SnapSelect();
 

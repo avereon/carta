@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class ScaleTest extends CommandBaseTest {
+public class ScaleTest extends BaseCommandTest {
 
 	private final Scale command = new Scale();
 

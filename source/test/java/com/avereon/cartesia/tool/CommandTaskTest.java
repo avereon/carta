@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.CommandTask;
 import javafx.geometry.Point3D;
@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommandTaskTest extends CommandBaseTest {
+public class CommandTaskTest extends BaseCommandTest {
 
 	private Command command;
 

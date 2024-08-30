@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class SelectToggleTest extends CommandBaseTest {
+public class SelectToggleTest extends BaseCommandTest {
 
 	private final SelectToggle command = new SelectToggle();
 

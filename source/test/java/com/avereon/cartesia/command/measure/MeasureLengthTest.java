@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.measure;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class MeasureLengthTest extends CommandBaseTest {
+public class MeasureLengthTest extends BaseCommandTest {
 
 	private final MeasureLength command = new MeasureLength();
 

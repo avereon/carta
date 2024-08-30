@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.layer;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class LayerToggleTest  extends CommandBaseTest {
+public class LayerToggleTest  extends BaseCommandTest {
 
 	private final LayerToggle command = new LayerToggle();
 

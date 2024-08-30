@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.InvalidInputException;
@@ -20,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class CameraZoomTest extends CommandBaseTest {
+public class CameraZoomTest extends BaseCommandTest {
 
 	private final Command command = new CameraZoom();
 

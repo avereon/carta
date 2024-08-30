@@ -1,13 +1,13 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ReferencePointsToggleTest extends CommandBaseTest {
+public class ReferencePointsToggleTest extends BaseCommandTest {
 
 	@Test
 	void testExecute() throws Exception {

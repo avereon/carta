@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
@@ -13,7 +13,7 @@ import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DeleteTest extends CommandBaseTest {
+public class DeleteTest extends BaseCommandTest {
 
 	private final Delete command = new Delete();
 

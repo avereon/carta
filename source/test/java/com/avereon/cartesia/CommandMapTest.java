@@ -17,7 +17,7 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommandMapTest extends CommandMapBaseTest {
+public class CommandMapTest extends BaseCommandMapTest {
 
 	@Test
 	void getCommandByShortcut() {

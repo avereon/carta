@@ -1,10 +1,9 @@
 package com.avereon.cartesia.command.layer;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
-import com.avereon.cartesia.command.layer.LayerSubLayer;
 import com.avereon.cartesia.data.DesignLayer;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.Test;
@@ -21,7 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class LayerSubLayerTest extends CommandBaseTest {
+public class LayerSubLayerTest extends BaseCommandTest {
 
 	private final LayerSubLayer command = new LayerSubLayer();
 

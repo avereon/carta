@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.print;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class PrintCreateTest extends CommandBaseTest {
+public class PrintCreateTest extends BaseCommandTest {
 
 	private final PrintCreate command = new PrintCreate();
 

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
@@ -19,13 +19,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-// NEXT Rename CommandBaseTest?
 // NEXT Replace Point3D checks with Point3DAssert.assertThat( ... )
 // NEXT Double check that shape selections are using non-snap version fo asPoint
 
 @CustomLog
 @ExtendWith( MockitoExtension.class )
-public class AnchorTest extends CommandBaseTest {
+public class AnchorTest extends BaseCommandTest {
 
 	private final Anchor command = new Anchor();
 

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class DrawTextTest extends CommandBaseTest {
+public class DrawTextTest extends BaseCommandTest {
 
 	private final DrawText command = new DrawText();
 

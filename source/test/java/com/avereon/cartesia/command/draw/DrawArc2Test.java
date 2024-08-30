@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignArc;
@@ -22,7 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class DrawArc2Test extends CommandBaseTest {
+public class DrawArc2Test extends BaseCommandTest {
 
 	private final DrawArc2 command = new DrawArc2();
 

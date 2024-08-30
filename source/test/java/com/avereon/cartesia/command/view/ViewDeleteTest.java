@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.view;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
@@ -10,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class ViewDeleteTest extends CommandBaseTest {
+public class ViewDeleteTest extends BaseCommandTest {
 
 	private final ViewDelete command = new ViewDelete();
 

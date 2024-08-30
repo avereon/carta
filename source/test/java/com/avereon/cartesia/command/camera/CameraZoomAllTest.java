@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.camera;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.command.CommandTask;
@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CameraZoomAllTest extends CommandBaseTest {
+public class CameraZoomAllTest extends BaseCommandTest {
 
 	private final Command command = new CameraZoomAll();
 

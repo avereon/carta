@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.print;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class PrintDeleteTest  extends CommandBaseTest {
+public class PrintDeleteTest  extends BaseCommandTest {
 
 	private final PrintDelete command = new PrintDelete();
 

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class SelectByWindowIntersectTest extends CommandBaseTest {
+public class SelectByWindowIntersectTest extends BaseCommandTest {
 
 	private final SelectByWindowIntersect command = new SelectByWindowIntersect();
 

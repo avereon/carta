@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
@@ -16,7 +16,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class ShapeInformationTest extends CommandBaseTest {
+public class ShapeInformationTest extends BaseCommandTest {
 
 	@Spy
 	private final ShapeInformation command = new ShapeInformation();

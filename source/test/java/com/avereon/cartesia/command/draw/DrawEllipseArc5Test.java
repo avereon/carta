@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class DrawEllipseArc5Test extends CommandBaseTest {
+public class DrawEllipseArc5Test extends BaseCommandTest {
 
 	private final DrawEllipseArc5 command = new DrawEllipseArc5();
 

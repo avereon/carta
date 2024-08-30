@@ -1,13 +1,13 @@
 package com.avereon.cartesia.command.print;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class PrintUpdateTest  extends CommandBaseTest {
+public class PrintUpdateTest  extends BaseCommandTest {
 
 	private final PrintUpdate command = new PrintUpdate();
 

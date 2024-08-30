@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.measure;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.Prompt;
@@ -21,7 +21,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class MeasureAngleTest extends CommandBaseTest {
+public class MeasureAngleTest extends BaseCommandTest {
 
 	private final MeasureAngle command = new MeasureAngle();
 

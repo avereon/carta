@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.layer;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class LayerHideTest extends CommandBaseTest {
+public class LayerHideTest extends BaseCommandTest {
 
 	private final LayerHide command = new LayerHide();
 

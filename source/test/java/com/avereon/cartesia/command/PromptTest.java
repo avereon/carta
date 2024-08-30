@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.tool.DesignCommandContext;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class PromptTest extends CommandBaseTest {
+public class PromptTest extends BaseCommandTest {
 
 	@Test
 	void testExecuteWithNoParameter() throws Exception {

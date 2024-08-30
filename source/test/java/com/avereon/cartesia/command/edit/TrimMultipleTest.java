@@ -1,13 +1,13 @@
 package com.avereon.cartesia.command.edit;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class TrimMultipleTest extends CommandBaseTest {
+public class TrimMultipleTest extends BaseCommandTest {
 
 	private final TrimMultiple command = new TrimMultiple();
 

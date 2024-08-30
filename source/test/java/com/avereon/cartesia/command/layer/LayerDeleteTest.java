@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.layer;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.data.DesignLayer;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class LayerDeleteTest extends CommandBaseTest {
+public class LayerDeleteTest extends BaseCommandTest {
 
 	private final LayerDelete command = new LayerDelete();
 

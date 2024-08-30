@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.*;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.settings.MapSettings;
@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class DesignCommandContextTest extends CommandBaseTest {
+public class DesignCommandContextTest extends BaseCommandTest {
 
 	@BeforeEach
 	protected void setup() throws Exception {

@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command.draw;
 
-import com.avereon.cartesia.CommandBaseTest;
+import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.Prompt;
 import com.avereon.cartesia.data.DesignEllipse;
@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-public class DrawCircleDiameter2Test  extends CommandBaseTest {
+public class DrawCircleDiameter2Test  extends BaseCommandTest {
 
 	private final DrawCircleDiameter2 command = new DrawCircleDiameter2();
 
