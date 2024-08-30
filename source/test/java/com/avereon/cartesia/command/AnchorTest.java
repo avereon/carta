@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 // NEXT Rename CommandBaseTest?
 // NEXT Replace Point3D checks with Point3DAssert.assertThat( ... )
 // NEXT Double check that shape selections are using non-snap version fo asPoint
-// NEXT Remove deprecated methods in Command, CommandContext, EditCommand, and CommandTask
 
 @CustomLog
 @ExtendWith( MockitoExtension.class )
