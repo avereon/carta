@@ -1,7 +1,9 @@
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.xenon.Module;
 
-module com.avereon.cartesia {
+// This should match the group and artifact from the product card
+// or there will be a lot of confusion.
+module com.avereon.carta {
 
 	// Compile-time only
 	requires static lombok;
