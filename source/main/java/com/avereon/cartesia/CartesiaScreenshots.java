@@ -1,7 +1,11 @@
 package com.avereon.cartesia;
 
+import com.avereon.product.ProgramFlag;
 import com.avereon.xenon.ProgramScreenshots;
 
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeoutException;
 
 public class CartesiaScreenshots extends ProgramScreenshots {
@@ -10,9 +14,25 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 		new CartesiaScreenshots().generate( args );
 	}
 
+//	@Override
+//	protected String getLogLevel() {
+//		return ProgramFlag.DEBUG;
+//	}
+
+	@Override
+	protected List<String> getProgramParameters() {
+		List<String> parameters = new ArrayList<>( super.getProgramParameters() );
+
+		parameters.add( ProgramFlag.ENABLE_MOD );
+		parameters.add( CartesiaMod.class.getModule().getName() );
+
+		return parameters;
+	}
+
 	@Override
 	protected void generateScreenshots() throws InterruptedException, TimeoutException {
-		// TODO Implement Cartesia screenshots
+		screenshot( "default-workarea" );
+		screenshot( Path.of( "sample/design/screenshot.cartesia2d" ).toUri(), "design-tool" );
 	}
 
 }

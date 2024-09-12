@@ -155,13 +155,12 @@
 								</goals>
 								<configuration>
 									<executable>java</executable>
-									<classpathScope>runtime</classpathScope>
+									<classpathScope>compile</classpathScope>
 									<arguments>
 										<argument>-Xmx256m</argument>
-										<argument>-p</argument>
 										<modulepath/>
 										<argument>-m</argument>
-										<argument>com.avereon.cartesia/com.avereon.cartesia.CartesiaScreenshots</argument>
+										<argument>com.avereon.carta/com.avereon.cartesia.CartesiaScreenshots</argument>
 										<argument>1</argument>
 									</arguments>
 								</configuration>
@@ -189,13 +188,13 @@
 								</goals>
 								<configuration>
 									<executable>java</executable>
-									<classpathScope>runtime</classpathScope>
+									<classpathScope>compile</classpathScope>
 									<arguments>
 										<argument>-Xmx256m</argument>
 										<argument>-p</argument>
 										<modulepath/>
 										<argument>-m</argument>
-										<argument>com.avereon.cartesia/com.avereon.cartesia.CartesiaScreenshots</argument>
+										<argument>com.avereon.carta/com.avereon.cartesia.CartesiaScreenshots</argument>
 										<argument>2</argument>
 									</arguments>
 								</configuration>

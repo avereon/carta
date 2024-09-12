@@ -1089,18 +1089,22 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void registerStatusBarItems() {
-		if( getWorkspace() == null ) return;
 		Fx.run( () -> {
-			StatusBar bar = getWorkspace().getStatusBar();
+			Workspace workspace = getWorkspace();
+			if( workspace == null ) return;
+
+			StatusBar bar = workspace.getStatusBar();
 			bar.setLeftToolItems( getCommandPrompt() );
 			bar.setRightToolItems( getCoordinateStatus() );
 		} );
 	}
 
 	private void unregisterStatusBarItems() {
-		if( getWorkspace() == null ) return;
 		Fx.run( () -> {
-			StatusBar bar = getWorkspace().getStatusBar();
+			Workspace workspace = getWorkspace();
+			if( workspace == null ) return;
+
+			StatusBar bar = workspace.getStatusBar();
 			bar.removeLeftToolItems( getCommandPrompt() );
 			bar.removeRightToolItems( getCoordinateStatus() );
 		} );

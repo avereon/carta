@@ -46,22 +46,6 @@ module com.avereon.carta {
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
 
-	// Private APIs for testing
-	opens com.avereon.cartesia to org.testfx.junit5;
-	opens com.avereon.cartesia.command to org.testfx.junit5;
-	opens com.avereon.cartesia.math to org.testfx.junit5;
-	opens com.avereon.cartesia.tool to org.testfx.junit5;
-	opens com.avereon.cartesia.tool.view to org.testfx.junit5;
-	opens com.avereon.cartesia.tool.design to org.testfx.junit5;
-	opens com.avereon.cartesia.command.camera to org.testfx.junit5;
-	opens com.avereon.cartesia.command.draw to org.testfx.junit5;
-	opens com.avereon.cartesia.command.layer to org.testfx.junit5;
-	opens com.avereon.cartesia.command.measure to org.testfx.junit5;
-	opens com.avereon.cartesia.command.view to org.testfx.junit5;
-	opens com.avereon.cartesia.command.print to org.testfx.junit5;
-	opens com.avereon.cartesia.command.snap to org.testfx.junit5;
-	opens com.avereon.cartesia.command.edit to org.testfx.junit5;
-
 	provides Module with CartesiaMod;
 
 }
