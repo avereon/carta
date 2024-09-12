@@ -161,7 +161,8 @@
 										<argument>-p</argument>
 										<modulepath/>
 										<argument>-m</argument>
-										<argument>com.avereon.cartesia/com.avereon.cartesia.Screenshots1x</argument>
+										<argument>com.avereon.cartesia/com.avereon.cartesia.CartesiaScreenshots</argument>
+										<argument>1</argument>
 									</arguments>
 								</configuration>
 							</execution>
@@ -194,7 +195,8 @@
 										<argument>-p</argument>
 										<modulepath/>
 										<argument>-m</argument>
-										<argument>com.avereon.cartesia/com.avereon.cartesia.Screenshots2x</argument>
+										<argument>com.avereon.cartesia/com.avereon.cartesia.CartesiaScreenshots</argument>
+										<argument>2</argument>
 									</arguments>
 								</configuration>
 							</execution>
