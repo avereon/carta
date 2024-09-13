@@ -269,7 +269,7 @@ jobs:
 
   packs:
     needs: build
-    name: Packs
+    name: Module Packs
     runs-on: ubuntu-latest
     timeout-minutes: 30
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/stable' || github.base_ref == 'refs/heads/main' || github.base_ref == 'refs/heads/stable'
@@ -315,19 +315,19 @@ jobs:
           name: build
           path: target
 
-#      - name: UX Tests
-#        run: |
-#          mvn ${{env.MAVEN_PARMS}} verify -P testui
-#
-#      - name: Generate Packs
-#        run: |
-#          mvn ${{env.MAVEN_PARMS}} verify -P packs -Dmaven.test.skip=true
-#
-#      - name: Publish Product Pack
-#        run: |
-#          scp -B target/*product.jar ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1
-#
-#      - name: Publish Product Card
-#        run: |
-#          scp -B target/main/java/META-INF/*.card ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1
+      - name: UX Tests
+        run: |
+          mvn ${{env.MAVEN_PARMS}} verify -P testui
+
+      - name: Generate Packs
+        run: |
+          mvn ${{env.MAVEN_PARMS}} verify -P packs -Dmaven.test.skip=true
+
+      - name: Publish Product Pack
+        run: |
+          scp -B target/*product.jar ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1
+
+      - name: Publish Product Card
+        run: |
+          scp -B target/main/java/META-INF/*.card ${{env.AVN_REPO_USERNAME}}@avereon.com:${PRODUCT_DEPLOY_PATH} 2>&1
 
