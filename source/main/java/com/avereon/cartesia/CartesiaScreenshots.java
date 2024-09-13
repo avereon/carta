@@ -31,7 +31,6 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 
 	@Override
 	protected void generateScreenshots() throws InterruptedException, TimeoutException {
-		screenshot( "default-workarea" );
 		screenshot( Path.of( "sample/design/screenshot.cartesia2d" ).toUri(), "design-tool" );
 	}
 
