@@ -134,6 +134,30 @@
 					<argLine>-Xmx128m --add-opens=javafx.base/com.sun.javafx.logging=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.util=ALL-UNNAMED -XX:+EnableDynamicAgentLoading</argLine>
 				</configuration>
 			</plugin>
+
+			<plugin>
+				<groupId>com.avereon</groupId>
+				<artifactId>cameo</artifactId>
+				<version>${cameo.version}</version>
+				<executions>
+					<execution>
+						<id>render-images</id>
+						<phase>package</phase>
+						<goals>
+							<goal>render</goal>
+						</goals>
+						<configuration>
+							<images>
+								<image>
+									<class>com.avereon.cartesia.icon.CartesiaIcon</class>
+									<target>${images-folder}/product.png</target>
+									<theme>light</theme>
+								</image>
+							</images>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -158,6 +182,7 @@
 									<classpathScope>compile</classpathScope>
 									<arguments>
 										<argument>-Xmx256m</argument>
+										<argument>-p</argument>
 										<modulepath/>
 										<argument>-m</argument>
 										<argument>com.avereon.carta/com.avereon.cartesia.CartesiaScreenshots</argument>
@@ -238,29 +263,6 @@
 			<id>packs</id>
 			<build>
 				<plugins>
-					<plugin>
-						<groupId>com.avereon</groupId>
-						<artifactId>cameo</artifactId>
-						<version>${cameo.version}</version>
-						<executions>
-							<execution>
-								<id>render</id>
-								<phase>prepare-package</phase>
-								<goals>
-									<goal>render</goal>
-								</goals>
-								<configuration>
-									<images>
-										<image>
-											<class>com.avereon.cartesia.icon.CartesiaIcon</class>
-											<target>${images-folder}/product.png</target>
-											<theme>light</theme>
-										</image>
-									</images>
-								</configuration>
-							</execution>
-						</executions>
-					</plugin>
 				</plugins>
 			</build>
 		</profile>
