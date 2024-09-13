@@ -204,9 +204,9 @@ jobs:
 
       - name: Publish Screenshots
         run: |
-          ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p /opt/avn/web/screenshots;"
+          ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p /opt/avn/web/screenshots/mod/carta;"
           if [ $? -ne 0 ]; then exit 1; fi
-          scp -Br target/screenshots/* ${{env.AVN_REPO_USERNAME}}@avereon.com:/opt/avn/web/screenshots/ 2>&1
+          scp -Br target/screenshots/* ${{env.AVN_REPO_USERNAME}}@avereon.com:/opt/avn/web/screenshots/mod/carta 2>&1
 
   screenshots2x:
     needs: build
@@ -263,9 +263,9 @@ jobs:
 
       - name: Publish Screenshots
         run: |
-          ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p /opt/avn/web/screenshots;"
+          ssh -t ${{env.AVN_REPO_USERNAME}}@avereon.com "mkdir -p /opt/avn/web/screenshots/mod/carta;"
           if [ $? -ne 0 ]; then exit 1; fi
-          scp -Br target/screenshots/* ${{env.AVN_REPO_USERNAME}}@avereon.com:/opt/avn/web/screenshots/ 2>&1
+          scp -Br target/screenshots/* ${{env.AVN_REPO_USERNAME}}@avereon.com:/opt/avn/web/screenshots/mod/carta 2>&1
 
   packs:
     needs: build
