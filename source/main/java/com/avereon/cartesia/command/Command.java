@@ -76,9 +76,6 @@ public abstract class Command {
 		INCOMPLETE,
 		// Indicates that the command executed successfully
 		SUCCESS,
-		// Indicates an invalid parameter was submitted
-		// In favor of InvalidInputException
-		@Deprecated INVALID,
 		// Indicates that the command failed to execute
 		FAILURE
 	}
