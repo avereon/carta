@@ -30,7 +30,7 @@ public class GridOrthographic implements Grid {
 
 	@Override
 	public Point3D getNearest( DesignWorkplane workplane, Point3D point ) {
-		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
+		Point3D origin = workplane.calcOrigin();
 		point = point.subtract( origin );
 		double x = Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() );
 		double y = Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() );

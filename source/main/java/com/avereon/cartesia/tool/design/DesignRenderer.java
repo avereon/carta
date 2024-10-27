@@ -87,6 +87,12 @@ public class DesignRenderer extends Pane {
 
 	private final SimpleStringProperty referenceFillPaint;
 
+	// Cached values
+
+	private Paint cachedSelectedFillPaint;
+
+	private Paint cachedSelectedDrawPaint;
+
 	// Listeners -----------------------------------------------------------------
 
 	private final EventHandler<NodeEvent> designWatcher = e -> render();
@@ -369,8 +375,8 @@ public class DesignRenderer extends Pane {
 	// Selected Paints -----------------------------------------------------------
 
 	public Paint calcSelectedDrawPaint() {
-		// TODO Cache this value for rendering performance
-		return Colors.parse( getSelectedDrawPaint() );
+		if( cachedSelectedDrawPaint == null ) cachedSelectedDrawPaint = Colors.parse( getSelectedDrawPaint() );
+		return cachedSelectedDrawPaint;
 	}
 
 	public String getSelectedDrawPaint() {
@@ -379,6 +385,7 @@ public class DesignRenderer extends Pane {
 
 	public void setSelectedDrawPaint( String paint ) {
 		selectedDrawPaint.set( paint );
+		cachedSelectedDrawPaint = null;
 	}
 
 	public SimpleStringProperty selectedDrawPaint() {
@@ -386,8 +393,8 @@ public class DesignRenderer extends Pane {
 	}
 
 	public Paint calcSelectedFillPaint() {
-		// TODO Cache this value for rendering performance
-		return Colors.parse( getSelectedFillPaint() );
+		if( cachedSelectedFillPaint == null ) cachedSelectedFillPaint = Colors.parse( getSelectedFillPaint() );
+		return cachedSelectedFillPaint;
 	}
 
 	public String getSelectedFillPaint() {
@@ -396,6 +403,7 @@ public class DesignRenderer extends Pane {
 
 	public void setSelectedFillPaint( String paint ) {
 		selectedFillPaint.set( paint );
+		cachedSelectedFillPaint = null;
 	}
 
 	public SimpleStringProperty selectedFillPaint() {

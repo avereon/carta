@@ -40,7 +40,9 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 	private static final String VIRTUAL_FONT_STRIKETHROUGH_MODE = "font-strikethrough-mode";
 
-	private static final String CACHE_TEXT_BOUNDS = "text-bounds";
+	private Font cachedFont;
+
+	private Bounds cachedTextBounds;
 
 	public DesignText() {
 		this( null );
@@ -74,6 +76,9 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignText> T setText( String value ) {
 		setValue( TEXT, value );
+
+		cachedTextBounds = null;
+
 		return (T)this;
 	}
 
@@ -98,6 +103,10 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignDrawable> T setTextSize( String value ) {
 		setValue( TEXT_SIZE, value );
+
+		cachedTextBounds = null;
+		cachedFont = null;
+
 		return (T)this;
 	}
 
@@ -121,6 +130,10 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignDrawable> T setFontName( String value ) {
 		setValue( FONT_NAME, value );
+
+		cachedTextBounds = null;
+		cachedFont = null;
+
 		return (T)this;
 	}
 
@@ -144,6 +157,10 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignDrawable> T setFontWeight( String value ) {
 		setValue( FONT_WEIGHT, value );
+
+		cachedTextBounds = null;
+		cachedFont = null;
+
 		return (T)this;
 	}
 
@@ -167,6 +184,10 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignDrawable> T setFontPosture( String value ) {
 		setValue( FONT_POSTURE, value );
+
+		cachedTextBounds = null;
+		cachedFont = null;
+
 		return (T)this;
 	}
 
@@ -190,6 +211,10 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignDrawable> T setFontUnderline( String value ) {
 		setValue( FONT_UNDERLINE, value );
+
+		cachedTextBounds = null;
+		cachedFont = null;
+
 		return (T)this;
 	}
 
@@ -213,6 +238,10 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	@SuppressWarnings( "unchecked" )
 	public <T extends DesignDrawable> T setFontStrikethrough( String value ) {
 		setValue( FONT_STRIKETHROUGH, value );
+
+		cachedTextBounds = null;
+		cachedFont = null;
+
 		return (T)this;
 	}
 
@@ -262,7 +291,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	}
 
 	public Font calcFont() {
-		return Font.font( calcFontName(), calcFontWeight(), calcFontPosture(), calcTextSize() );
+		if( cachedFont == null ) cachedFont = Font.font( calcFontName(), calcFontWeight(), calcFontPosture(), calcTextSize() );
+		return cachedFont;
 	}
 
 	public CadOrientation getOrientation() {
@@ -335,7 +365,8 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	 * @return The local text bounds.
 	 */
 	public Bounds getLocalTextBounds() {
-		return (Bounds)getCache().computeIfAbsent( CACHE_TEXT_BOUNDS, k -> new FontMetrics( calcFont() ).computeStringBounds( getText() ) );
+		if( cachedTextBounds == null ) cachedTextBounds = new FontMetrics( calcFont() ).computeStringBounds( getText() );
+		return cachedTextBounds;
 	}
 
 	@Override

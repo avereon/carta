@@ -1,12 +1,14 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.math.CadMath;
+import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.Node;
 import com.avereon.transaction.Txn;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
@@ -99,6 +101,8 @@ public class DesignWorkplane extends Node {
 	public static final String GRID_SNAP_Y = "grid-snap-y";
 
 	public static final String GRID_SNAP_Z = "grid-snap-z";
+
+	private Point3D cachedGridOrigin;
 
 	private Grid grid;
 
@@ -278,12 +282,18 @@ public class DesignWorkplane extends Node {
 		setValue( COORDINATE_SYSTEM, grid == null ? Grid.ORTHO : grid );
 	}
 
+	public Point3D calcOrigin() {
+		if( cachedGridOrigin == null ) cachedGridOrigin = CadShapes.parsePoint( getOrigin() );
+		return cachedGridOrigin;
+	}
+
 	public String getOrigin() {
 		return getValue( GRID_ORIGIN, DEFAULT_GRID_ORIGIN );
 	}
 
 	public DesignWorkplane setOrigin( String origin ) {
 		setValue( GRID_ORIGIN, origin );
+		cachedGridOrigin = null;
 		return this;
 	}
 

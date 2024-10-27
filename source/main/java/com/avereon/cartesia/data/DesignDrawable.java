@@ -62,6 +62,20 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected SettingsPage page;
 
+	private Paint cachedDrawPaint;
+
+	private double cachedDrawWidth = Double.NaN;
+
+	private StrokeType cachedDrawAlign;
+
+	private StrokeLineCap cachedDrawCap;
+
+	private StrokeLineJoin cachedDrawJoin;
+
+	private List<Double> cachedDrawPattern;
+
+	private Paint cachedFillPaint;
+
 	protected DesignDrawable() {
 		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 	}
@@ -81,7 +95,8 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Paint calcDrawPaint() {
-		return Paints.parseWithNullOnException( getDrawPaintWithInheritance() );
+		if( cachedDrawPaint == null ) cachedDrawPaint = Paints.parseWithNullOnException( getDrawPaintWithInheritance() );
+		return cachedDrawPaint;
 	}
 
 	public Paint calcDrawPaintWithoutInheritance() {
@@ -106,7 +121,8 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
-		return (double)getCache().computeIfAbsent( DRAW_WIDTH, (k) -> CadMath.evalNoException( getDrawWidthWithInheritance() ) );
+		if( Double.isNaN( cachedDrawWidth ) ) cachedDrawWidth = CadMath.evalNoException( getDrawWidthWithInheritance() );
+		return cachedDrawWidth;
 	}
 
 	public String getDrawWidthWithInheritance() {
@@ -127,11 +143,13 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public StrokeType calcDrawAlign() {
-		try {
-			return StrokeType.valueOf( getDrawAlignWithInheritance() );
-		} catch( NullPointerException | IllegalArgumentException exception ) {
-			return StrokeType.CENTERED;
-		}
+		if( cachedDrawAlign == null ) cachedDrawAlign = StrokeType.valueOf( getDrawAlignWithInheritance() );
+		//		try {
+		//			return StrokeType.valueOf( getDrawAlignWithInheritance() );
+		//		} catch( NullPointerException | IllegalArgumentException exception ) {
+		//			return StrokeType.CENTERED;
+		//		}
+		return cachedDrawAlign;
 	}
 
 	public String getDrawAlignWithInheritance() {
@@ -152,7 +170,13 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public List<Double> calcDrawPattern() {
-		return CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
+		if( isLayerValue( getDrawPattern() ) ) {
+			// FIXME This is the most common case, so we should optimize for it
+			return CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
+		} else {
+			if( cachedDrawPattern == null ) cachedDrawPattern = CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
+			return cachedDrawPattern;
+		}
 	}
 
 	public String getDrawPatternWithInheritance() {
@@ -170,13 +194,20 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawPattern( String pattern ) {
 		setValue( DRAW_PATTERN, pattern );
+		cachedDrawPattern = null;
 		return this;
 	}
 
 	// Draw Cap ------------------------------------------------------------------
 
 	public StrokeLineCap calcDrawCap() {
-		return StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
+		if( isLayerValue( getDrawCap() ) ) {
+			// FIXME This is the most common case, so we should optimize for it
+			return StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
+		} else {
+			if( cachedDrawCap == null ) cachedDrawCap = StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
+			return cachedDrawCap;
+		}
 	}
 
 	public String getDrawCapWithInheritance() {
@@ -193,13 +224,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawCap( String cap ) {
 		setValue( DRAW_CAP, cap );
+		cachedDrawCap = null;
 		return this;
 	}
 
 	// Draw Join -----------------------------------------------------------------
 
 	public StrokeLineJoin calcDrawJoin() {
-		return StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
+		if( cachedDrawJoin == null ) cachedDrawJoin = StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
+		return cachedDrawJoin;
 	}
 
 	public String getDrawJoinWithInheritance() {
@@ -216,14 +249,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawJoin( String join ) {
 		setValue( DRAW_JOIN, join );
+		cachedDrawJoin = null;
 		return this;
 	}
 
 	// Fill Paint ----------------------------------------------------------------
 
 	public Paint calcFillPaint() {
-		String value = getFillPaintWithInheritance();
-		return Paints.parseWithNullOnException( value == null ? DesignLayer.DEFAULT_FILL_PAINT : value );
+		if( cachedFillPaint == null ) cachedFillPaint = Paints.parseWithNullOnException( getFillPaintWithInheritance() );
+		return cachedFillPaint;
 	}
 
 	public String getFillPaintWithInheritance() {
@@ -241,6 +275,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setFillPaint( String paint ) {
 		setValue( FILL_PAINT, paint );
+		cachedFillPaint = null;
 		return this;
 	}
 
@@ -258,6 +293,10 @@ public abstract class DesignDrawable extends DesignNode {
 			case VIRTUAL_FILL_PAINT_MODE -> (T)(getValueMode( getFillPaint() ));
 			default -> super.getValue( key );
 		};
+	}
+
+	<T> boolean isLayerValue( T value ) {
+		return getValueMode( value ).equals( MODE_LAYER );
 	}
 
 	<T> boolean isCustomValue( T value ) {

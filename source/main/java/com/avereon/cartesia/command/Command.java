@@ -406,11 +406,11 @@ public abstract class Command {
 
 	private void addPreview( CommandTask task, List<DesignShape> shapes ) {
 		task.getTool().getPreviewLayer().addShapes( shapes );
-		this.preview.addAll( shapes );
+		preview.addAll( shapes );
 	}
 
 	protected void resetPreviewGeometry() {
-		previewMap.keySet().forEach( s -> previewMap.get( s ).updateFrom( s ) );
+		previewMap.forEach( ( k, v ) -> v.updateFrom( k ) );
 	}
 
 	protected void removePreview( CommandTask task, DesignShape... shapes ) {
