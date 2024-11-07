@@ -492,16 +492,16 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public double getViewRotate() {
-		return renderer.getRotate();
+		return renderer.getViewRotate();
 	}
 
 	@Override
 	public void setViewRotate( double angle ) {
-		renderer.setRotate( angle );
+		renderer.setViewRotate( angle );
 	}
 
 	public DoubleProperty viewRotateProperty() {
-		return renderer.rotateProperty();
+		return renderer.viewRotateProperty();
 	}
 
 	@Override

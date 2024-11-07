@@ -511,6 +511,28 @@ public class DesignRenderer extends Pane {
 	}
 
 	/**
+	 * Convenience method to get the view rotate of the renderer.
+	 *
+	 * @return The view rotate of the renderer
+	 */
+	public double getViewRotate() {
+		return renderer.getViewRotate();
+	}
+
+	/**
+	 * Convenience method to set the view rotate of the renderer.
+	 *
+	 * @param angle The angle to set
+	 */
+	public void setViewRotate( double angle ) {
+		renderer.setViewRotate( angle );
+	}
+
+	public DoubleProperty viewRotateProperty() {
+		return renderer.viewRotateProperty();
+	}
+
+	/**
 	 * Convenience method to get the zoom of the renderer.
 	 *
 	 * @return The zoom of the renderer
