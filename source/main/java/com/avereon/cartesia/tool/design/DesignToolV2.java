@@ -309,7 +309,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		} );
 
 		// Add view rotate property listener
-		renderer.rotateProperty().addListener( ( p, o, n ) -> {
+		renderer.viewRotateProperty().addListener( ( p, o, n ) -> {
 			storePreviousViewAction.request();
 			settings.set( SETTINGS_VIEW_ROTATE, n.doubleValue() );
 			//doUpdateGridBounds();
@@ -543,7 +543,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	public void setView( Point3D center, double zoom, double rotate ) {
 		renderer.setViewpoint( center );
 		renderer.setZoom( zoom, zoom );
-		renderer.setRotate( rotate );
+		renderer.setViewRotate( rotate );
 	}
 
 	@Override

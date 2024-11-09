@@ -148,6 +148,7 @@ public class DesignRenderer extends Pane {
 		renderer.zoomYProperty().addListener( ( p, o, n ) -> render() );
 		renderer.viewpointXProperty().addListener( ( p, o, n ) -> render() );
 		renderer.viewpointYProperty().addListener( ( p, o, n ) -> render() );
+		renderer.viewRotateProperty().addListener( ( p, o, n ) -> render() );
 		renderer.widthProperty().addListener( ( p, o, n ) -> render() );
 		renderer.heightProperty().addListener( ( p, o, n ) -> render() );
 
