@@ -215,6 +215,7 @@ public abstract class Command {
 			if( point == null ) throw new InvalidInputException( task.getCommand(), rbKey, value );
 		}
 
+		// FIXME This snap to the workplane causes a problem when using other snaps and drawing commands
 		point = snap ? task.getTool().snapToWorkplane( point ) : point;
 		task.getContext().setWorldAnchor( point );
 
