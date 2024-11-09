@@ -21,7 +21,7 @@ import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.AssetSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
-import com.avereon.xenon.asset.type.PropertiesType;
+import com.avereon.xenon.asset.type.ProgramPropertiesType;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -1414,7 +1414,7 @@ public class DesignToolV2 extends BaseDesignTool {
 			getProgram().getTaskManager().submit( Task.of( () -> {
 				try {
 					// Show the properties tool
-					getProgram().getAssetManager().openAsset( PropertiesType.URI ).get();
+					getProgram().getAssetManager().openAsset( ProgramPropertiesType.URI ).get();
 
 					// Fire the show request on the workspace event bus
 					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();

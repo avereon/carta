@@ -287,7 +287,7 @@ public class CartesiaMod extends Module {
 	) {
 		// Create the document URI
 		String modKey = getCard().getProductKey();
-		URI uri = URI.create( ProgramHelpType.SCHEME + ":/" + modKey + resourcePath );
+		URI uri = URI.create( ProgramHelpType.URI + ":/" + modKey + resourcePath );
 
 		Map<String, String> replacementValues = new HashMap<>( values );
 		replacementValues.put( "module.name", getCard().getName() );
