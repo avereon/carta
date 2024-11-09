@@ -28,7 +28,7 @@ public class DesignWorkplane extends Node {
 
 	public static final boolean DEFAULT_GRID_AXIS_VISIBLE = true;
 
-	public static final String DEFAULT_GRID_AXIS_PAINT = "#80a0d060";
+	public static final String DEFAULT_GRID_AXIS_PAINT = "#c0c040ff";
 
 	public static final String DEFAULT_GRID_AXIS_WIDTH = "0.05";
 
@@ -36,7 +36,7 @@ public class DesignWorkplane extends Node {
 
 	public static final String DEFAULT_GRID_MAJOR_SIZE = "1.0";
 
-	public static final String DEFAULT_GRID_MAJOR_PAINT = "#80a0d020";
+	public static final String DEFAULT_GRID_MAJOR_PAINT = "#80a0d080";
 
 	public static final String DEFAULT_GRID_MAJOR_WIDTH = "0.03";
 
@@ -44,7 +44,7 @@ public class DesignWorkplane extends Node {
 
 	public static final String DEFAULT_GRID_MINOR_SIZE = "0.5";
 
-	public static final String DEFAULT_GRID_MINOR_PAINT = "#80a0d010";
+	public static final String DEFAULT_GRID_MINOR_PAINT = "#80a0d040";
 
 	public static final String DEFAULT_GRID_MINOR_WIDTH = "0.02";
 

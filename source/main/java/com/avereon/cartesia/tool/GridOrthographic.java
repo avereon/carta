@@ -86,7 +86,7 @@ public class GridOrthographic implements Grid {
 			double[] dashSpacingY = new double[]{ 0, snapIntervalY };
 
 			Point2D minorGridPixels = renderer.localToParent( originInParent.add( workplane.calcSnapGridX(), -workplane.calcSnapGridY() ) );
-			boolean allowMinorGrid = minorGridPixels.getX() >= PIXEL_THRESHOLD && minorGridPixels.getY() >= PIXEL_THRESHOLD;
+			boolean allowMinorGrid = Math.abs( minorGridPixels.getX() ) >= PIXEL_THRESHOLD && Math.abs( minorGridPixels.getY() ) >= PIXEL_THRESHOLD;
 			if( allowMinorGrid ) {
 				renderer.setDrawPen( workplane.calcMinorGridPaint(), workplane.calcMinorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingY, 0 );
 				for( double valueX : minorOffsetsX ) {
@@ -106,7 +106,7 @@ public class GridOrthographic implements Grid {
 			double[] dashSpacingX = new double[]{ 0, minorIntervalX };
 			double[] dashSpacingY = new double[]{ 0, minorIntervalY };
 			Point2D majorGridPixels = renderer.localToParent( originInParent.add( workplane.calcMinorGridX(), -workplane.calcMinorGridY() ) );
-			boolean allowMajorGrid = majorGridPixels.getX() >= PIXEL_THRESHOLD && majorGridPixels.getY() >= PIXEL_THRESHOLD;
+			boolean allowMajorGrid = Math.abs( majorGridPixels.getX() ) >= PIXEL_THRESHOLD && Math.abs( majorGridPixels.getY() ) >= PIXEL_THRESHOLD;
 			if( allowMajorGrid ) {
 				renderer.setDrawPen( workplane.calcMajorGridPaint(), workplane.calcMajorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingY, 0 );
 				for( double valueX : majorOffsetsX ) {
@@ -126,7 +126,7 @@ public class GridOrthographic implements Grid {
 			double[] dashSpacingX = new double[]{ 0, majorIntervalX };
 			double[] dashSpacingY = new double[]{ 0, majorIntervalY };
 			Point2D axisGridPixels = renderer.localToParent( originInParent.add( workplane.calcMajorGridX(), -workplane.calcMajorGridY() ) );
-			boolean allowAxisGrid = axisGridPixels.getX() >= PIXEL_THRESHOLD && axisGridPixels.getY() >= PIXEL_THRESHOLD;
+			boolean allowAxisGrid = Math.abs( axisGridPixels.getX() ) >= PIXEL_THRESHOLD && Math.abs( axisGridPixels.getY() ) >= PIXEL_THRESHOLD;
 			if( allowAxisGrid ) {
 				renderer.setDrawPen( workplane.calcGridAxisPaint(), workplane.calcMajorGridWidth(), LineCap.ROUND, LineJoin.ROUND, dashSpacingY, 0 );
 				for( double valueX : axisOffsetsX ) {
