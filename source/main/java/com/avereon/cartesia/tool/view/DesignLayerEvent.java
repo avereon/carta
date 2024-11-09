@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.view;
 import javafx.event.Event;
 import javafx.event.EventType;
 
+@Deprecated
 public class DesignLayerEvent extends javafx.event.Event  {
 
 	public static final EventType<DesignLayerEvent> LAYER_ADDED = new EventType<>("LAYER_ADDED");

@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignNode;
 
+@Deprecated
 public class DesignNodeMeta {
 
 	private final DesignPane pane;

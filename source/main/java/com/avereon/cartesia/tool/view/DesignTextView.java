@@ -17,6 +17,7 @@ import lombok.CustomLog;
 
 import java.util.List;
 
+@Deprecated
 @CustomLog
 public class DesignTextView extends DesignShapeView {
 

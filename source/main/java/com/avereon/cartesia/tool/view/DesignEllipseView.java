@@ -10,6 +10,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
+@Deprecated
 public class DesignEllipseView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> originHandler;

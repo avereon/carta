@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
 
+@Deprecated
 public class DesignGeometry {
 
 	private static final Map<Class<? extends DesignShape>, BiFunction<DesignPane, DesignShape, ? extends DesignShapeView>> generatorMap;

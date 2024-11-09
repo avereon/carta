@@ -35,6 +35,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Deprecated
 @CustomLog
 public class DesignPaneMarea extends StackPane {
 

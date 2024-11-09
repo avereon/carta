@@ -13,6 +13,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
+@Deprecated
 public class DesignArcView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> originHandler;

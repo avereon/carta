@@ -11,6 +11,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
+@Deprecated
 public class DesignCurveView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> originHandler;

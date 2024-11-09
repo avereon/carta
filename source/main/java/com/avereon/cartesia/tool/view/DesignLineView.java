@@ -10,6 +10,7 @@ import javafx.scene.shape.Shape;
 
 import java.util.List;
 
+@Deprecated
 public class DesignLineView extends DesignShapeView {
 
 	private EventHandler<NodeEvent> originHandler;

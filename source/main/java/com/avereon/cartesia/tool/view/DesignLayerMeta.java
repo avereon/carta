@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool.view;
 
 import com.avereon.cartesia.data.DesignLayer;
 
+@Deprecated
 public class DesignLayerMeta extends DesignDrawableMeta {
 
 	//private final DesignLayerPane layerPane;
