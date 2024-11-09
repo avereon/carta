@@ -767,12 +767,14 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	public Point3D scaleScreenToWorld( Point3D point ) {
+		// FIXME What happens when the view is rotated
 		double scaleX = renderer.getInternalScaleX();
 		double scaleY = renderer.getInternalScaleY();
 		return new Point3D( point.getX() / scaleX, point.getY() / scaleY, point.getZ() );
 	}
 
 	public Point3D scaleWorldToScreen( Point3D point ) {
+		// FIXME What happens when the view is rotated
 		double scaleX = renderer.getInternalScaleX();
 		double scaleY = renderer.getInternalScaleY();
 		return new Point3D( point.getX() * scaleX, point.getY() * scaleY, point.getZ() );
