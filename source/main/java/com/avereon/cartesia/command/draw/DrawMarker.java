@@ -24,6 +24,7 @@ public class DrawMarker extends DrawCommand {
 			return INCOMPLETE;
 		}
 
+		// FIXME If the parameter came from a snap, it should not snap to the grid
 		if( task.hasParameter( 0 ) ) {
 			setCaptureUndoChanges( task, true );
 
