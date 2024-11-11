@@ -25,7 +25,8 @@ public class Anchor extends Command {
 
 		if( task.getEvent() instanceof MouseEvent event && task.getTrigger().matches( event ) ) {
 			Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
-			Point3D worldPoint = task.getTool().screenToWorld( event.getX(), event.getY(), event.getZ() );
+			// NEXT Very weird problem, replacing the point with the coords above breaks the unit test
+			Point3D worldPoint = task.getTool().screenToWorld( screenPoint );
 			task.getContext().setScreenAnchor( screenPoint );
 			task.getContext().setWorldAnchor( worldPoint );
 			event.consume();
