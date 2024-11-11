@@ -51,7 +51,8 @@ public class CameraMove extends CameraCommand {
 			Point3D worldAnchor = asPoint( task,"pan-anchor", 0 );
 			Point3D worldCorner = asPoint( task,"pan-target", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
-				task.getTool().setViewPoint( originalViewPoint.add( worldAnchor.subtract( worldCorner ) ) );
+				Point3D worldOffset = worldAnchor.subtract( worldCorner );
+				task.getTool().setViewPoint( originalViewPoint.add( worldOffset ) );
 				return SUCCESS;
 			}
 		}
@@ -62,17 +63,17 @@ public class CameraMove extends CameraCommand {
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = task.getContext().getScreenAnchor();
-		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
+		Point3D anchor = task.getContext().getWorldAnchor();
+		Point3D corner = tool.scaleScreenToWorld( new Point3D( event.getX(), event.getY(), event.getZ() ) );
+
+		log.atConfig().log( "Anchor: %s, Corner: %s", anchor, corner );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
-			Point3D screenOffset = anchor.subtract( mouse );
-			Point3D worldOffset = tool.scaleScreenToWorld( new Point3D( screenOffset.getX(), -1.0 * screenOffset.getY(), 0 ) );
+			Point3D worldOffset = anchor.subtract( corner );
 			tool.setViewPoint( originalViewPoint.add( worldOffset ) );
 			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
-			Point3D screenOffset = anchor.subtract( mouse );
-			Point3D worldOffset = tool.scaleScreenToWorld( new Point3D( screenOffset.getX(), -1.0 * screenOffset.getY(), 0 ) );
+			Point3D worldOffset = anchor.subtract( corner );
 			tool.getCommandContext().submit( tool, new Value(), task.getContext().getWorldAnchor().subtract( worldOffset ) );
 			event.consume();
 		}
