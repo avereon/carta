@@ -32,6 +32,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Affine;
 import lombok.CustomLog;
 import lombok.Getter;
 
@@ -612,6 +613,10 @@ public class DesignRenderer extends Pane {
 		Fx.run( new RenderTrigger() );
 	}
 
+	public Affine getWorldToScreenTransform() {
+		return renderer.getWorldToScreenTransform();
+	}
+
 	@Override
 	public Point2D localToParent( double localX, double localY ) {
 		return renderer.localToParent( localX, localY );
@@ -635,6 +640,10 @@ public class DesignRenderer extends Pane {
 	@Override
 	public Bounds localToParent( Bounds localBounds ) {
 		return renderer.localToParent( localBounds );
+	}
+
+	public Affine getScreenToWorldTransform() {
+		return renderer.getScreenToWorldTransform();
 	}
 
 	@Override

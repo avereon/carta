@@ -50,6 +50,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
@@ -456,6 +457,11 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
+	public Affine getWorldToScreenTransform() {
+		return null;
+	}
+
+	@Override
 	public Point3D worldToScreen( double x, double y, double z ) {
 		return designPane == null ? Point3D.ZERO : designPane.localToParent( x, y, z );
 	}
@@ -471,6 +477,11 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 		Point3D a = worldToScreen( bounds.getMinX(), bounds.getMaxY(), bounds.getMinZ() );
 		Point3D b = worldToScreen( bounds.getMaxX(), bounds.getMinY(), bounds.getMaxZ() );
 		return new BoundingBox( a.getX(), a.getY(), a.getZ(), b.getX() - a.getX(), b.getY() - a.getY(), b.getZ() - a.getZ() );
+	}
+
+	@Override
+	public Affine getScreenToWorldTransform() {
+		return null;
 	}
 
 	@Override

@@ -1,11 +1,12 @@
 package com.avereon.cartesia.command.camera;
 
+import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.Value;
 import com.avereon.cartesia.tool.BaseDesignTool;
-import com.avereon.cartesia.command.CommandTask;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.transform.Affine;
 import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.*;
@@ -14,6 +15,8 @@ import static com.avereon.cartesia.command.Command.Result.*;
 public class CameraMove extends CameraCommand {
 
 	private Point3D originalViewPoint;
+
+	private Affine originalTransform;
 
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
@@ -31,6 +34,7 @@ public class CameraMove extends CameraCommand {
 			event.consume();
 
 			originalViewPoint = task.getTool().getViewpoint();
+			originalTransform = task.getTool().getScreenToWorldTransform().clone();
 
 			// Submit a Value command to pass the anchor back to this command
 			task.getContext().submit( task.getTool(), new Value(), task.getContext().getWorldAnchor() );
@@ -64,7 +68,7 @@ public class CameraMove extends CameraCommand {
 	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		Point3D anchor = task.getContext().getWorldAnchor();
-		Point3D corner = tool.scaleScreenToWorld( new Point3D( event.getX(), event.getY(), event.getZ() ) );
+		Point3D corner = originalTransform.transform( new Point3D( event.getX(), event.getY(), event.getZ() ) );
 
 		log.atConfig().log( "Anchor: %s, Corner: %s", anchor, corner );
 

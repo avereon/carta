@@ -39,7 +39,10 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.*;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -48,6 +51,7 @@ import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
+import javafx.scene.transform.Affine;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
@@ -802,6 +806,11 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
+	public Affine getWorldToScreenTransform() {
+		return renderer == null ? null : renderer.getWorldToScreenTransform();
+	}
+
+	@Override
 	public Point3D worldToScreen( double x, double y, double z ) {
 		return renderer == null ? Point3D.ZERO : renderer.localToParent( x, y, z );
 	}
@@ -814,6 +823,11 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public Bounds worldToScreen( Bounds bounds ) {
 		return renderer == null ? Fx.EMPTY_BOUNDS : renderer.localToParent( bounds );
+	}
+
+	@Override
+	public Affine getScreenToWorldTransform() {
+		return renderer == null ? null : renderer.getScreenToWorldTransform();
 	}
 
 	@Override
