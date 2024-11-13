@@ -27,6 +27,7 @@ public class Anchor extends Command {
 			Point3D screenPoint = new Point3D( event.getX(), event.getY(), event.getZ() );
 			// NEXT Very weird problem, replacing the point with the coords above breaks the unit test
 			Point3D worldPoint = task.getTool().screenToWorld( screenPoint );
+			// TODO Should this use task.getTool().screenToWorkplane()?
 			task.getContext().setScreenAnchor( screenPoint );
 			task.getContext().setWorldAnchor( worldPoint );
 			event.consume();
@@ -35,8 +36,8 @@ public class Anchor extends Command {
 
 		if( task.hasParameter( 0 ) ) {
 			Point3D worldPoint = asPoint( task, "select-point", 0 );
-			Point3D screenPoint = task.getTool().worldToScreen( worldPoint );
 			if( worldPoint != null ) {
+				Point3D screenPoint = task.getTool().worldToScreen( worldPoint );
 				task.getContext().setScreenAnchor( screenPoint );
 				return SUCCESS;
 			}

@@ -40,26 +40,24 @@ public class CommandTest extends BaseCommandTest {
 	void testAsPointWithInput() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
 
 		// when
 		Point3D result = command.asPoint( task, "point", "1.01,2.01" );
 
 		// then
-		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1.01, 2.01, 0 ) );
 	}
 
 	@Test
 	void testAsPointWithPoint() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
 
 		// when
 		Point3D result = command.asPoint( task, "point", new Point3D( 1.01, 2.01, 0 ) );
 
 		// then
-		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1.01, 2.01, 0 ) );
 	}
 
 	@Test
@@ -67,13 +65,12 @@ public class CommandTest extends BaseCommandTest {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 		when( tool.screenToWorld( new Point3D( 72, 72, 0 ) ) ).thenReturn( new Point3D( 1.01, 2.01, 0 ) );
-		when( tool.snapToWorkplane( new Point3D( 1.01, 2.01, 0 ) ) ).thenReturn( new Point3D( 1, 2, 0 ) );
 
 		// when
 		Point3D result = command.asPoint( task, "point", createMouseEvent( MouseEvent.MOUSE_CLICKED, MouseButton.PRIMARY, false, false, false, false, false, 72, 72 ) );
 
 		// then
-		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1, 2, 0 ) );
+		Point3DAssert.assertThat( result ).isEqualTo( new Point3D( 1.01, 2.01, 0 ) );
 	}
 
 	// TODO Test more shared Command methods
