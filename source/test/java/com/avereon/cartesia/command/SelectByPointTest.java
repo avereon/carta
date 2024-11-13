@@ -94,13 +94,15 @@ public class SelectByPointTest extends BaseCommandTest {
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		// Pretend there is another command on the stack
 		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
-		when( tool.screenToWorld( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+		when( tool.screenToWorkplane( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
+		verify( tool, times( 1 ) ).screenToWorkplane( eq( new Point3D( 48, 17, 0 ) ) );
 		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
+		verify( tool, times( 0 ) ).screenToWorld( any( Point3D.class ) );
 		assertThat( event.isConsumed() ).isTrue();
 		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
 	}

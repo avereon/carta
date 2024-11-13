@@ -6,7 +6,8 @@ import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import org.junit.jupiter.api.Test;
 
-import static com.avereon.cartesia.command.Command.Result.*;
+import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
+import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -94,13 +95,15 @@ public class SelectToggleTest extends BaseCommandTest {
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		// Pretend there is another command on the stack
 		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
-		when( tool.screenToWorld( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+		when( tool.screenToWorkplane( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
+		verify( tool, times( 1 ) ).screenToWorkplane( eq( new Point3D( 48, 17, 0 ) ) );
 		verify( tool, times( 0 ) ).screenPointSelect( any(), anyBoolean() );
+		verify( tool, times( 0 ) ).screenToWorld( any( Point3D.class ) );
 		assertThat( result ).isEqualTo( new Point3D( 1, 1, 0 ) );
 	}
 

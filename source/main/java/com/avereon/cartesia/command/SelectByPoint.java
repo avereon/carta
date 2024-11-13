@@ -36,7 +36,7 @@ public class SelectByPoint extends SelectCommand {
 				task.getTool().screenPointSelect( screenPoint, toggle );
 				return SUCCESS;
 			} else {
-				return task.getTool().screenToWorld( screenPoint );
+				return task.getTool().screenToWorkplane( screenPoint );
 			}
 		}
 
