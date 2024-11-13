@@ -19,7 +19,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 
 import java.util.Collection;
 import java.util.List;
@@ -230,7 +230,7 @@ public interface DesignTool {
 
 	Point3D snapToWorkplane( double x, double y, double z );
 
-	Affine getWorldToScreenTransform();
+	Transform getWorldToScreenTransform();
 
 	Point3D worldToScreen( double x, double y, double z );
 
@@ -238,7 +238,7 @@ public interface DesignTool {
 
 	Bounds worldToScreen( Bounds bounds );
 
-	Affine getScreenToWorldTransform();
+	Transform getScreenToWorldTransform();
 
 	Point3D screenToWorld( double x, double y, double z );
 

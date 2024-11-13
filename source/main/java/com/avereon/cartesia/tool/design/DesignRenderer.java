@@ -32,7 +32,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 import lombok.Getter;
 
@@ -613,7 +613,7 @@ public class DesignRenderer extends Pane {
 		Fx.run( new RenderTrigger() );
 	}
 
-	public Affine getWorldToScreenTransform() {
+	public Transform getWorldToScreenTransform() {
 		return renderer.getWorldToScreenTransform();
 	}
 
@@ -642,7 +642,7 @@ public class DesignRenderer extends Pane {
 		return renderer.localToParent( localBounds );
 	}
 
-	public Affine getScreenToWorldTransform() {
+	public Transform getScreenToWorldTransform() {
 		return renderer.getScreenToWorldTransform();
 	}
 

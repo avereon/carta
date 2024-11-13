@@ -26,6 +26,7 @@ public abstract class DesignToolBaseTest extends BaseCartesiaUnitTest {
 
 		lenient().when( tool.getAsset() ).thenReturn( asset );
 		lenient().when( tool.snapToWorkplane( any() ) ).then( i -> i.getArgument( 0 ) );
+		lenient().when( tool.getScreenToWorldTransform() ).thenReturn( Fx.IDENTITY_TRANSFORM );
 	}
 
 }

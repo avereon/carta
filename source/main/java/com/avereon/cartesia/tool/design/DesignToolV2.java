@@ -51,7 +51,7 @@ import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
@@ -806,8 +806,8 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public Affine getWorldToScreenTransform() {
-		return renderer == null ? null : renderer.getWorldToScreenTransform();
+	public Transform getWorldToScreenTransform() {
+		return renderer == null ? Fx.IDENTITY_TRANSFORM : renderer.getWorldToScreenTransform();
 	}
 
 	@Override
@@ -826,8 +826,8 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public Affine getScreenToWorldTransform() {
-		return renderer == null ? null : renderer.getScreenToWorldTransform();
+	public Transform getScreenToWorldTransform() {
+		return renderer == null ? Fx.IDENTITY_TRANSFORM : renderer.getScreenToWorldTransform();
 	}
 
 	@Override

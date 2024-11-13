@@ -6,7 +6,7 @@ import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.*;
@@ -16,7 +16,7 @@ public class CameraMove extends CameraCommand {
 
 	private Point3D originalViewPoint;
 
-	private Affine originalTransform;
+	private Transform originalTransform;
 
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
@@ -42,7 +42,7 @@ public class CameraMove extends CameraCommand {
 		}
 
 		if( paramCount == 1 & noEvent ) {
-			Point3D worldAnchor = asPoint( task,"pan-anchor", 0 );
+			Point3D worldAnchor = asPoint( task, "pan-anchor", 0 );
 			if( worldAnchor != null ) {
 				promptForPoint( task, "pan-target" );
 				return INCOMPLETE;
@@ -52,8 +52,8 @@ public class CameraMove extends CameraCommand {
 		// The situation of one parameter and an event should not occur
 
 		if( paramCount == 2 & noEvent ) {
-			Point3D worldAnchor = asPoint( task,"pan-anchor", 0 );
-			Point3D worldCorner = asPoint( task,"pan-target", 1 );
+			Point3D worldAnchor = asPoint( task, "pan-anchor", 0 );
+			Point3D worldCorner = asPoint( task, "pan-target", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				Point3D worldOffset = worldAnchor.subtract( worldCorner );
 				task.getTool().setViewPoint( originalViewPoint.add( worldOffset ) );

@@ -50,7 +50,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
-import javafx.scene.transform.Affine;
+import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 
@@ -457,7 +457,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public Affine getWorldToScreenTransform() {
+	public Transform getWorldToScreenTransform() {
 		return null;
 	}
 
@@ -480,7 +480,7 @@ public abstract class DesignToolV1 extends BaseDesignTool {
 	}
 
 	@Override
-	public Affine getScreenToWorldTransform() {
+	public Transform getScreenToWorldTransform() {
 		return null;
 	}
 
