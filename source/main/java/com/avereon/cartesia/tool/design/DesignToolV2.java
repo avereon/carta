@@ -364,7 +364,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Update the select aperture when the mouse moves
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> {
-			if( getCommandContext().getCommandStackDepth() == 0 ) {
+			if( getCommandContext().isEmptyMode() ) {
 				setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) );
 			}
 		} );

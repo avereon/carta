@@ -99,6 +99,7 @@ public class SelectByWindowContainTest extends BaseCommandTest {
 	void testExecuteWithTwoParameters() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "-3,3", "3,-3" );
+		when( commandContext.isSelectMode() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();

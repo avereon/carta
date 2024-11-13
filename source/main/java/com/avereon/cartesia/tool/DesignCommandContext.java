@@ -108,10 +108,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return commandPrompt;
 	}
 
-	public int getCommandStackDepth() {
-		return commandStack.size();
-	}
-
 	public CommandTask getCommand( int index ) {
 		return new ArrayList<>( commandStack ).get( index );
 	}
@@ -224,7 +220,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public boolean isSelectMode() {
-		return commandStack.size() == 1;
+		return commandStack.size() < 2;
+	}
+
+	public boolean isEmptyMode() {
+		return commandStack.isEmpty();
 	}
 
 	public boolean isInteractive() {
@@ -314,6 +314,64 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		this.tool = Objects.requireNonNull( tool );
 	}
 
+	// For test purposes only
+	int getCommandStackDepth() {
+		return commandStack.size();
+	}
+
+	// THREAD Task Thread
+	Object doProcessCommands() throws Exception {
+		if( Fx.isFxThread() ) {
+			log.atSevere().log( "Command processing should not be run on the FX thread" );
+			return FAILURE;
+		}
+
+		CommandTask task = null;
+		Object result = SUCCESS;
+
+		try {
+			// This loop tries to execute as many steps as possible on the command
+			// stack. It is possible that the command stack will grow, if user input
+			// is required, or shrink as commands are completed.
+			while( !commandStack.isEmpty() ) {
+				task = commandStack.peek();
+				logCommandStack( "exec" );
+				setInputMode( task.getCommand().getInputMode() );
+
+				// Run the next task step
+				Object stepResult = task.runTaskStep();
+
+				// Don't pass incomplete results to the next task and
+				// allow the calling thread to exit with the INCOMPLETE result.
+				if( stepResult == INCOMPLETE ) return stepResult;
+
+				// Remove the command if it has completed
+				commandStack.remove( task );
+
+				// Pass the task result to the next task
+				passParameter( commandStack.peek(), stepResult );
+
+				logCommandStack( "rslt" );
+
+				result = stepResult;
+			}
+		} catch( InvalidInputException exception ) {
+			commandStack.remove( task );
+			String title = Rb.text( RbKey.NOTICE, "invalid-input" );
+			String message = Rb.text( RbKey.PROMPT, exception.getInputRbKey() ) + " " + exception.getValue();
+			if( task.getContext().isInteractive() ) {
+				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
+			} else {
+				log.atWarn( exception ).log( "Invalid input=%s", task );
+			}
+		} catch( Exception exception ) {
+			cancelAllCommands();
+			throw exception;
+		}
+
+		return result;
+	}
+
 	private void reset() {
 		Fx.run( () -> {
 			getLastActiveDesignTool().setSelectAperture( null, null );
@@ -332,7 +390,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		return mapping;
 	}
 
-	boolean submitEventCommand( InputEvent event ) {
+	private boolean submitEventCommand( InputEvent event ) {
 		// NOTE This method does not handle key events,
 		//  those are handled by the action infrastructure
 		CommandMetadata metadata = getMod().getCommandMap().getCommandByEvent( event );
@@ -390,59 +448,6 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private void logCommandStack( String prefix ) {
 		if( !log.at( COMMAND_STACK_LOG_LEVEL ).isEnabled() ) return;
 		log.at( COMMAND_STACK_LOG_LEVEL ).log( "%s tasks=%s", prefix, commandStack.reversed() );
-	}
-
-	// THREAD Task Thread
-	Object doProcessCommands() throws Exception {
-		if( Fx.isFxThread() ) {
-			log.atSevere().log( "Command processing should not be run on the FX thread" );
-			return FAILURE;
-		}
-
-		CommandTask task = null;
-		Object result = SUCCESS;
-
-		try {
-			// This loop tries to execute as many steps as possible on the command
-			// stack. It is possible that the command stack will grow, if user input
-			// is required, or shrink as commands are completed.
-			while( !commandStack.isEmpty() ) {
-				task = commandStack.peek();
-				logCommandStack( "exec" );
-				setInputMode( task.getCommand().getInputMode() );
-
-				// Run the next task step
-				Object stepResult = task.runTaskStep();
-
-				// Don't pass incomplete results to the next task and
-				// allow the calling thread to exit with the INCOMPLETE result.
-				if( stepResult == INCOMPLETE ) return stepResult;
-
-				// Remove the command if it has completed
-				commandStack.remove( task );
-
-				// Pass the task result to the next task
-				passParameter( commandStack.peek(), stepResult );
-
-				logCommandStack( "rslt" );
-
-				result = stepResult;
-			}
-		} catch( InvalidInputException exception ) {
-			commandStack.remove( task );
-			String title = Rb.text( RbKey.NOTICE, "invalid-input" );
-			String message = Rb.text( RbKey.PROMPT, exception.getInputRbKey() ) + " " + exception.getValue();
-			if( task.getContext().isInteractive() ) {
-				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
-			} else {
-				log.atWarn( exception ).log( "Invalid input=%s", task );
-			}
-		} catch( Exception exception ) {
-			cancelAllCommands();
-			throw exception;
-		}
-
-		return result;
 	}
 
 	private void passParameter( CommandTask task, Object parameter ) throws InvalidInputException {

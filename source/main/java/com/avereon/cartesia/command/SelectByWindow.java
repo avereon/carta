@@ -47,7 +47,7 @@ public abstract class SelectByWindow extends SelectCommand {
 			Point3D worldAnchor = asPoint( task, "select-window-anchor", 0 );
 			Point3D worldCorner = asPoint( task, "select-window-corner", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
-				if( task.getContext().getCommandStackDepth() < 2 ) {
+				if( task.getContext().isSelectMode() ) {
 					task.getTool().worldWindowSelect( worldAnchor, worldCorner, intersect, false );
 					return SUCCESS;
 				} else {

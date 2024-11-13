@@ -229,6 +229,10 @@ public abstract class Command {
 		return asPoint( task, rbKey, point, true );
 	}
 
+	/// It would be nice to deprecate this method, but some commands insist that
+	/// the workplane point (snap to grid) not be used, for example when selecting
+	/// shapes to trim.
+	@Deprecated
 	protected Point3D asPointWithoutSnap( CommandTask task, String rbKey, int index ) throws Exception {
 		return asPoint( task, rbKey, task.getParameter( index ), false );
 	}

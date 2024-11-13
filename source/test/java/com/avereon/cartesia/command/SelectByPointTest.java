@@ -38,7 +38,7 @@ public class SelectByPointTest extends BaseCommandTest {
 
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1" );
-		when( commandContext.getCommandStackDepth() ).thenReturn( 1 );
+		when( commandContext.isSelectMode() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();
@@ -55,7 +55,7 @@ public class SelectByPointTest extends BaseCommandTest {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1,1" );
 		// Pretend there is another command on the stack
-		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
+		when( commandContext.isSelectMode() ).thenReturn( false );
 
 		// when
 		Object result = task.runTaskStep();
@@ -73,7 +73,7 @@ public class SelectByPointTest extends BaseCommandTest {
 		CommandTrigger trigger = getMod().getCommandMap().getTriggerByAction( "select-point" );
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
-		when( commandContext.getCommandStackDepth() ).thenReturn( 1 );
+		when( commandContext.isSelectMode() ).thenReturn( true );
 
 		// when
 		Object result = task.runTaskStep();
@@ -93,7 +93,7 @@ public class SelectByPointTest extends BaseCommandTest {
 		InputEvent event = createMouseEvent( trigger, 48, 17 );
 		CommandTask task = new CommandTask( commandContext, tool, trigger, event, command );
 		// Pretend there is another command on the stack
-		when( commandContext.getCommandStackDepth() ).thenReturn( 2 );
+		when( commandContext.isSelectMode() ).thenReturn( false );
 		when( tool.screenToWorkplane( new Point3D( 48, 17, 0 ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
 
 		// when

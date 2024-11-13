@@ -32,11 +32,16 @@ public class SelectByPoint extends SelectCommand {
 			Point3D screenPoint = new Point3D( mouseEvent.getX(), mouseEvent.getY(), mouseEvent.getZ() );
 			event.consume();
 
-			if( task.getContext().getCommandStackDepth() < 2 ) {
+			if( task.getContext().isSelectMode() ) {
 				task.getTool().screenPointSelect( screenPoint, toggle );
 				return SUCCESS;
 			} else {
+				//task.getIndex();
+				// FIXME Some commands do not want workplane point, but want "real" points
+				//log.atConfig().log("inputmode={0}", task.getContext().getInputMode() );
+				//if( task.getContext().getInputMode() == DesignCommandContext.Input.POINT ) {
 				return task.getTool().screenToWorkplane( screenPoint );
+				//}
 			}
 		}
 
@@ -44,7 +49,7 @@ public class SelectByPoint extends SelectCommand {
 			// If there is a parameter, use that
 			Point3D worldPoint = asPointWithoutSnap( task, "select-point", 0 );
 
-			if( task.getContext().getCommandStackDepth() < 2 ) {
+			if( task.getContext().isSelectMode() ) {
 				task.getTool().worldPointSelect( worldPoint, toggle );
 				return SUCCESS;
 			} else {
