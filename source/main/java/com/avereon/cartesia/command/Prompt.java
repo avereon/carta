@@ -1,9 +1,11 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.tool.DesignCommandContext;
+import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
 
+@CustomLog
 public class Prompt extends Command {
 
 	private final String prompt;
