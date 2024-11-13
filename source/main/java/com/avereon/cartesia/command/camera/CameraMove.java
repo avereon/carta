@@ -70,8 +70,6 @@ public class CameraMove extends CameraCommand {
 		Point3D anchor = task.getContext().getWorldAnchor();
 		Point3D corner = originalTransform.transform( new Point3D( event.getX(), event.getY(), event.getZ() ) );
 
-		log.atConfig().log( "Anchor: %s, Corner: %s", anchor, corner );
-
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
 			Point3D worldOffset = anchor.subtract( corner );
 			tool.setViewPoint( originalViewPoint.add( worldOffset ) );
