@@ -31,7 +31,7 @@ public class MeasurePoint extends MeasureCommand {
 		}
 
 		if( task.hasParameter( 0 ) ) {
-			Point3D p1 = asPointWithoutSnap( task, "start-point", 0 );
+			Point3D p1 = asPoint( task, "start-point", 0 );
 
 			if( task.getContext().isInteractive() ) {
 				// TODO Run the point value through the design value formatter

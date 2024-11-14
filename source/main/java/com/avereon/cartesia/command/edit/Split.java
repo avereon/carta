@@ -20,7 +20,7 @@ public class Split extends EditCommand {
 		}
 
 		if( task.getParameters().length == 1 ) {
-			Point3D shapePoint = asPointWithoutSnap( task, "select-split-shape", 0 );
+			Point3D shapePoint = asPoint( task, "select-split-shape", 0 );
 			DesignShape shape = selectNearestShapeAtPoint( task, shapePoint );
 			if( shape == null ) return SUCCESS;
 			promptForPoint( task, "select-split-point" );
@@ -30,7 +30,7 @@ public class Split extends EditCommand {
 		if( task.hasParameter( 1 ) ) {
 			setCaptureUndoChanges( task, true );
 
-			Point3D shapePoint = asPointWithoutSnap( task, "select-split-shape", 0 );
+			Point3D shapePoint = asPoint( task, "select-split-shape", 0 );
 			Point3D splitPoint = asPoint( task, "select-split-point", 1 );
 			DesignShape shape = selectNearestShapeAtPoint( task, shapePoint );
 

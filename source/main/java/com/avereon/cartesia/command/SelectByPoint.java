@@ -1,5 +1,6 @@
 package com.avereon.cartesia.command;
 
+import com.avereon.cartesia.tool.DesignCommandContext;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseEvent;
@@ -36,18 +37,17 @@ public class SelectByPoint extends SelectCommand {
 				task.getTool().screenPointSelect( screenPoint, toggle );
 				return SUCCESS;
 			} else {
-				//task.getIndex();
-				// FIXME Some commands do not want workplane point, but want "real" points
-				//log.atConfig().log("inputmode={0}", task.getContext().getInputMode() );
-				//if( task.getContext().getInputMode() == DesignCommandContext.Input.POINT ) {
-				return task.getTool().screenToWorkplane( screenPoint );
-				//}
+				if( isSelectingShape( task ) ) {
+					return task.getTool().screenToWorld( screenPoint );
+				} else {
+					return task.getTool().screenToWorkplane( screenPoint );
+				}
 			}
 		}
 
 		if( task.hasParameter( 0 ) ) {
 			// If there is a parameter, use that
-			Point3D worldPoint = asPointWithoutSnap( task, "select-point", 0 );
+			Point3D worldPoint = asPoint( task, "select-point", 0 );
 
 			if( task.getContext().isSelectMode() ) {
 				task.getTool().worldPointSelect( worldPoint, toggle );
@@ -58,6 +58,12 @@ public class SelectByPoint extends SelectCommand {
 		}
 
 		return FAILURE;
+	}
+
+	private boolean isSelectingShape( CommandTask task ) {
+		CommandTask priorTask = task.getPrior();
+		Command priorCommand = priorTask == null ? null : priorTask.getCommand();
+		return priorCommand instanceof Prompt && priorCommand.getInputMode() == DesignCommandContext.Input.SHAPE;
 	}
 
 }

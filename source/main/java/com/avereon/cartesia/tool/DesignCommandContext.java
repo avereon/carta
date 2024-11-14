@@ -45,6 +45,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		NONE,
 		NUMBER,
 		POINT,
+		SHAPE,
 		TEXT
 	}
 
@@ -429,6 +430,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		// one of the commands could be setting a new prompt
 		if( Fx.isRunning() ) getCommandPrompt().clear();
 
+		request.setPrior( commandStack.peek() );
 		commandStack.push( request );
 		log.atTrace().log( "Command submitted %s", request );
 

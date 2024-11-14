@@ -8,6 +8,7 @@ import com.avereon.zarra.javafx.Fx;
 import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -36,6 +37,10 @@ public class CommandTask {
 	private Object[] parameters;
 
 	private Object result;
+
+	@Getter
+	@Setter
+	private CommandTask prior;
 
 	public CommandTask( DesignCommandContext context, DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
 		this.context = Objects.requireNonNull( context );
