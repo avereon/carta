@@ -3,10 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.view.DesignLayerEvent;
 import com.avereon.cartesia.tool.view.DesignLayerPane;
-import com.avereon.cartesia.tool.view.DesignPane;
-import com.avereon.cartesia.tool.view.DesignShapeView;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.product.Rb;
@@ -32,13 +29,13 @@ public class DesignToolLayersGuide extends Guide {
 
 	private final XenonProgramProduct product;
 
-	private final DesignToolV1 tool;
+	private final BaseDesignTool tool;
 
 	private final Map<DesignLayer, GuideNode> layerGuideNodes;
 
 	private final Map<GuideNode, DesignLayer> guideNodeLayers;
 
-	public DesignToolLayersGuide( XenonProgramProduct product, DesignToolV1 tool ) {
+	public DesignToolLayersGuide( XenonProgramProduct product, BaseDesignTool tool ) {
 		this.product = product;
 		this.tool = tool;
 		this.layerGuideNodes = new ConcurrentHashMap<>();
@@ -80,20 +77,20 @@ public class DesignToolLayersGuide extends Guide {
 
 	public void link() {
 		Design design = tool.getDesign();
-		DesignPane pane = tool.getDesignPane();
+		//DesignPane pane = tool.getDesignPane();
 
 		// Populate the guide
 		design.getAllLayers().forEach( l -> addLayer( l, null ) );
 
-		// Add listeners for changes
-		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
-			DesignLayerPane l = e.getLayer();
-			addLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
-		} );
-		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
-			DesignLayerPane l = e.getLayer();
-			removeLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
-		} );
+//		// Add listeners for changes
+//		pane.addEventFilter( DesignLayerEvent.LAYER_ADDED, e -> {
+//			DesignLayerPane l = e.getLayer();
+//			addLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
+//		} );
+//		pane.addEventFilter( DesignLayerEvent.LAYER_REMOVED, e -> {
+//			DesignLayerPane l = e.getLayer();
+//			removeLayer( (DesignLayer)DesignShapeView.getDesignData( l ), l );
+//		} );
 	}
 
 	@SuppressWarnings( "unchecked" )
