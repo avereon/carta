@@ -3,7 +3,7 @@ package com.avereon.cartesia.command.camera;
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.tool.view.DesignPaneMarea;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.Test;
 
@@ -25,7 +25,7 @@ public class CameraZoomInTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).zoom( eq( new Point3D( 1, 2, 3 ) ), eq( DesignPaneMarea.ZOOM_IN_FACTOR ) );
+		verify( tool, times( 1 ) ).zoom( eq( new Point3D( 1, 2, 3 ) ), eq( BaseDesignTool.ZOOM_IN_FACTOR ) );
 		assertThat( result ).isEqualTo( Command.Result.SUCCESS );
 	}
 

@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.tool.view.DesignPane;
 import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
 import com.avereon.zarra.javafx.Fx;
@@ -52,7 +51,7 @@ public class CoordinateStatus extends HBox {
 		getChildren().addAll( xPane, yPane, zPane, mPane );
 
 		updatePosition( Point3D.ZERO );
-		updateZoom( DesignPane.DEFAULT_ZOOM );
+		updateZoom( BaseDesignTool.DEFAULT_ZOOM );
 	}
 
 	public void updateZoom( double zoom ) {

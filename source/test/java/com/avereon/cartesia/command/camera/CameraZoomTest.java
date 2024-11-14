@@ -2,12 +2,8 @@ package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.command.Command;
-import com.avereon.cartesia.command.InvalidInputException;
-import com.avereon.cartesia.command.Prompt;
-import com.avereon.cartesia.command.Value;
-import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.tool.view.DesignPaneMarea;
+import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import org.junit.jupiter.api.Test;
@@ -86,7 +82,7 @@ public class CameraZoomTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).zoom( new Point3D( 1, 2, 0 ), DesignPaneMarea.ZOOM_IN_FACTOR );
+		verify( tool, times( 1 ) ).zoom( new Point3D( 1, 2, 0 ), BaseDesignTool.ZOOM_IN_FACTOR );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 
@@ -109,7 +105,7 @@ public class CameraZoomTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).zoom( new Point3D( 1, 2, 0 ), DesignPaneMarea.ZOOM_OUT_FACTOR );
+		verify( tool, times( 1 ) ).zoom( new Point3D( 1, 2, 0 ), BaseDesignTool.ZOOM_OUT_FACTOR );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 

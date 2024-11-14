@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.tool.view.DesignPaneMarea;
+import com.avereon.cartesia.tool.BaseDesignTool;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;
 
@@ -11,13 +11,13 @@ import static com.avereon.cartesia.command.Command.Result.SUCCESS;
  *
  * <p>This command does not require any parameters. If no parameters are
  * provided it assumes the zoom will be centered around the current view point
- * and will use {@link DesignPaneMarea#ZOOM_IN_FACTOR} as the zoom factor.</p>
+ * and will use {@link BaseDesignTool#ZOOM_IN_FACTOR} as the zoom factor.</p>
  */
 public class CameraZoomIn extends CameraZoom {
 
 	@Override
 	public Object execute( CommandTask task) {
-		zoomByFactor( task.getTool(), task.getTool().getViewpoint(), DesignPaneMarea.ZOOM_IN_FACTOR );
+		zoomByFactor( task.getTool(), task.getTool().getViewpoint(), BaseDesignTool.ZOOM_IN_FACTOR );
 		return SUCCESS;
 	}
 

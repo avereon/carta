@@ -1,8 +1,8 @@
 package com.avereon.cartesia.command.camera;
 
 import com.avereon.cartesia.command.CommandTask;
+import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.cartesia.tool.view.DesignPaneMarea;
 import javafx.geometry.Point3D;
 import javafx.scene.input.GestureEvent;
 import javafx.scene.input.ScrollEvent;
@@ -29,8 +29,8 @@ public class CameraZoom extends CameraCommand {
 				// NOTE Using the shift key causes the deltaX to change :-)
 				double deltaX = scrollEvent.getDeltaX();
 				double deltaY = scrollEvent.getDeltaY();
-				if( deltaX != 0.0 ) zoomByFactor( task.getTool(), point, deltaX > 0 ? DesignPaneMarea.ZOOM_IN_FACTOR : DesignPaneMarea.ZOOM_OUT_FACTOR );
-				if( deltaY != 0.0 ) zoomByFactor( task.getTool(), point, deltaY > 0 ? DesignPaneMarea.ZOOM_IN_FACTOR : DesignPaneMarea.ZOOM_OUT_FACTOR );
+				if( deltaX != 0.0 ) zoomByFactor( task.getTool(), point, deltaX > 0 ? BaseDesignTool.ZOOM_IN_FACTOR : BaseDesignTool.ZOOM_OUT_FACTOR );
+				if( deltaY != 0.0 ) zoomByFactor( task.getTool(), point, deltaY > 0 ? BaseDesignTool.ZOOM_IN_FACTOR : BaseDesignTool.ZOOM_OUT_FACTOR );
 				return SUCCESS;
 			}
 
