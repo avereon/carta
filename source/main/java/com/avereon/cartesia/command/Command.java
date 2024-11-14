@@ -229,14 +229,6 @@ public abstract class Command {
 		return asPoint( task, rbKey, point, true );
 	}
 
-	/// It would be nice to deprecate this method, but some commands insist that
-	/// the workplane point (snap to grid) not be used, for example when selecting
-	/// shapes to trim.
-	@Deprecated
-	protected Point3D asPointWithoutSnap( CommandTask task, String rbKey, int index ) throws Exception {
-		return asPoint( task, rbKey, task.getParameter( index ), false );
-	}
-
 	protected String asText( CommandTask task, String rbKey, int index ) throws Exception {
 		Object value = task.getParameter( index );
 		if( value == null ) throw new InvalidInputException( task.getCommand(), rbKey, null );
@@ -260,7 +252,7 @@ public abstract class Command {
 
 	protected void promptForShape( CommandTask task, String key ) {
 		task.getTool().setCursor( Cursor.HAND );
-		promptForValue( task, key, DesignCommandContext.Input.NONE );
+		promptForValue( task, key, DesignCommandContext.Input.SHAPE );
 	}
 
 	protected void promptForText( CommandTask task, String key ) {
