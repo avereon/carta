@@ -66,6 +66,9 @@ public class CameraMove extends CameraCommand {
 
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
+		if( originalViewPoint == null ) return;
+		if( originalTransform == null ) return;
+
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 		Point3D anchor = task.getContext().getWorldAnchor();
 		Point3D corner = originalTransform.transform( new Point3D( event.getX(), event.getY(), event.getZ() ) );
