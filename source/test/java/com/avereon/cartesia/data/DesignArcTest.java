@@ -1,11 +1,14 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadConstants;
+import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.curve.math.Constants;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
+import org.assertj.core.data.Percentage;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -380,6 +383,64 @@ public class DesignArcTest {
 		Point3DAssert.assertThat( points.getFirst() ).isCloseTo( new Point3D( 1, 7, 0 ) );
 		Point3DAssert.assertThat( points.get( 1 ) ).isCloseTo( new Point3D( -4, 2, 0 ) );
 		Point3DAssert.assertThat( points.get( 2 ) ).isCloseTo( new Point3D( 1, -3, 0 ) );
+	}
+
+	@Test
+	void testGetBounds() {
+		// given
+		double fullWidth = 1.0;
+		double halfWidth = 0.5 * fullWidth;
+		double radiusX = 3.0;
+		double radiusY = 5.0;
+
+		// Calculate the correct angle against the arc
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), radiusX, radiusY );
+		double theta = CadGeometry.ellipseAngle360( ellipse, new Point3D( -1, -1, 0 ) ) + 360 - 90;
+
+		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 90.0, theta, DesignArc.Type.OPEN );
+
+		// when
+		Bounds bounds = arc.getBounds();
+
+		// then
+		assertThat( bounds ).isNotNull();
+		assertThat( bounds.getMinX() ).isCloseTo( -radiusX - halfWidth, Percentage.withPercentage( 1.0 ) );
+		assertThat( bounds.getMaxX() ).isCloseTo( 0 + halfWidth, Percentage.withPercentage( 1.0 ) );
+
+		assertThat( bounds.getMinY() ).isCloseTo( -2.5724787771376323 - halfWidth, Percentage.withPercentage( 1.0 ) );
+		assertThat( bounds.getMaxY() ).isCloseTo( radiusY + halfWidth, Percentage.withPercentage( 1.0 ) );
+
+		assertThat( bounds.getWidth() ).isCloseTo( radiusX + fullWidth, Percentage.withPercentage( 1.0 ) );
+		assertThat( bounds.getHeight() ).isCloseTo( 7.5724787771376323 + fullWidth, Percentage.withPercentage( 1.0 ) );
+	}
+
+	@Test
+	void testGetSelectBounds() {
+		// given
+		double fullWidth = 1.05;
+		double halfWidth = 0.5 * fullWidth;
+		double radiusX = 3.0;
+		double radiusY = 5.0;
+
+		// Calculate the correct angle against the arc
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), radiusX, radiusY );
+		double theta = CadGeometry.ellipseAngle360( ellipse, new Point3D( -1, -1, 0 ) ) + 360 - 90;
+
+		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 90.0, theta, DesignArc.Type.OPEN );
+
+		// when
+		Bounds bounds = arc.getSelectBounds();
+
+		// then
+		assertThat( bounds ).isNotNull();
+		assertThat( bounds.getMinX() ).isCloseTo( -radiusX - halfWidth, Percentage.withPercentage( 1.0 ) );
+		assertThat( bounds.getMaxX() ).isCloseTo( 0 + halfWidth, Percentage.withPercentage( 1.0 ) );
+
+		assertThat( bounds.getMinY() ).isCloseTo( -2.5724787771376323 - halfWidth, Percentage.withPercentage( 1.0 ) );
+		assertThat( bounds.getMaxY() ).isCloseTo( radiusY + halfWidth, Percentage.withPercentage( 1.0 ) );
+
+		assertThat( bounds.getWidth() ).isCloseTo( radiusX + fullWidth, Percentage.withPercentage( 1.0 ) );
+		assertThat( bounds.getHeight() ).isCloseTo( 7.5724787771376323 + fullWidth, Percentage.withPercentage( 1.0 ) );
 	}
 
 }

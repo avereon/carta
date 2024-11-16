@@ -10,12 +10,13 @@ import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @CustomLog
 public class DesignEllipse extends DesignShape {
@@ -142,19 +143,19 @@ public class DesignEllipse extends DesignShape {
 		return CadTransform.scale( 1, xRadius / yRadius, 0 ).combine( calcOrientation( center, rotate ).getWorldToLocalTransform() );
 	}
 
-	@Override
-	public Bounds getBounds() {
-		// TODO This is used a lot and should be cached
-
-		double x = getOrigin().getX() - getXRadius();
-		double y = getOrigin().getY() - getYRadius();
-		double w = 2 * getXRadius();
-		double h = 2 * getYRadius();
-
-		// TODO Need to take rotation into account
-
-		return new BoundingBox( x, y, w, h );
-	}
+//	@Override
+//	public Bounds getBounds() {
+//		// TODO This is used a lot and should be cached
+//
+//		double x = getOrigin().getX() - getXRadius();
+//		double y = getOrigin().getY() - getYRadius();
+//		double w = 2 * getXRadius();
+//		double h = 2 * getYRadius();
+//
+//		// TODO Need to take rotation into account
+//
+//		return new BoundingBox( x, y, w, h );
+//	}
 
 	@Override
 	public List<Point3D> getReferencePoints() {

@@ -132,13 +132,14 @@ public class DrawEllipseArc5 extends DrawCommand {
 				case 2 -> {
 					// Arc X radius and rotate
 					referenceLine.setPoint( point );
-					previewArc.setRadii( new Point3D( point.distance( previewArc.getOrigin() ), 0, 0 ) );
-					previewArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
+					//previewArc.setRadii( new Point3D( point.distance( previewArc.getOrigin() ), 0, 0 ) );
 				}
 				case 3 -> {
 					// Arc Y radius
 					referenceLine.setPoint( point );
+					// FIXME The resulting arc is correct, but the preview is incorrect
 					previewArc.setRadii( new Point3D( previewArc.getXRadius(), deriveYRadius( origin, xPoint, point ), 0 ) );
+					previewArc.setRotate( String.valueOf( deriveRotate( origin, point ) ) );
 				}
 				case 4 -> {
 					// Arc start

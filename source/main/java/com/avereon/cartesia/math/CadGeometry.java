@@ -374,7 +374,7 @@ public class CadGeometry {
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
 		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
-		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern().stream().map( v -> v ).toList() );
+		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
 
 		// Handle the rotate transform, if needed
 		double rotate = shape.calcRotate();

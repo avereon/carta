@@ -230,4 +230,46 @@ public class DesignLineTest {
 		assertThat( points ).containsExactly( new Point3D( -2, -1, 0 ), new Point3D( 2, 3, 0 ) );
 	}
 
+	@Test
+	void getBounds() {
+		// NOTE JavaFX forces a stroke with of 1.0 if the width is smaller
+
+		// given
+		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 2, 0 ) );
+
+		// when
+		Bounds bounds = line.getBounds();
+
+		// then
+		assertThat( bounds ).isNotNull();
+		assertThat( bounds.getMinX() ).isEqualTo( -0.5 );
+		assertThat( bounds.getMinY() ).isEqualTo( -0.5 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.5 );
+		assertThat( bounds.getWidth() ).isEqualTo( 2.0 );
+		assertThat( bounds.getHeight() ).isEqualTo( 3.0 );
+	}
+
+	@Test
+	void getSelectedBounds() {
+		// NOTE JavaFX forces a stroke with of 1.0 if the width is smaller
+
+		// given
+		DesignLine line = new DesignLine( new Point3D( 0, 0, 0 ), new Point3D( 1, 2, 0 ) );
+		line.setDrawWidth( "0.2" );
+
+		// when
+		Bounds bounds = line.getSelectBounds();
+
+		// then
+		// FIXME These values are incorrect for a line with draw width
+		assertThat( bounds ).isNotNull();
+		assertThat( bounds.getMinX() ).isEqualTo( -0.5 );
+		assertThat( bounds.getMinY() ).isEqualTo( -0.5 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1.5 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2.5 );
+		assertThat( bounds.getWidth() ).isEqualTo( 2.0 );
+		assertThat( bounds.getHeight() ).isEqualTo( 3.0 );
+	}
+
 }
