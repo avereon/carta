@@ -363,11 +363,13 @@ public class DesignToolV2 extends BaseDesignTool {
 		getDesignContext().getSelectedShapes().addListener( this::onSelectedShapesChanged );
 
 		// Update the select aperture when the mouse moves
-		addEventFilter( MouseEvent.MOUSE_MOVED, e -> {
-			if( getCommandContext().isEmptyMode() ) {
-				setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) );
+		addEventFilter(
+			MouseEvent.MOUSE_MOVED, e -> {
+				if( getCommandContext().isEmptyMode() ) {
+					setSelectAperture( new Point3D( e.getX(), e.getY(), e.getZ() ), new Point3D( e.getX(), e.getY(), e.getZ() ) );
+				}
 			}
-		} );
+		);
 
 		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -411,11 +413,13 @@ public class DesignToolV2 extends BaseDesignTool {
 		super.allocate();
 
 		// Add asset switch listener to remove command prompt
-		getProgram().register( AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-			if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
-				unregisterStatusBarItems();
+		getProgram().register(
+			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
+					unregisterStatusBarItems();
+				}
 			}
-		} );
+		);
 	}
 
 	@Override
@@ -445,7 +449,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Remove asset switch listener to unregister status bar items
 		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
 
-		if(renderer!= null ) renderer.setDesign( null );
+		if( renderer != null ) renderer.setDesign( null );
 
 		super.deallocate();
 	}
@@ -457,7 +461,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setViewPoint( Point3D point ) {
-		renderer.setViewpoint(  point );
+		renderer.setViewpoint( point );
 	}
 
 	public DoubleProperty viewpointXProperty() {
@@ -483,7 +487,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setZoom( double zoom ) {
-		renderer.setZoom(  zoom, zoom );
+		renderer.setZoom( zoom, zoom );
 	}
 
 	public DoubleProperty zoomXProperty() {
@@ -913,7 +917,7 @@ public class DesignToolV2 extends BaseDesignTool {
 			}
 		} else {
 			Bounds box = FxUtil.bounds( anchor, mouse );
-			selectAperture = new DesignBox( box);
+			selectAperture = new DesignBox( box );
 		}
 
 		renderer.setSelectAperture( selectAperture );
@@ -1045,21 +1049,21 @@ public class DesignToolV2 extends BaseDesignTool {
 		workplane.setOrigin( settings.get( DesignWorkplane.WORKPANE_ORIGIN, DesignWorkplane.DEFAULT_GRID_ORIGIN ) );
 
 		workplane.setGridAxisVisible( settings.get( DesignWorkplane.GRID_AXIS_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE ) );
-		workplane.setGridAxisPaint( Paints.parseWithNullOnException( settings.get( DesignWorkplane.GRID_AXIS_PAINT, DesignWorkplane.DEFAULT_GRID_AXIS_PAINT ) ) );
+		workplane.setGridAxisPaint( settings.get( DesignWorkplane.GRID_AXIS_PAINT, DesignWorkplane.DEFAULT_GRID_AXIS_PAINT ) );
 		workplane.setGridAxisWidth( settings.get( DesignWorkplane.GRID_AXIS_WIDTH, DesignWorkplane.DEFAULT_GRID_AXIS_WIDTH ) );
 
 		workplane.setMajorGridVisible( settings.get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE ) );
 		workplane.setMajorGridX( settings.get( DesignWorkplane.GRID_MAJOR_X, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
 		workplane.setMajorGridY( settings.get( DesignWorkplane.GRID_MAJOR_Y, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
 		workplane.setMajorGridZ( settings.get( DesignWorkplane.GRID_MAJOR_Z, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
-		workplane.setMajorGridPaint( Paints.parseWithNullOnException( settings.get( DesignWorkplane.GRID_MAJOR_PAINT, DesignWorkplane.DEFAULT_GRID_MAJOR_PAINT ) ) );
+		workplane.setMajorGridPaint( settings.get( DesignWorkplane.GRID_MAJOR_PAINT, DesignWorkplane.DEFAULT_GRID_MAJOR_PAINT ) );
 		workplane.setMajorGridWidth( settings.get( DesignWorkplane.GRID_MAJOR_WIDTH, DesignWorkplane.DEFAULT_GRID_MAJOR_WIDTH ) );
 
 		workplane.setMinorGridVisible( settings.get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_MINOR_VISIBLE ) );
 		workplane.setMinorGridX( settings.get( DesignWorkplane.GRID_MINOR_X, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
 		workplane.setMinorGridY( settings.get( DesignWorkplane.GRID_MINOR_Y, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
 		workplane.setMinorGridZ( settings.get( DesignWorkplane.GRID_MINOR_Z, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
-		workplane.setMinorGridPaint( Paints.parseWithNullOnException( settings.get( DesignWorkplane.GRID_MINOR_PAINT, DesignWorkplane.DEFAULT_GRID_MINOR_PAINT ) ) );
+		workplane.setMinorGridPaint( settings.get( DesignWorkplane.GRID_MINOR_PAINT, DesignWorkplane.DEFAULT_GRID_MINOR_PAINT ) );
 		workplane.setMinorGridWidth( settings.get( DesignWorkplane.GRID_MINOR_WIDTH, DesignWorkplane.DEFAULT_GRID_MINOR_WIDTH ) );
 
 		workplane.setSnapGridX( settings.get( DesignWorkplane.GRID_SNAP_X, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
@@ -1070,21 +1074,21 @@ public class DesignToolV2 extends BaseDesignTool {
 		settings.register( DesignWorkplane.GRID_ORIGIN, e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( DesignWorkplane.GRID_AXIS_VISIBLE, e -> workplane.setGridAxisVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
-		settings.register( DesignWorkplane.GRID_AXIS_PAINT, e -> workplane.setGridAxisPaint( Paints.parse( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( DesignWorkplane.GRID_AXIS_PAINT, e -> workplane.setGridAxisPaint( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_AXIS_WIDTH, e -> workplane.setGridAxisWidth( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( DesignWorkplane.GRID_MAJOR_VISIBLE, e -> workplane.setMajorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_X, e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_Y, e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
 		//settings.register( DesignWorkplane.GRID_MAJOR_Z, e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MAJOR_PAINT, e -> workplane.setMajorGridPaint( Paints.parse( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( DesignWorkplane.GRID_MAJOR_PAINT, e -> workplane.setMajorGridPaint( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MAJOR_WIDTH, e -> workplane.setMajorGridWidth( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( DesignWorkplane.GRID_MINOR_VISIBLE, e -> workplane.setMinorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_X, e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_Y, e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
 		//settings.register( DesignWorkplane.GRID_MINOR_Z, e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MINOR_PAINT, e -> workplane.setMinorGridPaint( Paints.parse( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( DesignWorkplane.GRID_MINOR_PAINT, e -> workplane.setMinorGridPaint( String.valueOf( e.getNewValue() ) ) );
 		settings.register( DesignWorkplane.GRID_MINOR_WIDTH, e -> workplane.setMinorGridWidth( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( DesignWorkplane.GRID_SNAP_X, e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );

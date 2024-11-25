@@ -265,11 +265,11 @@ public class DesignWorkplane extends Node {
 			setSnapGridZ( snapGridZ );
 			setGridStyle( style );
 
-			setGridAxisPaint( Paints.parse( DEFAULT_GRID_AXIS_PAINT ) );
+			setGridAxisPaint( DEFAULT_GRID_AXIS_PAINT );
 			setGridAxisWidth( DEFAULT_GRID_AXIS_WIDTH );
-			setMajorGridPaint( Paints.parse( DEFAULT_GRID_MAJOR_PAINT ) );
+			setMajorGridPaint(  DEFAULT_GRID_MAJOR_PAINT );
 			setMajorGridWidth( DEFAULT_GRID_MAJOR_WIDTH );
-			setMinorGridPaint( Paints.parse( DEFAULT_GRID_MINOR_PAINT ) );
+			setMinorGridPaint( DEFAULT_GRID_MINOR_PAINT );
 			setMinorGridWidth( DEFAULT_GRID_MINOR_WIDTH );
 		} );
 	}
@@ -346,16 +346,17 @@ public class DesignWorkplane extends Node {
 	}
 
 	public Paint calcGridAxisPaint() {
+		if( gridAxisPaint == null ) gridAxisPaint = Paints.parse( getGridAxisPaint() );
 		return gridAxisPaint;
 	}
 
 	public String getGridAxisPaint() {
-		return getValue( GRID_AXIS_PAINT );
+		return getValue( GRID_AXIS_PAINT, DEFAULT_GRID_AXIS_PAINT );
 	}
 
-	public DesignWorkplane setGridAxisPaint( Paint paint ) {
-		this.gridAxisPaint = paint;
-		setValue( GRID_AXIS_PAINT, Paints.toString( paint ) );
+	public DesignWorkplane setGridAxisPaint( String paint ) {
+		setValue( GRID_AXIS_PAINT,  paint );
+		this.gridAxisPaint = null;
 		return this;
 	}
 
@@ -437,16 +438,17 @@ public class DesignWorkplane extends Node {
 	}
 
 	public Paint calcMajorGridPaint() {
+		if( majorGridPaint == null ) majorGridPaint = Paints.parse( getMajorGridPaint() );
 		return majorGridPaint;
 	}
 
 	public String getMajorGridPaint() {
-		return getValue( GRID_MAJOR_PAINT );
+		return getValue( GRID_MAJOR_PAINT, DEFAULT_GRID_MAJOR_PAINT );
 	}
 
-	public DesignWorkplane setMajorGridPaint( Paint paint ) {
-		this.majorGridPaint = paint;
-		setValue( GRID_MAJOR_PAINT, Paints.toString( paint ) );
+	public DesignWorkplane setMajorGridPaint( String paint ) {
+		setValue( GRID_MAJOR_PAINT,  paint );
+		this.majorGridPaint = null;
 		return this;
 	}
 
@@ -528,16 +530,17 @@ public class DesignWorkplane extends Node {
 	}
 
 	public Paint calcMinorGridPaint() {
+		if( minorGridPaint == null ) minorGridPaint = Paints.parse( getMinorGridPaint() );
 		return minorGridPaint;
 	}
 
 	public String getMinorGridPaint() {
-		return getValue( GRID_MINOR_PAINT );
+		return getValue( GRID_MINOR_PAINT, DEFAULT_GRID_MINOR_PAINT );
 	}
 
-	public DesignWorkplane setMinorGridPaint( Paint paint ) {
-		this.minorGridPaint = paint;
-		setValue( GRID_MINOR_PAINT, Paints.toString( paint ) );
+	public DesignWorkplane setMinorGridPaint( String paint ) {
+		setValue( GRID_MINOR_PAINT,  paint );
+		this.minorGridPaint = null;
 		return this;
 	}
 
