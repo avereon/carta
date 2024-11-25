@@ -99,11 +99,13 @@ public class DrawLinePerpendicular extends DrawCommand {
 			double m = mouse.subtract( origin ).dotProduct( v );
 			return origin.add( v.multiply( m ) );
 		} else if( reference instanceof DesignEllipse ellipse ) {
-			// FIXME This works well for circles and circle arcs,
-			//  not for ellipses and ellipse arcs
-			Point3D v = ellipse.getOrigin().subtract( origin ).normalize();
-			double m = mouse.subtract( origin ).dotProduct( v );
-			return origin.add( v.multiply( m ) );
+			if( ellipse.isCircular() ) {
+				Point3D v = ellipse.getOrigin().subtract( origin ).normalize();
+				double m = mouse.subtract( origin ).dotProduct( v );
+				return origin.add( v.multiply( m ) );
+			} else {
+				// TODO Calculate perpendicular for ellipses and ellipse arcs
+			}
 		}
 
 		return CadPoints.NONE;
