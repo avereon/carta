@@ -124,17 +124,17 @@ public class DesignWorkplane extends Node {
 	/**
 	 * The cached major grid X spacing.
 	 */
-	private double majorGridX;
+	private Double majorGridX;
 
 	/**
 	 * The cached major grid Y spacing.
 	 */
-	private double majorGridY;
+	private Double majorGridY;
 
 	/**
 	 * The cached major grid Z spacing.
 	 */
-	private double majorGridZ;
+	private Double majorGridZ;
 
 	/**
 	 * The cached major grid paint.
@@ -149,17 +149,17 @@ public class DesignWorkplane extends Node {
 	/**
 	 * The cached minor grid X spacing.
 	 */
-	private double minorGridX;
+	private Double minorGridX;
 
 	/**
 	 * The cached minor grid Y spacing.
 	 */
-	private double minorGridY;
+	private Double minorGridY;
 
 	/**
 	 * The cached minor grid Z spacing.
 	 */
-	private double minorGridZ;
+	private Double minorGridZ;
 
 	private Paint minorGridPaint;
 
@@ -168,17 +168,17 @@ public class DesignWorkplane extends Node {
 	/**
 	 * The cached snap grid X spacing.
 	 */
-	private double snapGridX;
+	private Double snapGridX;
 
 	/**
 	 * The cached snap grid Y spacing.
 	 */
-	private double snapGridY;
+	private Double snapGridY;
 
 	/**
 	 * The cached snap grid Z spacing.
 	 */
-	private double snapGridZ;
+	private Double snapGridZ;
 
 	private Boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBLE;
 
@@ -411,54 +411,48 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcMajorGridX() {
+		if( majorGridX == null ) majorGridX = CadMath.evalNoException( getMajorGridX() );
 		return majorGridX;
 	}
 
-	// FIXME Double check this implementation
 	public String getMajorGridX() {
-		return getValue( GRID_MAJOR_X );
+		return getValue( GRID_MAJOR_X, DEFAULT_GRID_MAJOR_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setMajorGridX( String majorGridX ) {
-		this.majorGridX = CadMath.evalNoException( majorGridX );
 		setValue( GRID_MAJOR_X, majorGridX );
+		this.majorGridX = null;
 		return this;
 	}
 
-	// FIXME Double check this implementation
-	public double calcMajorGridY() {
+	public Double calcMajorGridY() {
+		if( majorGridY == null ) majorGridY = CadMath.evalNoException( getMajorGridY() );
 		return majorGridY;
 	}
 
-	// FIXME Double check this implementation
 	public String getMajorGridY() {
-		return getValue( GRID_MAJOR_Y );
+		return getValue( GRID_MAJOR_Y, DEFAULT_GRID_MAJOR_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setMajorGridY( String majorGridY ) {
-		this.majorGridY = CadMath.evalNoException( majorGridY );
 		setValue( GRID_MAJOR_Y, majorGridY );
+		this.majorGridY = null;
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcMajorGridZ() {
+		if( majorGridZ == null ) majorGridZ = CadMath.evalNoException( getMajorGridZ() );
 		return majorGridZ;
 	}
 
-	// FIXME Double check this implementation
 	public String getMajorGridZ() {
-		return getValue( GRID_MAJOR_Z );
+		return getValue( GRID_MAJOR_Z, DEFAULT_GRID_MAJOR_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setMajorGridZ( String majorGridZ ) {
-		this.majorGridZ = CadMath.evalNoException( majorGridZ );
 		setValue( GRID_MAJOR_Z, majorGridZ );
+		this.majorGridZ = null;
 		return this;
 	}
 
@@ -514,54 +508,48 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcMinorGridX() {
+		if( minorGridX == null ) minorGridX = CadMath.evalNoException( getMinorGridX() );
 		return minorGridX;
 	}
 
-	// FIXME Double check this implementation
 	public String getMinorGridX() {
-		return getValue( GRID_MINOR_X );
+		return getValue( GRID_MINOR_X, DEFAULT_GRID_MINOR_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setMinorGridX( String minorGridX ) {
-		this.minorGridX = CadMath.evalNoException( minorGridX );
 		setValue( GRID_MINOR_X, minorGridX );
+		this.minorGridX = null;
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcMinorGridY() {
+		if( minorGridY == null ) minorGridY = CadMath.evalNoException( getMinorGridY() );
 		return minorGridY;
 	}
 
-	// FIXME Double check this implementation
 	public String getMinorGridY() {
-		return getValue( GRID_MINOR_Y );
+		return getValue( GRID_MINOR_Y, DEFAULT_GRID_MINOR_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setMinorGridY( String minorGridY ) {
-		this.minorGridY = CadMath.evalNoException( minorGridY );
 		setValue( GRID_MINOR_Y, minorGridY );
+		this.minorGridY = null;
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcMinorGridZ() {
+		if( minorGridZ == null ) minorGridZ = CadMath.evalNoException( getMinorGridZ() );
 		return minorGridZ;
 	}
 
-	// FIXME Double check this implementation
 	public String getMinorGridZ() {
-		return getValue( GRID_MINOR_Z );
+		return getValue( GRID_MINOR_Z, DEFAULT_GRID_MINOR_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setMinorGridZ( String minorGridZ ) {
-		this.minorGridZ = CadMath.evalNoException( minorGridZ );
 		setValue( GRID_MINOR_Z, minorGridZ );
+		this.minorGridZ = null;
 		return this;
 	}
 
@@ -598,54 +586,48 @@ public class DesignWorkplane extends Node {
 	// ******************************
 	// Grid Snap Spacing
 	// ******************************
-	// FIXME Double check this implementation
 	public double calcSnapGridX() {
+		if( snapGridX == null ) snapGridX = CadMath.evalNoException( getSnapGridX() );
 		return snapGridX;
 	}
 
-	// FIXME Double check this implementation
 	public String getSnapGridX() {
-		return getValue( GRID_SNAP_X );
+		return getValue( GRID_SNAP_X, DEFAULT_GRID_SNAP_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setSnapGridX( String snapGridX ) {
-		this.snapGridX = CadMath.evalNoException( snapGridX );
 		setValue( GRID_SNAP_X, snapGridX );
+		this.snapGridX = null;
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcSnapGridY() {
+		if( snapGridY == null ) snapGridY = CadMath.evalNoException( getSnapGridY() );
 		return snapGridY;
 	}
 
-	// FIXME Double check this implementation
 	public String getSnapGridY() {
-		return getValue( GRID_SNAP_Y );
+		return getValue( GRID_SNAP_Y, DEFAULT_GRID_SNAP_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setSnapGridY( String snapGridY ) {
-		this.snapGridY = CadMath.evalNoException( snapGridY );
 		setValue( GRID_SNAP_Y, snapGridY );
+		this.snapGridY = null;
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public double calcSnapGridZ() {
+		if( snapGridZ == null ) snapGridZ = CadMath.evalNoException( getSnapGridZ() );
 		return snapGridZ;
 	}
 
-	// FIXME Double check this implementation
 	public String getSnapGridZ() {
-		return getValue( GRID_SNAP_Z );
+		return getValue( GRID_SNAP_Z, DEFAULT_GRID_SNAP_SIZE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
-		this.snapGridZ = CadMath.evalNoException( snapGridZ );
 		setValue( GRID_SNAP_Z, snapGridZ );
+		this.snapGridZ = null;
 		return this;
 	}
 
