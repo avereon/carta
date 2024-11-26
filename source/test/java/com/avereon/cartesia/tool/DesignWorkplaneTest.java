@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.math.CadMath;
 import com.avereon.zarra.color.Colors;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -78,6 +79,7 @@ class DesignWorkplaneTest {
 		// then
 		assertThat( workplane.isMinorGridShowing() ).isEqualTo( expected );
 	}
+
 	@ParameterizedTest
 	@MethodSource( "gridAxisPaintArguments" )
 	void calcGridAxisPaint( String input, Color expected ) {
@@ -115,6 +117,69 @@ class DesignWorkplaneTest {
 
 		// then
 		assertThat( workplane.calcMinorGridPaint() ).isEqualTo( expected );
+	}
+
+	@ParameterizedTest
+	@MethodSource( "gridAxisWidthArguments" )
+	public void calcGridAxisWidth( String input, double expected ) {
+		// given
+		assertThat( workplane.calcGridAxisWidth() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_AXIS_WIDTH ) );
+
+		// when
+		workplane.setGridAxisWidth( input );
+
+		// then
+		assertThat( workplane.calcGridAxisWidth() ).isEqualTo( expected );
+	}
+
+	@ParameterizedTest
+	@MethodSource( "majorGridWidthArguments" )
+	public void calcMajorGridWidth( String input, double expected ) {
+		// given
+		assertThat( workplane.calcMajorGridWidth() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MAJOR_WIDTH ) );
+
+		// when
+		workplane.setMajorGridWidth( input );
+
+		// then
+		assertThat( workplane.calcMajorGridWidth() ).isEqualTo( expected );
+	}
+
+	@ParameterizedTest
+	@MethodSource( "minorGridWidthArguments" )
+	public void calcMinorGridWidth( String input, double expected ) {
+		// given
+		assertThat( workplane.calcMinorGridWidth() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MINOR_WIDTH ) );
+
+		// when
+		workplane.setMinorGridWidth( input );
+
+		// then
+		assertThat( workplane.calcMinorGridWidth() ).isEqualTo( expected );
+	}
+
+	private static Stream<Arguments> gridAxisWidthArguments() {
+		return widthArguments( DesignWorkplane.DEFAULT_GRID_AXIS_WIDTH );
+	}
+
+	private static Stream<Arguments> majorGridWidthArguments() {
+		return widthArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_WIDTH );
+	}
+
+	private static Stream<Arguments> minorGridWidthArguments() {
+		return widthArguments( DesignWorkplane.DEFAULT_GRID_MINOR_WIDTH );
+	}
+
+	private static Stream<Arguments> widthArguments( String defaultWidth ) {
+		return Stream.of(
+			Arguments.of( null, CadMath.evalNoException( defaultWidth ) ),
+			Arguments.of( "0.5", 0.5 ),
+			Arguments.of( "1/2", 0.5 ),
+			Arguments.of( "1.0", 1.0 ),
+			Arguments.of( "2/1", 2.0 ),
+			Arguments.of( "2.0", 2.0 ),
+			Arguments.of( null, CadMath.evalNoException( defaultWidth ) )
+		);
 	}
 
 	private static Stream<Arguments> gridAxisVisibleArguments() {
