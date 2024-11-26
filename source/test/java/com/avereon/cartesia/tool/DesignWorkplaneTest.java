@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.zarra.color.Colors;
 import javafx.scene.paint.Color;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -28,14 +27,57 @@ class DesignWorkplaneTest {
 		assertThat( workplane.isGridAxisVisible() ).isEqualTo( expected );
 	}
 
-	private static Stream<Arguments> gridAxisVisibleArguments() {
-		return booleanArguments( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+	@ParameterizedTest
+	@MethodSource( "gridMajorVisibleArguments" )
+	void isMajorGridVisible( Boolean input, boolean expected ) {
+		// given
+		assertThat( workplane.isMajorGridVisible() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+
+		// when
+		workplane.setMajorGridVisible( input );
+
+		// then
+		assertThat( workplane.isMajorGridVisible() ).isEqualTo( expected );
 	}
 
-	private static Stream<Arguments> booleanArguments( boolean defaultBoolean ) {
-		return Stream.of( Arguments.of( null, defaultBoolean ), Arguments.of( Boolean.FALSE, false ) );
+	@ParameterizedTest
+	@MethodSource( "gridMinorVisibleArguments" )
+	void isMinorGridVisible( Boolean input, boolean expected ) {
+		// given
+		assertThat( workplane.isMinorGridVisible() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+
+		// when
+		workplane.setMinorGridVisible( input );
+
+		// then
+		assertThat( workplane.isMinorGridVisible() ).isEqualTo( expected );
 	}
 
+	@ParameterizedTest
+	@MethodSource( "majorGridShowingArguments" )
+	void majorGridShowing( Boolean input, boolean expected ) {
+		// given
+		assertThat( workplane.isMajorGridShowing() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+
+		// when
+		workplane.setMajorGridShowing( input );
+
+		// then
+		assertThat( workplane.isMajorGridShowing() ).isEqualTo( expected );
+	}
+
+	@ParameterizedTest
+	@MethodSource( "minorGridShowingArguments" )
+	void minorGridShowing( Boolean input, boolean expected ) {
+		// given
+		assertThat( workplane.isMinorGridShowing() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+
+		// when
+		workplane.setMinorGridShowing( input );
+
+		// then
+		assertThat( workplane.isMinorGridShowing() ).isEqualTo( expected );
+	}
 	@ParameterizedTest
 	@MethodSource( "gridAxisPaintArguments" )
 	void calcGridAxisPaint( String input, Color expected ) {
@@ -75,56 +117,28 @@ class DesignWorkplaneTest {
 		assertThat( workplane.calcMinorGridPaint() ).isEqualTo( expected );
 	}
 
-	@Test
-	void performanceComparisonBoolean() {
-		//		Random random = new Random();
-		//		int iterations = 1000000000;
-		//
-		//		long start = System.currentTimeMillis();
-		//		for( int i = 0; i < iterations; i++ ) {
-		//			boolean flag = random.nextBoolean();
-		//		}
-		//		long end = System.currentTimeMillis();
-		//		long booleanDuration = end - start;
-		//
-		//		start = System.currentTimeMillis();
-		//		for( int i = 0; i < iterations; i++ ) {
-		//			boolean flag = Boolean.parseBoolean( random.nextBoolean() ? "true" : "false" );
-		//		}
-		//		end = System.currentTimeMillis();
-		//		long parseBooleanDuration = end - start;
-		//
-		//		System.out.println( "Boolean: " + booleanDuration + "ms" );
-		//		System.out.println( "Boolean: " + parseBooleanDuration + "ms" );
-		//		System.out.println( "Performance difference: " + (double)parseBooleanDuration / booleanDuration );
-
-		// RESULT Parsing the boolean is about 60-65% slower than direct method access
+	private static Stream<Arguments> gridAxisVisibleArguments() {
+		return booleanArguments( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
 	}
 
-	@Test
-	void performanceComparisonBooleanCast() {
-		//				Random random = new Random();
-		//				int iterations = 1000000000;
-		//
-		//				long start = System.currentTimeMillis();
-		//				for( int i = 0; i < iterations; i++ ) {
-		//					boolean flag = random.nextBoolean();
-		//				}
-		//				long end = System.currentTimeMillis();
-		//				long booleanDuration = end - start;
-		//
-		//				start = System.currentTimeMillis();
-		//				for( int i = 0; i < iterations; i++ ) {
-		//					boolean flag = random.nextBoolean() ? Boolean.TRUE : Boolean.FALSE;
-		//				}
-		//				end = System.currentTimeMillis();
-		//				long parseBooleanDuration = end - start;
-		//
-		//				System.out.println( "Boolean: " + booleanDuration + "ms" );
-		//				System.out.println( "Boolean: " + parseBooleanDuration + "ms" );
-		//				System.out.println( "Performance difference: " + (double)parseBooleanDuration / booleanDuration );
+	private static Stream<Arguments> gridMajorVisibleArguments() {
+		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+	}
 
-		// RESULT Casting the boolean is about 3% faster than direct method access
+	private static Stream<Arguments> gridMinorVisibleArguments() {
+		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MINOR_VISIBLE );
+	}
+
+	private static Stream<Arguments> majorGridShowingArguments() {
+		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+	}
+
+	private static Stream<Arguments> minorGridShowingArguments() {
+		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MINOR_VISIBLE );
+	}
+
+	private static Stream<Arguments> booleanArguments( boolean defaultBoolean ) {
+		return Stream.of( Arguments.of( null, defaultBoolean ), Arguments.of( Boolean.FALSE, false ), Arguments.of( null, defaultBoolean ) );
 	}
 
 	private static Stream<Arguments> gridAxisPaintArguments() {

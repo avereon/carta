@@ -106,6 +106,9 @@ public class DesignWorkplane extends Node {
 
 	private Grid grid;
 
+	/**
+	 * The cached grid axis visible.
+	 */
 	private Boolean gridAxisVisible;
 
 	/**
@@ -177,9 +180,9 @@ public class DesignWorkplane extends Node {
 	 */
 	private double snapGridZ;
 
-	private boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBLE;
+	private Boolean majorGridShowing = DEFAULT_GRID_MAJOR_VISIBLE;
 
-	private boolean minorGridShowing = DEFAULT_GRID_MINOR_VISIBLE;
+	private Boolean minorGridShowing = DEFAULT_GRID_MINOR_VISIBLE;
 
 	public DesignWorkplane() {
 		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
@@ -390,18 +393,17 @@ public class DesignWorkplane extends Node {
 	}
 
 	// FIXME Double check this implementation
-	public DesignWorkplane setMajorGridVisible( boolean visible ) {
+	public DesignWorkplane setMajorGridVisible( Boolean visible ) {
 		setValue( GRID_MAJOR_VISIBLE, visible );
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public boolean isMajorGridShowing() {
+		if( majorGridShowing == null ) majorGridShowing = DEFAULT_GRID_MAJOR_VISIBLE;
 		return majorGridShowing;
 	}
 
-	// FIXME Double check this implementation
-	public DesignWorkplane setMajorGridShowing( boolean showing ) {
+	public DesignWorkplane setMajorGridShowing( Boolean showing ) {
 		majorGridShowing = showing;
 		return this;
 	}
@@ -501,18 +503,17 @@ public class DesignWorkplane extends Node {
 	}
 
 	// FIXME Double check this implementation
-	public DesignWorkplane setMinorGridVisible( boolean visible ) {
+	public DesignWorkplane setMinorGridVisible( Boolean visible ) {
 		setValue( GRID_MINOR_VISIBLE, visible );
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public boolean isMinorGridShowing() {
+		if( minorGridShowing == null ) minorGridShowing = DEFAULT_GRID_MINOR_VISIBLE;
 		return minorGridShowing;
 	}
 
-	// FIXME Double check this implementation
-	public DesignWorkplane setMinorGridShowing( boolean showing ) {
+	public DesignWorkplane setMinorGridShowing( Boolean showing ) {
 		minorGridShowing = showing;
 		return this;
 	}
