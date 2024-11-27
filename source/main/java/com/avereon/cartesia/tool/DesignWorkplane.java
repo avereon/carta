@@ -7,7 +7,6 @@ import com.avereon.transaction.Txn;
 import com.avereon.zarra.color.Paints;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import lombok.CustomLog;
@@ -631,18 +630,15 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public GridStyle getGridStyle() {
 		return getValue( GRID_STYLE );
 	}
 
-	// FIXME Double check this implementation
 	public DesignWorkplane setGridStyle( GridStyle style ) {
 		setValue( GRID_STYLE, style );
 		return this;
 	}
 
-	// FIXME Double check this implementation
 	public Bounds getBounds() {
 		double boundaryXmin = Math.min( getBoundaryX1(), getBoundaryX2() );
 		double boundaryXmax = Math.max( getBoundaryX1(), getBoundaryX2() );
@@ -651,18 +647,6 @@ public class DesignWorkplane extends Node {
 		return new BoundingBox( boundaryXmin, boundaryYmin, boundaryXmax - boundaryXmin, boundaryYmax - boundaryYmin );
 	}
 
-	// FIXME Double check this implementation
-	public DesignWorkplane setBounds( Point2D min, Point2D max ) {
-		Txn.run( () -> {
-			setBoundaryX1( min.getX() );
-			setBoundaryY1( min.getY() );
-			setBoundaryX2( max.getX() );
-			setBoundaryY2( max.getY() );
-		} );
-		return this;
-	}
-
-	// FIXME Double check this implementation
 	public DesignWorkplane setBounds( Bounds bounds ) {
 		if( bounds == null ) return this;
 		Txn.run( () -> {
