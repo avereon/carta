@@ -242,12 +242,12 @@ public class DesignLineTest {
 
 		// then
 		assertThat( bounds ).isNotNull();
-		assertThat( bounds.getMinX() ).isEqualTo( -0.5 );
-		assertThat( bounds.getMinY() ).isEqualTo( -0.5 );
-		assertThat( bounds.getMaxX() ).isEqualTo( 1.5 );
-		assertThat( bounds.getMaxY() ).isEqualTo( 2.5 );
-		assertThat( bounds.getWidth() ).isEqualTo( 2.0 );
-		assertThat( bounds.getHeight() ).isEqualTo( 3.0 );
+		assertThat( bounds.getMinX() ).isEqualTo( 0 );
+		assertThat( bounds.getMinY() ).isEqualTo( 0 );
+		assertThat( bounds.getMaxX() ).isEqualTo( 1 );
+		assertThat( bounds.getMaxY() ).isEqualTo( 2 );
+		assertThat( bounds.getWidth() ).isEqualTo( 1.0 );
+		assertThat( bounds.getHeight() ).isEqualTo( 2.0 );
 	}
 
 	@Test
