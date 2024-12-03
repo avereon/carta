@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Vector;
 import com.avereon.zarra.font.FontUtil;
+import com.avereon.zarra.javafx.FxUtil;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -248,11 +249,7 @@ public class CadGeometry {
 	}
 
 	public static Bounds getBounds( Point3D a, Point3D b ) {
-		double x = Math.min( a.getX(), b.getX() );
-		double y = Math.min( a.getY(), b.getY() );
-		double w = Math.abs( a.getX() - b.getX() );
-		double h = Math.abs( a.getY() - b.getY() );
-		return new BoundingBox( x, y, w, h );
+		return FxUtil.bounds( a, b );
 	}
 
 	public static DesignEllipse circleFromThreePoints( Point3D start, Point3D mid, Point3D end ) {
