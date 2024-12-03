@@ -4,17 +4,17 @@
 
 Updated: 2024-12-02
 
-|         | Simple | Visual | Select |
-|---------|--------|--------|--------|
-| Line    | ✓      |        | ✓      |
-| Box     |        |        | ✓      |
-| Arc     |        |        | ✓      |
-| Ellipse |        |        | ✓      |
-| Cubic   |        |        | ✓      |
-| Quad    |        |        | ✓      |
-| Path    |        |        |        |
-| Marker  |        |        | ✓      |
-| Text    |        |        | ✓      |
+|         | Simple     | Visual | Select |
+|---------|------------|--------|--------|
+| Line    | 2024-12-02 |        | ✓      |
+| Box     | 2024-12-02 |        | ✓      |
+| Arc     |            |        | ✓      |
+| Ellipse |            |        | ✓      |
+| Cubic   |            |        | ✓      |
+| Quad    |            |        | ✓      |
+| Path    |            |        |        |
+| Marker  |            |        | ✓      |
+| Text    |            |        | ✓      |
 
 The bounds of the geometry without including stroke parameters.
 

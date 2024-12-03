@@ -29,7 +29,7 @@ public class DesignBox extends DesignShape {
 		this( new Point3D( x, y, 0 ), new Point3D( w, h, 0 ) );
 	}
 
-	public DesignBox( Bounds bounds) {
+	public DesignBox( Bounds bounds ) {
 		this( bounds.getMinX(), bounds.getMinY(), bounds.getWidth(), bounds.getHeight() );
 	}
 
@@ -53,16 +53,16 @@ public class DesignBox extends DesignShape {
 		return this;
 	}
 
-	//	@Override
-	//	protected Bounds computeGeometricBounds() {
-	//		// Computing the bounds for a box is pretty simple
-	//		// because the box fills its bounds exactly
-	//
-	//		Point3D origin = getOrigin();
-	//		Point3D size = getSize();
-	//		Bounds bounds = new BoundingBox( origin.getX(), origin.getY(), origin.getZ(), size.getX(), size.getY(), size.getZ() );
-	//		return getRotateTransform().apply( bounds );
-	//	}
+	@Override
+	protected Bounds computeGeometricBounds() {
+		// Computing the bounds for a box is pretty simple
+		// because the box fills its bounds exactly
+
+		Point3D origin = getOrigin();
+		Point3D size = getSize();
+		Bounds bounds = CadGeometry.getBounds( origin, origin.add( size ) );
+		return getRotateTransform().apply( bounds );
+	}
 
 	//	@Override
 	//	protected Bounds computeVisualBounds() {
