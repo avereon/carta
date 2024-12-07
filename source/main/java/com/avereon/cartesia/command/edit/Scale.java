@@ -24,7 +24,7 @@ public class Scale extends EditCommand {
 
 		setCaptureUndoChanges( task, false );
 
-		// Ask for a center point
+		// Ask for an anchor point
 		if( task.getParameterCount() == 0 ) {
 			if( referenceLine == null ) referenceLine = createReferenceLine( task );
 			promptForPoint( task, "anchor" );
