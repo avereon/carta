@@ -10,6 +10,9 @@ import com.avereon.curve.math.Constants;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import com.avereon.zarra.javafx.FxUtil;
+import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -143,19 +146,47 @@ public class DesignEllipse extends DesignShape {
 		return CadTransform.scale( 1, xRadius / yRadius, 0 ).combine( calcOrientation( center, rotate ).getWorldToLocalTransform() );
 	}
 
-//	@Override
-//	public Bounds getBounds() {
-//		// TODO This is used a lot and should be cached
-//
-//		double x = getOrigin().getX() - getXRadius();
-//		double y = getOrigin().getY() - getYRadius();
-//		double w = 2 * getXRadius();
-//		double h = 2 * getYRadius();
-//
-//		// TODO Need to take rotation into account
-//
-//		return new BoundingBox( x, y, w, h );
-//	}
+	@Override
+	protected Bounds computeGeometricBounds() {
+		// Start with a circle with radius equal to the larger of the two radii
+		double major = Math.max( getXRadius(), getYRadius() );
+		double minor = Math.min( getXRadius(), getYRadius() );
+		double eccentricity = minor / major;
+		Point3D origin = getOrigin();
+		double rotate = calcRotate();
+
+		// Generate four points at the cardinal points
+		Point3D a = origin.add( major, 0, 0 );
+		Point3D b = origin.add( 0, major, 0 );
+		Point3D c = origin.add( -major, 0, 0 );
+		Point3D d = origin.add( 0, -major, 0 );
+
+		// Rotate the points according to the major axis
+		Point3D ra = CadGeometry.rotate360( origin, a, rotate );
+		Point3D rb = CadGeometry.rotate360( origin, b, rotate );
+		Point3D rc = CadGeometry.rotate360( origin, c, rotate );
+		Point3D rd = CadGeometry.rotate360( origin, d, rotate );
+
+		// Scale the points around the major axis
+		CadTransform transform = CadTransform.stretchWithAxis( origin, ra, eccentricity );
+		Point3D za = transform.apply( ra );
+		Point3D zb = transform.apply( rb );
+		Point3D zc = transform.apply( rc );
+		Point3D zd = transform.apply( rd );
+
+		Bounds bounds = FxUtil.bounds( za, zb );
+		bounds = FxUtil.add( bounds, zc );
+		bounds = FxUtil.add( bounds, zd );
+
+		System.out.println( "a: " + za );
+		System.out.println( "b: " + zb );
+		System.out.println( "c: " + zc );
+		System.out.println( "d: " + zd );
+		System.out.println( "bounds: " + bounds );
+
+		// NEXT Verify this implementation is correct
+		return bounds;
+	}
 
 	@Override
 	public List<Point3D> getReferencePoints() {

@@ -4,6 +4,7 @@ import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
@@ -250,6 +251,18 @@ public class DesignEllipseTest {
 
 		// Rotated ellipse
 		//assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0, 45.0 ).getBounds() ).isEqualTo( new BoundingBox( -5, -5, 20, 20 ) );
+	}
+
+	@Test
+	void testBoundsWithRotatedEllipse() {
+		// given
+		DesignEllipse ellipse = new DesignEllipse( new Point3D( 5, 0, 0 ), 10.0, 5.0, 45.0 );
+
+		// when
+		Bounds bounds = ellipse.getBounds();
+
+		// then
+		//assertThat( bounds.getMinX() ).isCloseTo( -5, TOLERANCE );
 	}
 
 	@Test

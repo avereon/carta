@@ -144,15 +144,20 @@ public class CadTransform {
 	 * @return The stretch transform
 	 */
 	public static CadTransform stretch( Point3D anchor, Point3D source, Point3D target ) {
-		// This implementation uses a rotate/scale/-rotate transform
-		Point3D base = source.subtract( anchor );
+		Point3D normal = source.subtract( anchor );
 		Point3D stretch = target.subtract( anchor );
+		double scale = stretch.dotProduct( normal ) / (normal.magnitude() * normal.magnitude());
 
-		// Create an orientation such that the z-axis is aligned with the base
-		CadOrientation orientation = new CadOrientation( anchor, base );
+		return stretch( anchor, normal, scale );
+	}
 
-		double scale = stretch.dotProduct( base ) / (base.magnitude() * base.magnitude());
+	public static CadTransform stretchWithAxis( Point3D anchor, Point3D point, double scale ) {
+		return stretch( anchor, new Point3D( -point.getY(), point.getX(), 0 ), scale );
+	}
 
+	public static CadTransform stretch( Point3D anchor, Point3D normal, double scale ) {
+		// This implementation creates a rotate/scale/-rotate transform
+		CadOrientation orientation = new CadOrientation( anchor, normal );
 		return orientation.getLocalToWorldTransform().combine( CadTransform.scale( 1, 1, scale ) ).combine( orientation.getWorldToLocalTransform() );
 	}
 
