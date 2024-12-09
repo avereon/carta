@@ -5,7 +5,6 @@ import com.avereon.curve.math.Geometry;
 import com.avereon.curve.math.Vector;
 import com.avereon.zarra.font.FontUtil;
 import com.avereon.zarra.javafx.FxUtil;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
@@ -140,6 +139,11 @@ public class CadGeometry {
 		return Math.toDegrees( Geometry.ellipseAngle( asPoint( o ), xRadius, yRadius, Math.toRadians( rotate ), asPoint( point ) ) );
 	}
 
+	public static Bounds ellipseBounds( DesignEllipse ellipse ) {
+		double[][] b = Geometry.ellipseBounds( asPoint( ellipse.getOrigin() ), asPoint( ellipse.getRadii() ), Math.toRadians( ellipse.calcRotate() ) );
+		return FxUtil.bounds( CadPoints.toFxPoint( b[ 0 ] ), CadPoints.toFxPoint( b[ 1 ] ) );
+	}
+
 	public static double arcLength( DesignArc arc ) {
 		return Geometry.arcLength( asPoint( arc.getOrigin() ), asPoint( arc.getRadii() ), Math.toRadians( arc.calcRotate() ), Math.toRadians( arc.calcStart() ), Math.toRadians( arc.calcExtent() ) );
 	}
@@ -162,7 +166,8 @@ public class CadGeometry {
 	}
 
 	public static List<Point3D> arcReferencePoints( DesignArc arc ) {
-		return CadPoints.toFxPoints( Geometry.arcReferencePoints( asPoint( arc.getOrigin() ),
+		return CadPoints.toFxPoints( Geometry.arcReferencePoints(
+			asPoint( arc.getOrigin() ),
 			asPoint( arc.getRadii() ),
 			Math.toRadians( arc.calcRotate() ),
 			Math.toRadians( arc.calcStart() ),
@@ -195,7 +200,8 @@ public class CadGeometry {
 	}
 
 	public static double cubicArcLength( DesignCubic cubic ) {
-		return Geometry.cubicArcLength( asPoint( cubic.getOrigin() ),
+		return Geometry.cubicArcLength(
+			asPoint( cubic.getOrigin() ),
 			asPoint( cubic.getOriginControl() ),
 			asPoint( cubic.getPointControl() ),
 			asPoint( cubic.getPoint() ),
@@ -329,7 +335,8 @@ public class CadGeometry {
 			}
 			case CUBIC -> {
 				DesignCubic cubic = (DesignCubic)shape;
-				yield new CubicCurve( cubic.getOrigin().getX(),
+				yield new CubicCurve(
+					cubic.getOrigin().getX(),
 					cubic.getOrigin().getY(),
 					cubic.getOriginControl().getX(),
 					cubic.getOriginControl().getY(),
