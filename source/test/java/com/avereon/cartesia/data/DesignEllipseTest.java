@@ -238,7 +238,7 @@ public class DesignEllipseTest {
 	}
 
 	@Test
-	void testBounds() {
+	void testGetBounds() {
 		// Circle
 		assertThat( new DesignEllipse( new Point3D( 5, 0, 0 ), 1.0 ).getBounds() ).isEqualTo( new BoundingBox( 4, -1, 2, 2 ) );
 

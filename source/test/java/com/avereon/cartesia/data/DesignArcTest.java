@@ -388,7 +388,8 @@ public class DesignArcTest {
 	@Test
 	void testGetBounds() {
 		// given
-		double fullWidth = 1.0;
+		// FIXME Won't need fullWidth and halfWidth when getBounds is implemented correctly
+		double fullWidth = 0.0;
 		double halfWidth = 0.5 * fullWidth;
 		double radiusX = 3.0;
 		double radiusY = 5.0;

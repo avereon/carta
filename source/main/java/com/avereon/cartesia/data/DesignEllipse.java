@@ -11,7 +11,6 @@ import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.zarra.javafx.FxUtil;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -149,17 +148,27 @@ public class DesignEllipse extends DesignShape {
 	@Override
 	protected Bounds computeGeometricBounds() {
 		// Start with a circle with radius equal to the larger of the two radii
-		double major = Math.max( getXRadius(), getYRadius() );
-		double minor = Math.min( getXRadius(), getYRadius() );
+		double radiusX = getXRadius();
+		double radiusY = getYRadius();
+		double major = Math.max( radiusX, radiusY );
+		double minor = Math.min( radiusX, radiusY );
 		double eccentricity = minor / major;
 		Point3D origin = getOrigin();
 		double rotate = calcRotate();
 
+//		if( CadGeometry.areSameSize( 0.0, eccentricity ) ) {
+//			Point3D a = origin.add( radiusX, 0, 0 );
+//			Point3D b = origin.add( 0, radiusY, 0 );
+//			Point3D ra = CadGeometry.rotate360( origin, a, rotate );
+//			Point3D rb = CadGeometry.rotate360( origin, b, rotate );
+//			return CadGeometry.getBounds( ra, rb );
+//		}
+
 		// Generate four points at the cardinal points
-		Point3D a = origin.add( major, 0, 0 );
-		Point3D b = origin.add( 0, major, 0 );
-		Point3D c = origin.add( -major, 0, 0 );
-		Point3D d = origin.add( 0, -major, 0 );
+		Point3D a = origin.add( radiusX, 0, 0 );
+		Point3D b = origin.add( 0, radiusY, 0 );
+		Point3D c = origin.add( -radiusX, 0, 0 );
+		Point3D d = origin.add( 0, -radiusY, 0 );
 
 		// Rotate the points according to the major axis
 		Point3D ra = CadGeometry.rotate360( origin, a, rotate );
@@ -168,6 +177,7 @@ public class DesignEllipse extends DesignShape {
 		Point3D rd = CadGeometry.rotate360( origin, d, rotate );
 
 		// Scale the points around the major axis
+		// FIXME This assumes ra is the major axis
 		CadTransform transform = CadTransform.stretchWithAxis( origin, ra, eccentricity );
 		Point3D za = transform.apply( ra );
 		Point3D zb = transform.apply( rb );
