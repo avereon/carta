@@ -144,6 +144,11 @@ public class CadGeometry {
 		return FxUtil.bounds( CadPoints.toFxPoint( b[ 0 ] ), CadPoints.toFxPoint( b[ 1 ] ) );
 	}
 
+	public static Bounds arcBounds( DesignArc arc ) {
+		double[][] b = Geometry.arcBounds( asPoint( arc.getOrigin() ), asPoint( arc.getRadii() ), Math.toRadians( arc.calcRotate() ), Math.toRadians( arc.calcStart() ), Math.toRadians( arc.calcExtent() ) );
+		return FxUtil.bounds( CadPoints.toFxPoint( b[ 0 ] ), CadPoints.toFxPoint( b[ 1 ] ) );
+	}
+
 	public static double arcLength( DesignArc arc ) {
 		return Geometry.arcLength( asPoint( arc.getOrigin() ), asPoint( arc.getRadii() ), Math.toRadians( arc.calcRotate() ), Math.toRadians( arc.calcStart() ), Math.toRadians( arc.calcExtent() ) );
 	}

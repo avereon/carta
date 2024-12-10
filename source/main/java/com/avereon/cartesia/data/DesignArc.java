@@ -7,6 +7,7 @@ import com.avereon.cartesia.math.CadTransform;
 import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.ArcType;
@@ -63,6 +64,10 @@ public class DesignArc extends DesignEllipse {
 
 	public DesignArc( Point3D origin, Double xRadius, Double yRadius, Double start, Double extent, Type type ) {
 		this( origin, xRadius, yRadius, null, start, extent, type );
+	}
+
+	public DesignArc( Point3D origin, double xRadius, double yRadius, double rotate, double start, double extent, Type type ) {
+		this( origin, new Point3D( xRadius, yRadius, 0 ), rotate, start, extent, type );
 	}
 
 	public DesignArc( Point3D origin, Double xRadius, Double yRadius, Double rotate, Double start, Double extent, Type type ) {
@@ -162,6 +167,11 @@ public class DesignArc extends DesignEllipse {
 	@Override
 	public Paint calcFillPaint() {
 		return null;
+	}
+
+	@Override
+	protected Bounds computeGeometricBounds() {
+		return CadGeometry.arcBounds( this );
 	}
 
 	@Override

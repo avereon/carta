@@ -396,23 +396,30 @@ public class DesignArcTest {
 
 		// Calculate the correct angle against the arc
 		DesignEllipse ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), radiusX, radiusY );
-		double theta = CadGeometry.ellipseAngle360( ellipse, new Point3D( -1, -1, 0 ) ) + 360 - 90;
+		double theta = CadGeometry.ellipseAngle360( ellipse, new Point3D( -1, -1, 0 ) ) + 270;
 
-		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 90.0, theta, DesignArc.Type.OPEN );
+		System.out.println( "theta=" + theta );
+
+		//DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 90.0, theta, DesignArc.Type.OPEN );
+		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), 2, 1, 0, 90, 270, DesignArc.Type.OPEN );
 
 		// when
 		Bounds bounds = arc.getBounds();
 
 		// then
 		assertThat( bounds ).isNotNull();
-		assertThat( bounds.getMinX() ).isCloseTo( -radiusX - halfWidth, Percentage.withPercentage( 1.0 ) );
-		assertThat( bounds.getMaxX() ).isCloseTo( 0 + halfWidth, Percentage.withPercentage( 1.0 ) );
 
-		assertThat( bounds.getMinY() ).isCloseTo( -2.5724787771376323 - halfWidth, Percentage.withPercentage( 1.0 ) );
-		assertThat( bounds.getMaxY() ).isCloseTo( radiusY + halfWidth, Percentage.withPercentage( 1.0 ) );
+		// The top (maxY) should be easy
+		assertThat( bounds.getMaxY() ).isEqualTo( radiusY );
 
-		assertThat( bounds.getWidth() ).isCloseTo( radiusX + fullWidth, Percentage.withPercentage( 1.0 ) );
-		assertThat( bounds.getHeight() ).isCloseTo( 7.5724787771376323 + fullWidth, Percentage.withPercentage( 1.0 ) );
+		// The left (minX) should be easy
+		assertThat( bounds.getMinX() ).isEqualTo( -radiusX );
+
+		// The right (maxX) should be easy
+		assertThat( bounds.getMaxX() ).isEqualTo( 0 );
+
+		// The bottom (minY) is the hard one
+		assertThat( bounds.getMinY() ).isEqualTo( -2.5724787771376323 );
 	}
 
 	@Test
