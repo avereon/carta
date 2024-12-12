@@ -388,11 +388,8 @@ public class DesignArcTest {
 	@Test
 	void testGetBounds() {
 		// given
-		// FIXME Won't need fullWidth and halfWidth when getBounds is implemented correctly
-		double fullWidth = 0.0;
-		double halfWidth = 0.5 * fullWidth;
-		double radiusX = 3.0;
-		double radiusY = 5.0;
+		double radiusX = 2.0;
+		double radiusY = 1.0;
 
 		// Calculate the correct angle against the arc
 		DesignEllipse ellipse = new DesignEllipse( new Point3D( 0, 0, 0 ), radiusX, radiusY );
@@ -401,7 +398,7 @@ public class DesignArcTest {
 		System.out.println( "theta=" + theta );
 
 		//DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 90.0, theta, DesignArc.Type.OPEN );
-		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), 2, 1, 0, 90, 270, DesignArc.Type.OPEN );
+		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 0, 90, 270, DesignArc.Type.OPEN );
 
 		// when
 		Bounds bounds = arc.getBounds();
@@ -416,10 +413,10 @@ public class DesignArcTest {
 		assertThat( bounds.getMinX() ).isEqualTo( -radiusX );
 
 		// The right (maxX) should be easy
-		assertThat( bounds.getMaxX() ).isEqualTo( 0 );
+		assertThat( bounds.getMaxX() ).isEqualTo( radiusX );
 
 		// The bottom (minY) is the hard one
-		assertThat( bounds.getMinY() ).isEqualTo( -2.5724787771376323 );
+		assertThat( bounds.getMinY() ).isEqualTo( -radiusY );
 	}
 
 	@Test
