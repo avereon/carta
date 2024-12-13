@@ -66,10 +66,6 @@ public class DesignArc extends DesignEllipse {
 		this( origin, xRadius, yRadius, null, start, extent, type );
 	}
 
-	public DesignArc( Point3D origin, double xRadius, double yRadius, double rotate, double start, double extent, Type type ) {
-		this( origin, new Point3D( xRadius, yRadius, 0 ), rotate, start, extent, type );
-	}
-
 	public DesignArc( Point3D origin, Double xRadius, Double yRadius, Double rotate, Double start, Double extent, Type type ) {
 		this( origin, new Point3D( xRadius, yRadius, 0 ), rotate, start, extent, type );
 	}

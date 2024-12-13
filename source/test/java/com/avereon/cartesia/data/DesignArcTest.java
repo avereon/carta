@@ -398,7 +398,7 @@ public class DesignArcTest {
 		System.out.println( "theta=" + theta );
 
 		//DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 90.0, theta, DesignArc.Type.OPEN );
-		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 0, 90, 270, DesignArc.Type.OPEN );
+		DesignArc arc = new DesignArc( new Point3D( 0, 0, 0 ), radiusX, radiusY, 0.0, 90.0, 270.0, DesignArc.Type.OPEN );
 
 		// when
 		Bounds bounds = arc.getBounds();
