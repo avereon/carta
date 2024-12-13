@@ -145,7 +145,13 @@ public class CadGeometry {
 	}
 
 	public static Bounds arcBounds( DesignArc arc ) {
-		double[][] b = Geometry.arcBounds( asPoint( arc.getOrigin() ), asPoint( arc.getRadii() ), Math.toRadians( arc.calcRotate() ), Math.toRadians( arc.calcStart() ), Math.toRadians( arc.calcExtent() ) );
+		double[][] b = Geometry.arcBounds(
+			asPoint( arc.getOrigin() ),
+			asPoint( arc.getRadii() ),
+			Math.toRadians( arc.calcRotate() ),
+			Math.toRadians( arc.calcStart() ),
+			Math.toRadians( arc.calcExtent() )
+		);
 		return FxUtil.bounds( CadPoints.toFxPoint( b[ 0 ] ), CadPoints.toFxPoint( b[ 1 ] ) );
 	}
 
@@ -357,7 +363,11 @@ public class CadGeometry {
 			}
 			case MARKER -> {
 				DesignMarker marker = (DesignMarker)shape;
-				yield mapToFxPath( marker.getElements() );
+				Path path = mapToFxPath( marker.getElements() );
+				double size = marker.calcSize();
+				Transform scale = Transform.scale( size, size, marker.getOrigin().getX(), marker.getOrigin().getY() );
+				path.getTransforms().add( scale );
+				yield path;
 			}
 			case TEXT -> {
 				DesignText text = (DesignText)shape;

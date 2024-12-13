@@ -902,7 +902,13 @@ public class DesignRenderer extends Pane {
 	private void drawMarker( DesignMarker marker ) {
 		DesignPath path = marker.calcType().getDesignPath();
 		if( path != null ) {
-			path.apply( CadTransform.translation( marker.getOrigin() ) );
+			CadTransform transform = path.getValue( getClass().getName() + ":marker-transform", () -> {
+				double size = marker.calcSize();
+				CadTransform translate = CadTransform.translation( marker.getOrigin() );
+				CadTransform scale = CadTransform.scale( size, size, size );
+				return translate.combine( scale );
+			} );
+			path.apply( transform );
 			renderer.fillPath( toMareaPathSteps( path ) );
 		} else {
 			log.atWarn().log( "Undefined marker type: {0}", marker.getMarkerType() );
