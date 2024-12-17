@@ -94,6 +94,10 @@ public interface DesignTool {
 
 	void setViewRotate( double angle );
 
+	double getDpi();
+
+	void setDpi( double dpi );
+
 	double getZoom();
 
 	void setZoom( double zoom );

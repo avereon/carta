@@ -477,10 +477,12 @@ public class DesignToolV2 extends BaseDesignTool {
 		return renderer.viewpointYProperty();
 	}
 
+	@Override
 	public double getDpi() {
 		return renderer.getDpiX();
 	}
 
+	@Override
 	public void setDpi( double dpi ) {
 		renderer.setDpi( new Point2D( dpi, dpi ) );
 	}
