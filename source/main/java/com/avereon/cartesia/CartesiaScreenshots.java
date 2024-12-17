@@ -5,6 +5,7 @@ import com.avereon.xenon.ProgramScreenshots;
 import com.avereon.xenon.workpane.Tool;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Bounds;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 
@@ -37,7 +38,7 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 
 	@Override
 	protected void generateScreenshots() throws InterruptedException, TimeoutException {
-		generateDesignToolSnapshot( Path.of( "sample/design/screenshot.cartesia2d" ).toUri(), "design-tool" );
+		generateDesignToolSnapshot( Path.of( "sample/design/demo.cartesia2d" ).toUri(), "cartesia-demo" );
 	}
 
 	private void generateDesignToolSnapshot( URI uri, String name ) throws InterruptedException, TimeoutException {
@@ -48,7 +49,10 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 			Bounds b = tool.localToScreen( tool.getLayoutBounds() );
 			robot.mouseMove( b.getCenterX(), b.getCenterY() );
 			robot.mouseClick( MouseButton.PRIMARY );
+			robot.keyType( KeyCode.Y );
+			robot.keyType( KeyCode.Y );
 		} );
+		Fx.waitFor( 1000 );
 		screenshot( name );
 	}
 
