@@ -38,7 +38,7 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 
 	@Override
 	protected void generateScreenshots() throws InterruptedException, TimeoutException {
-		generateDesignToolSnapshot( Path.of( "sample/design/demo.cartesia2d" ).toUri(), "cartesia-demo" );
+		generateDesignToolSnapshot( Path.of( "sample/design/jet.cartesia2d" ).toUri(), "sample-jet" );
 	}
 
 	private void generateDesignToolSnapshot( URI uri, String name ) throws InterruptedException, TimeoutException {
