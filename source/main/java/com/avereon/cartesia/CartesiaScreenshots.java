@@ -51,10 +51,12 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 		Tool tool = getProgram().getWorkspaceManager().getActiveWorkspace().getActiveWorkarea().getWorkpane().getActiveTool();
 		DesignTool designTool = (DesignTool)tool;
 
+		double zoom = getRenderScale() / 4.0;
+
 		clickCenter( tool );
 		runCommand( designTool, "yy" );
 		runCommand( designTool, "vl" );
-		runCommand( designTool, "zm 1/4" );
+		runCommand( designTool, "zm " + zoom );
 		runCommand( designTool, "vp 0,-4" );
 
 		screenshot( name );
