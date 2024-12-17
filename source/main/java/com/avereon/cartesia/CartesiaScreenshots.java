@@ -2,7 +2,6 @@ package com.avereon.cartesia;
 
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.ProgramFlag;
-import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.ProgramScreenshots;
 import com.avereon.xenon.workpane.Tool;
 import com.avereon.zarra.javafx.Fx;
@@ -49,16 +48,14 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 	private void generateDesignToolSnapshot( URI uri, String name ) throws InterruptedException, TimeoutException, ExecutionException {
 		openAsset( uri );
 
-		Fx.waitFor( FX_WAIT );
-
 		Tool tool = getProgram().getWorkspaceManager().getActiveWorkspace().getActiveWorkarea().getWorkpane().getActiveTool();
-		clickCenter( tool );
-
 		DesignTool designTool = (DesignTool)tool;
-		command( designTool, "yy" );
-		command( designTool, "vl" );
-		command( designTool, "zm 1/4" );
-		command( designTool, "vp 0,-4" );
+
+		clickCenter( tool );
+		runCommand( designTool, "yy" );
+		runCommand( designTool, "vl" );
+		runCommand( designTool, "zm 1/4" );
+		runCommand( designTool, "vp 0,-4" );
 
 		screenshot( name );
 	}
@@ -71,13 +68,12 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 			robot.mouseClick( MouseButton.PRIMARY );
 		} );
 		Fx.waitFor( FX_WAIT );
-		ThreadUtil.pause( 10 );
 	}
 
-	private void command( DesignTool designTool, String command ) {
+	private void runCommand( DesignTool designTool, String command ) {
 		Fx.run( () -> designTool.getCommandContext().submit( designTool, command ) );
 		Fx.waitFor( FX_WAIT );
-		ThreadUtil.pause( 10 );
+		getProgram().getTaskManager().waitFor( FX_WAIT );
 	}
 
 }
