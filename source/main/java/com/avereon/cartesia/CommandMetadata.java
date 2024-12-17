@@ -40,6 +40,10 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 		this.tags = tags;
 	}
 
+	public CommandMetadata cloneWithParameters( Object... parameters ) {
+		return new CommandMetadata( action, name, command, shortcut, null, type, parameters );
+	}
+
 	@Override
 	public int compareTo( CommandMetadata that ) {
 		return BY_SHORTCUT.compare( this, that );

@@ -121,7 +121,8 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		CommandMetadata metadata = getMod().getCommandMap().getCommandByShortcut( shortcut );
 		if( metadata == NONE ) return null;
 
-		// Add the parameters to the metadata, or create a new one
+		// Create a new metadata object with the parameters
+		metadata = metadata.cloneWithParameters( (Object[])Arrays.copyOfRange( parts, 1, parts.length ) );
 
 		return submitCommand( metadata );
 	}

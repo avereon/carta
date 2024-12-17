@@ -13,4 +13,14 @@ public abstract class BaseCartesiaUiTest extends BaseModUiTestCase<CartesiaMod> 
 		return (CartesiaMod)super.getMod();
 	}
 
+	@Override
+	protected double getAllowedMemoryGrowthSize() {
+		return 48;
+	}
+
+	@Override
+	protected double getAllowedMemoryGrowthPercent() {
+		return 1.0;
+	}
+
 }

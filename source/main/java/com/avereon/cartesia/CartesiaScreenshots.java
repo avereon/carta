@@ -1,11 +1,13 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.product.ProgramFlag;
+import com.avereon.util.ThreadUtil;
 import com.avereon.xenon.ProgramScreenshots;
 import com.avereon.xenon.workpane.Tool;
 import com.avereon.zarra.javafx.Fx;
 import javafx.geometry.Bounds;
-import javafx.scene.input.KeyCode;
+import javafx.scene.Node;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 
@@ -13,9 +15,12 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class CartesiaScreenshots extends ProgramScreenshots {
+
+	private static final long FX_WAIT = 10000;
 
 	public static void main( String[] args ) {
 		new CartesiaScreenshots().generate( args );
@@ -37,23 +42,42 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 	}
 
 	@Override
-	protected void generateScreenshots() throws InterruptedException, TimeoutException {
+	protected void generateScreenshots() throws InterruptedException, TimeoutException, ExecutionException {
 		generateDesignToolSnapshot( Path.of( "sample/design/jet.cartesia2d" ).toUri(), "sample-jet" );
 	}
 
-	private void generateDesignToolSnapshot( URI uri, String name ) throws InterruptedException, TimeoutException {
+	private void generateDesignToolSnapshot( URI uri, String name ) throws InterruptedException, TimeoutException, ExecutionException {
 		openAsset( uri );
+
+		Fx.waitFor( FX_WAIT );
+
+		Tool tool = getProgram().getWorkspaceManager().getActiveWorkspace().getActiveWorkarea().getWorkpane().getActiveTool();
+		clickCenter( tool );
+
+		DesignTool designTool = (DesignTool)tool;
+		command( designTool, "yy" );
+		command( designTool, "vl" );
+		command( designTool, "zm 1/4" );
+		command( designTool, "vp 0,-4" );
+
+		screenshot( name );
+	}
+
+	private void clickCenter( Node node ) {
 		Fx.run( () -> {
+			Bounds b = node.localToScreen( node.getLayoutBounds() );
 			Robot robot = new Robot();
-			Tool tool = getProgram().getWorkspaceManager().getActiveWorkspace().getActiveWorkarea().getWorkpane().getActiveTool();
-			Bounds b = tool.localToScreen( tool.getLayoutBounds() );
 			robot.mouseMove( b.getCenterX(), b.getCenterY() );
 			robot.mouseClick( MouseButton.PRIMARY );
-			robot.keyType( KeyCode.Y );
-			robot.keyType( KeyCode.Y );
 		} );
-		Fx.waitFor( 1000 );
-		screenshot( name );
+		Fx.waitFor( FX_WAIT );
+		ThreadUtil.pause( 10 );
+	}
+
+	private void command( DesignTool designTool, String command ) {
+		Fx.run( () -> designTool.getCommandContext().submit( designTool, command ) );
+		Fx.waitFor( FX_WAIT );
+		ThreadUtil.pause( 10 );
 	}
 
 }

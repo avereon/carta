@@ -73,7 +73,7 @@ public abstract class SelectByWindow extends SelectCommand {
 			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			// Submit a Value command to pass the point back to this command
-			tool.getCommandContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
+			task.getContext().submit( tool, new Value(), tool.screenToWorld( mouse ) );
 			event.consume();
 		}
 	}

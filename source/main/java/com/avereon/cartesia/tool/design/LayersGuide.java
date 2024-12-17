@@ -112,7 +112,7 @@ public class LayersGuide extends Guide {
 		design.getAllLayers().forEach( this::addLayer );
 
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			if( e.getNewValue() instanceof DesignLayer layer) addLayer( layer );
+			if( e.getNewValue() != null && e.getNewValue() instanceof DesignLayer layer) addLayer( layer );
 		} );
 		design.register( NodeEvent.CHILD_REMOVED, e -> {
 			if(e.getOldValue() instanceof DesignLayer layer) removeLayer( layer );

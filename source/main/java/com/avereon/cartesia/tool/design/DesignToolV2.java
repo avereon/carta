@@ -388,6 +388,11 @@ public class DesignToolV2 extends BaseDesignTool {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
 
+		// Now that all the listeners are set up:
+
+		// TODO Should selected layer be stored in the tool settings?
+		if( getSelectedLayer() == null ) setSelectedLayer( getCurrentLayer() );
+
 		// Request the initial geometry render
 		renderer.render();
 	}
@@ -670,6 +675,10 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
+		if( layer == null ) {
+			log.atError( new NullPointerException( "Specified layer is null" ) ).log( "Cannot set the visibility of a null layer" );
+			return;
+		}
 		if( visible ) {
 			if( !renderer.visibleLayers().contains( layer ) ) renderer.visibleLayers().add( layer );
 		} else {

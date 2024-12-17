@@ -79,7 +79,7 @@ public class CameraMove extends CameraCommand {
 			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			Point3D worldOffset = anchor.subtract( corner );
-			tool.getCommandContext().submit( tool, new Value(), task.getContext().getWorldAnchor().subtract( worldOffset ) );
+			task.getContext().submit( tool, new Value(), task.getContext().getWorldAnchor().subtract( worldOffset ) );
 			event.consume();
 		}
 	}
