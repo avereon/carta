@@ -30,6 +30,7 @@ import com.avereon.xenon.workpane.Workpane;
 import com.avereon.xenon.workspace.StatusBar;
 import com.avereon.xenon.workspace.Workspace;
 import com.avereon.zarra.color.Paints;
+import com.avereon.zarra.event.FxEventHub;
 import com.avereon.zarra.javafx.Fx;
 import com.avereon.zarra.javafx.FxUtil;
 import javafx.beans.property.*;
@@ -1431,15 +1432,15 @@ public class DesignToolV2 extends BaseDesignTool {
 		public void handle( ActionEvent event ) {
 			// Get the settings pages for the asset type
 			Asset asset = getAsset();
-			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
 			SettingsPage assetSettingsPage = asset.getType().getSettingsPages().get( "grid" );
+			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
 
-			Settings designSettings = new NodeSettings( getAsset().getModel() );
 			Settings assetSettings = getAssetSettings();
+			Settings designSettings = new NodeSettings( getAsset().getModel() );
 
 			// Set the settings for the pages
-			designSettingsPage.setSettings( designSettings );
 			assetSettingsPage.setSettings( assetSettings );
+			designSettingsPage.setSettings( designSettings );
 
 			// Switch to a task thread to get the tool
 			getProgram().getTaskManager().submit( Task.of( () -> {
@@ -1448,8 +1449,10 @@ public class DesignToolV2 extends BaseDesignTool {
 					getProgram().getAssetManager().openAsset( ProgramPropertiesType.URI ).get();
 
 					// Fire the show request on the workspace event bus
+					PropertiesToolEvent toolEvent  = new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage );
 					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
-					Fx.run( () -> workspace.getEventBus().dispatch( new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage ) ) );
+					FxEventHub workspaceEventBus = workspace.getEventBus();
+					Fx.run( () -> workspaceEventBus.dispatch( toolEvent ) );
 				} catch( Exception exception ) {
 					log.atError( exception ).log();
 				}
