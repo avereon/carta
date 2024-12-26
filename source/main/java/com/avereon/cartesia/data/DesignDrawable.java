@@ -17,6 +17,7 @@ import lombok.CustomLog;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @CustomLog
 @SuppressWarnings( "UnusedReturnValue" )
@@ -62,6 +63,8 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected SettingsPage page;
 
+	private final Map<String, Object> cache;
+
 	private Paint cachedDrawPaint;
 
 	private Double cachedDrawWidth;
@@ -78,6 +81,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected DesignDrawable() {
 		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
+		cache = new ConcurrentHashMap<>();
 	}
 
 	public DesignLayer getLayer() {
@@ -295,6 +299,14 @@ public abstract class DesignDrawable extends DesignNode {
 		};
 	}
 
+	protected Map<String, Object> getCache() {
+		return cache;
+	}
+
+	protected void invalidateCache( String key ) {
+		cache.remove( key );
+	}
+
 	<T> boolean isLayerValue( T value ) {
 		return getValueMode( value ).equals( MODE_LAYER );
 	}
@@ -312,7 +324,12 @@ public abstract class DesignDrawable extends DesignNode {
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
+		// NEXT Changing a layer draw paint does not cause the color to change in the view
+		// NOTE The child geometry of a layer does not have the cache invalidated
+		if( getModifyingKeys().contains( key ) ) invalidateCache( key );
+
 		switch( key ) {
+			// FIXME Deprecate this part and use the cache map
 			case DRAW_PAINT -> cachedDrawPaint = null;
 			case DRAW_WIDTH -> cachedDrawWidth = null;
 			case DRAW_ALIGN -> cachedDrawAlign = null;

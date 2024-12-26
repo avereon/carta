@@ -17,10 +17,11 @@ import lombok.experimental.Accessors;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-@CustomLog
+@Getter
+@Setter
 @Accessors( chain = true )
+@CustomLog
 public abstract class DesignShape extends DesignDrawable {
 
 	// The shape types in order of simplicity:
@@ -50,8 +51,6 @@ public abstract class DesignShape extends DesignDrawable {
 
 	//public static final String REFERENCE = "reference";
 
-	private final Map<String, Object> cache;
-
 	private static final String CACHE_BOUNDS = "bounds";
 
 	private static final String CACHE_FX_SHAPE = "fx-shape";
@@ -64,8 +63,6 @@ public abstract class DesignShape extends DesignDrawable {
 	 * The preview flag is a special flag that indicates the shape is a preview
 	 * shape. This flag is used to optimize the rendering process.
 	 */
-	@Getter
-	@Setter
 	@Deprecated
 	private boolean preview;
 
@@ -75,8 +72,6 @@ public abstract class DesignShape extends DesignDrawable {
 	 * The selected flag is a special flag that indicates the shape is a selected
 	 * shape. This flag is used to optimize the rendering process.
 	 */
-	@Getter
-	@Setter
 	private boolean selected;
 
 	public DesignShape() {
@@ -86,8 +81,6 @@ public abstract class DesignShape extends DesignDrawable {
 	public DesignShape( Point3D origin ) {
 		addModifyingKeys( ORIGIN, ROTATE );
 		setOrigin( origin );
-
-		cache = new ConcurrentHashMap<>();
 	}
 
 	public Type getType() {
@@ -130,15 +123,9 @@ public abstract class DesignShape extends DesignDrawable {
 		return (T)this;
 	}
 
-	@Override
-	public <T> T setValue( String key, T newValue ) {
-		if( getModifyingKeys().contains( key ) ) cache.clear();
-		return super.setValue( key, newValue );
-	}
-
 	// Convenience method for selecting
 	public Shape getFxShape() {
-		return (Shape)cache.computeIfAbsent( CACHE_FX_SHAPE, k -> CadGeometry.toFxShape( this ) );
+		return (Shape)getCache().computeIfAbsent( CACHE_FX_SHAPE, k -> CadGeometry.toFxShape( this ) );
 	}
 
 	/**
@@ -148,7 +135,7 @@ public abstract class DesignShape extends DesignDrawable {
 	 * @return The geometric bounds of the shape
 	 */
 	public Bounds getBounds() {
-		return (Bounds)cache.computeIfAbsent( CACHE_BOUNDS, k -> computeGeometricBounds() );
+		return (Bounds)getCache().computeIfAbsent( CACHE_BOUNDS, k -> computeGeometricBounds() );
 	}
 
 	protected Bounds computeGeometricBounds() {
@@ -163,7 +150,7 @@ public abstract class DesignShape extends DesignDrawable {
 	 * @return The visual bounds of the shape
 	 */
 	public Bounds getSelectBounds() {
-		return (Bounds)cache.computeIfAbsent( CACHE_SELECT_BOUNDS, k -> computeSelectBounds() );
+		return (Bounds)getCache().computeIfAbsent( CACHE_SELECT_BOUNDS, k -> computeSelectBounds() );
 	}
 
 	protected Bounds computeSelectBounds() {
@@ -262,10 +249,6 @@ public abstract class DesignShape extends DesignDrawable {
 
 	public static Comparator<DesignShape> getComparator() {
 		return new DesignShapeOrderComparator();
-	}
-
-	protected Map<String, Object> getCache() {
-		return cache;
 	}
 
 }
