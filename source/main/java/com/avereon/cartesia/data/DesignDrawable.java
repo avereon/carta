@@ -65,20 +65,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private final Map<String, Object> cache;
 
-	//private Paint cachedDrawPaint;
-
-	private Double cachedDrawWidth;
-
-	private StrokeType cachedDrawAlign;
-
-	private StrokeLineCap cachedDrawCap;
-
-	private StrokeLineJoin cachedDrawJoin;
-
-	private List<Double> cachedDrawPattern;
-
-	private Paint cachedFillPaint;
-
 	protected DesignDrawable() {
 		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
 		cache = new ConcurrentHashMap<>();
@@ -124,8 +110,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
-		if( cachedDrawWidth == null ) cachedDrawWidth = CadMath.evalNoException( getDrawWidthWithInheritance() );
-		return cachedDrawWidth;
+		return (double)getCache().computeIfAbsent( DRAW_WIDTH, k -> CadMath.evalNoException( getDrawWidthWithInheritance() ) );
 	}
 
 	public String getDrawWidthWithInheritance() {
@@ -146,13 +131,14 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public StrokeType calcDrawAlign() {
-		if( cachedDrawAlign == null ) cachedDrawAlign = StrokeType.valueOf( getDrawAlignWithInheritance() );
-		//		try {
-		//			return StrokeType.valueOf( getDrawAlignWithInheritance() );
-		//		} catch( NullPointerException | IllegalArgumentException exception ) {
-		//			return StrokeType.CENTERED;
-		//		}
-		return cachedDrawAlign;
+//		if( cachedDrawAlign == null ) cachedDrawAlign = StrokeType.valueOf( getDrawAlignWithInheritance() );
+//		//		try {
+//		//			return StrokeType.valueOf( getDrawAlignWithInheritance() );
+//		//		} catch( NullPointerException | IllegalArgumentException exception ) {
+//		//			return StrokeType.CENTERED;
+//		//		}
+//		return cachedDrawAlign;
+		return (StrokeType)getCache().computeIfAbsent( DRAW_ALIGN, k -> StrokeType.valueOf( getDrawAlignWithInheritance() ) );
 	}
 
 	public String getDrawAlignWithInheritance() {
@@ -172,13 +158,14 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
+	@SuppressWarnings( "unchecked" )
 	public List<Double> calcDrawPattern() {
 		if( isLayerValue( getDrawPattern() ) ) {
 			// FIXME This is the most common case, so we should optimize for it
+			// TODO Not sure why this doesn't just use the cached value
 			return CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
 		} else {
-			if( cachedDrawPattern == null ) cachedDrawPattern = CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
-			return cachedDrawPattern;
+			return (List<Double>)getCache().computeIfAbsent( DRAW_PATTERN, k -> CadShapes.parseDashPattern( getDrawPatternWithInheritance() ) );
 		}
 	}
 
@@ -197,7 +184,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawPattern( String pattern ) {
 		setValue( DRAW_PATTERN, pattern );
-		cachedDrawPattern = null;
 		return this;
 	}
 
@@ -206,10 +192,10 @@ public abstract class DesignDrawable extends DesignNode {
 	public StrokeLineCap calcDrawCap() {
 		if( isLayerValue( getDrawCap() ) ) {
 			// FIXME This is the most common case, so we should optimize for it
+			// TODO Not sure why this doesn't just use the cached value
 			return StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
 		} else {
-			if( cachedDrawCap == null ) cachedDrawCap = StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
-			return cachedDrawCap;
+			return(StrokeLineCap)getCache().computeIfAbsent( DRAW_CAP, k -> StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() ) );
 		}
 	}
 
@@ -227,15 +213,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawCap( String cap ) {
 		setValue( DRAW_CAP, cap );
-		cachedDrawCap = null;
 		return this;
 	}
 
 	// Draw Join -----------------------------------------------------------------
 
 	public StrokeLineJoin calcDrawJoin() {
-		if( cachedDrawJoin == null ) cachedDrawJoin = StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
-		return cachedDrawJoin;
+//		if( cachedDrawJoin == null ) cachedDrawJoin = StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
+//		return cachedDrawJoin;
+		return (StrokeLineJoin)getCache().computeIfAbsent( DRAW_JOIN, k -> StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() ) );
 	}
 
 	public String getDrawJoinWithInheritance() {
@@ -252,15 +238,13 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setDrawJoin( String join ) {
 		setValue( DRAW_JOIN, join );
-		cachedDrawJoin = null;
 		return this;
 	}
 
 	// Fill Paint ----------------------------------------------------------------
 
 	public Paint calcFillPaint() {
-		if( cachedFillPaint == null ) cachedFillPaint = Paints.parseWithNullOnException( getFillPaintWithInheritance() );
-		return cachedFillPaint;
+		return (Paint)getCache().computeIfAbsent( FILL_PAINT, k -> Paints.parseWithNullOnException( getFillPaintWithInheritance() ) );
 	}
 
 	public String getFillPaintWithInheritance() {
@@ -278,7 +262,6 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public DesignDrawable setFillPaint( String paint ) {
 		setValue( FILL_PAINT, paint );
-		cachedFillPaint = null;
 		return this;
 	}
 
@@ -325,16 +308,6 @@ public abstract class DesignDrawable extends DesignNode {
 	public <T> T setValue( String key, T newValue ) {
 		if( getModifyingKeys().contains( key ) ) invalidateCache( key );
 
-		switch( key ) {
-			// NEXT Deprecate this part and use the cache map
-			//case DRAW_PAINT -> cachedDrawPaint = null;
-			case DRAW_WIDTH -> cachedDrawWidth = null;
-			case DRAW_ALIGN -> cachedDrawAlign = null;
-			case DRAW_CAP -> cachedDrawCap = null;
-			case DRAW_JOIN -> cachedDrawJoin = null;
-			case DRAW_PATTERN -> cachedDrawPattern = null;
-			case FILL_PAINT -> cachedFillPaint = null;
-		}
 		return switch( key ) {
 			case VIRTUAL_LAYER -> changeLayer( newValue );
 			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );
