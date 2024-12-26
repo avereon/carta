@@ -65,7 +65,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private final Map<String, Object> cache;
 
-	private Paint cachedDrawPaint;
+	//private Paint cachedDrawPaint;
 
 	private Double cachedDrawWidth;
 
@@ -99,8 +99,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public Paint calcDrawPaint() {
-		if( cachedDrawPaint == null ) cachedDrawPaint = Paints.parseWithNullOnException( getDrawPaintWithInheritance() );
-		return cachedDrawPaint;
+		return (Paint)getCache().computeIfAbsent( DRAW_PAINT, k -> Paints.parseWithNullOnException( getDrawPaintWithInheritance() ) );
 	}
 
 	public Paint calcDrawPaintWithoutInheritance() {
@@ -324,13 +323,11 @@ public abstract class DesignDrawable extends DesignNode {
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
-		// NEXT Changing a layer draw paint does not cause the color to change in the view
-		// NOTE The child geometry of a layer does not have the cache invalidated
 		if( getModifyingKeys().contains( key ) ) invalidateCache( key );
 
 		switch( key ) {
-			// FIXME Deprecate this part and use the cache map
-			case DRAW_PAINT -> cachedDrawPaint = null;
+			// NEXT Deprecate this part and use the cache map
+			//case DRAW_PAINT -> cachedDrawPaint = null;
 			case DRAW_WIDTH -> cachedDrawWidth = null;
 			case DRAW_ALIGN -> cachedDrawAlign = null;
 			case DRAW_CAP -> cachedDrawCap = null;

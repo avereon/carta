@@ -563,6 +563,13 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		return super.toString( NAME );
 	}
 
+	@Override
+	protected void invalidateCache( String key ) {
+		super.invalidateCache( key );
+		getLayers().forEach( l -> l.invalidateCache( key ) );
+		getShapes().forEach( s -> s.invalidateCache( key ) );
+	}
+
 	private <T extends DesignDrawable> List<T> updateOrder( List<T> list ) {
 		AtomicInteger counter = new AtomicInteger( 0 );
 		list.forEach( i -> i.setOrder( counter.getAndIncrement() ) );
