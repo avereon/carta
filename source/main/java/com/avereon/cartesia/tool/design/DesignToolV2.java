@@ -1335,8 +1335,18 @@ public class DesignToolV2 extends BaseDesignTool {
 			} else if( size == 1 ) {
 				c.getList().stream().findFirst().ifPresent( this::showPropertiesPage );
 			} else {
-				// Show a combined properties page
-				showPropertiesPage( new MultiNodeSettings( c.getList() ), DesignShape.class );
+				// If all selected shapes are of the same type then show the properties page for that type
+				Class<? extends DesignDrawable> type = c.getList().getFirst().getClass();
+
+				// Otherwise show the general DesignShape properties page
+				for( DesignShape shape : c.getList() ) {
+					if( shape.getClass() != type ) {
+						type = DesignShape.class;
+						break;
+					}
+				}
+
+				showPropertiesPage( new MultiNodeSettings( c.getList() ), type );
 			}
 		}
 
