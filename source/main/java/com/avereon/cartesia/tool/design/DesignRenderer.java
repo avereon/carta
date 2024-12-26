@@ -96,7 +96,9 @@ public class DesignRenderer extends Pane {
 
 	// Listeners -----------------------------------------------------------------
 
-	private final EventHandler<NodeEvent> designWatcher = e -> render();
+	private final EventHandler<NodeEvent> designWatcher = e -> {
+		render();
+	};
 
 	private final EventHandler<NodeEvent> unitValueWatcher = e -> setLengthUnit( e.getNewValue() );
 

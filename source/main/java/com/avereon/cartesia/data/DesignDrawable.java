@@ -64,7 +64,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	private Paint cachedDrawPaint;
 
-	private double cachedDrawWidth = Double.NaN;
+	private Double cachedDrawWidth;
 
 	private StrokeType cachedDrawAlign;
 
@@ -121,7 +121,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
-		if( Double.isNaN( cachedDrawWidth ) ) cachedDrawWidth = CadMath.evalNoException( getDrawWidthWithInheritance() );
+		if( cachedDrawWidth == null ) cachedDrawWidth = CadMath.evalNoException( getDrawWidthWithInheritance() );
 		return cachedDrawWidth;
 	}
 
@@ -312,6 +312,15 @@ public abstract class DesignDrawable extends DesignNode {
 
 	@Override
 	public <T> T setValue( String key, T newValue ) {
+		switch( key ) {
+			case DRAW_PAINT -> cachedDrawPaint = null;
+			case DRAW_WIDTH -> cachedDrawWidth = null;
+			case DRAW_ALIGN -> cachedDrawAlign = null;
+			case DRAW_CAP -> cachedDrawCap = null;
+			case DRAW_JOIN -> cachedDrawJoin = null;
+			case DRAW_PATTERN -> cachedDrawPattern = null;
+			case FILL_PAINT -> cachedFillPaint = null;
+		}
 		return switch( key ) {
 			case VIRTUAL_LAYER -> changeLayer( newValue );
 			case VIRTUAL_DRAW_PAINT_MODE -> changeDrawPaintMode( newValue );

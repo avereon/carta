@@ -1357,7 +1357,13 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void showPropertiesPage( DesignDrawable drawable ) {
-		if( drawable != null ) showPropertiesPage( new NodeSettings( drawable ), drawable.getClass() );
+		if( drawable != null ) {
+			// Wrap the drawable in a data node settings object
+			NodeSettings wrapper = new NodeSettings( drawable );
+
+			// Show the properties page for the drawable
+			showPropertiesPage( wrapper, drawable.getClass() );
+		}
 	}
 
 	private void showPropertiesPage( Settings settings, Class<? extends DesignDrawable> type ) {
