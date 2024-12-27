@@ -131,13 +131,6 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public StrokeType calcDrawAlign() {
-//		if( cachedDrawAlign == null ) cachedDrawAlign = StrokeType.valueOf( getDrawAlignWithInheritance() );
-//		//		try {
-//		//			return StrokeType.valueOf( getDrawAlignWithInheritance() );
-//		//		} catch( NullPointerException | IllegalArgumentException exception ) {
-//		//			return StrokeType.CENTERED;
-//		//		}
-//		return cachedDrawAlign;
 		return (StrokeType)getCache().computeIfAbsent( DRAW_ALIGN, k -> StrokeType.valueOf( getDrawAlignWithInheritance() ) );
 	}
 
@@ -219,8 +212,6 @@ public abstract class DesignDrawable extends DesignNode {
 	// Draw Join -----------------------------------------------------------------
 
 	public StrokeLineJoin calcDrawJoin() {
-//		if( cachedDrawJoin == null ) cachedDrawJoin = StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
-//		return cachedDrawJoin;
 		return (StrokeLineJoin)getCache().computeIfAbsent( DRAW_JOIN, k -> StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() ) );
 	}
 
