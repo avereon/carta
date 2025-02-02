@@ -169,7 +169,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>${maven.exec.version}</version>
+						<version>${exec.maven.version}</version>
 						<executions>
 							<execution>
 								<id>screenshots1x</id>
@@ -203,7 +203,7 @@
 					<plugin>
 						<groupId>org.codehaus.mojo</groupId>
 						<artifactId>exec-maven-plugin</artifactId>
-						<version>${maven.exec.version}</version>
+						<version>${exec.maven.version}</version>
 						<executions>
 							<execution>
 								<id>screenshots2x</id>
