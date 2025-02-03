@@ -48,7 +48,7 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 	private void generateDesignToolSnapshot( URI uri, String name ) throws InterruptedException, TimeoutException, ExecutionException {
 		openAsset( uri );
 
-		Tool tool = getProgram().getWorkspaceManager().getActiveWorkspace().getActiveWorkarea().getWorkpane().getActiveTool();
+		Tool tool = getProgram().getWorkspaceManager().getActiveWorkspace().getActiveWorkarea().getActiveTool();
 		DesignTool designTool = (DesignTool)tool;
 		designTool.setDpi( 48 );
 
