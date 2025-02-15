@@ -1,7 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.product.ProgramFlag;
+import com.avereon.xenon.XenonFlag;
 import com.avereon.xenon.ProgramScreenshots;
 import com.avereon.xenon.workpane.Tool;
 import com.avereon.zarra.javafx.Fx;
@@ -34,7 +34,7 @@ public class CartesiaScreenshots extends ProgramScreenshots {
 	protected List<String> getProgramParameters() {
 		List<String> parameters = new ArrayList<>( super.getProgramParameters() );
 
-		parameters.add( ProgramFlag.ENABLE_MOD );
+		parameters.add( XenonFlag.ENABLE_MOD );
 		parameters.add( CartesiaMod.class.getModule().getName() );
 
 		return parameters;
