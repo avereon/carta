@@ -16,7 +16,6 @@ import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.Path;
 import com.avereon.util.ThreadUtil;
 import com.avereon.zarra.color.Colors;
-import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -159,8 +158,16 @@ public class DesignRenderer extends Pane {
 		visibleLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 
-		previewLayer.register( NodeEvent.ANY, e -> render() );
-		referenceLayer.register( NodeEvent.ANY, e -> render() );
+		// TODO This may overwhelm the FX thread
+		previewLayer.register( NodeEvent.NODE_CHANGED, e -> {
+			//if( e.getSource() != previewLayer ) return;
+			//log.atConfig().log("preview layer event={%s}", e.getEventType());
+			render();
+		} );
+		referenceLayer.register( NodeEvent.NODE_CHANGED, e -> {
+			// TODO This may overwhelm the FX thread
+			render();
+		} );
 	}
 
 	public void setDesign( Design design ) {
@@ -612,7 +619,9 @@ public class DesignRenderer extends Pane {
 	 * call from any thread.
 	 */
 	public void render() {
-		Fx.run( new RenderTrigger() );
+		//log.atConfig().log("request render");
+		//Fx.run( new RenderTrigger() );
+		doRender();
 	}
 
 	public Transform getWorldToScreenTransform() {
@@ -747,9 +756,11 @@ public class DesignRenderer extends Pane {
 	 * {@link #render()} method.
 	 */
 	private synchronized void doRender() {
+		//log.atConfig().log("do render");
 		long startNs = System.nanoTime();
 
 		// Update the workplane bounds to match the renderer pane
+		// TODO Can this be put where the renderer bounds change?
 		workplane.setBounds( renderer.parentToLocal( renderer.getBoundsInParent() ) );
 
 		renderer.clear();
@@ -758,9 +769,6 @@ public class DesignRenderer extends Pane {
 		renderHintGeometry();
 		renderReferenceGeometry();
 		renderSelectAperture();
-
-		//		renderer.setFillPen( Color.RED );
-		//		renderer.fillScreenBox( 0, 0, 100, 100 );
 
 		long endNs = System.nanoTime();
 		long duration = (long)(0.000001 * (endNs - startNs));
@@ -1092,27 +1100,28 @@ public class DesignRenderer extends Pane {
 		private boolean cancelled;
 
 		public RenderTrigger() {
-			synchronized( RenderTrigger.class ) {
-				if( latest == null ) {
-					latest = this;
-				} else {
-					latest.next = this;
-				}
-			}
+			latest = this;
+//			synchronized( RenderTrigger.class ) {
+//				if( latest == null ) {
+//					latest = this;
+//				} else {
+//					latest.next = this;
+//				}
+//
+//				// Cancel all triggers that are currently waiting
+//				while( next != null ) {
+//					next.cancelled = true;
+//					next = next.next;
+//				}
+//			}
 		}
 
 		public void run() {
 			// If this trigger is already cancelled just skip it
-			if( cancelled ) return;
+			//if( this != latest ) return;
 
 			// Ensure that we are on the FX application thread
-			Fx.affirmOnFxThread();
-
-			// Cancel all triggers that are currently waiting
-			while( next != null ) {
-				next.cancelled = true;
-				next = next.next;
-			}
+			//Fx.affirmOnFxThread();
 
 			// Now actually draw the geometry
 			doRender();
