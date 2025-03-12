@@ -16,6 +16,7 @@ import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.marea.geom.Path;
 import com.avereon.util.ThreadUtil;
 import com.avereon.zarra.color.Colors;
+import com.avereon.zarra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -621,7 +622,7 @@ public class DesignRenderer extends Pane {
 	public void render() {
 		//log.atConfig().log("request render");
 		//Fx.run( new RenderTrigger() );
-		doRender();
+		Fx.run( this::doRender );
 	}
 
 	public Transform getWorldToScreenTransform() {
