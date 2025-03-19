@@ -1433,6 +1433,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	}
 
+	// FIXME Is this a duplicate of com.avereon.xenon.action.PropertiesAction?
 	private class PropertiesAction extends ProgramAction {
 
 		protected PropertiesAction( Xenon program ) {
