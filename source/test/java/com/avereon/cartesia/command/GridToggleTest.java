@@ -1,6 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
+import com.avereon.cartesia.command.base.GridToggle;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;

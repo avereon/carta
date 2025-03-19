@@ -3,7 +3,7 @@ package com.avereon.cartesia.command.draw;
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
-import com.avereon.cartesia.command.Prompt;
+import com.avereon.cartesia.command.base.Prompt;
 import com.avereon.cartesia.data.DesignBox;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.scene.Cursor;

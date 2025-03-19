@@ -1,6 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
+import com.avereon.cartesia.command.base.ReferencePointsToggle;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.SUCCESS;

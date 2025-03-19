@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.base.Anchor;
 import com.avereon.cartesia.command.camera.CameraMove;
 import com.avereon.cartesia.command.camera.CameraZoom;
 import com.avereon.cartesia.command.snap.AutoSnap;

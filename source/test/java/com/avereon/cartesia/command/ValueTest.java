@@ -1,6 +1,8 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
+import com.avereon.cartesia.command.base.Prompt;
+import com.avereon.cartesia.command.base.Value;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -3,7 +3,7 @@ package com.avereon.cartesia.command.print;
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
-import com.avereon.cartesia.command.Prompt;
+import com.avereon.cartesia.command.base.Prompt;
 import com.avereon.cartesia.data.DesignPrint;
 import org.junit.jupiter.api.Test;
 

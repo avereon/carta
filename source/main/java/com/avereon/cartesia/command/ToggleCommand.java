@@ -1,6 +1,6 @@
 package com.avereon.cartesia.command;
 
-public class ToggleCommand extends Command {
+public abstract class ToggleCommand extends Command {
 
 	@Override
 	public boolean clearSelectionWhenComplete() {

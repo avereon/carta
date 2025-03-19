@@ -1,6 +1,10 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.base.Anchor;
+import com.avereon.cartesia.command.base.GridToggle;
+import com.avereon.cartesia.command.base.ReferencePointsToggle;
+import com.avereon.cartesia.command.base.ShapeInformation;
 import com.avereon.cartesia.command.camera.*;
 import com.avereon.cartesia.command.draw.*;
 import com.avereon.cartesia.command.edit.*;

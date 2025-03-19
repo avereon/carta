@@ -2,6 +2,8 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.CommandTrigger;
+import com.avereon.cartesia.command.base.Anchor;
+import com.avereon.cartesia.command.base.Prompt;
 import javafx.geometry.Point3D;
 import javafx.scene.input.InputEvent;
 import javafx.scene.input.MouseButton;

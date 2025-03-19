@@ -45,6 +45,7 @@ module com.avereon.carta {
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
+	exports com.avereon.cartesia.command.base;
 
 	provides Module with CartesiaMod;
 

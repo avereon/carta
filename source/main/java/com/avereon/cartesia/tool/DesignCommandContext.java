@@ -5,6 +5,7 @@ import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.base.Value;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.log.LazyEval;

@@ -2,6 +2,9 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.base.Anchor;
+import com.avereon.cartesia.command.base.Prompt;
+import com.avereon.cartesia.command.base.Value;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.settings.MapSettings;
 import javafx.geometry.Point3D;

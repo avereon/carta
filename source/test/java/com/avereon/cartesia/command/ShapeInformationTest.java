@@ -1,6 +1,8 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
+import com.avereon.cartesia.command.base.Prompt;
+import com.avereon.cartesia.command.base.ShapeInformation;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;

@@ -2,6 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.command.base.Prompt;
 import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.*;

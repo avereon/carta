@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.draw;
 
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.command.Prompt;
+import com.avereon.cartesia.command.base.Prompt;
 import com.avereon.cartesia.data.DesignEllipse;
 import com.avereon.cartesia.data.DesignLine;
 import javafx.scene.Cursor;
