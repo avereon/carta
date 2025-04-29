@@ -8,12 +8,12 @@
 	<parent>
 		<groupId>com.avereon.pom</groupId>
 		<artifactId>mod</artifactId>
-		<version>3.5.8</version>
+		<version>3.6.0</version>
 	</parent>
 
 	<groupId>com.avereon</groupId>
 	<artifactId>carta</artifactId>
-	<version>1.3</version>
+	<version>1.4-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>Cartesia</name>
@@ -36,11 +36,11 @@
 
 	<properties>
 		<!-- Version numbers updated 28 Apr 2025 -->
-		<curve.version>0.5</curve.version>
-		<marea.version>0.3</marea.version>
-		<zarra.version>0.10</zarra.version>
-		<zerra.version>0.10</zerra.version>
-		<cameo.version>2.10</cameo.version>
+		<curve.version>0.6-SNAPSHOT</curve.version>
+		<marea.version>0.4-SNAPSHOT</marea.version>
+		<zarra.version>0.11-SNAPSHOT</zarra.version>
+		<zerra.version>0.11-SNAPSHOT</zerra.version>
+		<cameo.version>2.11</cameo.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>21.0.2</monocle.version>
 		<mockito.version>5.17.0</mockito.version>
