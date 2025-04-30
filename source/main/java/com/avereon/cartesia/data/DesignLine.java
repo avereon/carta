@@ -3,14 +3,10 @@ package com.avereon.cartesia.data;
 import com.avereon.cartesia.ParseUtil;
 import com.avereon.cartesia.math.CadGeometry;
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.curve.math.Geometry;
 import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
-import com.avereon.zarra.javafx.FxUtil;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.List;

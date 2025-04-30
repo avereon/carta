@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.zerra.BaseModUiTestCase;
+import com.avereon.xenos.BaseModUiTestCase;
 
 public abstract class BaseCartesiaUiTest extends BaseModUiTestCase<CartesiaMod> {
 

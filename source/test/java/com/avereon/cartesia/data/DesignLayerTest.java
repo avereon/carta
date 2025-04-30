@@ -1,7 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadShapes;
-import com.avereon.zarra.color.Paints;
+import com.avereon.zerra.color.Paints;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;

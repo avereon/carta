@@ -10,7 +10,7 @@ import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.tool.settings.SettingsPagePanel;
 import com.avereon.xenon.workpane.Workpane;
-import com.avereon.zarra.javafx.Fx;
+import com.avereon.zerra.javafx.Fx;
 import javafx.scene.control.ScrollPane;
 import lombok.CustomLog;
 

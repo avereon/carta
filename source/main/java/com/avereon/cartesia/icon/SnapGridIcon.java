@@ -1,6 +1,6 @@
 package com.avereon.cartesia.icon;
 
-import com.avereon.zarra.image.SvgIcon;
+import com.avereon.zerra.image.SvgIcon;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 

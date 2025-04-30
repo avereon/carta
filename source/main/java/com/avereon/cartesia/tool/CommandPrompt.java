@@ -3,7 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
-import com.avereon.zarra.javafx.Fx;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.value.ObservableValue;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;

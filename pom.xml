@@ -38,8 +38,8 @@
 		<!-- Version numbers updated 28 Apr 2025 -->
 		<curve.version>0.6-SNAPSHOT</curve.version>
 		<marea.version>0.4-SNAPSHOT</marea.version>
-		<zarra.version>0.11-SNAPSHOT</zarra.version>
 		<zerra.version>0.11-SNAPSHOT</zerra.version>
+		<xenos.version>0.11-SNAPSHOT</xenos.version>
 		<cameo.version>2.11</cameo.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>21.0.2</monocle.version>
@@ -63,15 +63,15 @@
 
 		<dependency>
 			<groupId>com.avereon</groupId>
-			<artifactId>zarra</artifactId>
-			<version>${zarra.version}</version>
+			<artifactId>zerra</artifactId>
+			<version>${zerra.version}</version>
 			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.avereon</groupId>
-			<artifactId>zerra</artifactId>
-			<version>${zerra.version}</version>
+			<artifactId>xenos</artifactId>
+			<version>${xenos.version}</version>
 			<scope>test</scope>
 		</dependency>
 

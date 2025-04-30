@@ -7,7 +7,7 @@ import com.avereon.transaction.Txn;
 import com.avereon.transaction.TxnException;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.tool.settings.SettingsPage;
-import com.avereon.zarra.color.Paints;
+import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;

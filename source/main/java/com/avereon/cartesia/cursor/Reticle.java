@@ -1,8 +1,8 @@
 package com.avereon.cartesia.cursor;
 
 import com.avereon.xenon.XenonProgram;
-import com.avereon.zarra.image.RenderedIcon;
-import com.avereon.zarra.javafx.Fx;
+import com.avereon.zerra.image.RenderedIcon;
+import com.avereon.zerra.javafx.Fx;
 import lombok.CustomLog;
 import lombok.Getter;
 

@@ -8,7 +8,7 @@ import com.avereon.product.Product;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.Codec;
-import com.avereon.zarra.font.FontUtil;
+import com.avereon.zerra.font.FontUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;

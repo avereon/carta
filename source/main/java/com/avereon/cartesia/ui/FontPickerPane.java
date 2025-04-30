@@ -1,6 +1,6 @@
 package com.avereon.cartesia.ui;
 
-import com.avereon.zarra.font.FontUtil;
+import com.avereon.zerra.font.FontUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;

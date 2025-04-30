@@ -2,7 +2,7 @@ package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.test.FxBoundsAssert;
 import com.avereon.curve.math.Constants;
-import com.avereon.zarra.color.Paints;
+import com.avereon.zerra.color.Paints;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;

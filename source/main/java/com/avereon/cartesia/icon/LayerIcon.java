@@ -1,6 +1,6 @@
 package com.avereon.cartesia.icon;
 
-import com.avereon.zarra.image.SvgIcon;
+import com.avereon.zerra.image.SvgIcon;
 
 public abstract class LayerIcon extends SvgIcon {
 

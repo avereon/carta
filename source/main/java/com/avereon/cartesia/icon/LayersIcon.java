@@ -1,7 +1,7 @@
 package com.avereon.cartesia.icon;
 
-import com.avereon.zarra.image.Proof;
-import com.avereon.zarra.image.SvgIcon;
+import com.avereon.zerra.image.Proof;
+import com.avereon.zerra.image.SvgIcon;
 
 public class LayersIcon extends SvgIcon {
 

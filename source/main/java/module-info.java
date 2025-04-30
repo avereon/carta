@@ -12,7 +12,7 @@ module com.avereon.carta {
 	requires com.avereon.curve;
 	requires com.avereon.marea;
 	requires com.avereon.xenon;
-	requires com.avereon.zarra;
+	requires com.avereon.zerra;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;
 	requires java.logging;
@@ -34,8 +34,8 @@ module com.avereon.carta {
 
 	// Private APIs
 	exports com.avereon.cartesia to com.avereon.xenon;
-	exports com.avereon.cartesia.cursor to com.avereon.zarra;
-	exports com.avereon.cartesia.icon to com.avereon.zarra;
+	exports com.avereon.cartesia.cursor to com.avereon.zerra;
+	exports com.avereon.cartesia.icon to com.avereon.zerra;
 	exports com.avereon.cartesia.settings to com.avereon.xenon;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
 	exports com.avereon.cartesia.tool.design to com.avereon.xenon;

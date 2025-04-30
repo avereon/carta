@@ -1,6 +1,6 @@
 package com.avereon.cartesia.cursor;
 
-import com.avereon.zarra.image.RenderedIcon;
+import com.avereon.zerra.image.RenderedIcon;
 import javafx.geometry.Dimension2D;
 import javafx.scene.ImageCursor;
 import javafx.scene.image.Image;

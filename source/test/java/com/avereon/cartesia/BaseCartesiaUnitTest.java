@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.zerra.BaseModTestCase;
+import com.avereon.xenos.BaseModTestCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;

@@ -14,7 +14,7 @@ import com.avereon.util.TextUtil;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.notice.Notice;
-import com.avereon.zarra.javafx.Fx;
+import com.avereon.zerra.javafx.Fx;
 import javafx.event.EventHandler;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
