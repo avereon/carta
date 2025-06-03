@@ -24,14 +24,14 @@ public class CameraViewPoint extends CameraCommand {
 
 		if( task.getEvent() instanceof MouseEvent mouseEvent ) {
 			Point3D mouse = new Point3D( mouseEvent.getX(), mouseEvent.getY(), mouseEvent.getZ() );
-			task.getTool().setViewPoint( task.getTool().screenToWorld( mouse ) );
+			task.getTool().setViewpoint( task.getTool().screenToWorld( mouse ) );
 			return SUCCESS;
 		}
 
 		if( task.hasParameter( 0 ) ) {
 			try {
 				Point3D viewPoint = asPoint( task, "select-viewpoint", 0 );
-				task.getTool().setViewPoint( viewPoint );
+				task.getTool().setViewpoint( viewPoint );
 				return SUCCESS;
 			} catch( ParseException exception ) {
 				// TODO Maybe time to have a CommandException to use for the notice

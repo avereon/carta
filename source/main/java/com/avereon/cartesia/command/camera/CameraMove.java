@@ -56,7 +56,7 @@ public class CameraMove extends CameraCommand {
 			Point3D worldCorner = asPoint( task, "pan-target", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				Point3D worldOffset = worldAnchor.subtract( worldCorner );
-				task.getTool().setViewPoint( originalViewPoint.add( worldOffset ) );
+				task.getTool().setViewpoint( originalViewPoint.add( worldOffset ) );
 				return SUCCESS;
 			}
 		}
@@ -75,7 +75,7 @@ public class CameraMove extends CameraCommand {
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
 			Point3D worldOffset = anchor.subtract( corner );
-			tool.setViewPoint( originalViewPoint.add( worldOffset ) );
+			tool.setViewpoint( originalViewPoint.add( worldOffset ) );
 			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			Point3D worldOffset = anchor.subtract( corner );

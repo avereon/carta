@@ -464,7 +464,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public void setViewPoint( Point3D point ) {
+	public void setViewpoint( Point3D point ) {
 		renderer.setViewpoint( point );
 	}
 
@@ -494,14 +494,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public void setZoom( double zoom ) {
 		renderer.setZoom( zoom, zoom );
-	}
-
-	public DoubleProperty zoomXProperty() {
-		return renderer.zoomXProperty();
-	}
-
-	public DoubleProperty zoomYProperty() {
-		return renderer.zoomYProperty();
 	}
 
 	@Override

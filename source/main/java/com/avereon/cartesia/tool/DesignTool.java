@@ -11,7 +11,6 @@ import com.avereon.cartesia.data.DesignView;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -86,7 +85,7 @@ public interface DesignTool {
 
 	Point3D getViewpoint();
 
-	void setViewPoint( Point3D point );
+	void setViewpoint( Point3D point );
 
 	double getViewRotate();
 
@@ -99,10 +98,6 @@ public interface DesignTool {
 	double getZoom();
 
 	void setZoom( double zoom );
-
-	DoubleProperty zoomXProperty();
-
-	DoubleProperty zoomYProperty();
 
 	void setView( DesignPortal portal );
 
