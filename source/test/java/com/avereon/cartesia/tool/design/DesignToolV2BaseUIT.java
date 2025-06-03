@@ -45,7 +45,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		tool.addEventHandler( ProgramToolEvent.READY, eventWatcher );
 		eventWatcher.waitForEvent( ProgramToolEvent.READY );
 
-		Fx.run( () -> tool.setZoom( 2 ) );
+		Fx.run( () -> tool.setViewZoom( 2 ) );
 		Fx.waitForWithExceptions( 1000 );
 
 		this.asset = tool.getAsset();
@@ -62,7 +62,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 		// Check the tool state
 		assertThat( getTool().getDpi() ).isEqualTo( Screen.getPrimary().getDpi() );
-		assertThat( getTool().getZoom() ).isEqualTo( 2 );
+		assertThat( getTool().getViewZoom() ).isEqualTo( 2 );
 		assertThat( getTool().getVisibleLayers().size() ).isEqualTo( 0 );
 		assertThat( getTool().getEnabledLayers().size() ).isEqualTo( 0 );
 		assertThat( getTool().getVisibleShapes().size() ).isEqualTo( 0 );
@@ -72,7 +72,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 	}
 
 	protected double getWorldSelectTolerance() {
-		return getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getZoom();
+		return getTool().getSelectTolerance().to( getDesign().calcDesignUnit() ).getValue() / getTool().getViewZoom();
 	}
 
 	protected void useBoxLayer() throws TimeoutException, InterruptedException {

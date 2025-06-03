@@ -17,8 +17,8 @@ public class PrintCreate extends PrintCommand {
 
 		if( task.hasParameter( 0 ) ) {
 			DesignPrint print = new DesignPrint().setName( asText( task, "print-name", 0 ) );
-			print.setOrigin( task.getTool().getViewpoint() );
-			print.setZoom( task.getTool().getZoom() );
+			print.setOrigin( task.getTool().getViewCenter() );
+			print.setZoom( task.getTool().getViewZoom() );
 			print.setRotate( task.getTool().getViewRotate() );
 			print.setLayers( task.getTool().getVisibleLayers() );
 

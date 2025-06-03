@@ -112,7 +112,7 @@ public class CameraMoveTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setViewpoint( eq( new Point3D( -6, 6, 0 ) ) );
+		verify( tool, times( 1 ) ).setViewCenter( eq( new Point3D( -6, 6, 0 ) ) );
 		verify( tool, times( 0 ) ).setCursor( any() );
 		verify( commandPrompt, times( 0 ) ).clear();
 		assertThat( result ).isEqualTo( SUCCESS );

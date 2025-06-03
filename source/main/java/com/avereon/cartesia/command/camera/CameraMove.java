@@ -33,7 +33,7 @@ public class CameraMove extends CameraCommand {
 		if( paramCount == 0 & hasEvent && event.getEventType() == MouseEvent.DRAG_DETECTED ) {
 			event.consume();
 
-			originalViewPoint = task.getTool().getViewpoint();
+			originalViewPoint = task.getTool().getViewCenter();
 			originalTransform = task.getTool().getScreenToWorldTransform().clone();
 
 			// Submit a Value command to pass the anchor back to this command
@@ -56,7 +56,7 @@ public class CameraMove extends CameraCommand {
 			Point3D worldCorner = asPoint( task, "pan-target", 1 );
 			if( worldAnchor != null && worldCorner != null ) {
 				Point3D worldOffset = worldAnchor.subtract( worldCorner );
-				task.getTool().setViewpoint( originalViewPoint.add( worldOffset ) );
+				task.getTool().setViewCenter( originalViewPoint.add( worldOffset ) );
 				return SUCCESS;
 			}
 		}
@@ -75,7 +75,7 @@ public class CameraMove extends CameraCommand {
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
 			Point3D worldOffset = anchor.subtract( corner );
-			tool.setViewpoint( originalViewPoint.add( worldOffset ) );
+			tool.setViewCenter( originalViewPoint.add( worldOffset ) );
 			event.consume();
 		} else if( event.getEventType().equals( MouseEvent.MOUSE_RELEASED ) ) {
 			Point3D worldOffset = anchor.subtract( corner );

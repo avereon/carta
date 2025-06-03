@@ -126,9 +126,9 @@ public class DesignPrintTask extends Task<Void> {
 		renderer.setDpi( factor * 72 );
 		renderer.setPrefWidth( layout.getPrintableWidth() );
 		renderer.setPrefHeight( layout.getPrintableHeight() );
-		renderer.setViewpoint( tool.getViewpoint() );
+		renderer.setViewpoint( tool.getViewCenter() );
 		renderer.setRotate( tool.getViewRotate() );
-		renderer.setZoom( tool.getZoom(), tool.getZoom() );
+		renderer.setZoom( tool.getViewZoom(), tool.getViewZoom() );
 
 		//renderer.setReferenceLayerVisible( false );
 

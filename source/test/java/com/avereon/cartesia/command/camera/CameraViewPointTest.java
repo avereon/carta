@@ -30,7 +30,7 @@ public class CameraViewPointTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 0 ) ).setViewpoint( any() );
+		verify( tool, times( 0 ) ).setViewCenter( any() );
 		assertThat( result ).isEqualTo( Command.Result.INCOMPLETE );
 	}
 
@@ -46,7 +46,7 @@ public class CameraViewPointTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setViewpoint( eq( new Point3D( 1, 2, 0 ) ) );
+		verify( tool, times( 1 ) ).setViewCenter( eq( new Point3D( 1, 2, 0 ) ) );
 		assertThat( result ).isEqualTo( Command.Result.SUCCESS );
 	}
 
@@ -59,7 +59,7 @@ public class CameraViewPointTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setViewpoint( eq( new Point3D( 1, 2, 0 ) ) );
+		verify( tool, times( 1 ) ).setViewCenter( eq( new Point3D( 1, 2, 0 ) ) );
 		assertThat( result ).isEqualTo( Command.Result.SUCCESS );
 	}
 

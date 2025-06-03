@@ -83,9 +83,9 @@ public interface DesignTool {
 	 */
 	void setCoordinateSystem( Grid system );
 
-	Point3D getViewpoint();
+	Point3D getViewCenter();
 
-	void setViewpoint( Point3D point );
+	void setViewCenter( Point3D point );
 
 	double getViewRotate();
 
@@ -95,9 +95,9 @@ public interface DesignTool {
 
 	void setDpi( double dpi );
 
-	double getZoom();
+	double getViewZoom();
 
-	void setZoom( double zoom );
+	void setViewZoom( double viewZoom );
 
 	void setView( DesignPortal portal );
 

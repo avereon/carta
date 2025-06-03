@@ -55,7 +55,7 @@ public class DesignContext {
 		getCoordinateStatus().updatePosition( point );
 
 		// While we're updating the position, may as well update the zoom
-		getCoordinateStatus().updateZoom( tool.getZoom() );
+		getCoordinateStatus().updateZoom( tool.getViewZoom() );
 	}
 }
 

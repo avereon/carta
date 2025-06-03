@@ -126,7 +126,7 @@ public class CameraZoomTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setZoom( Math.sqrt( 2 ) );
+		verify( tool, times( 1 ) ).setViewZoom( Math.sqrt( 2 ) );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
 

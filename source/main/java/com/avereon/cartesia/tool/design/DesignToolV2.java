@@ -376,7 +376,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
-		getCoordinateStatus().updateZoom( getZoom() );
+		getCoordinateStatus().updateZoom( getViewZoom() );
 		//		designPane.updateView();
 		//		doUpdateGridBounds();
 
@@ -459,12 +459,12 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D getViewpoint() {
+	public Point3D getViewCenter() {
 		return CadPoints.toPoint3d( renderer.getViewpoint() );
 	}
 
 	@Override
-	public void setViewpoint( Point3D point ) {
+	public void setViewCenter( Point3D point ) {
 		renderer.setViewpoint( point );
 	}
 
@@ -487,13 +487,13 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public double getZoom() {
+	public double getViewZoom() {
 		return renderer.getZoomX();
 	}
 
 	@Override
-	public void setZoom( double zoom ) {
-		renderer.setZoom( zoom, zoom );
+	public void setViewZoom( double viewZoom ) {
+		renderer.setZoom( viewZoom, viewZoom );
 	}
 
 	@Override
@@ -559,7 +559,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		Bounds toolBounds = getLayoutBounds();
 		double xZoom = Math.abs( toolBounds.getWidth() / viewport.getWidth() );
 		double yZoom = Math.abs( toolBounds.getHeight() / viewport.getHeight() );
-		double zoom = Math.min( xZoom, yZoom ) * getZoom();
+		double zoom = Math.min( xZoom, yZoom ) * getViewZoom();
 
 		setView( worldCenter, zoom );
 	}
@@ -1085,7 +1085,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void capturePreviousPortal() {
-		portalStack.push( new DesignPortal( getViewpoint(), getZoom(), getViewRotate() ) );
+		portalStack.push( new DesignPortal( getViewCenter(), getViewZoom(), getViewRotate() ) );
 	}
 
 	public void showCommandPrompt() {
