@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.*;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
@@ -35,7 +35,6 @@ import com.avereon.zerra.javafx.Fx;
 import com.avereon.zerra.javafx.FxUtil;
 import javafx.beans.property.*;
 import javafx.beans.value.ChangeListener;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -51,7 +50,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
 import lombok.CustomLog;
@@ -547,7 +545,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setView( DesignPortal portal ) {
-		setView( portal.getViewpoint(), portal.getZoom(), portal.getRotate() );
+		setView( portal.viewpoint(), portal.zoom(), portal.rotate() );
 	}
 
 	@Override
@@ -599,22 +597,10 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public ObservableList<Shape> selectedFxShapes() {
-		// This is the old FX shape implementation, just return an empty list.
-		return FXCollections.observableArrayList();
-	}
-
-	@Deprecated
-	@Override
-	public Point3D nearestCp( Collection<Shape> shapes, Point3D point ) {
-		throw new UnsupportedOperationException( "This method is not supported" );
-	}
-
-	@Override
 	public Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point ) {
 		// Use screen coordinates to determine "nearest" since that is what the user sees
 
-		// Convert the world point to screen coordinates
+		// Convert the world-point to screen-coordinates
 		Point3D mouse = worldToScreen( point );
 
 		// Go through all the reference points, convert them to screen coordinates and find the nearest
@@ -724,11 +710,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public DesignLayer getReferenceLayer() {
 		return renderer.getReferenceLayer();
-	}
-
-	@Override
-	public List<Shape> getVisibleFxShapes() {
-		return List.of();
 	}
 
 	@Override

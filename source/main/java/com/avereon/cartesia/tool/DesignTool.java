@@ -13,12 +13,10 @@ import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Shape;
 import javafx.scene.transform.Transform;
 
 import java.util.Collection;
@@ -137,12 +135,6 @@ public interface DesignTool {
 	 */
 	ObjectProperty<DesignValue> selectTolerance();
 
-	@Deprecated
-	ObservableList<Shape> selectedFxShapes();
-
-	@Deprecated
-	Point3D nearestCp( Collection<Shape> shapes, Point3D point );
-
 	Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point );
 
 	void setCurrentLayer( DesignLayer layer );
@@ -171,9 +163,6 @@ public interface DesignTool {
 	DesignLayer getPreviewLayer();
 
 	DesignLayer getReferenceLayer();
-
-	@Deprecated
-	List<Shape> getVisibleFxShapes();
 
 	List<DesignShape> getVisibleShapes();
 
