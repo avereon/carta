@@ -7,6 +7,7 @@ import lombok.CustomLog;
 import lombok.Getter;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 @CustomLog
@@ -37,7 +38,7 @@ public enum Reticle {
 		Fx.run( () -> future.complete( new ReticleCursor( this ) ) );
 
 		try {
-			return future.get();
+			return future.get(200, TimeUnit.MILLISECONDS);
 		} catch( Exception exception ) {
 			throw new RuntimeException( exception );
 		}
