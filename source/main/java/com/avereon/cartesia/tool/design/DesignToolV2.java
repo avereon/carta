@@ -132,8 +132,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	public DesignToolV2( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
-		addStylesheet( CartesiaMod.STYLESHEET );
-		getStyleClass().add( "design-tool" );
 
 		commandActions = new ConcurrentHashMap<>();
 		designPropertiesMap = new DesignPropertiesMap( product );
@@ -382,7 +380,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Get the reticle setting and bind the setting to the reticleProperty
 
-		// Update the cursor if the reticle changes and cursor is currently a reticle
+		// Update the cursor if the reticle changes and the cursor is currently a reticle
 		reticle.addListener( ( p, o, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );

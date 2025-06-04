@@ -17,12 +17,14 @@ public abstract class DesignToolBaseTest extends BaseCartesiaUnitTest {
 	@Mock
 	protected Asset asset;
 
+	static {
+		// All tools will want FX started
+		Fx.startup();
+	}
+
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-
-		// All tools will want FX started
-		Fx.startup();
 
 		lenient().when( tool.getAsset() ).thenReturn( asset );
 		lenient().when( tool.snapToWorkplane( any() ) ).then( i -> i.getArgument( 0 ) );

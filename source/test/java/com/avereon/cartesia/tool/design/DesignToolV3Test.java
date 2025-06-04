@@ -1,8 +1,11 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignToolBaseTest;
+import com.avereon.cartesia.cursor.Reticle;
+import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.tool.DesignPortal;
 import javafx.geometry.Point3D;
+import javafx.scene.Cursor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -129,5 +132,52 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		assertThat( tool.getViewCenter() ).isEqualTo( center );
 		assertThat( tool.getViewRotate() ).isEqualTo( rotate );
 		assertThat( tool.getViewZoom() ).isEqualTo( zoom );
+	}
+
+	@Test
+	void defaultDpi() {
+		// when
+		double result = tool.getDpi();
+
+		// then
+		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_DPI );
+	}
+
+	@Test
+	void setDpi() {
+		// given
+		double dpi = 123.45;
+
+		// when
+		tool.setDpi( dpi );
+
+		// then
+		assertThat( tool.getDpi() ).isEqualTo( dpi );
+	}
+
+	@Test
+	void defaultCursor() {
+		// when
+		Cursor result = tool.getCursor();
+
+		// then
+		assertThat( result.toString() ).isEqualTo( DesignToolV3.DEFAULT_CURSOR.toString() );
+		// FIXME Currently this is a normal cursor. Needs to be a ReticleCursor.
+		//assertThat( result ).isInstanceOf( ReticleCursor.class );
+	}
+
+	@Test
+	void setCursor() {
+		// given
+		Cursor cursor = Reticle.DUPLEX.getCursor( program );
+		assertThat( cursor.toString() ).isEqualTo( Reticle.DUPLEX.name() );
+
+		// when
+		tool.setCursor( cursor );
+		Cursor result = tool.getCursor();
+
+		// then
+		assertThat( result.toString() ).isEqualTo( cursor.toString() );
+		assertThat( result ).isInstanceOf( ReticleCursor.class );
 	}
 }

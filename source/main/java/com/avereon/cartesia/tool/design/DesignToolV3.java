@@ -8,6 +8,8 @@ import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.workpane.ToolException;
 import javafx.beans.property.*;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
@@ -21,17 +23,13 @@ import java.util.Objects;
 
 public class DesignToolV3 extends BaseDesignTool {
 
-	public static final Point3D DEFAULT_VIEWPOINT = new Point3D( 0, 0, 0 );
-
-	public static final double DEFAULT_ROTATE = 0;
-
-	public static final double DEFAULT_ZOOM = 1;
-
 	private final ObjectProperty<Point3D> viewCenter;
 
 	private final DoubleProperty viewRotate;
 
 	private final DoubleProperty viewZoom;
+
+	private final DoubleProperty viewDpi;
 
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -39,6 +37,14 @@ public class DesignToolV3 extends BaseDesignTool {
 		viewCenter = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
+
+		setCursor( DEFAULT_CURSOR );
+	}
+
+	@Override
+	protected void ready( OpenAssetRequest request ) throws ToolException {
+		super.ready( request );
 	}
 
 	@Override
@@ -51,6 +57,10 @@ public class DesignToolV3 extends BaseDesignTool {
 		this.viewCenter.set( Objects.requireNonNull( viewCenter ) );
 	}
 
+	public ObjectProperty<Point3D> viewCenterProperty() {
+		return viewCenter;
+	}
+
 	@Override
 	public double getViewRotate() {
 		return viewRotate.get();
@@ -59,6 +69,10 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	public void setViewRotate( double rotate ) {
 		this.viewRotate.set( rotate );
+	}
+
+	public DoubleProperty viewRotateProperty() {
+		return viewRotate;
 	}
 
 	@Override
@@ -71,6 +85,10 @@ public class DesignToolV3 extends BaseDesignTool {
 		this.viewZoom.set( viewZoom );
 	}
 
+	public DoubleProperty viewZoomProperty() {
+		return viewZoom;
+	}
+
 	@Override
 	public void setView( DesignPortal portal ) {
 		setView( portal.viewpoint(), portal.rotate(), portal.zoom() );
@@ -78,7 +96,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public void setView( Point3D viewpoint, double zoom ) {
-		setView(viewpoint, zoom, getViewRotate() );
+		setView( viewpoint, zoom, getViewRotate() );
 	}
 
 	@Override
@@ -90,15 +108,20 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public double getDpi() {
-		return 0;
+		return viewDpi.get();
 	}
 
 	@Override
 	public void setDpi( double dpi ) {
+		viewDpi.set( dpi );
+	}
 
+	public DoubleProperty viewDpiProperty() {
+		return viewDpi;
 	}
 
 	@Override
+	@Deprecated
 	public Cursor getReticleCursor() {
 		return null;
 	}
