@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.*;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
@@ -91,8 +90,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	// TOOL PROPERTIES
 	// The renderer might also have some properties that should be exposed
 
-	private final ObjectProperty<Reticle> reticle;
-
 	private final ObjectProperty<DesignValue> selectTolerance;
 
 	private final ObjectProperty<DesignLayer> currentLayer;
@@ -152,7 +149,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		// TODO Move this to tool settings like reticle and aperture
 		renderer.getWorkplane().setGridStyle( GridStyle.DOT );
 
-		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
 
 		currentLayer = new SimpleObjectProperty<>();
@@ -283,8 +279,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		//		// Restore the reference view visibility
 		//		setReferenceLayerVisible( Boolean.parseBoolean( settings.get( REFERENCE_LAYER_VISIBLE, Boolean.TRUE.toString() ) ) );
-		//
-		//		// Settings listeners
+
+		// Settings listeners
 		productSettings.register( RETICLE, e -> setReticle( Reticle.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		productSettings.register( SELECT_APERTURE_SIZE, e -> setSelectTolerance( new DesignValue( Double.parseDouble( (String)e.getNewValue() ), getSelectTolerance().getUnit() ) ) );
 		productSettings.register( SELECT_APERTURE_UNIT, e -> setSelectTolerance( new DesignValue( getSelectTolerance().getValue(), DesignUnit.valueOf( ((String)e.getNewValue()).toUpperCase() ) ) ) );
@@ -377,13 +373,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		getCoordinateStatus().updateZoom( getViewZoom() );
 		//		designPane.updateView();
 		//		doUpdateGridBounds();
-
-		// Get the reticle setting and bind the setting to the reticleProperty
-
-		// Update the cursor if the reticle changes and the cursor is currently a reticle
-		reticle.addListener( ( p, o, n ) -> {
-			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
-		} );
 
 		// Now that all the listeners are set up:
 
@@ -506,23 +495,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	public DoubleProperty viewRotateProperty() {
 		return renderer.viewRotateProperty();
-	}
-
-	@Override
-	public final ReticleCursor getReticleCursor() {
-		return getReticle().getCursor( getProgram() );
-	}
-
-	private Reticle getReticle() {
-		return reticle.get();
-	}
-
-	private void setReticle( Reticle reticle ) {
-		this.reticle.set( reticle );
-	}
-
-	public ObjectProperty<Reticle> reticle() {
-		return reticle;
 	}
 
 	private CommandPrompt getCommandPrompt() {

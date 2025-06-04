@@ -4,7 +4,6 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -17,7 +16,6 @@ import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
-import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 
@@ -59,10 +57,7 @@ public interface DesignTool {
 
 	DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MILLIMETER );
 
-	Cursor DEFAULT_CURSOR = ReticleCursor.CROSSHAIR;
-
-	@Deprecated
-	Reticle DEFAULT_RETICLE = Reticle.CROSSHAIR;
+	Reticle DEFAULT_RETICLE = Reticle.DUPLEX;
 
 	String DEFAULT_APERTURE_DRAW = "#c0c000ff";
 
@@ -143,16 +138,24 @@ public interface DesignTool {
 	void setView( Point3D center, double zoom, double rotate );
 
 	/**
-	 * Get the reticle cursor for this tool.
-	 * <p/>
-	 * As of 2025-06-03, the strategy is changing to just use the normal cursor
-	 * property with ReticleCursor objects. The specialized reticle cursor methods
-	 * will be removed in a future release.
+	 * Get the reticle for this tool.
 	 *
-	 * @deprecated Use {@link Node#getCursor()} instead.
+	 * @return The reticle for this tool
+	 */
+	Reticle getReticle();
+
+	/**
+	 * Set the reticle for this tool.
+	 *
+	 * @param reticle The reticle for this tool
+	 */
+	void setReticle( Reticle reticle );
+
+	/**
+	 * Get the reticle cursor for this tool.
+	 *
 	 * @return The cursor for this tool.
 	 */
-	@Deprecated
 	Cursor getReticleCursor();
 
 	/**

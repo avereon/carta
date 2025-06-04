@@ -43,14 +43,14 @@ public class Design2dAssetType extends AssetType {
 
 	@Override
 	public boolean assetOpen( Xenon program, Asset asset ) throws AssetException {
-		Design2D design = initModel( asset );
+		initModel( asset );
 
 		asset.setCaptureUndoChanges( true );
 		return true;
 	}
 
 	private Design2D initModel( Asset asset ) {
-		// There might already be a model from assetNew()
+		// There might already be a model
 		Design2D design = asset.getModel();
 
 		// If there is not already a model, create one

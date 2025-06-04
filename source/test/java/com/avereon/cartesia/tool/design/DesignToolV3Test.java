@@ -161,9 +161,8 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		Cursor result = tool.getCursor();
 
 		// then
-		assertThat( result.toString() ).isEqualTo( DesignToolV3.DEFAULT_CURSOR.toString() );
-		// FIXME Currently this is a normal cursor. Needs to be a ReticleCursor.
-		//assertThat( result ).isInstanceOf( ReticleCursor.class );
+		assertThat( result.toString() ).isEqualTo( DesignToolV3.DEFAULT_RETICLE.name() );
+		assertThat( result ).isInstanceOf( ReticleCursor.class );
 	}
 
 	@Test

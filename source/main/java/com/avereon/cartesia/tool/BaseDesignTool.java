@@ -1,6 +1,8 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.cursor.Reticle;
+import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
@@ -9,6 +11,7 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.guide.GuidedTool;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
@@ -65,7 +68,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// viewpoint
 	// rotate
 	// zoom
-	// reticle
+	private final ObjectProperty<Reticle> reticle;
+
 	// selectedShapes
 	// visibleShapes
 	// portal (viewport)
@@ -83,7 +87,14 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
 
+		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
+
 		this.workplane = new DesignWorkplane();
+
+		// Update the cursor if the reticle changes and the cursor is currently a reticle
+		reticle.addListener( ( p, o, n ) -> {
+			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
+		} );
 	}
 
 	@Override
@@ -93,21 +104,26 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public final Design getDesign() {
-		Design design = getAssetModel();
+		return getAssetModel();
+	}
 
-		// FIXME This initialization should be done
-		//  - in the asset manager (but how would it know)
-		//  - or in UiRegenerator
-		if( design == null ) {
-			try {
-				getAsset().getType().assetNew( getProgram(), getAsset() );
-				design = getAssetModel();
-			} catch( Exception exception ) {
-				log.atWarn().withCause( exception ).log();
-			}
-		}
+	@Override
+	public final ReticleCursor getReticleCursor() {
+		return getReticle().getCursor( getProgram() );
+	}
 
-		return design;
+	@Override
+	public Reticle getReticle() {
+		return reticle.get();
+	}
+
+	@Override
+	public void setReticle( Reticle reticle ) {
+		this.reticle.set( reticle );
+	}
+
+	public ObjectProperty<Reticle> reticle() {
+		return reticle;
 	}
 
 	@Override
