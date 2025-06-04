@@ -1,7 +1,7 @@
 import com.avereon.cartesia.CartesiaMod;
 import com.avereon.xenon.Module;
 
-// This should match the group and artifact from the product card
+// This should match the group and artifact from the product card,
 // or there will be a lot of confusion.
 module com.avereon.carta {
 
@@ -19,6 +19,7 @@ module com.avereon.carta {
 	requires jep;
 
 	// Public APIs
+	exports com.avereon.cartesia;
 	exports com.avereon.cartesia.command;
 	exports com.avereon.cartesia.command.camera;
 	exports com.avereon.cartesia.command.draw;
@@ -33,7 +34,6 @@ module com.avereon.carta {
 	exports com.avereon.cartesia.snap;
 
 	// Private APIs
-	exports com.avereon.cartesia to com.avereon.xenon;
 	exports com.avereon.cartesia.cursor to com.avereon.zerra;
 	exports com.avereon.cartesia.icon to com.avereon.zerra;
 	exports com.avereon.cartesia.settings to com.avereon.xenon;
