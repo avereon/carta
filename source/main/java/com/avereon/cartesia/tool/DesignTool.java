@@ -137,6 +137,10 @@ public interface DesignTool {
 
 	void setView( Point3D center, double zoom, double rotate );
 
+	void setView( DesignView view );
+
+	DesignView createView();
+
 	/**
 	 * Get the reticle for this tool.
 	 *
@@ -226,10 +230,19 @@ public interface DesignTool {
 
 	void setReferenceLayerVisible( boolean visible );
 
-	void setCurrentView( DesignView view );
+	// FIXME Setting a DesignView makes sense, but there really is not concept of
+	// a current "design view" in the tool. The current view is the workplane
+	// center, zoom, rotation, and layers, but does not have a name. A design view
+	// could be created from the current view information, but it is not a design
+	// view without a name.
 
+	@Deprecated
 	DesignView getCurrentView();
 
+	@Deprecated
+	void setCurrentView( DesignView view );
+
+	@Deprecated
 	ObjectProperty<DesignView> currentViewProperty();
 
 	/**

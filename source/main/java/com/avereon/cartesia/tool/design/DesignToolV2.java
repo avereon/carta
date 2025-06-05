@@ -499,7 +499,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setView( DesignPortal portal ) {
-		setView( portal.viewpoint(), portal.zoom(), portal.rotate() );
+		setView( portal.center(), portal.zoom(), portal.rotate() );
 	}
 
 	@Override
