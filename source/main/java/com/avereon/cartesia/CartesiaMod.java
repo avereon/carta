@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.util.DesignLayerOptionProvider;
 import com.avereon.cartesia.data.util.DesignUnitOptionProvider;
 import com.avereon.cartesia.data.util.MarkerTypeOptionProvider;
@@ -84,6 +85,9 @@ public class CartesiaMod extends Module {
 
 		// Index the help pages
 		registerHelpPages();
+
+		// Register a listener to clear the Reticle cursor cache when the theme changes
+		getProgram().getWorkspaceManager().themeIdProperty().addListener( (p,o,n) -> Reticle.clearCursorCache() );
 
 		log.atInfo().log( "%s started.", LazyEval.of( () -> getCard().getName() ) );
 	}

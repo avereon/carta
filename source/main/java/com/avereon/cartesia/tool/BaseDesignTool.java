@@ -5,7 +5,7 @@ import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.DesignView;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -13,8 +13,9 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
-import javafx.scene.shape.Shape;
 import lombok.CustomLog;
+
+import java.util.Objects;
 
 /**
  * The design tool is the base class for all design tools.
@@ -59,8 +60,11 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	// Current:
 	// selectAperture
-	// currentLayer
-	// currentView
+	private final ObjectProperty<DesignLayer> selectedLayer;
+
+	private final ObjectProperty<DesignLayer> currentLayer;
+
+	private final ObjectProperty<DesignView> currentView;
 	// gridVisible
 	// gridSnapEnabled
 
@@ -88,10 +92,15 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getStyleClass().add( "design-tool" );
 
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
+		setCursor( getReticleCursor() );
+
+		selectedLayer = new SimpleObjectProperty<>();
+		currentLayer = new SimpleObjectProperty<>();
+		currentView = new SimpleObjectProperty<>();
 
 		this.workplane = new DesignWorkplane();
 
-		// Update the cursor if the reticle changes and the cursor is currently a reticle
+		// Register the listener to update the cursor when the reticle changes, and the cursor is also a reticle cursor
 		reticle.addListener( ( p, o, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
@@ -169,11 +178,36 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
-	public abstract void showCommandPrompt();
-
-	@Deprecated
-	static DesignShape getDesignData( Shape s ) {
-		return null;
+	public DesignLayer getCurrentLayer() {
+		return currentLayer == null ? null : currentLayer.get();
 	}
+
+	@Override
+	public void setCurrentLayer( DesignLayer layer ) {
+		currentLayerProperty().set( Objects.requireNonNull( layer ) );
+	}
+
+	@Override
+	public ObjectProperty<DesignLayer> currentLayerProperty() {
+		return currentLayer;
+	}
+
+	@Override
+	public void setCurrentView( DesignView view ) {
+		currentView.set( view );
+	}
+
+	@Override
+	public DesignView getCurrentView() {
+		return currentView.get();
+	}
+
+	@Override
+	public ObjectProperty<DesignView> currentViewProperty() {
+		return currentView;
+	}
+
+	@Override
+	public abstract void showCommandPrompt();
 
 }

@@ -92,14 +92,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private final ObjectProperty<DesignValue> selectTolerance;
 
-	private final ObjectProperty<DesignLayer> currentLayer;
-
 	// OPTIONAL TOOL PROPERTIES
 	// The renderer might also have some properties that should be exposed
-
-	private ObjectProperty<DesignLayer> selectedLayer;
-
-	private ObjectProperty<DesignView> currentView;
 
 	// ACTIONS
 
@@ -150,9 +144,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		renderer.getWorkplane().setGridStyle( GridStyle.DOT );
 
 		selectTolerance = new SimpleObjectProperty<>( DEFAULT_SELECT_TOLERANCE );
-
-		currentLayer = new SimpleObjectProperty<>();
-		currentView = new SimpleObjectProperty<>();
 
 		// Actions
 		printAction = new PrintAction( product.getProgram() );
@@ -416,6 +407,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	protected void activate() throws ToolException {
 		super.activate();
+		if( !getAsset().isLoaded() ) return;
 
 		getCommandContext().setLastActiveDesignTool( this );
 		getCommandContext().setTool( this );
@@ -586,37 +578,8 @@ public class DesignToolV2 extends BaseDesignTool {
 		return nearest;
 	}
 
-	public DesignLayer getSelectedLayer() {
-		return selectedLayer == null ? null : selectedLayer.get();
-	}
-
-	public void setSelectedLayer( DesignLayer layer ) {
-		selectedLayerProperty().set( layer );
-	}
-
-	public ObjectProperty<DesignLayer> selectedLayerProperty() {
-		if( selectedLayer == null ) selectedLayer = new SimpleObjectProperty<>();
-		return selectedLayer;
-	}
-
 	public boolean isCurrentLayer( DesignLayer layer ) {
 		return getCurrentLayer() == layer;
-	}
-
-	@Override
-	public void setCurrentLayer( DesignLayer layer ) {
-		if( layer == null ) throw new NullPointerException( "Layer cannot be null" );
-		currentLayerProperty().set( layer );
-	}
-
-	@Override
-	public DesignLayer getCurrentLayer() {
-		return currentLayer == null ? null : currentLayer.get();
-	}
-
-	@Override
-	public ObjectProperty<DesignLayer> currentLayerProperty() {
-		return currentLayer;
 	}
 
 	@Override
@@ -697,22 +660,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public void setReferenceLayerVisible( boolean visible ) {
 
-	}
-
-	@Override
-	public void setCurrentView( DesignView view ) {
-		currentViewProperty().set( view );
-	}
-
-	@Override
-	public DesignView getCurrentView() {
-		return currentView == null ? null : currentView.get();
-	}
-
-	@Override
-	public ObjectProperty<DesignView> currentViewProperty() {
-		if( currentView == null ) currentView = new SimpleObjectProperty<>();
-		return currentView;
 	}
 
 	@Override
@@ -1409,7 +1356,7 @@ public class DesignToolV2 extends BaseDesignTool {
 					getProgram().getAssetManager().openAsset( ProgramPropertiesType.URI, getWorkpane() ).get();
 
 					// Fire the show request on the workspace event bus
-					PropertiesToolEvent toolEvent  = new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage );
+					PropertiesToolEvent toolEvent = new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage );
 					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
 					FxEventHub workspaceEventBus = workspace.getEventBus();
 					Fx.run( () -> workspaceEventBus.dispatch( toolEvent ) );

@@ -183,12 +183,18 @@ public interface DesignTool {
 
 	Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point );
 
-	void setCurrentLayer( DesignLayer layer );
-
+	// What is the difference between selected layer and current layer?
+	// We don't think there is a difference other than name.
+	// BaseDesignTool even has them linked together.
 	DesignLayer getCurrentLayer();
+
+	void setCurrentLayer( DesignLayer layer );
 
 	ObjectProperty<DesignLayer> currentLayerProperty();
 
+	// What is the difference between selected layer and current layer?
+	// We don't think there is a difference other than name.
+	// BaseDesignTool even has them linked together.
 	DesignLayer getSelectedLayer();
 
 	void setSelectedLayer( DesignLayer layer );

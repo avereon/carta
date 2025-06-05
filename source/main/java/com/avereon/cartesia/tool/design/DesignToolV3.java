@@ -1,8 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.cursor.Reticle;
-import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
@@ -32,8 +30,6 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	private final DoubleProperty viewDpi;
 
-	private final ObjectProperty<Reticle> reticle;
-
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
 
@@ -42,13 +38,6 @@ public class DesignToolV3 extends BaseDesignTool {
 		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM );
 		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
 
-		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
-		setCursor( getReticleCursor() );
-
-		// Update the cursor if the reticle changes and the cursor is also a reticle cursor
-		reticle.addListener( ( p, o, n ) -> {
-			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
-		} );
 	}
 
 	@Override

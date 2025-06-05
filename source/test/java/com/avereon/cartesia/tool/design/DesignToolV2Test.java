@@ -2,9 +2,12 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.test.Point3DAssert;
+import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -17,7 +20,8 @@ public class DesignToolV2Test extends DesignToolBaseTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		tool = new DesignToolV2( module, asset );
+		Fx.run( () -> tool = new DesignToolV2( module, asset ) );
+		Fx.waitFor( 2, TimeUnit.SECONDS );
 	}
 
 	@Test

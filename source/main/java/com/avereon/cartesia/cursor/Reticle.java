@@ -2,12 +2,11 @@ package com.avereon.cartesia.cursor;
 
 import com.avereon.xenon.XenonProgram;
 import com.avereon.zerra.image.RenderedIcon;
-import com.avereon.zerra.javafx.Fx;
 import lombok.CustomLog;
 import lombok.Getter;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.EnumMap;
+import java.util.Map;
 
 @Getter
 @CustomLog
@@ -23,6 +22,8 @@ public enum Reticle {
 	DUPLEX_CIRCLE( new DuplexCircleReticle( 0.8 ) ),
 	CROSSHAIR( new CrosshairReticle() );
 
+	private static final Map<Reticle, ReticleCursor> cursorCache = new EnumMap<>( Reticle.class );
+
 	final RenderedIcon icon;
 
 	Reticle( RenderedIcon icon ) {
@@ -30,18 +31,15 @@ public enum Reticle {
 	}
 
 	public ReticleCursor getCursor( XenonProgram program ) {
-		// Change the cursor color according to the theme
+		if( cursorCache.containsKey( this ) ) return cursorCache.get( this );
 		icon.setTheme( program.getWorkspaceManager().getThemeMetadata().getMotif() );
+		ReticleCursor cursor = new ReticleCursor( this );
+		cursorCache.put( this, cursor );
+		return cursor;
+	}
 
-		final CompletableFuture<ReticleCursor> future = new CompletableFuture<>();
-
-		Fx.run( () -> future.complete( new ReticleCursor( this ) ) );
-
-		try {
-			return future.get(200, TimeUnit.MILLISECONDS);
-		} catch( Exception exception ) {
-			throw new RuntimeException( exception );
-		}
+	public static void clearCursorCache() {
+		cursorCache.clear();
 	}
 
 }

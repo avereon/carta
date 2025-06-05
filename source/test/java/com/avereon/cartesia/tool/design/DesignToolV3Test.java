@@ -4,10 +4,14 @@ import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.tool.DesignPortal;
+import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +22,8 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		tool = new DesignToolV3( module, asset );
+		Fx.run( () -> tool = new DesignToolV3( module, asset ) );
+		Fx.waitFor( 2, TimeUnit.SECONDS );
 	}
 
 	@Test
@@ -166,9 +171,11 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void setCursor() {
+	void setCursor() throws Exception {
 		// given
-		Cursor cursor = Reticle.DUPLEX.getCursor( program );
+		CompletableFuture<Cursor> future = new CompletableFuture<>();
+		Fx.run( () -> future.complete( tool.getCursor() ) );
+		Cursor cursor = future.get();
 		assertThat( cursor.toString() ).isEqualTo( Reticle.DUPLEX.name() );
 
 		// when
