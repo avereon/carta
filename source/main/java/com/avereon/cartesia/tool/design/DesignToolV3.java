@@ -16,106 +16,21 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
 public class DesignToolV3 extends BaseDesignTool {
 
-	private final ObjectProperty<Point3D> viewCenter;
-
-	private final DoubleProperty viewRotate;
-
-	private final DoubleProperty viewZoom;
-
-	private final DoubleProperty viewDpi;
-
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
-
-		viewCenter = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
-		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
-		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM );
-		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
 
 	}
 
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
-	}
-
-	@Override
-	public Point3D getViewCenter() {
-		return viewCenter.get();
-	}
-
-	@Override
-	public void setViewCenter( Point3D viewCenter ) {
-		this.viewCenter.set( Objects.requireNonNull( viewCenter ) );
-	}
-
-	public ObjectProperty<Point3D> viewCenterProperty() {
-		return viewCenter;
-	}
-
-	@Override
-	public double getViewRotate() {
-		return viewRotate.get();
-	}
-
-	@Override
-	public void setViewRotate( double rotate ) {
-		this.viewRotate.set( rotate );
-	}
-
-	public DoubleProperty viewRotateProperty() {
-		return viewRotate;
-	}
-
-	@Override
-	public double getViewZoom() {
-		return viewZoom.get();
-	}
-
-	@Override
-	public void setViewZoom( double viewZoom ) {
-		this.viewZoom.set( viewZoom );
-	}
-
-	public DoubleProperty viewZoomProperty() {
-		return viewZoom;
-	}
-
-	@Override
-	public void setView( DesignPortal portal ) {
-		setView( portal.viewpoint(), portal.rotate(), portal.zoom() );
-	}
-
-	@Override
-	public void setView( Point3D viewpoint, double zoom ) {
-		setView( viewpoint, zoom, getViewRotate() );
-	}
-
-	@Override
-	public void setView( Point3D viewpoint, double zoom, double rotate ) {
-		setViewCenter( viewpoint );
-		setViewZoom( zoom );
-		setViewRotate( rotate );
-	}
-
-	@Override
-	public double getDpi() {
-		return viewDpi.get();
-	}
-
-	@Override
-	public void setDpi( double dpi ) {
-		viewDpi.set( dpi );
-	}
-
-	public DoubleProperty viewDpiProperty() {
-		return viewDpi;
 	}
 
 	@Override
@@ -422,4 +337,5 @@ public class DesignToolV3 extends BaseDesignTool {
 	public void showCommandPrompt() {
 
 	}
+
 }

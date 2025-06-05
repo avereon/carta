@@ -10,11 +10,15 @@ import com.avereon.skill.WritableIdentity;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.tool.guide.GuidedTool;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
+import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -58,12 +62,21 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	// FX properties (what others should be here?)
 
+	private final ObjectProperty<Point3D> viewCenter;
+
+	private final DoubleProperty viewRotate;
+
+	private final DoubleProperty viewZoom;
+
+	private final DoubleProperty viewDpi;
+
 	// Current:
 	// selectAperture
 	private final ObjectProperty<DesignLayer> selectedLayer;
 
 	private final ObjectProperty<DesignLayer> currentLayer;
 
+	@Deprecated
 	private final ObjectProperty<DesignView> currentView;
 	// gridVisible
 	// gridSnapEnabled
@@ -90,6 +103,11 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
+
+		viewCenter = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
+		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
+		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
 
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		setCursor( getReticleCursor() );
@@ -163,51 +181,143 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
+	public Point3D getViewCenter() {
+		return viewCenter.get();
+	}
+
+	@Override
+	public void setViewCenter( Point3D viewCenter ) {
+		this.viewCenter.set( Objects.requireNonNull( viewCenter ) );
+	}
+
+	public ObjectProperty<Point3D> viewCenterProperty() {
+		return viewCenter;
+	}
+
+	@Override
+	public double getViewRotate() {
+		return viewRotate.get();
+	}
+
+	@Override
+	public void setViewRotate( double rotate ) {
+		this.viewRotate.set( rotate );
+	}
+
+	public DoubleProperty viewRotateProperty() {
+		return viewRotate;
+	}
+
+	@Override
+	public double getViewZoom() {
+		return viewZoom.get();
+	}
+
+	@Override
+	public void setViewZoom( double viewZoom ) {
+		this.viewZoom.set( viewZoom );
+	}
+
+	public DoubleProperty viewZoomProperty() {
+		return viewZoom;
+	}
+
+	@Override
+	public void setView( DesignPortal portal ) {
+		setView( portal.center(), portal.zoom(), portal.rotate() );
+	}
+
+	@Override
+	public void setView( Point3D viewpoint, double zoom ) {
+		setView( viewpoint, zoom, getViewRotate() );
+	}
+
+	@Override
+	public void setView( Point3D viewpoint, double zoom, double rotate ) {
+		setViewCenter( viewpoint );
+		setViewZoom( zoom );
+		setViewRotate( rotate );
+	}
+
+	@Override
+	public void setView( DesignView view ) {
+		setViewCenter( view.getOrigin() );
+		setViewZoom( view.getZoom() );
+		setViewRotate( view.getRotate() );
+		// TODO Set the visible layers from the design view
+		// setVisibleLayers( view.getLayers() );
+	}
+
+	@Override
+	public DesignView createView() {
+		DesignView view = new DesignView();
+		view.setOrigin( getViewCenter() );
+		view.setRotate( getViewRotate() );
+		view.setZoom( getViewZoom() );
+		view.setLayers( new ArrayList<>( getVisibleLayers() ) );
+		return view;
+	}
+
+	@Override
+	public double getDpi() {
+		return viewDpi.get();
+	}
+
+	@Override
+	public void setDpi( double dpi ) {
+		viewDpi.set( dpi );
+	}
+
+	public DoubleProperty viewDpiProperty() {
+		return viewDpi;
+	}
+
+	@Override
 	public DesignLayer getSelectedLayer() {
-		return getCurrentLayer();
+		return selectedLayer.get();
 	}
 
 	@Override
 	public void setSelectedLayer( DesignLayer layer ) {
-		setCurrentLayer( layer );
+		selectedLayer.set( Objects.requireNonNull( layer ) );
 	}
 
 	@Override
 	public ObjectProperty<DesignLayer> selectedLayerProperty() {
-		return currentLayerProperty();
+		return selectedLayer;
 	}
 
 	@Override
 	public DesignLayer getCurrentLayer() {
-		return currentLayer == null ? null : currentLayer.get();
+		return currentLayer.get();
 	}
 
 	@Override
 	public void setCurrentLayer( DesignLayer layer ) {
-		currentLayerProperty().set( Objects.requireNonNull( layer ) );
+		currentLayer.set( Objects.requireNonNull( layer ) );
 	}
 
 	@Override
+	@Deprecated
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
 		return currentLayer;
 	}
 
 	@Override
-	public void setCurrentView( DesignView view ) {
-		currentView.set( view );
+	@Deprecated
+	public DesignView getCurrentView() {
+		return currentView.get();
 	}
 
 	@Override
-	public DesignView getCurrentView() {
-		return currentView.get();
+	@Deprecated
+	public void setCurrentView( DesignView view ) {
+		currentView.set( Objects.requireNonNull( view ) );
 	}
 
 	@Override
 	public ObjectProperty<DesignView> currentViewProperty() {
 		return currentView;
 	}
-
-	@Override
-	public abstract void showCommandPrompt();
 
 }

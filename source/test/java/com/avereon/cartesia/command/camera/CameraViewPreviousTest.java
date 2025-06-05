@@ -3,6 +3,7 @@ package com.avereon.cartesia.command.camera;
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.CommandTask;
+import com.avereon.cartesia.tool.DesignPortal;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ public class CameraViewPreviousTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setView( any() );
+		verify( tool, times( 1 ) ).setView( (DesignPortal)any() );
 		assertThat( result ).isEqualTo( Command.Result.SUCCESS );
 	}
 

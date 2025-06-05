@@ -103,7 +103,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		tool.setView( portal );
 
 		// then
-		assertThat( tool.getViewCenter() ).isEqualTo( portal.viewpoint() );
+		assertThat( tool.getViewCenter() ).isEqualTo( portal.center() );
 		assertThat( tool.getViewZoom() ).isEqualTo( portal.zoom() );
 		assertThat( tool.getViewRotate() ).isEqualTo( portal.rotate() );
 	}
@@ -185,5 +185,10 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		// then
 		assertThat( result.toString() ).isEqualTo( cursor.toString() );
 		assertThat( result ).isInstanceOf( ReticleCursor.class );
+	}
+
+	@Test
+	void next() {
+
 	}
 }
