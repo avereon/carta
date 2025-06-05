@@ -317,12 +317,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	@Deprecated
-	public void setCurrentView( DesignView view ) {
-		currentView.set( Objects.requireNonNull( view ) );
-	}
-
-	@Override
-	@Deprecated
 	public ObjectProperty<DesignView> currentViewProperty() {
 		return currentView;
 	}
