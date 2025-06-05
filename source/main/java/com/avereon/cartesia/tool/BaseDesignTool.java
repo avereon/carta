@@ -298,6 +298,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
+	@Deprecated
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
 		return currentLayer;
 	}
@@ -306,6 +307,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Deprecated
 	public DesignView getCurrentView() {
 		return currentView.get();
+	}
+
+	@Override
+	@Deprecated
+	public void setCurrentView( DesignView view ) {
+		currentView.set( Objects.requireNonNull( view ) );
 	}
 
 	@Override
