@@ -35,11 +35,8 @@ public abstract class CameraCommand extends Command {
 		}
 		if( bounds == null ) return FAILURE;
 
-		// Convert the bounds from world to screen coordinates
-		bounds = context.getTool().worldToScreen( bounds );
-
 		// Set the viewport to the bounds
-		context.getTool().setScreenViewport( bounds );
+		context.getTool().setWorldViewport( bounds );
 		return SUCCESS;
 	}
 

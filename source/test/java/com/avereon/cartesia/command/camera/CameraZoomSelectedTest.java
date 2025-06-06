@@ -26,7 +26,7 @@ public class CameraZoomSelectedTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( tool, times( 1 ) ).setScreenViewport( any() );
+		verify( tool, times( 1 ) ).setWorldViewport( any() );
 		assertThat( result ).isEqualTo( Command.Result.SUCCESS );
 	}
 
