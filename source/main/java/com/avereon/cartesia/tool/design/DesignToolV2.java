@@ -515,23 +515,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	public void setScreenViewport( Bounds viewport ) {
-		Point3D worldCenter = screenToWorld( new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() ) );
-
-		Bounds toolBounds = getLayoutBounds();
-		double xZoom = Math.abs( toolBounds.getWidth() / viewport.getWidth() );
-		double yZoom = Math.abs( toolBounds.getHeight() / viewport.getHeight() );
-		double zoom = Math.min( xZoom, yZoom ) * getViewZoom();
-
-		setView( worldCenter, zoom );
-	}
-
-	@Override
-	public void setWorldViewport( Bounds viewport ) {
-		setScreenViewport( worldToScreen( viewport ) );
-	}
-
-	@Override
 	public void setSelectTolerance( DesignValue aperture ) {
 		selectTolerance().set( aperture );
 	}

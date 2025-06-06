@@ -15,6 +15,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
@@ -132,25 +133,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Override
 	public final Design getDesign() {
 		return getAssetModel();
-	}
-
-	@Override
-	public final ReticleCursor getReticleCursor() {
-		return getReticle().getCursor( getProgram() );
-	}
-
-	@Override
-	public Reticle getReticle() {
-		return reticle.get();
-	}
-
-	@Override
-	public void setReticle( Reticle reticle ) {
-		this.reticle.set( reticle );
-	}
-
-	public ObjectProperty<Reticle> reticle() {
-		return reticle;
 	}
 
 	@Override
@@ -273,6 +255,65 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
+	@Deprecated
+	public DesignView getCurrentView() {
+		return currentView.get();
+	}
+
+	@Override
+	@Deprecated
+	public void setCurrentView( DesignView view ) {
+		currentView.set( Objects.requireNonNull( view ) );
+	}
+
+	@Override
+	@Deprecated
+	public ObjectProperty<DesignView> currentViewProperty() {
+		return currentView;
+	}
+
+	@Override
+	public final ReticleCursor getReticleCursor() {
+		return getReticle().getCursor( getProgram() );
+	}
+
+	@Override
+	public Reticle getReticle() {
+		return reticle.get();
+	}
+
+	@Override
+	public void setReticle( Reticle reticle ) {
+		this.reticle.set( reticle );
+	}
+
+	public ObjectProperty<Reticle> reticle() {
+		return reticle;
+	}
+
+	@Override
+	@Deprecated
+	public void setScreenViewport( Bounds viewport ) {
+		setWorldViewport( screenToWorld( viewport ) );
+	}
+
+	@Override
+	public void setWorldViewport( Bounds viewport ) {
+		Bounds toolBounds = getLayoutBounds();
+		if( toolBounds.getWidth() == 0 || toolBounds.getHeight() == 0 ) return;
+
+		Bounds worldBounds = screenToWorld( toolBounds );
+		double xZoom = Math.abs( worldBounds.getWidth() / viewport.getWidth() );
+		double yZoom = Math.abs( worldBounds.getHeight() / viewport.getHeight() );
+		double zoom = Math.min( xZoom, yZoom ) * getViewZoom();
+
+		Point3D worldCenter = new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() );
+		setView( worldCenter, zoom );
+	}
+
+	// NEXT Insert implementations here
+
+	@Override
 	public DesignLayer getSelectedLayer() {
 		return selectedLayer.get();
 	}
@@ -301,24 +342,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Deprecated
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
 		return currentLayer;
-	}
-
-	@Override
-	@Deprecated
-	public DesignView getCurrentView() {
-		return currentView.get();
-	}
-
-	@Override
-	@Deprecated
-	public void setCurrentView( DesignView view ) {
-		currentView.set( Objects.requireNonNull( view ) );
-	}
-
-	@Override
-	@Deprecated
-	public ObjectProperty<DesignView> currentViewProperty() {
-		return currentView;
 	}
 
 }

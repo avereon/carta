@@ -164,12 +164,19 @@ public interface DesignTool {
 
 	/**
 	 * Set the camera viewport using a screen-based rectangular viewport. The
-	 * appropriate zoom and center will be calculated.
+	 * appropriate center and zoom will be calculated and used to set the view.
 	 *
 	 * @param viewport The screen viewport
 	 */
+	@Deprecated
 	void setScreenViewport( Bounds viewport );
 
+	/**
+	 * Set the camera viewport using a world-based rectangular viewport. The
+	 * appropriate center and zoom are calculated and used to set the view.
+	 *
+	 * @param viewport The world viewport
+	 */
 	void setWorldViewport( Bounds viewport );
 
 	DesignValue getSelectTolerance();

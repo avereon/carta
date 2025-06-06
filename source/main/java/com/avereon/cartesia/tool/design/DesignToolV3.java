@@ -16,7 +16,6 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -30,16 +29,6 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
-	}
-
-	@Override
-	public void setScreenViewport( Bounds viewport ) {
-
-	}
-
-	@Override
-	public void setWorldViewport( Bounds viewport ) {
-
 	}
 
 	@Override
@@ -189,6 +178,13 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public Bounds screenToWorld( Bounds bounds ) {
+		/* In previous implementations this method relied on the
+		 * renderer.parentToLocal( bounds ) method to convert the bounds from screen
+		 * to world coordinates. Should V3 do the same? Maybe not, since there is a
+		 * discussion about having an internal scaling strategy to help with pixel
+		 * artifacts. If that is the case then this method would need to take that
+		 * into account.
+		 */
 		return null;
 	}
 
