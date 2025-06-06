@@ -32,6 +32,7 @@ module com.avereon.carta {
 	exports com.avereon.cartesia.data;
 	exports com.avereon.cartesia.math;
 	exports com.avereon.cartesia.snap;
+	exports com.avereon.cartesia.trial;
 
 	// Private APIs
 	exports com.avereon.cartesia.cursor to com.avereon.zerra;
