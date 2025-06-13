@@ -303,4 +303,9 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	}
 
+	@Override
+	public Class<? extends DesignRenderer> getPrintDesignRenderer() {
+		return null;
+	}
+
 }

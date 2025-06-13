@@ -81,7 +81,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private final Label toast;
 
-	private final DesignRenderer renderer;
+	private final DesignToolV2Renderer renderer;
 
 	private final Stack<DesignPortal> portalStack;
 
@@ -132,7 +132,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		//		printsGuide = new PrintsGuide( product, this );
 
 		// Create and associate the workplane and renderer
-		renderer = new DesignRenderer();
+		renderer = new DesignToolV2Renderer();
 		renderer.setApertureDrawPaint( DEFAULT_APERTURE_DRAW );
 		renderer.setApertureFillPaint( DEFAULT_APERTURE_FILL );
 		renderer.setPreviewDrawPaint( DEFAULT_PREVIEW_DRAW );
@@ -991,6 +991,10 @@ public class DesignToolV2 extends BaseDesignTool {
 	public void showCommandPrompt() {
 		Fx.run( this::registerStatusBarItems );
 		Fx.run( this::requestFocus );
+	}
+
+	public Class<? extends DesignRenderer> getPrintDesignRenderer() {
+		return DesignToolV2Renderer.class;
 	}
 
 	private void registerStatusBarItems() {

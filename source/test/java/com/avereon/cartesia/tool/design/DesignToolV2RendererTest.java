@@ -16,18 +16,18 @@ import org.junit.jupiter.api.Test;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignRendererTest extends BaseCartesiaUnitTest {
+public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 
 	private Design design;
 
-	private DesignRenderer renderer;
+	private DesignToolV2Renderer renderer;
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
 		Fx.startup();
 		design = new Design2D();
-		renderer = new DesignRenderer();
+		renderer = new DesignToolV2Renderer();
 		renderer.setDesign( design );
 		renderer.resizeRelocate( 0, 0, 100, 100 );
 	}

@@ -23,13 +23,13 @@ public class DesignPrintTask extends Task<Void> {
 
 	private final Xenon program;
 
-	private final BaseDesignTool tool;
+	private final DesignTool tool;
 
 	private final Asset asset;
 
 	private final DesignPrint print;
 
-	public DesignPrintTask( final Xenon program, final BaseDesignTool tool, final Asset asset, final DesignPrint print ) {
+	public DesignPrintTask( final Xenon program, final DesignTool tool, final Asset asset, final DesignPrint print ) {
 		this.program = program;
 		this.tool = tool;
 		this.asset = asset;
@@ -112,13 +112,14 @@ public class DesignPrintTask extends Task<Void> {
 		return job.printPage( renderer ) && job.endJob();
 	}
 
-	private boolean printWithSingleRenderPane( PrinterJob job ) {
+	private boolean printWithSingleRenderPane( PrinterJob job ) throws Exception {
 		PageLayout layout = job.getJobSettings().getPageLayout();
 
 		double factor = 1;
 
 		// The NEW way
-		final DesignRenderer renderer = new DesignRenderer();
+		Class<? extends DesignRenderer> rendererClass = tool.getPrintDesignRenderer();
+		final DesignRenderer renderer = rendererClass.getDeclaredConstructor().newInstance();
 		//renderer.setBackground( Background.fill( Color.LIGHTGRAY ) );
 		renderer.setDesign( asset.getModel() );
 		renderer.setVisibleLayers( tool.getVisibleLayers() );
@@ -187,7 +188,7 @@ public class DesignPrintTask extends Task<Void> {
 		//		log.atConfig().log( "Job size: " + layout.getPrintableWidth() + "x" + layout.getPrintableHeight() );
 		//		log.atConfig().log( "Print size: " + renderer.getWidth() + "x" + renderer.getHeight() + " = " + (renderer.getWidth() * renderer.getHeight()) );
 
-		return job.printPage( layout, renderer ) && job.endJob();
+		return job.printPage( layout, renderer.getNode() ) && job.endJob();
 	}
 
 	private static Printer getPrinterByName( String name, Printer orElse ) {

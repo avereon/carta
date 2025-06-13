@@ -8,6 +8,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
+import com.avereon.cartesia.tool.design.DesignRenderer;
 import com.avereon.marea.RenderUnit;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
@@ -369,4 +370,5 @@ public interface DesignTool {
 
 	void setCursor( Cursor cursor );
 
+	Class<? extends DesignRenderer> getPrintDesignRenderer();
 }

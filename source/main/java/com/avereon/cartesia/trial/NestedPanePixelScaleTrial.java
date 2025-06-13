@@ -11,6 +11,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 public class NestedPanePixelScaleTrial extends Application {
@@ -23,35 +24,48 @@ public class NestedPanePixelScaleTrial extends Application {
 
 	private Pane world;
 
+	private Pane preScaledWorld;
+
+	private Bounds line1BoundsInTool;
+
 	@Override
 	public void start( Stage stage ) throws Exception {
 		this.stage = stage;
 
-		double scale = 80;
+		double dpi = 160;
+		double screenScale = Screen.getPrimary().getOutputScaleX();
+		double cmPerInch = 2.54;
+
+		double scale = dpi/screenScale/cmPerInch;
 		double width = 500;
 		double height = 500;
+
+		world = new Pane();
+		world.resizeRelocate( 0.5 * width, 0.5 * height, 0, 0 );
+		world.getTransforms().add( javafx.scene.transform.Transform.scale( scale, -scale ) );
+		//		world.setScaleX( scale );
+		//		world.setScaleY( -scale );
 
 		// This should be as simple as:
 		// 1. Move the origin from upper-left to center using pixels
 		// 2. Scale according to the desired design scale
-		// 3. Flip the Y-axis. In theory, this should be done in step 2 also.
+		// 3. Flip the Y-axis. In theory, this should be done in step 2 also.\
 
-		// But because JavaFX works the way it does, have to pre-scale the geometry
-
-		// The pre-scaled world
-		Line line1 = new Line( -2 * scale, -2 * scale, 2 * scale, 2 * scale );
-		line1.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
-		line1.setStrokeWidth( 1 * scale );
-		line1.setStrokeLineCap( StrokeLineCap.ROUND );
-		Line line2 = new Line( -2 * scale, 2 * scale, 2 * scale, -2 * scale );
-		line2.setStroke( javafx.scene.paint.Color.GREEN );
-		line2.setStrokeWidth( 1 * scale );
-		line2.setStrokeLineCap( StrokeLineCap.ROUND );
-
-		this.world = new Pane();
-		world.setScaleY( -1 );
-		world.getChildren().addAll( line1, line2 );
-		world.resizeRelocate( 0.5 * width, 0.5 * height - FxUtil.getContentBounds( world ).getHeight(), 0, 0 );
+//		// The pre-scaled world
+//		Line preScaledLine1 = new Line( -2 * scale, -2 * scale, 2 * scale, 2 * scale );
+//		preScaledLine1.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
+//		preScaledLine1.setStrokeWidth( 1 * scale );
+//		preScaledLine1.setStrokeLineCap( StrokeLineCap.ROUND );
+//		Line preScaledLine2 = new Line( -2 * scale, 2 * scale, 2 * scale, -2 * scale );
+//		preScaledLine2.setStroke( javafx.scene.paint.Color.GREEN );
+//		preScaledLine2.setStrokeWidth( 1 * scale );
+//		preScaledLine2.setStrokeLineCap( StrokeLineCap.ROUND );
+//
+//		this.preScaledWorld = new Pane();
+//		preScaledWorld.getChildren().addAll( preScaledLine1, preScaledLine2 );
+//		preScaledWorld.resizeRelocate( 0.5 * width, 0.5 * height, 0, 0 );
+//		// Don't use setScaleY(-1) because it just doesn't work as expected
+//		preScaledWorld.getTransforms().add( javafx.scene.transform.Transform.scale( 1, -1 ) );
 
 		this.tool = new Pane();
 		tool.setStyle( "-fx-background-color: #222222;" );
@@ -79,31 +93,45 @@ public class NestedPanePixelScaleTrial extends Application {
 		//		System.out.println( "Stage size: " + stage.getWidth() + ", " + stage.getHeight() );
 		//		System.out.println( "Scene size: " + scene.getWidth() + ", " + scene.getHeight() );
 		//		System.out.println( "Tool size:  " + tool.getWidth() + ", " + tool.getHeight() );
-		//
 
 		//		tool.widthProperty().addListener( ( _, _, _ ) -> printBounds() );
 		//		tool.heightProperty().addListener( ( _, _, _ ) -> printBounds() );
 
-		new Thread( () -> {
-			ThreadUtil.pause( 100 );
-			printBounds();
+		new Thread( this::task1, "Task 1" ).start();
+	}
 
-			Fx.run( () -> {
-				//				Bounds worldToTool = FxUtil.localToAncestor( scaledWorld, tool );
-				//				Rectangle worldBounds = FxUtil.toRectangle( worldToTool );
-				//				worldBounds.setFill( Color.TRANSPARENT );
-				//				worldBounds.setStroke( Color.YELLOW );
-				//				tool.getChildren().add( worldBounds );
-				//				System.out.println( "World to tool: " + worldToTool );
+	private void task1() {
+		ThreadUtil.pause( 100 );
+		printBounds();
+		Fx.run( this::nextOnFx );
+	}
 
-				Bounds line1BoundsInTool = FxUtil.localToAncestor( line1, tool );
-				Rectangle line1Bounds = FxUtil.toRectangle( line1BoundsInTool );
-				line1Bounds.setFill( Color.TRANSPARENT );
-				line1Bounds.setStroke( Color.YELLOW );
-				tool.getChildren().add( line1Bounds );
-				System.out.println( "Line 1 to tool: " + line1BoundsInTool );
-			} );
-		} ).start();
+	private void nextOnFx() {
+		Line line1 = new Line( -2, -2, 2, 2 );
+		line1.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
+		line1.setStrokeWidth( 1 );
+		line1.setStrokeLineCap( StrokeLineCap.ROUND );
+		Line line2 = new Line( -2, 2, 2, -2 );
+		line2.setStroke( javafx.scene.paint.Color.GREEN );
+		line2.setStrokeWidth( 1 );
+		line2.setStrokeLineCap( StrokeLineCap.ROUND );
+		world.getChildren().addAll( line1, line2 );
+
+
+
+		//				Bounds worldToTool = FxUtil.localToAncestor( scaledWorld, tool );
+		//				Rectangle worldBounds = FxUtil.toRectangle( worldToTool );
+		//				worldBounds.setFill( Color.TRANSPARENT );
+		//				worldBounds.setStroke( Color.YELLOW );
+		//				tool.getChildren().add( worldBounds );
+		//				System.out.println( "World to tool: " + worldToTool );
+
+		line1BoundsInTool = FxUtil.localToAncestor( line1, tool );
+		Rectangle line1Bounds = FxUtil.toRectangle( line1BoundsInTool );
+		line1Bounds.setFill( Color.TRANSPARENT );
+		line1Bounds.setStroke( Color.YELLOW );
+		tool.getChildren().add( line1Bounds );
+		System.out.println( "Line 1 to tool: " + line1BoundsInTool );
 	}
 
 	private void printBounds() {
