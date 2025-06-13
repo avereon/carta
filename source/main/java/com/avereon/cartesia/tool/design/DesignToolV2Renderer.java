@@ -511,7 +511,7 @@ public class DesignToolV2Renderer extends Pane implements DesignRenderer {
 	 *
 	 * @param viewpoint The viewpoint to set
 	 */
-	public void setViewpoint( Point3D viewpoint ) {
+	public void setViewCenter( Point3D viewpoint ) {
 		renderer.setViewpoint( viewpoint.getX(), viewpoint.getY() );
 	}
 
@@ -554,14 +554,8 @@ public class DesignToolV2Renderer extends Pane implements DesignRenderer {
 		return new Point2D( renderer.getZoomX(), renderer.getZoomY() );
 	}
 
-	/**
-	 * Convenience method to set the zoom of the renderer.
-	 *
-	 * @param zoomX The zoom to set for the X axis
-	 * @param zoomY The zoom to set for the Y axis
-	 */
-	public void setZoom( double zoomX, double zoomY ) {
-		renderer.setZoom( zoomX, zoomY );
+	public void setViewZoom( double zoom ) {
+		renderer.setZoom( zoom, zoom );
 	}
 
 	public double getZoomX() {
@@ -726,7 +720,7 @@ public class DesignToolV2Renderer extends Pane implements DesignRenderer {
 
 	// Rendering -----------------------------------------------------------------
 
-	public void printRender( double factor ) {
+	public void print( double factor ) {
 		renderer.widthProperty().unbind();
 		renderer.heightProperty().unbind();
 

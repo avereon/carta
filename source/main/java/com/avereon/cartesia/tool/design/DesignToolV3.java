@@ -23,7 +23,6 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
-
 	}
 
 	@Override
@@ -305,7 +304,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public Class<? extends DesignRenderer> getPrintDesignRenderer() {
-		return null;
+		return DesignToolV3Renderer.class;
 	}
 
 }

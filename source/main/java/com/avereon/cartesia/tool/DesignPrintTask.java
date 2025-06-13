@@ -127,9 +127,9 @@ public class DesignPrintTask extends Task<Void> {
 		renderer.setDpi( factor * 72 );
 		renderer.setPrefWidth( layout.getPrintableWidth() );
 		renderer.setPrefHeight( layout.getPrintableHeight() );
-		renderer.setViewpoint( tool.getViewCenter() );
-		renderer.setRotate( tool.getViewRotate() );
-		renderer.setZoom( tool.getViewZoom(), tool.getViewZoom() );
+		renderer.setViewCenter( tool.getViewCenter() );
+		renderer.setViewRotate( tool.getViewRotate() );
+		renderer.setViewZoom( tool.getViewZoom() );
 
 		//renderer.setReferenceLayerVisible( false );
 
@@ -145,7 +145,7 @@ public class DesignPrintTask extends Task<Void> {
 
 		// Do the actual rendering
 		// It is NOT required to do this on the FX thread
-		renderer.printRender( factor );
+		renderer.print( factor );
 
 		//		// FIXME Can't seem to get the factor above 3.2, about 230 dpi
 		//		//  ...and it inconsistently prints nothing

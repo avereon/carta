@@ -19,15 +19,11 @@ public interface DesignRenderer {
 
 	void setPrefHeight( double height );
 
-	void setViewpoint( Point3D center );
+	void setViewCenter( Point3D center );
 
-	void setRotate( double rotate );
+	void setViewRotate( double rotate );
 
-	default void setZoom( double zoom ) {
-		setZoom( zoom, zoom );
-	}
-
-	void setZoom( double zoomX, double zoomY );
+	void setViewZoom( double zoom );
 
 	/**
 	 * Called to request the design be rendered.
@@ -39,8 +35,7 @@ public interface DesignRenderer {
 	 *
 	 * @param factor The scale factor to apply to the design when printing.
 	 */
-	// TODO Rename to print()
-	void printRender( double factor );
+	void print( double factor );
 
 	Node getNode();
 }

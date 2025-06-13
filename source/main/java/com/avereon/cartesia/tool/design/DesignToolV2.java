@@ -444,7 +444,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setViewCenter( Point3D point ) {
-		renderer.setViewpoint( point );
+		renderer.setViewCenter( point );
 	}
 
 	public DoubleProperty viewpointXProperty() {
@@ -472,7 +472,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setViewZoom( double viewZoom ) {
-		renderer.setZoom( viewZoom, viewZoom );
+		renderer.setViewZoom( viewZoom );
 	}
 
 	@Override
@@ -509,8 +509,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setView( Point3D center, double zoom, double rotate ) {
-		renderer.setViewpoint( center );
-		renderer.setZoom( zoom, zoom );
+		renderer.setViewCenter( center );
+		renderer.setViewZoom( zoom );
 		renderer.setViewRotate( rotate );
 	}
 
