@@ -11,6 +11,10 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
+/**
+ * @deprecated In favor of the observable Workplane
+ */
+@Deprecated
 @CustomLog
 @SuppressWarnings( "UnusedReturnValue" )
 public class DesignWorkplane extends Node {
