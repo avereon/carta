@@ -11,10 +11,12 @@ import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
 import lombok.CustomLog;
 
-/**
- * @deprecated In favor of the observable Workplane
- */
-@Deprecated
+// FIXME All properties must be observable
+// So, I've got myself a mess here. Both FX Node and data Node are
+// "technically" observable, but I think I was aiming for FX observable. So
+// why is the old one a data Node? Probably to fit into the data model, and
+// make it easier to store the values in settings, etc.
+
 @CustomLog
 @SuppressWarnings( "UnusedReturnValue" )
 public class DesignWorkplane extends Node {
