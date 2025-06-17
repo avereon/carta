@@ -31,7 +31,7 @@ public class GridPolar implements Grid {
 
 		point = new Point3D( Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
 			Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ),
-			Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() )
+			0
 		);
 
 		point = CadShapes.polarDegreesToCartesian( point );

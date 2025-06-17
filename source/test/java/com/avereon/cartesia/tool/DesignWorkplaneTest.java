@@ -185,19 +185,6 @@ class DesignWorkplaneTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource( "majorGridSizeArguments" )
-	void majorGridZ(String input, double expected) {
-		// given
-		assertThat( workplane.calcMajorGridZ() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
-
-		// when
-		workplane.setMajorGridZ( input );
-
-		// then
-		assertThat( workplane.calcMajorGridZ() ).isEqualTo( expected );
-	}
-
-	@ParameterizedTest
 	@MethodSource( "minorGridSizeArguments" )
 	void minorGridX(String input, double expected) {
 		// given
@@ -224,19 +211,6 @@ class DesignWorkplaneTest {
 	}
 
 	@ParameterizedTest
-	@MethodSource( "minorGridSizeArguments" )
-	void minorGridZ(String input, double expected) {
-		// given
-		assertThat( workplane.calcMinorGridZ() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
-
-		// when
-		workplane.setMinorGridZ( input );
-
-		// then
-		assertThat( workplane.calcMinorGridZ() ).isEqualTo( expected );
-	}
-
-	@ParameterizedTest
 	@MethodSource( "snapGridSizeArguments" )
 	void snapGridX(String input, double expected) {
 		// given
@@ -260,19 +234,6 @@ class DesignWorkplaneTest {
 
 		// then
 		assertThat( workplane.calcSnapGridY() ).isEqualTo( expected );
-	}
-
-	@ParameterizedTest
-	@MethodSource( "snapGridSizeArguments" )
-	void snapGridZ(String input, double expected) {
-		// given
-		assertThat( workplane.calcSnapGridZ() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
-
-		// when
-		workplane.setSnapGridZ( input );
-
-		// then
-		assertThat( workplane.calcSnapGridZ() ).isEqualTo( expected );
 	}
 
 	private static Stream<Arguments> gridAxisWidthArguments() {

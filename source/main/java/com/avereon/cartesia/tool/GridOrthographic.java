@@ -34,8 +34,7 @@ public class GridOrthographic implements Grid {
 		point = point.subtract( origin );
 		double x = Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() );
 		double y = Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() );
-		double z = Arithmetic.nearest( point.getZ(), workplane.calcSnapGridZ() );
-		point = new Point3D( x, y, z );
+		point = new Point3D( x, y, 0 );
 		point = point.add( origin );
 		return point;
 	}

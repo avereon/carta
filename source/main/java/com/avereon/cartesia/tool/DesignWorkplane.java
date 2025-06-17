@@ -83,8 +83,6 @@ public class DesignWorkplane extends Node {
 
 	public static final String GRID_MAJOR_Y = "grid-major-y";
 
-	public static final String GRID_MAJOR_Z = "grid-major-z";
-
 	public static final String GRID_MAJOR_PAINT = "grid-major-paint";
 
 	public static final String GRID_MAJOR_WIDTH = "grid-major-width";
@@ -95,8 +93,6 @@ public class DesignWorkplane extends Node {
 
 	public static final String GRID_MINOR_Y = "grid-minor-y";
 
-	public static final String GRID_MINOR_Z = "grid-minor-z";
-
 	public static final String GRID_MINOR_PAINT = "grid-minor-paint";
 
 	public static final String GRID_MINOR_WIDTH = "grid-minor-width";
@@ -104,8 +100,6 @@ public class DesignWorkplane extends Node {
 	public static final String GRID_SNAP_X = "grid-snap-x";
 
 	public static final String GRID_SNAP_Y = "grid-snap-y";
-
-	public static final String GRID_SNAP_Z = "grid-snap-z";
 
 	private Point3D cachedGridOrigin;
 
@@ -203,11 +197,8 @@ public class DesignWorkplane extends Node {
 			boundaryY2,
 			majorGrid,
 			majorGrid,
-			majorGrid,
 			minorGrid,
 			minorGrid,
-			minorGrid,
-			snapGrid,
 			snapGrid,
 			snapGrid,
 			DEFAULT_GRID_STYLE
@@ -235,13 +226,10 @@ public class DesignWorkplane extends Node {
 			boundaryY2,
 			majorGridX,
 			majorGridY,
-			DEFAULT_GRID_MAJOR_SIZE,
 			minorGridX,
 			minorGridY,
-			DEFAULT_GRID_MINOR_SIZE,
 			snapGridX,
 			snapGridY,
-			DEFAULT_GRID_SNAP_SIZE,
 			DEFAULT_GRID_STYLE
 		);
 	}
@@ -255,13 +243,10 @@ public class DesignWorkplane extends Node {
 		double boundaryY2,
 		String majorGridX,
 		String majorGridY,
-		String majorGridZ,
 		String minorGridX,
 		String minorGridY,
-		String minorGridZ,
 		String snapGridX,
 		String snapGridY,
-		String snapGridZ,
 		GridStyle style
 	) {
 		Txn.run( () -> {
@@ -273,13 +258,10 @@ public class DesignWorkplane extends Node {
 			setBoundaryY2( boundaryY2 );
 			setMajorGridX( majorGridX );
 			setMajorGridY( majorGridY );
-			setMajorGridZ( majorGridZ );
 			setMinorGridX( minorGridX );
 			setMinorGridY( minorGridY );
-			setMinorGridZ( minorGridZ );
 			setSnapGridX( snapGridX );
 			setSnapGridY( snapGridY );
-			setSnapGridZ( snapGridZ );
 			setGridStyle( style );
 
 			setGridAxisPaint( DEFAULT_GRID_AXIS_PAINT );
@@ -446,21 +428,6 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
-	public double calcMajorGridZ() {
-		if( majorGridZ == null ) majorGridZ = CadMath.evalNoException( getMajorGridZ() );
-		return majorGridZ;
-	}
-
-	public String getMajorGridZ() {
-		return getValue( GRID_MAJOR_Z, DEFAULT_GRID_MAJOR_SIZE );
-	}
-
-	public DesignWorkplane setMajorGridZ( String majorGridZ ) {
-		setValue( GRID_MAJOR_Z, majorGridZ );
-		this.majorGridZ = null;
-		return this;
-	}
-
 	public Paint calcMajorGridPaint() {
 		if( majorGridPaint == null ) majorGridPaint = Paints.parse( getMajorGridPaint() );
 		return majorGridPaint;
@@ -543,21 +510,6 @@ public class DesignWorkplane extends Node {
 		return this;
 	}
 
-	public double calcMinorGridZ() {
-		if( minorGridZ == null ) minorGridZ = CadMath.evalNoException( getMinorGridZ() );
-		return minorGridZ;
-	}
-
-	public String getMinorGridZ() {
-		return getValue( GRID_MINOR_Z, DEFAULT_GRID_MINOR_SIZE );
-	}
-
-	public DesignWorkplane setMinorGridZ( String minorGridZ ) {
-		setValue( GRID_MINOR_Z, minorGridZ );
-		this.minorGridZ = null;
-		return this;
-	}
-
 	public Paint calcMinorGridPaint() {
 		if( minorGridPaint == null ) minorGridPaint = Paints.parse( getMinorGridPaint() );
 		return minorGridPaint;
@@ -618,21 +570,6 @@ public class DesignWorkplane extends Node {
 	public DesignWorkplane setSnapGridY( String snapGridY ) {
 		setValue( GRID_SNAP_Y, snapGridY );
 		this.snapGridY = null;
-		return this;
-	}
-
-	public double calcSnapGridZ() {
-		if( snapGridZ == null ) snapGridZ = CadMath.evalNoException( getSnapGridZ() );
-		return snapGridZ;
-	}
-
-	public String getSnapGridZ() {
-		return getValue( GRID_SNAP_Z, DEFAULT_GRID_SNAP_SIZE );
-	}
-
-	public DesignWorkplane setSnapGridZ( String snapGridZ ) {
-		setValue( GRID_SNAP_Z, snapGridZ );
-		this.snapGridZ = null;
 		return this;
 	}
 
