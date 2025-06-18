@@ -10,7 +10,7 @@ import javafx.scene.transform.Transform;
 
 import java.util.Collection;
 
-public class DesignToolV3Renderer extends Pane implements DesignRenderer {
+public class DesignToolV3Renderer extends DesignRenderer {
 
 	private final Pane world;
 

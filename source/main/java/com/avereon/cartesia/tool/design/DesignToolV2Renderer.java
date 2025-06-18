@@ -29,7 +29,6 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -44,7 +43,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CustomLog
-public class DesignToolV2Renderer extends Pane implements DesignRenderer {
+public class DesignToolV2Renderer extends DesignRenderer {
 
 	private Design design;
 

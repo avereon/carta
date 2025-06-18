@@ -4,38 +4,35 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
+import javafx.scene.layout.Pane;
 
 import java.util.Collection;
 
-public interface DesignRenderer {
+public abstract class DesignRenderer extends Pane {
 
-	void setDesign( Design design );
+	public abstract void setDesign( Design design );
 
-	void setVisibleLayers( Collection<DesignLayer> layers );
+	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
 
-	void setDpi( double dpi );
+	public abstract void setDpi( double dpi );
 
-	void setPrefWidth( double width );
+	public abstract void setViewCenter( Point3D center );
 
-	void setPrefHeight( double height );
+	public abstract void setViewRotate( double rotate );
 
-	void setViewCenter( Point3D center );
-
-	void setViewRotate( double rotate );
-
-	void setViewZoom( double zoom );
+	public abstract void setViewZoom( double zoom );
 
 	/**
 	 * Called to request the design be rendered.
 	 */
-	void render();
+	public abstract void render();
 
 	/**
 	 * Called to request the design be printed.
 	 *
 	 * @param factor The scale factor to apply to the design when printing.
 	 */
-	void print( double factor );
+	public abstract void print( double factor );
 
-	Node getNode();
+	public abstract Node getNode();
 }

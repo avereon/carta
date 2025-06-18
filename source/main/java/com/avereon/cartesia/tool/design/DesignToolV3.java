@@ -17,15 +17,19 @@ import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Transform;
+import javafx.stage.Screen;
+import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
 
+@CustomLog
 public class DesignToolV3 extends BaseDesignTool {
 
 	/**
@@ -50,13 +54,37 @@ public class DesignToolV3 extends BaseDesignTool {
 		// Create the objects
 		this.renderer = new DesignToolV3Renderer();
 		this.workplane = new Workplane();
-		this.toast = new Label( Rb.text( RbKey.LABEL, "loading" ) + "..." );
+		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
+
+		// FIXME These are the development values. They should be changed to the default values
+		double scale = Screen.getPrimary().getDpi() / CM_PER_INCH;
+		renderer.getTransforms().add( javafx.scene.transform.Transform.scale( scale, -scale ) );
+
+		// Keep the renderer in the center of the tool
+		// FIXME This will probably conflict with the renderers view center
+		widthProperty().addListener( ( _, _, n ) -> renderer.setTranslateX( 0.5 * n.doubleValue() ) );
+		heightProperty().addListener( ( _, _, n ) -> renderer.setTranslateY( 0.5 * n.doubleValue() ) );
+
+		// Test geometry
+		Line line1 = new Line( -2, -2, 2, 2 );
+		line1.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
+		line1.setStrokeWidth( 1 );
+		line1.setStrokeLineCap( StrokeLineCap.ROUND );
+		Line line2 = new Line( -2, 2, 2, -2 );
+		line2.setStroke( javafx.scene.paint.Color.GREEN );
+		line2.setStrokeWidth( 1 );
+		line2.setStrokeLineCap( StrokeLineCap.ROUND );
+		renderer.getChildren().addAll( line1, line2 );
 
 		// Align the toast label to the center of the screen
 		StackPane.setAlignment( toast, Pos.CENTER );
 
+		// Initially the renderer is hidden and the toast is shown
+		renderer.setVisible( false );
+		toast.setVisible( true );
+
 		// Add the components to the parent
-		getChildren().addAll( (Node)renderer, toast );
+		getChildren().addAll( renderer, toast );
 	}
 
 	/**
@@ -68,6 +96,9 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
+
+		renderer.setVisible( true );
+		toast.setVisible( false );
 	}
 
 	@Override

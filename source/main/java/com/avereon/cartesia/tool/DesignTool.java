@@ -78,6 +78,10 @@ public interface DesignTool {
 
 	boolean DEFAULT_GRID_VISIBLE = true;
 
+	double CM_PER_INCH = 2.54;
+
+	double INCH_PER_CM = 1 / CM_PER_INCH;
+
 	XenonProgram getProgram();
 
 	CartesiaMod getMod();
