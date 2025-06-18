@@ -1,10 +1,13 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignValue;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
+import com.avereon.cartesia.tool.Workplane;
+import com.avereon.product.Rb;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
@@ -13,6 +16,10 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 
@@ -21,10 +28,43 @@ import java.util.List;
 
 public class DesignToolV3 extends BaseDesignTool {
 
+	/**
+	 * The toast label. This is used to display messages to the user.
+	 */
+	private final Label toast;
+
+	/**
+	 * The design tool renderer. This is the main renderer for the design tool.
+	 */
+	private final DesignRenderer renderer;
+
+	/**
+	 * The tool workplane. This is the logical workplane for the tool. A 2D tool
+	 * only needs one workplane.
+	 */
+	private final Workplane workplane;
+
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
+
+		// Create the objects
+		this.renderer = new DesignToolV3Renderer();
+		this.workplane = new Workplane();
+		this.toast = new Label( Rb.text( RbKey.LABEL, "loading" ) + "..." );
+
+		// Align the toast label to the center of the screen
+		StackPane.setAlignment( toast, Pos.CENTER );
+
+		// Add the components to the parent
+		getChildren().addAll( (Node)renderer, toast );
 	}
 
+	/**
+	 * Called when both the tool and the asset are ready to be used.
+	 *
+	 * @param request The request to open the asset
+	 * @throws ToolException If there is a problem preparing the tool for use
+	 */
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
