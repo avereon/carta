@@ -27,20 +27,20 @@ public interface Grid {
 
 	String name();
 
-	Point3D getNearest( DesignWorkplane workplane, Point3D point );
+	Point3D getNearest( Workplane workplane, Point3D point );
 
 	/**
 	 * @param workplane The workplane that defines the users work plane
 	 * @return The grid geometry as Marea shapes
 	 */
-	default List<Shape2d> createMareaGeometryGrid( DesignWorkplane workplane ) {
+	default List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
 		return List.of();
 	}
 
-	default void drawMareaGeometryGrid( FxRenderer2d renderer, DesignWorkplane workplane ) {}
+	default void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {}
 
 	@Deprecated
-	default List<Shape> getGridDots( DesignWorkplane workplane ) {
+	default List<Shape> getGridDots( Workplane workplane ) {
 		return List.of();
 	}
 
@@ -48,7 +48,7 @@ public interface Grid {
 	 * @param workplane The workplane that defines the users work plane
 	 * @return The grid geometry as FX shapes
 	 */
-	List<Shape> createFxGeometryGrid( DesignWorkplane workplane );
+	List<Shape> createFxGeometryGrid( Workplane workplane );
 
 	static Grid valueOf( String name ) {
 		return switch( name ) {

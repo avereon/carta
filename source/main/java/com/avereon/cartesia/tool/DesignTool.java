@@ -100,7 +100,7 @@ public interface DesignTool {
 	 */
 	DesignCommandContext getCommandContext();
 
-	DesignWorkplane getWorkplane();
+	Workplane getWorkplane();
 
 	/**
 	 * A convenience method to get the workplane coordinate system.

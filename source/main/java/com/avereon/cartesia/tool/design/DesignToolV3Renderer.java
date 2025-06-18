@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.DesignWorkplane;
+import com.avereon.cartesia.tool.Workplane;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -52,7 +52,7 @@ public class DesignToolV3Renderer extends Pane implements DesignRenderer {
 		this.design.getChildren().clear();
 	}
 
-	public void setWorkplane( DesignWorkplane workplane ) {
+	public void setWorkplane( Workplane workplane ) {
 		//gridGeometryManager.updateGridGeometry( workplane );
 	}
 

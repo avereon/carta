@@ -17,9 +17,15 @@ import lombok.CustomLog;
 // why is the old one a data Node? Probably to fit into the data model, and
 // make it easier to store the values in settings, etc.
 
+/**
+ * The workplane represents the 2D workplane that the user interacts with in the
+ * design tool. It contains the grid, coordinate system, and other properties
+ * that define the workplane's behavior and appearance.
+ */
+
 @CustomLog
 @SuppressWarnings( "UnusedReturnValue" )
-public class DesignWorkplane extends Node {
+public class Workplane extends Node {
 
 	public static final GridStyle DEFAULT_GRID_STYLE = GridStyle.LINE;
 
@@ -29,7 +35,7 @@ public class DesignWorkplane extends Node {
 
 	public static final Grid DEFAULT_COORDINATE_SYSTEM = Grid.ORTHO;
 
-	public static final String DEFAULT_GRID_ORIGIN = "0,0,0";
+	public static final String DEFAULT_ORIGIN = "0,0";
 
 	public static final boolean DEFAULT_GRID_AXIS_VISIBLE = true;
 
@@ -183,14 +189,13 @@ public class DesignWorkplane extends Node {
 
 	private Boolean minorGridShowing = DEFAULT_GRID_MINOR_VISIBLE;
 
-	public DesignWorkplane() {
+	public Workplane() {
 		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
 	}
 
-	public DesignWorkplane( double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid ) {
+	public Workplane( double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid ) {
 		this(
-			DEFAULT_COORDINATE_SYSTEM,
-			DEFAULT_GRID_ORIGIN,
+			DEFAULT_COORDINATE_SYSTEM, DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -205,7 +210,7 @@ public class DesignWorkplane extends Node {
 		);
 	}
 
-	public DesignWorkplane(
+	public Workplane(
 		double boundaryX1,
 		double boundaryY1,
 		double boundaryX2,
@@ -218,8 +223,7 @@ public class DesignWorkplane extends Node {
 		String snapGridY
 	) {
 		this(
-			DEFAULT_COORDINATE_SYSTEM,
-			DEFAULT_GRID_ORIGIN,
+			DEFAULT_COORDINATE_SYSTEM, DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -234,7 +238,7 @@ public class DesignWorkplane extends Node {
 		);
 	}
 
-	public DesignWorkplane(
+	public Workplane(
 		Grid grid,
 		String origin,
 		double boundaryX1,
@@ -287,10 +291,10 @@ public class DesignWorkplane extends Node {
 	}
 
 	public String getOrigin() {
-		return getValue( GRID_ORIGIN, DEFAULT_GRID_ORIGIN );
+		return getValue( GRID_ORIGIN, DEFAULT_ORIGIN );
 	}
 
-	public DesignWorkplane setOrigin( String origin ) {
+	public Workplane setOrigin( String origin ) {
 		setValue( GRID_ORIGIN, origin );
 		cachedGridOrigin = null;
 		return this;
@@ -300,7 +304,7 @@ public class DesignWorkplane extends Node {
 		return getValue( BOUNDARY_X1 );
 	}
 
-	public DesignWorkplane setBoundaryX1( double boundaryX1 ) {
+	public Workplane setBoundaryX1( double boundaryX1 ) {
 		setValue( BOUNDARY_X1, boundaryX1 );
 		return this;
 	}
@@ -309,7 +313,7 @@ public class DesignWorkplane extends Node {
 		return getValue( BOUNDARY_Y1 );
 	}
 
-	public DesignWorkplane setBoundaryY1( double boundaryY1 ) {
+	public Workplane setBoundaryY1( double boundaryY1 ) {
 		setValue( BOUNDARY_Y1, boundaryY1 );
 		return this;
 	}
@@ -318,7 +322,7 @@ public class DesignWorkplane extends Node {
 		return getValue( BOUNDARY_X2 );
 	}
 
-	public DesignWorkplane setBoundaryX2( double boundaryX2 ) {
+	public Workplane setBoundaryX2( double boundaryX2 ) {
 		setValue( BOUNDARY_X2, boundaryX2 );
 		return this;
 	}
@@ -327,7 +331,7 @@ public class DesignWorkplane extends Node {
 		return getValue( BOUNDARY_Y2 );
 	}
 
-	public DesignWorkplane setBoundaryY2( double boundaryY2 ) {
+	public Workplane setBoundaryY2( double boundaryY2 ) {
 		setValue( BOUNDARY_Y2, boundaryY2 );
 		return this;
 	}
@@ -340,7 +344,7 @@ public class DesignWorkplane extends Node {
 		return gridAxisVisible;
 	}
 
-	public DesignWorkplane setGridAxisVisible( Boolean visible ) {
+	public Workplane setGridAxisVisible( Boolean visible ) {
 		setValue( GRID_AXIS_VISIBLE, visible );
 		this.gridAxisVisible = null;
 		return this;
@@ -355,7 +359,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_AXIS_PAINT, DEFAULT_GRID_AXIS_PAINT );
 	}
 
-	public DesignWorkplane setGridAxisPaint( String paint ) {
+	public Workplane setGridAxisPaint( String paint ) {
 		setValue( GRID_AXIS_PAINT, paint );
 		this.gridAxisPaint = null;
 		return this;
@@ -370,7 +374,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_AXIS_WIDTH, DEFAULT_GRID_AXIS_WIDTH );
 	}
 
-	public DesignWorkplane setGridAxisWidth( String width ) {
+	public Workplane setGridAxisWidth( String width ) {
 		setValue( GRID_AXIS_WIDTH, width );
 		this.gridAxisWidth = null;
 		return this;
@@ -383,7 +387,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MAJOR_VISIBLE, DEFAULT_GRID_MAJOR_VISIBLE );
 	}
 
-	public DesignWorkplane setMajorGridVisible( Boolean visible ) {
+	public Workplane setMajorGridVisible( Boolean visible ) {
 		setValue( GRID_MAJOR_VISIBLE, visible );
 		return this;
 	}
@@ -393,7 +397,7 @@ public class DesignWorkplane extends Node {
 		return majorGridShowing;
 	}
 
-	public DesignWorkplane setMajorGridShowing( Boolean showing ) {
+	public Workplane setMajorGridShowing( Boolean showing ) {
 		majorGridShowing = showing;
 		return this;
 	}
@@ -407,7 +411,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MAJOR_X, DEFAULT_GRID_MAJOR_SIZE );
 	}
 
-	public DesignWorkplane setMajorGridX( String majorGridX ) {
+	public Workplane setMajorGridX( String majorGridX ) {
 		setValue( GRID_MAJOR_X, majorGridX );
 		this.majorGridX = null;
 		return this;
@@ -422,7 +426,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MAJOR_Y, DEFAULT_GRID_MAJOR_SIZE );
 	}
 
-	public DesignWorkplane setMajorGridY( String majorGridY ) {
+	public Workplane setMajorGridY( String majorGridY ) {
 		setValue( GRID_MAJOR_Y, majorGridY );
 		this.majorGridY = null;
 		return this;
@@ -437,7 +441,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MAJOR_PAINT, DEFAULT_GRID_MAJOR_PAINT );
 	}
 
-	public DesignWorkplane setMajorGridPaint( String paint ) {
+	public Workplane setMajorGridPaint( String paint ) {
 		setValue( GRID_MAJOR_PAINT, paint );
 		this.majorGridPaint = null;
 		return this;
@@ -452,7 +456,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MAJOR_WIDTH, DEFAULT_GRID_MAJOR_WIDTH );
 	}
 
-	public DesignWorkplane setMajorGridWidth( String width ) {
+	public Workplane setMajorGridWidth( String width ) {
 		setValue( GRID_MAJOR_WIDTH, width );
 		this.majorGridWidth = null;
 		return this;
@@ -465,7 +469,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MINOR_VISIBLE, DEFAULT_GRID_MINOR_VISIBLE );
 	}
 
-	public DesignWorkplane setMinorGridVisible( Boolean visible ) {
+	public Workplane setMinorGridVisible( Boolean visible ) {
 		setValue( GRID_MINOR_VISIBLE, visible );
 		return this;
 	}
@@ -475,7 +479,7 @@ public class DesignWorkplane extends Node {
 		return minorGridShowing;
 	}
 
-	public DesignWorkplane setMinorGridShowing( Boolean showing ) {
+	public Workplane setMinorGridShowing( Boolean showing ) {
 		minorGridShowing = showing;
 		return this;
 	}
@@ -489,7 +493,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MINOR_X, DEFAULT_GRID_MINOR_SIZE );
 	}
 
-	public DesignWorkplane setMinorGridX( String minorGridX ) {
+	public Workplane setMinorGridX( String minorGridX ) {
 		setValue( GRID_MINOR_X, minorGridX );
 		this.minorGridX = null;
 		return this;
@@ -504,7 +508,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MINOR_Y, DEFAULT_GRID_MINOR_SIZE );
 	}
 
-	public DesignWorkplane setMinorGridY( String minorGridY ) {
+	public Workplane setMinorGridY( String minorGridY ) {
 		setValue( GRID_MINOR_Y, minorGridY );
 		this.minorGridY = null;
 		return this;
@@ -519,7 +523,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MINOR_PAINT, DEFAULT_GRID_MINOR_PAINT );
 	}
 
-	public DesignWorkplane setMinorGridPaint( String paint ) {
+	public Workplane setMinorGridPaint( String paint ) {
 		setValue( GRID_MINOR_PAINT, paint );
 		this.minorGridPaint = null;
 		return this;
@@ -534,7 +538,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_MINOR_WIDTH, DEFAULT_GRID_MINOR_WIDTH );
 	}
 
-	public DesignWorkplane setMinorGridWidth( String width ) {
+	public Workplane setMinorGridWidth( String width ) {
 		setValue( GRID_MINOR_WIDTH, width );
 		this.minorGridWidth = null;
 		return this;
@@ -552,7 +556,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_SNAP_X, DEFAULT_GRID_SNAP_SIZE );
 	}
 
-	public DesignWorkplane setSnapGridX( String snapGridX ) {
+	public Workplane setSnapGridX( String snapGridX ) {
 		setValue( GRID_SNAP_X, snapGridX );
 		this.snapGridX = null;
 		return this;
@@ -567,7 +571,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_SNAP_Y, DEFAULT_GRID_SNAP_SIZE );
 	}
 
-	public DesignWorkplane setSnapGridY( String snapGridY ) {
+	public Workplane setSnapGridY( String snapGridY ) {
 		setValue( GRID_SNAP_Y, snapGridY );
 		this.snapGridY = null;
 		return this;
@@ -577,7 +581,7 @@ public class DesignWorkplane extends Node {
 		return getValue( GRID_STYLE );
 	}
 
-	public DesignWorkplane setGridStyle( GridStyle style ) {
+	public Workplane setGridStyle( GridStyle style ) {
 		setValue( GRID_STYLE, style );
 		return this;
 	}
@@ -590,7 +594,7 @@ public class DesignWorkplane extends Node {
 		return new BoundingBox( boundaryXmin, boundaryYmin, boundaryXmax - boundaryXmin, boundaryYmax - boundaryYmin );
 	}
 
-	public DesignWorkplane setBounds( Bounds bounds ) {
+	public Workplane setBounds( Bounds bounds ) {
 		if( bounds == null ) return this;
 		Txn.run( () -> {
 			setBoundaryX1( bounds.getMinX() );

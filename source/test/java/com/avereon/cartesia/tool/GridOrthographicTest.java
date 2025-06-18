@@ -13,7 +13,7 @@ public class GridOrthographicTest {
 
 	@Test
 	void testFindNearest() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "1", "1" );
+		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
@@ -28,13 +28,13 @@ public class GridOrthographicTest {
 
 	@Test
 	void testFindNearestAtZero() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane();
+		Workplane workplane = new Workplane();
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isEqualTo( Point3D.ZERO );
 	}
 
 	@Test
 	void testFindNearestOffsetOrigin() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "1", "1" );
+		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
 		workplane.setOrigin( "0.3, 0.2, 0" );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( 0.3, 0.2, 0 ) );
 
@@ -51,14 +51,14 @@ public class GridOrthographicTest {
 
 	@Test
 	void testGetGridDots() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
+		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
 		List<Shape> dots = Grid.ORTHO.getGridDots( workplane );
 		assertThat( dots.size() ).isEqualTo( 0 );
 	}
 
 	@Test
 	void getGridLinesCommon() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
+		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		List<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
 
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
@@ -69,7 +69,7 @@ public class GridOrthographicTest {
 
 	@Test
 	void getGridLinesOffOrigin() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
+		Workplane workplane = new Workplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
 		List<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
 
 		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11

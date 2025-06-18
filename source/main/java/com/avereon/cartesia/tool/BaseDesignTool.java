@@ -98,7 +98,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// Design layers
 	// Grid
 
-	private final DesignWorkplane workplane;
+	private final Workplane workplane;
 
 	protected BaseDesignTool( XenonProgramProduct product, Asset asset ) {
 		super( product, asset );
@@ -117,7 +117,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		currentLayer = new SimpleObjectProperty<>();
 		currentView = new SimpleObjectProperty<>();
 
-		this.workplane = new DesignWorkplane();
+		this.workplane = new Workplane();
 
 		// Register the listener to update the cursor when the reticle changes, and the cursor is also a reticle cursor
 		reticle.addListener( ( p, o, n ) -> {
@@ -148,7 +148,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
-	public final DesignWorkplane getWorkplane() {
+	public final Workplane getWorkplane() {
 		return workplane;
 	}
 

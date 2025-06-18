@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.zerra.color.Colors;
 import javafx.scene.paint.Color;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -11,15 +12,21 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DesignWorkplaneTest {
+class WorkplaneTest {
 
-	private final DesignWorkplane workplane = new DesignWorkplane();
+	private final Workplane workplane = new Workplane();
+
+	@Test
+	void defaultOriginConstant() {
+		// The default origin should be "0,0". The workplane is a 2D plane and has no Z coordinate.
+		assertThat( Workplane.DEFAULT_ORIGIN ).isEqualTo( "0,0" );
+	}
 
 	@ParameterizedTest
 	@MethodSource( "gridAxisVisibleArguments" )
 	void isGridAxisVisible( Boolean input, boolean expected ) {
 		// given
-		assertThat( workplane.isGridAxisVisible() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+		assertThat( workplane.isGridAxisVisible() ).isEqualTo( Workplane.DEFAULT_GRID_AXIS_VISIBLE );
 
 		// when
 		workplane.setGridAxisVisible( input );
@@ -32,7 +39,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "gridMajorVisibleArguments" )
 	void isMajorGridVisible( Boolean input, boolean expected ) {
 		// given
-		assertThat( workplane.isMajorGridVisible() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+		assertThat( workplane.isMajorGridVisible() ).isEqualTo( Workplane.DEFAULT_GRID_AXIS_VISIBLE );
 
 		// when
 		workplane.setMajorGridVisible( input );
@@ -45,7 +52,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "gridMinorVisibleArguments" )
 	void isMinorGridVisible( Boolean input, boolean expected ) {
 		// given
-		assertThat( workplane.isMinorGridVisible() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+		assertThat( workplane.isMinorGridVisible() ).isEqualTo( Workplane.DEFAULT_GRID_AXIS_VISIBLE );
 
 		// when
 		workplane.setMinorGridVisible( input );
@@ -58,7 +65,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "majorGridShowingArguments" )
 	void majorGridShowing( Boolean input, boolean expected ) {
 		// given
-		assertThat( workplane.isMajorGridShowing() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+		assertThat( workplane.isMajorGridShowing() ).isEqualTo( Workplane.DEFAULT_GRID_MAJOR_VISIBLE );
 
 		// when
 		workplane.setMajorGridShowing( input );
@@ -71,7 +78,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "minorGridShowingArguments" )
 	void minorGridShowing( Boolean input, boolean expected ) {
 		// given
-		assertThat( workplane.isMinorGridShowing() ).isEqualTo( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+		assertThat( workplane.isMinorGridShowing() ).isEqualTo( Workplane.DEFAULT_GRID_MAJOR_VISIBLE );
 
 		// when
 		workplane.setMinorGridShowing( input );
@@ -84,7 +91,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "gridAxisPaintArguments" )
 	void gridAxisPaint( String input, Color expected ) {
 		// given
-		assertThat( workplane.calcGridAxisPaint() ).isEqualTo( Colors.parse( DesignWorkplane.DEFAULT_GRID_AXIS_PAINT ) );
+		assertThat( workplane.calcGridAxisPaint() ).isEqualTo( Colors.parse( Workplane.DEFAULT_GRID_AXIS_PAINT ) );
 
 		// when
 		workplane.setGridAxisPaint( input );
@@ -97,7 +104,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "majorGridPaintArguments" )
 	void majorGridPaint( String input, Color expected ) {
 		// given
-		assertThat( workplane.calcMajorGridPaint() ).isEqualTo( Colors.parse( DesignWorkplane.DEFAULT_GRID_MAJOR_PAINT ) );
+		assertThat( workplane.calcMajorGridPaint() ).isEqualTo( Colors.parse( Workplane.DEFAULT_GRID_MAJOR_PAINT ) );
 
 		// when
 		workplane.setMajorGridPaint( input );
@@ -110,7 +117,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "minorGridPaintArguments" )
 	void minorGridPaint( String input, Color expected ) {
 		// given
-		assertThat( workplane.calcMinorGridPaint() ).isEqualTo( Colors.parse( DesignWorkplane.DEFAULT_GRID_MINOR_PAINT ) );
+		assertThat( workplane.calcMinorGridPaint() ).isEqualTo( Colors.parse( Workplane.DEFAULT_GRID_MINOR_PAINT ) );
 
 		// when
 		workplane.setMinorGridPaint( input );
@@ -123,7 +130,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "gridAxisWidthArguments" )
 	void gridAxisWidth( String input, double expected ) {
 		// given
-		assertThat( workplane.calcGridAxisWidth() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_AXIS_WIDTH ) );
+		assertThat( workplane.calcGridAxisWidth() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_AXIS_WIDTH ) );
 
 		// when
 		workplane.setGridAxisWidth( input );
@@ -136,7 +143,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "majorGridWidthArguments" )
 	void majorGridWidth( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMajorGridWidth() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MAJOR_WIDTH ) );
+		assertThat( workplane.calcMajorGridWidth() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MAJOR_WIDTH ) );
 
 		// when
 		workplane.setMajorGridWidth( input );
@@ -149,7 +156,7 @@ class DesignWorkplaneTest {
 	@MethodSource( "minorGridWidthArguments" )
 	void minorGridWidth( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMinorGridWidth() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MINOR_WIDTH ) );
+		assertThat( workplane.calcMinorGridWidth() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MINOR_WIDTH ) );
 
 		// when
 		workplane.setMinorGridWidth( input );
@@ -160,9 +167,9 @@ class DesignWorkplaneTest {
 
 	@ParameterizedTest
 	@MethodSource( "majorGridSizeArguments" )
-	void majorGridX(String input, double expected) {
+	void majorGridX( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMajorGridX() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		assertThat( workplane.calcMajorGridX() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
 
 		// when
 		workplane.setMajorGridX( input );
@@ -173,9 +180,9 @@ class DesignWorkplaneTest {
 
 	@ParameterizedTest
 	@MethodSource( "majorGridSizeArguments" )
-	void majorGridY(String input, double expected) {
+	void majorGridY( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMajorGridY() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		assertThat( workplane.calcMajorGridY() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
 
 		// when
 		workplane.setMajorGridY( input );
@@ -186,9 +193,9 @@ class DesignWorkplaneTest {
 
 	@ParameterizedTest
 	@MethodSource( "minorGridSizeArguments" )
-	void minorGridX(String input, double expected) {
+	void minorGridX( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMinorGridX() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
+		assertThat( workplane.calcMinorGridX() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MINOR_SIZE ) );
 
 		// when
 		workplane.setMinorGridX( input );
@@ -199,9 +206,9 @@ class DesignWorkplaneTest {
 
 	@ParameterizedTest
 	@MethodSource( "minorGridSizeArguments" )
-	void minorGridY(String input, double expected) {
+	void minorGridY( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMinorGridY() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
+		assertThat( workplane.calcMinorGridY() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MINOR_SIZE ) );
 
 		// when
 		workplane.setMinorGridY( input );
@@ -212,9 +219,9 @@ class DesignWorkplaneTest {
 
 	@ParameterizedTest
 	@MethodSource( "snapGridSizeArguments" )
-	void snapGridX(String input, double expected) {
+	void snapGridX( String input, double expected ) {
 		// given
-		assertThat( workplane.calcSnapGridX() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
+		assertThat( workplane.calcSnapGridX() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 
 		// when
 		workplane.setSnapGridX( input );
@@ -225,9 +232,9 @@ class DesignWorkplaneTest {
 
 	@ParameterizedTest
 	@MethodSource( "snapGridSizeArguments" )
-	void snapGridY(String input, double expected) {
+	void snapGridY( String input, double expected ) {
 		// given
-		assertThat( workplane.calcSnapGridY() ).isEqualTo( CadMath.evalNoException( DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
+		assertThat( workplane.calcSnapGridY() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 
 		// when
 		workplane.setSnapGridY( input );
@@ -237,35 +244,35 @@ class DesignWorkplaneTest {
 	}
 
 	private static Stream<Arguments> gridAxisWidthArguments() {
-		return widthArguments( DesignWorkplane.DEFAULT_GRID_AXIS_WIDTH );
+		return widthArguments( Workplane.DEFAULT_GRID_AXIS_WIDTH );
 	}
 
 	private static Stream<Arguments> majorGridWidthArguments() {
-		return widthArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_WIDTH );
+		return widthArguments( Workplane.DEFAULT_GRID_MAJOR_WIDTH );
 	}
 
 	private static Stream<Arguments> minorGridWidthArguments() {
-		return widthArguments( DesignWorkplane.DEFAULT_GRID_MINOR_WIDTH );
+		return widthArguments( Workplane.DEFAULT_GRID_MINOR_WIDTH );
 	}
 
 	private static Stream<Arguments> gridAxisVisibleArguments() {
-		return booleanArguments( DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE );
+		return booleanArguments( Workplane.DEFAULT_GRID_AXIS_VISIBLE );
 	}
 
 	private static Stream<Arguments> gridMajorVisibleArguments() {
-		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+		return booleanArguments( Workplane.DEFAULT_GRID_MAJOR_VISIBLE );
 	}
 
 	private static Stream<Arguments> gridMinorVisibleArguments() {
-		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MINOR_VISIBLE );
+		return booleanArguments( Workplane.DEFAULT_GRID_MINOR_VISIBLE );
 	}
 
 	private static Stream<Arguments> majorGridShowingArguments() {
-		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE );
+		return booleanArguments( Workplane.DEFAULT_GRID_MAJOR_VISIBLE );
 	}
 
 	private static Stream<Arguments> minorGridShowingArguments() {
-		return booleanArguments( DesignWorkplane.DEFAULT_GRID_MINOR_VISIBLE );
+		return booleanArguments( Workplane.DEFAULT_GRID_MINOR_VISIBLE );
 	}
 
 	private static Stream<Arguments> booleanArguments( boolean defaultBoolean ) {
@@ -273,27 +280,27 @@ class DesignWorkplaneTest {
 	}
 
 	private static Stream<Arguments> gridAxisPaintArguments() {
-		return paintArguments( DesignWorkplane.DEFAULT_GRID_AXIS_PAINT );
+		return paintArguments( Workplane.DEFAULT_GRID_AXIS_PAINT );
 	}
 
 	private static Stream<Arguments> majorGridPaintArguments() {
-		return paintArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_PAINT );
+		return paintArguments( Workplane.DEFAULT_GRID_MAJOR_PAINT );
 	}
 
 	private static Stream<Arguments> minorGridPaintArguments() {
-		return paintArguments( DesignWorkplane.DEFAULT_GRID_MINOR_PAINT );
+		return paintArguments( Workplane.DEFAULT_GRID_MINOR_PAINT );
 	}
 
 	private static Stream<Arguments> majorGridSizeArguments() {
-		return valueArguments( DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE );
+		return valueArguments( Workplane.DEFAULT_GRID_MAJOR_SIZE );
 	}
 
 	private static Stream<Arguments> minorGridSizeArguments() {
-		return valueArguments( DesignWorkplane.DEFAULT_GRID_MINOR_SIZE );
+		return valueArguments( Workplane.DEFAULT_GRID_MINOR_SIZE );
 	}
 
 	private static Stream<Arguments> snapGridSizeArguments() {
-		return valueArguments( DesignWorkplane.DEFAULT_GRID_SNAP_SIZE );
+		return valueArguments( Workplane.DEFAULT_GRID_SNAP_SIZE );
 	}
 
 	private static Stream<Arguments> paintArguments( String defaultColor ) {

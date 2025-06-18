@@ -14,7 +14,7 @@ public class GridPolarTest {
 
 	@Test
 	void testFindNearest() {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
 		Point3DAssert.assertThat( Grid.POLAR.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
 		Point3DAssert.assertThat( Grid.POLAR.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
 		Point3DAssert.assertThat( Grid.POLAR.getNearest( workplane, new Point3D( -0.3, -0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
@@ -30,13 +30,13 @@ public class GridPolarTest {
 
 	@Test
 	void testFindNearestAtZero() {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "30" );
 		Point3DAssert.assertThat( Grid.POLAR.getNearest( workplane, Point3D.ZERO ) ).isEqualTo( Point3D.ZERO );
 	}
 
 	@Test
 	void testFindNearestOffsetOrigin() {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
 		workplane.setOrigin( "0.3, 0.2, 0" );
 		Point3DAssert.assertThat( Grid.POLAR.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( 0.3, 0.2, 0 ) );
 
@@ -46,14 +46,14 @@ public class GridPolarTest {
 
 	@Test
 	void testGetGridDots() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
 		List<Shape> dots = Grid.POLAR.getGridDots( workplane );
 		assertThat( dots.size() ).isEqualTo( 0 );
 	}
 
 	@Test
 	void testGetGridLines() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
 		List<Shape> lines = Grid.POLAR.createFxGeometryGrid( workplane );
 		assertThat( lines.size() ).isEqualTo( 44 );
 	}

@@ -29,7 +29,7 @@ public class GridOrthographic implements Grid {
 	}
 
 	@Override
-	public Point3D getNearest( DesignWorkplane workplane, Point3D point ) {
+	public Point3D getNearest( Workplane workplane, Point3D point ) {
 		Point3D origin = workplane.calcOrigin();
 		point = point.subtract( origin );
 		double x = Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() );
@@ -40,14 +40,14 @@ public class GridOrthographic implements Grid {
 	}
 
 	@Override
-	public void drawMareaGeometryGrid( FxRenderer2d renderer, DesignWorkplane workplane ) {
+	public void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {
 		switch( workplane.getGridStyle() ) {
 			case DOT -> drawMareaGridDots( renderer, workplane );
 			case LINE -> drawMareaGridLines( renderer, workplane );
 		}
 	}
 
-	private void drawMareaGridDots( FxRenderer2d renderer, DesignWorkplane workplane ) {
+	private void drawMareaGridDots( FxRenderer2d renderer, Workplane workplane ) {
 		Point2D originInParent = renderer.parentToLocal( Point2D.ZERO ).add( workplane.calcSnapGridX(), -workplane.calcSnapGridY() );
 
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
@@ -141,7 +141,7 @@ public class GridOrthographic implements Grid {
 		}
 	}
 
-	private void drawMareaGridLines( FxRenderer2d renderer, DesignWorkplane workplane ) {
+	private void drawMareaGridLines( FxRenderer2d renderer, Workplane workplane ) {
 		// TODO Can performance be improved by caching some things, the the pens
 
 		Point2D parentZero = renderer.parentToLocal( Point2D.ZERO ).add( workplane.calcSnapGridX(), -workplane.calcSnapGridY() );
@@ -226,7 +226,7 @@ public class GridOrthographic implements Grid {
 
 	@Override
 	@Deprecated
-	public List<Shape> createFxGeometryGrid( DesignWorkplane workplane ) {
+	public List<Shape> createFxGeometryGrid( Workplane workplane ) {
 		return switch( workplane.getGridStyle() ) {
 			case DOT -> createFxGridDots( workplane );
 			case LINE -> createFxGridLines( workplane );
@@ -234,13 +234,13 @@ public class GridOrthographic implements Grid {
 	}
 
 	@Deprecated
-	private List<Shape> createFxGridDots( DesignWorkplane workplane ) {
+	private List<Shape> createFxGridDots( Workplane workplane ) {
 		// It is not practical to create a dotted grid with FX shapes
 		return List.of();
 	}
 
 	@Deprecated
-	private List<Shape> createFxGridLines( DesignWorkplane workplane ) {
+	private List<Shape> createFxGridLines( Workplane workplane ) {
 		List<Shape> grid = new ArrayList<>();
 
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );

@@ -11,7 +11,7 @@ public class GridIsometricTest {
 
 	@Test
 	void testGetGridDots() throws Exception {
-		DesignWorkplane workplane = new DesignWorkplane( -10, -10, 10, 10, "1", "1", "1", "1", "1", "1" );
+		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "1", "1", "1", "1", "1" );
 		List<Shape> dots = Grid.ISO.getGridDots( workplane );
 		assertThat( dots.size()).isEqualTo( 0 );
 	}

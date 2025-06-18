@@ -929,52 +929,52 @@ public class DesignToolV2 extends BaseDesignTool {
 		return portalStack.isEmpty() ? DesignPortal.DEFAULT : portalStack.pop();
 	}
 
-	private void configureWorkplane( DesignWorkplane workplane, Settings settings ) {
-		workplane.setCoordinateSystem( Grid.valueOf( settings.get( DesignWorkplane.COORDINATE_SYSTEM, DesignWorkplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
-		workplane.setOrigin( settings.get( DesignWorkplane.WORKPANE_ORIGIN, DesignWorkplane.DEFAULT_GRID_ORIGIN ) );
+	private void configureWorkplane( Workplane workplane, Settings settings ) {
+		workplane.setCoordinateSystem( Grid.valueOf( settings.get( Workplane.COORDINATE_SYSTEM, Workplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
+		workplane.setOrigin( settings.get( Workplane.WORKPANE_ORIGIN, Workplane.DEFAULT_ORIGIN ) );
 
-		workplane.setGridAxisVisible( settings.get( DesignWorkplane.GRID_AXIS_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_AXIS_VISIBLE ) );
-		workplane.setGridAxisPaint( settings.get( DesignWorkplane.GRID_AXIS_PAINT, DesignWorkplane.DEFAULT_GRID_AXIS_PAINT ) );
-		workplane.setGridAxisWidth( settings.get( DesignWorkplane.GRID_AXIS_WIDTH, DesignWorkplane.DEFAULT_GRID_AXIS_WIDTH ) );
+		workplane.setGridAxisVisible( settings.get( Workplane.GRID_AXIS_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_AXIS_VISIBLE ) );
+		workplane.setGridAxisPaint( settings.get( Workplane.GRID_AXIS_PAINT, Workplane.DEFAULT_GRID_AXIS_PAINT ) );
+		workplane.setGridAxisWidth( settings.get( Workplane.GRID_AXIS_WIDTH, Workplane.DEFAULT_GRID_AXIS_WIDTH ) );
 
-		workplane.setMajorGridVisible( settings.get( DesignWorkplane.GRID_MAJOR_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_MAJOR_VISIBLE ) );
-		workplane.setMajorGridX( settings.get( DesignWorkplane.GRID_MAJOR_X, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
-		workplane.setMajorGridY( settings.get( DesignWorkplane.GRID_MAJOR_Y, DesignWorkplane.DEFAULT_GRID_MAJOR_SIZE ) );
-		workplane.setMajorGridPaint( settings.get( DesignWorkplane.GRID_MAJOR_PAINT, DesignWorkplane.DEFAULT_GRID_MAJOR_PAINT ) );
-		workplane.setMajorGridWidth( settings.get( DesignWorkplane.GRID_MAJOR_WIDTH, DesignWorkplane.DEFAULT_GRID_MAJOR_WIDTH ) );
+		workplane.setMajorGridVisible( settings.get( Workplane.GRID_MAJOR_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_MAJOR_VISIBLE ) );
+		workplane.setMajorGridX( settings.get( Workplane.GRID_MAJOR_X, Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		workplane.setMajorGridY( settings.get( Workplane.GRID_MAJOR_Y, Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		workplane.setMajorGridPaint( settings.get( Workplane.GRID_MAJOR_PAINT, Workplane.DEFAULT_GRID_MAJOR_PAINT ) );
+		workplane.setMajorGridWidth( settings.get( Workplane.GRID_MAJOR_WIDTH, Workplane.DEFAULT_GRID_MAJOR_WIDTH ) );
 
-		workplane.setMinorGridVisible( settings.get( DesignWorkplane.GRID_MINOR_VISIBLE, Boolean.class, DesignWorkplane.DEFAULT_GRID_MINOR_VISIBLE ) );
-		workplane.setMinorGridX( settings.get( DesignWorkplane.GRID_MINOR_X, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
-		workplane.setMinorGridY( settings.get( DesignWorkplane.GRID_MINOR_Y, DesignWorkplane.DEFAULT_GRID_MINOR_SIZE ) );
-		workplane.setMinorGridPaint( settings.get( DesignWorkplane.GRID_MINOR_PAINT, DesignWorkplane.DEFAULT_GRID_MINOR_PAINT ) );
-		workplane.setMinorGridWidth( settings.get( DesignWorkplane.GRID_MINOR_WIDTH, DesignWorkplane.DEFAULT_GRID_MINOR_WIDTH ) );
+		workplane.setMinorGridVisible( settings.get( Workplane.GRID_MINOR_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_MINOR_VISIBLE ) );
+		workplane.setMinorGridX( settings.get( Workplane.GRID_MINOR_X, Workplane.DEFAULT_GRID_MINOR_SIZE ) );
+		workplane.setMinorGridY( settings.get( Workplane.GRID_MINOR_Y, Workplane.DEFAULT_GRID_MINOR_SIZE ) );
+		workplane.setMinorGridPaint( settings.get( Workplane.GRID_MINOR_PAINT, Workplane.DEFAULT_GRID_MINOR_PAINT ) );
+		workplane.setMinorGridWidth( settings.get( Workplane.GRID_MINOR_WIDTH, Workplane.DEFAULT_GRID_MINOR_WIDTH ) );
 
-		workplane.setSnapGridX( settings.get( DesignWorkplane.GRID_SNAP_X, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
-		workplane.setSnapGridY( settings.get( DesignWorkplane.GRID_SNAP_Y, DesignWorkplane.DEFAULT_GRID_SNAP_SIZE ) );
+		workplane.setSnapGridX( settings.get( Workplane.GRID_SNAP_X, Workplane.DEFAULT_GRID_SNAP_SIZE ) );
+		workplane.setSnapGridY( settings.get( Workplane.GRID_SNAP_Y, Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 
-		settings.register( DesignWorkplane.COORDINATE_SYSTEM, e -> workplane.setCoordinateSystem( Grid.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
-		settings.register( DesignWorkplane.GRID_ORIGIN, e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.COORDINATE_SYSTEM, e -> workplane.setCoordinateSystem( Grid.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		settings.register( Workplane.GRID_ORIGIN, e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
 
-		settings.register( DesignWorkplane.GRID_AXIS_VISIBLE, e -> workplane.setGridAxisVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
-		settings.register( DesignWorkplane.GRID_AXIS_PAINT, e -> workplane.setGridAxisPaint( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_AXIS_WIDTH, e -> workplane.setGridAxisWidth( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_AXIS_VISIBLE, e -> workplane.setGridAxisVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( Workplane.GRID_AXIS_PAINT, e -> workplane.setGridAxisPaint( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_AXIS_WIDTH, e -> workplane.setGridAxisWidth( String.valueOf( e.getNewValue() ) ) );
 
-		settings.register( DesignWorkplane.GRID_MAJOR_VISIBLE, e -> workplane.setMajorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
-		settings.register( DesignWorkplane.GRID_MAJOR_X, e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MAJOR_Y, e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MAJOR_VISIBLE, e -> workplane.setMajorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( Workplane.GRID_MAJOR_X, e -> workplane.setMajorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MAJOR_Y, e -> workplane.setMajorGridY( String.valueOf( e.getNewValue() ) ) );
 		//settings.register( DesignWorkplane.GRID_MAJOR_Z, e -> workplane.setMajorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MAJOR_PAINT, e -> workplane.setMajorGridPaint( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MAJOR_WIDTH, e -> workplane.setMajorGridWidth( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MAJOR_PAINT, e -> workplane.setMajorGridPaint( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MAJOR_WIDTH, e -> workplane.setMajorGridWidth( String.valueOf( e.getNewValue() ) ) );
 
-		settings.register( DesignWorkplane.GRID_MINOR_VISIBLE, e -> workplane.setMinorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
-		settings.register( DesignWorkplane.GRID_MINOR_X, e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MINOR_Y, e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MINOR_VISIBLE, e -> workplane.setMinorGridVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );
+		settings.register( Workplane.GRID_MINOR_X, e -> workplane.setMinorGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MINOR_Y, e -> workplane.setMinorGridY( String.valueOf( e.getNewValue() ) ) );
 		//settings.register( DesignWorkplane.GRID_MINOR_Z, e -> workplane.setMinorGridZ( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MINOR_PAINT, e -> workplane.setMinorGridPaint( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_MINOR_WIDTH, e -> workplane.setMinorGridWidth( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MINOR_PAINT, e -> workplane.setMinorGridPaint( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_MINOR_WIDTH, e -> workplane.setMinorGridWidth( String.valueOf( e.getNewValue() ) ) );
 
-		settings.register( DesignWorkplane.GRID_SNAP_X, e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
-		settings.register( DesignWorkplane.GRID_SNAP_Y, e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_SNAP_X, e -> workplane.setSnapGridX( String.valueOf( e.getNewValue() ) ) );
+		settings.register( Workplane.GRID_SNAP_Y, e -> workplane.setSnapGridY( String.valueOf( e.getNewValue() ) ) );
 		//settings.register( DesignWorkplane.GRID_SNAP_Z, e -> workplane.setSnapGridZ( String.valueOf( e.getNewValue() ) ) );
 
 		// Rebuild the grid if any workplane values change

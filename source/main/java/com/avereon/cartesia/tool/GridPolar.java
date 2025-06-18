@@ -22,7 +22,7 @@ public class GridPolar implements Grid {
 	}
 
 	@Override
-	public Point3D getNearest( DesignWorkplane workplane, Point3D point ) {
+	public Point3D getNearest( Workplane workplane, Point3D point ) {
 		// This can be determined by calculating the nearest point
 		// and then converting from polar to cartesian coordinates
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
@@ -41,23 +41,23 @@ public class GridPolar implements Grid {
 	}
 
 	@Override
-	public List<Shape2d> createMareaGeometryGrid( DesignWorkplane workplane ) {
+	public List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
 		return switch( workplane.getGridStyle() ) {
 			case DOT -> generateMareaGridDots( workplane );
 			case LINE -> generateMareaGridLines( workplane );
 		};
 	}
 
-	private List<Shape2d> generateMareaGridDots( DesignWorkplane workplane ) {
+	private List<Shape2d> generateMareaGridDots( Workplane workplane ) {
 		return List.of();
 	}
 
-	private List<Shape2d> generateMareaGridLines( DesignWorkplane workplane ) {
+	private List<Shape2d> generateMareaGridLines( Workplane workplane ) {
 		return List.of();
 	}
 
 	@Override
-	public List<Shape> createFxGeometryGrid( DesignWorkplane workplane ) {
+	public List<Shape> createFxGeometryGrid( Workplane workplane ) {
 		// The x spacing will be radius
 		// The y spacing will be angle in degrees
 

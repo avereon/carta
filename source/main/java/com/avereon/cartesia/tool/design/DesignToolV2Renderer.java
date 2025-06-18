@@ -5,7 +5,7 @@ import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadTransform;
 import com.avereon.cartesia.tool.DesignContext;
-import com.avereon.cartesia.tool.DesignWorkplane;
+import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.marea.Font;
@@ -49,7 +49,7 @@ public class DesignToolV2Renderer extends Pane implements DesignRenderer {
 	private Design design;
 
 	@Getter
-	private DesignWorkplane workplane;
+	private Workplane workplane;
 
 	private final FxRenderer2d renderer;
 
@@ -130,7 +130,7 @@ public class DesignToolV2Renderer extends Pane implements DesignRenderer {
 		referenceLayer.setDrawPaint( getReferenceDrawPaint() );
 		referenceLayer.setFillPaint( getReferenceFillPaint() );
 
-		workplane = new DesignWorkplane();
+		workplane = new Workplane();
 
 		// Create and add the renderer to the center
 		renderer = new FxRenderer2d();
@@ -196,7 +196,7 @@ public class DesignToolV2Renderer extends Pane implements DesignRenderer {
 		return design.getDesignContext();
 	}
 
-	public void setWorkplane( DesignWorkplane workplane ) {
+	public void setWorkplane( Workplane workplane ) {
 		// TODO Disconnect listeners
 
 		this.workplane = workplane;
