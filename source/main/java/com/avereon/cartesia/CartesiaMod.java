@@ -190,15 +190,15 @@ public class CartesiaMod extends Module {
 		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxRenderDesignTool", DesignToolV2.class );
 		getProgram().getToolManager().addToolAlias( "com.avereon.cartesia.tool.design.FxShapeDesignTool", DesignToolV2.class );
 
-		// Design V3 Editor registration
-		ToolRegistration designToolV3Registration = new ToolRegistration( this, DesignToolV3.class );
-		designToolV3Registration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (New)" );
-		registerTool( design2dAssetType, designToolV3Registration );
-
 		// Default tool registration
 		ToolRegistration designToolV2Registration = new ToolRegistration( this, DesignToolV2.class );
 		designToolV2Registration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) );
 		registerTool( design2dAssetType, designToolV2Registration );
+
+		// Design V3 Editor registration
+		ToolRegistration designToolV3Registration = new ToolRegistration( this, DesignToolV3.class );
+		designToolV3Registration.setName( Rb.text( RbKey.LABEL, "design-2d-editor" ) + " (New)" );
+		registerTool( design2dAssetType, designToolV3Registration );
 
 		// Other tool registrations
 		ToolRegistration design2dEditorRegistration = new ToolRegistration( this, Design2dEditor.class );
