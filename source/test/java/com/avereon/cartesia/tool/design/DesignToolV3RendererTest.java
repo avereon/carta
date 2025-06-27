@@ -5,12 +5,14 @@ import com.avereon.cartesia.tool.RenderConstants;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -73,8 +75,8 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void defaultDpi() {
-		assertThat( renderer.getDpiX() ).isEqualTo( RenderConstants.DEFAULT_DPI );
-		assertThat( renderer.getDpiY() ).isEqualTo( RenderConstants.DEFAULT_DPI );
+		assertThat( renderer.getDpiX() ).isEqualTo( DEFAULT_DPI );
+		assertThat( renderer.getDpiY() ).isEqualTo( DEFAULT_DPI );
 	}
 
 	@Test
@@ -288,6 +290,35 @@ public class DesignToolV3RendererTest {
 
 		// then
 		verify( yListener, times( 1 ) ).changed( any(), any(), eq( 3.0 ) );
+	}
+
+	@Test
+		// @WhiteBoxTest
+	void defaultInternalScaleFactor() {
+		// given
+		double expectedScaleFactor = DEFAULT_DPI / (RenderConstants.DEFAULT_UNIT.per( DesignUnit.INCH ));
+		Offset<Double> offset = Offset.offset( 1e-12 );
+
+		// then
+		assertThat( renderer.getInternalScaleFactor().getX() ).isEqualTo( expectedScaleFactor, offset );
+		assertThat( renderer.getInternalScaleFactor().getY() ).isEqualTo( expectedScaleFactor, offset );
+		assertThat( expectedScaleFactor ).isCloseTo( 37.79527559055118, offset );
+	}
+
+	@Test
+	void setInternalScaleFactor() {
+		// given
+		double expectedScaleFactor = 160 / (DesignUnit.CENTIMETER.per( DesignUnit.INCH ));
+		Offset<Double> offset = Offset.offset( 1e-12 );
+
+		// when
+		renderer.setUnit( DesignUnit.CENTIMETER );
+		renderer.setDpi( 160 );
+
+		// then
+		assertThat( renderer.getInternalScaleFactor().getX() ).isEqualTo( expectedScaleFactor, offset );
+		assertThat( renderer.getInternalScaleFactor().getY() ).isEqualTo( expectedScaleFactor, offset );
+		assertThat( expectedScaleFactor ).isEqualTo( 62.99212598425197, offset );
 	}
 
 }

@@ -34,6 +34,10 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	private final DoubleProperty viewZoomY;
 
+	private final DoubleProperty internalScaleFactorX;
+
+	private final DoubleProperty internalScaleFactorY;
+
 	public DesignRenderer() {
 		unit = new SimpleObjectProperty<>( DEFAULT_UNIT );
 
@@ -54,6 +58,15 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
 		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
+
+		internalScaleFactorX = new SimpleDoubleProperty( 1.0 );
+		internalScaleFactorY = new SimpleDoubleProperty( 1.0 );
+
+		this.updateInternalScaleFactor( getUnit(), getDpiX(), getDpiY() );
+
+		unit.addListener( ( _, _, n ) -> this.updateInternalScaleFactor( n, getDpiX(), getDpiY() ) );
+		dpiX.addListener( ( _, _, n ) -> this.updateInternalScaleFactor( getUnit(), n.doubleValue(), getDpiY() ) );
+		dpiY.addListener( ( _, _, n ) -> this.updateInternalScaleFactor( getUnit(), getDpiX(), n.doubleValue() ) );
 	}
 
 	public abstract void setDesign( Design design );
@@ -253,6 +266,18 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		// The zoom has to be set before the viewpoint
 		setViewZoom( getViewZoom().multiply( factor ) );
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
+	}
+
+	/*
+	For testing purposes only! This method is not part of the public API.
+  */
+	Point2D getInternalScaleFactor() {
+		return new Point2D( internalScaleFactorX.get(), internalScaleFactorY.get() );
+	}
+
+	private void updateInternalScaleFactor( DesignUnit unit, double dpiX, double dpiY ) {
+		internalScaleFactorX.set( unit.to( dpiX, DesignUnit.INCH ) );
+		internalScaleFactorY.set( unit.to( dpiY, DesignUnit.INCH ) );
 	}
 
 }
