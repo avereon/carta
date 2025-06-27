@@ -650,15 +650,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		Fx.run( () -> renderer.zoom( anchor, factor ) );
 	}
 
-//	@Override
-//	@Deprecated
-//	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
-//		if( viewAnchor == null ) throw new NullPointerException( "View anchor cannot be null" );
-//		if( dragAnchor == null ) throw new NullPointerException( "Drag anchor cannot be null" );
-//		if( point == null ) throw new NullPointerException( "Point cannot be null" );
-//		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
-//	}
-
 	public Point3D scaleScreenToWorld( Point3D point ) {
 		// FIXME What happens when the view is rotated
 		double scaleX = renderer.getInternalScaleX();

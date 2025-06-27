@@ -224,25 +224,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
-//	/**
-//	 * Change the view point due to mouse movement.
-//	 *
-//	 * @param viewpointAnchor The view point location before being dragged (world)
-//	 * @param dragAnchor The point where the mouse was pressed (screen)
-//	 * @param dragTarget The new view point (screen)
-//	 */
-//	@Deprecated
-//	public void pan( Point3D viewpointAnchor, Point3D dragAnchor, Point3D dragTarget ) {
-//		// Convert the view anchor to screen coordinates
-//		Point3D anchor = localToParent( viewpointAnchor );
-//
-//		// Calculate the drag offset in screen coordinates
-//		Point3D delta = dragAnchor.subtract( dragTarget );
-//
-//		// Set the new viewpoint in world coordinates
-//		setViewCenter( parentToLocal( anchor.add( delta ) ) );
-//	}
-
 	/**
 	 * Called to request the design be rendered.
 	 */
