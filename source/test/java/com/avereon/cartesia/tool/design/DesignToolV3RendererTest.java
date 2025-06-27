@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.tool.RenderConstants;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
@@ -22,6 +23,9 @@ public class DesignToolV3RendererTest {
 	private DesignToolV3Renderer renderer;
 
 	@Mock
+	private ChangeListener<DesignUnit> unitListener;
+
+	@Mock
 	private ChangeListener<Number> xListener;
 
 	@Mock
@@ -36,6 +40,35 @@ public class DesignToolV3RendererTest {
 	@BeforeEach
 	void setUp() {
 		renderer = new DesignToolV3Renderer();
+	}
+
+	@Test
+	void defaultUnit() {
+		assertThat( renderer.getUnit() ).isEqualTo( RenderConstants.DEFAULT_UNIT );
+	}
+
+	@Test
+	void setUnit() {
+		renderer.setUnit( DesignUnit.INCH );
+		assertThat( renderer.getUnit() ).isEqualTo( DesignUnit.INCH );
+
+		renderer.setUnit( DesignUnit.CENTIMETER );
+		assertThat( renderer.getUnit() ).isEqualTo( DesignUnit.CENTIMETER );
+
+		renderer.setUnit( DesignUnit.METER );
+		assertThat( renderer.getUnit() ).isEqualTo( DesignUnit.METER );
+	}
+
+	@Test
+	void setUnitWithListeners() {
+		// given
+		renderer.unitProperty().addListener( unitListener );
+
+		// when
+		renderer.setUnit( DesignUnit.METER );
+
+		// then
+		verify( unitListener, times( 1 ) ).changed( any(), any(), eq( DesignUnit.METER ) );
 	}
 
 	@Test

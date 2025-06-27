@@ -1,10 +1,13 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
@@ -12,6 +15,8 @@ import javafx.scene.layout.Pane;
 import java.util.Collection;
 
 public abstract class DesignRenderer extends Pane implements RenderConstants {
+
+	private final ObjectProperty<DesignUnit> unit;
 
 	private final DoubleProperty dpiX;
 
@@ -30,6 +35,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	private final DoubleProperty viewZoomY;
 
 	public DesignRenderer() {
+		unit = new SimpleObjectProperty<>( DEFAULT_UNIT );
+
 		/*
 	  The renderer is configured to render at 96 DPI by default, but it can be
 		configured to render for different media just as easily by changing the
@@ -52,6 +59,30 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	public abstract void setDesign( Design design );
 
 	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
+
+	/**
+	 * Called to request the design be rendered.
+	 */
+	public abstract void render();
+
+	/**
+	 * Called to request the design be printed.
+	 *
+	 * @param factor The scale factor to apply to the design when printing.
+	 */
+	public abstract void print( double factor );
+
+	public void setUnit( DesignUnit unit ) {
+		this.unit.set( unit );
+	}
+
+	public DesignUnit getUnit() {
+		return unit.get();
+	}
+
+	public ObjectProperty<DesignUnit> unitProperty() {
+		return unit;
+	}
 
 	/**
 	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
@@ -223,17 +254,5 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		setViewZoom( getViewZoom().multiply( factor ) );
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
-
-	/**
-	 * Called to request the design be rendered.
-	 */
-	public abstract void render();
-
-	/**
-	 * Called to request the design be printed.
-	 *
-	 * @param factor The scale factor to apply to the design when printing.
-	 */
-	public abstract void print( double factor );
 
 }
