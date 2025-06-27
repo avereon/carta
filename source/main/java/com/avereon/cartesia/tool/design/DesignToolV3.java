@@ -54,10 +54,6 @@ public class DesignToolV3 extends BaseDesignTool {
 
 		this.workplane = new Workplane();
 
-		// FIXME These are the development values. They should be changed to the default values
-		double scale = Screen.getPrimary().getDpi() / CM_PER_INCH;
-		getRenderer().getTransforms().add( javafx.scene.transform.Transform.scale( scale, -scale ) );
-
 		// Keep the renderer in the center of the tool
 		// FIXME This will probably conflict with the renderers view center
 		widthProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateX( 0.5 * n.doubleValue() ) );
