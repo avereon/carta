@@ -7,7 +7,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 
 import java.util.Collection;
@@ -255,7 +254,5 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	 * @param factor The scale factor to apply to the design when printing.
 	 */
 	public abstract void print( double factor );
-
-	public abstract Node getNode();
 
 }

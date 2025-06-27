@@ -188,7 +188,7 @@ public class DesignPrintTask extends Task<Void> {
 		//		log.atConfig().log( "Job size: " + layout.getPrintableWidth() + "x" + layout.getPrintableHeight() );
 		//		log.atConfig().log( "Print size: " + renderer.getWidth() + "x" + renderer.getHeight() + " = " + (renderer.getWidth() * renderer.getHeight()) );
 
-		return job.printPage( layout, renderer.getNode() ) && job.endJob();
+		return job.printPage( layout, renderer ) && job.endJob();
 	}
 
 	private static Printer getPrinterByName( String name, Printer orElse ) {

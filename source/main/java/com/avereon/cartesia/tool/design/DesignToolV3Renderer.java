@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
-import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
@@ -96,11 +95,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	@Override
 	public void print( double factor ) {
 
-	}
-
-	@Override
-	public Node getNode() {
-		return this;
 	}
 
 }

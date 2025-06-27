@@ -28,7 +28,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.Node;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Shape;
@@ -734,11 +733,6 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		long endNs = System.nanoTime();
 		long duration = (long)(0.000001 * (endNs - startNs));
 		log.atWarn().log( "Print render time: {0} ms", duration );
-	}
-
-	@Override
-	public Node getNode() {
-		return this;
 	}
 
 	/**
