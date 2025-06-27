@@ -59,12 +59,12 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
 		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
 
-		unit.addListener( ( _, _, n ) -> this.updateInternalScaleFactor( n, getDpiX(), getDpiY() ) );
-		dpiX.addListener( ( _, _, n ) -> this.updateInternalScaleFactor( getUnit(), n.doubleValue(), getDpiY() ) );
-		dpiY.addListener( ( _, _, n ) -> this.updateInternalScaleFactor( getUnit(), getDpiX(), n.doubleValue() ) );
+		unit.addListener( ( _, _, n ) -> this.updateInternalScale( n, getDpiX(), getDpiY() ) );
+		dpiX.addListener( ( _, _, n ) -> this.updateInternalScale( getUnit(), n.doubleValue(), getDpiY() ) );
+		dpiY.addListener( ( _, _, n ) -> this.updateInternalScale( getUnit(), getDpiX(), n.doubleValue() ) );
 
-		// Initialize the internal scale factor
-		this.updateInternalScaleFactor( unit.get(), dpiX.get(), dpiY.get() );
+		// Initialize the internal scale
+		this.updateInternalScale( unit.get(), dpiX.get(), dpiY.get() );
 	}
 
 	public abstract void setDesign( Design design );
@@ -273,7 +273,7 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		return internalScaleTransform;
 	}
 
-	private void updateInternalScaleFactor( DesignUnit unit, double dpiX, double dpiY ) {
+	private void updateInternalScale( DesignUnit unit, double dpiX, double dpiY ) {
 		double scaleFactorX = unit.to( dpiX, DesignUnit.INCH );
 		double scaleFactorY = unit.to( dpiY, DesignUnit.INCH );
 		if( internalScaleTransform != null ) getTransforms().remove( internalScaleTransform );
