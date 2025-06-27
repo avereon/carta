@@ -38,7 +38,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		Point3D result = tool.getViewCenter();
 
 		// then
-		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_VIEWPOINT );
+		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_CENTER );
 	}
 
 	@Test
@@ -80,7 +80,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		double result = tool.getViewZoom();
 
 		// then
-		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_ZOOM );
+		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_ZOOM.getX() );
 	}
 
 	@Test

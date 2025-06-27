@@ -23,15 +23,7 @@ import javafx.scene.transform.Transform;
 import java.util.Collection;
 import java.util.List;
 
-public interface DesignTool {
-
-	Point3D DEFAULT_VIEWPOINT = new Point3D( 0, 0, 0 );
-
-	double DEFAULT_ROTATE = 0;
-
-	double DEFAULT_ZOOM = 1;
-
-	double DEFAULT_DPI = 96;
+public interface DesignTool extends RenderConstants {
 
 	Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
 
@@ -265,14 +257,14 @@ public interface DesignTool {
 	 */
 	void zoom( Point3D anchor, double factor );
 
-	/**
-	 * Pan the view by mouse coordinates.
-	 *
-	 * @param viewAnchor The view point location before being dragged (world)
-	 * @param dragAnchor The drag anchor (screen)
-	 * @param point The new view point (screen)
-	 */
-	void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
+//	/**
+//	 * Pan the view by mouse coordinates.
+//	 *
+//	 * @param viewAnchor The view point location before being dragged (world)
+//	 * @param dragAnchor The drag anchor (screen)
+//	 * @param point The new view point (screen)
+//	 */
+//	void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
 
 	/**
 	 * Scale a point from screen size to world size. This transform only applies

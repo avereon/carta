@@ -6,6 +6,7 @@ import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignView;
+import com.avereon.cartesia.tool.design.DesignRenderer;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -61,15 +62,17 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// TODO This is not connected to the grid pixel threshold yet
 	protected static final double MINIMUM_GRID_PIXELS = 3.0;
 
+	private final DesignRenderer renderer;
 	// FX properties (what others should be here?)
 
+	// FIXME These are basically ignored by the subclasses in favor of the renderer properties.
 	private final ObjectProperty<Point3D> viewCenter;
 
 	private final DoubleProperty viewRotate;
 
 	private final DoubleProperty viewZoom;
 
-	private final DoubleProperty viewDpi;
+//	private final DoubleProperty viewDpi;
 
 	// Current:
 	// selectAperture
@@ -100,15 +103,17 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private final Workplane workplane;
 
-	protected BaseDesignTool( XenonProgramProduct product, Asset asset ) {
+	protected BaseDesignTool( XenonProgramProduct product, Asset asset, DesignRenderer renderer ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
 
-		viewCenter = new SimpleObjectProperty<>( DEFAULT_VIEWPOINT );
+		this.renderer = renderer;
+
+		viewCenter = new SimpleObjectProperty<>( DEFAULT_CENTER );
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
-		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM );
-		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
+		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
+//		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
 
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		setCursor( getReticleCursor() );
@@ -123,6 +128,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		reticle.addListener( ( p, o, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
+	}
+
+	protected DesignRenderer getRenderer() {
+		return renderer;
 	}
 
 	@Override
@@ -242,16 +251,16 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public double getDpi() {
-		return viewDpi.get();
+		return getRenderer().getDpiX();
 	}
 
 	@Override
 	public void setDpi( double dpi ) {
-		viewDpi.set( dpi );
+		getRenderer().setDpi( dpi );
 	}
 
 	public DoubleProperty viewDpiProperty() {
-		return viewDpi;
+		return getRenderer().dpiXProperty();
 	}
 
 	@Override

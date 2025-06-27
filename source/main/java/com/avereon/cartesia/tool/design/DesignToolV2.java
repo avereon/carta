@@ -122,7 +122,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
 	public DesignToolV2( XenonProgramProduct product, Asset asset ) {
-		super( product, asset );
+		super( product, asset, new DesignToolV2Renderer() );
 
 		commandActions = new ConcurrentHashMap<>();
 		designPropertiesMap = new DesignPropertiesMap( product );
@@ -132,7 +132,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		//		printsGuide = new PrintsGuide( product, this );
 
 		// Create and associate the workplane and renderer
-		renderer = new DesignToolV2Renderer();
+		renderer = (DesignToolV2Renderer)getRenderer();
 		renderer.setApertureDrawPaint( DEFAULT_APERTURE_DRAW );
 		renderer.setApertureFillPaint( DEFAULT_APERTURE_FILL );
 		renderer.setPreviewDrawPaint( DEFAULT_PREVIEW_DRAW );
@@ -283,15 +283,15 @@ public class DesignToolV2 extends BaseDesignTool {
 		//		layoutBoundsProperty().addListener( ( p, o, n ) -> doUpdateGridBounds() );
 
 		// Add view point property listener
-		renderer.viewpointXProperty().addListener( ( p, o, n ) -> {
+		renderer.viewCenterXProperty().addListener( ( p, o, n ) -> {
 			storePreviousViewAction.request();
-			Point2D vp = renderer.getViewpoint();
+			Point3D vp = renderer.getViewCenter();
 			settings.set( SETTINGS_VIEW_POINT, vp.getX() + "," + vp.getY() + ",0" );
 			//doUpdateGridBounds();
 		} );
-		renderer.viewpointYProperty().addListener( ( p, o, n ) -> {
+		renderer.viewCenterYProperty().addListener( ( p, o, n ) -> {
 			storePreviousViewAction.request();
-			Point2D vp = renderer.getViewpoint();
+			Point3D vp = renderer.getViewCenter();
 			settings.set( SETTINGS_VIEW_POINT, vp.getX() + "," + vp.getY() + ",0" );
 			//doUpdateGridBounds();
 		} );
@@ -304,13 +304,13 @@ public class DesignToolV2 extends BaseDesignTool {
 		} );
 
 		// Add view zoom property listener
-		renderer.zoomXProperty().addListener( ( p, o, n ) -> {
+		renderer.viewZoomXProperty().addListener( ( p, o, n ) -> {
 			storePreviousViewAction.request();
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
 			//doUpdateGridBounds();
 		} );
-		renderer.zoomYProperty().addListener( ( p, o, n ) -> {
+		renderer.viewZoomYProperty().addListener( ( p, o, n ) -> {
 			storePreviousViewAction.request();
 			getCoordinateStatus().updateZoom( n.doubleValue() );
 			settings.set( SETTINGS_VIEW_ZOOM, n.doubleValue() );
@@ -439,7 +439,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public Point3D getViewCenter() {
-		return CadPoints.toPoint3d( renderer.getViewpoint() );
+		return renderer.getViewCenter();
 	}
 
 	@Override
@@ -448,11 +448,11 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	public DoubleProperty viewpointXProperty() {
-		return renderer.viewpointXProperty();
+		return renderer.viewCenterXProperty();
 	}
 
 	public DoubleProperty viewpointYProperty() {
-		return renderer.viewpointYProperty();
+		return renderer.viewCenterYProperty();
 	}
 
 	@Override
@@ -467,7 +467,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public double getViewZoom() {
-		return renderer.getZoomX();
+		return renderer.getViewZoomX();
 	}
 
 	@Override
@@ -650,14 +650,14 @@ public class DesignToolV2 extends BaseDesignTool {
 		Fx.run( () -> renderer.zoom( anchor, factor ) );
 	}
 
-	@Override
-	@Deprecated
-	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
-		if( viewAnchor == null ) throw new NullPointerException( "View anchor cannot be null" );
-		if( dragAnchor == null ) throw new NullPointerException( "Drag anchor cannot be null" );
-		if( point == null ) throw new NullPointerException( "Point cannot be null" );
-		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
-	}
+//	@Override
+//	@Deprecated
+//	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
+//		if( viewAnchor == null ) throw new NullPointerException( "View anchor cannot be null" );
+//		if( dragAnchor == null ) throw new NullPointerException( "Drag anchor cannot be null" );
+//		if( point == null ) throw new NullPointerException( "Point cannot be null" );
+//		Fx.run( () -> renderer.pan( viewAnchor, dragAnchor, point ) );
+//	}
 
 	public Point3D scaleScreenToWorld( Point3D point ) {
 		// FIXME What happens when the view is rotated

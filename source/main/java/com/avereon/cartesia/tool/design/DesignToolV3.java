@@ -20,8 +20,6 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
 import lombok.CustomLog;
@@ -38,53 +36,42 @@ public class DesignToolV3 extends BaseDesignTool {
 	private final Label toast;
 
 	/**
-	 * The design tool renderer. This is the main renderer for the design tool.
-	 */
-	private final DesignRenderer renderer;
-
-	/**
 	 * The tool workplane. This is the logical workplane for the tool. A 2D tool
 	 * only needs one workplane.
 	 */
 	private final Workplane workplane;
 
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
-		super( product, asset );
+		super( product, asset, new DesignToolV3Renderer() );
 
 		// Create the objects
-		this.renderer = new DesignToolV3Renderer();
-		this.workplane = new Workplane();
 		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
+
+		// The renderer is configured to render to the primary screen by default,
+		// but it can be configured to render to different media just as easily by
+		// changing the DPI setting.
+		getRenderer().setDpi( Screen.getPrimary().getDpi() );
+
+		this.workplane = new Workplane();
 
 		// FIXME These are the development values. They should be changed to the default values
 		double scale = Screen.getPrimary().getDpi() / CM_PER_INCH;
-		renderer.getTransforms().add( javafx.scene.transform.Transform.scale( scale, -scale ) );
+		getRenderer().getTransforms().add( javafx.scene.transform.Transform.scale( scale, -scale ) );
 
 		// Keep the renderer in the center of the tool
 		// FIXME This will probably conflict with the renderers view center
-		widthProperty().addListener( ( _, _, n ) -> renderer.setTranslateX( 0.5 * n.doubleValue() ) );
-		heightProperty().addListener( ( _, _, n ) -> renderer.setTranslateY( 0.5 * n.doubleValue() ) );
-
-		// Test geometry
-		Line line1 = new Line( -2, -2, 2, 2 );
-		line1.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
-		line1.setStrokeWidth( 1 );
-		line1.setStrokeLineCap( StrokeLineCap.ROUND );
-		Line line2 = new Line( -2, 2, 2, -2 );
-		line2.setStroke( javafx.scene.paint.Color.GREEN );
-		line2.setStrokeWidth( 1 );
-		line2.setStrokeLineCap( StrokeLineCap.ROUND );
-		renderer.getChildren().addAll( line1, line2 );
+		widthProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateX( 0.5 * n.doubleValue() ) );
+		heightProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateY( 0.5 * n.doubleValue() ) );
 
 		// Align the toast label to the center of the screen
 		StackPane.setAlignment( toast, Pos.CENTER );
 
 		// Initially the renderer is hidden and the toast is shown
-		renderer.setVisible( false );
 		toast.setVisible( true );
+		getRenderer().setVisible( false );
 
 		// Add the components to the parent
-		getChildren().addAll( renderer, toast );
+		getChildren().addAll( getRenderer(), toast );
 	}
 
 	/**
@@ -97,7 +84,9 @@ public class DesignToolV3 extends BaseDesignTool {
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
-		renderer.setVisible( true );
+		getRenderer().setDesign( request.getAsset().getModel() );
+
+		getRenderer().setVisible( true );
 		toast.setVisible( false );
 	}
 
@@ -173,11 +162,6 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public void zoom( Point3D anchor, double factor ) {
-
-	}
-
-	@Override
-	public void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point ) {
 
 	}
 

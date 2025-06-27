@@ -51,7 +51,7 @@ public class CoordinateStatus extends HBox {
 		getChildren().addAll( xPane, yPane, zPane, mPane );
 
 		updatePosition( Point3D.ZERO );
-		updateZoom( BaseDesignTool.DEFAULT_ZOOM );
+		updateZoom( BaseDesignTool.DEFAULT_ZOOM.getX() );
 	}
 
 	public void updateZoom( double zoom ) {

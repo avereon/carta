@@ -160,15 +160,19 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		enabledLayers.addListener( (ListChangeListener<? super DesignLayer>)( c ) -> render() );
 
 		// TODO This may overwhelm the FX thread
-		previewLayer.register( NodeEvent.NODE_CHANGED, e -> {
-			//if( e.getSource() != previewLayer ) return;
-			//log.atConfig().log("preview layer event={%s}", e.getEventType());
-			render();
-		} );
-		referenceLayer.register( NodeEvent.NODE_CHANGED, e -> {
-			// TODO This may overwhelm the FX thread
-			render();
-		} );
+		previewLayer.register(
+			NodeEvent.NODE_CHANGED, e -> {
+				//if( e.getSource() != previewLayer ) return;
+				//log.atConfig().log("preview layer event={%s}", e.getEventType());
+				render();
+			}
+		);
+		referenceLayer.register(
+			NodeEvent.NODE_CHANGED, e -> {
+				// TODO This may overwhelm the FX thread
+				render();
+			}
+		);
 	}
 
 	public void setDesign( Design design ) {
@@ -203,52 +207,57 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		// TODO Connect listeners
 
 		// Temporary listener for testing
-		workplane.register( NodeEvent.VALUE_CHANGED, e -> {
-			//log.atConfig().log( "Something changed in the workplane: " + e.getKey() );
-			render();
-		} );
+		workplane.register(
+			NodeEvent.VALUE_CHANGED, e -> {
+				//log.atConfig().log( "Something changed in the workplane: " + e.getKey() );
+				render();
+			}
+		);
 	}
 
-	/**
-	 * Get the DPI for the renderer. This method returns the DPI for the X and Y axes.
-	 *
-	 * @return The DPI for the renderer
-	 */
-	public Point2D getDpi() {
-		return new Point2D( renderer.getDpiX(), renderer.getDpiY() );
-	}
-
-	public double getDpiX() {
-		return renderer.getDpiX();
-	}
-
-	public double getDpiY() {
-		return renderer.getDpiY();
-	}
-
-	/**
-	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
-	 * axes to the same value.
-	 *
-	 * @param dpi The DPI to set
-	 */
+	@Override
 	public void setDpi( double dpi ) {
 		setDpi( dpi, dpi );
 	}
 
-	/**
-	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
-	 * axes.
-	 *
-	 * @param dpiX The DPI to set for the X axis
-	 * @param dpiY The DPI to set for the Y axis
-	 */
+	@Override
 	public void setDpi( double dpiX, double dpiY ) {
 		renderer.setDpi( dpiX, dpiY );
 	}
 
+	@Override
 	public void setDpi( Point2D dpi ) {
 		renderer.setDpi( dpi.getX(), dpi.getY() );
+	}
+
+	@Override
+	public double getDpiX() {
+		return renderer.getDpiX();
+	}
+
+	@Override
+	public void setDpiX( double dpi ) {
+		renderer.setDpiX( dpi );
+	}
+
+	@Override
+	public DoubleProperty dpiXProperty() {
+		return renderer.dpiXProperty();
+	}
+
+	@Override
+	public double getDpiY() {
+		return renderer.getDpiY();
+	}
+
+	@Override
+	public void setDpiY( double dpi ) {
+		renderer.setDpiY( dpi );
+	}
+
+	@Override
+	public DoubleProperty dpiYProperty() {
+		return renderer.dpiYProperty();
 	}
 
 	public boolean isGridVisible() {
@@ -501,8 +510,8 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	 *
 	 * @return The viewpoint of the renderer
 	 */
-	public Point2D getViewpoint() {
-		return new Point2D( renderer.getViewpointX(), renderer.getViewpointY() );
+	public Point3D getViewCenter() {
+		return new Point3D( renderer.getViewpointX(), renderer.getViewpointY(), 0 );
 	}
 
 	/**
@@ -510,15 +519,17 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	 *
 	 * @param viewpoint The viewpoint to set
 	 */
+	@Override
 	public void setViewCenter( Point3D viewpoint ) {
 		renderer.setViewpoint( viewpoint.getX(), viewpoint.getY() );
+		super.setViewCenter( viewpoint );
 	}
 
-	public DoubleProperty viewpointXProperty() {
+	public DoubleProperty viewCenterXProperty() {
 		return renderer.viewpointXProperty();
 	}
 
-	public DoubleProperty viewpointYProperty() {
+	public DoubleProperty viewCenterYProperty() {
 		return renderer.viewpointYProperty();
 	}
 
@@ -527,6 +538,7 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	 *
 	 * @return The view rotate of the renderer
 	 */
+	@Override
 	public double getViewRotate() {
 		return renderer.getViewRotate();
 	}
@@ -536,10 +548,12 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	 *
 	 * @param angle The angle to set
 	 */
+	@Override
 	public void setViewRotate( double angle ) {
 		renderer.setViewRotate( angle );
 	}
 
+	@Override
 	public DoubleProperty viewRotateProperty() {
 		return renderer.viewRotateProperty();
 	}
@@ -549,63 +563,39 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	 *
 	 * @return The zoom of the renderer
 	 */
-	public Point2D getZoom() {
+	public Point2D getViewZoom() {
 		return new Point2D( renderer.getZoomX(), renderer.getZoomY() );
 	}
 
+	@Override
 	public void setViewZoom( double zoom ) {
 		renderer.setZoom( zoom, zoom );
 	}
 
-	public double getZoomX() {
+	@Override
+	public void setViewZoom( double zoomX, double zoomY ) {
+		renderer.setZoom( zoomX, zoomY );
+	}
+
+	@Override
+	public void setViewZoom( Point2D zoom ) {
+		renderer.setZoom( zoom.getX(), zoom.getY() );
+	}
+
+	public double getViewZoomX() {
 		return renderer.getZoomX();
 	}
 
-	public double getZoomY() {
+	public double getViewZoomY() {
 		return renderer.getZoomY();
 	}
 
-	public DoubleProperty zoomXProperty() {
+	public DoubleProperty viewZoomXProperty() {
 		return renderer.zoomXProperty();
 	}
 
-	public DoubleProperty zoomYProperty() {
+	public DoubleProperty viewZoomYProperty() {
 		return renderer.zoomYProperty();
-	}
-
-	/**
-	 * Change the zoom by the zoom factor. The zoom is centered on the provided
-	 * anchor point in world coordinates. The current zoom is multiplied by the
-	 * zoom factor.
-	 *
-	 * @param anchor The anchor point in world coordinates
-	 * @param factor The zoom factor
-	 */
-	public void zoom( Point3D anchor, double factor ) {
-		Point3D offset = renderer.getViewpoint().subtract( anchor );
-
-		// The zoom has to be set before the viewpoint
-		renderer.setZoom( renderer.getZoom().multiply( factor ) );
-		renderer.setViewpoint( anchor.add( offset.multiply( 1 / factor ) ) );
-	}
-
-	/**
-	 * Change the view point due to mouse movement.
-	 *
-	 * @param viewpointAnchor The view point location before being dragged (world)
-	 * @param dragAnchor The point where the mouse was pressed (screen)
-	 * @param dragTarget The new view point (screen)
-	 */
-	@Deprecated
-	public void pan( Point3D viewpointAnchor, Point3D dragAnchor, Point3D dragTarget ) {
-		// Convert the view anchor to screen coordinates
-		Point3D anchor = renderer.localToParent( viewpointAnchor );
-
-		// Calculate the drag offset in screen coordinates
-		Point3D delta = dragAnchor.subtract( dragTarget );
-
-		// Set the new viewpoint in world coordinates
-		renderer.setViewpoint( renderer.parentToLocal( anchor.add( delta ) ) );
 	}
 
 	/**
@@ -710,7 +700,7 @@ public class DesignToolV2Renderer extends DesignRenderer {
 
 	double realToWorld( DesignValue value ) {
 		// Convert the provided value to design units and divide by the zoom factor
-		return value.to( design.calcDesignUnit() ).getValue() / getZoomX();
+		return value.to( design.calcDesignUnit() ).getValue() / getViewZoomX();
 	}
 
 	double realToScreen( DesignValue value ) {
@@ -912,12 +902,14 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	private void drawMarker( DesignMarker marker ) {
 		DesignPath path = marker.calcType().getDesignPath();
 		if( path != null ) {
-			CadTransform transform = path.getValue( getClass().getName() + ":marker-transform", () -> {
-				double size = marker.calcSize();
-				CadTransform translate = CadTransform.translation( marker.getOrigin() );
-				CadTransform scale = CadTransform.scale( size, size, size );
-				return translate.combine( scale );
-			} );
+			CadTransform transform = path.getValue(
+				getClass().getName() + ":marker-transform", () -> {
+					double size = marker.calcSize();
+					CadTransform translate = CadTransform.translation( marker.getOrigin() );
+					CadTransform scale = CadTransform.scale( size, size, size );
+					return translate.combine( scale );
+				}
+			);
 			path.apply( transform );
 			renderer.fillPath( toMareaPathSteps( path ) );
 		} else {
@@ -1018,13 +1010,13 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	double getInternalScaleX() {
 		// TODO This value can be cached
 		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
-		return scale * renderer.getDpiX() * getZoomX();
+		return scale * renderer.getDpiX() * getViewZoomX();
 	}
 
 	double getInternalScaleY() {
 		// TODO This value can be cached
 		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
-		return scale * renderer.getDpiY() * getZoomY();
+		return scale * renderer.getDpiY() * getViewZoomY();
 	}
 
 	/**
@@ -1102,19 +1094,19 @@ public class DesignToolV2Renderer extends DesignRenderer {
 
 		public RenderTrigger() {
 			latest = this;
-//			synchronized( RenderTrigger.class ) {
-//				if( latest == null ) {
-//					latest = this;
-//				} else {
-//					latest.next = this;
-//				}
-//
-//				// Cancel all triggers that are currently waiting
-//				while( next != null ) {
-//					next.cancelled = true;
-//					next = next.next;
-//				}
-//			}
+			//			synchronized( RenderTrigger.class ) {
+			//				if( latest == null ) {
+			//					latest = this;
+			//				} else {
+			//					latest.next = this;
+			//				}
+			//
+			//				// Cancel all triggers that are currently waiting
+			//				while( next != null ) {
+			//					next.cancelled = true;
+			//					next = next.next;
+			//				}
+			//			}
 		}
 
 		public void run() {
