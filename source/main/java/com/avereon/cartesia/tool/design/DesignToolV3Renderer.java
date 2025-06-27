@@ -4,9 +4,12 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
@@ -70,23 +73,34 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Test geometry
 		this.design.getChildren().clear();
 		// Green line goes up and to the right
-		Line greenLine = new Line( -2, -2, 2, 2 );
+		Line greenLine = new Line( -3, -3, 3, 3 );
 		greenLine.setStroke( javafx.scene.paint.Color.GREEN );
 		greenLine.setStrokeWidth( 1 );
 		greenLine.setStrokeLineCap( StrokeLineCap.ROUND );
 		// Red line goes down and to the right
-		Line redLine = new Line( -2, 2, 2, -2 );
+		Line redLine = new Line( -4, 4, 4, -4 );
 		redLine.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
-		redLine.setStrokeWidth( 1 );
-		redLine.setStrokeLineCap( StrokeLineCap.ROUND );
-		this.design.getChildren().addAll( redLine, greenLine );
+		redLine.setStrokeWidth( 0.2 );
+		redLine.setStrokeLineCap( StrokeLineCap.SQUARE );
+
+		Rectangle greenBounds = FxUtil.toRectangle( getVisibleBounds( greenLine ) );
+		greenBounds.setFill( null );
+		greenBounds.setStrokeWidth( 0.01 );
+		greenBounds.setStroke( javafx.scene.paint.Color.GREEN );
+
+		Rectangle redBounds = FxUtil.toRectangle( getVisibleBounds( redLine ) );
+		redBounds.setFill( null );
+		redBounds.setStrokeWidth( 0.01 );
+		redBounds.setStroke( javafx.scene.paint.Color.RED );
+
+		this.design.getChildren().addAll( redLine, greenLine, greenBounds, redBounds );
 	}
 
-	private Bounds getVisibleBounds() {
+	private Bounds getVisibleBounds( Node node) {
 		// There are two ways to approach this:
 		// 1. Use the bounds of the world to determine the visible area.
 		// 2. Use the bounds of the renderer to determine the visible area.
-		return null;
+		return node.getBoundsInParent();
 	}
 
 	public void addWorkplane( Workplane workplane ) {
