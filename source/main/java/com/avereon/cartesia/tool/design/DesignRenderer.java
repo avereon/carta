@@ -81,6 +81,7 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	 *
 	 * @param factor The scale factor to apply to the design when printing.
 	 */
+	@Deprecated
 	public abstract void print( double factor );
 
 	public void setUnit( DesignUnit unit ) {
