@@ -1,11 +1,15 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
+import javafx.geometry.Bounds;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
 
 import java.util.Collection;
 
@@ -17,6 +21,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	// The design pane contains all the design layers.
 	private final Pane design;
+
+	private final Pane world;
+
+	private final Pane screen;
+
+	private Scale worldScaleTransform;
 
 	// NEXT Apply lessons learned to create a new design renderer
 
@@ -34,16 +44,28 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Reference pane?
 		// Preview pane?
 
+		world = new Pane();
+		world.getChildren().addAll( grid, design );
+
+		screen = new Pane();
+
 		//getTransforms().add( Transform.scale( 1, -1 ) );
-		getChildren().addAll( grid, design );
+		getChildren().addAll( world, screen );
+
+		unitProperty().addListener( ( _, _, n ) -> this.updateWorldScale( n, getDpiX(), getDpiY() ) );
+		dpiXProperty().addListener( ( _, _, n ) -> this.updateWorldScale( getUnit(), n.doubleValue(), getDpiY() ) );
+		dpiYProperty().addListener( ( _, _, n ) -> this.updateWorldScale( getUnit(), getDpiX(), n.doubleValue() ) );
+
+		// Initialize the internal scale
+		this.updateWorldScale( getUnit(), getDpiX(), getDpiY() );
 	}
 
 	@Override
 	public void setDesign( Design design ) {
 		// Grid geometry
 		this.grid.getChildren().clear();
-		this.grid.getChildren().add(new Line( -10, 0, 10, 0 ) ); // Horizontal line
-		this.grid.getChildren().add(new Line( 0, -10, 0, 10 ) ); // Vertical line
+		this.grid.getChildren().add( new Line( -10, 0, 10, 0 ) ); // Horizontal line
+		this.grid.getChildren().add( new Line( 0, -10, 0, 10 ) ); // Vertical line
 
 		// Test geometry
 		this.design.getChildren().clear();
@@ -58,6 +80,13 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		redLine.setStrokeWidth( 1 );
 		redLine.setStrokeLineCap( StrokeLineCap.ROUND );
 		this.design.getChildren().addAll( redLine, greenLine );
+	}
+
+	private Bounds getVisibleBounds() {
+		// There are two ways to approach this:
+		// 1. Use the bounds of the world to determine the visible area.
+		// 2. Use the bounds of the renderer to determine the visible area.
+		return null;
 	}
 
 	public void addWorkplane( Workplane workplane ) {
@@ -95,6 +124,21 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	@Override
 	public void print( double factor ) {
 
+	}
+
+	/*
+	For testing purposes only! This method is not part of the public API.
+  */
+	Scale getWorldScale() {
+		return worldScaleTransform;
+	}
+
+	private void updateWorldScale( DesignUnit unit, double dpiX, double dpiY ) {
+		double scaleFactorX = unit.to( dpiX, DesignUnit.INCH );
+		double scaleFactorY = unit.to( dpiY, DesignUnit.INCH );
+		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
+		worldScaleTransform = Transform.scale( scaleFactorX, -scaleFactorY );
+		world.getTransforms().add( worldScaleTransform );
 	}
 
 }

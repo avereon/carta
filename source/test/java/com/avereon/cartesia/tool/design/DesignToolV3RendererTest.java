@@ -294,22 +294,22 @@ public class DesignToolV3RendererTest {
 
 	@Test
 		// @WhiteBoxTest
-	void defaultInternalScaleFactor() {
+	void defaultWorldScale() {
 		// given
-		double expectedScaleFactor = DEFAULT_DPI / (RenderConstants.DEFAULT_UNIT.per( DesignUnit.INCH ));
+		double expectedScale = DEFAULT_DPI / (RenderConstants.DEFAULT_UNIT.per( DesignUnit.INCH ));
 		Offset<Double> offset = Offset.offset( 1e-12 );
 
 		// then
-		assertThat( renderer.getInternalScale().getX() ).isEqualTo( expectedScaleFactor, offset );
-		assertThat( renderer.getInternalScale().getY() ).isEqualTo( -expectedScaleFactor, offset );
-		assertThat( expectedScaleFactor ).isCloseTo( 37.79527559055118, offset );
+		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
+		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
+		assertThat( expectedScale ).isCloseTo( 37.79527559055118, offset );
 	}
 
 	@Test
 		// @WhiteBoxTest
-	void setInternalScaleFactor() {
+	void setWorldScale() {
 		// given
-		double expectedScaleFactor = 160 / (DesignUnit.CENTIMETER.per( DesignUnit.INCH ));
+		double expectedScale = 160 / (DesignUnit.CENTIMETER.per( DesignUnit.INCH ));
 		Offset<Double> offset = Offset.offset( 1e-12 );
 
 		// when
@@ -317,9 +317,9 @@ public class DesignToolV3RendererTest {
 		renderer.setDpi( 160 );
 
 		// then
-		assertThat( renderer.getInternalScale().getX() ).isEqualTo( expectedScaleFactor, offset );
-		assertThat( renderer.getInternalScale().getY() ).isEqualTo( -expectedScaleFactor, offset );
-		assertThat( expectedScaleFactor ).isEqualTo( 62.99212598425197, offset );
+		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
+		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
+		assertThat( expectedScale ).isEqualTo( 62.99212598425197, offset );
 	}
 
 }

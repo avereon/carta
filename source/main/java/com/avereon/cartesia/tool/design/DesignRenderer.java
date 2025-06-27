@@ -11,8 +11,6 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
 
 import java.util.Collection;
 
@@ -36,8 +34,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	private final DoubleProperty viewZoomY;
 
-	private Scale internalScaleTransform;
-
 	public DesignRenderer() {
 		unit = new SimpleObjectProperty<>( DEFAULT_UNIT );
 
@@ -58,13 +54,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
 		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
-
-		unit.addListener( ( _, _, n ) -> this.updateInternalScale( n, getDpiX(), getDpiY() ) );
-		dpiX.addListener( ( _, _, n ) -> this.updateInternalScale( getUnit(), n.doubleValue(), getDpiY() ) );
-		dpiY.addListener( ( _, _, n ) -> this.updateInternalScale( getUnit(), getDpiX(), n.doubleValue() ) );
-
-		// Initialize the internal scale
-		this.updateInternalScale( unit.get(), dpiX.get(), dpiY.get() );
 	}
 
 	public abstract void setDesign( Design design );
@@ -265,21 +254,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		// The zoom has to be set before the viewpoint
 		setViewZoom( getViewZoom().multiply( factor ) );
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
-	}
-
-	/*
-	For testing purposes only! This method is not part of the public API.
-  */
-	Scale getInternalScale() {
-		return internalScaleTransform;
-	}
-
-	private void updateInternalScale( DesignUnit unit, double dpiX, double dpiY ) {
-		double scaleFactorX = unit.to( dpiX, DesignUnit.INCH );
-		double scaleFactorY = unit.to( dpiY, DesignUnit.INCH );
-		if( internalScaleTransform != null ) getTransforms().remove( internalScaleTransform );
-		internalScaleTransform = Transform.scale( scaleFactorX, -scaleFactorY );
-		getTransforms().add( internalScaleTransform );
 	}
 
 }
