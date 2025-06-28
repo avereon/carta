@@ -29,10 +29,10 @@ public class DesignDrawableTest {
 
 	@Test
 	void testisCustomValue() {
-		assertThat( drawable.isCustomValue( null )).isEqualTo( false );
-		assertThat( drawable.isCustomValue( "" )).isEqualTo( true );
-		assertThat( drawable.isCustomValue( DesignDrawable.MODE_LAYER )).isEqualTo( false );
-		assertThat( drawable.isCustomValue( "1/2" )).isEqualTo( true );
+		assertThat( drawable.isCustomValue( null ) ).isEqualTo( false );
+		assertThat( drawable.isCustomValue( "" ) ).isEqualTo( true );
+		assertThat( drawable.isCustomValue( DesignDrawable.MODE_LAYER ) ).isEqualTo( false );
+		assertThat( drawable.isCustomValue( "1/2" ) ).isEqualTo( true );
 	}
 
 	@Test
@@ -92,6 +92,7 @@ public class DesignDrawableTest {
 		assertThat( drawable.getDrawWidth() ).isNull();
 		assertThat( drawable.getDrawCap() ).isNull();
 		assertThat( drawable.getDrawPattern() ).isNull();
+		assertThat( drawable.getDrawJoin() ).isNull();
 		assertThat( drawable.getFillPaint() ).isNull();
 	}
 

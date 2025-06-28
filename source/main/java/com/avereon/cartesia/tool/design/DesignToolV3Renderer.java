@@ -1,21 +1,21 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
-import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.Shape;
+import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
+import lombok.CustomLog;
 
 import java.util.Collection;
 
+@CustomLog
 public class DesignToolV3Renderer extends DesignRenderer {
 
 	// The geometry in this pane should be configured by the workplane but
@@ -24,6 +24,10 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	// The design pane contains all the design layers.
 	private final Pane design;
+
+	private final Pane reference;
+
+	private final Pane preview;
 
 	private final Pane world;
 
@@ -43,16 +47,21 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		design = new Pane();
 		design.getStyleClass().add( "tool-renderer-design" );
 
-		// What other specific panes should be here
-		// Reference pane?
-		// Preview pane?
+		preview = new Pane();
+		preview.getStyleClass().add( "tool-renderer-preview" );
 
+		reference = new Pane();
+		reference.getStyleClass().add( "tool-renderer-reference" );
+
+		// The world scale container
+		// Contains the grid, design, preview, and reference panes
 		world = new Pane();
-		world.getChildren().addAll( grid, design );
+		world.getChildren().addAll( grid, design, preview, reference );
 
+		// The screen scale container
+		// Contains the orientation indicator
 		screen = new Pane();
 
-		//getTransforms().add( Transform.scale( 1, -1 ) );
 		getChildren().addAll( world, screen );
 
 		unitProperty().addListener( ( _, _, n ) -> this.updateWorldScale( n, getDpiX(), getDpiY() ) );
@@ -70,33 +79,108 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		this.grid.getChildren().add( new Line( -10, 0, 10, 0 ) ); // Horizontal line
 		this.grid.getChildren().add( new Line( 0, -10, 0, 10 ) ); // Vertical line
 
-		// Test geometry
-		this.design.getChildren().clear();
-		// Green line goes up and to the right
-		Line greenLine = new Line( -3, -3, 3, 3 );
-		greenLine.setStroke( javafx.scene.paint.Color.GREEN );
-		greenLine.setStrokeWidth( 1 );
-		greenLine.setStrokeLineCap( StrokeLineCap.ROUND );
-		// Red line goes down and to the right
-		Line redLine = new Line( -4, 4, 4, -4 );
-		redLine.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
-		redLine.setStrokeWidth( 0.2 );
-		redLine.setStrokeLineCap( StrokeLineCap.SQUARE );
+		// FIXME This is inefficient since it builds geometry for everything in the design.
+		// Consider only generating geometry for the visible layers and shapes.
+		DesignLayer rootDesignLayer = design.getLayers();
+		rootDesignLayer.getLayers().forEach( designLayer -> this.design.getChildren().add( mapDesignLayer( designLayer ) ) );
 
-		Rectangle greenBounds = FxUtil.toRectangle( getVisibleBounds( greenLine ) );
-		greenBounds.setFill( null );
-		greenBounds.setStrokeWidth( 0.01 );
-		greenBounds.setStroke( javafx.scene.paint.Color.GREEN );
-
-		Rectangle redBounds = FxUtil.toRectangle( getVisibleBounds( redLine ) );
-		redBounds.setFill( null );
-		redBounds.setStrokeWidth( 0.01 );
-		redBounds.setStroke( javafx.scene.paint.Color.RED );
-
-		this.design.getChildren().addAll( redLine, greenLine, greenBounds, redBounds );
+		//		// Test geometry
+		//		this.design.getChildren().clear();
+		//		// Green line goes up and to the right
+		//		Line greenLine = new Line( -3, -3, 3, 3 );
+		//		greenLine.setStroke( javafx.scene.paint.Color.GREEN );
+		//		greenLine.setStrokeWidth( 1 );
+		//		greenLine.setStrokeLineCap( StrokeLineCap.ROUND );
+		//		// Red line goes down and to the right
+		//		Line redLine = new Line( -4, 4, 4, -4 );
+		//		redLine.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
+		//		redLine.setStrokeWidth( 0.2 );
+		//		redLine.setStrokeLineCap( StrokeLineCap.SQUARE );
+		//
+		//		this.design.getChildren().addAll( redLine, greenLine );
+		//
+		//		Rectangle greenBounds = FxUtil.toRectangle( getVisibleBounds( greenLine ) );
+		//		greenBounds.setFill( null );
+		//		greenBounds.setStrokeWidth( 0.01 );
+		//		greenBounds.setStroke( javafx.scene.paint.Color.GREEN );
+		//
+		//		Rectangle redBounds = FxUtil.toRectangle( getVisibleBounds( redLine ) );
+		//		redBounds.setFill( null );
+		//		redBounds.setStrokeWidth( 0.01 );
+		//		redBounds.setStroke( javafx.scene.paint.Color.RED );
+		//
+		//		this.design.getChildren().addAll( greenBounds, redBounds );
 	}
 
-	private Bounds getVisibleBounds( Node node) {
+	private Pane mapDesignLayer( DesignLayer designLayer ) {
+		return mapDesignLayer( designLayer, true, true );
+	}
+
+	private Pane mapDesignLayer( DesignLayer designLayer, boolean includeShapes ) {
+		return mapDesignLayer( designLayer, includeShapes, false );
+	}
+
+	private Pane mapDesignLayer( DesignLayer designLayer, boolean includeShapes, boolean includeSubLayers ) {
+		Pane layer = new Pane();
+		layer.setUserData( designLayer );
+		designLayer.setValue( "fx-pane", layer );
+		log.atConfig().log( "Created a pane for layer: %s", designLayer.getName() );
+
+		if( includeShapes ) {
+			designLayer.getShapes().forEach( designShape -> {
+				Shape shape = mapDesignShape( designShape );
+				if( shape != null ) layer.getChildren().add( shape );
+			} );
+		}
+
+		if( includeSubLayers ) {
+			designLayer.getLayers().forEach( subLayer -> layer.getChildren().add( mapDesignLayer( subLayer ) ) );
+		}
+
+		return layer;
+	}
+
+	private Shape mapDesignShape( DesignShape shape ) {
+
+		Shape fxShape = switch( shape.getType() ) {
+			case LINE -> {
+				DesignLine designLine = (DesignLine)shape;
+				yield new Line( designLine.getOrigin().getX(), designLine.getOrigin().getY(), designLine.getPoint().getX(), designLine.getPoint().getY() );
+			}
+			case TEXT -> {
+				DesignText designText = (DesignText)shape;
+				Text text = new Text( designText.getOrigin().getX(), -designText.getOrigin().getY(), designText.getText() );
+				text.setFont( designText.calcFont() );
+				text.setRotate( designText.calcRotate() );
+				text.getTransforms().add( Transform.scale( 1, -1 ) );
+				yield text;
+			}
+			default -> null;
+		};
+
+		if( fxShape == null ) {
+			log.atWarn().log( "Unable to map design shape: %s", shape );
+			return null;
+		}
+
+		fxShape.setUserData( shape );
+		fxShape.setManaged( false );
+
+		fxShape.setStroke( shape.calcDrawPaint() );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() );
+		fxShape.setStrokeLineCap( shape.calcDrawCap() );
+		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
+		//fxShape.setStrokeType( shape.calcDrawType() );
+
+		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
+		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
+		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
+		fxShape.setFill( shape.calcFillPaint() );
+
+		return fxShape;
+	}
+
+	private Bounds getVisibleBounds( Node node ) {
 		// There are two ways to approach this:
 		// 1. Use the bounds of the world to determine the visible area.
 		// 2. Use the bounds of the renderer to determine the visible area.

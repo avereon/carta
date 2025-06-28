@@ -212,7 +212,13 @@ public abstract class DesignDrawable extends DesignNode {
 	// Draw Join -----------------------------------------------------------------
 
 	public StrokeLineJoin calcDrawJoin() {
-		return (StrokeLineJoin)getCache().computeIfAbsent( DRAW_JOIN, k -> StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() ) );
+		if( isLayerValue( getDrawJoin() ) ) {
+			// FIXME This is the most common case, so we should optimize for it
+			// TODO Not sure why this doesn't just use the cached value
+			return StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() );
+		} else {
+			return (StrokeLineJoin)getCache().computeIfAbsent( DRAW_JOIN, k -> StrokeLineJoin.valueOf( getDrawJoinWithInheritance().toUpperCase() ) );
+		}
 	}
 
 	public String getDrawJoinWithInheritance() {

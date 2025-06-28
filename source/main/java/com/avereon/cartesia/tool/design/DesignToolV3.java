@@ -2,11 +2,11 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.marea.LineCap;
 import com.avereon.product.Rb;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -80,10 +80,36 @@ public class DesignToolV3 extends BaseDesignTool {
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
-		getRenderer().setDesign( request.getAsset().getModel() );
+		getRenderer().setDesign( createTestDesign() );
+		//getRenderer().setDesign( request.getAsset().getModel() );
 
 		getRenderer().setVisible( true );
 		toast.setVisible( false );
+	}
+
+	private Design createTestDesign() {
+		Design design = new Design2D();
+		design.setName( "Test Design" );
+
+		DesignLine greenLine = new DesignLine( -3, -3, 3, 3 );
+		greenLine.setDrawPaint( "#008000" );
+		greenLine.setDrawWidth( "1.0" );
+		greenLine.setDrawCap( LineCap.ROUND.name() );
+		greenLine.setOrder( 0 );
+		DesignLine redLine = new DesignLine( -4, 4, 4, -4 );
+		redLine.setDrawPaint( "#800000" );
+		redLine.setDrawWidth( "0.5" );
+		redLine.setDrawCap( LineCap.BUTT.name() );
+		redLine.setOrder( 1 );
+
+		DesignText text = new DesignText( new Point3D( 2, 2, 0 ), "Hello World" );
+		text.setFillPaint( "#204080" );
+
+		DesignLayer construction = new DesignLayer();
+		construction.setName( "Construction" );
+		construction.addShapes( List.of( redLine, greenLine, text ) );
+		design.getLayers().addLayer( construction );
+		return design;
 	}
 
 	@Override
