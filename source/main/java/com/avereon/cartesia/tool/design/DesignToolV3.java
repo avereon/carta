@@ -103,7 +103,7 @@ public class DesignToolV3 extends BaseDesignTool {
 		redLine.setOrder( 1 );
 
 		DesignText text = new DesignText( new Point3D( 2, 2, 0 ), "Hello World" );
-		text.setFillPaint( "#204080" );
+		text.setFillPaint( "#80C0FF" );
 
 		DesignLayer construction = new DesignLayer();
 		construction.setName( "Construction" );

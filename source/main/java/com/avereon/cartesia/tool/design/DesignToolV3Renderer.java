@@ -3,11 +3,15 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
@@ -17,6 +21,15 @@ import java.util.Collection;
 
 @CustomLog
 public class DesignToolV3Renderer extends DesignRenderer {
+
+	// NEXT Implement an internal scale value that is used to scale the world
+	// geometry to the renderer. This should allow the geometry to be rendered
+	// accurately as well as bounding rectangles to be calculated accurately.
+	// The scale should be at least as large as the media DPI, which can reach
+	// as high as 9600 x 2400 DPI with high resolution printers.
+	private static final double ATOMIC_SCALE = 4096;
+
+	private static final double ATOMIC_ISCALE = 1.0 / ATOMIC_SCALE;
 
 	// The geometry in this pane should be configured by the workplane but
 	// managed by an internal class that can optimize the use of the FX geometry.
@@ -84,32 +97,20 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		DesignLayer rootDesignLayer = design.getLayers();
 		rootDesignLayer.getLayers().forEach( designLayer -> this.design.getChildren().add( mapDesignLayer( designLayer ) ) );
 
-		//		// Test geometry
-		//		this.design.getChildren().clear();
-		//		// Green line goes up and to the right
-		//		Line greenLine = new Line( -3, -3, 3, 3 );
-		//		greenLine.setStroke( javafx.scene.paint.Color.GREEN );
-		//		greenLine.setStrokeWidth( 1 );
-		//		greenLine.setStrokeLineCap( StrokeLineCap.ROUND );
-		//		// Red line goes down and to the right
-		//		Line redLine = new Line( -4, 4, 4, -4 );
-		//		redLine.setStroke( javafx.scene.paint.Color.RED.darker().darker() );
-		//		redLine.setStrokeWidth( 0.2 );
-		//		redLine.setStrokeLineCap( StrokeLineCap.SQUARE );
-		//
-		//		this.design.getChildren().addAll( redLine, greenLine );
-		//
-		//		Rectangle greenBounds = FxUtil.toRectangle( getVisibleBounds( greenLine ) );
-		//		greenBounds.setFill( null );
-		//		greenBounds.setStrokeWidth( 0.01 );
-		//		greenBounds.setStroke( javafx.scene.paint.Color.GREEN );
-		//
-		//		Rectangle redBounds = FxUtil.toRectangle( getVisibleBounds( redLine ) );
-		//		redBounds.setFill( null );
-		//		redBounds.setStrokeWidth( 0.01 );
-		//		redBounds.setStroke( javafx.scene.paint.Color.RED );
-		//
-		//		this.design.getChildren().addAll( greenBounds, redBounds );
+		// Add boundary rectangles for each shape in the design
+		design.getLayers().getAllLayers().forEach( designLayer -> {
+			designLayer.getShapes().forEach( designShape -> {
+				Shape shape = mapDesignShape( designShape );
+				if( shape != null ) {
+					Rectangle bounds = FxUtil.toRectangle( getVisibleBounds( shape ) );
+					bounds.setStroke( Color.YELLOW );
+					bounds.setStrokeWidth( 0.02 * ATOMIC_SCALE );
+					bounds.setFill( null );
+					reference.getChildren().add( bounds );
+				}
+			} );
+		} );
+
 	}
 
 	private Pane mapDesignLayer( DesignLayer designLayer ) {
@@ -123,6 +124,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private Pane mapDesignLayer( DesignLayer designLayer, boolean includeShapes, boolean includeSubLayers ) {
 		Pane layer = new Pane();
 		layer.setUserData( designLayer );
+		// TODO Use a weak reference to the layer to avoid memory leaks
 		designLayer.setValue( "fx-pane", layer );
 		log.atConfig().log( "Created a pane for layer: %s", designLayer.getName() );
 
@@ -141,16 +143,23 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private Shape mapDesignShape( DesignShape shape ) {
+		Shape fxShape = shape.getValue( "fx-shape" );
+		if( fxShape != null ) return fxShape;
 
-		Shape fxShape = switch( shape.getType() ) {
+		fxShape = switch( shape.getType() ) {
 			case LINE -> {
 				DesignLine designLine = (DesignLine)shape;
-				yield new Line( designLine.getOrigin().getX(), designLine.getOrigin().getY(), designLine.getPoint().getX(), designLine.getPoint().getY() );
+				yield new Line(
+					designLine.getOrigin().getX() * ATOMIC_SCALE,
+					designLine.getOrigin().getY() * ATOMIC_SCALE,
+					designLine.getPoint().getX() * ATOMIC_SCALE,
+					designLine.getPoint().getY() * ATOMIC_SCALE
+				);
 			}
 			case TEXT -> {
 				DesignText designText = (DesignText)shape;
-				Text text = new Text( designText.getOrigin().getX(), -designText.getOrigin().getY(), designText.getText() );
-				text.setFont( designText.calcFont() );
+				Text text = new Text( designText.getOrigin().getX() * ATOMIC_SCALE, -designText.getOrigin().getY() * ATOMIC_SCALE, designText.getText() );
+				text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * ATOMIC_SCALE ) );
 				text.setRotate( designText.calcRotate() );
 				text.getTransforms().add( Transform.scale( 1, -1 ) );
 				yield text;
@@ -167,7 +176,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		fxShape.setManaged( false );
 
 		fxShape.setStroke( shape.calcDrawPaint() );
-		fxShape.setStrokeWidth( shape.calcDrawWidth() );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() * ATOMIC_SCALE );
 		fxShape.setStrokeLineCap( shape.calcDrawCap() );
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		//fxShape.setStrokeType( shape.calcDrawType() );
@@ -232,8 +241,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateWorldScale( DesignUnit unit, double dpiX, double dpiY ) {
-		double scaleFactorX = unit.to( dpiX, DesignUnit.INCH );
-		double scaleFactorY = unit.to( dpiY, DesignUnit.INCH );
+		double scaleFactorX = unit.to( dpiX, DesignUnit.INCH ) * ATOMIC_ISCALE;
+		double scaleFactorY = unit.to( dpiY, DesignUnit.INCH ) * ATOMIC_ISCALE;
 		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
 		worldScaleTransform = Transform.scale( scaleFactorX, -scaleFactorY );
 		world.getTransforms().add( worldScaleTransform );
