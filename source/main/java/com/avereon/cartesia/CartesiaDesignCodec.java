@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.map.DesignUnitMapper;
 import com.avereon.data.IdNode;
 import com.avereon.data.Node;
 import com.avereon.log.LazyEval;
@@ -135,6 +136,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Design2D design = asset.setModel( new Design2D() );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
+		map.put( DesignDrawable.UNIT, DesignUnitMapper.mapNameToAbbreviation( (String)map.get( Design.UNIT ) ) );
 		design.updateFrom( map );
 
 		log.atFine().log( "Design codec version: %s", LazyEval.of( () -> map.get( CODEC_VERSION_KEY ) ) );

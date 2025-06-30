@@ -4,6 +4,7 @@ import com.avereon.cartesia.*;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.map.DesignUnitMapper;
 import com.avereon.cartesia.data.util.DesignPropertiesMap;
 import com.avereon.cartesia.math.CadPoints;
 import com.avereon.cartesia.snap.Snap;
@@ -236,7 +237,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Get tool settings
 		double selectApertureSize = Double.parseDouble( productSettings.get( SELECT_APERTURE_SIZE, defaultSelectSize ) );
-		DesignUnit selectApertureUnit = DesignUnit.valueOf( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ).toUpperCase() );
+		DesignUnit selectApertureUnit = DesignUnit.valueOf( DesignUnitMapper.mapNameToAbbreviation( productSettings.get( SELECT_APERTURE_UNIT, defaultSelectUnit ) ).toUpperCase() );
 		DesignMarker.Type referencePointType = DesignMarker.Type.valueOf( productSettings.get( REFERENCE_POINT_TYPE, defaultReferencePointType ).toUpperCase() );
 		double referencePointSize = Double.parseDouble( productSettings.get( REFERENCE_POINT_SIZE, defaultReferencePointSize ) );
 		Paint referencePointPaint = Paints.parse( productSettings.get( REFERENCE_POINT_PAINT, defaultReferencePointPaint ) );
