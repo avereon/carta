@@ -112,7 +112,7 @@ public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 
 	@Test
 	void parentToLocal() {
-		double oneCentimeterPerInch = new DesignValue( 1, DesignUnit.CENTIMETER ).to( DesignUnit.INCH ).getValue();
+		double oneCentimeterPerInch = new DesignValue( 1, DesignUnit.CM ).to( DesignUnit.IN ).getValue();
 		double pixelsPerCentimeter = renderer.getDpiX() * oneCentimeterPerInch;
 
 		// Check the center
@@ -129,7 +129,7 @@ public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 
 	@Test
 	void localToParent() {
-		double oneCentimeterPerInch = new DesignValue( 1, DesignUnit.CENTIMETER ).to( DesignUnit.INCH ).getValue();
+		double oneCentimeterPerInch = new DesignValue( 1, DesignUnit.CM ).to( DesignUnit.IN ).getValue();
 		double pixelsPerCentimeter = renderer.getDpiX() * oneCentimeterPerInch;
 
 		// Check the center
@@ -147,7 +147,7 @@ public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 	@Test
 	void realToWorld() {
 		// when
-		double value = renderer.realToWorld( new DesignValue( 2, DesignUnit.MILLIMETER ) );
+		double value = renderer.realToWorld( new DesignValue( 2, DesignUnit.MM ) );
 
 		// then
 		assertThat( value ).isEqualTo( 0.2 );
@@ -155,11 +155,11 @@ public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 
 	@Test
 	void realToScreen() {
-		double oneMillimeterPerInch = new DesignValue( 1, DesignUnit.MILLIMETER ).to( DesignUnit.INCH ).getValue();
+		double oneMillimeterPerInch = new DesignValue( 1, DesignUnit.MM ).to( DesignUnit.IN ).getValue();
 		double pixelsPerMillimeter = renderer.getDpiX() * oneMillimeterPerInch;
 
 		// when
-		double value = renderer.realToScreen( new DesignValue( 2, DesignUnit.MILLIMETER ) );
+		double value = renderer.realToScreen( new DesignValue( 2, DesignUnit.MM ) );
 
 		// then
 		assertThat( value ).isEqualTo( 2 * pixelsPerMillimeter );

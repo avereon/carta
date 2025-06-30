@@ -5,33 +5,40 @@ package com.avereon.cartesia;
  */
 public enum DesignUnit {
 
-	// The standard measure (https://en.wikipedia.org/wiki/Metre)
-	METER( 1 ),
+	// The base unit of length (https://en.wikipedia.org/wiki/Metre)
+	M( "Meter", 1 ),
 
-	MILLIMETER( 0.001, METER ),
-	CENTIMETER( 0.01, METER ),
-	DECIMETER( 0.1, METER ),
-	KILOMETER( 1000, METER ),
+	MM( "Millimeter", 0.001 ),
+	CM( "Centimeter", 0.01 ),
+	DM( "Decimeter", 0.1 ),
+	KM( "Kilometer", 1000 ),
 
 	// Defined by international agreement (https://en.wikipedia.org/wiki/Inch_(unit))
-	INCH( 2.54, CENTIMETER ),
+	IN( "Inch", 2.54, CM ),
 	// Defined by international agreement (https://en.wikipedia.org/wiki/Foot_(unit))
-	FOOT( 12, INCH ),
+	FT( "Foot", 12, IN ),
 	// Defined by international agreement (https://en.wikipedia.org/wiki/Yard_(unit))
-	YARD( 3, FOOT ),
+	YD( "Yard", 3, FT ),
 	// Defined by international agreement (https://en.wikipedia.org/wiki/Mile_(unit))
-	MILE( 5280, FOOT ),
+	MI( "Mile", 5280, FT ),
 	// Defined by international agreement (https://en.wikipedia.org/wiki/Nautical_mile)
-	NAUTICAL_MILE( 1852, METER );
+	NM( "Nautical Mile", 1852, M );
+
+	private final String name;
 
 	private final double conversion;
 
-	DesignUnit( double conversion ) {
+	DesignUnit( String name, double conversion ) {
+		this.name = name;
 		this.conversion = conversion;
 	}
 
-	DesignUnit( double value, DesignUnit unit ) {
-		this( value * unit.conversion );
+	DesignUnit( String name, double value, DesignUnit unit ) {
+		this( name, value * unit.conversion );
+	}
+
+	public double conversion() {
+		return conversion;
 	}
 
 	/**

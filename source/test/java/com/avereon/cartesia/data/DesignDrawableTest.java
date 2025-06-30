@@ -1,10 +1,12 @@
 package com.avereon.cartesia.data;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
+import javafx.scene.shape.StrokeLineJoin;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +30,7 @@ public class DesignDrawableTest {
 	}
 
 	@Test
-	void testisCustomValue() {
+	void testIsCustomValue() {
 		assertThat( drawable.isCustomValue( null ) ).isEqualTo( false );
 		assertThat( drawable.isCustomValue( "" ) ).isEqualTo( true );
 		assertThat( drawable.isCustomValue( DesignDrawable.MODE_LAYER ) ).isEqualTo( false );
@@ -88,6 +90,7 @@ public class DesignDrawableTest {
 	@Test
 	void testDrawableDefaults() {
 		assertThat( drawable.getOrder() ).isEqualTo( -1 );
+		assertThat( drawable.getUnit() ).isNull();
 		assertThat( drawable.getDrawPaint() ).isNull();
 		assertThat( drawable.getDrawWidth() ).isNull();
 		assertThat( drawable.getDrawCap() ).isNull();
@@ -98,10 +101,12 @@ public class DesignDrawableTest {
 
 	@Test
 	void testDrawableCalcDefaults() {
+		assertThat( drawable.calcUnit() ).isEqualTo( DesignUnit.valueOf( DesignLayer.DEFAULT_UNIT.toUpperCase() ) );
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
 		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
 		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDrawJoin() ).isEqualTo( StrokeLineJoin.ROUND );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 	}
 

@@ -703,7 +703,7 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	}
 
 	double realToScreen( DesignValue value ) {
-		return value.to( DesignUnit.INCH ).getValue() * getDpiX();
+		return value.to( DesignUnit.IN ).getValue() * getDpiX();
 	}
 
 	// Rendering -----------------------------------------------------------------
@@ -1003,13 +1003,13 @@ public class DesignToolV2Renderer extends DesignRenderer {
 
 	double getInternalScaleX() {
 		// TODO This value can be cached
-		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
+		double scale = DesignUnit.IN.per( design.calcDesignUnit() );
 		return scale * renderer.getDpiX() * getViewZoomX();
 	}
 
 	double getInternalScaleY() {
 		// TODO This value can be cached
-		double scale = DesignUnit.INCH.per( design.calcDesignUnit() );
+		double scale = DesignUnit.IN.per( design.calcDesignUnit() );
 		return scale * renderer.getDpiY() * getViewZoomY();
 	}
 

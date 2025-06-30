@@ -48,7 +48,7 @@ public interface DesignTool extends RenderConstants {
 
 	double ZOOM_OUT_FACTOR = 1.0 / ZOOM_IN_FACTOR;
 
-	DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MILLIMETER );
+	DesignValue DEFAULT_SELECT_TOLERANCE = new DesignValue( 2, DesignUnit.MM );
 
 	Reticle DEFAULT_RETICLE = Reticle.DUPLEX;
 

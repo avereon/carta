@@ -93,7 +93,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		design.setName( "Test Design" );
 		design.setAuthor( "Test Author" );
 		design.setDescription( "Test design for unit tests." );
-		design.setDesignUnit( DesignUnit.METER );
+		design.setDesignUnit( DesignUnit.M );
 		DesignLayer layer0 = new DesignLayer().setName( "Layer 0 (Empty layer)" );
 		design.getLayers().addLayer( layer0 );
 		DesignLayer layer1 = new DesignLayer().setName( "Layer 1 (Box)" );

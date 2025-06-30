@@ -6,7 +6,7 @@ import javafx.geometry.Point3D;
 
 public interface RenderConstants {
 
-	DesignUnit DEFAULT_UNIT = DesignUnit.CENTIMETER;
+	DesignUnit DEFAULT_UNIT = DesignUnit.CM;
 
 	double DEFAULT_DPI = 96;
 

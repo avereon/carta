@@ -13,16 +13,16 @@ public class DesignUnitOptionProvider implements SettingOptionProvider {
 
 	static {
 		DesignUnitOptionProvider.keys = List.of(
-			DesignUnit.MILLIMETER.name().toLowerCase(),
-			DesignUnit.CENTIMETER.name().toLowerCase(),
+			DesignUnit.MM.name().toLowerCase(),
+			DesignUnit.CM.name().toLowerCase(),
 			//DesignUnit.DECIMETER.name().toLowerCase(),
-			DesignUnit.KILOMETER.name().toLowerCase(),
-			DesignUnit.METER.name().toLowerCase(),
-			DesignUnit.INCH.name().toLowerCase(),
-			DesignUnit.FOOT.name().toLowerCase(),
-			DesignUnit.YARD.name().toLowerCase(),
-			DesignUnit.MILE.name().toLowerCase(),
-			DesignUnit.NAUTICAL_MILE.name().toLowerCase().replace( "_", "-" )
+			DesignUnit.KM.name().toLowerCase(),
+			DesignUnit.M.name().toLowerCase(),
+			DesignUnit.IN.name().toLowerCase(),
+			DesignUnit.FT.name().toLowerCase(),
+			DesignUnit.YD.name().toLowerCase(),
+			DesignUnit.MI.name().toLowerCase(),
+			DesignUnit.NM.name().toLowerCase().replace( "_", "-" )
 		);
 
 	}

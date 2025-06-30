@@ -29,15 +29,15 @@ public class DesignTest {
 	void testDesignUnitModifiesDesign() {
 		Design design = new MockDesign();
 		design.setModified( false );
-		assertThat( design.calcDesignUnit() ).isEqualTo( DesignUnit.CENTIMETER );
+		assertThat( design.calcDesignUnit() ).isEqualTo( DesignUnit.CM );
 		assertThat( design.isModified() ).isFalse();
 
-		design.setDesignUnit( DesignUnit.MILLIMETER );
+		design.setDesignUnit( DesignUnit.MM );
 		assertThat( design.isModified() ).isTrue();
 		design.setModified( false );
 		assertThat( design.isModified() ).isFalse();
 
-		design.setDesignUnit( DesignUnit.INCH );
+		design.setDesignUnit( DesignUnit.IN );
 		assertThat( design.isModified() ).isTrue();
 		design.setModified( false );
 		assertThat( design.isModified() ).isFalse();

@@ -27,14 +27,11 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	public static final String UNIT = "unit";
 
-	// NOTE Visibility state is stored in the design tool,
-	// instead of here in the data model so that each tool can have different
-	// layers visible.
-	//public static final String VISIBLE = "visible";
-
 	public static final String LAYERS = "layers";
 
 	public static final String SHAPES = "shapes";
+
+	static final String DEFAULT_UNIT = DesignUnit.CM.name().toLowerCase();
 
 	static final String DEFAULT_DRAW_PAINT = "#808080ff";
 
@@ -287,6 +284,16 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	@Override
+	public String getUnit() {
+		return getValue( UNIT, DEFAULT_UNIT );
+	}
+
+	@Override
+	public DesignUnit calcUnit() {
+		return DesignUnit.valueOf( getUnit().toUpperCase() );
+	}
+
+	@Override
 	public String getDrawPaint() {
 		return getValue( DRAW_PAINT, DEFAULT_DRAW_PAINT );
 	}
@@ -308,7 +315,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	@Override
 	public String getDrawPattern() {
-		return getValue( DRAW_PATTERN );
+		return getValue( DRAW_PATTERN, DEFAULT_DRAW_PATTERN );
 	}
 
 	@Override
@@ -324,6 +331,16 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	@Override
 	public StrokeLineCap calcDrawCap() {
 		return StrokeLineCap.valueOf( getDrawCap().toUpperCase() );
+	}
+
+	@Override
+	public String getDrawJoin() {
+		return getValue( DRAW_JOIN, DEFAULT_DRAW_JOIN );
+	}
+
+	@Override
+	public StrokeLineJoin calcDrawJoin() {
+		return StrokeLineJoin.valueOf( getDrawJoin().toUpperCase() );
 	}
 
 	@Override

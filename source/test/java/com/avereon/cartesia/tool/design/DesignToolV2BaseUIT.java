@@ -57,7 +57,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		assertNotNull( getDesign() );
 
 		// Check the design state
-		assertThat( getDesign().calcDesignUnit() ).isEqualTo( DesignUnit.CENTIMETER );
+		assertThat( getDesign().calcDesignUnit() ).isEqualTo( DesignUnit.CM );
 		assertThat( getDesign().getAllLayers().size() ).isEqualTo( 10 );
 
 		// Check the tool state
@@ -68,7 +68,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		assertThat( getTool().getVisibleShapes().size() ).isEqualTo( 0 );
 
 		assertThat( getTool().getSelectTolerance().getValue() ).isEqualTo( 2 );
-		assertThat( getTool().getSelectTolerance().getUnit() ).isEqualTo( DesignUnit.MILLIMETER );
+		assertThat( getTool().getSelectTolerance().getUnit() ).isEqualTo( DesignUnit.MM );
 	}
 
 	protected double getWorldSelectTolerance() {

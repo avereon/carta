@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 @CustomLog
 public abstract class Design extends IdNode {
 
-	public static final DesignUnit DEFAULT_DESIGN_UNIT = DesignUnit.CENTIMETER;
+	public static final DesignUnit DEFAULT_DESIGN_UNIT = DesignUnit.CM;
 
 	public static final String NAME = "name";
 
