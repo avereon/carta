@@ -267,20 +267,20 @@ public class DesignToolV3RendererTest {
 		// @WhiteBoxTest
 	void defaultWorldScale() {
 		// given
-		double expectedScale = DEFAULT_DPI;
+		double expectedScale = DEFAULT_DPI * DesignToolV3Renderer.ATOMIC_ISCALE;
 		Offset<Double> offset = Offset.offset( 1e-12 );
 
 		// then
 		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
 		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
-		assertThat( expectedScale ).isCloseTo( 96, offset );
+		assertThat( expectedScale ).isCloseTo( 0.0096, offset );
 	}
 
 	@Test
 		// @WhiteBoxTest
 	void setWorldScale() {
 		// given
-		double expectedScale = 160;
+		double expectedScale = 160 * DesignToolV3Renderer.ATOMIC_ISCALE;
 		Offset<Double> offset = Offset.offset( 1e-12 );
 
 		// when
@@ -289,7 +289,7 @@ public class DesignToolV3RendererTest {
 		// then
 		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
 		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
-		assertThat( expectedScale ).isEqualTo( 160, offset );
+		assertThat( expectedScale ).isEqualTo( 0.016, offset );
 	}
 
 }
