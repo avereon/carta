@@ -244,7 +244,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	private void updateWorldScale( double dpiX, double dpiY ) {
 		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
-		worldScaleTransform = Transform.scale( dpiX, -dpiY );
+		worldScaleTransform = Transform.scale( dpiX* ATOMIC_ISCALE, -dpiY* ATOMIC_ISCALE );
 		world.getTransforms().add( worldScaleTransform );
 	}
 
