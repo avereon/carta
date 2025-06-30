@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.zerra.color.Colors;
@@ -27,7 +28,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	// The scale should be at least as large as the media DPI, which can reach
 	// as high as 9600 x 2400 DPI with high resolution printers.
 	//
- 	// The text renderer dies at 100,000,000 scale, so we need to keep the
+	// The text renderer dies at 100,000,000 scale, so we need to keep the
 	// scale below that value.
 
 	static final double ATOMIC_SCALE = 10000;
@@ -105,8 +106,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 				Shape shape = mapDesignShape( designShape );
 				if( shape != null ) {
 					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
-					bounds.setStroke( Colors.parse("#C0A000") );
-					bounds.setStrokeWidth( 0.02 * ATOMIC_SCALE );
+					bounds.setStroke( Colors.parse( "#C0A000" ) );
+					bounds.setStrokeWidth( ATOMIC_SCALE / getDpiX() );
 					bounds.setFill( null );
 					reference.getChildren().add( bounds );
 				}
@@ -148,21 +149,27 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		Shape fxShape = shape.getValue( "fx-shape" );
 		if( fxShape != null ) return fxShape;
 
+		DesignUnit unit = shape.calcUnit();
+		double unitScaleX = unit.to( 1, DesignUnit.IN );
+		double unitScaleY = unit.to( 1, DesignUnit.IN );
+
 		fxShape = switch( shape.getType() ) {
 			case LINE -> {
 				DesignLine designLine = (DesignLine)shape;
 				yield new Line(
-					designLine.getOrigin().getX() * ATOMIC_SCALE,
-					designLine.getOrigin().getY() * ATOMIC_SCALE,
-					designLine.getPoint().getX() * ATOMIC_SCALE,
-					designLine.getPoint().getY() * ATOMIC_SCALE
+					// FIXME take into account the design unit
+					designLine.getOrigin().getX() * ATOMIC_SCALE * unitScaleX,
+					designLine.getOrigin().getY() * ATOMIC_SCALE * unitScaleY,
+					designLine.getPoint().getX() * ATOMIC_SCALE * unitScaleX,
+					designLine.getPoint().getY() * ATOMIC_SCALE * unitScaleY
 				);
 			}
 			case TEXT -> {
+				// FIXME take into account the design unit
 				DesignText designText = (DesignText)shape;
-				Text text = new Text( designText.getOrigin().getX() * ATOMIC_SCALE, -designText.getOrigin().getY() * ATOMIC_SCALE, designText.getText() );
-				text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * ATOMIC_SCALE ) );
-				text.getTransforms().add( Transform.rotate( designText.calcRotate(), designText.getOrigin().getX() * ATOMIC_SCALE, designText.getOrigin().getY() * ATOMIC_SCALE ) );
+				Text text = new Text( designText.getOrigin().getX() * ATOMIC_SCALE * unitScaleX, -designText.getOrigin().getY() * ATOMIC_SCALE * unitScaleX, designText.getText() );
+				text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * ATOMIC_SCALE * unitScaleX ) );
+				text.getTransforms().add( Transform.rotate( designText.calcRotate(), designText.getOrigin().getX() * ATOMIC_SCALE * unitScaleX, designText.getOrigin().getY() * ATOMIC_SCALE * unitScaleX ) );
 				text.getTransforms().add( Transform.scale( 1, -1 ) );
 				yield text;
 			}
@@ -178,7 +185,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		fxShape.setManaged( false );
 
 		fxShape.setStroke( shape.calcDrawPaint() );
-		fxShape.setStrokeWidth( shape.calcDrawWidth() * ATOMIC_SCALE );
+		fxShape.setStrokeWidth( shape.calcDrawWidth() * ATOMIC_SCALE * unitScaleX );
 		fxShape.setStrokeLineCap( shape.calcDrawCap() );
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		//fxShape.setStrokeType( shape.calcDrawType() );
@@ -244,7 +251,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	private void updateWorldScale( double dpiX, double dpiY ) {
 		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
-		worldScaleTransform = Transform.scale( dpiX* ATOMIC_ISCALE, -dpiY* ATOMIC_ISCALE );
+		worldScaleTransform = Transform.scale( dpiX * ATOMIC_ISCALE, -dpiY * ATOMIC_ISCALE );
 		world.getTransforms().add( worldScaleTransform );
 	}
 
