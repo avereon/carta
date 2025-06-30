@@ -45,35 +45,6 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void defaultUnit() {
-		assertThat( renderer.getUnit() ).isEqualTo( RenderConstants.DEFAULT_UNIT );
-	}
-
-	@Test
-	void setUnit() {
-		renderer.setUnit( DesignUnit.INCH );
-		assertThat( renderer.getUnit() ).isEqualTo( DesignUnit.INCH );
-
-		renderer.setUnit( DesignUnit.CENTIMETER );
-		assertThat( renderer.getUnit() ).isEqualTo( DesignUnit.CENTIMETER );
-
-		renderer.setUnit( DesignUnit.METER );
-		assertThat( renderer.getUnit() ).isEqualTo( DesignUnit.METER );
-	}
-
-	@Test
-	void setUnitWithListeners() {
-		// given
-		renderer.unitProperty().addListener( unitListener );
-
-		// when
-		renderer.setUnit( DesignUnit.METER );
-
-		// then
-		verify( unitListener, times( 1 ) ).changed( any(), any(), eq( DesignUnit.METER ) );
-	}
-
-	@Test
 	void defaultDpi() {
 		assertThat( renderer.getDpiX() ).isEqualTo( DEFAULT_DPI );
 		assertThat( renderer.getDpiY() ).isEqualTo( DEFAULT_DPI );
@@ -296,30 +267,29 @@ public class DesignToolV3RendererTest {
 		// @WhiteBoxTest
 	void defaultWorldScale() {
 		// given
-		double expectedScale = DEFAULT_DPI / (RenderConstants.DEFAULT_UNIT.per( DesignUnit.INCH )) * DesignToolV3Renderer.ATOMIC_ISCALE;
+		double expectedScale = DEFAULT_DPI;
 		Offset<Double> offset = Offset.offset( 1e-12 );
 
 		// then
 		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
 		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
-		assertThat( expectedScale ).isCloseTo( 37.79527559055118 * DesignToolV3Renderer.ATOMIC_ISCALE, offset );
+		assertThat( expectedScale ).isCloseTo( 96, offset );
 	}
 
 	@Test
 		// @WhiteBoxTest
 	void setWorldScale() {
 		// given
-		double expectedScale = (160 / (DesignUnit.CENTIMETER.per( DesignUnit.INCH ))) * DesignToolV3Renderer.ATOMIC_ISCALE;
+		double expectedScale = 160;
 		Offset<Double> offset = Offset.offset( 1e-12 );
 
 		// when
-		renderer.setUnit( DesignUnit.CENTIMETER );
 		renderer.setDpi( 160 );
 
 		// then
 		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
 		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
-		assertThat( expectedScale ).isEqualTo( 62.99212598425197 * DesignToolV3Renderer.ATOMIC_ISCALE, offset );
+		assertThat( expectedScale ).isEqualTo( 160, offset );
 	}
 
 }

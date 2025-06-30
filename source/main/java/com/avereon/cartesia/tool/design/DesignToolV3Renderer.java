@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.zerra.color.Colors;
@@ -81,12 +80,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		getChildren().addAll( world, screen );
 
-		unitProperty().addListener( ( _, _, n ) -> this.updateWorldScale( n, getDpiX(), getDpiY() ) );
-		dpiXProperty().addListener( ( _, _, n ) -> this.updateWorldScale( getUnit(), n.doubleValue(), getDpiY() ) );
-		dpiYProperty().addListener( ( _, _, n ) -> this.updateWorldScale( getUnit(), getDpiX(), n.doubleValue() ) );
+		dpiXProperty().addListener( ( _, _, n ) -> this.updateWorldScale( n.doubleValue(), getDpiY() ) );
+		dpiYProperty().addListener( ( _, _, n ) -> this.updateWorldScale( getDpiX(), n.doubleValue() ) );
 
 		// Initialize the internal scale
-		this.updateWorldScale( getUnit(), getDpiX(), getDpiY() );
+		this.updateWorldScale( getDpiX(), getDpiY() );
 	}
 
 	@Override
@@ -244,11 +242,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return worldScaleTransform;
 	}
 
-	private void updateWorldScale( DesignUnit unit, double dpiX, double dpiY ) {
-		double scaleFactorX = unit.to( dpiX, DesignUnit.INCH ) * ATOMIC_ISCALE;
-		double scaleFactorY = unit.to( dpiY, DesignUnit.INCH ) * ATOMIC_ISCALE;
+	private void updateWorldScale( double dpiX, double dpiY ) {
 		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
-		worldScaleTransform = Transform.scale( scaleFactorX, -scaleFactorY );
+		worldScaleTransform = Transform.scale( dpiX, -dpiY );
 		world.getTransforms().add( worldScaleTransform );
 	}
 
