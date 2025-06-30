@@ -3,11 +3,11 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.zerra.color.Colors;
 import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -27,7 +27,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	// accurately as well as bounding rectangles to be calculated accurately.
 	// The scale should be at least as large as the media DPI, which can reach
 	// as high as 9600 x 2400 DPI with high resolution printers.
-	private static final double ATOMIC_SCALE = 4096;
+	//
+ 	// The text renderer dies at 100,000,000 scale, so we need to keep the
+	// scale below that value.
+
+	private static final double ATOMIC_SCALE = 100000;
 
 	private static final double ATOMIC_ISCALE = 1.0 / ATOMIC_SCALE;
 
@@ -102,8 +106,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			designLayer.getShapes().forEach( designShape -> {
 				Shape shape = mapDesignShape( designShape );
 				if( shape != null ) {
-					Rectangle bounds = FxUtil.toRectangle( getVisibleBounds( shape ) );
-					bounds.setStroke( Color.YELLOW );
+					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
+					bounds.setStroke( Colors.parse("#C0A000") );
 					bounds.setStrokeWidth( 0.02 * ATOMIC_SCALE );
 					bounds.setFill( null );
 					reference.getChildren().add( bounds );
@@ -160,7 +164,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 				DesignText designText = (DesignText)shape;
 				Text text = new Text( designText.getOrigin().getX() * ATOMIC_SCALE, -designText.getOrigin().getY() * ATOMIC_SCALE, designText.getText() );
 				text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * ATOMIC_SCALE ) );
-				text.setRotate( designText.calcRotate() );
+				text.getTransforms().add( Transform.rotate( designText.calcRotate(), designText.getOrigin().getX() * ATOMIC_SCALE, designText.getOrigin().getY() * ATOMIC_SCALE ) );
 				text.getTransforms().add( Transform.scale( 1, -1 ) );
 				yield text;
 			}
@@ -189,7 +193,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return fxShape;
 	}
 
-	private Bounds getVisibleBounds( Node node ) {
+	private Bounds getVisualBounds( Node node ) {
 		// There are two ways to approach this:
 		// 1. Use the bounds of the world to determine the visible area.
 		// 2. Use the bounds of the renderer to determine the visible area.
