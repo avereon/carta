@@ -50,13 +50,14 @@ public class DesignDrawableTest {
 		assertThat( layer.getDrawPaint() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PAINT );
 		assertThat( layer.getDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_DRAW_WIDTH );
 		assertThat( layer.getDrawCap() ).isEqualTo( DesignLayer.DEFAULT_DRAW_CAP );
-		assertThat( layer.getDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_DRAW_PATTERN );
+		assertThat( layer.getDashOffset() ).isEqualTo( DesignLayer.DEFAULT_DASH_OFFSET );
+		assertThat( layer.getDashPattern() ).isEqualTo( DesignLayer.DEFAULT_DASH_PATTERN );
 		assertThat( layer.getFillPaint() ).isEqualTo( DesignLayer.DEFAULT_FILL_PAINT );
 
 		assertThat( layer.getTextDrawPaint() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_PAINT );
 		assertThat( layer.getTextDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH );
 		assertThat( layer.getTextDrawCap() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_CAP );
-		assertThat( layer.getTextDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DRAW_PATTERN );
+		assertThat( layer.getTextDrawPattern() ).isEqualTo( DesignLayer.DEFAULT_TEXT_DASH_PATTERN );
 		assertThat( layer.getTextFillPaint() ).isEqualTo( DesignLayer.DEFAULT_TEXT_FILL_PAINT );
 
 		assertThat( layer.getFontName() ).isNull();
@@ -71,13 +72,14 @@ public class DesignDrawableTest {
 		assertThat( layer.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
 		assertThat( layer.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 		assertThat( layer.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
-		assertThat( layer.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( layer.calcDashOffset() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DASH_OFFSET ) );
+		assertThat( layer.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DASH_PATTERN ) );
 		assertThat( layer.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 
 		assertThat( layer.calcTextDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_DRAW_PAINT ) );
 		assertThat( layer.calcTextDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH ) );
 		assertThat( layer.calcTextDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_TEXT_DRAW_CAP.toUpperCase() ) );
-		assertThat( layer.calcTextDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_TEXT_DRAW_PATTERN ) );
+		assertThat( layer.calcTextDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_TEXT_DASH_PATTERN ) );
 		assertThat( layer.calcTextFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_FILL_PAINT ) );
 
 		assertThat( layer.calcFontName() ).isEqualTo( DesignLayer.DEFAULT_FONT_NAME );
@@ -94,7 +96,8 @@ public class DesignDrawableTest {
 		assertThat( drawable.getDrawPaint() ).isNull();
 		assertThat( drawable.getDrawWidth() ).isNull();
 		assertThat( drawable.getDrawCap() ).isNull();
-		assertThat( drawable.getDrawPattern() ).isNull();
+		assertThat( drawable.getDashOffset() ).isNull();
+		assertThat( drawable.getDashPattern() ).isNull();
 		assertThat( drawable.getDrawJoin() ).isNull();
 		assertThat( drawable.getFillPaint() ).isNull();
 	}
@@ -105,7 +108,8 @@ public class DesignDrawableTest {
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
 		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+		assertThat( drawable.calcDashOffset() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DASH_OFFSET ) );
+		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DASH_PATTERN ) );
 		assertThat( drawable.calcDrawJoin() ).isEqualTo( StrokeLineJoin.ROUND );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 	}
@@ -253,53 +257,53 @@ public class DesignDrawableTest {
 	void testChangeDrawPatternModeFromDefaultToCustom() {
 		// Change mode to custom to copy current getDrawPatternWithInheritance value
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
-		assertThat( drawable.getDrawPattern() ).isEqualTo( "" );
-		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getDashPattern() ).isEqualTo( "" );
+		assertThat( drawable.getValueMode( drawable.getDashPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
 
 		// Check that the pattern is a copy of the layer pattern value
-		assertThat( drawable.getDrawPattern() ).isEqualTo( "" );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( "" ) );
+		assertThat( drawable.getDashPattern() ).isEqualTo( "" );
+		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( "" ) );
 
 		// Change the layer pattern to ensure that pattern value is still the custom value
-		layer.setDrawPattern( "1/8,1/4" );
-		assertThat( drawable.getDrawPattern() ).isEqualTo( "" );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( "" ) );
+		layer.setDashPattern( "1/8,1/4" );
+		assertThat( drawable.getDashPattern() ).isEqualTo( "" );
+		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( "" ) );
 	}
 
 	@Test
 	void testChangeDrawPatternModeFromLayerToCustom() {
 		String layerPattern = "1/6,1/3";
-		layer.setDrawPattern( layerPattern );
+		layer.setDashPattern( layerPattern );
 
 		// Change mode to custom to copy current getDrawPatternWithInheritance value
 		drawable.changeDrawPatternMode( DesignDrawable.MODE_CUSTOM );
-		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getValueMode( drawable.getDashPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
 
 		// Check that the pattern value is a copy of the layer pattern value
-		assertThat( drawable.getDrawPattern() ).isEqualTo( layerPattern );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( layerPattern ) );
+		assertThat( drawable.getDashPattern() ).isEqualTo( layerPattern );
+		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( layerPattern ) );
 
 		// Change the layer pattern to ensure that pattern value is still the custom value
-		layer.setDrawPattern( "1/8,1/4" );
-		assertThat( drawable.getDrawPattern() ).isEqualTo( layerPattern );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( layerPattern ) );
+		layer.setDashPattern( "1/8,1/4" );
+		assertThat( drawable.getDashPattern() ).isEqualTo( layerPattern );
+		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( layerPattern ) );
 	}
 
 	@Test
-	void testSetDrawPatternWhenDrawPatternModeIsLayer() {
-		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-		assertThat( drawable.getDrawPattern() ).isNull();
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DRAW_PATTERN ) );
+	void testSetDrawPatternWhenDashPatternModeIsLayer() {
+		assertThat( drawable.getValueMode( drawable.getDashPattern() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getDashPattern() ).isNull();
+		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DASH_PATTERN ) );
 
-		layer.setDrawPattern( "0.5,1/4" );
-		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
-		assertThat( drawable.getDrawPattern() ).isNull();
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( List.of( 0.5, 0.25 ) );
+		layer.setDashPattern( "0.5,1/4" );
+		assertThat( drawable.getValueMode( drawable.getDashPattern() ) ).isEqualTo( DesignDrawable.MODE_LAYER );
+		assertThat( drawable.getDashPattern() ).isNull();
+		assertThat( drawable.calcDashPattern() ).isEqualTo( List.of( 0.5, 0.25 ) );
 
-		drawable.setDrawPattern( "1/8, 0.5" );
-		assertThat( drawable.getValueMode( drawable.getDrawPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
-		assertThat( drawable.getDrawPattern() ).isEqualTo( "1/8, 0.5" );
-		assertThat( drawable.calcDrawPattern() ).isEqualTo( List.of( 0.125, 0.5 ) );
+		drawable.setDashPattern( "1/8, 0.5" );
+		assertThat( drawable.getValueMode( drawable.getDashPattern() ) ).isEqualTo( DesignDrawable.MODE_CUSTOM );
+		assertThat( drawable.getDashPattern() ).isEqualTo( "1/8, 0.5" );
+		assertThat( drawable.calcDashPattern() ).isEqualTo( List.of( 0.125, 0.5 ) );
 	}
 
 	@Test

@@ -33,6 +33,8 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	static final String DEFAULT_UNIT = DesignUnit.CM.name().toLowerCase();
 
+	static final String DEFAULT_FILL_PAINT = null;
+
 	static final String DEFAULT_DRAW_PAINT = "#808080ff";
 
 	static final String DEFAULT_DRAW_WIDTH = "0.05";
@@ -43,9 +45,9 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	static final String DEFAULT_DRAW_JOIN = StrokeLineJoin.ROUND.name().toLowerCase();
 
-	static final String DEFAULT_DRAW_PATTERN = null;
+	static final String DEFAULT_DASH_OFFSET = "0";
 
-	static final String DEFAULT_FILL_PAINT = null;
+	static final String DEFAULT_DASH_PATTERN = null;
 
 	static final String DEFAULT_TEXT_SIZE = "1";
 
@@ -57,7 +59,9 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	static final String DEFAULT_TEXT_DRAW_CAP = StrokeLineCap.ROUND.name().toLowerCase();
 
-	static final String DEFAULT_TEXT_DRAW_PATTERN = null;
+	static final String DEFAULT_TEXT_DASH_OFFSET = "0";
+
+	static final String DEFAULT_TEXT_DASH_PATTERN = null;
 
 	static final String DEFAULT_FONT_NAME = null;
 
@@ -71,13 +75,15 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	public DesignLayer() {
 		defineNaturalKey( NAME );
-		addModifyingKeys( NAME,
+		addModifyingKeys(
+			NAME,
 			UNIT,
 			FILL_PAINT,
 			DRAW_PAINT,
 			DRAW_WIDTH,
 			DRAW_CAP,
-			DRAW_PATTERN,
+			DASH_OFFSET,
+			DASH_PATTERN,
 			TEXT_FILL_PAINT,
 			TEXT_DRAW_PAINT,
 			TEXT_DRAW_WIDTH,
@@ -95,7 +101,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 		setDrawPaint( DEFAULT_DRAW_PAINT );
 		setDrawWidth( DEFAULT_DRAW_WIDTH );
-		setDrawPattern( DEFAULT_DRAW_PATTERN );
+		setDashPattern( DEFAULT_DASH_PATTERN );
 		setDrawCap( DEFAULT_DRAW_CAP );
 		setFillPaint( DEFAULT_FILL_PAINT );
 
@@ -103,7 +109,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 		setTextFillPaint( DEFAULT_TEXT_FILL_PAINT );
 		setTextDrawPaint( DEFAULT_TEXT_DRAW_PAINT );
 		setTextDrawWidth( DEFAULT_TEXT_DRAW_WIDTH );
-		setTextDrawPattern( DEFAULT_TEXT_DRAW_PATTERN );
+		setTextDrawPattern( DEFAULT_TEXT_DASH_PATTERN );
 		setTextDrawCap( DEFAULT_TEXT_DRAW_CAP );
 
 		setFontName( DEFAULT_FONT_NAME );
@@ -314,13 +320,23 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	@Override
-	public String getDrawPattern() {
-		return getValue( DRAW_PATTERN, DEFAULT_DRAW_PATTERN );
+	public String getDashOffset() {
+		return getValue( DASH_OFFSET, DEFAULT_DASH_OFFSET );
 	}
 
 	@Override
-	public List<Double> calcDrawPattern() {
-		return CadShapes.parseDashPattern( getDrawPattern() );
+	public double calcDashOffset() {
+		return CadMath.evalNoException( getDashOffset() );
+	}
+
+	@Override
+	public String getDashPattern() {
+		return getValue( DASH_PATTERN, DEFAULT_DASH_PATTERN );
+	}
+
+	@Override
+	public List<Double> calcDashPattern() {
+		return CadShapes.parseDashPattern( getDashPattern() );
 	}
 
 	@Override
@@ -396,7 +412,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	public String getTextDrawPattern() {
-		return getValue( TEXT_DRAW_PATTERN, DEFAULT_TEXT_DRAW_PATTERN );
+		return getValue( TEXT_DRAW_PATTERN, DEFAULT_TEXT_DASH_PATTERN );
 	}
 
 	public List<Double> calcTextDrawPattern() {
@@ -520,7 +536,8 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	@Override
 	public Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( NAME,
+		map.putAll( asMap(
+			NAME,
 			TEXT_FILL_PAINT,
 			TEXT_DRAW_PAINT,
 			TEXT_DRAW_WIDTH,

@@ -174,7 +174,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		remapValue( map, DesignLayer.DRAW_PAINT, loadPaintMapping );
 		remapValue( map, DesignLayer.DRAW_WIDTH, loadPropertyMapping );
 		remapValue( map, DesignLayer.DRAW_CAP, loadPropertyMapping );
-		remapValue( map, DesignLayer.DRAW_PATTERN, loadPropertyMapping );
+		remapValue( map, DesignLayer.DASH_PATTERN, loadPropertyMapping );
 		remapValue( map, DesignLayer.FILL_PAINT, loadPaintMapping );
 
 		// Text value mapping
@@ -255,20 +255,20 @@ public abstract class CartesiaDesignCodec extends Codec {
 		loadDesignNode( map, drawable );
 
 		// Clean values
-		cleanPatternValue( map, DesignLayer.DRAW_PATTERN );
+		cleanPatternValue( map, DesignLayer.DASH_PATTERN );
 
 		// Geometry value mapping
 		remapValue( map, DesignDrawable.DRAW_PAINT, loadPaintMapping );
 		remapValue( map, DesignDrawable.DRAW_WIDTH, loadPropertyMapping );
 		remapValue( map, DesignDrawable.DRAW_CAP, loadPropertyMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, loadPropertyMapping );
+		remapValue( map, DesignDrawable.DASH_PATTERN, loadPropertyMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, loadPaintMapping );
 
 		if( map.containsKey( DesignDrawable.ORDER ) ) drawable.setOrder( (Integer)map.get( DesignDrawable.ORDER ) );
 		drawable.setDrawPaint( map.containsKey( DesignDrawable.DRAW_PAINT ) ? (String)map.get( DesignDrawable.DRAW_PAINT ) : null );
 		if( map.containsKey( DesignDrawable.DRAW_WIDTH ) ) drawable.setDrawWidth( (String)map.get( DesignDrawable.DRAW_WIDTH ) );
 		if( map.containsKey( DesignDrawable.DRAW_CAP ) ) drawable.setDrawCap( (String)map.get( DesignDrawable.DRAW_CAP ) );
-		if( map.containsKey( DesignDrawable.DRAW_PATTERN ) ) drawable.setDrawPattern( String.valueOf( map.get( DesignDrawable.DRAW_PATTERN ) ) );
+		if( map.containsKey( DesignDrawable.DASH_PATTERN ) ) drawable.setDashPattern( String.valueOf( map.get( DesignDrawable.DASH_PATTERN ) ) );
 		drawable.setFillPaint( map.containsKey( DesignDrawable.FILL_PAINT ) ? (String)map.get( DesignDrawable.FILL_PAINT ) : null );
 	}
 
@@ -437,7 +437,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 			DesignDrawable.ORDER,
 			DesignDrawable.DRAW_PAINT,
 			DesignDrawable.DRAW_WIDTH,
-			DesignDrawable.DRAW_PATTERN,
+			DesignDrawable.DASH_PATTERN,
 			DesignDrawable.DRAW_CAP,
 			DesignDrawable.FILL_PAINT
 		) );
@@ -446,7 +446,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		remapValue( map, DesignDrawable.DRAW_PAINT, savePaintMapping );
 		remapValue( map, DesignDrawable.DRAW_WIDTH, savePropertyMapping );
 		remapValue( map, DesignDrawable.DRAW_CAP, savePropertyMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, savePropertyMapping );
+		remapValue( map, DesignDrawable.DASH_PATTERN, savePropertyMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, savePaintMapping );
 
 		return map;

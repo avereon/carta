@@ -264,12 +264,12 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	}
 
 	@Override
-	public String getDrawPatternWithInheritance() {
-		String pattern = getDrawPattern();
+	public String getDashPatternWithInheritance() {
+		String pattern = getDashPattern();
 		if( isCustomValue( pattern ) ) return pattern;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_TEXT_DRAW_PATTERN : layer.getTextDrawPattern();
+		return layer == null ? DesignLayer.DEFAULT_TEXT_DASH_PATTERN : layer.getTextDrawPattern();
 	}
 
 	@Override
@@ -311,7 +311,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 
 			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
 			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
-			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
+			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDashPattern() ));
 			case VIRTUAL_DRAW_CAP_MODE -> (T)(getValueMode( getDrawCap() ));
 			case VIRTUAL_FILL_PAINT_MODE -> (T)(getValueMode( getFillPaint() ));
 

@@ -31,9 +31,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	// The text renderer dies at 100,000,000 scale, so we need to keep the
 	// scale below that value.
 
+	// TODO Can we deprecate the use of ATOMIC_SCALE and ATOMIC_ISCALE?
 	static final double ATOMIC_SCALE = 10000;
 
 	static final double ATOMIC_ISCALE = 1.0 / ATOMIC_SCALE;
+
+	public static final String FX_SHAPE = "fx-shape";
 
 	// The geometry in this pane should be configured by the workplane but
 	// managed by an internal class that can optimize the use of the FX geometry.
@@ -49,6 +52,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private final Pane world;
 
 	private final Pane screen;
+
+	private Scale screenScaleTransform;
 
 	private Scale worldScaleTransform;
 
@@ -146,7 +151,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private Shape mapDesignShape( DesignShape shape ) {
-		Shape fxShape = shape.getValue( "fx-shape" );
+		Shape fxShape = shape.getValue( FX_SHAPE );
 		if( fxShape != null ) return fxShape;
 
 		DesignUnit unit = shape.calcUnit();
@@ -190,7 +195,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
 		//fxShape.setStrokeType( shape.calcDrawType() );
 
-		fxShape.getStrokeDashArray().setAll( shape.calcDrawPattern() );
+		fxShape.getStrokeDashArray().setAll( shape.calcDashPattern() );
 		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
 		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
 		fxShape.setFill( shape.calcFillPaint() );
@@ -242,6 +247,37 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	}
 
+	private void updateToScreenScale( DesignLine designLine) {
+		Line line = designLine.getValue( FX_SHAPE );
+		if( line == null ) return;
+
+		double zX = getScreenScale().getX();
+		double zY = getScreenScale().getY();
+
+		// Screen scale should "just" be the DPI scale
+		line.setStartX( designLine.getOrigin().getX() * zX );
+		line.setStartY( designLine.getOrigin().getY() * zY );
+		line.setEndX( designLine.getPoint().getX() * zX );
+		line.setEndY( designLine.getPoint().getY() * zY );
+
+		// update common shape properties
+		updateToScreenScale( designLine, line );
+	}
+
+	private void updateToScreenScale( DesignShape designShape, Shape shape ) {
+		if( shape == null ) return;
+
+		double zX = getScreenScale().getX();
+
+		shape.setStrokeWidth( designShape.calcDrawWidth() * zX );
+		//shape.setStrokeDashOffset( designShape.calcDrawDashOffset() * zX );
+		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * zX ).toList() );
+	}
+
+	Scale getScreenScale() {
+		return screenScaleTransform;
+	}
+
 	/*
 	For testing purposes only! This method is not part of the public API.
   */
@@ -250,6 +286,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateWorldScale( double dpiX, double dpiY ) {
+		screenScaleTransform = Transform.scale( dpiX * ATOMIC_ISCALE, -dpiY * ATOMIC_ISCALE );
+
 		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
 		worldScaleTransform = Transform.scale( dpiX * ATOMIC_ISCALE, -dpiY * ATOMIC_ISCALE );
 		world.getTransforms().add( worldScaleTransform );

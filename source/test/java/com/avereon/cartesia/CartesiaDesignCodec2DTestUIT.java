@@ -197,7 +197,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		remapValue( map, DesignDrawable.DRAW_PAINT, CartesiaDesignCodec.loadPaintMapping );
 		remapValue( map, DesignDrawable.DRAW_WIDTH, CartesiaDesignCodec.loadPropertyMapping );
 		remapValue( map, DesignDrawable.DRAW_CAP, CartesiaDesignCodec.loadPropertyMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, CartesiaDesignCodec.loadPropertyMapping );
+		remapValue( map, DesignDrawable.DASH_PATTERN, CartesiaDesignCodec.loadPropertyMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, CartesiaDesignCodec.loadPaintMapping );
 
 		if( DesignText.TEXT.equals( map.get( DesignShape.SHAPE ) ) ) {
@@ -232,7 +232,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		remapValue( map, DesignDrawable.DRAW_PAINT, CartesiaDesignCodec.savePaintMapping );
 		remapValue( map, DesignDrawable.DRAW_WIDTH, CartesiaDesignCodec.savePropertyMapping );
 		remapValue( map, DesignDrawable.DRAW_CAP, CartesiaDesignCodec.savePropertyMapping );
-		remapValue( map, DesignDrawable.DRAW_PATTERN, CartesiaDesignCodec.savePropertyMapping );
+		remapValue( map, DesignDrawable.DASH_PATTERN, CartesiaDesignCodec.savePropertyMapping );
 		remapValue( map, DesignDrawable.FILL_PAINT, CartesiaDesignCodec.savePaintMapping );
 	}
 

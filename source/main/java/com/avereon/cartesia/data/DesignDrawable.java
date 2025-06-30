@@ -38,7 +38,10 @@ public abstract class DesignDrawable extends DesignNode {
 
 	public static final String DRAW_JOIN = "draw-join";
 
-	public static final String DRAW_PATTERN = "draw-pattern";
+	public static final String DASH_OFFSET = "dash-offset";
+
+	// TODO Convert this value to "dash-pattern" for consistency
+	public static final String DASH_PATTERN = "draw-pattern";
 
 	// Do we want to do draw pattern offset or draw pattern alignment (start, middle, end)?
 
@@ -69,7 +72,7 @@ public abstract class DesignDrawable extends DesignNode {
 	private final Map<String, Object> cache;
 
 	protected DesignDrawable() {
-		addModifyingKeys( ORDER, UNIT, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT );
+		addModifyingKeys( ORDER, UNIT, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DASH_OFFSET, DASH_PATTERN, FILL_PAINT );
 		cache = new ConcurrentHashMap<>();
 	}
 
@@ -174,32 +177,58 @@ public abstract class DesignDrawable extends DesignNode {
 		return this;
 	}
 
+	// Dash Offset ---------------------------------------------------------------
+
+	public double calcDashOffset() {
+		return (double)getCache().computeIfAbsent( DASH_OFFSET, k -> CadMath.evalNoException( getDashOffsetWithInheritance() ) );
+	}
+
+	public String getDashOffsetWithInheritance() {
+		String offset = getDashOffset();
+		if( isCustomValue( offset ) ) return offset;
+
+		DesignLayer layer = getLayer();
+		return layer == null ? DesignLayer.DEFAULT_DASH_OFFSET : layer.getDashOffset();
+	}
+
+	public String getDashOffset() {
+		return getValue( DASH_OFFSET );
+	}
+
+	public DesignDrawable setDashOffset( String offset ) {
+		setValue( DASH_OFFSET, offset );
+		return this;
+	}
+
+	// Dash Pattern --------------------------------------------------------------
+
 	@SuppressWarnings( "unchecked" )
-	public List<Double> calcDrawPattern() {
-		if( isLayerValue( getDrawPattern() ) ) {
+	public List<Double> calcDashPattern() {
+		if( isLayerValue( getDashPattern() ) ) {
 			// FIXME This is the most common case, so we should optimize for it
 			// TODO Not sure why this doesn't just use the cached value
-			return CadShapes.parseDashPattern( getDrawPatternWithInheritance() );
+			return CadShapes.parseDashPattern( getDashPatternWithInheritance() );
 		} else {
-			return (List<Double>)getCache().computeIfAbsent( DRAW_PATTERN, k -> CadShapes.parseDashPattern( getDrawPatternWithInheritance() ) );
+			return (List<Double>)getCache().computeIfAbsent( DASH_PATTERN, k -> CadShapes.parseDashPattern( getDashPatternWithInheritance() ) );
 		}
 	}
 
-	public String getDrawPatternWithInheritance() {
-		String pattern = getDrawPattern();
+	public String getDashPatternWithInheritance() {
+		String pattern = getDashPattern();
 		if( isCustomValue( pattern ) ) return pattern;
 
 		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_DRAW_PATTERN : layer.getDrawPattern();
+		return layer == null ? DesignLayer.DEFAULT_DASH_PATTERN : layer.getDashPattern();
 	}
 
-	public String getDrawPattern() {
+	public String getDashPattern() {
 		// Do not default to layer for this property
-		return getValue( DRAW_PATTERN );
+		// TODO Why?
+		return getValue( DASH_PATTERN );
 	}
 
-	public DesignDrawable setDrawPattern( String pattern ) {
-		setValue( DRAW_PATTERN, pattern );
+	public DesignDrawable setDashPattern( String pattern ) {
+		setValue( DASH_PATTERN, pattern );
 		return this;
 	}
 
@@ -211,7 +240,7 @@ public abstract class DesignDrawable extends DesignNode {
 			// TODO Not sure why this doesn't just use the cached value
 			return StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() );
 		} else {
-			return(StrokeLineCap)getCache().computeIfAbsent( DRAW_CAP, k -> StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() ) );
+			return (StrokeLineCap)getCache().computeIfAbsent( DRAW_CAP, k -> StrokeLineCap.valueOf( getDrawCapWithInheritance().toUpperCase() ) );
 		}
 	}
 
@@ -294,7 +323,7 @@ public abstract class DesignDrawable extends DesignNode {
 			case VIRTUAL_LAYER -> getLayer() == null ? null : (T)getLayer().getId();
 			case VIRTUAL_DRAW_PAINT_MODE -> (T)(getValueMode( getDrawPaint() ));
 			case VIRTUAL_DRAW_WIDTH_MODE -> (T)(getValueMode( getDrawWidth() ));
-			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDrawPattern() ));
+			case VIRTUAL_DRAW_PATTERN_MODE -> (T)(getValueMode( getDashPattern() ));
 			case VIRTUAL_DRAW_CAP_MODE -> (T)(getValueMode( getDrawCap() ));
 			case VIRTUAL_FILL_PAINT_MODE -> (T)(getValueMode( getFillPaint() ));
 			default -> super.getValue( key );
@@ -341,7 +370,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 	protected Map<String, Object> asMap() {
 		Map<String, Object> map = super.asMap();
-		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DRAW_PATTERN, FILL_PAINT ) );
+		map.putAll( asMap( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DASH_PATTERN, FILL_PAINT ) );
 		return map;
 	}
 
@@ -349,7 +378,7 @@ public abstract class DesignDrawable extends DesignNode {
 		super.updateFrom( map );
 
 		// Fix pattern data
-		String drawPattern = (String)map.get( DRAW_PATTERN );
+		String drawPattern = (String)map.get( DASH_PATTERN );
 		if( "0".equals( drawPattern ) ) drawPattern = null;
 		if( "".equals( drawPattern ) ) drawPattern = null;
 
@@ -359,7 +388,7 @@ public abstract class DesignDrawable extends DesignNode {
 		if( map.containsKey( DRAW_WIDTH ) ) setDrawWidth( (String)map.get( DRAW_WIDTH ) );
 		if( map.containsKey( DRAW_ALIGN ) ) setDrawAlign( (String)map.get( DRAW_ALIGN ) );
 		if( map.containsKey( DRAW_CAP ) ) setDrawCap( (String)map.get( DRAW_CAP ) );
-		if( map.containsKey( DRAW_PATTERN ) ) setDrawPattern( drawPattern );
+		if( map.containsKey( DASH_PATTERN ) ) setDashPattern( drawPattern );
 		setFillPaint( map.containsKey( FILL_PAINT ) ? (String)map.get( FILL_PAINT ) : null );
 
 		return this;
@@ -422,7 +451,7 @@ public abstract class DesignDrawable extends DesignNode {
 
 		String oldValue = getValue( VIRTUAL_DRAW_PATTERN_MODE );
 		try( Txn ignored = Txn.create() ) {
-			setDrawPattern( isCustom ? TextUtil.nullToEmpty( getDrawPatternWithInheritance() ) : null );
+			setDashPattern( isCustom ? TextUtil.nullToEmpty( getDashPatternWithInheritance() ) : null );
 			Txn.submit( this, t -> getEventHub().dispatch( new NodeEvent( this, NodeEvent.VALUE_CHANGED, VIRTUAL_DRAW_PATTERN_MODE, oldValue, newValue ) ) );
 		} catch( TxnException exception ) {
 			log.atError().withCause( exception ).log( "Error setting draw pattern" );

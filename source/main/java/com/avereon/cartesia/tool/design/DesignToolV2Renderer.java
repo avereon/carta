@@ -847,7 +847,7 @@ public class DesignToolV2Renderer extends DesignRenderer {
 				shape.calcDrawWidth(),
 				LineCap.valueOf( shape.calcDrawCap().name() ),
 				LineJoin.ROUND,
-				shape.calcDrawPattern().stream().mapToDouble( d -> d ).toArray(),
+				shape.calcDashPattern().stream().mapToDouble( d -> d ).toArray(),
 				0.0,
 				shape.getType() == DesignShape.Type.TEXT
 			);

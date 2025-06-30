@@ -310,7 +310,7 @@ public abstract class Command {
 		shape.setFillPaint( layer.getFillPaint() );
 		shape.setDrawPaint( layer.getDrawPaint() );
 		shape.setDrawWidth( layer.getDrawWidth() );
-		shape.setDrawPattern( layer.getDrawPattern() );
+		shape.setDashPattern( layer.getDashPattern() );
 		shape.setDrawCap( layer.getDrawCap() );
 		shape.setDrawJoin( layer.getDrawJoin() );
 
@@ -318,7 +318,7 @@ public abstract class Command {
 			text.setFillPaint( layer.getTextFillPaint() );
 			text.setDrawPaint( layer.getTextDrawPaint() );
 			text.setDrawWidth( layer.getTextDrawWidth() );
-			text.setDrawPattern( layer.getTextDrawPattern() );
+			text.setDashPattern( layer.getTextDrawPattern() );
 
 			text.setTextSize( layer.getTextSize() );
 			text.setFontName( layer.getFontName() );
