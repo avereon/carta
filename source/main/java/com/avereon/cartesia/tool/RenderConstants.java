@@ -1,12 +1,9 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.DesignUnit;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
 public interface RenderConstants {
-
-	DesignUnit DEFAULT_UNIT = DesignUnit.CM;
 
 	double DEFAULT_DPI = 96;
 

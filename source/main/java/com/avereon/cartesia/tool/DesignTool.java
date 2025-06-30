@@ -9,7 +9,6 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.DesignRenderer;
-import com.avereon.marea.RenderUnit;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
@@ -24,12 +23,6 @@ import java.util.Collection;
 import java.util.List;
 
 public interface DesignTool extends RenderConstants {
-
-	Point3D DEFAULT_PAN = new Point3D( 0, 0, 0 );
-
-	RenderUnit DEFAULT_LENGTH_UNIT = RenderUnit.CENTIMETER;
-
-	double DEFAULT_ZOOM_STEP_FACTOR = 0.1;
 
 	/**
 	 * The default zoom magnification reached by applying zoom in or out the {@link #DEFAULT_ZOOM_STEPS} times.
