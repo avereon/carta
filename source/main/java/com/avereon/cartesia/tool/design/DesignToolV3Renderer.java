@@ -31,9 +31,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
  	// The text renderer dies at 100,000,000 scale, so we need to keep the
 	// scale below that value.
 
-	private static final double ATOMIC_SCALE = 100000;
+	static final double ATOMIC_SCALE = 10000;
 
-	private static final double ATOMIC_ISCALE = 1.0 / ATOMIC_SCALE;
+	static final double ATOMIC_ISCALE = 1.0 / ATOMIC_SCALE;
 
 	// The geometry in this pane should be configured by the workplane but
 	// managed by an internal class that can optimize the use of the FX geometry.
