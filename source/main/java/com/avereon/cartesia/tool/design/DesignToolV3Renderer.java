@@ -85,6 +85,10 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		DesignLayer rootDesignLayer = design.getLayers();
 		rootDesignLayer.getLayers().forEach( designLayer -> this.design.getChildren().add( mapDesignLayer( designLayer ) ) );
 
+		design.register( this, Design.UNIT, e -> {
+			// NEXT Design unit changed, update the geometry scale
+		} );
+
 		// Add boundary rectangles for each shape in the design
 		design.getLayers().getAllLayers().forEach( designLayer -> {
 			designLayer.getShapes().forEach( designShape -> {
