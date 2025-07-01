@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.data.NodeEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -82,25 +83,24 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		this.grid.getChildren().add( new Line( -10, 0, 10, 0 ) ); // Horizontal line
 		this.grid.getChildren().add( new Line( 0, -10, 0, 10 ) ); // Vertical line
 
-//		// FIXME This is inefficient since it builds geometry for everything in the design.
-//		// Consider only generating geometry for the visible layers and shapes.
-//		DesignLayer rootDesignLayer = design.getLayers();
-//		rootDesignLayer.getLayers().forEach( designLayer -> this.layers.getChildren().add( mapDesignLayer( designLayer ) ) );
-//
-//		// TEMPORARY Add boundary rectangles for each shape in the design
-//		design.getLayers().getAllLayers().forEach( designLayer -> {
-//			designLayer.getShapes().forEach( designShape -> {
-//				Shape shape = mapDesignShape( designShape );
-//				if( shape != null ) {
-//					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
-//					bounds.setStroke( Colors.parse( "#C0A000" ) );
-//					bounds.setStrokeWidth( 1 );
-//					bounds.setFill( null );
-//					reference.getChildren().add( bounds );
-//				}
-//			} );
-//		} );
-
+		//		// FIXME This is inefficient since it builds geometry for everything in the design.
+		//		// Consider only generating geometry for the visible layers and shapes.
+		//		DesignLayer rootDesignLayer = design.getLayers();
+		//		rootDesignLayer.getLayers().forEach( designLayer -> this.layers.getChildren().add( mapDesignLayer( designLayer ) ) );
+		//
+		//		// TEMPORARY Add boundary rectangles for each shape in the design
+		//		design.getLayers().getAllLayers().forEach( designLayer -> {
+		//			designLayer.getShapes().forEach( designShape -> {
+		//				Shape shape = mapDesignShape( designShape );
+		//				if( shape != null ) {
+		//					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
+		//					bounds.setStroke( Colors.parse( "#C0A000" ) );
+		//					bounds.setStrokeWidth( 1 );
+		//					bounds.setFill( null );
+		//					reference.getChildren().add( bounds );
+		//				}
+		//			} );
+		//		} );
 
 		// TODO Set up the framework so that layers only have to be generated when they are visible.
 		// Initially this is easy since the design.getLayers() is the root layer and
@@ -108,15 +108,39 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// need to be added and removed from the layer pane in order. What is the best
 		// way to do this?
 
-		// This is a DataNode
+		// This is a DataNode. This can be used to listen for all the layer added
+		// events. The added layer can then be compared to the all layers list and
+		// the new location be determined. A removed layer should have a reference
+		// to the layer that needs to be removed, if it exists, so it should be
+		// much easier to remove.
 		DesignLayer root = design.getLayers();
+		root.register(
+			NodeEvent.CHILD_ADDED, e -> {
+				DesignLayer addedLayer = e.getNewValue();
+				int index = root.getAllLayers().indexOf(addedLayer );
+				// It probably isn't quite this easy, but it's the right idea
+				// Or maybe we do nothing until the layer is made visible
+				Pane pane = new Pane();
+				layers.getChildren().add(index,pane);
+			}
+		);
+		root.register(
+			NodeEvent.CHILD_REMOVED, e -> {
+				DesignLayer removedLayer = e.getOldValue();
+				Pane pane = removedLayer.getValue( FX_SHAPE );
+				// It probably isn't quite this easy, but it's the right idea
+				layers.getChildren().remove(pane);
+			}
+		);
 
 		// This is "just" a list. Not observable or a DataList.
 		List<DesignLayer> layers = design.getLayers().getAllLayers();
 
-		design.register( this, Design.UNIT, e -> {
-			// NEXT Design unit changed, update the geometry scale
-		} );
+		design.register(
+			this, Design.UNIT, e -> {
+				// NEXT Design unit changed, update the geometry scale
+			}
+		);
 	}
 
 	private Pane mapDesignLayer( DesignLayer designLayer ) {
@@ -152,7 +176,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		Shape fxShape = designShape.getValue( FX_SHAPE );
 		if( fxShape != null ) return fxShape;
 
-		Design design = designShape.getDesign().orElse(null);
+		Design design = designShape.getDesign().orElse( null );
 		if( design == null ) return null;
 
 		DesignUnit unit = design.calcDesignUnit();
