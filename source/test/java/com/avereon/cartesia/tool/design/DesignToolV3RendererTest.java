@@ -5,7 +5,6 @@ import com.avereon.cartesia.tool.RenderConstants;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -261,35 +260,6 @@ public class DesignToolV3RendererTest {
 
 		// then
 		verify( yListener, times( 1 ) ).changed( any(), any(), eq( 3.0 ) );
-	}
-
-	@Test
-		// @WhiteBoxTest
-	void defaultWorldScale() {
-		// given
-		double expectedScale = DEFAULT_DPI * DesignToolV3Renderer.ATOMIC_ISCALE;
-		Offset<Double> offset = Offset.offset( 1e-12 );
-
-		// then
-		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
-		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
-		assertThat( expectedScale ).isCloseTo( 0.0096, offset );
-	}
-
-	@Test
-		// @WhiteBoxTest
-	void setWorldScale() {
-		// given
-		double expectedScale = 160 * DesignToolV3Renderer.ATOMIC_ISCALE;
-		Offset<Double> offset = Offset.offset( 1e-12 );
-
-		// when
-		renderer.setDpi( 160 );
-
-		// then
-		assertThat( renderer.getWorldScale().getX() ).isEqualTo( expectedScale, offset );
-		assertThat( renderer.getWorldScale().getY() ).isEqualTo( -expectedScale, offset );
-		assertThat( expectedScale ).isEqualTo( 0.016, offset );
 	}
 
 }

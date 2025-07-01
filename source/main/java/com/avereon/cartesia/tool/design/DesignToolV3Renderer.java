@@ -13,7 +13,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
@@ -21,20 +20,6 @@ import java.util.Collection;
 
 @CustomLog
 public class DesignToolV3Renderer extends DesignRenderer {
-
-	// NEXT Implement an internal scale value that is used to scale the world
-	// geometry to the renderer. This should allow the geometry to be rendered
-	// accurately as well as bounding rectangles to be calculated accurately.
-	// The scale should be at least as large as the media DPI, which can reach
-	// as high as 9600 x 2400 DPI with high resolution printers.
-	//
-	// The text renderer dies at 100,000,000 scale, so we need to keep the
-	// scale below that value.
-
-	// TODO Can we deprecate the use of ATOMIC_SCALE and ATOMIC_ISCALE?
-	static final double ATOMIC_SCALE = 10000;
-
-	static final double ATOMIC_ISCALE = 1.0 / ATOMIC_SCALE;
 
 	public static final String FX_SHAPE = "fx-shape";
 
@@ -52,10 +37,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private final Pane world;
 
 	private final Pane screen;
-
-	private Scale screenScaleTransform;
-
-	private Scale worldScaleTransform;
 
 	// NEXT Apply lessons learned to create a new design renderer
 
@@ -78,6 +59,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// The world scale container
 		// Contains the grid, design, preview, and reference panes
 		world = new Pane();
+		world.getTransforms().add( Transform.scale( 1, -1 ) );
 		world.getChildren().addAll( grid, design, preview, reference );
 
 		// The screen scale container
@@ -86,11 +68,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		getChildren().addAll( world, screen );
 
-		dpiXProperty().addListener( ( _, _, n ) -> this.updateWorldScale( n.doubleValue(), getDpiY() ) );
-		dpiYProperty().addListener( ( _, _, n ) -> this.updateWorldScale( getDpiX(), n.doubleValue() ) );
-
-		// Initialize the internal scale
-		this.updateWorldScale( getDpiX(), getDpiY() );
+		// Update the geometry when the DPI changes
+		//		dpiXProperty().addListener( ( _, _, n ) -> this.updateFxGeometry( n.doubleValue(), getDpiY() ) );
+		//		dpiYProperty().addListener( ( _, _, n ) -> this.updateFxGeometry( getDpiX(), n.doubleValue() ) );
 	}
 
 	@Override
@@ -112,7 +92,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 				if( shape != null ) {
 					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
 					bounds.setStroke( Colors.parse( "#C0A000" ) );
-					bounds.setStrokeWidth( ATOMIC_SCALE / getDpiX() );
+					bounds.setStrokeWidth( 1 );
 					bounds.setFill( null );
 					reference.getChildren().add( bounds );
 				}
@@ -150,63 +130,40 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return layer;
 	}
 
-	private Shape mapDesignShape( DesignShape shape ) {
-		Shape fxShape = shape.getValue( FX_SHAPE );
+	private Shape mapDesignShape( DesignShape designShape ) {
+		Shape fxShape = designShape.getValue( FX_SHAPE );
 		if( fxShape != null ) return fxShape;
 
-		DesignUnit unit = shape.calcUnit();
-		double unitScaleX = unit.to( 1, DesignUnit.IN );
-		double unitScaleY = unit.to( 1, DesignUnit.IN );
+		DesignUnit unit = designShape.calcUnit();
+		double unitScale = unit.to( 1, DesignUnit.IN );
+		double gzX = getDpiX() * unitScale;
+		double gzY = getDpiY() * unitScale;
 
-		fxShape = switch( shape.getType() ) {
-			case LINE -> {
-				DesignLine designLine = (DesignLine)shape;
-				yield new Line(
-					// FIXME take into account the design unit
-					designLine.getOrigin().getX() * ATOMIC_SCALE * unitScaleX,
-					designLine.getOrigin().getY() * ATOMIC_SCALE * unitScaleY,
-					designLine.getPoint().getX() * ATOMIC_SCALE * unitScaleX,
-					designLine.getPoint().getY() * ATOMIC_SCALE * unitScaleY
-				);
-			}
-			case TEXT -> {
-				// FIXME take into account the design unit
-				DesignText designText = (DesignText)shape;
-				Text text = new Text( designText.getOrigin().getX() * ATOMIC_SCALE * unitScaleX, -designText.getOrigin().getY() * ATOMIC_SCALE * unitScaleX, designText.getText() );
-				text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * ATOMIC_SCALE * unitScaleX ) );
-				text.getTransforms().add( Transform.rotate( designText.calcRotate(), designText.getOrigin().getX() * ATOMIC_SCALE * unitScaleX, designText.getOrigin().getY() * ATOMIC_SCALE * unitScaleX ) );
-				text.getTransforms().add( Transform.scale( 1, -1 ) );
-				yield text;
-			}
+		fxShape = switch( designShape.getType() ) {
+			case LINE -> updateFxGeometry( (DesignLine)designShape, gzX, gzY );
+			case TEXT -> updateFxGeometry( (DesignText)designShape, gzX, gzY );
 			default -> null;
 		};
 
 		if( fxShape == null ) {
-			log.atWarn().log( "Unable to map design shape: %s", shape );
+			log.atWarn().log( "Unable to map design shape: %s", designShape );
 			return null;
 		}
 
-		fxShape.setUserData( shape );
+		fxShape.setUserData( designShape );
 		fxShape.setManaged( false );
 
-		fxShape.setStroke( shape.calcDrawPaint() );
-		fxShape.setStrokeWidth( shape.calcDrawWidth() * ATOMIC_SCALE * unitScaleX );
-		fxShape.setStrokeLineCap( shape.calcDrawCap() );
-		//fxShape.setStrokeLineJoin( shape.calcDrawJoin() );
-		//fxShape.setStrokeType( shape.calcDrawType() );
+		fxShape.setStroke( designShape.calcDrawPaint() );
+		fxShape.setStrokeLineCap( designShape.calcDrawCap() );
+		fxShape.setStrokeLineJoin( designShape.calcDrawJoin() );
+		//fxShape.setStrokeType( designShape.calcDrawType() );
 
-		fxShape.getStrokeDashArray().setAll( shape.calcDashPattern() );
-		//fxShape.setStrokeDashOffset( shape.calcDrawDashOffset() );
-		//fxShape.setStrokeMiterLimit( shape.calcDrawMiterLimit() );
-		fxShape.setFill( shape.calcFillPaint() );
+		fxShape.setFill( designShape.calcFillPaint() );
 
 		return fxShape;
 	}
 
 	private Bounds getVisualBounds( Node node ) {
-		// There are two ways to approach this:
-		// 1. Use the bounds of the world to determine the visible area.
-		// 2. Use the bounds of the renderer to determine the visible area.
 		return node.getBoundsInParent();
 	}
 
@@ -247,50 +204,53 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	}
 
-	private void updateToScreenScale( DesignLine designLine) {
+	private Shape updateFxGeometry( DesignLine designLine, double gzX, double gzY ) {
 		Line line = designLine.getValue( FX_SHAPE );
-		if( line == null ) return;
+		if( line == null ) line = designLine.setValue( FX_SHAPE, new Line() );
 
-		double zX = getScreenScale().getX();
-		double zY = getScreenScale().getY();
+		line.setStartX( designLine.getOrigin().getX() * gzX );
+		line.setStartY( designLine.getOrigin().getY() * gzY );
+		line.setEndX( designLine.getPoint().getX() * gzX );
+		line.setEndY( designLine.getPoint().getY() * gzY );
 
-		// Screen scale should "just" be the DPI scale
-		line.setStartX( designLine.getOrigin().getX() * zX );
-		line.setStartY( designLine.getOrigin().getY() * zY );
-		line.setEndX( designLine.getPoint().getX() * zX );
-		line.setEndY( designLine.getPoint().getY() * zY );
-
-		// update common shape properties
-		updateToScreenScale( designLine, line );
+		return updateFxGeometry( designLine, line, gzX, gzY );
 	}
 
-	private void updateToScreenScale( DesignShape designShape, Shape shape ) {
-		if( shape == null ) return;
+	// TODO Finish building the update methods for the remaining design shapes
 
-		double zX = getScreenScale().getX();
+	private Shape updateFxGeometry( DesignText designText, double gzX, double gzY ) {
+		Text text = designText.getValue( FX_SHAPE );
+		if( text == null ) text = designText.setValue( FX_SHAPE, new Text() );
 
-		shape.setStrokeWidth( designShape.calcDrawWidth() * zX );
-		//shape.setStrokeDashOffset( designShape.calcDrawDashOffset() * zX );
-		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * zX ).toList() );
+		double x = designText.getOrigin().getX() * gzX;
+		double y = designText.getOrigin().getY() * gzY;
+
+		text.setX( x );
+		text.setY( -y );
+		text.setText( designText.getText() );
+		text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * gzY ) );
+		text.getTransforms().add( Transform.rotate( designText.calcRotate(), x, y ) );
+		text.getTransforms().add( Transform.scale( 1, -1 ) );
+
+		return updateFxGeometry( designText, text, gzX, gzY );
 	}
 
-	Scale getScreenScale() {
-		return screenScaleTransform;
-	}
-
-	/*
-	For testing purposes only! This method is not part of the public API.
-  */
-	Scale getWorldScale() {
-		return worldScaleTransform;
-	}
-
-	private void updateWorldScale( double dpiX, double dpiY ) {
-		screenScaleTransform = Transform.scale( dpiX * ATOMIC_ISCALE, -dpiY * ATOMIC_ISCALE );
-
-		if( worldScaleTransform != null ) world.getTransforms().remove( worldScaleTransform );
-		worldScaleTransform = Transform.scale( dpiX * ATOMIC_ISCALE, -dpiY * ATOMIC_ISCALE );
-		world.getTransforms().add( worldScaleTransform );
+	/**
+	 * Update the common geometry properties of the shape. This method is used to
+	 * common shape properties that are dependent on the rendering scale.
+	 *
+	 * @param designShape The source design shape
+	 * @param shape The target FX shape
+	 * @param gzX The pre-calculated geometry scale factor for the X axis
+	 * @param gzY The pre-calculated geometry scale factor for the Y axis
+	 * @return The updated FX shape
+	 */
+	private Shape updateFxGeometry( DesignShape designShape, Shape shape, double gzX, double gzY ) {
+		shape.setStrokeWidth( designShape.calcDrawWidth() * gzX );
+		shape.setStrokeDashOffset( designShape.calcDashOffset() * gzX );
+		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * gzX ).toList() );
+		//shape.setStrokeMiterLimit( designShape.calcDrawMiterLimit()* gzX );
+		return shape;
 	}
 
 }
