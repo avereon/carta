@@ -1,12 +1,15 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.math.CadShapes;
+import com.avereon.data.NodeEvent;
 import com.avereon.zerra.color.Paints;
 import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,6 +61,44 @@ public class DesignLayerTest {
 		assertThat( layer.isModified() ).isTrue();
 		layer.setModified( false );
 		assertThat( layer.isModified() ).isFalse();
+	}
+
+	@Test
+	void testAddLayerEvent() {
+		// given
+		DesignLayer child = new DesignLayer();
+		AtomicInteger count = new AtomicInteger( 0 );
+		layer.register( NodeEvent.CHILD_ADDED, _ -> count.incrementAndGet() );
+
+		// when
+		layer.addLayer( child );
+		// then
+		assertThat( count.get() ).isEqualTo( 1 );
+
+		// when
+		child.addLayer( new DesignLayer() );
+		// then
+		assertThat( count.get() ).isEqualTo( 2 );
+	}
+
+	@Test
+	void testRemoveLayerEvent() {
+		DesignLayer child = new DesignLayer();
+		DesignLayer grandchild = new DesignLayer();
+		AtomicInteger count = new AtomicInteger( 0 );
+		layer.addLayer( child );
+		child.addLayer( grandchild );
+		layer.register( NodeEvent.CHILD_REMOVED, _ -> count.incrementAndGet() );
+
+		// when
+		child.removeLayer( grandchild );
+		// then
+		assertThat( count.get() ).isEqualTo( 1 );
+
+		// when
+		layer.removeLayer( child );
+		// then
+		assertThat( count.get() ).isEqualTo( 2 );
 	}
 
 }

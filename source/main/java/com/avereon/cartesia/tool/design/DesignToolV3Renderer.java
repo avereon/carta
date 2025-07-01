@@ -3,13 +3,10 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
-import com.avereon.zerra.color.Colors;
-import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -17,6 +14,7 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.Collection;
+import java.util.List;
 
 @CustomLog
 public class DesignToolV3Renderer extends DesignRenderer {
@@ -28,7 +26,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private final Pane grid;
 
 	// The design pane contains all the design layers.
-	private final Pane design;
+	private final Pane layers;
 
 	private final Pane reference;
 
@@ -37,6 +35,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private final Pane world;
 
 	private final Pane screen;
+
+	private Design design;
 
 	// NEXT Apply lessons learned to create a new design renderer
 
@@ -47,8 +47,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		grid = new Pane();
 		grid.getStyleClass().add( "tool-renderer-grid" );
 
-		design = new Pane();
-		design.getStyleClass().add( "tool-renderer-design" );
+		layers = new Pane();
+		layers.getStyleClass().add( "tool-renderer-design" );
 
 		preview = new Pane();
 		preview.getStyleClass().add( "tool-renderer-preview" );
@@ -60,7 +60,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Contains the grid, design, preview, and reference panes
 		world = new Pane();
 		world.getTransforms().add( Transform.scale( 1, -1 ) );
-		world.getChildren().addAll( grid, design, preview, reference );
+		world.getChildren().addAll( grid, layers, preview, reference );
 
 		// The screen scale container
 		// Contains the orientation indicator
@@ -75,34 +75,48 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	@Override
 	public void setDesign( Design design ) {
+		this.design = design;
+
 		// Grid geometry
 		this.grid.getChildren().clear();
 		this.grid.getChildren().add( new Line( -10, 0, 10, 0 ) ); // Horizontal line
 		this.grid.getChildren().add( new Line( 0, -10, 0, 10 ) ); // Vertical line
 
-		// FIXME This is inefficient since it builds geometry for everything in the design.
-		// Consider only generating geometry for the visible layers and shapes.
-		DesignLayer rootDesignLayer = design.getLayers();
-		rootDesignLayer.getLayers().forEach( designLayer -> this.design.getChildren().add( mapDesignLayer( designLayer ) ) );
+//		// FIXME This is inefficient since it builds geometry for everything in the design.
+//		// Consider only generating geometry for the visible layers and shapes.
+//		DesignLayer rootDesignLayer = design.getLayers();
+//		rootDesignLayer.getLayers().forEach( designLayer -> this.layers.getChildren().add( mapDesignLayer( designLayer ) ) );
+//
+//		// TEMPORARY Add boundary rectangles for each shape in the design
+//		design.getLayers().getAllLayers().forEach( designLayer -> {
+//			designLayer.getShapes().forEach( designShape -> {
+//				Shape shape = mapDesignShape( designShape );
+//				if( shape != null ) {
+//					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
+//					bounds.setStroke( Colors.parse( "#C0A000" ) );
+//					bounds.setStrokeWidth( 1 );
+//					bounds.setFill( null );
+//					reference.getChildren().add( bounds );
+//				}
+//			} );
+//		} );
+
+
+		// TODO Set up the framework so that layers only have to be generated when they are visible.
+		// Initially this is easy since the design.getLayers() is the root layer and
+		// get all layers come in order, but as sub-layers are added and removed they
+		// need to be added and removed from the layer pane in order. What is the best
+		// way to do this?
+
+		// This is a DataNode
+		DesignLayer root = design.getLayers();
+
+		// This is "just" a list. Not observable or a DataList.
+		List<DesignLayer> layers = design.getLayers().getAllLayers();
 
 		design.register( this, Design.UNIT, e -> {
 			// NEXT Design unit changed, update the geometry scale
 		} );
-
-		// Add boundary rectangles for each shape in the design
-		design.getLayers().getAllLayers().forEach( designLayer -> {
-			designLayer.getShapes().forEach( designShape -> {
-				Shape shape = mapDesignShape( designShape );
-				if( shape != null ) {
-					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
-					bounds.setStroke( Colors.parse( "#C0A000" ) );
-					bounds.setStrokeWidth( 1 );
-					bounds.setFill( null );
-					reference.getChildren().add( bounds );
-				}
-			} );
-		} );
-
 	}
 
 	private Pane mapDesignLayer( DesignLayer designLayer ) {
@@ -183,7 +197,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	public void setLayer( DesignLayer layer ) {
-		design.getChildren().clear();
+		layers.getChildren().clear();
 	}
 
 	@Override
