@@ -134,7 +134,10 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		Shape fxShape = designShape.getValue( FX_SHAPE );
 		if( fxShape != null ) return fxShape;
 
-		DesignUnit unit = designShape.calcUnit();
+		Design design = designShape.getDesign().orElse(null);
+		if( design == null ) return null;
+
+		DesignUnit unit = design.calcDesignUnit();
 		double unitScale = unit.to( 1, DesignUnit.IN );
 		double gzX = getDpiX() * unitScale;
 		double gzY = getDpiY() * unitScale;

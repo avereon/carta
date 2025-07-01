@@ -1,6 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.zerra.color.Paints;
@@ -92,7 +91,6 @@ public class DesignDrawableTest {
 	@Test
 	void testDrawableDefaults() {
 		assertThat( drawable.getOrder() ).isEqualTo( -1 );
-		assertThat( drawable.getUnit() ).isNull();
 		assertThat( drawable.getDrawPaint() ).isNull();
 		assertThat( drawable.getDrawWidth() ).isNull();
 		assertThat( drawable.getDrawCap() ).isNull();
@@ -104,7 +102,6 @@ public class DesignDrawableTest {
 
 	@Test
 	void testDrawableCalcDefaults() {
-		assertThat( drawable.calcUnit() ).isEqualTo( DesignUnit.valueOf( DesignLayer.DEFAULT_UNIT.toUpperCase() ) );
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
 		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );

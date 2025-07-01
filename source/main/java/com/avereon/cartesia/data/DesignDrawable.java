@@ -1,6 +1,5 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.math.CadMath;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.data.NodeEvent;
@@ -25,8 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public abstract class DesignDrawable extends DesignNode {
 
 	public static final String ORDER = "order";
-
-	public static final String UNIT = "unit";
 
 	public static final String DRAW_PAINT = "draw-paint";
 
@@ -72,7 +69,7 @@ public abstract class DesignDrawable extends DesignNode {
 	private final Map<String, Object> cache;
 
 	protected DesignDrawable() {
-		addModifyingKeys( ORDER, UNIT, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DASH_OFFSET, DASH_PATTERN, FILL_PAINT );
+		addModifyingKeys( ORDER, DRAW_PAINT, DRAW_WIDTH, DRAW_ALIGN, DRAW_CAP, DASH_OFFSET, DASH_PATTERN, FILL_PAINT );
 		cache = new ConcurrentHashMap<>();
 	}
 
@@ -88,26 +85,6 @@ public abstract class DesignDrawable extends DesignNode {
 	public <T extends DesignDrawable> T setOrder( int order ) {
 		setValue( ORDER, order );
 		return (T)this;
-	}
-
-	public DesignUnit calcUnit() {
-		return (DesignUnit)getCache().computeIfAbsent( UNIT, _ -> DesignUnit.valueOf( getUnitWithInheritance().toUpperCase() ) );
-	}
-
-	public String getUnitWithInheritance() {
-		String unit = getUnit();
-		if( isCustomValue( unit ) ) return unit;
-
-		DesignLayer layer = getLayer();
-		return layer == null ? DesignLayer.DEFAULT_UNIT : layer.getUnit();
-	}
-
-	public String getUnit() {
-		return getValue( UNIT );
-	}
-
-	public void setUnit( String unit ) {
-		setValue( UNIT, unit );
 	}
 
 	public Paint calcDrawPaint() {

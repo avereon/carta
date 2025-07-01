@@ -290,16 +290,6 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	@Override
-	public String getUnit() {
-		return getValue( UNIT, DEFAULT_UNIT );
-	}
-
-	@Override
-	public DesignUnit calcUnit() {
-		return DesignUnit.valueOf( getUnit().toUpperCase() );
-	}
-
-	@Override
 	public String getDrawPaint() {
 		return getValue( DRAW_PAINT, DEFAULT_DRAW_PAINT );
 	}

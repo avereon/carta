@@ -1,6 +1,7 @@
 package com.avereon.cartesia.data;
 
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.data.map.DesignUnitMapper;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
 import com.avereon.xenon.XenonProgramProduct;
@@ -70,7 +71,8 @@ public abstract class Design extends IdNode {
 	}
 
 	public DesignUnit calcDesignUnit() {
-		return DesignUnit.valueOf( getDesignUnit().toUpperCase() );
+		// TODO Cache this object, it is used frequently
+		return DesignUnitMapper.map( getDesignUnit() );
 	}
 
 	public String getDesignUnit() {
