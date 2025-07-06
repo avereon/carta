@@ -15,6 +15,7 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @CustomLog
@@ -117,11 +118,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		root.register(
 			NodeEvent.CHILD_ADDED, e -> {
 				DesignLayer addedLayer = e.getNewValue();
-				int index = root.getAllLayers().indexOf(addedLayer );
+				int index = root.getAllLayers().indexOf( addedLayer );
 				// It probably isn't quite this easy, but it's the right idea
 				// Or maybe we do nothing until the layer is made visible
 				Pane pane = new Pane();
-				layers.getChildren().add(index,pane);
+				layers.getChildren().add( index, pane );
 			}
 		);
 		root.register(
@@ -129,7 +130,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 				DesignLayer removedLayer = e.getOldValue();
 				Pane pane = removedLayer.getValue( FX_SHAPE );
 				// It probably isn't quite this easy, but it's the right idea
-				layers.getChildren().remove(pane);
+				layers.getChildren().remove( pane );
 			}
 		);
 
@@ -141,6 +142,89 @@ public class DesignToolV3Renderer extends DesignRenderer {
 				// NEXT Design unit changed, update the geometry scale
 			}
 		);
+	}
+
+	/**
+	 * Sets the visibility of a specified design layer.
+	 *
+	 * @param layer The design layer to modify visibility.
+	 * @param visible True to make the layer visible, false to make it hidden.
+	 */
+	public void setLayerVisible( DesignLayer layer, boolean visible ) {
+		// This method has a very important implementation, it is more than just
+		// setting a flag, it participates in the performance of the renderer by
+		// creating and destroying geometry. Since most layers are not visible in
+		// most designs, layer geometry is only created when needed, and that is
+		// most often when the layer is made visible. The same happens in reverse;
+		// when the layer is hidden, the geometry is usually not needed anymore.
+		if( visible ) {
+			Pane pane = mapDesignLayer( layer, true );
+			layer.setValue( FX_SHAPE, pane );
+			layers.getChildren().add( determineLayerIndex( layer ), pane );
+		} else {
+			// Remove the FX layer from the renderer
+			Pane pane = layer.getValue( FX_SHAPE );
+			if( pane != null ) layers.getChildren().remove( pane );
+			layer.setValue( FX_SHAPE, null );
+		}
+	}
+
+	private int determineLayerIndex( DesignLayer designLayer ) {
+		// Figure out where designLayer goes among the existing FX layers based on
+		// the order of the design layers
+		List<DesignLayer> designLayers = design.getLayers().getAllLayers();
+		Collections.reverse( designLayers );
+		List<Node> fxLayers = layers.getChildren();
+
+		int index = -1;
+		for( DesignLayer checkLayer : designLayers ) {
+			if( checkLayer == designLayer ) break;
+			Pane fxLayer = checkLayer.getValue( FX_SHAPE );
+			if( fxLayer != null ) index = fxLayers.indexOf( fxLayer );
+		}
+
+		return index + 1;
+	}
+
+	@Override
+	public void setVisibleLayers( Collection<DesignLayer> layers ) {
+		// Convenience method, to set multiple layers visible and hidden at the same time
+	}
+
+	public void addWorkplane( Workplane workplane ) {
+		//gridGeometryManager.updateGridGeometry( workplane );
+	}
+
+	public void removeWorkplane( Workplane workplane ) {
+		//gridGeometryManager.removeGridGeometry( workplane );
+	}
+
+	//	@Override
+	//	public void setPrefWidth( double width ) {
+	//		super.setPrefWidth( width );
+	//	}
+	//
+	//	@Override
+	//	public void setPrefHeight( double height ) {
+	//
+	//	}
+
+	@Override
+	public void render() {
+
+	}
+
+	@Override
+	public void print( double factor ) {
+
+	}
+
+	final Pane layersPane() {
+		return layers;
+	}
+
+	private Bounds getVisualBounds( Node node ) {
+		return node.getBoundsInParent();
 	}
 
 	private Pane mapDesignLayer( DesignLayer designLayer ) {
@@ -161,6 +245,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		if( includeShapes ) {
 			designLayer.getShapes().forEach( designShape -> {
 				Shape shape = mapDesignShape( designShape );
+				// TODO Handlers need to be attached with the layer as owner
 				if( shape != null ) layer.getChildren().add( shape );
 			} );
 		}
@@ -185,8 +270,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		double gzY = getDpiY() * unitScale;
 
 		fxShape = switch( designShape.getType() ) {
-			case LINE -> updateFxGeometry( (DesignLine)designShape, gzX, gzY );
-			case TEXT -> updateFxGeometry( (DesignText)designShape, gzX, gzY );
+			case LINE -> updateLineGeometry( (DesignLine)designShape, gzX, gzY );
+			case TEXT -> updateTextGeometry( (DesignText)designShape, gzX, gzY );
 			default -> null;
 		};
 
@@ -208,48 +293,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return fxShape;
 	}
 
-	private Bounds getVisualBounds( Node node ) {
-		return node.getBoundsInParent();
-	}
-
-	public void addWorkplane( Workplane workplane ) {
-		//gridGeometryManager.updateGridGeometry( workplane );
-	}
-
-	public void removeWorkplane( Workplane workplane ) {
-		//gridGeometryManager.removeGridGeometry( workplane );
-	}
-
-	public void setLayer( DesignLayer layer ) {
-		layers.getChildren().clear();
-	}
-
-	@Override
-	public void setVisibleLayers( Collection<DesignLayer> layers ) {
-
-	}
-
-	//	@Override
-	//	public void setPrefWidth( double width ) {
-	//		super.setPrefWidth( width );
-	//	}
-	//
-	//	@Override
-	//	public void setPrefHeight( double height ) {
-	//
-	//	}
-
-	@Override
-	public void render() {
-
-	}
-
-	@Override
-	public void print( double factor ) {
-
-	}
-
-	private Shape updateFxGeometry( DesignLine designLine, double gzX, double gzY ) {
+	private Shape updateLineGeometry( DesignLine designLine, double gzX, double gzY ) {
 		Line line = designLine.getValue( FX_SHAPE );
 		if( line == null ) line = designLine.setValue( FX_SHAPE, new Line() );
 
@@ -258,12 +302,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		line.setEndX( designLine.getPoint().getX() * gzX );
 		line.setEndY( designLine.getPoint().getY() * gzY );
 
-		return updateFxGeometry( designLine, line, gzX, gzY );
+		return updateCommonShapeGeometry( designLine, line, gzX, gzY );
 	}
 
 	// TODO Finish building the update methods for the remaining design shapes
 
-	private Shape updateFxGeometry( DesignText designText, double gzX, double gzY ) {
+	private Shape updateTextGeometry( DesignText designText, double gzX, double gzY ) {
 		Text text = designText.getValue( FX_SHAPE );
 		if( text == null ) text = designText.setValue( FX_SHAPE, new Text() );
 
@@ -277,7 +321,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		text.getTransforms().add( Transform.rotate( designText.calcRotate(), x, y ) );
 		text.getTransforms().add( Transform.scale( 1, -1 ) );
 
-		return updateFxGeometry( designText, text, gzX, gzY );
+		return updateCommonShapeGeometry( designText, text, gzX, gzY );
 	}
 
 	/**
@@ -290,7 +334,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 * @param gzY The pre-calculated geometry scale factor for the Y axis
 	 * @return The updated FX shape
 	 */
-	private Shape updateFxGeometry( DesignShape designShape, Shape shape, double gzX, double gzY ) {
+	private Shape updateCommonShapeGeometry( DesignShape designShape, Shape shape, double gzX, double gzY ) {
 		shape.setStrokeWidth( designShape.calcDrawWidth() * gzX );
 		shape.setStrokeDashOffset( designShape.calcDashOffset() * gzX );
 		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * gzX ).toList() );

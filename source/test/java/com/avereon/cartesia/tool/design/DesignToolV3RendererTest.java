@@ -1,10 +1,14 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.layout.Pane;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -260,6 +264,56 @@ public class DesignToolV3RendererTest {
 
 		// then
 		verify( yListener, times( 1 ) ).changed( any(), any(), eq( 3.0 ) );
+	}
+	
+	@Test
+	void setLayerVisible() {
+		// given
+		Design design = new Design2D();
+		DesignLayer layer0 = new DesignLayer().setName("layer0").setOrder( 0 );
+		DesignLayer layer1 = new DesignLayer().setName("layer1").setOrder( 1 );
+		DesignLayer layer2 = new DesignLayer().setName("layer2").setOrder( 2 );
+		DesignLayer layer3 = new DesignLayer().setName("layer3").setOrder( 3 );
+		DesignLayer layer4 = new DesignLayer().setName("layer4").setOrder( 4 );
+		design.getLayers().addLayer( layer0 );
+		design.getLayers().addLayer( layer1 );
+		design.getLayers().addLayer( layer2 );
+		design.getLayers().addLayer( layer3 );
+		design.getLayers().addLayer( layer4 );
+		renderer.setDesign( design );
+		assertThat(design.getAllLayers().size()).isEqualTo( 5 );
+		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 0 );
+		
+		// when
+		renderer.setLayerVisible( layer1, true );
+		renderer.setLayerVisible( layer3, true );
+		// then
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
+		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 2 );
+
+		// when
+		renderer.setLayerVisible( layer2, true );
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(2);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer2.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
+		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 3 );
+
+		// when
+		renderer.setLayerVisible( layer4, true );
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(3);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer2.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(2);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer4.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
+		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 4 );
+
+		// when
+		renderer.setLayerVisible( layer4, false );
+		// then
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(2);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer2.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
+		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
+		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 3 );
 	}
 
 }
