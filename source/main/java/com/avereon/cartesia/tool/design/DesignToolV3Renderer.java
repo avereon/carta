@@ -145,9 +145,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	/**
-	 * Sets the visibility of a specified design layer.
+	 * Sets the visibility of a specific design layer in the renderer. When a layer
+	 * is made visible, its geometry is created and added to the rendering system.
+	 * Conversely, when a layer is hidden, its geometry is removed to optimize
+	 * rendering performance.
 	 *
-	 * @param layer The design layer to modify visibility.
+	 * @param layer The design layer whose visibility is being set.
 	 * @param visible True to make the layer visible, false to make it hidden.
 	 */
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
@@ -158,6 +161,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// most often when the layer is made visible. The same happens in reverse;
 		// when the layer is hidden, the geometry is usually not needed anymore.
 		if( visible ) {
+			// Add the FX layer to the renderer
 			Pane pane = mapDesignLayer( layer, true );
 			layer.setValue( FX_SHAPE, pane );
 			layers.getChildren().add( determineLayerIndex( layer ), pane );
@@ -169,13 +173,19 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		}
 	}
 
+	/**
+	 * Determines the appropriate index for placing a design layer among the existing
+	 * FX layers based on the order of the design layers in the design.
+	 *
+	 * @param designLayer The design layer to determine the index for.
+	 * @return The computed index where the design layer should be inserted among FX layers.
+	 */
 	private int determineLayerIndex( DesignLayer designLayer ) {
-		// Figure out where designLayer goes among the existing FX layers based on
-		// the order of the design layers
 		List<DesignLayer> designLayers = design.getLayers().getAllLayers();
 		Collections.reverse( designLayers );
 		List<Node> fxLayers = layers.getChildren();
 
+		// Determine the appropriate index in the FX layers
 		int index = -1;
 		for( DesignLayer checkLayer : designLayers ) {
 			if( checkLayer == designLayer ) break;
