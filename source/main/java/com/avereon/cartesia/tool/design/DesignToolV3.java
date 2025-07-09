@@ -52,10 +52,10 @@ public class DesignToolV3 extends BaseDesignTool {
 		// changing the DPI setting.
 		getRenderer().setDpi( Screen.getPrimary().getDpi() );
 
+		// The tool workplane
 		this.workplane = new Workplane();
 
 		// Keep the renderer in the center of the tool
-		// FIXME This will probably conflict with the renderers view center
 		widthProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateX( 0.5 * n.doubleValue() ) );
 		heightProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateY( 0.5 * n.doubleValue() ) );
 

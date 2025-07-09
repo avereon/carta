@@ -23,6 +23,26 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	public static final String FX_SHAPE = "fx-shape";
 
+	/**
+	 * The primary container for all visual elements that are not part of the design
+	 * in the renderer. Examples include the orientation indicator.
+	 * <p>
+	 * This field is immutable and is used internally to manage the rendering system's
+	 * screen-level components.
+	 */
+	private final Pane screen;
+
+	/**
+	 * Represents the primary rendering pane for the design in the renderer.
+	 * This pane serves as the container for all graphical components and sublayers
+	 * that are part of the design. It acts as the central element around which
+	 * other panes or layers may be structured to compose the complete design visualization.
+	 * <p>
+	 * This field is immutable and is used internally to manage the rendering system's
+	 * design-level components.
+	 */
+	private final Pane world;
+
 	// The geometry in this pane should be configured by the workplane but
 	// managed by an internal class that can optimize the use of the FX geometry.
 	private final Pane grid;
@@ -33,10 +53,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private final Pane reference;
 
 	private final Pane preview;
-
-	private final Pane world;
-
-	private final Pane screen;
 
 	private Design design;
 
