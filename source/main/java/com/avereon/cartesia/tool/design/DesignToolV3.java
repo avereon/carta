@@ -80,8 +80,12 @@ public class DesignToolV3 extends BaseDesignTool {
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
-		getRenderer().setDesign( createTestDesign() );
 		//getRenderer().setDesign( request.getAsset().getModel() );
+
+		// DEVELOPMENT
+		Design testDesign = createTestDesign();
+		getRenderer().setDesign( testDesign );
+		getRenderer().setLayerVisible( testDesign.getLayers().getLayers().getFirst(), true );
 
 		getRenderer().setVisible( true );
 		toast.setVisible( false );

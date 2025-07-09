@@ -153,6 +153,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 * @param layer The design layer whose visibility is being set.
 	 * @param visible True to make the layer visible, false to make it hidden.
 	 */
+	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		// This method has a very important implementation, it is more than just
 		// setting a flag, it participates in the performance of the renderer by

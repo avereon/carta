@@ -283,9 +283,20 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		return visibleLayers;
 	}
 
+	@Override
 	public void setVisibleLayers( Collection<DesignLayer> layers ) {
 		visibleLayers.clear();
 		visibleLayers.addAll( layers );
+		render();
+	}
+
+	@Override
+	public void setLayerVisible( DesignLayer layer, boolean visible ) {
+		if( visible ) {
+			visibleLayers.add( layer );
+		} else {
+			visibleLayers.remove( layer );
+		}
 		render();
 	}
 

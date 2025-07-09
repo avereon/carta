@@ -53,6 +53,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
 
+	public abstract void setLayerVisible( DesignLayer layer, boolean visible );
+
 	/**
 	 * Called to request the design be rendered.
 	 */
