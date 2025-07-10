@@ -3,7 +3,6 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
-import com.avereon.data.NodeEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -56,6 +55,14 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	private Design design;
 
+	/**
+	 * A flag indicating whether the FX geometry is currently being updated.
+	 * This variable is primarily used to prevent redundant or recursive updates
+	 * during the rendering process, ensuring the update operations are executed
+	 * efficiently and without conflicts.
+	 */
+	private boolean updatingFxGeometry;
+
 	// NEXT Apply lessons learned to create a new design renderer
 
 	DesignToolV3Renderer() {
@@ -87,8 +94,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		getChildren().addAll( world, screen );
 
 		// Update the geometry when the DPI changes
-		//		dpiXProperty().addListener( ( _, _, n ) -> this.updateFxGeometry( n.doubleValue(), getDpiY() ) );
-		//		dpiYProperty().addListener( ( _, _, n ) -> this.updateFxGeometry( getDpiX(), n.doubleValue() ) );
+		dpiXProperty().addListener( ( _, _, _ ) -> this.updateFxGeometry() );
+		dpiYProperty().addListener( ( _, _, _ ) -> this.updateFxGeometry() );
 	}
 
 	@Override
@@ -100,64 +107,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		this.grid.getChildren().add( new Line( -10, 0, 10, 0 ) ); // Horizontal line
 		this.grid.getChildren().add( new Line( 0, -10, 0, 10 ) ); // Vertical line
 
-		//		// FIXME This is inefficient since it builds geometry for everything in the design.
-		//		// Consider only generating geometry for the visible layers and shapes.
-		//		DesignLayer rootDesignLayer = design.getLayers();
-		//		rootDesignLayer.getLayers().forEach( designLayer -> this.layers.getChildren().add( mapDesignLayer( designLayer ) ) );
-		//
-		//		// TEMPORARY Add boundary rectangles for each shape in the design
-		//		design.getLayers().getAllLayers().forEach( designLayer -> {
-		//			designLayer.getShapes().forEach( designShape -> {
-		//				Shape shape = mapDesignShape( designShape );
-		//				if( shape != null ) {
-		//					Rectangle bounds = FxUtil.toRectangle( getVisualBounds( shape ) );
-		//					bounds.setStroke( Colors.parse( "#C0A000" ) );
-		//					bounds.setStrokeWidth( 1 );
-		//					bounds.setFill( null );
-		//					reference.getChildren().add( bounds );
-		//				}
-		//			} );
-		//		} );
-
-		// TODO Set up the framework so that layers only have to be generated when they are visible.
-		// Initially this is easy since the design.getLayers() is the root layer and
-		// get all layers come in order, but as sub-layers are added and removed they
-		// need to be added and removed from the layer pane in order. What is the best
-		// way to do this?
-
-		// This is a DataNode. This can be used to listen for all the layer added
-		// events. The added layer can then be compared to the all layers list and
-		// the new location be determined. A removed layer should have a reference
-		// to the layer that needs to be removed, if it exists, so it should be
-		// much easier to remove.
-		DesignLayer root = design.getLayers();
-		root.register(
-			NodeEvent.CHILD_ADDED, e -> {
-				DesignLayer addedLayer = e.getNewValue();
-				int index = root.getAllLayers().indexOf( addedLayer );
-				// It probably isn't quite this easy, but it's the right idea
-				// Or maybe we do nothing until the layer is made visible
-				Pane pane = new Pane();
-				layers.getChildren().add( index, pane );
-			}
-		);
-		root.register(
-			NodeEvent.CHILD_REMOVED, e -> {
-				DesignLayer removedLayer = e.getOldValue();
-				Pane pane = removedLayer.getValue( FX_SHAPE );
-				// It probably isn't quite this easy, but it's the right idea
-				layers.getChildren().remove( pane );
-			}
-		);
-
-		// This is "just" a list. Not observable or a DataList.
-		List<DesignLayer> layers = design.getLayers().getAllLayers();
-
-		design.register(
-			this, Design.UNIT, e -> {
-				// NEXT Design unit changed, update the geometry scale
-			}
-		);
+		// Update the geometry when the design unit changes
+		design.register( this, Design.UNIT, _ -> this.updateFxGeometry() );
 	}
 
 	/**
@@ -226,16 +177,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		//gridGeometryManager.removeGridGeometry( workplane );
 	}
 
-	//	@Override
-	//	public void setPrefWidth( double width ) {
-	//		super.setPrefWidth( width );
-	//	}
-	//
-	//	@Override
-	//	public void setPrefHeight( double height ) {
-	//
-	//	}
-
 	@Override
 	public void render() {
 
@@ -284,9 +225,29 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return layer;
 	}
 
+	/**
+	 * Called when all the FX geometry needs to be updated due to a change in
+	 * renderer or design settings such as DPI or design unit.
+	 */
+	private void updateFxGeometry() {
+		if( updatingFxGeometry || design == null ) return;
+		try {
+			updatingFxGeometry = true;
+			design.getLayers().getAllLayers().forEach( layer -> {
+				layer.getShapes().forEach( shape -> mapDesignShape( shape, true ) );
+			} );
+		} finally {
+			updatingFxGeometry = false;
+		}
+	}
+
 	private Shape mapDesignShape( DesignShape designShape ) {
+		return mapDesignShape( designShape, false );
+	}
+
+	private Shape mapDesignShape( DesignShape designShape, boolean forceUpdate ) {
 		Shape fxShape = designShape.getValue( FX_SHAPE );
-		if( fxShape != null ) return fxShape;
+		if( !forceUpdate && fxShape != null ) return fxShape;
 
 		Design design = designShape.getDesign().orElse( null );
 		if( design == null ) return null;
