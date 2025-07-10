@@ -183,16 +183,6 @@ public class DesignToolV3 extends BaseDesignTool {
 	}
 
 	@Override
-	public boolean isLayerVisible( DesignLayer layer ) {
-		return false;
-	}
-
-	@Override
-	public void setLayerVisible( DesignLayer layer, boolean visible ) {
-
-	}
-
-	@Override
 	public List<DesignLayer> getVisibleLayers() {
 		return List.of();
 	}
@@ -430,7 +420,7 @@ public class DesignToolV3 extends BaseDesignTool {
 	}
 
 	@Override
-	public Class<? extends DesignRenderer> getPrintDesignRenderer() {
+	public Class<? extends DesignRenderer> getPrintDesignRendererClass() {
 		return DesignToolV3Renderer.class;
 	}
 

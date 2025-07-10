@@ -51,6 +51,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	public abstract void setDesign( Design design );
 
+	public abstract boolean isLayerVisible( DesignLayer layer );
+
 	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
 
 	public abstract void setLayerVisible( DesignLayer layer, boolean visible );

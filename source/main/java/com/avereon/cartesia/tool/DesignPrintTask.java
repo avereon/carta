@@ -118,7 +118,7 @@ public class DesignPrintTask extends Task<Void> {
 		double factor = 1;
 
 		// The NEW way
-		Class<? extends DesignRenderer> rendererClass = tool.getPrintDesignRenderer();
+		Class<? extends DesignRenderer> rendererClass = tool.getPrintDesignRendererClass();
 		final DesignRenderer renderer = rendererClass.getDeclaredConstructor().newInstance();
 		//renderer.setBackground( Background.fill( Color.LIGHTGRAY ) );
 		renderer.setDesign( asset.getModel() );

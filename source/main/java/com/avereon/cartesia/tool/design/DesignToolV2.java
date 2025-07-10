@@ -982,7 +982,11 @@ public class DesignToolV2 extends BaseDesignTool {
 		Fx.run( this::requestFocus );
 	}
 
-	public Class<? extends DesignRenderer> getPrintDesignRenderer() {
+	public DesignRenderer getScreenDesignRenderer() {
+		return renderer;
+	}
+
+	public Class<? extends DesignRenderer> getPrintDesignRendererClass() {
 		return DesignToolV2Renderer.class;
 	}
 

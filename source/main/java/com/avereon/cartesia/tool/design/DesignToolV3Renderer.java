@@ -111,6 +111,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		design.register( this, Design.UNIT, _ -> this.updateFxGeometry() );
 	}
 
+	@Override
+	public boolean isLayerVisible( DesignLayer layer ) {
+		// NEXT Check if the design layers FX pane is in the layers pane
+		return false;
+	}
+
 	/**
 	 * Sets the visibility of a specific design layer in the renderer. When a layer
 	 * is made visible, its geometry is created and added to the rendering system.

@@ -359,5 +359,7 @@ public interface DesignTool extends RenderConstants {
 
 	void setCursor( Cursor cursor );
 
-	Class<? extends DesignRenderer> getPrintDesignRenderer();
+	DesignRenderer getScreenDesignRenderer();
+
+	Class<? extends DesignRenderer> getPrintDesignRendererClass();
 }

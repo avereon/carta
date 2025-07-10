@@ -1,16 +1,28 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.DesignPortal;
+import com.avereon.marea.LineCap;
+import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
+import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.net.URI;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -23,8 +35,16 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
+		initTool( asset );
+	}
+
+	private void initTool( Asset asset ) throws Exception {
 		Fx.run( () -> tool = new DesignToolV3( module, asset ) );
-		Fx.waitFor( 2, TimeUnit.SECONDS );
+		Fx.waitFor( 1, TimeUnit.SECONDS );
+
+		OpenAssetRequest request = new OpenAssetRequest();
+		request.setAsset( asset );
+		tool.ready( request );
 	}
 
 	@Test
@@ -225,6 +245,63 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		//		assertThat( tool.getHeight() ).isEqualTo( 0 );
 		//		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 		//		assertThat( tool.getViewZoom() ).isEqualTo( 1 );
+	}
+
+	@Test
+	void updateDesignUnit() throws Exception {
+		// given
+		Design model = createTestDesign1();
+		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) );
+		asset.setModel( model );
+		initTool( asset );
+		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
+		assertThat( tool.getDesign() ).isNotNull();
+
+		// Show the construction layer
+		Fx.run( () -> tool.setLayerVisible( model.getLayers().getLayers().getFirst(), true ) );
+		Fx.waitFor( 1, TimeUnit.SECONDS );
+
+		// Verify the FX geometry in the renderer
+		DesignToolV3Renderer renderer = (DesignToolV3Renderer)tool.getScreenDesignRenderer();
+		Pane layers = renderer.layersPane();
+		Pane construction = (Pane)layers.getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
+		// NEXT Verify the original bounds (these are DPI dependent)
+		// FIXME ...and why is it moving around?
+		//assertThat( redLine.getBoundsInParent() ).isEqualTo( new BoundingBox( -37.7952766418457, -18.89763832092285, 75.5905532836914, 37.7952766418457 ) );
+
+
+		// when
+		model.setDesignUnit( "mm" );
+
+		// then
+		// The FX geometry should have changed in the renderer
+	}
+
+	// TODO Move to a test utility class
+	private Design createTestDesign1() {
+		Design design = new Design2D();
+		design.setName( "Test Design" );
+
+		DesignLine greenLine = new DesignLine( -5, -5, 5, 5 );
+		greenLine.setDrawPaint( "#008000" );
+		greenLine.setDrawWidth( "1.0" );
+		greenLine.setDrawCap( LineCap.ROUND.name() );
+		greenLine.setOrder( 0 );
+
+		DesignLine redLine = new DesignLine( -5, 5, 5, -5 );
+		redLine.setDrawPaint( "#800000" );
+		redLine.setDrawWidth( "1.0" );
+		redLine.setDrawCap( LineCap.ROUND.name() );
+		redLine.setOrder( 1 );
+
+		DesignLayer construction = new DesignLayer();
+		construction.setName( "Construction" );
+		construction.addShapes( Set.of( redLine, greenLine ) );
+		design.getLayers().addLayer( construction );
+
+		return design;
 	}
 
 }

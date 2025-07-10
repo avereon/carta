@@ -320,6 +320,16 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		setView( worldCenter, zoom );
 	}
 
+	@Override
+	public boolean isLayerVisible( DesignLayer layer ) {
+		return getRenderer().isLayerVisible(layer);
+	}
+
+	@Override
+	public void setLayerVisible( DesignLayer layer, boolean visible ) {
+		getRenderer().setLayerVisible( layer, visible );
+	}
+
 	// NEXT Insert implementations here
 
 	@Override
@@ -351,6 +361,11 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Deprecated
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
 		return currentLayer;
+	}
+
+	@Override
+	public DesignRenderer getScreenDesignRenderer() {
+		return renderer;
 	}
 
 }
