@@ -5,9 +5,6 @@ import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.Design2D;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
@@ -17,12 +14,10 @@ import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.StrokeLineCap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -32,22 +27,24 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 	private DesignToolV3 tool;
 
+	private Design model;
+
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		Design model = createTestDesign1();
-		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) );
-		asset.setModel( model );
-		initTool( asset );
-	}
 
-	private void initTool( final Asset asset ) throws Exception {
+		model = ExampleDesigns.redBlueX();
+		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) ).setModel( model );
+
 		Fx.run( () -> tool = new DesignToolV3( module, asset ) );
 		Fx.waitFor( 1, TimeUnit.SECONDS );
 
 		OpenAssetRequest request = new OpenAssetRequest();
 		request.setAsset( asset );
 		tool.ready( request );
+
+		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
+		assertThat( tool.getDesign() ).isNotNull();
 	}
 
 	@Test
@@ -250,21 +247,13 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		//		assertThat( tool.getViewZoom() ).isEqualTo( 1 );
 	}
 
+	/**
+	 * This test ensures that FX geometry is resized when the design unit is changed
+	 * in the tool.
+	 */
 	@Test
-	void updateDesignUnit() throws Exception {
+	void updateDesignUnit() {
 		// given
-		Design model = createTestDesign1();
-		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) );
-		asset.setModel( model );
-		initTool( asset );
-
-		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
-		assertThat( tool.getDesign() ).isNotNull();
-
-		// Show the construction layer
-		Fx.run( () -> tool.setLayerVisible( model.getLayers().getLayers().getFirst(), true ) );
-		Fx.waitFor( 1, TimeUnit.SECONDS );
-
 		// Verify the FX geometry in the renderer
 		DesignToolV3Renderer renderer = (DesignToolV3Renderer)tool.getScreenDesignRenderer();
 		Pane layers = renderer.layersPane();
@@ -277,35 +266,14 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
 
 		// when
-		//model.setDesignUnit( "mm" );
+		Fx.run( ()-> model.setDesignUnit( "mm" ) );
+		Fx.waitFor( 1, TimeUnit.SECONDS );
 
 		// then
 		// The FX geometry should have changed in the renderer
-	}
-
-	// TODO Move to a test utility class
-	private Design createTestDesign1() {
-		Design design = new Design2D();
-		design.setName( "Test Design" );
-
-		DesignLine greenLine = new DesignLine( -5, -5, 5, 5 );
-		greenLine.setDrawPaint( "#008000" );
-		greenLine.setDrawWidth( "1.0" );
-		greenLine.setDrawCap( StrokeLineCap.ROUND.name() );
-		greenLine.setOrder( 0 );
-
-		DesignLine redLine = new DesignLine( -5, 5, 5, -5 );
-		redLine.setDrawPaint( "#800000" );
-		redLine.setDrawWidth( "1.0" );
-		redLine.setDrawCap( StrokeLineCap.ROUND.name() );
-		redLine.setOrder( 1 );
-
-		DesignLayer construction = new DesignLayer();
-		construction.setName( "Construction" );
-		construction.addShapes( Set.of( redLine, greenLine ) );
-		design.getLayers().addLayer( construction );
-
-		return design;
+		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
+		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
+		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 	}
 
 }

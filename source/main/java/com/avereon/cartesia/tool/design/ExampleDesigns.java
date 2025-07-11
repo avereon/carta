@@ -5,8 +5,33 @@ import javafx.geometry.Point3D;
 import javafx.scene.shape.StrokeLineCap;
 
 import java.util.List;
+import java.util.Set;
 
 public class ExampleDesigns {
+
+	public static Design redBlueX() {
+		Design design = new Design2D();
+		design.setName( "Test Design" );
+
+		DesignLine blueLine = new DesignLine( -5, -5, 5, 5 );
+		blueLine.setDrawPaint( "#000080" );
+		blueLine.setDrawWidth( "1.0" );
+		blueLine.setDrawCap( StrokeLineCap.ROUND.name() );
+		blueLine.setOrder( 0 );
+
+		DesignLine redLine = new DesignLine( -5, 5, 5, -5 );
+		redLine.setDrawPaint( "#800000" );
+		redLine.setDrawWidth( "1.0" );
+		redLine.setDrawCap( StrokeLineCap.ROUND.name() );
+		redLine.setOrder( 1 );
+
+		DesignLayer construction = new DesignLayer();
+		construction.setName( "Construction" );
+		construction.addShapes( Set.of( redLine, blueLine ) );
+		design.getLayers().addLayer( construction );
+
+		return design;
+	}
 
 	public static Design design1() {
 		Design design = new Design2D();
