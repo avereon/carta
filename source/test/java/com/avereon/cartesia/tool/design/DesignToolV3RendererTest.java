@@ -316,4 +316,56 @@ public class DesignToolV3RendererTest {
 		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 3 );
 	}
 
+	@Test
+	void isLayerVisible() {
+		Design design = new Design2D();
+		DesignLayer layer0 = new DesignLayer().setName("layer0").setOrder( 0 );
+		DesignLayer layer1 = new DesignLayer().setName("layer1").setOrder( 1 );
+		DesignLayer layer2 = new DesignLayer().setName("layer2").setOrder( 2 );
+		DesignLayer layer3 = new DesignLayer().setName("layer3").setOrder( 3 );
+		DesignLayer layer4 = new DesignLayer().setName("layer4").setOrder( 4 );
+		design.getLayers().addLayer( layer0 );
+		design.getLayers().addLayer( layer1 );
+		design.getLayers().addLayer( layer2 );
+		design.getLayers().addLayer( layer3 );
+		design.getLayers().addLayer( layer4 );
+		renderer.setDesign( design );
+		assertThat(design.getAllLayers().size()).isEqualTo( 5 );
+		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 0 );
+
+		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer1 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer3 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+
+		renderer.setLayerVisible( layer1, true );
+		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer1 )).isTrue();
+		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer3 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+
+		renderer.setLayerVisible( layer3, true );
+		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer1 )).isTrue();
+		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer3 )).isTrue();
+		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+
+		renderer.setLayerVisible( layer1, false );
+		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer1 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer3 )).isTrue();
+		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+
+		renderer.setLayerVisible( layer3, false );
+		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer1 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer3 )).isFalse();
+		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+	}
+
 }

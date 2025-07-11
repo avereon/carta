@@ -113,8 +113,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	@Override
 	public boolean isLayerVisible( DesignLayer layer ) {
-		// NEXT Check if the design layers FX pane is in the layers pane
-		return false;
+		Pane pane = layer.getValue( FX_SHAPE );
+		return layers.getChildren().contains( pane );
 	}
 
 	/**
