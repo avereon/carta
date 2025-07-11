@@ -15,6 +15,7 @@ import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.net.URI;
@@ -249,10 +250,14 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 	/**
 	 * This test ensures that FX geometry is resized when the design unit is changed
-	 * in the tool.
+	 * in the tool. This test relies on the somewhat complicated implementation of
+	 * the renderer, even though the API is exposed here at the tool level.
 	 */
 	@Test
+	@Tag( "white-box")
 	void updateDesignUnit() {
+		// The test values are based on 96 DPI and a design unit of CM
+
 		// given
 		// Verify the FX geometry in the renderer
 		DesignToolV3Renderer renderer = (DesignToolV3Renderer)tool.getScreenDesignRenderer();
@@ -260,7 +265,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		Pane construction = (Pane)layers.getChildren().getFirst();
 		Line redLine = (Line)construction.getChildren().get( 0 );
 		Line greenLine = (Line)construction.getChildren().get( 1 );
-		// Verify the original bounds (these are DPI-dependent)
+		// Verify the original bounds (these are design unit and DPI-dependent)
 		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
 		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
 		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
