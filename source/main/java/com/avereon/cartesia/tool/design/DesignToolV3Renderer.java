@@ -153,29 +153,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		}
 	}
 
-	/**
-	 * Determines the appropriate index for placing a design layer among the existing
-	 * FX layers based on the order of the design layers in the design.
-	 *
-	 * @param designLayer The design layer to determine the index for.
-	 * @return The computed index where the design layer should be inserted among FX layers.
-	 */
-	private int determineLayerIndex( DesignLayer designLayer ) {
-		List<DesignLayer> designLayers = design.getLayers().getAllLayers();
-		Collections.reverse( designLayers );
-		List<Node> fxLayers = layers.getChildren();
-
-		// Determine the appropriate index in the FX layers
-		int index = -1;
-		for( DesignLayer checkLayer : designLayers ) {
-			if( checkLayer == designLayer ) break;
-			Pane fxLayer = checkLayer.getValue( FX_SHAPE );
-			if( fxLayer != null ) index = fxLayers.indexOf( fxLayer );
-		}
-
-		return index + 1;
-	}
-
 	@Override
 	public void setVisibleLayers( Collection<DesignLayer> layers ) {
 		// Convenience method, to set multiple layers visible and hidden at the same time
@@ -205,6 +182,29 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	Bounds getVisualBounds( Node node ) {
 		return node.getBoundsInParent();
+	}
+
+	/**
+	 * Determines the appropriate index for placing a design layer among the existing
+	 * FX layers based on the order of the design layers in the design.
+	 *
+	 * @param designLayer The design layer to determine the index for.
+	 * @return The computed index where the design layer should be inserted among FX layers.
+	 */
+	private int determineLayerIndex( DesignLayer designLayer ) {
+		List<DesignLayer> designLayers = design.getLayers().getAllLayers();
+		Collections.reverse( designLayers );
+		List<Node> fxLayers = layers.getChildren();
+
+		// Determine the appropriate index in the FX layers
+		int index = -1;
+		for( DesignLayer checkLayer : designLayers ) {
+			if( checkLayer == designLayer ) break;
+			Pane fxLayer = checkLayer.getValue( FX_SHAPE );
+			if( fxLayer != null ) index = fxLayers.indexOf( fxLayer );
+		}
+
+		return index + 1;
 	}
 
 	private Pane mapDesignLayer( DesignLayer designLayer ) {
