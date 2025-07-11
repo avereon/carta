@@ -241,16 +241,14 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 0, 0, 0 ) );
 		assertThat( tool.getViewZoom() ).isEqualTo( 1 );
 
-		// TODO Finish DesignToolV3Test.setWorldViewport()
+		// when
+		tool.setWorldViewport( new BoundingBox( 400, 500, 100, 100 ) );
 
-		//		// when
-		//		tool.setWorldViewport( new BoundingBox( 0, 0, 1, 1 ) );
-		//
-		//		// then
-		//		assertThat( tool.getWidth() ).isEqualTo( 0 );
-		//		assertThat( tool.getHeight() ).isEqualTo( 0 );
-		//		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 0, 0, 0 ) );
-		//		assertThat( tool.getViewZoom() ).isEqualTo( 1 );
+		// then
+		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 450, 550, 0 ) );
+		assertThat( tool.getViewZoom() ).isEqualTo( 10 );
+		assertThat( tool.getWidth() ).isEqualTo( 1000 );
+		assertThat( tool.getHeight() ).isEqualTo( 1000 );
 	}
 
 	/**
@@ -259,7 +257,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	 * the renderer, even though the API is exposed here at the tool level.
 	 */
 	@Test
-	@Tag( "white-box" )
+	@Tag( "WhiteBox" )
 	void updateDpi() {
 		// given
 		verifyInitialFxGeometry();
@@ -284,7 +282,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	 * the renderer, even though the references are configured at the tool level.
 	 */
 	@Test
-	@Tag( "white-box" )
+	@Tag( "WhiteBox" )
 	void updateDesignUnit() {
 		// given
 		verifyInitialFxGeometry();

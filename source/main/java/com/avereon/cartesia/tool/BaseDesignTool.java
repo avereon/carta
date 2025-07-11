@@ -308,7 +308,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public void setWorldViewport( Bounds viewport ) {
-		Bounds toolBounds = getLayoutBounds();
+		Bounds toolBounds = getBoundsInLocal();
 		if( toolBounds.getWidth() == 0 || toolBounds.getHeight() == 0 ) return;
 
 		Bounds worldBounds = screenToWorld( toolBounds );

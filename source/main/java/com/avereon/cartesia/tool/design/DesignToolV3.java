@@ -49,14 +49,12 @@ public class DesignToolV3 extends BaseDesignTool {
 
 		// Create the objects
 		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
+		this.workplane = new Workplane();
 
 		// The renderer is configured to render to the primary screen by default,
 		// but it can be configured to render to different media just as easily by
 		// changing the DPI setting.
 		getRenderer().setDpi( Screen.getPrimary().getDpi() );
-
-		// The tool workplane
-		this.workplane = new Workplane();
 
 		// Keep the renderer in the center of the tool
 		widthProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateX( 0.5 * n.doubleValue() ) );
@@ -226,14 +224,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public Bounds screenToWorld( Bounds bounds ) {
-		/* In previous implementations this method relied on the
-		 * renderer.parentToLocal( bounds ) method to convert the bounds from screen
-		 * to world coordinates. Should V3 do the same? Maybe not, since there is a
-		 * discussion about having an internal scaling strategy to help with pixel
-		 * artifacts. If that is the case then this method would need to take that
-		 * into account.
-		 */
-		return null;
+		return getRenderer().parentToLocal( bounds );
 	}
 
 	@Override
