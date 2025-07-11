@@ -111,6 +111,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		design.register( this, Design.UNIT, _ -> this.updateFxGeometry() );
 	}
 
+	/**
+	 * Determines whether the specified design layer is visible within the renderer.
+	 *
+	 * @param layer The design layer whose visibility is to be checked.
+	 * @return True if the layer is visible, false otherwise.
+	 */
 	@Override
 	public boolean isLayerVisible( DesignLayer layer ) {
 		Pane pane = layer.getValue( FX_SHAPE );
