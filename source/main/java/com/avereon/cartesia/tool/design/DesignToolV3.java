@@ -2,12 +2,14 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.cartesia.tool.Workplane;
-import com.avereon.marea.LineCap;
 import com.avereon.product.Rb;
+import com.avereon.xenon.XenonMode;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
@@ -26,6 +28,7 @@ import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @CustomLog
 public class DesignToolV3 extends BaseDesignTool {
@@ -80,86 +83,15 @@ public class DesignToolV3 extends BaseDesignTool {
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
-		//getRenderer().setDesign( request.getAsset().getModel() );
+		Design design = request.getAsset().getModel();
 
 		// DEVELOPMENT
-		Design testDesign = createTestDesign();
-		getRenderer().setDesign( testDesign );
-		getRenderer().setLayerVisible( testDesign.getLayers().getLayers().getFirst(), true );
+		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) design = ExampleDesigns.design1();
 
+		getRenderer().setDesign( design );
+		getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 		getRenderer().setVisible( true );
 		toast.setVisible( false );
-	}
-
-	private Design createTestDesign() {
-		Design design = new Design2D();
-		design.setName( "Test Design" );
-
-		DesignLine greenLineA = new DesignLine( -5, 5, -3, 3 );
-		greenLineA.setDrawPaint( "#008000" );
-		greenLineA.setDrawWidth( "1.0" );
-		greenLineA.setDrawCap( LineCap.ROUND.name() );
-		greenLineA.setOrder( 0 );
-		DesignLine greenLineB = new DesignLine( -1, 4, 1, 4 );
-		greenLineB.setDrawPaint( "#008000" );
-		greenLineB.setDrawWidth( "1.0" );
-		greenLineB.setDrawCap( LineCap.ROUND.name() );
-		greenLineB.setOrder( 0 );
-		DesignLine greenLineC = new DesignLine( 3, 3, 5, 5 );
-		greenLineC.setDrawPaint( "#008000" );
-		greenLineC.setDrawWidth( "1.0" );
-		greenLineC.setDrawCap( LineCap.ROUND.name() );
-		greenLineC.setOrder( 0 );
-
-		DesignLine blueLineA = new DesignLine( -5, 3, -3, 1 );
-		blueLineA.setDrawPaint( "#000080" );
-		blueLineA.setDrawWidth( "1.0" );
-		blueLineA.setDrawCap( LineCap.SQUARE.name() );
-		blueLineA.setOrder( 0 );
-		DesignLine blueLineB = new DesignLine( -1, 2, 1, 2 );
-		blueLineB.setDrawPaint( "#000080" );
-		blueLineB.setDrawWidth( "1.0" );
-		blueLineB.setDrawCap( LineCap.SQUARE.name() );
-		blueLineB.setOrder( 0 );
-		DesignLine blueLineC = new DesignLine( 3, 1, 5, 3 );
-		blueLineC.setDrawPaint( "#000080" );
-		blueLineC.setDrawWidth( "1.0" );
-		blueLineC.setDrawCap( LineCap.SQUARE.name() );
-		blueLineC.setOrder( 0 );
-
-		DesignLine redLineA = new DesignLine( -5, 1, -3, -1 );
-		redLineA.setDrawPaint( "#800000" );
-		redLineA.setDrawWidth( "1.0" );
-		redLineA.setDrawCap( LineCap.BUTT.name() );
-		redLineA.setOrder( 1 );
-		DesignLine redLineB = new DesignLine( -1, 0, 1, 0 );
-		redLineB.setDrawPaint( "#800000" );
-		redLineB.setDrawWidth( "1.0" );
-		redLineB.setDrawCap( LineCap.BUTT.name() );
-		redLineB.setOrder( 1 );
-		DesignLine redLineC = new DesignLine( 3, -1, 5, 1 );
-		redLineC.setDrawPaint( "#800000" );
-		redLineC.setDrawWidth( "1.0" );
-		redLineC.setDrawCap( LineCap.BUTT.name() );
-		redLineC.setOrder( 1 );
-
-		DesignText hello = new DesignText( new Point3D( -5, -5, 0 ), "Hello" );
-		hello.setFillPaint( "#80C0FF" );
-		hello.setRotate( -45 );
-		DesignText sweet = new DesignText( new Point3D( -1.5, -6, 0 ), "Sweet" );
-		sweet.setFillPaint( "#80C0FF" );
-		DesignText world = new DesignText( new Point3D( 3, -7, 0 ), "World" );
-		world.setFillPaint( "#80C0FF" );
-		world.setRotate( 45 );
-
-		DesignLayer construction = new DesignLayer();
-		construction.setName( "Construction" );
-		construction.addShapes( List.of( greenLineA, greenLineB, greenLineC ) );
-		construction.addShapes( List.of( blueLineA, blueLineB, blueLineC ) );
-		construction.addShapes( List.of( redLineA, redLineB, redLineC ) );
-		construction.addShapes( List.of( hello, sweet, world ) );
-		design.getLayers().addLayer( construction );
-		return design;
 	}
 
 	@Override

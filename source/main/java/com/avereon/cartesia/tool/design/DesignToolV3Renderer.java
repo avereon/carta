@@ -197,7 +197,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return layers;
 	}
 
-	private Bounds getVisualBounds( Node node ) {
+	Bounds getVisualBounds( Node node ) {
 		return node.getBoundsInParent();
 	}
 

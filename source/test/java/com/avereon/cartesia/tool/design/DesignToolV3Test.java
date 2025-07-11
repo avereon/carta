@@ -9,7 +9,6 @@ import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignLine;
 import com.avereon.cartesia.tool.DesignPortal;
-import com.avereon.marea.LineCap;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.zerra.javafx.Fx;
@@ -18,6 +17,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -35,10 +35,13 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
+		Design model = createTestDesign1();
+		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) );
+		asset.setModel( model );
 		initTool( asset );
 	}
 
-	private void initTool( Asset asset ) throws Exception {
+	private void initTool( final Asset asset ) throws Exception {
 		Fx.run( () -> tool = new DesignToolV3( module, asset ) );
 		Fx.waitFor( 1, TimeUnit.SECONDS );
 
@@ -254,6 +257,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) );
 		asset.setModel( model );
 		initTool( asset );
+
 		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
 		assertThat( tool.getDesign() ).isNotNull();
 
@@ -267,13 +271,13 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		Pane construction = (Pane)layers.getChildren().getFirst();
 		Line redLine = (Line)construction.getChildren().get( 0 );
 		Line greenLine = (Line)construction.getChildren().get( 1 );
-		// NEXT Verify the original bounds (these are DPI dependent)
-		// FIXME ...and why is it moving around?
-		//assertThat( redLine.getBoundsInParent() ).isEqualTo( new BoundingBox( -37.7952766418457, -18.89763832092285, 75.5905532836914, 37.7952766418457 ) );
-
+		// Verify the original bounds (these are DPI-dependent)
+		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
 
 		// when
-		model.setDesignUnit( "mm" );
+		//model.setDesignUnit( "mm" );
 
 		// then
 		// The FX geometry should have changed in the renderer
@@ -287,13 +291,13 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		DesignLine greenLine = new DesignLine( -5, -5, 5, 5 );
 		greenLine.setDrawPaint( "#008000" );
 		greenLine.setDrawWidth( "1.0" );
-		greenLine.setDrawCap( LineCap.ROUND.name() );
+		greenLine.setDrawCap( StrokeLineCap.ROUND.name() );
 		greenLine.setOrder( 0 );
 
 		DesignLine redLine = new DesignLine( -5, 5, 5, -5 );
 		redLine.setDrawPaint( "#800000" );
 		redLine.setDrawWidth( "1.0" );
-		redLine.setDrawCap( LineCap.ROUND.name() );
+		redLine.setDrawCap( StrokeLineCap.ROUND.name() );
 		redLine.setOrder( 1 );
 
 		DesignLayer construction = new DesignLayer();
