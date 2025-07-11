@@ -2,6 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.DesignToolBaseTest;
+import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
@@ -26,9 +27,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignToolV3Test extends DesignToolBaseTest {
 
+	private Design model;
+
 	private DesignToolV3 tool;
 
-	private Design model;
+	private DesignToolV3Renderer renderer;
 
 	@BeforeEach
 	protected void setup() throws Exception {
@@ -46,6 +49,8 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
 		assertThat( tool.getDesign() ).isNotNull();
+
+		renderer = (DesignToolV3Renderer)tool.getScreenDesignRenderer();
 	}
 
 	@Test
@@ -249,36 +254,65 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	/**
-	 * This test ensures that FX geometry is resized when the design unit is changed
+	 * This test ensures that FX geometry is resized when the DPI is changed
 	 * in the tool. This test relies on the somewhat complicated implementation of
 	 * the renderer, even though the API is exposed here at the tool level.
 	 */
 	@Test
-	@Tag( "white-box")
-	void updateDesignUnit() {
-		// The test values are based on 96 DPI and a design unit of CM
-
+	@Tag( "white-box" )
+	void updateDpi() {
 		// given
-		// Verify the FX geometry in the renderer
-		DesignToolV3Renderer renderer = (DesignToolV3Renderer)tool.getScreenDesignRenderer();
-		Pane layers = renderer.layersPane();
-		Pane construction = (Pane)layers.getChildren().getFirst();
-		Line redLine = (Line)construction.getChildren().get( 0 );
-		Line greenLine = (Line)construction.getChildren().get( 1 );
-		// Verify the original bounds (these are design unit and DPI-dependent)
-		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
-		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
-		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		verifyInitialFxGeometry();
 
 		// when
-		Fx.run( ()-> model.setDesignUnit( "mm" ) );
+		Fx.run( () -> tool.setDpi( 2 * DesignToolV3.DEFAULT_DPI ) );
 		Fx.waitFor( 1, TimeUnit.SECONDS );
 
 		// then
 		// The FX geometry should have changed in the renderer
+		Pane construction = (Pane)renderer.layersPane().getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
+		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
+		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
+		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
+	}
+
+	/**
+	 * This test ensures that FX geometry is resized when the design unit is changed
+	 * in the model. This test relies on the somewhat complicated implementation of
+	 * the renderer, even though the references are configured at the tool level.
+	 */
+	@Test
+	@Tag( "white-box" )
+	void updateDesignUnit() {
+		// given
+		verifyInitialFxGeometry();
+
+		// when
+		Fx.run( () -> model.setDesignUnit( DesignUnit.MM.name() ) );
+		Fx.waitFor( 1, TimeUnit.SECONDS );
+
+		// then
+		// The FX geometry should have changed in the renderer
+		Pane construction = (Pane)renderer.layersPane().getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
 		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 	}
 
+	private void verifyInitialFxGeometry() {
+		// Verify the FX geometry in the renderer
+		Pane construction = (Pane)renderer.layersPane().getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
+
+		// The test values are based on 96 DPI and a design unit of CM
+		// Verify the original bounds (these are design unit and DPI-dependent)
+		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+	}
 }
