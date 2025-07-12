@@ -101,6 +101,12 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>net.bytebuddy</groupId>
+			<artifactId>byte-buddy-agent</artifactId>
+			<version>${bytebuddy.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>${mockito.version}</version>
@@ -131,7 +137,18 @@
 				<!-- Version comes from parent -->
 				<configuration>
 					<forkCount>0.5C</forkCount>
-					<argLine>-Xmx128m --add-opens=javafx.base/com.sun.javafx.logging=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.util=ALL-UNNAMED -XX:+EnableDynamicAgentLoading</argLine>
+					<argLine>
+						-Xmx128m
+						--add-opens=javafx.base/com.sun.javafx.logging=ALL-UNNAMED
+						--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+						--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+						--add-opens=javafx.graphics/com.sun.javafx.util=ALL-UNNAMED
+						<!-- This works in Maven, of course, but not in IntelliJ -->
+						<!--										-javaagent:${net.bytebuddy:byte-buddy-agent:jar}-->
+						<!--										-javaagent:${org.mockito:mockito-core:jar}-->
+						-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${bytebuddy.version}/byte-buddy-agent-${bytebuddy.version}.jar
+						-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+					</argLine>
 				</configuration>
 			</plugin>
 
@@ -250,7 +267,18 @@
 									<forkCount>1</forkCount>
 									<reuseForks>false</reuseForks>
 									<runOrder>alphabetical</runOrder>
-									<argLine>-Xmx128m --add-opens=javafx.base/com.sun.javafx.logging=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-opens=javafx.graphics/com.sun.javafx.util=ALL-UNNAMED</argLine>
+									<argLine>
+										-Xmx128m
+										--add-opens=javafx.base/com.sun.javafx.logging=ALL-UNNAMED
+										--add-opens=javafx.graphics/com.sun.glass.ui=ALL-UNNAMED
+										--add-opens=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED
+										--add-opens=javafx.graphics/com.sun.javafx.util=ALL-UNNAMED
+										<!-- This works in Maven, of course, but not in IntelliJ -->
+										<!--										-javaagent:${net.bytebuddy:byte-buddy-agent:jar}-->
+										<!--										-javaagent:${org.mockito:mockito-core:jar}-->
+										-javaagent:${settings.localRepository}/net/bytebuddy/byte-buddy-agent/${bytebuddy.version}/byte-buddy-agent-${bytebuddy.version}.jar
+										-javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
+									</argLine>
 								</configuration>
 							</execution>
 						</executions>

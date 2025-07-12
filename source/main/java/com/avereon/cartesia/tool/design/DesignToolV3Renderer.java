@@ -154,6 +154,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	@Override
+	public List<DesignLayer> getVisibleLayers() {
+		return List.of();
+	}
+
+	@Override
 	public void setVisibleLayers( Collection<DesignLayer> layers ) {
 		// Convenience method, to set multiple layers visible and hidden at the same time
 	}

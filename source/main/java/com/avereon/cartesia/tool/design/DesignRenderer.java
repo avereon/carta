@@ -10,6 +10,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
 
 import java.util.Collection;
+import java.util.List;
 
 public abstract class DesignRenderer extends Pane implements RenderConstants {
 
@@ -52,6 +53,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	public abstract void setDesign( Design design );
 
 	public abstract boolean isLayerVisible( DesignLayer layer );
+
+	public abstract List<DesignLayer> getVisibleLayers();
 
 	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
 

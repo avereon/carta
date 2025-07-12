@@ -21,6 +21,8 @@ import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -72,7 +74,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private final DoubleProperty viewZoom;
 
-//	private final DoubleProperty viewDpi;
+	//	private final DoubleProperty viewDpi;
 
 	// Current:
 	// selectAperture
@@ -113,7 +115,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		viewCenter = new SimpleObjectProperty<>( DEFAULT_CENTER );
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
-//		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
+		//		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
 
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		setCursor( getReticleCursor() );
@@ -235,8 +237,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		setViewCenter( view.getOrigin() );
 		setViewZoom( view.getZoom() );
 		setViewRotate( view.getRotate() );
-		// TODO Set the visible layers from the design view
-		// setVisibleLayers( view.getLayers() );
+		setVisibleLayers( view.getLayers() );
 	}
 
 	@Override
@@ -322,12 +323,22 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public boolean isLayerVisible( DesignLayer layer ) {
-		return getRenderer().isLayerVisible(layer);
+		return getRenderer().isLayerVisible( layer );
 	}
 
 	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		getRenderer().setLayerVisible( layer, visible );
+	}
+
+	@Override
+	public List<DesignLayer> getVisibleLayers() {
+		return getRenderer().getVisibleLayers();
+	}
+
+	@Override
+	public void setVisibleLayers( Collection<DesignLayer> layers ) {
+		getRenderer().setVisibleLayers( layers );
 	}
 
 	// NEXT Insert implementations here

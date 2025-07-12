@@ -45,7 +45,11 @@ public class DesignToolV3 extends BaseDesignTool {
 	private final Workplane workplane;
 
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
-		super( product, asset, new DesignToolV3Renderer() );
+		this( product, asset, new DesignToolV3Renderer() );
+	}
+
+	DesignToolV3( XenonProgramProduct product, Asset asset, DesignRenderer renderer ) {
+		super( product, asset, renderer );
 
 		// Create the objects
 		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
@@ -110,11 +114,6 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	public Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point ) {
 		return null;
-	}
-
-	@Override
-	public List<DesignLayer> getVisibleLayers() {
-		return List.of();
 	}
 
 	@Override

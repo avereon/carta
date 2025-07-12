@@ -213,6 +213,8 @@ public interface DesignTool extends RenderConstants {
 	 */
 	List<DesignLayer> getVisibleLayers();
 
+	void setVisibleLayers( Collection<DesignLayer> layers );
+
 	DesignLayer getPreviewLayer();
 
 	DesignLayer getReferenceLayer();
@@ -250,14 +252,14 @@ public interface DesignTool extends RenderConstants {
 	 */
 	void zoom( Point3D anchor, double factor );
 
-//	/**
-//	 * Pan the view by mouse coordinates.
-//	 *
-//	 * @param viewAnchor The view point location before being dragged (world)
-//	 * @param dragAnchor The drag anchor (screen)
-//	 * @param point The new view point (screen)
-//	 */
-//	void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
+	//	/**
+	//	 * Pan the view by mouse coordinates.
+	//	 *
+	//	 * @param viewAnchor The view point location before being dragged (world)
+	//	 * @param dragAnchor The drag anchor (screen)
+	//	 * @param point The new view point (screen)
+	//	 */
+	//	void pan( Point3D viewAnchor, Point3D dragAnchor, Point3D point );
 
 	/**
 	 * Scale a point from screen size to world size. This transform only applies

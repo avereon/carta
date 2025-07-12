@@ -6,10 +6,14 @@ import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
 import javafx.beans.value.ChangeListener;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
+import javafx.scene.shape.Line;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -265,107 +269,183 @@ public class DesignToolV3RendererTest {
 		// then
 		verify( yListener, times( 1 ) ).changed( any(), any(), eq( 3.0 ) );
 	}
-	
+
+	@Test
+	void getVisibleLayers() {
+
+	}
+
+	@Test
+	void setVisibleLayers() {
+
+	}
+
 	@Test
 	void setLayerVisible() {
 		// given
 		Design design = new Design2D();
-		DesignLayer layer0 = new DesignLayer().setName("layer0").setOrder( 0 );
-		DesignLayer layer1 = new DesignLayer().setName("layer1").setOrder( 1 );
-		DesignLayer layer2 = new DesignLayer().setName("layer2").setOrder( 2 );
-		DesignLayer layer3 = new DesignLayer().setName("layer3").setOrder( 3 );
-		DesignLayer layer4 = new DesignLayer().setName("layer4").setOrder( 4 );
+		DesignLayer layer0 = new DesignLayer().setName( "layer0" ).setOrder( 0 );
+		DesignLayer layer1 = new DesignLayer().setName( "layer1" ).setOrder( 1 );
+		DesignLayer layer2 = new DesignLayer().setName( "layer2" ).setOrder( 2 );
+		DesignLayer layer3 = new DesignLayer().setName( "layer3" ).setOrder( 3 );
+		DesignLayer layer4 = new DesignLayer().setName( "layer4" ).setOrder( 4 );
 		design.getLayers().addLayer( layer0 );
 		design.getLayers().addLayer( layer1 );
 		design.getLayers().addLayer( layer2 );
 		design.getLayers().addLayer( layer3 );
 		design.getLayers().addLayer( layer4 );
 		renderer.setDesign( design );
-		assertThat(design.getAllLayers().size()).isEqualTo( 5 );
-		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 0 );
-		
+		assertThat( design.getAllLayers().size() ).isEqualTo( 5 );
+		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 0 );
+
 		// when
 		renderer.setLayerVisible( layer1, true );
 		renderer.setLayerVisible( layer3, true );
 		// then
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
-		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 2 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 2 );
 
 		// when
 		renderer.setLayerVisible( layer2, true );
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(2);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer2.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
-		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 3 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 2 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer2.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 3 );
 
 		// when
 		renderer.setLayerVisible( layer4, true );
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(3);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer2.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(2);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer4.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
-		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 4 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 3 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer2.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 2 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer4.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 4 );
 
 		// when
 		renderer.setLayerVisible( layer4, false );
 		// then
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer1.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(2);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer2.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(1);
-		assertThat(renderer.layersPane().getChildren().indexOf((Pane)layer3.getValue(DesignToolV3Renderer.FX_SHAPE))).isEqualTo(0);
-		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 3 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 2 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer2.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
+		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 3 );
 	}
 
 	@Test
 	void isLayerVisible() {
 		Design design = new Design2D();
-		DesignLayer layer0 = new DesignLayer().setName("layer0").setOrder( 0 );
-		DesignLayer layer1 = new DesignLayer().setName("layer1").setOrder( 1 );
-		DesignLayer layer2 = new DesignLayer().setName("layer2").setOrder( 2 );
-		DesignLayer layer3 = new DesignLayer().setName("layer3").setOrder( 3 );
-		DesignLayer layer4 = new DesignLayer().setName("layer4").setOrder( 4 );
+		DesignLayer layer0 = new DesignLayer().setName( "layer0" ).setOrder( 0 );
+		DesignLayer layer1 = new DesignLayer().setName( "layer1" ).setOrder( 1 );
+		DesignLayer layer2 = new DesignLayer().setName( "layer2" ).setOrder( 2 );
+		DesignLayer layer3 = new DesignLayer().setName( "layer3" ).setOrder( 3 );
+		DesignLayer layer4 = new DesignLayer().setName( "layer4" ).setOrder( 4 );
 		design.getLayers().addLayer( layer0 );
 		design.getLayers().addLayer( layer1 );
 		design.getLayers().addLayer( layer2 );
 		design.getLayers().addLayer( layer3 );
 		design.getLayers().addLayer( layer4 );
 		renderer.setDesign( design );
-		assertThat(design.getAllLayers().size()).isEqualTo( 5 );
-		assertThat(renderer.layersPane().getChildren().size()).isEqualTo( 0 );
+		assertThat( design.getAllLayers().size() ).isEqualTo( 5 );
+		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 0 );
 
-		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer1 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer3 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+		assertThat( renderer.isLayerVisible( layer0 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer1 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer2 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer3 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer4 ) ).isFalse();
 
 		renderer.setLayerVisible( layer1, true );
-		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer1 )).isTrue();
-		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer3 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+		assertThat( renderer.isLayerVisible( layer0 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer1 ) ).isTrue();
+		assertThat( renderer.isLayerVisible( layer2 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer3 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer4 ) ).isFalse();
 
 		renderer.setLayerVisible( layer3, true );
-		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer1 )).isTrue();
-		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer3 )).isTrue();
-		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+		assertThat( renderer.isLayerVisible( layer0 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer1 ) ).isTrue();
+		assertThat( renderer.isLayerVisible( layer2 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer3 ) ).isTrue();
+		assertThat( renderer.isLayerVisible( layer4 ) ).isFalse();
 
 		renderer.setLayerVisible( layer1, false );
-		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer1 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer3 )).isTrue();
-		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+		assertThat( renderer.isLayerVisible( layer0 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer1 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer2 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer3 ) ).isTrue();
+		assertThat( renderer.isLayerVisible( layer4 ) ).isFalse();
 
 		renderer.setLayerVisible( layer3, false );
-		assertThat(renderer.isLayerVisible( layer0 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer1 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer2 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer3 )).isFalse();
-		assertThat(renderer.isLayerVisible( layer4 )).isFalse();
+		assertThat( renderer.isLayerVisible( layer0 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer1 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer2 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer3 ) ).isFalse();
+		assertThat( renderer.isLayerVisible( layer4 ) ).isFalse();
+	}
+
+	/**
+	 * This test ensures that FX geometry is resized when the DPI is changed in
+	 * the renderer.
+	 */
+	@Test
+	@Tag( "WhiteBox" )
+	void updateDpi() {
+		// given
+		Design design = ExampleDesigns.redBlueX();
+		renderer.setDesign( design );
+		renderer.setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+
+		// Verify the FX geometry in the renderer
+		Pane construction = (Pane)renderer.layersPane().getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
+
+		// The test values are based on 96 DPI and a design unit of CM
+		// Verify the original bounds (these are design unit and DPI-dependent)
+		Assertions.assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		Assertions.assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+
+		// when
+		renderer.setDpi( 2 * DesignToolV3.DEFAULT_DPI );
+
+		// then
+		// The FX geometry should have changed in the renderer
+		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
+		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
+		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
+	}
+
+	/**
+	 * This test ensures that FX geometry is resized when the design unit is changed
+	 * in the design.
+	 */
+	@Test
+	@Tag( "WhiteBox" )
+	void updateDesignUnit() {
+		// given
+		Design design = ExampleDesigns.redBlueX();
+		renderer.setDesign( design );
+		renderer.setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+
+		// Verify the FX geometry in the renderer
+		Pane construction = (Pane)renderer.layersPane().getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
+
+		// The test values are based on 96 DPI and a design unit of CM
+		// Verify the original bounds (these are design unit and DPI-dependent)
+		Assertions.assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		Assertions.assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+
+		// when
+		design.setDesignUnit( DesignUnit.MM );
+
+		// then
+		// The FX geometry should have changed in the renderer
+		Assertions.assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
+		Assertions.assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
+		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 	}
 
 }
