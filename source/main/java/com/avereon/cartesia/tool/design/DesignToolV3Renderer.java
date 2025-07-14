@@ -5,6 +5,8 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.GridOrthographic;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -16,9 +18,7 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.lang.ref.WeakReference;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @CustomLog
 public class DesignToolV3Renderer extends DesignRenderer {
@@ -60,6 +60,10 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	private Workplane workplane;
 
+	private DoubleProperty gzX;
+
+	private DoubleProperty gzY;
+
 	/**
 	 * A flag indicating whether the FX geometry is currently being updated.
 	 * This variable is primarily used to prevent redundant or recursive updates
@@ -68,11 +72,28 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 */
 	private boolean updatingFxGeometry;
 
+	/**
+	 * Indicates whether the Gz (geometry scaling factor) is currently being
+	 * updated in the renderer.
+	 * <p>
+	 * This flag is primarily used to track and prevent redundant or recursive
+	 * updates of the geometry scaling factor during rendering processes. When set
+	 * to true, it signals that the geometry scaling factor update is in progress,
+	 * which can help avoid conflicts or unnecessary computations.
+	 * <p>
+	 * The value of this variable is managed internally by methods such as
+	 * {@code updateGz()}, {@code updateGzX()}, and {@code updateGzY()} to ensure
+	 * consistency and control over the geometric transformation updates.
+	 */
+	boolean updatingGz;
+
 	// NEXT Apply lessons learned to create a new design renderer
 
 	DesignToolV3Renderer() {
 		super();
-		getStyleClass().add( "tool-renderer" );
+
+		gzX = new SimpleDoubleProperty( 1.0 );
+		gzY = new SimpleDoubleProperty( 1.0 );
 
 		grid = new Pane();
 		grid.getStyleClass().add( "tool-renderer-grid" );
@@ -98,9 +119,15 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		getChildren().addAll( world, screen );
 
-		// Update the geometry when the DPI changes
-		dpiXProperty().addListener( ( _, _, _ ) -> this.updateFxGeometry() );
-		dpiYProperty().addListener( ( _, _, _ ) -> this.updateFxGeometry() );
+		// Update the global scale when the DPI changes
+		dpiXProperty().addListener( ( _, _, _ ) -> this.updateGzX() );
+		dpiYProperty().addListener( ( _, _, _ ) -> this.updateGzY() );
+
+		// Update the design geometry when the global scale changes
+		gzXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
+		gzYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
+		gzXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
+		gzYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 	}
 
 	@Override
@@ -114,6 +141,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		// Update the grid geometry when the grid parameters change
 		workplane.register( this, NodeEvent.ANY, _ -> this.updateGridFxGeometry() );
+
+		updateGz();
 	}
 
 	public boolean isGridVisible() {
@@ -144,7 +173,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		this.design = design;
 
 		// Update the design geometry when the design unit changes
-		design.register( this, Design.UNIT, _ -> this.updateFxGeometry() );
+		design.register( this, Design.UNIT, _ -> this.updateGz() );
+
+		updateGz();
 	}
 
 	/**
@@ -228,18 +259,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private Collection<Shape> generateGridGeometry() {
-		// Grid geometry
-		this.grid.getChildren().clear();
-		this.grid.getChildren().add( new Line( -100, 0, 100, 0 ) ); // Horizontal line
-		this.grid.getChildren().add( new Line( 0, -100, 0, 100 ) ); // Vertical line
-
-		new GridOrthographic().createFxGeometryGrid( workplane );
-		// NEXT Implement DesignToolV3Renderer.generateGridGeometry()
-		return Collections.emptySet();
+		return GridOrthographic.createFxGeometryGrid( workplane, getGzX() );
 	}
 
 	private void updateGridFxGeometry() {
-		//
+		grid.getChildren().clear();
+		grid.getChildren().addAll( generateGridGeometry() );
 	}
 
 	/**
@@ -300,7 +325,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 * Called when all the FX geometry needs to be updated due to a change in
 	 * renderer or design settings such as DPI or design unit.
 	 */
-	private void updateFxGeometry() {
+	private void updateDesignFxGeometry() {
 		if( updatingFxGeometry || design == null ) return;
 		try {
 			updatingFxGeometry = true;
@@ -316,18 +341,61 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return mapDesignShape( designShape, false );
 	}
 
+	private void updateGzX() {
+		updateGz();
+	}
+
+	private void updateGzY() {
+		updateGz();
+	}
+
+	private void updateGz() {
+		if( updatingGz ) return;
+		try {
+			updatingGz = true;
+			Design design = getDesign();
+			if( design == null ) return;
+
+			DesignUnit unit = design.calcDesignUnit();
+			double unitScale = unit.to( 1, DesignUnit.IN );
+			setGzX( getDpiX() * unitScale );
+			setGzY( getDpiY() * unitScale );
+		} finally {
+			updatingGz = false;
+		}
+	}
+
+	private double getGzX() {
+		return gzX.get();
+	}
+
+	private void setGzX( double gzX ) {
+		this.gzX.set( gzX );
+	}
+
+	private DoubleProperty gzXProperty() {
+		return gzX;
+	}
+
+	private double getGzY() {
+		return gzY.get();
+	}
+
+	private void setGzY( double gzY ) {
+		this.gzY.set( gzY );
+	}
+
+	private DoubleProperty gzYProperty() {
+		return gzY;
+	}
+
 	private Shape mapDesignShape( DesignShape designShape, boolean forceUpdate ) {
 		WeakReference<Shape> shapeRef = designShape.getValue( FX_SHAPE );
 		Shape fxShape = shapeRef == null ? null : shapeRef.get();
 		if( !forceUpdate && fxShape != null ) return fxShape;
 
-		Design design = designShape.getDesign().orElse( null );
-		if( design == null ) return null;
-
-		DesignUnit unit = design.calcDesignUnit();
-		double unitScale = unit.to( 1, DesignUnit.IN );
-		double gzX = getDpiX() * unitScale;
-		double gzY = getDpiY() * unitScale;
+		double gzX = getGzX();
+		double gzY = getGzY();
 
 		fxShape = switch( designShape.getType() ) {
 			case LINE -> updateLineGeometry( (DesignLine)designShape, gzX, gzY );
@@ -386,8 +454,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		text.setY( -y );
 		text.setText( designText.getText() );
 		text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * gzY ) );
-		text.getTransforms().add( Transform.rotate( designText.calcRotate(), x, y ) );
-		text.getTransforms().add( Transform.scale( 1, -1 ) );
+
+		// Rotate must be before scale
+		text.getTransforms().setAll( Transform.rotate( designText.calcRotate(), x, y ), Transform.scale( 1, -1 ) );
 
 		return updateCommonShapeGeometry( designText, text, gzX, gzY );
 	}

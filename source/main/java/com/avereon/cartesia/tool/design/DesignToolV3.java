@@ -7,7 +7,6 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
-import com.avereon.cartesia.tool.Workplane;
 import com.avereon.product.Rb;
 import com.avereon.xenon.XenonMode;
 import com.avereon.xenon.XenonProgramProduct;
@@ -38,12 +37,7 @@ public class DesignToolV3 extends BaseDesignTool {
 	 */
 	private final Label toast;
 
-	/**
-	 * The tool workplane. This is the logical workplane for the tool. A 2D tool
-	 * only needs one workplane.
-	 */
-	private final Workplane workplane;
-
+	@SuppressWarnings( "unused" )
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		this( product, asset, new DesignToolV3Renderer() );
 	}
@@ -53,7 +47,6 @@ public class DesignToolV3 extends BaseDesignTool {
 
 		// Create the objects
 		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
-		this.workplane = new Workplane();
 
 		// The renderer is configured to render to the primary screen by default,
 		// but it can be configured to render to different media just as easily by
@@ -90,8 +83,6 @@ public class DesignToolV3 extends BaseDesignTool {
 		// DEVELOPMENT
 		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) design = ExampleDesigns.design1();
 
-		// Set the workplane
-		getRenderer().setWorkplane( workplane );
 		// Show the grid TODO replace with settings eventually
 		getRenderer().setGridVisible( true );
 
@@ -102,6 +93,15 @@ public class DesignToolV3 extends BaseDesignTool {
 
 		toast.setVisible( false );
 		getRenderer().setVisible( true );
+
+		// Set the workplane settings TODO replace with settings eventually
+		//getWorkplane().setGridStyle( GridStyle.DOT );
+		getWorkplane().setMinorGridX( "0.2" );
+		getWorkplane().setMinorGridY( "0.2" );
+		getWorkplane().setBoundaryX1( -10 );
+		getWorkplane().setBoundaryX2( 10 );
+		getWorkplane().setBoundaryY1( -10 );
+		getWorkplane().setBoundaryY2( 10 );
 	}
 
 	@Override

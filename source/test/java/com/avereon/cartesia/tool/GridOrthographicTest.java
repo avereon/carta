@@ -5,7 +5,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -52,14 +52,14 @@ public class GridOrthographicTest {
 	@Test
 	void testGetGridDots() throws Exception {
 		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
-		List<Shape> dots = Grid.ORTHO.getGridDots( workplane );
+		Collection<Shape> dots = Grid.ORTHO.getGridDots( workplane );
 		assertThat( dots.size() ).isEqualTo( 0 );
 	}
 
 	@Test
 	void getGridLinesCommon() throws Exception {
 		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
-		List<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
+		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
 
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
 		// Y lines = 8 - -8 = 16 / 0.5 + 1 = 33
@@ -70,7 +70,7 @@ public class GridOrthographicTest {
 	@Test
 	void getGridLinesOffOrigin() throws Exception {
 		Workplane workplane = new Workplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
-		List<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
+		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
 
 		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11
 		// Y lines = 8 - 4 = 4 / 0.5 + 1 = 9

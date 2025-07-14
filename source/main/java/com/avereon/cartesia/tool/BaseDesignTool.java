@@ -65,6 +65,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected static final double MINIMUM_GRID_PIXELS = 3.0;
 
 	private final DesignRenderer renderer;
+
 	// FX properties (what others should be here?)
 
 	// FIXME These are basically ignored by the subclasses in favor of the renderer properties.
@@ -73,8 +74,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	private final DoubleProperty viewRotate;
 
 	private final DoubleProperty viewZoom;
-
-	//	private final DoubleProperty viewDpi;
 
 	// Current:
 	// selectAperture
@@ -115,7 +114,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		viewCenter = new SimpleObjectProperty<>( DEFAULT_CENTER );
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
 		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
-		//		viewDpi = new SimpleDoubleProperty( DEFAULT_DPI );
 
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		setCursor( getReticleCursor() );
@@ -125,9 +123,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		currentView = new SimpleObjectProperty<>();
 
 		this.workplane = new Workplane();
+		renderer.setWorkplane( this.workplane );
 
 		// Register the listener to update the cursor when the reticle changes, and the cursor is also a reticle cursor
-		reticle.addListener( ( p, o, n ) -> {
+		reticle.addListener( ( _, _, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
 	}

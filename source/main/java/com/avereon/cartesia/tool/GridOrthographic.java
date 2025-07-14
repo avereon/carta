@@ -13,8 +13,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @CustomLog
 public class GridOrthographic implements Grid {
@@ -37,6 +36,134 @@ public class GridOrthographic implements Grid {
 		point = new Point3D( x, y, 0 );
 		point = point.add( origin );
 		return point;
+	}
+
+	@Override
+	@Deprecated
+	public Collection<Shape> createFxGeometryGrid( Workplane workplane ) {
+		return switch( workplane.getGridStyle() ) {
+			case DOT -> createFxGridLines( workplane, 1.0, true );
+			case LINE -> createFxGridLines( workplane, 1.0, false );
+		};
+	}
+
+	public static Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
+		return switch( workplane.getGridStyle() ) {
+			case DOT -> createFxGridLines( workplane, scale, true );
+			case LINE -> createFxGridLines( workplane, scale, false );
+		};
+	}
+
+	private static Collection<Shape> createFxGridLines( Workplane workplane, double scale, boolean dots ) {
+		Set<Shape> grid = new HashSet<>();
+
+		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
+		double originX = origin.getX() * scale;
+		double originY = origin.getY() * scale;
+
+		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale;
+		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale;
+		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale;
+		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale;
+
+		boolean axisVisible = workplane.isGridAxisVisible();
+		Paint axisPaint = workplane.calcGridAxisPaint();
+		double axisWidth = workplane.calcGridAxisWidth() * scale;
+
+		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
+		double majorIntervalX = workplane.calcMajorGridX() * scale;
+		double majorIntervalY = workplane.calcMajorGridY() * scale;
+		Paint majorPaint = workplane.calcMajorGridPaint();
+		double majorWidth = workplane.calcMajorGridWidth() * scale;
+
+		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
+		double minorIntervalX = workplane.calcMinorGridX() * scale;
+		double minorIntervalY = workplane.calcMinorGridY() * scale;
+		Paint minorPaint = workplane.calcMinorGridPaint();
+		double minorWidth = workplane.calcMinorGridWidth() * scale;
+
+		double snapIntervalX = workplane.calcSnapGridX() * scale;
+		double snapIntervalY = workplane.calcSnapGridY() * scale;
+
+		// Get all offsets
+		List<Double> axisOffsetsX = new ArrayList<>();
+		List<Double> axisOffsetsY = new ArrayList<>();
+		if( originX >= boundaryX1 && originX <= boundaryX2 ) axisOffsetsX.add( originX );
+		if( originY >= boundaryY1 && originY <= boundaryY2 ) axisOffsetsY.add( originY );
+		List<Double> majorOffsetsX = Grid.getOffsets( originX, majorIntervalX, boundaryX1, boundaryX2 );
+		List<Double> majorOffsetsY = Grid.getOffsets( originY, majorIntervalY, boundaryY1, boundaryY2 );
+		List<Double> minorOffsetsX = Grid.getOffsets( originX, minorIntervalX, boundaryX1, boundaryX2 );
+		List<Double> minorOffsetsY = Grid.getOffsets( originY, minorIntervalY, boundaryY1, boundaryY2 );
+
+		// Check for conflicts
+		if( majorVisible ) {
+			minorOffsetsX.removeIf( value -> Grid.isNearAny( value, majorOffsetsX ) );
+			minorOffsetsY.removeIf( value -> Grid.isNearAny( value, majorOffsetsY ) );
+		}
+		if( axisVisible ) {
+			majorOffsetsX.removeIf( value -> Grid.isNearAny( value, axisOffsetsX ) );
+			majorOffsetsY.removeIf( value -> Grid.isNearAny( value, axisOffsetsY ) );
+		}
+
+		if( minorVisible ) {
+			Double[] dashSpacingX = new Double[]{ 0.0, snapIntervalX };
+			Double[] dashSpacingY = new Double[]{ 0.0, snapIntervalY };
+
+			for( double value : minorOffsetsX ) {
+				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				shape.setStroke( minorPaint );
+				shape.setStrokeWidth( minorWidth );
+				if( dots ) shape.getStrokeDashArray().setAll( dashSpacingY );
+				grid.add( shape );
+			}
+			for( double value : minorOffsetsY ) {
+				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				shape.setStroke( minorPaint );
+				shape.setStrokeWidth( minorWidth );
+				if( dots ) shape.getStrokeDashArray().setAll( dashSpacingX );
+				grid.add( shape );
+			}
+		}
+
+		if( majorVisible ) {
+			Double[] dashSpacingX = new Double[]{ 0.0, minorIntervalX };
+			Double[] dashSpacingY = new Double[]{ 0.0, minorIntervalY };
+			for( double value : majorOffsetsX ) {
+				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				shape.setStroke( majorPaint );
+				shape.setStrokeWidth( majorWidth );
+				if( dots ) shape.getStrokeDashArray().setAll( dashSpacingY );
+				grid.add( shape );
+			}
+			for( double value : majorOffsetsY ) {
+				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				shape.setStroke( majorPaint );
+				shape.setStrokeWidth( majorWidth );
+				if( dots ) shape.getStrokeDashArray().setAll( dashSpacingX );
+				grid.add( shape );
+			}
+		}
+
+		if( true ) {
+			Double[] dashSpacingX = new Double[]{ 0.0, majorIntervalX };
+			Double[] dashSpacingY = new Double[]{ 0.0, majorIntervalY };
+			for( double value : axisOffsetsX ) {
+				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				shape.setStroke( axisPaint );
+				shape.setStrokeWidth( axisWidth );
+				if( dots ) shape.getStrokeDashArray().setAll( dashSpacingY );
+				grid.add( shape );
+			}
+			for( double value : axisOffsetsY ) {
+				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				shape.setStroke( axisPaint );
+				shape.setStrokeWidth( axisWidth );
+				if( dots ) shape.getStrokeDashArray().setAll( dashSpacingX );
+				grid.add( shape );
+			}
+		}
+
+		return grid;
 	}
 
 	@Override
@@ -222,115 +349,6 @@ public class GridOrthographic implements Grid {
 				renderer.drawLine( boundaryX1, value, boundaryX2, value );
 			}
 		}
-	}
-
-	@Override
-	@Deprecated
-	public List<Shape> createFxGeometryGrid( Workplane workplane ) {
-		return switch( workplane.getGridStyle() ) {
-			case DOT -> createFxGridDots( workplane );
-			case LINE -> createFxGridLines( workplane );
-		};
-	}
-
-	@Deprecated
-	private List<Shape> createFxGridDots( Workplane workplane ) {
-		// It is not practical to create a dotted grid with FX shapes
-		return List.of();
-	}
-
-	@Deprecated
-	private List<Shape> createFxGridLines( Workplane workplane ) {
-		List<Shape> grid = new ArrayList<>();
-
-		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
-		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
-		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() );
-		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() );
-		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() );
-
-		boolean axisVisible = workplane.isGridAxisVisible();
-		Paint axisPaint = workplane.calcGridAxisPaint();
-		double axisWidth = workplane.calcGridAxisWidth();
-
-		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
-		double majorIntervalX = workplane.calcMajorGridX();
-		double majorIntervalY = workplane.calcMajorGridY();
-		Paint majorPaint = workplane.calcMajorGridPaint();
-		double majorWidth = workplane.calcMajorGridWidth();
-
-		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
-		double minorIntervalX = workplane.calcMinorGridX();
-		double minorIntervalY = workplane.calcMinorGridY();
-		Paint minorPaint = workplane.calcMinorGridPaint();
-		double minorWidth = workplane.calcMinorGridWidth();
-
-		// Get all offsets
-		List<Double> axisOffsetsX = new ArrayList<>();
-		List<Double> axisOffsetsY = new ArrayList<>();
-		if( origin.getX() >= boundaryX1 && origin.getX() <= boundaryX2 ) axisOffsetsX.add( origin.getX() );
-		if( origin.getY() >= boundaryY1 && origin.getY() <= boundaryY2 ) axisOffsetsY.add( origin.getY() );
-		List<Double> majorOffsetsX = Grid.getOffsets( origin.getX(), majorIntervalX, boundaryX1, boundaryX2 );
-		List<Double> majorOffsetsY = Grid.getOffsets( origin.getY(), majorIntervalY, boundaryY1, boundaryY2 );
-		List<Double> minorOffsetsX = Grid.getOffsets( origin.getX(), minorIntervalX, boundaryX1, boundaryX2 );
-		List<Double> minorOffsetsY = Grid.getOffsets( origin.getY(), minorIntervalY, boundaryY1, boundaryY2 );
-
-		// Check for conflicts
-		if( majorVisible ) {
-			minorOffsetsX.removeIf( value -> Grid.isNearAny( value, majorOffsetsX ) );
-			minorOffsetsY.removeIf( value -> Grid.isNearAny( value, majorOffsetsY ) );
-		}
-		if( axisVisible ) {
-			majorOffsetsX.removeIf( value -> Grid.isNearAny( value, axisOffsetsX ) );
-			majorOffsetsY.removeIf( value -> Grid.isNearAny( value, axisOffsetsY ) );
-		}
-
-		if( minorVisible ) {
-			for( double value : minorOffsetsX ) {
-				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-				shape.setStroke( minorPaint );
-				shape.setStrokeWidth( minorWidth );
-				grid.add( shape );
-			}
-			for( double value : minorOffsetsY ) {
-				Line shape = new Line( boundaryX1, value, boundaryX2, value );
-				shape.setStroke( minorPaint );
-				shape.setStrokeWidth( minorWidth );
-				grid.add( shape );
-			}
-		}
-
-		if( majorVisible ) {
-			for( double value : majorOffsetsX ) {
-				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-				shape.setStroke( majorPaint );
-				shape.setStrokeWidth( majorWidth );
-				grid.add( shape );
-			}
-			for( double value : majorOffsetsY ) {
-				Line shape = new Line( boundaryX1, value, boundaryX2, value );
-				shape.setStroke( majorPaint );
-				shape.setStrokeWidth( majorWidth );
-				grid.add( shape );
-			}
-		}
-
-		if( axisVisible ) {
-			for( double value : axisOffsetsX ) {
-				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
-				shape.setStroke( axisPaint );
-				shape.setStrokeWidth( axisWidth );
-				grid.add( shape );
-			}
-			for( double value : axisOffsetsY ) {
-				Line shape = new Line( boundaryX1, value, boundaryX2, value );
-				shape.setStroke( axisPaint );
-				shape.setStrokeWidth( axisWidth );
-				grid.add( shape );
-			}
-		}
-
-		return grid;
 	}
 
 }

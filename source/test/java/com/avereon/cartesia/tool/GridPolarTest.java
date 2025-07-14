@@ -6,7 +6,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,14 +47,14 @@ public class GridPolarTest {
 	@Test
 	void testGetGridDots() throws Exception {
 		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "90", "1", "45", "1", "45" );
-		List<Shape> dots = Grid.POLAR.getGridDots( workplane );
+		Collection<Shape> dots = Grid.POLAR.getGridDots( workplane );
 		assertThat( dots.size() ).isEqualTo( 0 );
 	}
 
 	@Test
 	void testGetGridLines() throws Exception {
 		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
-		List<Shape> lines = Grid.POLAR.createFxGeometryGrid( workplane );
+		Collection<Shape> lines = Grid.POLAR.createFxGeometryGrid( workplane );
 		assertThat( lines.size() ).isEqualTo( 44 );
 	}
 

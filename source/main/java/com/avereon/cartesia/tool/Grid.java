@@ -40,7 +40,7 @@ public interface Grid {
 	default void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {}
 
 	@Deprecated
-	default List<Shape> getGridDots( Workplane workplane ) {
+	default Collection<Shape> getGridDots( Workplane workplane ) {
 		return List.of();
 	}
 
@@ -48,7 +48,7 @@ public interface Grid {
 	 * @param workplane The workplane that defines the users work plane
 	 * @return The grid geometry as FX shapes
 	 */
-	List<Shape> createFxGeometryGrid( Workplane workplane );
+	Collection<Shape> createFxGeometryGrid( Workplane workplane );
 
 	static Grid valueOf( String name ) {
 		return switch( name ) {

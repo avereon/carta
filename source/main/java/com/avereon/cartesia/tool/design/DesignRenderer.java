@@ -32,6 +32,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	private final DoubleProperty viewZoomY;
 
 	public DesignRenderer() {
+		getStyleClass().add( "tool-renderer" );
+
 		/*
 	  The renderer is configured to render at 96 DPI by default, but it can be
 		configured to render for different media just as easily by changing the
