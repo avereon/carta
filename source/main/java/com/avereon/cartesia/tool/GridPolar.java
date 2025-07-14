@@ -29,31 +29,12 @@ public class GridPolar implements Grid {
 		point = point.subtract( origin );
 		point = CadShapes.cartesianToPolarDegrees( point );
 
-		point = new Point3D( Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ),
-			Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ),
-			0
-		);
+		point = new Point3D( Arithmetic.nearest( point.getX(), workplane.calcSnapGridX() ), Arithmetic.nearest( point.getY(), workplane.calcSnapGridY() ), 0 );
 
 		point = CadShapes.polarDegreesToCartesian( point );
 		point = point.add( origin );
 
 		return point;
-	}
-
-	@Override
-	public List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
-		return switch( workplane.getGridStyle() ) {
-			case DOT -> generateMareaGridDots( workplane );
-			case LINE -> generateMareaGridLines( workplane );
-		};
-	}
-
-	private List<Shape2d> generateMareaGridDots( Workplane workplane ) {
-		return List.of();
-	}
-
-	private List<Shape2d> generateMareaGridLines( Workplane workplane ) {
-		return List.of();
 	}
 
 	@Override
@@ -172,6 +153,22 @@ public class GridPolar implements Grid {
 		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );
 
 		return grid;
+	}
+
+	@Override
+	public List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
+		return switch( workplane.getGridStyle() ) {
+			case DOT -> generateMareaGridDots( workplane );
+			case LINE -> generateMareaGridLines( workplane );
+		};
+	}
+
+	private List<Shape2d> generateMareaGridDots( Workplane workplane ) {
+		return List.of();
+	}
+
+	private List<Shape2d> generateMareaGridLines( Workplane workplane ) {
+		return List.of();
 	}
 
 }

@@ -14,8 +14,13 @@ public class GridIsometric implements Grid {
 	}
 
 	@Override
-	public Point3D getNearest( Workplane workplane, Point3D point) {
+	public Point3D getNearest( Workplane workplane, Point3D point ) {
 		return null;
+	}
+
+	@Override
+	public List<Shape> createFxGeometryGrid( Workplane workplane ) {
+		return List.of();
 	}
 
 	@Override
@@ -31,11 +36,6 @@ public class GridIsometric implements Grid {
 	}
 
 	private List<Shape2d> generateMareaGridLines( Workplane workplane ) {
-		return List.of();
-	}
-
-	@Override
-	public List<Shape> createFxGeometryGrid( Workplane workplane) {
 		return List.of();
 	}
 

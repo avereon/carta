@@ -50,13 +50,6 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void testGetGridDots() throws Exception {
-		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "90", "1", "45", "1", "45" );
-		Collection<Shape> dots = Grid.ORTHO.getGridDots( workplane );
-		assertThat( dots.size() ).isEqualTo( 0 );
-	}
-
-	@Test
 	void getGridLinesCommon() throws Exception {
 		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );

@@ -39,11 +39,6 @@ public interface Grid {
 
 	default void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {}
 
-	@Deprecated
-	default Collection<Shape> getGridDots( Workplane workplane ) {
-		return List.of();
-	}
-
 	/**
 	 * @param workplane The workplane that defines the users work plane
 	 * @return The grid geometry as FX shapes
