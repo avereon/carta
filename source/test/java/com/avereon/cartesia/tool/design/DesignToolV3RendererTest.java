@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
+import com.avereon.cartesia.tool.Workplane;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
@@ -34,9 +35,6 @@ public class DesignToolV3RendererTest {
 	private DesignToolV3Renderer renderer;
 
 	@Mock
-	private ChangeListener<DesignUnit> unitListener;
-
-	@Mock
 	private ChangeListener<Number> xListener;
 
 	@Mock
@@ -51,6 +49,20 @@ public class DesignToolV3RendererTest {
 	@BeforeEach
 	void setUp() {
 		renderer = new DesignToolV3Renderer();
+	}
+
+	@Test
+	void setWorkplane() {
+		Workplane workplane = new Workplane();
+		renderer.setWorkplane( workplane );
+		assertThat( renderer.getWorkplane() ).isEqualTo( workplane );
+	}
+
+	@Test
+	void setDesign() {
+		Design design = new Design2D();
+		renderer.setDesign( design );
+		assertThat( renderer.getDesign() ).isEqualTo( design );
 	}
 
 	@Test
@@ -304,46 +316,40 @@ public class DesignToolV3RendererTest {
 		renderer.setLayerVisible( layer1, true );
 		renderer.setLayerVisible( layer3, true );
 		// then
-		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( -1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer1 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer2 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 2 );
 
 		// when
 		renderer.setLayerVisible( layer2, true );
-		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 2 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( 1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer1 ) ).isEqualTo( 2 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer2 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 3 );
 
 		// when
 		renderer.setLayerVisible( layer4, true );
-		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 3 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( 2 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer1 ) ).isEqualTo( 3 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer2 ) ).isEqualTo( 2 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer3 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer4 ) ).isEqualTo( 0 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 4 );
 
 		// when
 		renderer.setLayerVisible( layer4, false );
 		// then
-		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 2 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( 1 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
-		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer1 ) ).isEqualTo( 2 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer2 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOfDesignLayer( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 3 );
-	}
-
-	private int paneIndexOf( Pane pane, DesignLayer layer ) {
-		WeakReference<Pane> weakLayer = layer.getValue( DesignToolV3Renderer.FX_SHAPE );
-		if( weakLayer == null ) return -1;
-		return pane.getChildren().indexOf( weakLayer.get() );
 	}
 
 	@Test
@@ -464,4 +470,10 @@ public class DesignToolV3RendererTest {
 		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 	}
 
+
+	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
+		WeakReference<Pane> weakLayer = layer.getValue( DesignToolV3Renderer.FX_SHAPE );
+		if( weakLayer == null ) return -1;
+		return pane.getChildren().indexOf( weakLayer.get() );
+	}
 }
