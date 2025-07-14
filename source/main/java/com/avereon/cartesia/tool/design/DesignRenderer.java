@@ -3,6 +3,7 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
+import com.avereon.cartesia.tool.Workplane;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
@@ -49,6 +50,16 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
 		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
 	}
+
+	public abstract Workplane getWorkplane();
+
+	public abstract void setWorkplane( Workplane workplane );
+
+	public abstract boolean isGridVisible();
+
+	public abstract void setGridVisible( boolean visible );
+
+	public abstract Design getDesign();
 
 	public abstract void setDesign( Design design );
 

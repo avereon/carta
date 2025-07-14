@@ -2,7 +2,9 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
+import com.avereon.cartesia.tool.GridOrthographic;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.data.NodeEvent;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -13,6 +15,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
+import java.lang.ref.WeakReference;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,6 +57,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private final Pane preview;
 
 	private Design design;
+
+	private Workplane workplane;
 
 	/**
 	 * A flag indicating whether the FX geometry is currently being updated.
@@ -99,15 +104,46 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	@Override
+	public Workplane getWorkplane() {
+		return workplane;
+	}
+
+	@Override
+	public void setWorkplane( Workplane workplane ) {
+		this.workplane = workplane;
+
+		// Update the grid geometry when the grid parameters change
+		workplane.register( this, NodeEvent.ANY, _ -> this.updateGridFxGeometry() );
+	}
+
+	public boolean isGridVisible() {
+		return grid.isVisible();
+	}
+
+	public void setGridVisible( boolean visible ) {
+		// This method has a very important implementation, it is more than just
+		// setting a flag, it participates in the performance of the renderer by
+		// creating and destroying geometry. Grid geometry is only created when
+		// needed, and that is when the grid is made visible. The same happens in
+		// reverse; when the grid is hidden, the geometry is not needed anymore.
+		if( visible ) {
+			grid.getChildren().addAll( generateGridGeometry() );
+		} else {
+			grid.getChildren().clear();
+		}
+		grid.setVisible( visible );
+	}
+
+	@Override
+	public Design getDesign() {
+		return design;
+	}
+
+	@Override
 	public void setDesign( Design design ) {
 		this.design = design;
 
-		// Grid geometry
-		this.grid.getChildren().clear();
-		this.grid.getChildren().add( new Line( -10, 0, 10, 0 ) ); // Horizontal line
-		this.grid.getChildren().add( new Line( 0, -10, 0, 10 ) ); // Vertical line
-
-		// Update the geometry when the design unit changes
+		// Update the design geometry when the design unit changes
 		design.register( this, Design.UNIT, _ -> this.updateFxGeometry() );
 	}
 
@@ -119,7 +155,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 */
 	@Override
 	public boolean isLayerVisible( DesignLayer layer ) {
-		Pane pane = layer.getValue( FX_SHAPE );
+		WeakReference<Pane> layerRef = layer.getValue( FX_SHAPE );
+		Pane pane = layerRef == null ? null : layerRef.get();
 		return layers.getChildren().contains( pane );
 	}
 
@@ -143,11 +180,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		if( visible ) {
 			// Add the FX layer to the renderer
 			Pane pane = mapDesignLayer( layer, true );
-			layer.setValue( FX_SHAPE, pane );
+			layer.setValue( FX_SHAPE, new WeakReference<>( pane ) );
 			layers.getChildren().add( determineLayerIndex( layer ), pane );
 		} else {
 			// Remove the FX layer from the renderer
-			Pane pane = layer.getValue( FX_SHAPE );
+			WeakReference<Pane> layerRef = layer.getValue( FX_SHAPE );
+			Pane pane = layerRef == null ? null : layerRef.get();
 			if( pane != null ) layers.getChildren().remove( pane );
 			layer.setValue( FX_SHAPE, null );
 		}
@@ -189,6 +227,21 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return node.getBoundsInParent();
 	}
 
+	private Collection<Shape> generateGridGeometry() {
+		// Grid geometry
+		this.grid.getChildren().clear();
+		this.grid.getChildren().add( new Line( -100, 0, 100, 0 ) ); // Horizontal line
+		this.grid.getChildren().add( new Line( 0, -100, 0, 100 ) ); // Vertical line
+
+		new GridOrthographic().createFxGeometryGrid( workplane );
+		// NEXT Implement DesignToolV3Renderer.generateGridGeometry()
+		return Collections.emptySet();
+	}
+
+	private void updateGridFxGeometry() {
+		//
+	}
+
 	/**
 	 * Determines the appropriate index for placing a design layer among the existing
 	 * FX layers based on the order of the design layers in the design.
@@ -205,7 +258,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		int index = -1;
 		for( DesignLayer checkLayer : designLayers ) {
 			if( checkLayer == designLayer ) break;
-			Pane fxLayer = checkLayer.getValue( FX_SHAPE );
+			WeakReference<Pane> layerRef = checkLayer.getValue( FX_SHAPE );
+			Pane fxLayer = layerRef == null ? null : layerRef.get();
 			if( fxLayer != null ) index = fxLayers.indexOf( fxLayer );
 		}
 
@@ -223,15 +277,15 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private Pane mapDesignLayer( DesignLayer designLayer, boolean includeShapes, boolean includeSubLayers ) {
 		Pane layer = new Pane();
 		layer.setUserData( designLayer );
-		// TODO Use a weak reference to the layer to avoid memory leaks
-		designLayer.setValue( "fx-pane", layer );
-		log.atConfig().log( "Created a pane for layer: %s", designLayer.getName() );
+		designLayer.setValue( FX_SHAPE, new WeakReference<>( layer ) );
 
 		if( includeShapes ) {
 			designLayer.getShapes().forEach( designShape -> {
 				Shape shape = mapDesignShape( designShape );
-				// TODO Handlers need to be attached with the layer as owner
 				if( shape != null ) layer.getChildren().add( shape );
+
+				// TODO Handlers need to be attached with the layer as owner
+				// i.e. designLayer.register(layer, "order", e -> changeLayerOrder() );
 			} );
 		}
 
@@ -263,7 +317,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private Shape mapDesignShape( DesignShape designShape, boolean forceUpdate ) {
-		Shape fxShape = designShape.getValue( FX_SHAPE );
+		WeakReference<Shape> shapeRef = designShape.getValue( FX_SHAPE );
+		Shape fxShape = shapeRef == null ? null : shapeRef.get();
 		if( !forceUpdate && fxShape != null ) return fxShape;
 
 		Design design = designShape.getDesign().orElse( null );
@@ -299,8 +354,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private Shape updateLineGeometry( DesignLine designLine, double gzX, double gzY ) {
-		Line line = designLine.getValue( FX_SHAPE );
-		if( line == null ) line = designLine.setValue( FX_SHAPE, new Line() );
+		WeakReference<Line> lineRef = designLine.getValue( FX_SHAPE );
+		Line line = lineRef == null ? null : lineRef.get();
+		if( line == null ) {
+			line = new Line();
+			designLine.setValue( FX_SHAPE, new WeakReference<>( line ) );
+		}
 
 		line.setStartX( designLine.getOrigin().getX() * gzX );
 		line.setStartY( designLine.getOrigin().getY() * gzY );
@@ -313,8 +372,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	// TODO Finish building the update methods for the remaining design shapes
 
 	private Shape updateTextGeometry( DesignText designText, double gzX, double gzY ) {
-		Text text = designText.getValue( FX_SHAPE );
-		if( text == null ) text = designText.setValue( FX_SHAPE, new Text() );
+		WeakReference<Text> textRef = designText.getValue( FX_SHAPE );
+		Text text = textRef == null ? null : textRef.get();
+		if( text == null ) {
+			text = new Text();
+			designText.setValue( FX_SHAPE, new WeakReference<>( text ) );
+		}
 
 		double x = designText.getOrigin().getX() * gzX;
 		double y = designText.getOrigin().getY() * gzY;

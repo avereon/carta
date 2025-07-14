@@ -90,10 +90,18 @@ public class DesignToolV3 extends BaseDesignTool {
 		// DEVELOPMENT
 		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) design = ExampleDesigns.design1();
 
+		// Set the workplane
+		getRenderer().setWorkplane( workplane );
+		// Show the grid TODO replace with settings eventually
+		getRenderer().setGridVisible( true );
+
+		// Set the design model
 		getRenderer().setDesign( design );
+		// Show the first layer TODO replace with settings eventually
 		getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
-		getRenderer().setVisible( true );
+
 		toast.setVisible( false );
+		getRenderer().setVisible( true );
 	}
 
 	@Override

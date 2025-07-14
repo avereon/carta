@@ -19,6 +19,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.ref.WeakReference;
+
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -302,32 +304,46 @@ public class DesignToolV3RendererTest {
 		renderer.setLayerVisible( layer1, true );
 		renderer.setLayerVisible( layer3, true );
 		// then
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 2 );
 
 		// when
 		renderer.setLayerVisible( layer2, true );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 2 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer2.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 2 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 3 );
 
 		// when
 		renderer.setLayerVisible( layer4, true );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 3 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer2.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 2 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer4.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 3 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( 2 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( 0 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 4 );
 
 		// when
 		renderer.setLayerVisible( layer4, false );
 		// then
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer1.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 2 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer2.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 1 );
-		assertThat( renderer.layersPane().getChildren().indexOf( (Pane)layer3.getValue( DesignToolV3Renderer.FX_SHAPE ) ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer0 ) ).isEqualTo( -1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer1 ) ).isEqualTo( 2 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer2 ) ).isEqualTo( 1 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer3 ) ).isEqualTo( 0 );
+		assertThat( paneIndexOf( renderer.layersPane(), layer4 ) ).isEqualTo( -1 );
 		assertThat( renderer.layersPane().getChildren().size() ).isEqualTo( 3 );
+	}
+
+	private int paneIndexOf( Pane pane, DesignLayer layer ) {
+		WeakReference<Pane> weakLayer = layer.getValue( DesignToolV3Renderer.FX_SHAPE );
+		if( weakLayer == null ) return -1;
+		return pane.getChildren().indexOf( weakLayer.get() );
 	}
 
 	@Test

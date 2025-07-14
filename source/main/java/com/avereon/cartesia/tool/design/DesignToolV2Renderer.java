@@ -174,6 +174,12 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		);
 	}
 
+	@Override
+	public Design getDesign() {
+		return design;
+	}
+
+	@Override
 	public void setDesign( Design design ) {
 		if( this.design != null ) {
 			this.design.unregister( NodeEvent.ANY, designWatcher );
