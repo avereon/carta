@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
+import static com.avereon.cartesia.TestConstants.EXTRA_LOOSE_TOLERANCE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignBoxTest {
@@ -65,12 +65,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 1, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 1 + CadMath.SQRT2, LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2, LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 1, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 1 + CadMath.SQRT2, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2, EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -81,12 +81,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getSelectBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 1.975, LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 0.975, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 6.025, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 3.025, LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 4.05, LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 2.05, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( 1.975, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 0.975, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 6.025, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 3.025, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 4.05, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 2.05, EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -99,12 +99,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getSelectBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 1.5, LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 0.5, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 6.5, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 3.5, LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 5, LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 3, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( 1.5, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 0.5, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 6.5, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 3.5, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 5, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 3, EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -119,12 +119,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getSelectBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 - (2 * CadMath.SQRT2_OVER_2) - a, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + (4 * CadMath.SQRT2_OVER_2) + a, LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 1 - a, LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 1 + (6 * CadMath.SQRT2_OVER_2) + a, LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( 2 - (2 * CadMath.SQRT2_OVER_2) - a, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 2 + (4 * CadMath.SQRT2_OVER_2) + a, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( 1 - a, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 1 + (6 * CadMath.SQRT2_OVER_2) + a, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test

@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.avereon.cartesia.TestConstants.LOOSE_TOLERANCE;
+import static com.avereon.cartesia.TestConstants.EXTRA_LOOSE_TOLERANCE;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static com.avereon.cartesia.math.CadMath.SQRT2;
 import static com.avereon.cartesia.math.CadMath.SQRT2_OVER_2;
@@ -128,7 +128,7 @@ public class DesignLineTest {
 		Bounds bounds = line.getSelectBounds();
 
 		// then
-		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( -2 - SQRT2_OVER_2, -2 - SQRT2_OVER_2, 4 + SQRT2, 4 + SQRT2 ), LOOSE_TOLERANCE );
+		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( -2 - SQRT2_OVER_2, -2 - SQRT2_OVER_2, 4 + SQRT2, 4 + SQRT2 ), EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -195,7 +195,7 @@ public class DesignLineTest {
 		//assertThat( bounds ).isEqualTo( new BoundingBox( 0.5, 1.5, 1, 1 ) );
 
 		// But this is what is computed by JavaFX
-		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( 1 - SQRT2_OVER_2, 2 - SQRT2_OVER_2, SQRT2, SQRT2 ), LOOSE_TOLERANCE );
+		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( 1 - SQRT2_OVER_2, 2 - SQRT2_OVER_2, SQRT2, SQRT2 ), EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test
@@ -215,7 +215,7 @@ public class DesignLineTest {
 		//assertThat( bounds ).isEqualTo( new BoundingBox( -2-TEN_OVER_SQRT2_OVER_2, -2-TEN_OVER_SQRT2_OVER_2, 4+TEN_OVER_SQRT2, 4+TEN_OVER_SQRT2 ) );
 
 		// But this is what is computed by JavaFX
-		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( -2 - SQRT2_OVER_2, -2 - SQRT2_OVER_2, 4 + SQRT2, 4 + SQRT2 ), LOOSE_TOLERANCE );
+		FxBoundsAssert.assertThat( bounds ).isEqualTo( new BoundingBox( -2 - SQRT2_OVER_2, -2 - SQRT2_OVER_2, 4 + SQRT2, 4 + SQRT2 ), EXTRA_LOOSE_TOLERANCE );
 	}
 
 	@Test

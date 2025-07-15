@@ -7,6 +7,7 @@ import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
@@ -18,7 +19,9 @@ import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.lang.ref.WeakReference;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @CustomLog
 public class DesignToolV3Renderer extends DesignRenderer {
@@ -128,6 +131,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		gzYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
 		gzXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 		gzYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
+
+		viewCenterXProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( n.doubleValue(), getViewCenterY(), getViewZoomX(), getViewZoomY(), getViewRotate() ) ) );
+		viewCenterYProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), n.doubleValue(), getViewZoomX(), getViewZoomY(), getViewRotate() ) ) );
+		viewZoomXProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), getViewCenterY(), n.doubleValue(), getViewZoomY(), getViewRotate() ) ) );
+		viewZoomYProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), getViewCenterY(), getViewZoomX(), n.doubleValue(), getViewRotate() ) ) );
+		viewRotateProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), getViewCenterY(), getViewZoomX(), getViewZoomY(), n.doubleValue() ) ) );
 	}
 
 	@Override
@@ -248,6 +257,17 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	@Override
 	public void print( double factor ) {
 
+	}
+
+	public Bounds screenToWorld( Bounds bounds ) {
+		Bounds worldBounds = world.parentToLocal( bounds );
+
+		double minX = worldBounds.getMinX() / getGzX();
+		double minY = worldBounds.getMinY() / getGzY();
+		double maxX = worldBounds.getMaxX() / getGzX();
+		double maxY = worldBounds.getMaxY() / getGzY();
+
+		return new BoundingBox( minX, minY, maxX - minX, maxY - minY );
 	}
 
 	final Pane layersPane() {

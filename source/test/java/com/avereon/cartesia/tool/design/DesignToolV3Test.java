@@ -11,6 +11,7 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.BeforeEach;
@@ -287,4 +288,17 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		verify( renderer, times( 1 ) ).setDpi( 2 * DesignToolV3.DEFAULT_DPI );
 	}
 
+	@Test
+	void screenToWorld() {
+		// given
+		tool.resize( 1000, 1000 );
+		assertThat( tool.getWidth() ).isEqualTo( 1000 );
+		assertThat( tool.getHeight() ).isEqualTo( 1000 );
+		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 0, 0, 0 ) );
+		assertThat( tool.getViewZoom() ).isEqualTo( 1 );
+
+		Bounds bounds = tool.screenToWorld( new BoundingBox( 0, 0, tool.getWidth(), tool.getHeight() ) );
+
+		System.out.println( bounds );
+	}
 }

@@ -378,4 +378,14 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		return renderer;
 	}
 
+	private void updateWorkplaneBoundaries() {
+		// Update the workplane boundaries based on the viewport
+
+		// Determine the viewport boundaries in world coordinates
+		// Note that the viewport can be panned, zoomed and rotated
+		// A world rectangle could be determined from the viewport
+
+		getRenderer().screenToLocal( getRenderer().getBoundsInLocal() );
+	}
+
 }

@@ -6,8 +6,10 @@ import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.curve.math.Constants;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
@@ -22,6 +24,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.ref.WeakReference;
 
+import static com.avereon.cartesia.TestConstants.EXTRA_LOOSE_TOLERANCE;
+import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -470,6 +474,62 @@ public class DesignToolV3RendererTest {
 		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -20.78740119934082, -20.78740119934082, 41.57480239868164, 41.57480239868164 ) );
 	}
 
+	@Test
+	void screenToWorld() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Bounds bounds = renderer.screenToWorld( new BoundingBox( -100, -100, 200, 200 ) );
+
+		// then
+		assertThat( bounds.getMinX() ).isEqualTo( -100 / gz );
+		assertThat( bounds.getMinY() ).isEqualTo( -100 / gz );
+		assertThat( bounds.getMaxX() ).isEqualTo( 100 / gz );
+		assertThat( bounds.getMaxY() ).isEqualTo( 100 / gz );
+		assertThat( bounds.getWidth() ).isEqualTo( 200 / gz );
+		assertThat( bounds.getHeight() ).isEqualTo( 200 / gz );
+	}
+
+	@Test
+	void screenToWorldWithScale() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.setViewZoom( 2 );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+		double scale = 0.5;
+
+		Bounds bounds = renderer.screenToWorld( new BoundingBox( -100, -100, 200, 200 ) );
+
+		assertThat( bounds.getMinX() ).isEqualTo( scale * -100 / gz, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( scale * -100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( scale * 100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( scale * 100 / gz, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( scale * 200 / gz, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( scale * 200 / gz, TOLERANCE );
+	}
+
+	@Test
+	void screenToWorldWithRotation() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.setViewRotate(45 );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+		double scale = Constants.SQRT_TWO;
+
+		Bounds bounds = renderer.screenToWorld( new BoundingBox( -100, -100, 200, 200 ) );
+
+		assertThat( bounds.getMinX() ).isEqualTo( scale * -100 / gz, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( scale * -100 / gz, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( scale * 100 / gz, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( scale * 100 / gz, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( scale * 200 / gz, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( scale * 200 / gz, EXTRA_LOOSE_TOLERANCE );
+	}
 
 	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
 		WeakReference<Pane> weakLayer = layer.getValue( DesignToolV3Renderer.FX_SHAPE );

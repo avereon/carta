@@ -48,6 +48,7 @@ public class GridOrthographic implements Grid {
 	}
 
 	public static Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
+		if( workplane == null ) return Collections.emptyList();
 		return switch( workplane.getGridStyle() ) {
 			case DOT -> createFxGridLines( workplane, scale, true );
 			case LINE -> createFxGridLines( workplane, scale, false );
