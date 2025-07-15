@@ -7,6 +7,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
+import com.avereon.cartesia.tool.GridStyle;
 import com.avereon.product.Rb;
 import com.avereon.xenon.XenonMode;
 import com.avereon.xenon.XenonProgramProduct;
@@ -95,7 +96,7 @@ public class DesignToolV3 extends BaseDesignTool {
 		getRenderer().setVisible( true );
 
 		// Set the workplane settings TODO replace with settings eventually
-		//getWorkplane().setGridStyle( GridStyle.DOT );
+		getWorkplane().setGridStyle( GridStyle.CROSS );
 		getWorkplane().setMinorGridX( "0.2" );
 		getWorkplane().setMinorGridY( "0.2" );
 		getWorkplane().setBoundaryX1( -10 );

@@ -27,6 +27,7 @@ public class GridIsometric implements Grid {
 	public List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
 		return switch( workplane.getGridStyle() ) {
 			case DOT -> generateMareaGridDots( workplane );
+			case CROSS -> generateMareaGridLines( workplane );
 			case LINE -> generateMareaGridLines( workplane );
 		};
 	}
