@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static com.avereon.cartesia.TestConstants.EXTRA_LOOSE_TOLERANCE;
+import static com.avereon.cartesia.TestConstants.TOLERANCE_PERCENT_LOOSE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignBoxTest {
@@ -65,12 +65,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 - CadMath.SQRT2_OVER_2, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + CadMath.SQRT2_OVER_2, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 1, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 1 + CadMath.SQRT2, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( CadMath.SQRT2, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( CadMath.SQRT2, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isCloseTo( 2 - CadMath.SQRT2_OVER_2, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxX() ).isCloseTo( 2 + CadMath.SQRT2_OVER_2, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMinY() ).isCloseTo( 1, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxY() ).isCloseTo( 1 + CadMath.SQRT2, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getWidth() ).isCloseTo( CadMath.SQRT2, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getHeight() ).isCloseTo( CadMath.SQRT2, TOLERANCE_PERCENT_LOOSE );
 	}
 
 	@Test
@@ -81,12 +81,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getSelectBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 1.975, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 0.975, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 6.025, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 3.025, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 4.05, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 2.05, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isCloseTo( 1.975, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMinY() ).isCloseTo( 0.975, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxX() ).isCloseTo( 6.025, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxY() ).isCloseTo( 3.025, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getWidth() ).isCloseTo( 4.05, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getHeight() ).isCloseTo( 2.05, TOLERANCE_PERCENT_LOOSE );
 	}
 
 	@Test
@@ -99,12 +99,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getSelectBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 1.5, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 0.5, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 6.5, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 3.5, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 5, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 3, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isCloseTo( 1.5, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMinY() ).isCloseTo( 0.5, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxX() ).isCloseTo( 6.5, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxY() ).isCloseTo( 3.5, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getWidth() ).isCloseTo( 5, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getHeight() ).isCloseTo( 3, TOLERANCE_PERCENT_LOOSE );
 	}
 
 	@Test
@@ -119,12 +119,12 @@ public class DesignBoxTest {
 		// when
 		Bounds bounds = box.getSelectBounds();
 
-		assertThat( bounds.getMinX() ).isEqualTo( 2 - (2 * CadMath.SQRT2_OVER_2) - a, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 2 + (4 * CadMath.SQRT2_OVER_2) + a, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( 1 - a, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 1 + (6 * CadMath.SQRT2_OVER_2) + a, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, EXTRA_LOOSE_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, EXTRA_LOOSE_TOLERANCE );
+		assertThat( bounds.getMinX() ).isCloseTo( 2 - (2 * CadMath.SQRT2_OVER_2) - a, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxX() ).isCloseTo( 2 + (4 * CadMath.SQRT2_OVER_2) + a, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMinY() ).isCloseTo( 1 - a, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getMaxY() ).isCloseTo( 1 + (6 * CadMath.SQRT2_OVER_2) + a, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getWidth() ).isCloseTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, TOLERANCE_PERCENT_LOOSE );
+		assertThat( bounds.getHeight() ).isCloseTo( 2 * CadMath.SQRT2_OVER_2 + 4 * CadMath.SQRT2_OVER_2 + b, TOLERANCE_PERCENT_LOOSE );
 	}
 
 	@Test
