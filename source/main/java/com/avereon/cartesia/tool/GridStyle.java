@@ -4,6 +4,8 @@ public enum GridStyle {
 
 	LINE,
 
+	CROSS,
+
 	DOT
 
 }
