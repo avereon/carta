@@ -5,6 +5,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.GridOrthographic;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
+import com.avereon.xenon.util.DragCapability;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
@@ -116,6 +117,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		world.getTransforms().add( Transform.scale( 1, -1 ) );
 		world.getChildren().addAll( grid, layers, preview, reference );
 
+		DragCapability.add( world );
+
 		// The screen scale container
 		// Contains the orientation indicator
 		screen = new Pane();
@@ -132,11 +135,19 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		gzXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 		gzYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 
-		viewCenterXProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( n.doubleValue(), getViewCenterY(), getViewZoomX(), getViewZoomY(), getViewRotate() ) ) );
-		viewCenterYProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), n.doubleValue(), getViewZoomX(), getViewZoomY(), getViewRotate() ) ) );
-		viewZoomXProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), getViewCenterY(), n.doubleValue(), getViewZoomY(), getViewRotate() ) ) );
-		viewZoomYProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), getViewCenterY(), getViewZoomX(), n.doubleValue(), getViewRotate() ) ) );
-		viewRotateProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( computeWorldTransform( getViewCenterX(), getViewCenterY(), getViewZoomX(), getViewZoomY(), n.doubleValue() ) ) );
+		viewCenterXProperty().addListener( ( _, _, n ) -> updateWorldOrientation( n.doubleValue(), getViewCenterY(), getViewZoomX(), getViewZoomY(), getViewRotate() ) );
+		viewCenterYProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), n.doubleValue(), getViewZoomX(), getViewZoomY(), getViewRotate() ) );
+		viewZoomXProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), getViewCenterY(), n.doubleValue(), getViewZoomY(), getViewRotate() ) );
+		viewZoomYProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), getViewCenterY(), getViewZoomX(), n.doubleValue(), getViewRotate() ) );
+		viewRotateProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), getViewCenterY(), getViewZoomX(), getViewZoomY(), n.doubleValue() ) );
+	}
+
+	private void updateWorldOrientation( double centerX, double centerY, double zoomX, double zoomY, double rotate ) {
+		world.setLayoutX( centerX * getGzX() - (0.5 * getWidth()) );
+		world.setLayoutY( centerY * getGzY() - (0.5 * getHeight()) );
+		world.setScaleX( zoomX );
+		world.setScaleY( zoomY );
+		world.setRotate( rotate );
 	}
 
 	@Override

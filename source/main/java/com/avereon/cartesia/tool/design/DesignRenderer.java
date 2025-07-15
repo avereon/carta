@@ -9,8 +9,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Affine;
-import javafx.scene.transform.Transform;
 
 import java.util.Collection;
 import java.util.List;
@@ -257,14 +255,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		// The zoom has to be set before the viewpoint
 		setViewZoom( getViewZoom().multiply( factor ) );
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
-	}
-
-	Transform computeWorldTransform( double centerX, double centerY, double zoomX, double zoomY, double rotate ) {
-		Affine affine = new Affine();
-		affine.appendScale( zoomX, zoomY );
-		affine.appendRotation( rotate );
-		affine.appendTranslation( centerX, centerY );
-		return affine;
 	}
 
 }
