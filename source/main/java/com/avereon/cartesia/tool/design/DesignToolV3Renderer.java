@@ -270,6 +270,17 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return new BoundingBox( minX, minY, maxX - minX, maxY - minY );
 	}
 
+	public Bounds worldToScreen( Bounds bounds ) {
+		Bounds screenBounds = world.localToParent( bounds );
+
+		double minX = screenBounds.getMinX() * getGzX();
+		double minY = screenBounds.getMinY() * getGzY();
+		double maxX = screenBounds.getMaxX() * getGzX();
+		double maxY = screenBounds.getMaxY() * getGzY();
+
+		return new BoundingBox( minX, minY, maxX - minX, maxY - minY );
+	}
+
 	final Pane layersPane() {
 		return layers;
 	}

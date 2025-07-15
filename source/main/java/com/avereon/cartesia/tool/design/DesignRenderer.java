@@ -260,7 +260,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	}
 
 	Transform computeWorldTransform( double centerX, double centerY, double zoomX, double zoomY, double rotate ) {
-		System.out.println( "centerX=" + centerX + ", centerY=" + centerY + ", zoomX=" + zoomX + ", zoomY=" + zoomY + ", rotate=" + rotate );
 		Affine affine = new Affine();
 		affine.appendScale( zoomX, zoomY );
 		affine.appendRotation( rotate );
