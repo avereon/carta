@@ -6,6 +6,7 @@ import com.avereon.cartesia.tool.RenderConstants;
 import com.avereon.cartesia.tool.Workplane;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
@@ -255,6 +256,14 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		// The zoom has to be set before the viewpoint
 		setViewZoom( getViewZoom().multiply( factor ) );
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
+	}
+
+	public Bounds screenToWorld( Bounds bounds ) {
+		return bounds;
+	}
+
+	public Bounds worldToScreen( Bounds bounds ) {
+		return bounds;
 	}
 
 }

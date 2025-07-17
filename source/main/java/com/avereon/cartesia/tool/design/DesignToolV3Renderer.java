@@ -271,6 +271,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	public Bounds screenToWorld( Bounds bounds ) {
+		System.out.println( "dpi=" + getDpiX() + ", " + getDpiY() );
 		Bounds worldBounds = world.parentToLocal( bounds );
 
 		double minX = worldBounds.getMinX() / getGzX();

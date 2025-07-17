@@ -52,11 +52,11 @@ public class DesignToolV3 extends BaseDesignTool {
 		// The renderer is configured to render to the primary screen by default,
 		// but it can be configured to render to different media just as easily by
 		// changing the DPI setting.
-		getRenderer().setDpi( Screen.getPrimary().getDpi() );
-
-		// Keep the renderer in the center of the tool
-		widthProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateX( 0.5 * n.doubleValue() ) );
-		heightProperty().addListener( ( _, _, n ) -> getRenderer().setTranslateY( 0.5 * n.doubleValue() ) );
+		// Should be:
+		// Sapphire: 162
+		// Graphene: 153
+		getRenderer().setDpiX( Screen.getPrimary().getDpi() * Screen.getPrimary().getOutputScaleX() );
+		getRenderer().setDpiY( Screen.getPrimary().getDpi() * Screen.getPrimary().getOutputScaleY() );
 
 		// Align the toast label to the center of the screen
 		StackPane.setAlignment( toast, Pos.CENTER );

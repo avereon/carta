@@ -125,6 +125,16 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		this.workplane = new Workplane();
 		renderer.setWorkplane( this.workplane );
 
+		// Keep the renderer in the center of the tool
+		widthProperty().addListener( ( _, _, n ) -> {
+			getRenderer().setTranslateX( 0.5 * n.doubleValue() );
+			updateWorkplaneBoundaries();
+		} );
+		heightProperty().addListener( ( _, _, n ) -> {
+			getRenderer().setTranslateY( 0.5 * n.doubleValue() );
+			updateWorkplaneBoundaries();
+		} );
+
 		// Register the listener to update the cursor when the reticle changes, and the cursor is also a reticle cursor
 		reticle.addListener( ( _, _, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
@@ -385,7 +395,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Note that the viewport can be panned, zoomed and rotated
 		// A world rectangle could be determined from the viewport
 
-		getRenderer().screenToLocal( getRenderer().getBoundsInLocal() );
+		Bounds workplaneBounds = getRenderer().screenToWorld( getRenderer().getBoundsInLocal() );
+		System.out.println( "Workplane Bounds: " + workplaneBounds );
+		//workplane.setBounds( workplaneBounds );
 	}
 
 }
