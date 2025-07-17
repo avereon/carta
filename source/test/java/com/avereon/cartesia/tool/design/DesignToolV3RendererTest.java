@@ -90,10 +90,6 @@ public class DesignToolV3RendererTest {
 		renderer.setDpi( 150, 200 );
 		assertThat( renderer.getDpiX() ).isEqualTo( 150 );
 		assertThat( renderer.getDpiY() ).isEqualTo( 200 );
-
-		renderer.setDpi( new Point2D( 100, 250 ) );
-		assertThat( renderer.getDpiX() ).isEqualTo( 100 );
-		assertThat( renderer.getDpiY() ).isEqualTo( 250 );
 	}
 
 	@Test

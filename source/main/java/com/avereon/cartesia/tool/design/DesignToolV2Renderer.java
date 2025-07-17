@@ -231,11 +231,6 @@ public class DesignToolV2Renderer extends DesignRenderer {
 	}
 
 	@Override
-	public void setDpi( Point2D dpi ) {
-		renderer.setDpi( dpi.getX(), dpi.getY() );
-	}
-
-	@Override
 	public double getDpiX() {
 		return renderer.getDpiX();
 	}

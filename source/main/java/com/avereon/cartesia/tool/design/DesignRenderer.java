@@ -20,6 +20,10 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	private final DoubleProperty dpiY;
 
+	private final DoubleProperty outputScaleX;
+
+	private final DoubleProperty outputScaleY;
+
 	private final DoubleProperty viewCenterX;
 
 	private final DoubleProperty viewCenterY;
@@ -46,6 +50,18 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		dpiX = new SimpleDoubleProperty( DEFAULT_DPI );
 		dpiY = new SimpleDoubleProperty( DEFAULT_DPI );
 
+		/*
+		The output scale is used when working with high resolution (HiDPI) monitors.
+		This allows for fractional scaling as well and needs to be taken into account
+		for detailed rendering of the model when the application may not require it.
+		 */
+		outputScaleX = new SimpleDoubleProperty( DEFAULT_OUTPUT_SCALE );
+		outputScaleY = new SimpleDoubleProperty( DEFAULT_OUTPUT_SCALE );
+
+		/*
+		The world view settings. These are the view settings from the user's
+		perspective.
+		 */
 		viewCenterX = new SimpleDoubleProperty( DEFAULT_CENTER.getX() );
 		viewCenterY = new SimpleDoubleProperty( DEFAULT_CENTER.getY() );
 		viewCenterZ = new SimpleDoubleProperty( DEFAULT_CENTER.getZ() );
@@ -109,11 +125,6 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		setDpiY( dpiY );
 	}
 
-	public void setDpi( Point2D dpi ) {
-		setDpiX( dpi.getX() );
-		setDpiY( dpi.getY() );
-	}
-
 	public void setDpiX( double dpi ) {
 		dpiX.set( dpi );
 	}
@@ -136,6 +147,35 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	public DoubleProperty dpiYProperty() {
 		return dpiY;
+	}
+
+	public void setOutputScale( double scaleX, double scaleY ) {
+		setOutputScaleX( scaleX );
+		setOutputScaleY( scaleY );
+	}
+
+	public double getOutputScaleX() {
+		return outputScaleX.get();
+	}
+
+	public void setOutputScaleX( double scale ) {
+		outputScaleX.set( scale );
+	}
+
+	public DoubleProperty outputScaleXProperty() {
+		return outputScaleX;
+	}
+
+	public double getOutputScaleY() {
+		return outputScaleY.get();
+	}
+
+	public void setOutputScaleY( double scale ) {
+		outputScaleY.set( scale );
+	}
+
+	public DoubleProperty outputScaleYProperty() {
+		return outputScaleY;
 	}
 
 	public Point3D getViewCenter() {

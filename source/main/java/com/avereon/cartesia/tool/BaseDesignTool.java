@@ -127,14 +127,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		renderer.setWorkplane( this.workplane );
 
 		// Keep the renderer in the center of the tool
-		widthProperty().addListener( ( _, _, n ) -> {
-			//getRenderer().setTranslateX( 0.5 * n.doubleValue() );
-			updateWorkplaneBoundaries();
-		} );
-		heightProperty().addListener( ( _, _, n ) -> {
-			//getRenderer().setTranslateY( 0.5 * n.doubleValue() );
-			updateWorkplaneBoundaries();
-		} );
+		widthProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		heightProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
 
 		// Register the listener to update the cursor when the reticle changes, and the cursor is also a reticle cursor
 		reticle.addListener( ( _, _, n ) -> {

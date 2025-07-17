@@ -40,7 +40,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -463,7 +462,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setDpi( double dpi ) {
-		renderer.setDpi( new Point2D( dpi, dpi ) );
+		renderer.setDpi(  dpi, dpi );
 	}
 
 	@Override
