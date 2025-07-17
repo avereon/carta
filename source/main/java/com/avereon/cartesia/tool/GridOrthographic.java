@@ -65,18 +65,21 @@ public class GridOrthographic implements Grid {
 		boolean axisVisible = workplane.isGridAxisVisible();
 		Paint axisPaint = workplane.calcGridAxisPaint();
 		double axisWidth = workplane.calcGridAxisWidth() * scale;
+		axisWidth = 2.0;
 
 		boolean majorVisible = workplane.isMajorGridShowing() && workplane.isMajorGridVisible();
 		double majorIntervalX = workplane.calcMajorGridX() * scale;
 		double majorIntervalY = workplane.calcMajorGridY() * scale;
 		Paint majorPaint = workplane.calcMajorGridPaint();
 		double majorWidth = workplane.calcMajorGridWidth() * scale;
+		majorWidth  = 1.0;
 
 		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 		double minorIntervalX = workplane.calcMinorGridX() * scale;
 		double minorIntervalY = workplane.calcMinorGridY() * scale;
 		Paint minorPaint = workplane.calcMinorGridPaint();
 		double minorWidth = workplane.calcMinorGridWidth() * scale;
+		minorWidth = 0.5;
 
 		double snapIntervalX = workplane.calcSnapGridX() * scale;
 		double snapIntervalY = workplane.calcSnapGridY() * scale;

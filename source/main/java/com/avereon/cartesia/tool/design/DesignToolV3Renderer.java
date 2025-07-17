@@ -135,16 +135,23 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		gzXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 		gzYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 
+		// Update the world orientation when view settings change
 		viewCenterXProperty().addListener( ( _, _, n ) -> updateWorldOrientation( n.doubleValue(), getViewCenterY(), getViewZoomX(), getViewZoomY(), getViewRotate() ) );
 		viewCenterYProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), n.doubleValue(), getViewZoomX(), getViewZoomY(), getViewRotate() ) );
 		viewZoomXProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), getViewCenterY(), n.doubleValue(), getViewZoomY(), getViewRotate() ) );
 		viewZoomYProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), getViewCenterY(), getViewZoomX(), n.doubleValue(), getViewRotate() ) );
 		viewRotateProperty().addListener( ( _, _, n ) -> updateWorldOrientation( getViewCenterX(), getViewCenterY(), getViewZoomX(), getViewZoomY(), n.doubleValue() ) );
+		widthProperty().addListener( ( _, _, _ ) -> updateWorldOrientation() );
+		heightProperty().addListener( ( _, _, _ ) -> updateWorldOrientation() );
+	}
+
+	private void updateWorldOrientation() {
+		updateWorldOrientation( getViewCenterX(), getViewCenterY(), getViewZoomX(), getViewZoomY(), getViewRotate() );
 	}
 
 	private void updateWorldOrientation( double centerX, double centerY, double zoomX, double zoomY, double rotate ) {
-		world.setLayoutX( centerX * getGzX() - (0.5 * getWidth()) );
-		world.setLayoutY( centerY * getGzY() - (0.5 * getHeight()) );
+		world.setTranslateX( -centerX * getGzX() + (0.5 * getWidth()) );
+		world.setTranslateY( centerY * getGzY() + (0.5 * getHeight()) );
 		world.setScaleX( zoomX );
 		world.setScaleY( zoomY );
 		world.setRotate( rotate );
@@ -271,7 +278,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	public Bounds screenToWorld( Bounds bounds ) {
-		System.out.println( "dpi=" + getDpiX() + ", " + getDpiY() );
 		Bounds worldBounds = world.parentToLocal( bounds );
 
 		double minX = worldBounds.getMinX() / getGzX();

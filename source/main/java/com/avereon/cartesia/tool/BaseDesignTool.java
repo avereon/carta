@@ -16,6 +16,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
+import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
@@ -127,11 +128,11 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		// Keep the renderer in the center of the tool
 		widthProperty().addListener( ( _, _, n ) -> {
-			getRenderer().setTranslateX( 0.5 * n.doubleValue() );
+			//getRenderer().setTranslateX( 0.5 * n.doubleValue() );
 			updateWorkplaneBoundaries();
 		} );
 		heightProperty().addListener( ( _, _, n ) -> {
-			getRenderer().setTranslateY( 0.5 * n.doubleValue() );
+			//getRenderer().setTranslateY( 0.5 * n.doubleValue() );
 			updateWorkplaneBoundaries();
 		} );
 
@@ -395,9 +396,17 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Note that the viewport can be panned, zoomed and rotated
 		// A world rectangle could be determined from the viewport
 
-		Bounds workplaneBounds = getRenderer().screenToWorld( getRenderer().getBoundsInLocal() );
-		System.out.println( "Workplane Bounds: " + workplaneBounds );
-		//workplane.setBounds( workplaneBounds );
+		double width = getRenderer().getWidth();
+		double height = getRenderer().getHeight();
+		Bounds source = new BoundingBox( 0, 0, width, height );
+		//Bounds source = getRenderer().getBoundsInLocal();
+//		System.out.println();
+//		System.out.println( "source bounds: " + source );
+
+		// NEXT Continue work to manage the workplane bounds
+		Bounds workplaneBounds = getRenderer().screenToWorld( source );
+//		System.out.println( "target bounds: " + workplaneBounds );
+		workplane.setBounds( workplaneBounds );
 	}
 
 }
