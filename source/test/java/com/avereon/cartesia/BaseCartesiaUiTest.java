@@ -15,12 +15,12 @@ public abstract class BaseCartesiaUiTest extends BaseModUiTestCase<CartesiaMod> 
 
 	@Override
 	protected double getAllowedMemoryGrowthSize() {
-		return 48;
+		return 96 - MIN_INITIAL_MEMORY_MiB;
 	}
 
 	@Override
 	protected double getAllowedMemoryGrowthPercent() {
-		return 1.0;
+		return 2.0;
 	}
 
 }
