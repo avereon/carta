@@ -58,6 +58,9 @@ public class DesignToolV3 extends BaseDesignTool {
 		getRenderer().setDpiX( Screen.getPrimary().getDpi() );
 		getRenderer().setDpiY( Screen.getPrimary().getDpi() );
 
+		getRenderer().setOutputScaleX( Screen.getPrimary().getOutputScaleX() );
+		getRenderer().setOutputScaleY( Screen.getPrimary().getOutputScaleY() );
+
 		// Align the toast label to the center of the screen
 		StackPane.setAlignment( toast, Pos.CENTER );
 

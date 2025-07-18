@@ -24,8 +24,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.ref.WeakReference;
 
-import static com.avereon.cartesia.TestConstants.*;
+import static com.avereon.cartesia.TestConstants.TOLERANCE_PERCENT_LOOSE;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
+import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_OUTPUT_SCALE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -436,6 +437,36 @@ public class DesignToolV3RendererTest {
 		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
 	}
 
+	//@Disabled( "This test is not working" )
+	@Test
+	@Tag( "WhiteBox" )
+	void updateOutputScale() {
+		// given
+		Design design = ExampleDesigns.redBlueX();
+		renderer.setDesign( design );
+		renderer.setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+
+		// Verify the FX geometry in the renderer
+		Pane construction = (Pane)renderer.layersPane().getChildren().getFirst();
+		Line redLine = (Line)construction.getChildren().get( 0 );
+		Line greenLine = (Line)construction.getChildren().get( 1 );
+
+		// The test values are based on 96 DPI and a design unit of CM
+		// Verify the original bounds (these are design unit and DPI-dependent)
+		Assertions.assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		Assertions.assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
+
+		// when
+		renderer.setOutputScale( 1.5 * DEFAULT_OUTPUT_SCALE, 1.5 * DEFAULT_OUTPUT_SCALE );
+
+		// then
+		// The FX geometry should have changed in the renderer
+		assertThat( renderer.getVisualBounds( redLine ) ).isEqualTo( new BoundingBox( -311.81103515625, -311.81103515625, 623.6220703125, 623.6220703125 ) );
+		assertThat( renderer.getVisualBounds( greenLine ) ).isEqualTo( new BoundingBox( -311.81103515625, -311.81103515625, 623.6220703125, 623.6220703125 ) );
+		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -311.81103515625, -311.81103515625, 623.6220703125, 623.6220703125 ) );
+	}
+
 	/**
 	 * This test ensures that FX geometry is resized when the design unit is changed
 	 * in the design.
@@ -512,7 +543,7 @@ public class DesignToolV3RendererTest {
 		// given
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
-		renderer.setViewRotate(45 );
+		renderer.setViewRotate( 45 );
 		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
 		double scale = Constants.SQRT_TWO;
 
@@ -571,7 +602,7 @@ public class DesignToolV3RendererTest {
 		// given
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
-		renderer.setViewRotate(45 );
+		renderer.setViewRotate( 45 );
 		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
 		double scale = Constants.SQRT_TWO;
 
