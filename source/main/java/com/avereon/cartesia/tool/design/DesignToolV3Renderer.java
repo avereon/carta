@@ -114,11 +114,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		// TODO Sort out these property dependencies and organize how they update things
 
-		// Update the global scale when the DPI changes
+		// Update the global scale when the DPI or output scale changes
 		dpiXProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), n.doubleValue(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
 		dpiYProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), n.doubleValue(), getOutputScaleX(), getOutputScaleY() ) );
 		outputScaleXProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), getDpiY(), n.doubleValue(), getOutputScaleY() ) );
-		outputScaleYProperty().addListener( ( _, _, n ) -> updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), n.doubleValue() ) );
+		outputScaleYProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), n.doubleValue() ) );
 
 		// Update the design geometry when the global scale changes
 		gzXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
@@ -133,12 +133,20 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			n.doubleValue(),
+			getGzY()
 		) );
-		gzYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation() );
+		gzYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
+			getWidth(),
+			getHeight(),
+			getViewCenterX(),
+			getViewCenterY(),
+			getViewZoomX(),
+			getViewZoomY(),
+			getViewRotate(),
+			getGzX(),
+			n.doubleValue()
+		) );
 
 		// Update the world orientation when view settings change
 		widthProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
@@ -150,9 +158,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 		heightProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -163,9 +169,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 		viewCenterXProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -176,9 +180,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 		viewCenterYProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -189,9 +191,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 		viewZoomXProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -202,9 +202,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 		viewZoomYProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -215,9 +213,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			n.doubleValue(),
 			getViewRotate(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 		viewRotateProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -228,9 +224,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			n.doubleValue(),
 			getGzX(),
-			getGzY(),
-			getOutputScaleX(),
-			getOutputScaleY()
+			getGzY()
 		) );
 	}
 
@@ -278,7 +272,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		// Update the design geometry when the design unit changes
 		design.register( this, Design.UNIT, _ -> setDesignUnit( design.calcDesignUnit() ) );
-		unitScale.addListener( ( _, _, n ) -> updateGz( n.doubleValue(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
+		unitScaleProperty().addListener( ( _, _, n ) -> updateGz( n.doubleValue(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
 
 		// Set the design unit after the unit scale listener has been added
 		// This allows the world transforms to be updated
@@ -387,23 +381,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return node.getBoundsInParent();
 	}
 
-	//	@Deprecated
-	//	private void updateGz() {
-	//		if( updatingGz ) return;
-	//		try {
-	//			updatingGz = true;
-	//			Design design = getDesign();
-	//			if( design == null ) return;
-	//
-	//			DesignUnit unit = design.calcDesignUnit();
-	//			double unitScale = unit.to( 1, DesignUnit.IN );
-	//			setGzX( unitScale * getDpiX() * getOutputScaleX() );
-	//			setGzY( unitScale * getDpiY() * getOutputScaleY() );
-	//		} finally {
-	//			updatingGz = false;
-	//		}
-	//	}
-
 	private void updateGz( double unitScale, double dpiX, double dpiY, double outputScaleX, double outputScaleY ) {
 		setGzX( unitScale * dpiX * outputScaleX );
 		setGzY( unitScale * dpiY * outputScaleY );
@@ -449,26 +426,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
 	}
 
-	@Deprecated
-	private void updateWorldOrientation() {
-		updateWorldOrientation( getWidth(), getHeight(), getViewCenterX(), getViewCenterY(), getViewZoomX(), getViewZoomY(), getViewRotate(), getGzX(), getGzY(), getOutputScaleX(), getOutputScaleY() );
-	}
-
-	private void updateWorldOrientation(
-		double width,
-		double height,
-		double centerX,
-		double centerY,
-		double zoomX,
-		double zoomY,
-		double rotate,
-		double gxz,
-		double gzy,
-		double outputScaleX,
-		double outputScaleY
-	) {
-		world.setTranslateX( -centerX * getGzX() + (0.5 * width) );
-		world.setTranslateY( centerY * getGzY() + (0.5 * height) );
+	private void updateWorldOrientation( double width, double height, double centerX, double centerY, double zoomX, double zoomY, double rotate, double gzx, double gzy ) {
+		world.setTranslateX( -centerX * gzx + (0.5 * width) );
+		world.setTranslateY( centerY * gzy + (0.5 * height) );
 		world.setScaleX( zoomX );
 		world.setScaleY( zoomY );
 		world.setRotate( rotate );
@@ -477,7 +437,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		double outputRescaleY = 1.0 / getOutputScaleY();
 
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
-		world.getTransforms().setAll( Transform.scale( 1, -1 ) );
 	}
 
 	private Collection<Shape> generateGridGeometry() {
