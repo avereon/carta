@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.tool.GridOrthographic;
+import com.avereon.cartesia.tool.Grid;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.xenon.util.DragCapability;
@@ -254,7 +254,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// needed, and that is when the grid is made visible. The same happens in
 		// reverse; when the grid is hidden, the geometry is not needed anymore.
 		if( visible ) {
-			grid.getChildren().setAll( generateGridGeometry() );
+			updateGridFxGeometry();
 		} else {
 			grid.getChildren().clear();
 		}
@@ -439,13 +439,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
 	}
 
-	private Collection<Shape> generateGridGeometry() {
-		return GridOrthographic.createFxGeometryGrid( workplane, getGzX() );
-	}
-
 	private void updateGridFxGeometry() {
-		grid.getChildren().setAll( GridOrthographic.updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() ) );
-		//grid.getChildren().setAll( GridOrthographic.createFxGeometryGrid( workplane, getGzX() ) );
+		Grid.ORTHO.updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() );
 	}
 
 	/**

@@ -4,14 +4,17 @@ import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
 import com.avereon.marea.Shape2d;
+import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class GridPolar implements Grid {
@@ -153,6 +156,16 @@ public class GridPolar implements Grid {
 		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );
 
 		return grid;
+	}
+
+	@Override
+	public Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
+		return List.of();
+	}
+
+	@Override
+	public Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
+		return List.of();
 	}
 
 	@Override

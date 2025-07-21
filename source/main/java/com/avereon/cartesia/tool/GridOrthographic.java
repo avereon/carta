@@ -48,16 +48,16 @@ public class GridOrthographic implements Grid {
 		return updateFxGridLines( workplane, 1.0, FXCollections.observableArrayList() );
 	}
 
-	public static Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
+	public Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
 		if( workplane == null ) return Collections.emptyList();
 		return updateFxGridLines( workplane, scale, FXCollections.observableArrayList() );
 	}
 
-	public static Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
+	public Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
 		return updateFxGridLines( workplane, scale, existing );
 	}
 
-	private static Collection<Shape> updateFxGridLines( Workplane workplane, double scale, ObservableList<Node> existing ) {
+	private Collection<Shape> updateFxGridLines( Workplane workplane, double scale, ObservableList<Node> existing ) {
 		if( workplane == null ) return Collections.emptyList();
 
 		// The existing geometry should be all lines, or empty
@@ -219,23 +219,6 @@ public class GridOrthographic implements Grid {
 		existing.setAll( grid );
 
 		return grid;
-	}
-
-	static Line reuseOrNew( Set<Line> prior, double x1, double y1, double x2, double y2 ) {
-		if( prior.isEmpty() ) return new Line( x1, y1, x2, y2 );
-
-		// Reuse a line
-		Iterator<Line> iterator = prior.iterator();
-		Line line = iterator.next();
-		iterator.remove();
-
-		// Update the position
-		line.setStartX( x1 );
-		line.setStartY( y1 );
-		line.setEndX( x2 );
-		line.setEndY( y2 );
-
-		return line;
 	}
 
 	@Override
@@ -421,6 +404,23 @@ public class GridOrthographic implements Grid {
 				renderer.drawLine( boundaryX1, value, boundaryX2, value );
 			}
 		}
+	}
+
+	static Line reuseOrNew( Set<Line> prior, double x1, double y1, double x2, double y2 ) {
+		if( prior.isEmpty() ) return new Line( x1, y1, x2, y2 );
+
+		// Reuse a line
+		Iterator<Line> iterator = prior.iterator();
+		Line line = iterator.next();
+		iterator.remove();
+
+		// Update the position
+		line.setStartX( x1 );
+		line.setStartY( y1 );
+		line.setEndX( x2 );
+		line.setEndY( y2 );
+
+		return line;
 	}
 
 }

@@ -4,7 +4,9 @@ import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
 import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public interface Grid {
 	 * @return The grid geometry as FX shapes
 	 */
 	Collection<Shape> createFxGeometryGrid( Workplane workplane );
+	Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale );
+	Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing );
 
 	static Grid valueOf( String name ) {
 		return switch( name ) {
