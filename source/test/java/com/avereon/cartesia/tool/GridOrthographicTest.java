@@ -2,10 +2,13 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -69,6 +72,40 @@ public class GridOrthographicTest {
 		// Y lines = 8 - 4 = 4 / 0.5 + 1 = 9
 		// All lines = 11 + 9
 		assertThat( lines.size() ).isEqualTo( 20 );
+	}
+
+	@Test
+	void reuseOrNew() {
+		// Test with empty prior set - should create a new Line
+		Set<Line> emptyPrior = new HashSet<>();
+		double x1 = 1.0, y1 = 2.0, x2 = 3.0, y2 = 4.0;
+		Line newLine = GridOrthographic.reuseOrNew( emptyPrior, x1, y1, x2, y2 );
+
+		assertThat( newLine ).isNotNull();
+		assertThat( newLine.getStartX() ).isEqualTo( x1 );
+		assertThat( newLine.getStartY() ).isEqualTo( y1 );
+		assertThat( newLine.getEndX() ).isEqualTo( x2 );
+		assertThat( newLine.getEndY() ).isEqualTo( y2 );
+
+		// Test with non-empty prior set - should reuse a Line
+		Set<Line> nonEmptyPrior = new HashSet<>();
+		Line existingLine = new Line( 5.0, 6.0, 7.0, 8.0 );
+		nonEmptyPrior.add( existingLine );
+
+		double newX1 = 10.0, newY1 = 20.0, newX2 = 30.0, newY2 = 40.0;
+		Line reusedLine = GridOrthographic.reuseOrNew( nonEmptyPrior, newX1, newY1, newX2, newY2 );
+
+		// Verify the line was reused (same instance)
+		assertThat( reusedLine ).isSameAs( existingLine );
+
+		// Verify the line was removed from the prior set
+		assertThat( nonEmptyPrior ).isEmpty();
+
+		// Verify the line's coordinates were updated
+		assertThat( reusedLine.getStartX() ).isEqualTo( newX1 );
+		assertThat( reusedLine.getStartY() ).isEqualTo( newY1 );
+		assertThat( reusedLine.getEndX() ).isEqualTo( newX2 );
+		assertThat( reusedLine.getEndY() ).isEqualTo( newY2 );
 	}
 
 }

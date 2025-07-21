@@ -254,7 +254,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// needed, and that is when the grid is made visible. The same happens in
 		// reverse; when the grid is hidden, the geometry is not needed anymore.
 		if( visible ) {
-			grid.getChildren().addAll( generateGridGeometry() );
+			grid.getChildren().setAll( generateGridGeometry() );
 		} else {
 			grid.getChildren().clear();
 		}
@@ -444,8 +444,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateGridFxGeometry() {
-		grid.getChildren().clear();
-		grid.getChildren().addAll( generateGridGeometry() );
+		grid.getChildren().setAll( GridOrthographic.updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() ) );
+		//grid.getChildren().setAll( GridOrthographic.createFxGeometryGrid( workplane, getGzX() ) );
 	}
 
 	/**

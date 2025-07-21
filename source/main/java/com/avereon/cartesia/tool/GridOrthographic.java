@@ -6,14 +6,18 @@ import com.avereon.marea.LineCap;
 import com.avereon.marea.LineJoin;
 import com.avereon.marea.Pen;
 import com.avereon.marea.fx.FxRenderer2d;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
+import javafx.scene.Node;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CustomLog
 public class GridOrthographic implements Grid {
@@ -41,16 +45,24 @@ public class GridOrthographic implements Grid {
 	@Override
 	@Deprecated
 	public Collection<Shape> createFxGeometryGrid( Workplane workplane ) {
-		if( workplane == null ) return Collections.emptyList();
-		return createFxGridLines( workplane, 1.0 );
+		return updateFxGridLines( workplane, 1.0, FXCollections.observableArrayList() );
 	}
 
 	public static Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
 		if( workplane == null ) return Collections.emptyList();
-		return createFxGridLines( workplane, scale );
+		return updateFxGridLines( workplane, scale, FXCollections.observableArrayList() );
 	}
 
-	private static Collection<Shape> createFxGridLines( Workplane workplane, double scale ) {
+	public static Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
+		return updateFxGridLines( workplane, scale, existing );
+	}
+
+	private static Collection<Shape> updateFxGridLines( Workplane workplane, double scale, ObservableList<Node> existing ) {
+		if( workplane == null ) return Collections.emptyList();
+
+		// The existing geometry should be all lines, or empty
+		Set<Line> prior = existing.stream().map( n -> (Line)n ).collect( Collectors.toSet() );
+
 		Set<Shape> grid = new HashSet<>();
 
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
@@ -72,7 +84,7 @@ public class GridOrthographic implements Grid {
 		double majorIntervalY = workplane.calcMajorGridY() * scale;
 		Paint majorPaint = workplane.calcMajorGridPaint();
 		double majorWidth = workplane.calcMajorGridWidth() * scale;
-		majorWidth  = 1.0;
+		majorWidth = 1.0;
 
 		boolean minorVisible = workplane.isMinorGridShowing() && workplane.isMinorGridVisible();
 		double minorIntervalX = workplane.calcMinorGridX() * scale;
@@ -120,7 +132,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : minorOffsetsX ) {
-				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				Line shape = reuseOrNew( prior, value, boundaryY1, value, boundaryY2 );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -128,7 +140,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : minorOffsetsY ) {
-				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				Line shape = reuseOrNew( prior, boundaryX1, value, boundaryX2, value );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -153,7 +165,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : majorOffsetsX ) {
-				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				Line shape = reuseOrNew( prior, value, boundaryY1, value, boundaryY2 );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -161,7 +173,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : majorOffsetsY ) {
-				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				Line shape = reuseOrNew( prior, boundaryX1, value, boundaryX2, value );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -170,7 +182,7 @@ public class GridOrthographic implements Grid {
 			}
 		}
 
-		if( true ) {
+		if( axisVisible ) {
 			// Grid style
 			double dashOffset = 0.0;
 			Double[] dashSpacingX = null;
@@ -186,7 +198,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : axisOffsetsX ) {
-				Line shape = new Line( value, boundaryY1, value, boundaryY2 );
+				Line shape = reuseOrNew( prior, value, boundaryY1, value, boundaryY2 );
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -194,7 +206,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : axisOffsetsY ) {
-				Line shape = new Line( boundaryX1, value, boundaryX2, value );
+				Line shape = reuseOrNew( prior, boundaryX1, value, boundaryX2, value );
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -203,7 +215,27 @@ public class GridOrthographic implements Grid {
 			}
 		}
 
+		existing.removeAll( prior );
+		existing.setAll( grid );
+
 		return grid;
+	}
+
+	static Line reuseOrNew( Set<Line> prior, double x1, double y1, double x2, double y2 ) {
+		if( prior.isEmpty() ) return new Line( x1, y1, x2, y2 );
+
+		// Reuse a line
+		Iterator<Line> iterator = prior.iterator();
+		Line line = iterator.next();
+		iterator.remove();
+
+		// Update the position
+		line.setStartX( x1 );
+		line.setStartY( y1 );
+		line.setEndX( x2 );
+		line.setEndY( y2 );
+
+		return line;
 	}
 
 	@Override
