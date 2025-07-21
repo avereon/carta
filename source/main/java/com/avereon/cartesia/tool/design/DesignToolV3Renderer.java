@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
-import com.avereon.cartesia.tool.Grid;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.xenon.util.DragCapability;
@@ -441,7 +440,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateGridFxGeometry() {
-		Grid.ORTHO.updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() );
+		workplane.getGridSystem().updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() );
 	}
 
 	/**
