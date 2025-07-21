@@ -33,7 +33,7 @@ public class Workplane extends Node {
 
 	public static final double DEFAULT_BOUNDARY_Y = 0.0;
 
-	public static final Grid DEFAULT_COORDINATE_SYSTEM = Grid.ORTHO;
+	public static final Grid DEFAULT_GRID_SYSTEM = Grid.ORTHO;
 
 	public static final String DEFAULT_ORIGIN = "0,0";
 
@@ -195,7 +195,7 @@ public class Workplane extends Node {
 
 	public Workplane( double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid ) {
 		this(
-			DEFAULT_COORDINATE_SYSTEM, DEFAULT_ORIGIN,
+			DEFAULT_GRID_SYSTEM, DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,
@@ -223,7 +223,7 @@ public class Workplane extends Node {
 		String snapGridY
 	) {
 		this(
-			DEFAULT_COORDINATE_SYSTEM, DEFAULT_ORIGIN,
+			DEFAULT_GRID_SYSTEM, DEFAULT_ORIGIN,
 			boundaryX1,
 			boundaryY1,
 			boundaryX2,

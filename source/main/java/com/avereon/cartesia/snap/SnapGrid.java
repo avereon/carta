@@ -14,7 +14,7 @@ public class SnapGrid implements Snap {
 	@Override
 	public Point3D snap( DesignTool tool, Point3D point ) {
 		if( point == null || point == CadPoints.NONE ) return CadPoints.NONE;
-		return tool.getCoordinateSystem().getNearest( tool.getWorkplane(), point );
+		return tool.getGridSystem().getNearest( tool.getWorkplane(), point );
 	}
 
 }

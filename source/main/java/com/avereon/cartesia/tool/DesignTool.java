@@ -92,18 +92,18 @@ public interface DesignTool extends RenderConstants {
 	Workplane getWorkplane();
 
 	/**
-	 * A convenience method to get the workplane coordinate system.
+	 * A convenience method to get the workplane grid system.
 	 *
-	 * @return The workplane coordinate system
+	 * @return The workplane grid system
 	 */
-	Grid getCoordinateSystem();
+	Grid getGridSystem();
 
 	/**
-	 * A convenience method to set the workplane coordinate system.
+	 * A convenience method to set the workplane grid system.
 	 *
-	 * @param system The coordinate system
+	 * @param system The grid system
 	 */
-	void setCoordinateSystem( Grid system );
+	void setGridSystem( Grid system );
 
 	Point3D getViewCenter();
 

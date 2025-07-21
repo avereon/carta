@@ -921,7 +921,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void configureWorkplane( Workplane workplane, Settings settings ) {
-		workplane.setGridSystem( Grid.valueOf( settings.get( Workplane.GRID_SYSTEM, Workplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
+		workplane.setGridSystem( Grid.valueOf( settings.get( Workplane.GRID_SYSTEM, Workplane.DEFAULT_GRID_SYSTEM.name() ).toUpperCase() ) );
 		workplane.setOrigin( settings.get( Workplane.WORKPANE_ORIGIN, Workplane.DEFAULT_ORIGIN ) );
 
 		workplane.setGridAxisVisible( settings.get( Workplane.GRID_AXIS_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_AXIS_VISIBLE ) );

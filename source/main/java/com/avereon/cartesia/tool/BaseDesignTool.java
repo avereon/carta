@@ -168,12 +168,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
-	public final Grid getCoordinateSystem() {
+	public final Grid getGridSystem() {
 		return getWorkplane().getGridSystem();
 	}
 
 	@Override
-	public final void setCoordinateSystem( Grid system ) {
+	public final void setGridSystem( Grid system ) {
 		getWorkplane().setGridSystem( system );
 	}
 
