@@ -185,11 +185,11 @@ public class GridOrthographic implements Grid {
 			double dashOffset = 0.0;
 			Double[] dashSpacingX = new Double[]{};
 			Double[] dashSpacingY = new Double[]{};
+			// Match the style of the major grid
 			if( workplane.getGridStyle() == GridStyle.CROSS ) {
-				// This code makes the axis dashed
-				//  dashOffset = 0.25 * majorIntervalX;
-				//	dashSpacingX = new Double[]{ 0.5 * majorIntervalX, 0.5 * majorIntervalX };
-				//	dashSpacingY = new Double[]{ 0.5 * majorIntervalY, 0.5 * majorIntervalY };
+				dashOffset = 0.25 * majorIntervalX;
+				dashSpacingX = new Double[]{ 0.5 * majorIntervalX, 0.5 * majorIntervalX };
+				dashSpacingY = new Double[]{ 0.5 * majorIntervalY, 0.5 * majorIntervalY };
 			} else if( workplane.getGridStyle() == GridStyle.DOT ) {
 				dashSpacingX = new Double[]{ 0.0, majorIntervalX };
 				dashSpacingY = new Double[]{ 0.0, majorIntervalY };
