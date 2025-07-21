@@ -46,10 +46,20 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void testGetOffsets() throws Exception {
+	void testGetOffsets() {
 		assertThat( Grid.getOffsets( 0, 1, -0.5, 0.5 ) ).contains( 0.0 );
 		assertThat( Grid.getOffsets( 0, 1, -1, 1 ) ).contains( -1.0, 0.0, 1.0 );
 		assertThat( Grid.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ) ).contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 );
+	}
+
+	@Test
+	void gridOffsetsMissingOne() {
+		// https://github.com/avereon/carta/issues/155
+		double origin = 0.0;
+		double interval = 63.77952755905511;
+		double lowerBound = -672.0;
+		double upperBound = 672.0;
+		assertThat( Grid.getOffsets( origin, interval, lowerBound, upperBound ) ).hasSize( 21 );
 	}
 
 	@Test

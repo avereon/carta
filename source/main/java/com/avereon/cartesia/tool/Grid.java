@@ -46,7 +46,9 @@ public interface Grid {
 	 * @return The grid geometry as FX shapes
 	 */
 	Collection<Shape> createFxGeometryGrid( Workplane workplane );
+
 	Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale );
+
 	Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing );
 
 	static Grid valueOf( String name ) {
@@ -69,16 +71,16 @@ public interface Grid {
 	}
 
 	static List<Double> getOffsets( double origin, double spacing, double lowLimit, double highLimit, boolean radial ) {
-		double x1 = Arithmetic.nearestAbove( lowLimit - origin, spacing ) + origin;
-		double x2 = Arithmetic.nearestBelow( highLimit - origin, spacing ) + origin;
+		double n1 = Arithmetic.nearestAbove( lowLimit - origin, spacing ) + origin;
+		double n2 = Arithmetic.nearestBelow( highLimit - origin, spacing ) + origin;
 
-		int count = (int)((x2 - x1) / spacing) + 1;
+		int count = (int)Math.round( (n2 - n1) / spacing ) + 1;
 		List<Double> offsets = new ArrayList<>( count );
 		double max = radial ? 360 : Double.MAX_VALUE;
 
 		for( int index = 0; index < count; index++ ) {
-			double value = index * spacing + x1;
-			if( value <= x2 && value < max ) offsets.add( value );
+			double value = index * spacing + n1;
+			if( value < max ) offsets.add( value );
 		}
 
 		return offsets;
