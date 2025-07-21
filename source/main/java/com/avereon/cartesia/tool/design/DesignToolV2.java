@@ -921,7 +921,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	private void configureWorkplane( Workplane workplane, Settings settings ) {
-		workplane.setCoordinateSystem( Grid.valueOf( settings.get( Workplane.COORDINATE_SYSTEM, Workplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
+		workplane.setGridSystem( Grid.valueOf( settings.get( Workplane.GRID_SYSTEM, Workplane.DEFAULT_COORDINATE_SYSTEM.name() ).toUpperCase() ) );
 		workplane.setOrigin( settings.get( Workplane.WORKPANE_ORIGIN, Workplane.DEFAULT_ORIGIN ) );
 
 		workplane.setGridAxisVisible( settings.get( Workplane.GRID_AXIS_VISIBLE, Boolean.class, Workplane.DEFAULT_GRID_AXIS_VISIBLE ) );
@@ -943,7 +943,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		workplane.setSnapGridX( settings.get( Workplane.GRID_SNAP_X, Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 		workplane.setSnapGridY( settings.get( Workplane.GRID_SNAP_Y, Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 
-		settings.register( Workplane.COORDINATE_SYSTEM, e -> workplane.setCoordinateSystem( Grid.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
+		settings.register( Workplane.GRID_SYSTEM, e -> workplane.setGridSystem( Grid.valueOf( String.valueOf( e.getNewValue() ).toUpperCase() ) ) );
 		settings.register( Workplane.GRID_ORIGIN, e -> workplane.setOrigin( String.valueOf( e.getNewValue() ) ) );
 
 		settings.register( Workplane.GRID_AXIS_VISIBLE, e -> workplane.setGridAxisVisible( Boolean.parseBoolean( String.valueOf( e.getNewValue() ) ) ) );

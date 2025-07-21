@@ -255,10 +255,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// reverse; when the grid is hidden, the geometry is not needed anymore.
 		if( visible ) {
 			updateGridFxGeometry();
+			grid.setVisible( true );
 		} else {
+			grid.setVisible( false );
 			grid.getChildren().clear();
 		}
-		grid.setVisible( visible );
 	}
 
 	@Override

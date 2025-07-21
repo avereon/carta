@@ -776,7 +776,7 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		if( workplane == null ) return;
 
 		// Render grid
-		if( isGridVisible() ) workplane.getCoordinateSystem().drawMareaGeometryGrid( renderer, workplane );
+		if( isGridVisible() ) workplane.getGridSystem().drawMareaGeometryGrid( renderer, workplane );
 	}
 
 	private void renderLayers() {

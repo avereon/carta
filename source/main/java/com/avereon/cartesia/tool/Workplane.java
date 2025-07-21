@@ -63,8 +63,6 @@ public class Workplane extends Node {
 
 	public static final String WORKPANE_ORIGIN = "workpane-origin";
 
-	public static final String GRID_STYLE = "grid-style";
-
 	public static final String BOUNDARY_X1 = "boundary-x1";
 
 	public static final String BOUNDARY_Y1 = "boundary-y1";
@@ -73,7 +71,9 @@ public class Workplane extends Node {
 
 	public static final String BOUNDARY_Y2 = "boundary-y2";
 
-	public static final String COORDINATE_SYSTEM = "coordinate-system";
+	public static final String GRID_SYSTEM = "grid-system";
+
+	public static final String GRID_STYLE = "grid-style";
 
 	public static final String GRID_ORIGIN = "grid-origin";
 
@@ -254,7 +254,7 @@ public class Workplane extends Node {
 		GridStyle style
 	) {
 		Txn.run( () -> {
-			setCoordinateSystem( grid );
+			setGridSystem( grid );
 			setOrigin( origin );
 			setBoundaryX1( boundaryX1 );
 			setBoundaryY1( boundaryY1 );
@@ -277,12 +277,12 @@ public class Workplane extends Node {
 		} );
 	}
 
-	public Grid getCoordinateSystem() {
-		return getValue( COORDINATE_SYSTEM );
+	public Grid getGridSystem() {
+		return getValue( GRID_SYSTEM );
 	}
 
-	public void setCoordinateSystem( Grid grid ) {
-		setValue( COORDINATE_SYSTEM, grid == null ? Grid.ORTHO : grid );
+	public void setGridSystem( Grid grid ) {
+		setValue( GRID_SYSTEM, grid == null ? Grid.ORTHO : grid );
 	}
 
 	public Point3D calcOrigin() {
