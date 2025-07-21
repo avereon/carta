@@ -4,6 +4,7 @@ import com.avereon.cartesia.test.Point3DAssert;
 import javafx.geometry.Point3D;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -15,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GridOrthographicTest {
 
 	@Test
-	void testFindNearest() throws Exception {
+	void getNearest() {
 		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( 0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, new Point3D( -0.3, 0.2, 0 ) ) ).isCloseTo( Point3D.ZERO );
@@ -30,13 +31,13 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void testFindNearestAtZero() throws Exception {
+	void getNearestAtZero() {
 		Workplane workplane = new Workplane();
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isEqualTo( Point3D.ZERO );
 	}
 
 	@Test
-	void testFindNearestOffsetOrigin() throws Exception {
+	void getNearestWithOffsetOrigin() {
 		Workplane workplane = new Workplane( -10, 10, -10, 10, "1", "1", "1" );
 		workplane.setOrigin( "0.3, 0.2, 0" );
 		Point3DAssert.assertThat( Grid.ORTHO.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( 0.3, 0.2, 0 ) );
@@ -46,14 +47,15 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void testGetOffsets() {
+	void getOffsets() {
 		assertThat( Grid.getOffsets( 0, 1, -0.5, 0.5 ) ).contains( 0.0 );
 		assertThat( Grid.getOffsets( 0, 1, -1, 1 ) ).contains( -1.0, 0.0, 1.0 );
 		assertThat( Grid.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ) ).contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 );
 	}
 
 	@Test
-	void gridOffsetsMissingOne() {
+	@Tag( "recursion" )
+	void issue155() {
 		// https://github.com/avereon/carta/issues/155
 		double origin = 0.0;
 		double interval = 63.77952755905511;
@@ -63,7 +65,7 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void getGridLinesCommon() throws Exception {
+	void getGridLinesCommon() {
 		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane, 1.0 );
 
