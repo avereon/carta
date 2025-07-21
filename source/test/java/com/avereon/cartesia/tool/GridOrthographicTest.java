@@ -69,9 +69,10 @@ public class GridOrthographicTest {
 		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane, 1.0 );
 
-		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
-		// Y lines = 8 - -8 = 16 / 0.5 + 1 = 33
-		// All lines = 41 + 33
+		// X lines = -10 -> 10 = 20 / 0.5 + 1 = 41
+		// Y lines = -8 -> 8 = 16 / 0.5 + 1 = 33
+		// All lines = 41 + 33 = 74
+		// Add (major/minor) * 4 more lines for margin = 82
 		assertThat( lines.size() ).isEqualTo( 82 );
 	}
 
@@ -109,4 +110,91 @@ public class GridOrthographicTest {
 		assertThat( reusedLine.getEndY() ).isEqualTo( newY2 );
 	}
 
+	@Test
+	void getBoundaryX1() {
+		// Normal case: x1 < x2
+		assertThat( GridOrthographic.getBoundaryX1( 5.0, 10.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+
+		// Edge case: x1 = x2
+		assertThat( GridOrthographic.getBoundaryX1( 5.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+
+		// Edge case: x1 > x2
+		assertThat( GridOrthographic.getBoundaryX1( 10.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+
+		// Edge case: negative coordinates
+		assertThat( GridOrthographic.getBoundaryX1( -10.0, -5.0, 2.0, 3.0 ) ).isEqualTo( -10.0 * 2.0 - 3.0 );
+
+		// Edge case: zero scale
+		assertThat( GridOrthographic.getBoundaryX1( 5.0, 10.0, 0.0, 3.0 ) ).isEqualTo( -3.0 );
+
+		// Edge case: negative scale
+		assertThat( GridOrthographic.getBoundaryX1( 5.0, 10.0, -1.0, 3.0 ) ).isEqualTo( 5.0 * -1.0 - 3.0 );
+	}
+
+	@Test
+	void getBoundaryX2() {
+		// Normal case: x1 < x2
+		assertThat( GridOrthographic.getBoundaryX2( 5.0, 10.0, 2.0, 3.0 ) ).isEqualTo( 10.0 * 2.0 + 3.0 );
+
+		// Edge case: x1 = x2
+		assertThat( GridOrthographic.getBoundaryX2( 5.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 + 3.0 );
+
+		// Edge case: x1 > x2
+		assertThat( GridOrthographic.getBoundaryX2( 10.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 10.0 * 2.0 + 3.0 );
+
+		// Edge case: negative coordinates
+		assertThat( GridOrthographic.getBoundaryX2( -10.0, -5.0, 2.0, 3.0 ) ).isEqualTo( -5.0 * 2.0 + 3.0 );
+
+		// Edge case: zero scale
+		assertThat( GridOrthographic.getBoundaryX2( 5.0, 10.0, 0.0, 3.0 ) ).isEqualTo( 3.0 );
+
+		// Edge case: negative scale
+		assertThat( GridOrthographic.getBoundaryX2( 5.0, 10.0, -1.0, 3.0 ) ).isEqualTo( 10.0 * -1.0 + 3.0 );
+	}
+
+	@Test
+	void getBoundaryY1() {
+		// Normal case: y1 < y2
+		assertThat( GridOrthographic.getBoundaryY1( 5.0, 10.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+
+		// Edge case: y1 = y2
+		assertThat( GridOrthographic.getBoundaryY1( 5.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+
+		// Edge case: y1 > y2
+		assertThat( GridOrthographic.getBoundaryY1( 10.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+
+		// Edge case: negative coordinates
+		assertThat( GridOrthographic.getBoundaryY1( -10.0, -5.0, 2.0, 3.0 ) ).isEqualTo( -10.0 * 2.0 - 3.0 );
+
+		// Edge case: zero scale
+		assertThat( GridOrthographic.getBoundaryY1( 5.0, 10.0, 0.0, 3.0 ) ).isEqualTo( -3.0 );
+
+		// Edge case: negative scale
+		assertThat( GridOrthographic.getBoundaryY1( 5.0, 10.0, -1.0, 3.0 ) ).isEqualTo( 5.0 * -1.0 - 3.0 );
+
+		// Test the bug: Math.min(y2, y2) instead of Math.min(y1, y2)
+		// This test will fail if the bug is present
+		assertThat( GridOrthographic.getBoundaryY1( 10.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 - 3.0 );
+	}
+
+	@Test
+	void getBoundaryY2() {
+		// Normal case: y1 < y2
+		assertThat( GridOrthographic.getBoundaryY2( 5.0, 10.0, 2.0, 3.0 ) ).isEqualTo( 10.0 * 2.0 + 3.0 );
+
+		// Edge case: y1 = y2
+		assertThat( GridOrthographic.getBoundaryY2( 5.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 5.0 * 2.0 + 3.0 );
+
+		// Edge case: y1 > y2
+		assertThat( GridOrthographic.getBoundaryY2( 10.0, 5.0, 2.0, 3.0 ) ).isEqualTo( 10.0 * 2.0 + 3.0 );
+
+		// Edge case: negative coordinates
+		assertThat( GridOrthographic.getBoundaryY2( -10.0, -5.0, 2.0, 3.0 ) ).isEqualTo( -5.0 * 2.0 + 3.0 );
+
+		// Edge case: zero scale
+		assertThat( GridOrthographic.getBoundaryY2( 5.0, 10.0, 0.0, 3.0 ) ).isEqualTo( 3.0 );
+
+		// Edge case: negative scale
+		assertThat( GridOrthographic.getBoundaryY2( 5.0, 10.0, -1.0, 3.0 ) ).isEqualTo( 10.0 * -1.0 + 3.0 );
+	}
 }

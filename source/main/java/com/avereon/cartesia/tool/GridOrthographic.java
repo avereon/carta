@@ -82,10 +82,10 @@ public class GridOrthographic implements Grid {
 		double snapIntervalX = workplane.calcSnapGridX() * scale;
 		double snapIntervalY = workplane.calcSnapGridY() * scale;
 
-		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale - majorIntervalX;
-		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale + majorIntervalX;
-		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale - majorIntervalY;
-		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale + majorIntervalY;
+		double boundaryX1 = getBoundaryX1( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalX );
+		double boundaryX2 = getBoundaryX2( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalX );
+		double boundaryY1 = getBoundaryY1( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalY );
+		double boundaryY2 = getBoundaryY2( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalY );
 
 		// Get all offsets
 		List<Double> axisOffsetsX = new ArrayList<>();
@@ -412,6 +412,22 @@ public class GridOrthographic implements Grid {
 				renderer.drawLine( boundaryX1, value, boundaryX2, value );
 			}
 		}
+	}
+
+	static double getBoundaryX1( double x1, double x2, double scale, double majorIntervalX ) {
+		return Math.min( x1, x2 ) * scale - majorIntervalX;
+	}
+
+	static double getBoundaryX2( double x1, double x2, double scale, double majorIntervalX ) {
+		return Math.max( x1, x2 ) * scale + majorIntervalX;
+	}
+
+	static double getBoundaryY1( double y1, double y2, double scale, double majorIntervalY ) {
+		return Math.min( y1, y2 ) * scale - majorIntervalY;
+	}
+
+	static double getBoundaryY2( double y1, double y2, double scale, double majorIntervalY ) {
+		return Math.max( y1, y2 ) * scale + majorIntervalY;
 	}
 
 	static Line reuseOrNew( Collection<Line> prior, double x1, double y1, double x2, double y2 ) {
