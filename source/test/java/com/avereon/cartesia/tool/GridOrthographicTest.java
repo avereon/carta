@@ -72,7 +72,7 @@ public class GridOrthographicTest {
 		// X lines = 10 - -10 = 20 / 0.5 + 1 = 41
 		// Y lines = 8 - -8 = 16 / 0.5 + 1 = 33
 		// All lines = 41 + 33
-		assertThat( lines.size() ).isEqualTo( 74 );
+		assertThat( lines.size() ).isEqualTo( 82 );
 	}
 
 	@Test

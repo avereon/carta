@@ -17,6 +17,7 @@ import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CustomLog
 public class GridOrthographic implements Grid {
@@ -50,7 +51,7 @@ public class GridOrthographic implements Grid {
 		if( workplane == null ) return Collections.emptyList();
 
 		// Map the existing geometry from the node list to a line list
-		List<Line> prior = existing.stream().map( n -> (Line)n ).toList();
+		Set<Line> prior = existing.stream().map( n -> (Line)n ).collect( Collectors.toCollection( HashSet::new ) );
 
 		// This will become the collection of grid geometry after the update
 		Set<Shape> grid = new HashSet<>();
@@ -58,11 +59,6 @@ public class GridOrthographic implements Grid {
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
 		double originX = origin.getX() * scale;
 		double originY = origin.getY() * scale;
-
-		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale;
-		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale;
-		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale;
-		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale;
 
 		boolean axisVisible = workplane.isGridAxisVisible();
 		Paint axisPaint = workplane.calcGridAxisPaint();
@@ -85,6 +81,11 @@ public class GridOrthographic implements Grid {
 
 		double snapIntervalX = workplane.calcSnapGridX() * scale;
 		double snapIntervalY = workplane.calcSnapGridY() * scale;
+
+		double boundaryX1 = Math.min( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale - majorIntervalX;
+		double boundaryX2 = Math.max( workplane.getBoundaryX1(), workplane.getBoundaryX2() ) * scale + majorIntervalX;
+		double boundaryY1 = Math.min( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale - majorIntervalY;
+		double boundaryY2 = Math.max( workplane.getBoundaryY1(), workplane.getBoundaryY2() ) * scale + majorIntervalY;
 
 		// Get all offsets
 		List<Double> axisOffsetsX = new ArrayList<>();
