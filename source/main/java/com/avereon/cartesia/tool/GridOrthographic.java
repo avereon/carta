@@ -96,43 +96,33 @@ public class GridOrthographic implements Grid {
 		List<Double> majorOffsetsY = Grid.getOffsets( originY, majorIntervalY, boundaryY1, boundaryY2 );
 		List<Double> minorOffsetsX = Grid.getOffsets( originX, minorIntervalX, boundaryX1, boundaryX2 );
 		List<Double> minorOffsetsY = Grid.getOffsets( originY, minorIntervalY, boundaryY1, boundaryY2 );
-		List<Double> snapOffsetsX = Grid.getOffsets( originX, snapIntervalX, boundaryX1, boundaryX2 );
-		List<Double> snapOffsetsY = Grid.getOffsets( originY, snapIntervalY, boundaryY1, boundaryY2 );
 
 		double majorBoundaryX1 = majorOffsetsX.getFirst();
 		double majorBoundaryX2 = majorOffsetsX.getLast();
 		double majorBoundaryY1 = majorOffsetsY.getFirst();
 		double majorBoundaryY2 = majorOffsetsY.getLast();
 
-		double minorBoundaryX1 = minorOffsetsX.getFirst();
-		double minorBoundaryX2 = minorOffsetsX.getLast();
-		double minorBoundaryY1 = minorOffsetsY.getFirst();
-		double minorBoundaryY2 = minorOffsetsY.getLast();
-
-		double snapBoundaryX1 = snapOffsetsX.getFirst();
-		double snapBoundaryX2 = snapOffsetsX.getLast();
-		double snapBoundaryY1 = snapOffsetsY.getFirst();
-		double snapBoundaryY2 = snapOffsetsY.getLast();
-
-		// Check for conflicts
-		if( majorVisible ) {
-			minorOffsetsX.removeIf( value -> Grid.isNearAny( value, majorOffsetsX ) );
-			minorOffsetsY.removeIf( value -> Grid.isNearAny( value, majorOffsetsY ) );
-		}
-		if( axisVisible ) {
-			majorOffsetsX.removeIf( value -> Grid.isNearAny( value, axisOffsetsX ) );
-			majorOffsetsY.removeIf( value -> Grid.isNearAny( value, axisOffsetsY ) );
+		if( workplane.getGridStyle() == GridStyle.LINE ) {
+			// Check for conflicts
+			if( majorVisible ) {
+				minorOffsetsX.removeIf( value -> Grid.isNearAny( value, majorOffsetsX ) );
+				minorOffsetsY.removeIf( value -> Grid.isNearAny( value, majorOffsetsY ) );
+			}
+			if( axisVisible ) {
+				majorOffsetsX.removeIf( value -> Grid.isNearAny( value, axisOffsetsX ) );
+				majorOffsetsY.removeIf( value -> Grid.isNearAny( value, axisOffsetsY ) );
+			}
 		}
 
 		if( minorVisible ) {
 			// Grid style
 			double dashOffset = 0.0;
-			Double[] dashSpacingX = null;
-			Double[] dashSpacingY = null;
+			Double[] dashSpacingX = new Double[]{};
+			Double[] dashSpacingY = new Double[]{};
 			if( workplane.getGridStyle() == GridStyle.CROSS ) {
-				dashOffset = 0.25 * snapIntervalX;
-				dashSpacingX = new Double[]{ 0.5 * snapIntervalX, 0.5 * snapIntervalX };
-				dashSpacingY = new Double[]{ 0.5 * snapIntervalY, 0.5 * snapIntervalY };
+				dashOffset = 0.25 * minorIntervalX;
+				dashSpacingX = new Double[]{ 0.5 * minorIntervalX, 0.5 * minorIntervalX };
+				dashSpacingY = new Double[]{ 0.5 * minorIntervalY, 0.5 * minorIntervalY };
 			} else if( workplane.getGridStyle() == GridStyle.DOT ) {
 				dashSpacingX = new Double[]{ 0.0, snapIntervalX };
 				dashSpacingY = new Double[]{ 0.0, snapIntervalY };
@@ -140,19 +130,19 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : minorOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, snapBoundaryY1, value, snapBoundaryY2 );
+				Line shape = reuseOrNew( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
-				if( dashSpacingY != null ) shape.getStrokeDashArray().setAll( dashSpacingY );
+				shape.getStrokeDashArray().setAll( dashSpacingY );
 				grid.add( shape );
 			}
 			for( double value : minorOffsetsY ) {
-				Line shape = reuseOrNew( prior, snapBoundaryX1, value, snapBoundaryX2, value );
+				Line shape = reuseOrNew( prior, majorBoundaryX1, value, majorBoundaryX2, value );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
-				if( dashSpacingX != null ) shape.getStrokeDashArray().setAll( dashSpacingX );
+				shape.getStrokeDashArray().setAll( dashSpacingX );
 				grid.add( shape );
 			}
 		}
@@ -160,12 +150,12 @@ public class GridOrthographic implements Grid {
 		if( majorVisible ) {
 			// Grid style
 			double dashOffset = 0.0;
-			Double[] dashSpacingX = null;
-			Double[] dashSpacingY = null;
+			Double[] dashSpacingX = new Double[]{};
+			Double[] dashSpacingY = new Double[]{};
 			if( workplane.getGridStyle() == GridStyle.CROSS ) {
-				dashOffset = 0.25 * minorIntervalX;
-				dashSpacingX = new Double[]{ 0.5 * minorIntervalX, 0.5 * minorIntervalX };
-				dashSpacingY = new Double[]{ 0.5 * minorIntervalY, 0.5 * minorIntervalY };
+				dashOffset = 0.25 * majorIntervalX;
+				dashSpacingX = new Double[]{ 0.5 * majorIntervalX, 0.5 * majorIntervalX };
+				dashSpacingY = new Double[]{ 0.5 * majorIntervalY, 0.5 * majorIntervalY };
 			} else if( workplane.getGridStyle() == GridStyle.DOT ) {
 				dashSpacingX = new Double[]{ 0.0, minorIntervalX };
 				dashSpacingY = new Double[]{ 0.0, minorIntervalY };
@@ -173,19 +163,19 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : majorOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, minorBoundaryY1, value, minorBoundaryY2 );
+				Line shape = reuseOrNew( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
-				if( dashSpacingY != null ) shape.getStrokeDashArray().setAll( dashSpacingY );
+				shape.getStrokeDashArray().setAll( dashSpacingY );
 				grid.add( shape );
 			}
 			for( double value : majorOffsetsY ) {
-				Line shape = reuseOrNew( prior, minorBoundaryX1, value, minorBoundaryX2, value );
+				Line shape = reuseOrNew( prior, majorBoundaryX1, value, majorBoundaryX2, value );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
-				if( dashSpacingX != null ) shape.getStrokeDashArray().setAll( dashSpacingX );
+				shape.getStrokeDashArray().setAll( dashSpacingX );
 				grid.add( shape );
 			}
 		}
@@ -193,12 +183,13 @@ public class GridOrthographic implements Grid {
 		if( axisVisible ) {
 			// Grid style
 			double dashOffset = 0.0;
-			Double[] dashSpacingX = null;
-			Double[] dashSpacingY = null;
+			Double[] dashSpacingX = new Double[]{};
+			Double[] dashSpacingY = new Double[]{};
 			if( workplane.getGridStyle() == GridStyle.CROSS ) {
-				dashOffset = 0.25 * majorIntervalX;
-				dashSpacingX = new Double[]{ 0.5 * majorIntervalX, 0.5 * majorIntervalX };
-				dashSpacingY = new Double[]{ 0.5 * majorIntervalY, 0.5 * majorIntervalY };
+				// This code makes the axis dashed
+				//  dashOffset = 0.25 * majorIntervalX;
+				//	dashSpacingX = new Double[]{ 0.5 * majorIntervalX, 0.5 * majorIntervalX };
+				//	dashSpacingY = new Double[]{ 0.5 * majorIntervalY, 0.5 * majorIntervalY };
 			} else if( workplane.getGridStyle() == GridStyle.DOT ) {
 				dashSpacingX = new Double[]{ 0.0, majorIntervalX };
 				dashSpacingY = new Double[]{ 0.0, majorIntervalY };
@@ -210,7 +201,7 @@ public class GridOrthographic implements Grid {
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
-				if( dashSpacingY != null ) shape.getStrokeDashArray().setAll( dashSpacingY );
+				shape.getStrokeDashArray().setAll( dashSpacingY );
 				grid.add( shape );
 			}
 			for( double value : axisOffsetsY ) {
@@ -218,7 +209,7 @@ public class GridOrthographic implements Grid {
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
-				if( dashSpacingX != null ) shape.getStrokeDashArray().setAll( dashSpacingX );
+				shape.getStrokeDashArray().setAll( dashSpacingX );
 				grid.add( shape );
 			}
 		}
