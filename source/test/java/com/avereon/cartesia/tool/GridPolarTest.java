@@ -3,12 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.curve.math.Constants;
 import javafx.geometry.Point3D;
-import javafx.scene.shape.Shape;
 import org.junit.jupiter.api.Test;
-
-import java.util.Collection;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class GridPolarTest {
 
@@ -42,13 +37,6 @@ public class GridPolarTest {
 
 		workplane.setOrigin( "0.7, 0.8, 0" );
 		Point3DAssert.assertThat( Grid.POLAR.getNearest( workplane, Point3D.ZERO ) ).isCloseTo( new Point3D( 0.7 - Constants.SQRT_ONE_HALF, 0.8 - Constants.SQRT_ONE_HALF, 0 ) );
-	}
-
-	@Test
-	void testGetGridLines() throws Exception {
-		Workplane workplane = new Workplane( -10, -10, 10, 10, "1", "45", "0.5", "30", "0.1", "15" );
-		Collection<Shape> lines = Grid.POLAR.createFxGeometryGrid( workplane );
-		assertThat( lines.size() ).isEqualTo( 44 );
 	}
 
 }

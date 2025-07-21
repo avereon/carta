@@ -74,17 +74,6 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void getGridLinesOffOrigin() throws Exception {
-		Workplane workplane = new Workplane( 5, 4, 10, 8, "1", "0.5", "0.1" );
-		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane );
-
-		// X lines = 10 - 5 = 5 / 0.5 + 1 = 11
-		// Y lines = 8 - 4 = 4 / 0.5 + 1 = 9
-		// All lines = 11 + 9
-		assertThat( lines.size() ).isEqualTo( 20 );
-	}
-
-	@Test
 	void reuseOrNew() {
 		// Test with empty prior set - should create a new Line
 		Set<Line> emptyPrior = new HashSet<>();

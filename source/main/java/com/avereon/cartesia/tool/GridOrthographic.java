@@ -17,7 +17,6 @@ import javafx.scene.shape.Shape;
 import lombok.CustomLog;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @CustomLog
 public class GridOrthographic implements Grid {
@@ -42,27 +41,18 @@ public class GridOrthographic implements Grid {
 		return point;
 	}
 
-	@Override
-	@Deprecated
-	public Collection<Shape> createFxGeometryGrid( Workplane workplane ) {
-		return updateFxGridLines( workplane, 1.0, FXCollections.observableArrayList() );
-	}
-
 	public Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
 		if( workplane == null ) return Collections.emptyList();
-		return updateFxGridLines( workplane, scale, FXCollections.observableArrayList() );
+		return updateFxGeometryGrid( workplane, scale, FXCollections.observableArrayList() );
 	}
 
 	public Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
-		return updateFxGridLines( workplane, scale, existing );
-	}
-
-	private Collection<Shape> updateFxGridLines( Workplane workplane, double scale, ObservableList<Node> existing ) {
 		if( workplane == null ) return Collections.emptyList();
 
-		// The existing geometry should be all lines, or empty
-		Set<Line> prior = existing.stream().map( n -> (Line)n ).collect( Collectors.toSet() );
+		// Map the existing geometry from the node list to a line list
+		List<Line> prior = existing.stream().map( n -> (Line)n ).toList();
 
+		// This will become the collection of grid geometry after the update
 		Set<Shape> grid = new HashSet<>();
 
 		Point3D origin = CadShapes.parsePoint( workplane.getOrigin() );
@@ -105,6 +95,23 @@ public class GridOrthographic implements Grid {
 		List<Double> majorOffsetsY = Grid.getOffsets( originY, majorIntervalY, boundaryY1, boundaryY2 );
 		List<Double> minorOffsetsX = Grid.getOffsets( originX, minorIntervalX, boundaryX1, boundaryX2 );
 		List<Double> minorOffsetsY = Grid.getOffsets( originY, minorIntervalY, boundaryY1, boundaryY2 );
+		List<Double> snapOffsetsX = Grid.getOffsets( originX, snapIntervalX, boundaryX1, boundaryX2 );
+		List<Double> snapOffsetsY = Grid.getOffsets( originY, snapIntervalY, boundaryY1, boundaryY2 );
+
+		double majorBoundaryX1 = majorOffsetsX.getFirst();
+		double majorBoundaryX2 = majorOffsetsX.getLast();
+		double majorBoundaryY1 = majorOffsetsY.getFirst();
+		double majorBoundaryY2 = majorOffsetsY.getLast();
+
+		double minorBoundaryX1 = minorOffsetsX.getFirst();
+		double minorBoundaryX2 = minorOffsetsX.getLast();
+		double minorBoundaryY1 = minorOffsetsY.getFirst();
+		double minorBoundaryY2 = minorOffsetsY.getLast();
+
+		double snapBoundaryX1 = snapOffsetsX.getFirst();
+		double snapBoundaryX2 = snapOffsetsX.getLast();
+		double snapBoundaryY1 = snapOffsetsY.getFirst();
+		double snapBoundaryY2 = snapOffsetsY.getLast();
 
 		// Check for conflicts
 		if( majorVisible ) {
@@ -132,7 +139,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : minorOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, boundaryY1, value, boundaryY2 );
+				Line shape = reuseOrNew( prior, value, snapBoundaryY1, value, snapBoundaryY2 );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -140,7 +147,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : minorOffsetsY ) {
-				Line shape = reuseOrNew( prior, boundaryX1, value, boundaryX2, value );
+				Line shape = reuseOrNew( prior, snapBoundaryX1, value, snapBoundaryX2, value );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -165,7 +172,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : majorOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, boundaryY1, value, boundaryY2 );
+				Line shape = reuseOrNew( prior, value, minorBoundaryY1, value, minorBoundaryY2 );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -173,7 +180,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : majorOffsetsY ) {
-				Line shape = reuseOrNew( prior, boundaryX1, value, boundaryX2, value );
+				Line shape = reuseOrNew( prior, minorBoundaryX1, value, minorBoundaryX2, value );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -198,7 +205,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : axisOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, boundaryY1, value, boundaryY2 );
+				Line shape = reuseOrNew( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -206,7 +213,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : axisOffsetsY ) {
-				Line shape = reuseOrNew( prior, boundaryX1, value, boundaryX2, value );
+				Line shape = reuseOrNew( prior, majorBoundaryX1, value, majorBoundaryX2, value );
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -406,7 +413,7 @@ public class GridOrthographic implements Grid {
 		}
 	}
 
-	static Line reuseOrNew( Set<Line> prior, double x1, double y1, double x2, double y2 ) {
+	static Line reuseOrNew( Collection<Line> prior, double x1, double y1, double x2, double y2 ) {
 		if( prior.isEmpty() ) return new Line( x1, y1, x2, y2 );
 
 		// Reuse a line

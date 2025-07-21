@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
-import com.avereon.marea.Shape2d;
 import com.avereon.marea.fx.FxRenderer2d;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point3D;
@@ -31,25 +30,17 @@ public interface Grid {
 
 	Point3D getNearest( Workplane workplane, Point3D point );
 
-	/**
-	 * @param workplane The workplane that defines the users work plane
-	 * @return The grid geometry as Marea shapes
-	 */
-	default List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
-		return List.of();
-	}
-
-	default void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {}
-
-	/**
-	 * @param workplane The workplane that defines the users work plane
-	 * @return The grid geometry as FX shapes
-	 */
-	Collection<Shape> createFxGeometryGrid( Workplane workplane );
-
 	Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale );
 
 	Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing );
+
+	/**
+	 * @deprecated Most likely be moving back to using FX geometry
+	 * @param renderer The FX renderer to draw the grid
+	 * @param workplane The workplane that defines the grid configuration
+	 */
+	@Deprecated
+	default void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {}
 
 	static Grid valueOf( String name ) {
 		return switch( name ) {

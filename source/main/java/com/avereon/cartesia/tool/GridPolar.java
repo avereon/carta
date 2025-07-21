@@ -3,7 +3,7 @@ package com.avereon.cartesia.tool;
 import com.avereon.cartesia.math.CadShapes;
 import com.avereon.curve.math.Arithmetic;
 import com.avereon.curve.math.Constants;
-import com.avereon.marea.Shape2d;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point3D;
@@ -41,7 +41,12 @@ public class GridPolar implements Grid {
 	}
 
 	@Override
-	public List<Shape> createFxGeometryGrid( Workplane workplane ) {
+	public Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
+		return updateFxGeometryGrid( workplane, scale, FXCollections.observableArrayList() );
+	}
+
+	@Override
+	public Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
 		// The x spacing will be radius
 		// The y spacing will be angle in degrees
 
@@ -156,33 +161,6 @@ public class GridPolar implements Grid {
 		grid.forEach( s -> s.setStrokeWidth( 0.05 ) );
 
 		return grid;
-	}
-
-	@Override
-	public Collection<Shape> createFxGeometryGrid( Workplane workplane, double scale ) {
-		return List.of();
-	}
-
-	@Override
-	public Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
-		return List.of();
-	}
-
-	@Override
-	public List<Shape2d> createMareaGeometryGrid( Workplane workplane ) {
-		return switch( workplane.getGridStyle() ) {
-			case DOT -> generateMareaGridDots( workplane );
-			case CROSS -> generateMareaGridLines( workplane );
-			case LINE -> generateMareaGridLines( workplane );
-		};
-	}
-
-	private List<Shape2d> generateMareaGridDots( Workplane workplane ) {
-		return List.of();
-	}
-
-	private List<Shape2d> generateMareaGridLines( Workplane workplane ) {
-		return List.of();
 	}
 
 }
