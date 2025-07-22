@@ -97,8 +97,10 @@ public class GridPolar implements Grid {
 
 		double boundaryX1 = Grid.getBoundaryX1( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalR );
 		double boundaryX2 = Grid.getBoundaryX2( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalR );
-		double boundaryY1 = Grid.getBoundaryY1( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalA );
-		double boundaryY2 = Grid.getBoundaryY2( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalA );
+		// Use the majorIntervalR for the next two Y boundaries, instead of
+		// majorIntervalA, because that interval is in degrees instead of design units
+		double boundaryY1 = Grid.getBoundaryY1( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalR );
+		double boundaryY2 = Grid.getBoundaryY2( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalR );
 
 		// Create points for the corners of the view
 		Point2D a = new Point2D( boundaryX1, boundaryY1 );
@@ -154,8 +156,8 @@ public class GridPolar implements Grid {
 		List<Double> minorOffsetsR = Grid.getOffsets( 0, minorIntervalR, boundaryRmin, boundaryRmax );
 		//List<Double> majorOffsetsA = Grid.getOffsets( 0, majorIntervalA, boundaryAmin, boundaryAmax, true );
 		//List<Double> minorOffsetsA = Grid.getOffsets( 0, minorIntervalA, boundaryAmin, boundaryAmax, true );
-		List<Double> majorOffsetsA = Grid.getOffsets( 0, 10, boundaryAmin, boundaryAmax, true );
-		List<Double> minorOffsetsA = Grid.getOffsets( 0, 2, boundaryAmin, boundaryAmax, true );
+		List<Double> majorOffsetsA = Grid.getOffsets( 0, majorIntervalA, boundaryAmin, boundaryAmax, true );
+		List<Double> minorOffsetsA = Grid.getOffsets( 0, minorIntervalA, boundaryAmin, boundaryAmax, true );
 
 		double majorBoundaryR1 = majorOffsetsR.getFirst();
 		double majorBoundaryR2 = majorOffsetsR.getLast();

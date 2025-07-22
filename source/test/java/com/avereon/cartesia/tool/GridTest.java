@@ -13,6 +13,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class GridTest {
 
 	@Test
+	void getOffsets() {
+		assertThat( Grid.getOffsets( 0, 1, -0.5, 0.5 ) ).contains( 0.0 );
+		assertThat( Grid.getOffsets( 0, 1, -1, 1 ) ).contains( -1.0, 0.0, 1.0 );
+		assertThat( Grid.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ) ).contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 );
+	}
+
+	@Test
 	@Tag( AI_GENERATED )
 	void getBoundaryX1() {
 		// Normal case: x1 < x2

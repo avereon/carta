@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 
+import static com.avereon.test.TestTag.RECURSION;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GridOrthographicTest {
@@ -44,24 +45,6 @@ public class GridOrthographicTest {
 	}
 
 	@Test
-	void getOffsets() {
-		assertThat( Grid.getOffsets( 0, 1, -0.5, 0.5 ) ).contains( 0.0 );
-		assertThat( Grid.getOffsets( 0, 1, -1, 1 ) ).contains( -1.0, 0.0, 1.0 );
-		assertThat( Grid.getOffsets( 1, Math.PI, -2 * Math.PI, 3 * Math.PI ) ).contains( -2 * Math.PI + 1, -Math.PI + 1, 1.0, Math.PI + 1, 2 * Math.PI + 1 );
-	}
-
-	@Test
-	@Tag( "recursion" )
-	void issue155() {
-		// https://github.com/avereon/carta/issues/155
-		double origin = 0.0;
-		double interval = 63.77952755905511;
-		double lowerBound = -672.0;
-		double upperBound = 672.0;
-		assertThat( Grid.getOffsets( origin, interval, lowerBound, upperBound ) ).hasSize( 21 );
-	}
-
-	@Test
 	void getGridLinesCommon() {
 		Workplane workplane = new Workplane( -10, -8, 10, 8, "1", "0.5", "0.1" );
 		Collection<Shape> lines = Grid.ORTHO.createFxGeometryGrid( workplane, 1.0 );
@@ -71,6 +54,17 @@ public class GridOrthographicTest {
 		// All lines = 41 + 33 = 74
 		// Add (major/minor) * 4 more lines for margin = 82
 		assertThat( lines.size() ).isEqualTo( 82 );
+	}
+
+	@Test
+	@Tag( RECURSION )
+	void issue155() {
+		// https://github.com/avereon/carta/issues/155
+		double origin = 0.0;
+		double interval = 63.77952755905511;
+		double lowerBound = -672.0;
+		double upperBound = 672.0;
+		assertThat( Grid.getOffsets( origin, interval, lowerBound, upperBound ) ).hasSize( 21 );
 	}
 
 }

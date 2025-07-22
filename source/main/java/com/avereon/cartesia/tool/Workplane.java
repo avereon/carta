@@ -193,21 +193,12 @@ public class Workplane extends Node {
 		this( -DEFAULT_BOUNDARY_X, -DEFAULT_BOUNDARY_Y, DEFAULT_BOUNDARY_X, DEFAULT_BOUNDARY_Y, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
 	}
 
+	public Workplane( double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2 ) {
+		this( boundaryX1, boundaryY1, boundaryX2, boundaryY2, DEFAULT_GRID_MAJOR_SIZE, DEFAULT_GRID_MINOR_SIZE, DEFAULT_GRID_SNAP_SIZE );
+	}
+
 	public Workplane( double boundaryX1, double boundaryY1, double boundaryX2, double boundaryY2, String majorGrid, String minorGrid, String snapGrid ) {
-		this(
-			DEFAULT_GRID_SYSTEM, DEFAULT_ORIGIN,
-			boundaryX1,
-			boundaryY1,
-			boundaryX2,
-			boundaryY2,
-			majorGrid,
-			majorGrid,
-			minorGrid,
-			minorGrid,
-			snapGrid,
-			snapGrid,
-			DEFAULT_GRID_STYLE
-		);
+		this( DEFAULT_GRID_SYSTEM, DEFAULT_ORIGIN, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorGrid, majorGrid, minorGrid, minorGrid, snapGrid, snapGrid, DEFAULT_GRID_STYLE );
 	}
 
 	public Workplane(
@@ -222,20 +213,7 @@ public class Workplane extends Node {
 		String snapGridX,
 		String snapGridY
 	) {
-		this(
-			DEFAULT_GRID_SYSTEM, DEFAULT_ORIGIN,
-			boundaryX1,
-			boundaryY1,
-			boundaryX2,
-			boundaryY2,
-			majorGridX,
-			majorGridY,
-			minorGridX,
-			minorGridY,
-			snapGridX,
-			snapGridY,
-			DEFAULT_GRID_STYLE
-		);
+		this( DEFAULT_GRID_SYSTEM, DEFAULT_ORIGIN, boundaryX1, boundaryY1, boundaryX2, boundaryY2, majorGridX, majorGridY, minorGridX, minorGridY, snapGridX, snapGridY, DEFAULT_GRID_STYLE );
 	}
 
 	public Workplane(
