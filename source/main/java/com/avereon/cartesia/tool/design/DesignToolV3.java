@@ -93,7 +93,9 @@ public class DesignToolV3 extends BaseDesignTool {
 		// Set the design model
 		getRenderer().setDesign( design );
 		// Show the first layer TODO replace with settings eventually
-		getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+		if( !design.getLayers().getLayers().isEmpty() ) {
+			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+		}
 
 		toast.setVisible( false );
 		getRenderer().setVisible( true );

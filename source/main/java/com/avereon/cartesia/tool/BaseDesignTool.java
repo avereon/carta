@@ -69,7 +69,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	// FX properties (what others should be here?)
 
-	// FIXME These are basically ignored by the subclasses in favor of the renderer properties.
 	private final ObjectProperty<Point3D> viewCenter;
 
 	private final DoubleProperty viewRotate;
