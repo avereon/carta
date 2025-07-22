@@ -333,14 +333,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Convenience method, to set multiple layers visible and hidden at the same time
 	}
 
-	public void addWorkplane( Workplane workplane ) {
-		//gridGeometryManager.updateGridGeometry( workplane );
-	}
-
-	public void removeWorkplane( Workplane workplane ) {
-		//gridGeometryManager.removeGridGeometry( workplane );
-	}
-
 	@Override
 	public void render() {
 
@@ -439,7 +431,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
 	}
 
-	private void updateGridFxGeometry() {
+	void updateGridFxGeometry() {
+		if( workplane == null ) return;
 		workplane.getGridSystem().updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() );
 	}
 

@@ -28,6 +28,7 @@ import static com.avereon.cartesia.TestConstants.TOLERANCE_PERCENT_LOOSE;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_OUTPUT_SCALE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.times;
@@ -437,7 +438,6 @@ public class DesignToolV3RendererTest {
 		assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -415.7480163574219, -415.7480163574219, 831.4960327148438, 831.4960327148438 ) );
 	}
 
-	//@Disabled( "This test is not working" )
 	@Test
 	@Tag( "WhiteBox" )
 	void updateOutputScale() {
@@ -614,6 +614,12 @@ public class DesignToolV3RendererTest {
 		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 * gz, TOLERANCE_PERCENT_LOOSE );
 		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 * gz, TOLERANCE_PERCENT_LOOSE );
 		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 * gz, TOLERANCE_PERCENT_LOOSE );
+	}
+
+	@Test
+	void updateGridFxGeometryDoesNotThrowNpe() {
+		Throwable throwable = catchThrowable( () -> renderer.updateGridFxGeometry() );
+		assertThat( throwable ).isNull();
 	}
 
 	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
