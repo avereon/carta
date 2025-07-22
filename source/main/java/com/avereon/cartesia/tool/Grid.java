@@ -6,10 +6,13 @@ import com.avereon.marea.fx.FxRenderer2d;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /*
@@ -35,9 +38,9 @@ public interface Grid {
 	Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing );
 
 	/**
-	 * @deprecated Most likely be moving back to using FX geometry
 	 * @param renderer The FX renderer to draw the grid
 	 * @param workplane The workplane that defines the grid configuration
+	 * @deprecated Most likely be moving back to using FX geometry
 	 */
 	@Deprecated
 	default void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {}
@@ -75,6 +78,55 @@ public interface Grid {
 		}
 
 		return offsets;
+	}
+
+	static double getBoundaryX1( double x1, double x2, double scale, double majorIntervalX ) {
+		return Math.min( x1, x2 ) * scale - majorIntervalX;
+	}
+
+	static double getBoundaryX2( double x1, double x2, double scale, double majorIntervalX ) {
+		return Math.max( x1, x2 ) * scale + majorIntervalX;
+	}
+
+	static double getBoundaryY1( double y1, double y2, double scale, double majorIntervalY ) {
+		return Math.min( y1, y2 ) * scale - majorIntervalY;
+	}
+
+	static double getBoundaryY2( double y1, double y2, double scale, double majorIntervalY ) {
+		return Math.max( y1, y2 ) * scale + majorIntervalY;
+	}
+
+	static Line reuseOrNewLine( Collection<Line> prior, double x1, double y1, double x2, double y2 ) {
+		if( prior.isEmpty() ) return new Line( x1, y1, x2, y2 );
+
+		// Reuse a line
+		Iterator<Line> iterator = prior.iterator();
+		Line line = iterator.next();
+		iterator.remove();
+
+		// Update the position
+		line.setStartX( x1 );
+		line.setStartY( y1 );
+		line.setEndX( x2 );
+		line.setEndY( y2 );
+
+		return line;
+	}
+
+	static Circle reuseOrNewCircle( Collection<Circle> prior, double cx, double cy, double r ) {
+		if( prior.isEmpty() ) return new Circle( cx, cy, r );
+
+		// Reuse a line
+		Iterator<Circle> iterator = prior.iterator();
+		Circle circle = iterator.next();
+		iterator.remove();
+
+		// Update the position
+		circle.setCenterX( cx );
+		circle.setCenterY( cy );
+		circle.setRadius( r );
+
+		return circle;
 	}
 
 }

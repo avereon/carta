@@ -50,7 +50,7 @@ public class GridOrthographic implements Grid {
 	public Collection<Shape> updateFxGeometryGrid( Workplane workplane, double scale, ObservableList<Node> existing ) {
 		if( workplane == null ) return Collections.emptyList();
 
-		// Map the existing geometry from the node list to a line list
+		// Map the existing geometry from the node list to a collection
 		Set<Line> prior = existing.stream().map( n -> (Line)n ).collect( Collectors.toCollection( HashSet::new ) );
 
 		// This will become the collection of grid geometry after the update
@@ -82,10 +82,10 @@ public class GridOrthographic implements Grid {
 		double snapIntervalX = workplane.calcSnapGridX() * scale;
 		double snapIntervalY = workplane.calcSnapGridY() * scale;
 
-		double boundaryX1 = getBoundaryX1( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalX );
-		double boundaryX2 = getBoundaryX2( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalX );
-		double boundaryY1 = getBoundaryY1( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalY );
-		double boundaryY2 = getBoundaryY2( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalY );
+		double boundaryX1 = Grid.getBoundaryX1( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalX );
+		double boundaryX2 = Grid.getBoundaryX2( workplane.getBoundaryX1(), workplane.getBoundaryX2(), scale, majorIntervalX );
+		double boundaryY1 = Grid.getBoundaryY1( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalY );
+		double boundaryY2 = Grid.getBoundaryY2( workplane.getBoundaryY1(), workplane.getBoundaryY2(), scale, majorIntervalY );
 
 		// Get all offsets
 		List<Double> axisOffsetsX = new ArrayList<>();
@@ -102,8 +102,8 @@ public class GridOrthographic implements Grid {
 		double majorBoundaryY1 = majorOffsetsY.getFirst();
 		double majorBoundaryY2 = majorOffsetsY.getLast();
 
+		// Check for conflicts
 		if( workplane.getGridStyle() == GridStyle.LINE ) {
-			// Check for conflicts
 			if( majorVisible ) {
 				minorOffsetsX.removeIf( value -> Grid.isNearAny( value, majorOffsetsX ) );
 				minorOffsetsY.removeIf( value -> Grid.isNearAny( value, majorOffsetsY ) );
@@ -130,7 +130,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : minorOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
+				Line shape = Grid.reuseOrNewLine( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -138,7 +138,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : minorOffsetsY ) {
-				Line shape = reuseOrNew( prior, majorBoundaryX1, value, majorBoundaryX2, value );
+				Line shape = Grid.reuseOrNewLine( prior, majorBoundaryX1, value, majorBoundaryX2, value );
 				shape.setStroke( minorPaint );
 				shape.setStrokeWidth( minorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -163,7 +163,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : majorOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
+				Line shape = Grid.reuseOrNewLine( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -171,7 +171,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : majorOffsetsY ) {
-				Line shape = reuseOrNew( prior, majorBoundaryX1, value, majorBoundaryX2, value );
+				Line shape = Grid.reuseOrNewLine( prior, majorBoundaryX1, value, majorBoundaryX2, value );
 				shape.setStroke( majorPaint );
 				shape.setStrokeWidth( majorWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -197,7 +197,7 @@ public class GridOrthographic implements Grid {
 
 			// Lines
 			for( double value : axisOffsetsX ) {
-				Line shape = reuseOrNew( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
+				Line shape = Grid.reuseOrNewLine( prior, value, majorBoundaryY1, value, majorBoundaryY2 );
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -205,7 +205,7 @@ public class GridOrthographic implements Grid {
 				grid.add( shape );
 			}
 			for( double value : axisOffsetsY ) {
-				Line shape = reuseOrNew( prior, majorBoundaryX1, value, majorBoundaryX2, value );
+				Line shape = Grid.reuseOrNewLine( prior, majorBoundaryX1, value, majorBoundaryX2, value );
 				shape.setStroke( axisPaint );
 				shape.setStrokeWidth( axisWidth );
 				shape.setStrokeDashOffset( dashOffset );
@@ -403,39 +403,6 @@ public class GridOrthographic implements Grid {
 				renderer.drawLine( boundaryX1, value, boundaryX2, value );
 			}
 		}
-	}
-
-	static double getBoundaryX1( double x1, double x2, double scale, double majorIntervalX ) {
-		return Math.min( x1, x2 ) * scale - majorIntervalX;
-	}
-
-	static double getBoundaryX2( double x1, double x2, double scale, double majorIntervalX ) {
-		return Math.max( x1, x2 ) * scale + majorIntervalX;
-	}
-
-	static double getBoundaryY1( double y1, double y2, double scale, double majorIntervalY ) {
-		return Math.min( y1, y2 ) * scale - majorIntervalY;
-	}
-
-	static double getBoundaryY2( double y1, double y2, double scale, double majorIntervalY ) {
-		return Math.max( y1, y2 ) * scale + majorIntervalY;
-	}
-
-	static Line reuseOrNew( Collection<Line> prior, double x1, double y1, double x2, double y2 ) {
-		if( prior.isEmpty() ) return new Line( x1, y1, x2, y2 );
-
-		// Reuse a line
-		Iterator<Line> iterator = prior.iterator();
-		Line line = iterator.next();
-		iterator.remove();
-
-		// Update the position
-		line.setStartX( x1 );
-		line.setStartY( y1 );
-		line.setEndX( x2 );
-		line.setEndY( y2 );
-
-		return line;
 	}
 
 }

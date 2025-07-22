@@ -33,7 +33,7 @@ public class Workplane extends Node {
 
 	public static final double DEFAULT_BOUNDARY_Y = 0.0;
 
-	public static final Grid DEFAULT_GRID_SYSTEM = Grid.ORTHO;
+	public static final Grid DEFAULT_GRID_SYSTEM = Grid.POLAR;
 
 	public static final String DEFAULT_ORIGIN = "0,0";
 

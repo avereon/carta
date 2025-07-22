@@ -24,6 +24,10 @@ public class CadPoints {
 
 	public static final Point3D UNIT_Z = CadPoints.toFxPoint( Vector.UNIT_Z );
 
+	public static double[] asPoint( Point2D point ) {
+		return Point.of( point.getX(), point.getY() );
+	}
+
 	public static double[] asPoint( Point3D point ) {
 		return Point.of( point.getX(), point.getY(), point.getZ() );
 	}
@@ -35,6 +39,11 @@ public class CadPoints {
 
 	public static Point2D toPoint2d( double x, double y ) {
 		return new Point2D( x, y );
+	}
+
+	public static Point2D toPoint2d( double[] point ) {
+		if( point == null ) return null;
+		return new Point2D( point[ 0 ], point[ 1 ] );
 	}
 
 	public static Point2D toPoint2d( Point3D point ) {

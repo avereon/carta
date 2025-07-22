@@ -6,6 +6,7 @@ import com.avereon.curve.math.Vector;
 import com.avereon.zerra.font.FontUtil;
 import com.avereon.zerra.javafx.FxUtil;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
@@ -30,6 +31,10 @@ public class CadGeometry {
 
 	public static double angle360( Point3D a, Point3D b ) {
 		return Math.toDegrees( Geometry.getAngle( asPoint( a ), asPoint( b ) ) );
+	}
+
+	public static double theta360( Point2D a, Point2D b ) {
+		return Math.toDegrees( Geometry.theta( asPoint( a ), asPoint( b ) ) );
 	}
 
 	public static double pointAngle360( Point3D a, Point3D b, Point3D c ) {

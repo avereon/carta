@@ -3,13 +3,21 @@ package com.avereon.cartesia.math;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.util.DesignShapeDistanceComparator;
 import com.avereon.curve.math.Geometry;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import lombok.CustomLog;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 @CustomLog
 public class CadShapes {
+
+	public static Point2D polarDegreesToCartesian( Point2D point ) {
+		return CadPoints.toPoint2d( Geometry.polarDegreesToCartesian( CadPoints.asPoint( point ) ) );
+	}
 
 	//	public static Point3D polarToCartesian( Point3D point ) {
 	//		return toFxPoint( Geometry.polarToCartesian( asPoint( point ) ) );
