@@ -409,8 +409,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		super.activate();
 		if( !getAsset().isLoaded() ) return;
 
-		getCommandContext().setLastActiveDesignTool( this );
-		getCommandContext().setTool( this );
+		getCommandContext().setLastUserTool( this );
 
 		registerStatusBarItems();
 		registerCommandCapture();

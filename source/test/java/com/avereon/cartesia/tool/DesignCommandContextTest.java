@@ -106,7 +106,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
 		commandContext.doProcessCommands();
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 
 		// when
 		commandContext.setInputMode( DesignCommandContext.Input.NUMBER );
@@ -123,7 +123,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
 		commandContext.doProcessCommands();
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 
 		// when
 		commandContext.setInputMode( DesignCommandContext.Input.POINT );
@@ -140,7 +140,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
 		commandContext.doProcessCommands();
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 
 		// when
 		commandContext.setInputMode( DesignCommandContext.Input.POINT );
@@ -157,7 +157,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
 		commandContext.doProcessCommands();
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 
 		// when
 		commandContext.setInputMode( DesignCommandContext.Input.TEXT );
@@ -174,7 +174,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		MockCommand command = new MockCommand( 1 );
 		commandContext.submit( tool, command );
 		commandContext.doProcessCommands();
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 
 		// when
 		commandContext.setInputMode( DesignCommandContext.Input.NONE );
@@ -235,7 +235,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 	@Test
 	void testAutoCommand() throws Exception {
 		// given
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 		when( getMod().getSettings() ).thenReturn( new MapSettings() );
 
 		Command command = commandContext.processText( "test", false );
@@ -245,7 +245,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 
 	@Test
 	void testNoAutoCommandWithTextInput() throws Exception {
-		commandContext.setLastActiveDesignTool( tool );
+		commandContext.setLastUserTool( tool );
 		commandContext.setInputMode( DesignCommandContext.Input.TEXT );
 		Command command = commandContext.processText( "test", false );
 		commandContext.doProcessCommands();

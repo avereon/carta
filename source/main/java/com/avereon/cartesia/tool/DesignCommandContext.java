@@ -62,7 +62,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private String priorCommand;
 
-	private DesignTool lastActiveDesignTool;
+	private DesignTool lastUserTool;
 
 	@Setter
 	@Getter
@@ -160,7 +160,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		event.consume();
 		String input = getCommandPrompt().getCommand();
 		if( input.isEmpty() ) {
-			DesignTool tool = getLastActiveDesignTool();
+			DesignTool tool = getLastUserTool();
 			Point3D mouse = tool.worldToScreen( getWorldMouse() );
 			Point3D screen = tool.worldToScreen( mouse );
 			MouseEvent mouseEvent = new MouseEvent(
@@ -297,22 +297,19 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		submitEventCommand( event );
 	}
 
-	DesignTool getLastActiveDesignTool() {
-		return lastActiveDesignTool;
+	DesignTool getLastUserTool() {
+		return lastUserTool;
 	}
 
-	// FIXME What is the difference between this method and setTool()?
-	//  Because these are both set at the same time, they are the same value
-	public void setLastActiveDesignTool( DesignTool tool ) {
-		lastActiveDesignTool = Objects.requireNonNull( tool );
+	public void setLastUserTool( DesignTool tool ) {
+		lastUserTool = Objects.requireNonNull( tool );
+		setTool( tool );
 	}
 
 	public final DesignTool getTool() {
 		return tool;
 	}
 
-	// FIXME What is the difference between this method and setLastActiveDesignTool()?
-	//  Because these are both set at the same time, they are the same value
 	public void setTool( DesignTool tool ) {
 		this.tool = Objects.requireNonNull( tool );
 	}
@@ -377,8 +374,8 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private void reset() {
 		Fx.run( () -> {
-			getLastActiveDesignTool().setSelectAperture( null, null );
-			getLastActiveDesignTool().clearSelectedShapes();
+			getLastUserTool().setSelectAperture( null, null );
+			getLastUserTool().clearSelectedShapes();
 			setInputMode( DesignCommandContext.Input.NONE );
 			getCommandPrompt().clear();
 		} );
@@ -406,11 +403,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private Command submitCommand( CommandMetadata metadata ) {
 		if( metadata == NONE ) return null;
 		priorCommand = metadata.getCommand();
-		return submitCommand( getLastActiveDesignTool(), null, metadata.getType(), metadata.getParameters() );
+		return submitCommand( getLastUserTool(), null, metadata.getType(), metadata.getParameters() );
 	}
 
 	private Command submitCommand( Command command, Object... parameters ) {
-		return submitCommand( new CommandTask( this, getLastActiveDesignTool(), null, null, command, parameters ) );
+		return submitCommand( new CommandTask( this, getLastUserTool(), null, null, command, parameters ) );
 	}
 
 	private Command submitCommand( DesignTool tool, InputEvent event, Class<? extends Command> commandClass, Object... parameters ) {
