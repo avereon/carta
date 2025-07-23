@@ -53,10 +53,6 @@ public class DesignToolV3 extends BaseDesignTool {
 				getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 			}
 		}
-
-		// Swap the toast for the renderer
-		getToast().setVisible( false );
-		getRenderer().setVisible( true );
 	}
 
 	@Override

@@ -444,6 +444,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		if( !design.getLayers().getLayers().isEmpty() ) {
 			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 		}
+
+		// Swap the toast for the renderer
+		getToast().setVisible( false );
+		getRenderer().setVisible( true );
 	}
 
 	private void updateWorkplaneBoundaries() {
