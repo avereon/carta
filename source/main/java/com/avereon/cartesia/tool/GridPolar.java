@@ -165,7 +165,7 @@ public class GridPolar implements Grid {
 		double majorBoundaryA2 = majorOffsetsA.getLast();
 
 		// Check for conflicts
-		if( workplane.getGridStyle() == GridStyle.LINE ) {
+		if( workplane.getGridStyle() == GridStyle.SOLID ) {
 			if( majorVisible ) {
 				minorOffsetsR.removeIf( value -> Grid.isNearAny( value, majorOffsetsR ) );
 				minorOffsetsA.removeIf( value -> Grid.isNearAny( value, majorOffsetsA ) );

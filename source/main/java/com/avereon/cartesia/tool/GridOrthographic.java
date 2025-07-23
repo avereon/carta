@@ -103,7 +103,7 @@ public class GridOrthographic implements Grid {
 		double majorBoundaryY2 = majorOffsetsY.getLast();
 
 		// Check for conflicts
-		if( workplane.getGridStyle() == GridStyle.LINE ) {
+		if( workplane.getGridStyle() == GridStyle.SOLID ) {
 			if( majorVisible ) {
 				minorOffsetsX.removeIf( value -> Grid.isNearAny( value, majorOffsetsX ) );
 				minorOffsetsY.removeIf( value -> Grid.isNearAny( value, majorOffsetsY ) );
@@ -224,7 +224,7 @@ public class GridOrthographic implements Grid {
 	public void drawMareaGeometryGrid( FxRenderer2d renderer, Workplane workplane ) {
 		switch( workplane.getGridStyle() ) {
 			case DOT -> drawMareaGridDots( renderer, workplane );
-			case LINE -> drawMareaGridLines( renderer, workplane );
+			case SOLID -> drawMareaGridLines( renderer, workplane );
 		}
 	}
 

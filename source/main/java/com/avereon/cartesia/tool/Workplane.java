@@ -27,7 +27,7 @@ import lombok.CustomLog;
 @SuppressWarnings( "UnusedReturnValue" )
 public class Workplane extends Node {
 
-	public static final GridStyle DEFAULT_GRID_STYLE = GridStyle.LINE;
+	public static final GridStyle DEFAULT_GRID_STYLE = GridStyle.SOLID;
 
 	public static final double DEFAULT_BOUNDARY_X = 0.0;
 
