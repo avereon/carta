@@ -2,6 +2,8 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.test.Point3DAssert;
+import com.avereon.cartesia.tool.Grid;
+import com.avereon.marea.fx.FxRenderer2d;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.Point3D;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignToolV2Test extends DesignToolBaseTest {
 
-	private static final double DPC = 72 / 2.54;
+	private static final double DPC = FxRenderer2d.DEFAULT_DPI / 2.54;
 
 	private DesignToolV2 tool;
 
@@ -27,9 +29,11 @@ public class DesignToolV2Test extends DesignToolBaseTest {
 	@Test
 	void testScreenToWorkplaneWithCoordinates() {
 		// given
+		tool.setDpi( FxRenderer2d.DEFAULT_DPI );
 		assertThat( tool.isGridSnapEnabled() ).isTrue();
 		assertThat( tool.getWorkplane().calcSnapGridX() ).isEqualTo( 0.1 );
 		assertThat( tool.getWorkplane().calcSnapGridY() ).isEqualTo( 0.1 );
+		assertThat( tool.getWorkplane().getGridSystem() ).isEqualTo( Grid.ORTHO );
 
 		// then
 		Point3DAssert.assertThat( tool.screenToWorkplane( 2 * DPC, -2 * DPC, 0 ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
@@ -40,9 +44,11 @@ public class DesignToolV2Test extends DesignToolBaseTest {
 	@Test
 	void testScreenToWorkplaneWithPoints() {
 		// given
+		tool.setDpi( FxRenderer2d.DEFAULT_DPI );
 		assertThat( tool.isGridSnapEnabled() ).isTrue();
 		assertThat( tool.getWorkplane().calcSnapGridX() ).isEqualTo( 0.1 );
 		assertThat( tool.getWorkplane().calcSnapGridY() ).isEqualTo( 0.1 );
+		assertThat( tool.getWorkplane().getGridSystem() ).isEqualTo( Grid.ORTHO );
 
 		// then
 		Point3DAssert.assertThat( tool.screenToWorkplane( new Point3D( 2 * DPC, -2 * DPC, 0 ) ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );

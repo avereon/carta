@@ -48,7 +48,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
-import javafx.stage.Screen;
 import lombok.CustomLog;
 
 import java.util.*;
@@ -175,7 +174,6 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Set the renderer design
 		renderer.setDesign( getDesign() );
-		renderer.setDpi( Screen.getPrimary().getDpi() );
 
 		// Set defaults
 		setCurrentLayer( getDesign().getAllLayers().getFirst() );
