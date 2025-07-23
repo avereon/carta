@@ -169,7 +169,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
-		super.ready( request );
+		// Don't use the superclass logic
+		//super.ready( request );
 
 		setTitle( getAsset().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
