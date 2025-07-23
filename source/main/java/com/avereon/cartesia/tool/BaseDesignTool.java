@@ -1,12 +1,14 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.CartesiaMod;
+import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.DesignRenderer;
+import com.avereon.product.Rb;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -21,6 +23,11 @@ import javafx.event.EventTarget;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.layout.StackPane;
+import javafx.stage.Screen;
 import lombok.CustomLog;
 
 import java.util.ArrayList;
@@ -67,6 +74,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// TODO This is not connected to the grid pixel threshold yet
 	protected static final double MINIMUM_GRID_PIXELS = 3.0;
 
+	private final Label toast;
+
 	private final DesignRenderer renderer;
 
 	// FX properties (what others should be here?)
@@ -111,7 +120,28 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
 
+		// Create the tool toast
+		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
+		this.toast.getStyleClass().add( "tool-toast" );
+		StackPane.setAlignment( this.toast, Pos.CENTER );
+
+		// Configure the tool renderer
+		// The renderer is configured to render to the primary screen by default,
+		// but it can be configured to render to different media just as easily by
+		// changing the DPI setting.
+		// Should be:
+		// Sapphire: 162 @ 1x
+		// Graphene: 153 @ 1x
+		renderer.setDpiX( Screen.getPrimary().getDpi() );
+		renderer.setDpiY( Screen.getPrimary().getDpi() );
+
+		renderer.setOutputScaleX( Screen.getPrimary().getOutputScaleX() );
+		renderer.setOutputScaleY( Screen.getPrimary().getOutputScaleY() );
 		this.renderer = renderer;
+
+		// Initially the toast is shown and the renderer is hidden
+		this.toast.setVisible( true );
+		this.renderer.setVisible( false );
 
 		viewCenter = new SimpleObjectProperty<>( DEFAULT_CENTER );
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
@@ -135,7 +165,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		reticle.addListener( ( _, _, n ) -> {
 			if( getCursor() instanceof ReticleCursor ) setCursor( n.getCursor( getProgram() ) );
 		} );
+
+		// Add the components to the parent
+		getChildren().addAll( this.renderer, this.toast );
 	}
+
+	protected Node getToast() {return toast;}
 
 	protected DesignRenderer getRenderer() {
 		return renderer;
@@ -387,9 +422,14 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
-		Design design = request.getAsset().getModel();
+		setTitle( getAsset().getName() );
+		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
+
+		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
+		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		// Set the design model
+		Design design = request.getAsset().getModel();
 		getRenderer().setDesign( design );
 
 		// Set the workplane settings TODO replace with settings eventually

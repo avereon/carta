@@ -1,7 +1,9 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.*;
-import com.avereon.cartesia.RbKey;
+import com.avereon.cartesia.DesignUnit;
+import com.avereon.cartesia.DesignValue;
+import com.avereon.cartesia.ParseUtil;
+import com.avereon.cartesia.ShapePropertiesAssetType;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.data.map.DesignUnitMapper;
@@ -13,7 +15,6 @@ import com.avereon.cartesia.tool.*;
 import com.avereon.data.IdNode;
 import com.avereon.data.MultiNodeSettings;
 import com.avereon.data.NodeSettings;
-import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.util.DelayedAction;
 import com.avereon.util.TypeReference;
@@ -41,13 +42,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.ZoomEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
@@ -78,8 +76,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	// RENDERER
 
 	private static final Snap gridSnap = new SnapGrid();
-
-	private final Label toast;
 
 	private final DesignToolV2Renderer renderer;
 
@@ -157,13 +153,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		storePreviousViewAction.setMaxTriggerLimit( 5000 );
 		portalStack = new Stack<>();
 
-		// Create the toast label
-		toast = new Label( Rb.text( RbKey.LABEL, "loading" ) + "..." );
-		StackPane.setAlignment( toast, Pos.CENTER );
-
-		// Add the components to the parent
-		getChildren().addAll( renderer, toast );
-
 		// NOTE Settings and settings listeners should go in the ready() method
 	}
 
@@ -179,7 +168,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
 		// Hide the toast message
-		toast.setVisible( false );
+		getToast().setVisible( false );
 
 		// Create the design context
 		getDesign().createDesignContext( getProduct() );
@@ -372,6 +361,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		if( getSelectedLayer() == null ) setSelectedLayer( getCurrentLayer() );
 
 		// Request the initial geometry render
+		getRenderer().setVisible( true );
 		renderer.render();
 	}
 

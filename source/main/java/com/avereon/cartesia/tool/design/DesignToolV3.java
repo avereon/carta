@@ -1,13 +1,11 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
-import com.avereon.product.Rb;
 import com.avereon.xenon.XenonMode;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
@@ -17,12 +15,8 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.scene.transform.Transform;
-import javafx.stage.Screen;
 import lombok.CustomLog;
 
 import java.util.Collection;
@@ -32,11 +26,6 @@ import java.util.Objects;
 @CustomLog
 public class DesignToolV3 extends BaseDesignTool {
 
-	/**
-	 * The toast label. This is used to display messages to the user.
-	 */
-	private final Label toast;
-
 	@SuppressWarnings( "unused" )
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
 		this( product, asset, new DesignToolV3Renderer() );
@@ -44,32 +33,6 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	DesignToolV3( XenonProgramProduct product, Asset asset, DesignRenderer renderer ) {
 		super( product, asset, renderer );
-
-		// Create the objects
-		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
-		this.toast.getStyleClass().add( "tool-toast" );
-
-		// The renderer is configured to render to the primary screen by default,
-		// but it can be configured to render to different media just as easily by
-		// changing the DPI setting.
-		// Should be:
-		// Sapphire: 162 @ 1x
-		// Graphene: 153 @ 1x
-		getRenderer().setDpiX( Screen.getPrimary().getDpi() );
-		getRenderer().setDpiY( Screen.getPrimary().getDpi() );
-
-		getRenderer().setOutputScaleX( Screen.getPrimary().getOutputScaleX() );
-		getRenderer().setOutputScaleY( Screen.getPrimary().getOutputScaleY() );
-
-		// Align the toast label to the center of the screen
-		StackPane.setAlignment( toast, Pos.CENTER );
-
-		// Initially the renderer is hidden and the toast is shown
-		toast.setVisible( true );
-		getRenderer().setVisible( false );
-
-		// Add the components to the parent
-		getChildren().addAll( getRenderer(), toast );
 	}
 
 	/**
@@ -92,7 +55,7 @@ public class DesignToolV3 extends BaseDesignTool {
 		}
 
 		// Swap the toast for the renderer
-		toast.setVisible( false );
+		getToast().setVisible( false );
 		getRenderer().setVisible( true );
 	}
 
