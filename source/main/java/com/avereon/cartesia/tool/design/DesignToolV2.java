@@ -170,7 +170,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		getToast().setVisible( false );
 
 		// Create the design context
-		getDesign().createDesignContext( getProduct() );
+		getDesign().computeIfAbsent( getProduct() );
 
 		// Set the renderer design
 		renderer.setDesign( getDesign() );

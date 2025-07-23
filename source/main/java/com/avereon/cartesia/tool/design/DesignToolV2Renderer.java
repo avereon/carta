@@ -4,7 +4,6 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.CadTransform;
-import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
@@ -198,10 +197,6 @@ public class DesignToolV2Renderer extends DesignRenderer {
 
 			visibleLayers.addAll( design.getAllLayers() );
 		}
-	}
-
-	public DesignContext getDesignContext() {
-		return design.getDesignContext();
 	}
 
 	public void setWorkplane( Workplane workplane ) {

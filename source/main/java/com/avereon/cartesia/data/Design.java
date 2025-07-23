@@ -104,12 +104,8 @@ public abstract class Design extends IdNode {
 		return super.isModifiedByChild();
 	}
 
-	public synchronized DesignContext createDesignContext( XenonProgramProduct product ) {
+	public synchronized DesignContext computeIfAbsent( XenonProgramProduct product ) {
 		if( context == null ) context = new DesignContext( product, this );
-		return context;
-	}
-
-	public DesignContext getDesignContext() {
 		return context;
 	}
 
