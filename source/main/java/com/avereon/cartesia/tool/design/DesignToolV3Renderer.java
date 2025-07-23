@@ -103,6 +103,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		world = new Pane();
 		world.getChildren().addAll( grid, layers, preview, reference );
 
+		// TODO DEVELOPMENT
 		DragCapability.add( world );
 
 		// The screen scale container
@@ -111,7 +112,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		getChildren().addAll( world, screen );
 
-		// TODO Sort out these property dependencies and organize how they update things
+		// Add a listener to the unit scale property to update the global scale
+		unitScaleProperty().addListener( ( _, _, n ) -> updateGz( n.doubleValue(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
 
 		// Update the global scale when the DPI or output scale changes
 		dpiXProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), n.doubleValue(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
@@ -272,10 +274,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		// Update the design geometry when the design unit changes
 		design.register( this, Design.UNIT, _ -> setDesignUnit( design.calcDesignUnit() ) );
-		unitScaleProperty().addListener( ( _, _, n ) -> updateGz( n.doubleValue(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
 
-		// Set the design unit after the unit scale listener has been added
-		// This allows the world transforms to be updated
 		setDesignUnit( design.calcDesignUnit() );
 	}
 

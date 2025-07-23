@@ -10,7 +10,9 @@ import com.avereon.cartesia.tool.design.DesignRenderer;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.tool.guide.GuidedTool;
+import com.avereon.xenon.workpane.ToolException;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -380,6 +382,28 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Override
 	public DesignRenderer getScreenDesignRenderer() {
 		return renderer;
+	}
+
+	protected void ready( OpenAssetRequest request ) throws ToolException {
+		super.ready( request );
+
+		Design design = request.getAsset().getModel();
+
+		// Set the design model
+		getRenderer().setDesign( design );
+
+		// Set the workplane settings TODO replace with settings eventually
+		getWorkplane().setGridStyle( GridStyle.CROSS );
+		getWorkplane().setMinorGridX( "0.2" );
+		getWorkplane().setMinorGridY( "0.2" );
+
+		// Show the grid TODO replace with settings eventually
+		getRenderer().setGridVisible( true );
+
+		// Show the first layer TODO replace with settings eventually
+		if( !design.getLayers().getLayers().isEmpty() ) {
+			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+		}
 	}
 
 	private void updateWorkplaneBoundaries() {

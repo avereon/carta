@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.cursor.Reticle;
@@ -11,7 +12,6 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.BeforeEach;
@@ -250,13 +250,13 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 		// then
 		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 450, 550, 0 ) );
-		assertThat( tool.getViewZoom() ).isEqualTo( 10 );
+		assertThat( tool.getViewZoom() ).isEqualTo( 0.26458333333333334 );
 		assertThat( tool.getWidth() ).isEqualTo( 1000 );
 		assertThat( tool.getHeight() ).isEqualTo( 1000 );
 	}
 
 	@Test
-	@Tag( "WhiteBox" )
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void getVisibleLayers() {
 		tool.getVisibleLayers();
 
@@ -265,7 +265,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	@Tag( "WhiteBox" )
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void setVisibleLayers() {
 		DesignLayer layer = new DesignLayer().setName( "layer-0" );
 		tool.setVisibleLayers( Set.of( layer ) );
@@ -280,7 +280,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	 * the renderer, even though the API is exposed here at the tool level.
 	 */
 	@Test
-	@Tag( "WhiteBox" )
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void updateDpi() {
 		tool.setDpi( 2 * DesignToolV3.DEFAULT_DPI );
 
@@ -289,16 +289,21 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void screenToWorld() {
-		// given
-		tool.resize( 1000, 1000 );
-		assertThat( tool.getWidth() ).isEqualTo( 1000 );
-		assertThat( tool.getHeight() ).isEqualTo( 1000 );
-		assertThat( tool.getViewCenter() ).isEqualTo( new Point3D( 0, 0, 0 ) );
-		assertThat( tool.getViewZoom() ).isEqualTo( 1 );
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void screenToWorldWithBounds() {
+		tool.screenToWorld( new BoundingBox( 1, 2, 3, 4 ) );
 
-		Bounds bounds = tool.screenToWorld( new BoundingBox( 0, 0, tool.getWidth(), tool.getHeight() ) );
-
-		System.out.println( bounds );
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).screenToWorld( new BoundingBox( 1, 2, 3, 4 ) );
 	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void worldToScreenWithBounds() {
+		tool.worldToScreen( new BoundingBox( 4, 3, 2, 1 ) );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).worldToScreen( new BoundingBox( 4, 3, 2, 1 ) );
+	}
+
 }
