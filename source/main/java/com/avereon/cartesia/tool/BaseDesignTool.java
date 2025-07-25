@@ -190,7 +190,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	public final DesignContext getDesignContext() {
 		Design design = getDesign();
 		if( design == null ) return null;
-		return design.computeIfAbsent( getProduct() );
+		return design.computeDesignContextIfAbsent( getProduct() );
 	}
 
 	@Override
