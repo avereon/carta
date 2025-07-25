@@ -104,6 +104,12 @@ public abstract class Design extends IdNode {
 		return super.isModifiedByChild();
 	}
 
+	/**
+	 * Get the design edit context.
+	 *
+	 * @param product The program product
+	 * @return The design edit context
+	 */
 	public synchronized DesignContext computeDesignContextIfAbsent( XenonProgramProduct product ) {
 		if( context == null ) context = new DesignContext( product, this );
 		return context;
