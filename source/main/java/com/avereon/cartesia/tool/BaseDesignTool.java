@@ -86,6 +86,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	// FX properties (what others should be here?)
 
+	// NEXT This viewCenter property and the renderer viewCenter property are not the same and are not linked
 	private final ObjectProperty<Point3D> viewCenter;
 
 	private final DoubleProperty viewRotate;
