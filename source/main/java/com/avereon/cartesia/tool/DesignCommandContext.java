@@ -377,8 +377,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private void reset() {
 		Fx.run( () -> {
-			getLastUserTool().setSelectAperture( null, null );
-			getLastUserTool().clearSelectedShapes();
+			DesignTool tool = getLastUserTool();
+			if( tool != null ) {
+				tool.setSelectAperture( null, null );
+				tool.clearSelectedShapes();
+			}
 			setInputMode( DesignCommandContext.Input.NONE );
 			getCommandPrompt().clear();
 		} );

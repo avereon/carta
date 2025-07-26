@@ -284,7 +284,8 @@ public abstract class Command {
 	}
 
 	private void addReference( CommandTask task, Collection<DesignShape> shapes ) {
-		task.getTool().getReferenceLayer().addShapes( shapes );
+		DesignLayer referenceLayer = task.getTool().getReferenceLayer();
+		if( referenceLayer != null ) referenceLayer.addShapes( shapes );
 		this.reference.addAll( shapes );
 	}
 
@@ -294,7 +295,8 @@ public abstract class Command {
 
 	@SuppressWarnings( "unused" )
 	protected void removeReference( CommandTask task, Collection<DesignShape> shapes ) {
-		task.getTool().getReferenceLayer().removeShapes( shapes );
+		DesignLayer referenceLayer = task.getTool().getReferenceLayer();
+		if( referenceLayer != null ) referenceLayer.removeShapes( shapes );
 		reference.removeAll( shapes );
 	}
 
@@ -401,7 +403,8 @@ public abstract class Command {
 	}
 
 	private void addPreview( CommandTask task, List<DesignShape> shapes ) {
-		task.getTool().getPreviewLayer().addShapes( shapes );
+		DesignLayer previewLayer = task.getTool().getPreviewLayer();
+		if( previewLayer != null) previewLayer.addShapes( shapes );
 		preview.addAll( shapes );
 	}
 
@@ -415,13 +418,15 @@ public abstract class Command {
 
 	protected void removePreview( CommandTask task, Collection<DesignShape> shapes ) {
 		if( shapes == null ) return;
-		task.getTool().getPreviewLayer().removeShapes( shapes );
+		DesignLayer previewLayer = task.getTool().getPreviewLayer();
+		if( previewLayer != null) previewLayer.removeShapes( shapes );
 		preview.removeAll( shapes );
 	}
 
 	protected void clearPreview( CommandTask task ) {
 		// The shapes have to be removed before capturing undo changes again
-		task.getTool().getPreviewLayer().clearShapes();
+		DesignLayer previewLayer = task.getTool().getPreviewLayer();
+		if(previewLayer != null) previewLayer.clearShapes();
 		preview.clear();
 	}
 

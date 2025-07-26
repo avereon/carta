@@ -4,7 +4,6 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
-import com.avereon.xenon.util.DragCapability;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
@@ -102,9 +101,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Contains the grid, design, preview, and reference panes
 		world = new Pane();
 		world.getChildren().addAll( grid, layers, preview, reference );
-
-		// TODO DEVELOPMENT
-		DragCapability.add( world );
 
 		// The screen scale container
 		// Contains the orientation indicator

@@ -34,6 +34,10 @@ public class DesignContext {
 
 	public DesignContext( Design design, DesignCommandContext commandContext ) {
 		this.design = design;
+
+		// In theory, commands are executed against a tool but scoped by the design,
+		// so there should only be one command context per design, across all the
+		// tools involved.
 		this.designCommandContext = commandContext;
 
 		this.previewShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );

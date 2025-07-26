@@ -26,6 +26,7 @@ import javafx.geometry.Point3D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import lombok.CustomLog;
@@ -200,6 +201,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		if( !design.getLayers().getLayers().isEmpty() ) {
 			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 		}
+
+		// Link the command context to the user interfaces
+		addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
 
 		// Swap the toast for the renderer
 		getToast().setVisible( false );
