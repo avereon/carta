@@ -13,10 +13,8 @@ import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
 import javafx.scene.paint.Paint;
-import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.Collection;
@@ -143,47 +141,6 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	public Point3D snapToWorkplane( double x, double y, double z ) {
 		return null;
-	}
-
-	@Override
-	public Transform getWorldToScreenTransform() {
-		return null;
-	}
-
-	@Override
-	public Point3D worldToScreen( double x, double y, double z ) {
-		return null;
-	}
-
-	@Override
-	public Point3D worldToScreen( Point3D point ) {
-		return null;
-	}
-
-	@Override
-	public Bounds worldToScreen( Bounds bounds ) {
-		return getRenderer().worldToScreen( bounds );
-	}
-
-	@Override
-	public Transform getScreenToWorldTransform() {
-		return null;
-	}
-
-	@Override
-	public Point3D screenToWorld( double x, double y, double z ) {
-		return null;
-	}
-
-	@Override
-	public Point3D screenToWorld( Point3D point ) {
-		return null;
-	}
-
-	@Override
-	public Bounds screenToWorld( Bounds bounds ) {
-		//return getRenderer().parentToLocal( bounds );
-		return getRenderer().screenToWorld( bounds );
 	}
 
 	@Override

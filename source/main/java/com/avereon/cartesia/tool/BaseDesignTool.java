@@ -17,17 +17,17 @@ import com.avereon.xenon.tool.guide.GuidedTool;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.EventTarget;
-import javafx.geometry.BoundingBox;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point3D;
-import javafx.geometry.Pos;
+import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.input.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.ZoomEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -86,13 +86,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	// FX properties (what others should be here?)
 
-	// NEXT This viewCenter property and the renderer viewCenter property are not the same and are not linked
-	private final ObjectProperty<Point3D> viewCenter;
-
-	private final DoubleProperty viewRotate;
-
-	private final DoubleProperty viewZoom;
-
 	// Current:
 	// selectAperture
 	private final ObjectProperty<DesignLayer> selectedLayer;
@@ -150,10 +143,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		this.toast.setVisible( true );
 		this.renderer.setVisible( false );
 
-		viewCenter = new SimpleObjectProperty<>( DEFAULT_CENTER );
-		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
-		viewZoom = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
-
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
 		setCursor( getReticleCursor() );
 
@@ -203,6 +192,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 		}
 
+		// Update the design context when the mouse moves
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+
 		// Link the command context to the user interfaces
 		addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -212,6 +204,53 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Swap the toast for the renderer
 		getToast().setVisible( false );
 		getRenderer().setVisible( true );
+	}
+
+	@Override
+	protected void allocate() throws ToolException {
+		super.allocate();
+
+		//		// Add asset switch listener to remove command prompt
+		//		getProgram().register(
+		//			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+		//				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
+		//					unregisterStatusBarItems();
+		//				}
+		//			}
+		//		);
+	}
+
+	@Override
+	protected void activate() throws ToolException {
+		super.activate();
+		if( !getAsset().isLoaded() ) return;
+
+		DesignCommandContext commandContext = getCommandContext();
+		if( commandContext != null ) commandContext.setLastUserTool( this );
+
+		//		registerStatusBarItems();
+		//		registerCommandCapture();
+		//		registerActions();
+
+		requestFocus();
+	}
+
+	@Override
+	protected void conceal() throws ToolException {
+		//		unregisterCommandCapture();
+		//		unregisterActions();
+
+		super.conceal();
+	}
+
+	@Override
+	protected void deallocate() throws ToolException {
+		//		// Remove asset switch listener to unregister status bar items
+		//		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+		//
+		//		if( renderer != null ) renderer.setDesign( null );
+
+		super.deallocate();
 	}
 
 	@Override
@@ -263,44 +302,33 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public Point3D getViewCenter() {
-		return viewCenter.get();
+		return getRenderer().getViewCenter();
 	}
 
 	@Override
 	public void setViewCenter( Point3D viewCenter ) {
-		this.viewCenter.set( Objects.requireNonNull( viewCenter ) );
-	}
-
-	public ObjectProperty<Point3D> viewCenterProperty() {
-		return viewCenter;
+		getRenderer().setViewCenter( viewCenter );
+		log.atConfig().log( "View center=%s", viewCenter );
 	}
 
 	@Override
 	public double getViewRotate() {
-		return viewRotate.get();
+		return getRenderer().getViewRotate();
 	}
 
 	@Override
 	public void setViewRotate( double rotate ) {
-		this.viewRotate.set( rotate );
-	}
-
-	public DoubleProperty viewRotateProperty() {
-		return viewRotate;
+		getRenderer().setViewRotate( rotate );
 	}
 
 	@Override
 	public double getViewZoom() {
-		return viewZoom.get();
+		return getRenderer().getViewZoom().getX();
 	}
 
 	@Override
 	public void setViewZoom( double viewZoom ) {
-		this.viewZoom.set( viewZoom );
-	}
-
-	public DoubleProperty viewZoomProperty() {
-		return viewZoom;
+		getRenderer().setViewZoom( viewZoom );
 	}
 
 	@Override
@@ -407,6 +435,56 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		Point3D worldCenter = new Point3D( viewport.getCenterX(), viewport.getCenterY(), viewport.getCenterZ() );
 		setView( worldCenter, zoom );
+	}
+
+	@Override
+	public Transform getWorldToScreenTransform() {
+		return null;
+	}
+
+	@Override
+	public Point3D worldToScreen( double x, double y, double z ) {
+		return null;
+	}
+
+	@Override
+	public Point3D worldToScreen( Point3D point ) {
+		return null;
+	}
+
+	@Override
+	public Bounds worldToScreen( Bounds bounds ) {
+		return getRenderer().worldToScreen( bounds );
+	}
+
+	@Override
+	public Transform getScreenToWorldTransform() {
+		return null;
+	}
+
+	@Override
+	public Point2D screenToWorld( double x, double y ) {
+		return getRenderer().screenToWorld( x, y );
+	}
+
+	@Override
+	public Point2D screenToWorld( Point2D point ) {
+		return getRenderer().screenToWorld( point );
+	}
+
+	@Override
+	public Point3D screenToWorld( double x, double y, double z ) {
+		return null;
+	}
+
+	@Override
+	public Point3D screenToWorld( Point3D point ) {
+		return null;
+	}
+
+	@Override
+	public Bounds screenToWorld( Bounds bounds ) {
+		return getRenderer().screenToWorld( bounds );
 	}
 
 	@Override

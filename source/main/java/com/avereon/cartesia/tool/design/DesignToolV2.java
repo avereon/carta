@@ -41,6 +41,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -328,6 +329,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 		// Update the design context when the mouse moves
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+
 		getDesignContext().getPreviewShapes().addListener( this::onPreviewShapesChanged );
 		getDesignContext().getSelectedShapes().addListener( this::onSelectedShapesChanged );
 
@@ -468,10 +470,6 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public void setViewRotate( double angle ) {
 		renderer.setViewRotate( angle );
-	}
-
-	public DoubleProperty viewRotateProperty() {
-		return renderer.viewRotateProperty();
 	}
 
 	private CommandPrompt getCommandPrompt() {
@@ -693,6 +691,16 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public Transform getScreenToWorldTransform() {
 		return renderer == null ? Fx.IDENTITY_TRANSFORM : renderer.getScreenToWorldTransform();
+	}
+
+	@Override
+	public Point2D screenToWorld( double x, double y ) {
+		return renderer == null ? Point2D.ZERO : renderer.parentToLocal( x, y );
+	}
+
+	@Override
+	public Point2D screenToWorld( Point2D point ) {
+		return renderer == null ? Point2D.ZERO : renderer.parentToLocal( point );
 	}
 
 	@Override

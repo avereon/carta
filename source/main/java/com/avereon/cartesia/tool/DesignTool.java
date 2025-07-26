@@ -14,6 +14,7 @@ import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Paint;
@@ -296,6 +297,10 @@ public interface DesignTool extends RenderConstants {
 	Bounds worldToScreen( Bounds bounds );
 
 	Transform getScreenToWorldTransform();
+
+	Point2D screenToWorld( double x, double y );
+
+	Point2D screenToWorld( Point2D point );
 
 	Point3D screenToWorld( double x, double y, double z );
 

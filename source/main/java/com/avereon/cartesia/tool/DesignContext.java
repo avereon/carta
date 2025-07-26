@@ -4,6 +4,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
 import lombok.Getter;
@@ -46,21 +47,27 @@ public class DesignContext {
 	}
 
 	public void setMouse( MouseEvent event ) {
+		DesignCommandContext commandContext = getDesignCommandContext();
+		CoordinateStatus coordinateStatus = getCoordinateStatus();
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 
 		// Set the mouse position in screen coordinates
+		Point2D screenMouse = new Point2D( event.getScreenX(), event.getScreenY() );
+		commandContext.setScreenMouse( screenMouse );
+
+		// Set the mouse position in local coordinates
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
-		getDesignCommandContext().setScreenMouse( mouse );
+		commandContext.setLocalMouse( mouse );
 
 		// Set the mouse position in world coordinates
 		Point3D point = tool.screenToWorkplane( mouse );
-		getDesignCommandContext().setWorldMouse( point );
+		commandContext.setWorldMouse( point );
 
 		// Update the position
-		getCoordinateStatus().updatePosition( point );
+		coordinateStatus.updatePosition( point );
 
 		// While we're updating the position, may as well update the zoom
-		getCoordinateStatus().updateZoom( tool.getViewZoom() );
+		coordinateStatus.updateZoom( tool.getViewZoom() );
 	}
 }
 

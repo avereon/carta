@@ -64,7 +64,7 @@ public class CameraZoomWindowTest extends BaseCommandTest {
 
 		// then
 		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -3, 3, 0 ) ) );
-		verify( commandContext, times( 0 ) ).setScreenAnchor( eq( new Point3D( 72, 144, 0 ) ) );
+		verify( commandContext, times( 0 ) ).setLocalAnchor( eq( new Point3D( 72, 144, 0 ) ) );
 		assertThat( result ).isEqualTo( INCOMPLETE );
 	}
 

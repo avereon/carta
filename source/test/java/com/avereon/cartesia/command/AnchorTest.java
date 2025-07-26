@@ -36,7 +36,7 @@ public class AnchorTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( commandContext, times( 0 ) ).setScreenAnchor( any() );
+		verify( commandContext, times( 0 ) ).setLocalAnchor( any() );
 		verify( commandContext, times( 0 ) ).setWorldAnchor( any() );
 		verify( commandContext, times( 1 ) ).submit( eq( tool ), any( Prompt.class ) );
 		verify( tool, times( 1 ) ).setCursor( any() );
@@ -53,7 +53,7 @@ public class AnchorTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 84, 127, 0 ) ) );
+		verify( commandContext, times( 1 ) ).setLocalAnchor( eq( new Point3D( 84, 127, 0 ) ) );
 		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( 0.5, -3, 0 ) ) );
 		assertThat( result ).isEqualTo( SUCCESS );
 	}
@@ -70,7 +70,7 @@ public class AnchorTest extends BaseCommandTest {
 		Object result = task.runTaskStep();
 
 		// then
-		verify( commandContext, times( 1 ) ).setScreenAnchor( eq( new Point3D( 48, 17, 0 ) ) );
+		verify( commandContext, times( 1 ) ).setLocalAnchor( eq( new Point3D( 48, 17, 0 ) ) );
 		verify( commandContext, times( 1 ) ).setWorldAnchor( eq( new Point3D( -2, 1, 0 ) ) );
 		assertThat( event.isConsumed() ).isTrue();
 		assertThat( result ).isEqualTo( SUCCESS );

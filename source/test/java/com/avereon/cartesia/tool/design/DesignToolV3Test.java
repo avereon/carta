@@ -63,7 +63,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void defaultViewpoint() {
+	void defaultViewCenter() {
 		// when
 		Point3D result = tool.getViewCenter();
 
@@ -72,7 +72,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void setViewpoint() {
+	void setViewCenter() {
 		// given
 		Point3D center = new Point3D( 1, 2, 3 );
 
@@ -105,7 +105,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void defaultZoom() {
+	void defaultViewZoom() {
 		// when
 		double result = tool.getViewZoom();
 
@@ -114,7 +114,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void setZoom() {
+	void setViewZoom() {
 		// given
 		double zoom = 123.45;
 
@@ -189,6 +189,20 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 		// then
 		assertThat( tool.getDpi() ).isEqualTo( dpi );
+	}
+
+	/**
+	 * This test ensures that FX geometry is resized when the DPI is changed
+	 * in the tool. This test relies on the somewhat complicated implementation of
+	 * the renderer, even though the API is exposed here at the tool level.
+	 */
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void updateDpi() {
+		tool.setDpi( 2 * DesignToolV3.DEFAULT_DPI );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).setDpi( 2 * DesignToolV3.DEFAULT_DPI );
 	}
 
 	@Test
@@ -272,20 +286,6 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 		// Check that it delegates to the renderer
 		verify( renderer, times( 1 ) ).setVisibleLayers( Set.of( layer ) );
-	}
-
-	/**
-	 * This test ensures that FX geometry is resized when the DPI is changed
-	 * in the tool. This test relies on the somewhat complicated implementation of
-	 * the renderer, even though the API is exposed here at the tool level.
-	 */
-	@Test
-	@Tag( CartesiaTestTag.WHITE_BOX )
-	void updateDpi() {
-		tool.setDpi( 2 * DesignToolV3.DEFAULT_DPI );
-
-		// Check that it delegates to the renderer
-		verify( renderer, times( 1 ) ).setDpi( 2 * DesignToolV3.DEFAULT_DPI );
 	}
 
 	@Test

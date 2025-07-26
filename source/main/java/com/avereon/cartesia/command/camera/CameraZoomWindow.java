@@ -75,7 +75,7 @@ public class CameraZoomWindow extends CameraCommand {
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = task.getContext().getScreenAnchor();
+		Point3D anchor = task.getContext().getLocalAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( getStep() == 2 && event.getEventType().equals( MouseEvent.MOUSE_MOVED ) ) {

@@ -19,6 +19,7 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zerra.javafx.Fx;
 import javafx.event.EventHandler;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.*;
 import lombok.CustomLog;
@@ -73,11 +74,19 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	@Getter
 	@Setter
-	private Point3D screenAnchor;
+	private Point2D screenAnchor;
 
 	@Getter
 	@Setter
-	private Point3D screenMouse;
+	private Point2D screenMouse;
+
+	@Getter
+	@Setter
+	private Point3D localAnchor;
+
+	@Getter
+	@Setter
+	private Point3D localMouse;
 
 	@Getter
 	@Setter
@@ -164,16 +173,16 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		String input = getCommandPrompt().getCommand();
 		if( input.isEmpty() ) {
 			DesignTool tool = getLastUserTool();
-			Point3D mouse = tool.worldToScreen( getWorldMouse() );
-			Point3D screen = tool.worldToScreen( mouse );
+			Point3D localMouse = this.localMouse;
+			Point2D screenMouse = this.screenMouse;
 			MouseEvent mouseEvent = new MouseEvent(
 				tool,
 				null,
 				MouseEvent.MOUSE_RELEASED,
-				mouse.getX(),
-				mouse.getY(),
-				screen.getX(),
-				screen.getY(),
+				localMouse.getX(),
+				localMouse.getY(),
+				screenMouse.getX(),
+				screenMouse.getY(),
 				MouseButton.PRIMARY,
 				1,
 				event.isShiftDown(),
@@ -401,6 +410,8 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		//  those are handled by the action infrastructure
 		CommandMetadata metadata = getMod().getCommandMap().getCommandByEvent( event );
 		if( metadata == NONE ) return false;
+
+		log.atConfig().log( "Mapped command=%s", metadata );
 
 		submitCommand( (DesignTool)event.getSource(), event, metadata.getType(), metadata.getParameters() );
 		return true;

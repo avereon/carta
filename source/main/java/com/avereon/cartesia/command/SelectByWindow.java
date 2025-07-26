@@ -63,7 +63,7 @@ public abstract class SelectByWindow extends SelectCommand {
 	@Override
 	public void handle( CommandTask task, MouseEvent event ) {
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
-		Point3D anchor = task.getContext().getScreenAnchor();
+		Point3D anchor = task.getContext().getLocalAnchor();
 		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
 
 		if( event.getEventType().equals( MouseEvent.MOUSE_DRAGGED ) ) {
