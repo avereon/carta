@@ -39,7 +39,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @CustomLog
 public final class CommandMap {
 
-	public static final CommandMetadata NONE = new CommandMetadata( "", "", "", "", List.of(), Noop.class );
+	public static final CommandMetadata NONE = new CommandMetadata( "NONE", "NONE", "NONE", "NONE", List.of(), Noop.class );
 
 	private final Map<String, String> shortcutActions = new ConcurrentHashMap<>();
 
