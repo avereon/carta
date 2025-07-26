@@ -1,8 +1,10 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Command;
+import com.avereon.util.TextUtil;
 import lombok.Getter;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -47,6 +49,17 @@ public class CommandMetadata implements Comparable<CommandMetadata> {
 	@Override
 	public int compareTo( CommandMetadata that ) {
 		return BY_SHORTCUT.compare( this, that );
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder( "CommandMetadata{" );
+		if( !TextUtil.isEmpty( command ) ) builder.append( "command='" ).append( command ).append( "', " );
+		if( !TextUtil.isEmpty( action ) ) builder.append( "action='" ).append( action ).append( "', " );
+		if( !TextUtil.isEmpty( shortcut ) ) builder.append( "shortcut='" ).append( shortcut ).append( "', " );
+		if( !TextUtil.isEmpty( name ) ) builder.append( "name='" ).append( name ).append( "', " );
+		builder.append( "type=" ).append( type ).append( ", parameters=" ).append( Arrays.toString( parameters ) ).append( " }" );
+		return builder.toString();
 	}
 
 	private static class CommandShortcutComparator implements Comparator<CommandMetadata> {
