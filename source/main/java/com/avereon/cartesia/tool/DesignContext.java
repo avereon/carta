@@ -9,8 +9,9 @@ import javafx.scene.input.MouseEvent;
 import lombok.Getter;
 
 /**
- * The DesignContext class is a container for design specific information. It is
- * normally accessed by the design tool and its associated classes.
+ * The DesignContext is for sharing design-related information between design
+ * tools. It should only be accessed through the design tool and its associated
+ * classes.
  * <pre>
  * DesignTool -> Design -> DesignContext -> CommandContext
  * </pre>

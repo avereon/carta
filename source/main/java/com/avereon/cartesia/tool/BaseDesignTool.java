@@ -29,6 +29,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Screen;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -76,8 +77,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// TODO This is not connected to the grid pixel threshold yet
 	protected static final double MINIMUM_GRID_PIXELS = 3.0;
 
-	private final Label toast;
+	@Getter
+	private final Node toast;
 
+	@Getter
 	private final DesignRenderer renderer;
 
 	// FX properties (what others should be here?)
@@ -123,7 +126,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getStyleClass().add( "design-tool" );
 
 		// Create the tool toast
-		this.toast = new Label( Rb.text( RbKey.LABEL, "loading", asset.getName() ) + " ..." );
+		this.toast = new Label( Rb.text( RbKey.LABEL, "loading-asset", asset.getName() ) + " ..." );
 		this.toast.getStyleClass().add( "tool-toast" );
 		StackPane.setAlignment( this.toast, Pos.CENTER );
 
@@ -172,10 +175,35 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getChildren().addAll( this.renderer, this.toast );
 	}
 
-	protected Node getToast() {return toast;}
+	protected void ready( OpenAssetRequest request ) throws ToolException {
+		super.ready( request );
 
-	protected DesignRenderer getRenderer() {
-		return renderer;
+		setTitle( getAsset().getName() );
+		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
+
+		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
+		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
+
+		// Set the design model
+		Design design = request.getAsset().getModel();
+		getRenderer().setDesign( design );
+
+		// Set the workplane settings TODO replace with settings eventually
+		getWorkplane().setGridStyle( GridStyle.CROSS );
+		getWorkplane().setMinorGridX( "0.2" );
+		getWorkplane().setMinorGridY( "0.2" );
+
+		// Show the grid TODO replace with settings eventually
+		getRenderer().setGridVisible( true );
+
+		// Show the first layer TODO replace with settings eventually
+		if( !design.getLayers().getLayers().isEmpty() ) {
+			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+		}
+
+		// Swap the toast for the renderer
+		getToast().setVisible( false );
+		getRenderer().setVisible( true );
 	}
 
 	@Override
@@ -190,16 +218,16 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public final DesignContext getDesignContext() {
-		return createDesignContext( getDesign() );
-	}
-
-	protected DesignContext createDesignContext( Design design ) {
+		Design design = getDesign();
 		if( design == null ) return null;
+
+		// Lazy instantiate the context
 		DesignContext context = design.getValue( DESIGN_CONTEXT );
 		if( context == null ) {
 			context = new DesignContext( design, new DesignCommandContext( getProduct() ) );
 			design.setValue( DESIGN_CONTEXT, context );
 		}
+
 		return context;
 	}
 
@@ -429,37 +457,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Override
 	public DesignRenderer getScreenDesignRenderer() {
 		return renderer;
-	}
-
-	protected void ready( OpenAssetRequest request ) throws ToolException {
-		super.ready( request );
-
-		setTitle( getAsset().getName() );
-		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
-
-		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
-		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
-
-		// Set the design model
-		Design design = request.getAsset().getModel();
-		getRenderer().setDesign( design );
-
-		// Set the workplane settings TODO replace with settings eventually
-		getWorkplane().setGridStyle( GridStyle.CROSS );
-		getWorkplane().setMinorGridX( "0.2" );
-		getWorkplane().setMinorGridY( "0.2" );
-
-		// Show the grid TODO replace with settings eventually
-		getRenderer().setGridVisible( true );
-
-		// Show the first layer TODO replace with settings eventually
-		if( !design.getLayers().getLayers().isEmpty() ) {
-			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
-		}
-
-		// Swap the toast for the renderer
-		getToast().setVisible( false );
-		getRenderer().setVisible( true );
 	}
 
 	private void updateWorkplaneBoundaries() {

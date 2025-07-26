@@ -169,9 +169,6 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Hide the toast message
 		getToast().setVisible( false );
 
-		// Create the design context
-		createDesignContext( getDesign() );
-
 		// Set the renderer design
 		renderer.setDesign( getDesign() );
 
