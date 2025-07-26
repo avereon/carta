@@ -298,12 +298,44 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
+	public Point2D screenToWorld( double x, double y ) {
+		return null;
+	}
+
+	public Point2D screenToWorld( Point2D point ) {
+		return null;
+	}
+
+	public Point3D screenToWorld( double x, double y, double z ) {
+		return null;
+	}
+
+	public Point3D screenToWorld( Point3D point ) {
+		return null;
+	}
+
 	public Bounds screenToWorld( Bounds bounds ) {
-		return bounds;
+		return null;
+	}
+
+	public Point2D worldToScreen( double x, double y ) {
+		return null;
+	}
+
+	public Point2D worldToScreen( Point2D point ) {
+		return null;
+	}
+
+	public Point3D worldToScreen( double x, double y, double z ) {
+		return null;
+	}
+
+	public Point3D worldToScreen( Point3D point ) {
+		return null;
 	}
 
 	public Bounds worldToScreen( Bounds bounds ) {
-		return bounds;
+		return null;
 	}
 
 }

@@ -501,6 +501,68 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	void screenToWorldWithDoubleDouble() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point2D worldPoint = renderer.screenToWorld( 100, 200 );
+
+		// then
+		assertThat( worldPoint.getX() ).isEqualTo( 100 / gz );
+		assertThat( worldPoint.getY() ).isEqualTo( -200 / gz );
+	}
+
+	@Test
+	void screenToWorldWithPoint2D() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point2D worldPoint = renderer.screenToWorld( new Point2D( 200, 100 ) );
+
+		// then
+		assertThat( worldPoint.getX() ).isEqualTo( 200 / gz );
+		assertThat( worldPoint.getY() ).isEqualTo( -100 / gz );
+	}
+
+	@Test
+	void screenToWorldWithDoubleDoubleDouble() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point3D worldPoint = renderer.screenToWorld( 100, 200, 300 );
+
+		// then
+		assertThat( worldPoint.getX() ).isEqualTo( 100 / gz );
+		assertThat( worldPoint.getY() ).isEqualTo( -200 / gz );
+		assertThat( worldPoint.getZ() ).isEqualTo( 300 );
+	}
+
+	@Test
+	void screenToWorldWithPoint3D() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point3D worldPoint = renderer.screenToWorld( new Point3D( 200, 300, 100 ) );
+
+		// then
+		assertThat( worldPoint.getX() ).isEqualTo( 200 / gz );
+		assertThat( worldPoint.getY() ).isEqualTo( -300 / gz );
+		assertThat( worldPoint.getZ() ).isEqualTo( 100 );
+	}
+
+	@Test
 	void screenToWorld() {
 		// given
 		renderer.setDesign( new Design2D() );
@@ -555,6 +617,68 @@ public class DesignToolV3RendererTest {
 		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 / gz, TOLERANCE_PERCENT_LOOSE );
 		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 / gz, TOLERANCE_PERCENT_LOOSE );
 		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 / gz, TOLERANCE_PERCENT_LOOSE );
+	}
+
+	@Test
+	void worldToScreenWithDoubleDouble() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point2D screenPoint = renderer.worldToScreen( 100, 200 );
+
+		// then
+		assertThat( screenPoint.getX() ).isEqualTo( 100 * gz );
+		assertThat( screenPoint.getY() ).isEqualTo( -200 * gz );
+	}
+
+	@Test
+	void worldToScreenWithPoint2D() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point2D screenPoint = renderer.worldToScreen( new Point2D( 200, 100 ) );
+
+		// then
+		assertThat( screenPoint.getX() ).isEqualTo( 200 * gz );
+		assertThat( screenPoint.getY() ).isEqualTo( -100 * gz );
+	}
+
+	@Test
+	void worldToScreenWithDoubleDoubleDouble() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point3D screenPoint = renderer.worldToScreen( 200, 300, 100 );
+
+		// then
+		assertThat( screenPoint.getX() ).isEqualTo( 200 * gz );
+		assertThat( screenPoint.getY() ).isEqualTo( -300 * gz );
+		assertThat( screenPoint.getZ() ).isEqualTo( 100 );
+	}
+
+	@Test
+	void worldToScreenWithPoint3D() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		// when
+		Point3D screenPoint = renderer.worldToScreen( new Point3D( 300, 200, 100 ) );
+
+		// then
+		assertThat( screenPoint.getX() ).isEqualTo( 300 * gz );
+		assertThat( screenPoint.getY() ).isEqualTo( -200 * gz );
+		assertThat( screenPoint.getZ() ).isEqualTo( 100 );
 	}
 
 	@Test

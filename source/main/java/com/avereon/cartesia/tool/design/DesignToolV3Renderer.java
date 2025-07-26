@@ -8,6 +8,8 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -338,6 +340,24 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	}
 
+	public Point2D screenToWorld( double x, double y ) {
+		return screenToWorld( new Point2D( x, y ) );
+	}
+
+	public Point2D screenToWorld( Point2D point ) {
+		Point2D screenPoint = world.parentToLocal( point );
+		return new Point2D( screenPoint.getX() / getGzX(), screenPoint.getY() / getGzY() );
+	}
+
+	public Point3D screenToWorld( double x, double y, double z ) {
+		return screenToWorld( new Point3D( x, y, z ) );
+	}
+
+	public Point3D screenToWorld( Point3D point ) {
+		Point3D screenPoint = world.parentToLocal( point );
+		return new Point3D( screenPoint.getX() / getGzX(), screenPoint.getY() / getGzY(), screenPoint.getZ() );
+	}
+
 	public Bounds screenToWorld( Bounds bounds ) {
 		Bounds worldBounds = world.parentToLocal( bounds );
 
@@ -347,6 +367,24 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		double maxY = worldBounds.getMaxY() / getGzY();
 
 		return new BoundingBox( minX, minY, maxX - minX, maxY - minY );
+	}
+
+	public Point2D worldToScreen( double x, double y ) {
+		return worldToScreen( new Point2D( x, y ) );
+	}
+
+	public Point2D worldToScreen( Point2D point ) {
+		Point2D screenPoint = world.localToParent( point );
+		return new Point2D( screenPoint.getX() * getGzX(), screenPoint.getY() * getGzY() );
+	}
+
+	public Point3D worldToScreen( double x, double y, double z ) {
+		return worldToScreen( new Point3D( x, y, z ) );
+	}
+
+	public Point3D worldToScreen( Point3D point ) {
+		Point3D screenPoint = world.localToParent( point );
+		return new Point3D( screenPoint.getX() * getGzX(), screenPoint.getY() * getGzY(), point.getZ() );
 	}
 
 	public Bounds worldToScreen( Bounds bounds ) {
@@ -424,6 +462,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		double outputRescaleY = 1.0 / getOutputScaleY();
 
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
+
+		log.atConfig().log( "World orientation changed." );
 	}
 
 	void updateGridFxGeometry() {
