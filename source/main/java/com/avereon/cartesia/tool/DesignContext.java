@@ -2,7 +2,6 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignShape;
-import com.avereon.xenon.XenonProgramProduct;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point3D;
@@ -19,22 +18,25 @@ import lombok.Getter;
 @Getter
 public class DesignContext {
 
+	/**
+	 * The design that this context belongs to.
+	 */
 	private final Design design;
+
+	private final DesignCommandContext designCommandContext;
 
 	private final ObservableList<DesignShape> previewShapes;
 
 	private final ObservableList<DesignShape> selectedShapes;
 
-	private final DesignCommandContext designCommandContext;
-
 	private final CoordinateStatus coordinateStatus;
 
-	public DesignContext( XenonProgramProduct product, Design design ) {
+	public DesignContext( Design design, DesignCommandContext commandContext ) {
 		this.design = design;
+		this.designCommandContext = commandContext;
+
 		this.previewShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
 		this.selectedShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
-		// FIXME I don't like this being wound in here. Can I fix it?
-		this.designCommandContext = new DesignCommandContext( product );
 		this.coordinateStatus = new CoordinateStatus();
 	}
 

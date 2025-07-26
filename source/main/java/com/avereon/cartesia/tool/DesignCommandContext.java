@@ -4,7 +4,10 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.command.*;
+import com.avereon.cartesia.command.Command;
+import com.avereon.cartesia.command.CommandTask;
+import com.avereon.cartesia.command.InvalidInputException;
+import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.base.Value;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
@@ -34,7 +37,7 @@ import static com.avereon.cartesia.CommandMap.NONE;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
- * The CommandContext class is a container for command specific information.
+ * The CommandContext class is a container for command-specific information.
  * <pre>
  * {@link DesignTool} -> {@link Design} -> {@link DesignContext} -> {@link DesignCommandContext}
  * </pre>

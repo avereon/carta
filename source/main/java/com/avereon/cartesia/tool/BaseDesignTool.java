@@ -71,6 +71,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	protected static final String GRID_SNAP_ENABLED = "grid-snap";
 
+	protected static final String DESIGN_CONTEXT = "design-context";
+
 	// TODO This is not connected to the grid pixel threshold yet
 	protected static final double MINIMUM_GRID_PIXELS = 3.0;
 
@@ -188,9 +190,17 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public final DesignContext getDesignContext() {
-		Design design = getDesign();
+		return createDesignContext( getDesign() );
+	}
+
+	protected DesignContext createDesignContext( Design design ) {
 		if( design == null ) return null;
-		return design.computeDesignContextIfAbsent( getProduct() );
+		DesignContext context = design.getValue( DESIGN_CONTEXT );
+		if( context == null ) {
+			context = new DesignContext( design, new DesignCommandContext( getProduct() ) );
+			design.setValue( DESIGN_CONTEXT, context );
+		}
+		return context;
 	}
 
 	@Override
@@ -463,12 +473,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		double height = getRenderer().getHeight();
 		Bounds source = new BoundingBox( 0, 0, width, height );
 		//Bounds source = getRenderer().getBoundsInLocal();
-//		System.out.println();
-//		System.out.println( "source bounds: " + source );
+		//		System.out.println();
+		//		System.out.println( "source bounds: " + source );
 
 		// NEXT Continue work to manage the workplane bounds
 		Bounds workplaneBounds = getRenderer().screenToWorld( source );
-//		System.out.println( "target bounds: " + workplaneBounds );
+		//		System.out.println( "target bounds: " + workplaneBounds );
 		workplane.setBounds( workplaneBounds );
 	}
 

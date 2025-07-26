@@ -170,7 +170,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		getToast().setVisible( false );
 
 		// Create the design context
-		getDesign().computeDesignContextIfAbsent( getProduct() );
+		createDesignContext( getDesign() );
 
 		// Set the renderer design
 		renderer.setDesign( getDesign() );
@@ -450,7 +450,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setDpi( double dpi ) {
-		renderer.setDpi(  dpi, dpi );
+		renderer.setDpi( dpi, dpi );
 	}
 
 	@Override

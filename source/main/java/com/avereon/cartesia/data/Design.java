@@ -4,7 +4,6 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.map.DesignUnitMapper;
 import com.avereon.cartesia.tool.DesignContext;
 import com.avereon.data.IdNode;
-import com.avereon.xenon.XenonProgramProduct;
 import lombok.CustomLog;
 
 import java.util.*;
@@ -102,17 +101,6 @@ public abstract class Design extends IdNode {
 	@Override
 	public boolean isModifiedByChild() {
 		return super.isModifiedByChild();
-	}
-
-	/**
-	 * Get the design edit context.
-	 *
-	 * @param product The program product
-	 * @return The design edit context
-	 */
-	public synchronized DesignContext computeDesignContextIfAbsent( XenonProgramProduct product ) {
-		if( context == null ) context = new DesignContext( product, this );
-		return context;
 	}
 
 	public DesignLayer getLayers() {
