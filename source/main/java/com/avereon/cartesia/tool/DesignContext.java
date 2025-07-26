@@ -19,8 +19,6 @@ import lombok.Getter;
 @Getter
 public class DesignContext {
 
-	private final XenonProgramProduct product;
-
 	private final Design design;
 
 	private final ObservableList<DesignShape> previewShapes;
@@ -32,10 +30,10 @@ public class DesignContext {
 	private final CoordinateStatus coordinateStatus;
 
 	public DesignContext( XenonProgramProduct product, Design design ) {
-		this.product = product;
 		this.design = design;
 		this.previewShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
 		this.selectedShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
+		// FIXME I don't like this being wound in here. Can I fix it?
 		this.designCommandContext = new DesignCommandContext( product );
 		this.coordinateStatus = new CoordinateStatus();
 	}

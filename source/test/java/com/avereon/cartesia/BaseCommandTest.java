@@ -73,7 +73,6 @@ public class BaseCommandTest extends DesignToolBaseTest {
 		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
 		lenient().when( tool.getReferenceLayer() ).thenReturn( referenceLayer );
 		lenient().when( tool.getReticleCursor() ).thenReturn( RETICLE );
-		lenient().when( designContext.getProduct() ).thenReturn( program );
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
