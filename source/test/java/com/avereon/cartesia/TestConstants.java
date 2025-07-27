@@ -6,7 +6,10 @@ import org.assertj.core.data.Percentage;
 
 public interface TestConstants {
 
+	Offset<Double> EXTRA_TIGHT_TOLERANCE = Offset.offset( Arithmetic.EXTRA_HIGH_PRECISION );
+	Offset<Double> TIGHT_TOLERANCE = Offset.offset( Arithmetic.HIGH_PRECISION );
 	Offset<Double> TOLERANCE = Offset.offset( Arithmetic.DEFAULT_PRECISION );
+	Offset<Double> LOOSE_TOLERANCE = Offset.offset( Arithmetic.LOW_PRECISION );
 	Offset<Double> EXTRA_LOOSE_TOLERANCE = Offset.offset( Arithmetic.EXTRA_LOW_PRECISION );
 
 	Percentage TOLERANCE_PERCENT_EXTRA_TIGHT = Percentage.withPercentage( 0.0000000000000001 );
