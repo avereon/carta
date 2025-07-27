@@ -11,6 +11,7 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Point3D;
@@ -110,7 +111,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public void zoom( Point3D anchor, double factor ) {
-
+		Fx.run( () -> getRenderer().zoom( anchor, factor ) );
 	}
 
 	@Override
@@ -130,7 +131,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public Point3D screenToWorkplane( double x, double y, double z ) {
-		return null;
+		return screenToWorld( x, y, z );
 	}
 
 	@Override
