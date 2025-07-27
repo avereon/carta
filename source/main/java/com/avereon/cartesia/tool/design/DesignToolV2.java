@@ -344,55 +344,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
-	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {
-
-	}
-
-	@Override
-	protected void allocate() throws ToolException {
-		super.allocate();
-
-		// Add asset switch listener to remove command prompt
-		getProgram().register(
-			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
-					unregisterStatusBarItems();
-				}
-			}
-		);
-	}
-
-	@Override
-	protected void activate() throws ToolException {
-		super.activate();
-		if( !getAsset().isLoaded() ) return;
-
-		getCommandContext().setLastUserTool( this );
-
-		registerStatusBarItems();
-		registerCommandCapture();
-		registerActions();
-
-		requestFocus();
-	}
-
-	@Override
-	protected void conceal() throws ToolException {
-		unregisterCommandCapture();
-		unregisterActions();
-
-		super.conceal();
-	}
-
-	@Override
-	protected void deallocate() throws ToolException {
-		// Remove asset switch listener to unregister status bar items
-		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
-
-		if( renderer != null ) renderer.setDesign( null );
-
-		super.deallocate();
-	}
+	protected void guideFocusChanged( boolean focused, Set<GuideNode> nodes ) {}
 
 	@Override
 	public Point3D getViewCenter() {
