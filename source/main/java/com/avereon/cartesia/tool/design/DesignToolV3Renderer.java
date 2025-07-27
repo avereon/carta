@@ -272,7 +272,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	@Override
 	public void setDesign( Design design ) {
 		if( this.design != null ) {
-			this.design.unregister( this, Design.UNIT, designUnitChangeHandler);
+			this.design.unregister( this, Design.UNIT, designUnitChangeHandler );
 		}
 
 		this.design = design;
@@ -459,18 +459,17 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateWorldOrientation( double width, double height, double centerX, double centerY, double zoomX, double zoomY, double rotate, double gzx, double gzy ) {
-		world.setTranslateX( -centerX * gzx + (0.5 * width) );
-		world.setTranslateY( centerY * gzy + (0.5 * height) );
+		log.atConfig().log("width=%s height=%s", width, height);
+		world.setTranslateX( (-centerX * gzx + 0.5 * width) * zoomX );
+		world.setTranslateY( (centerY * gzy + 0.5 * height) * zoomY );
 		world.setScaleX( zoomX );
 		world.setScaleY( zoomY );
 		world.setRotate( rotate );
 
+		// TODO This can be optimized also
 		double outputRescaleX = 1.0 / getOutputScaleX();
 		double outputRescaleY = 1.0 / getOutputScaleY();
-
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
-
-		log.atConfig().log( "World orientation changed." );
 	}
 
 	void updateGridFxGeometry() {

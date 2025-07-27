@@ -296,9 +296,11 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	public void zoom( Point3D anchor, double factor ) {
 		Point3D offset = getViewCenter().subtract( anchor );
 
-		// The zoom has to be set before the viewpoint
+		// The new view zoom has to be set before the new view center
 		setViewZoom( getViewZoom().multiply( factor ) );
-		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
+
+		// The new view center has to be set after the new view zoom
+		setViewCenter( anchor.add( offset.multiply( 1.0 / factor ) ) );
 	}
 
 	public abstract Point2D screenToWorld( double x, double y );

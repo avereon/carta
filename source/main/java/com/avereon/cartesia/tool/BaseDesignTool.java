@@ -562,8 +562,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getRenderer().setVisibleLayers( layers );
 	}
 
-	// NEXT Insert implementations here
-
 	@Override
 	public DesignLayer getSelectedLayer() {
 		return selectedLayer.get();
@@ -594,6 +592,13 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	public ObjectProperty<DesignLayer> currentLayerProperty() {
 		return currentLayer;
 	}
+
+	@Override
+	public void zoom( Point3D anchor, double factor ) {
+		Fx.run( () -> getRenderer().zoom( anchor, factor ) );
+	}
+
+	// NEXT Insert implementations here
 
 	@Override
 	public DesignRenderer getScreenDesignRenderer() {
