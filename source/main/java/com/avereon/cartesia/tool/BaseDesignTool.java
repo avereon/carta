@@ -529,12 +529,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public Point3D screenToWorld( double x, double y, double z ) {
-		return null;
+		return getRenderer().screenToWorld( x, y, z );
 	}
 
 	@Override
 	public Point3D screenToWorld( Point3D point ) {
-		return null;
+		return getRenderer().screenToWorld( point );
 	}
 
 	@Override

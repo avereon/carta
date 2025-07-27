@@ -10,10 +10,12 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
+import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
 
+@CustomLog
 public abstract class DesignRenderer extends Pane implements RenderConstants {
 
 	private final DoubleProperty dpiX;
@@ -249,6 +251,7 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	}
 
 	public void setViewZoom( double zoomX, double zoomY ) {
+		log.atConfig().log( "set view zoom..." );
 		setViewZoomX( zoomX );
 		setViewZoomY( zoomY );
 	}
@@ -283,9 +286,9 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	}
 
 	/**
-	 * Change the zoom by the zoom factor. The zoom is centered on the provided
-	 * anchor point in world coordinates. The current zoom is multiplied by the
-	 * zoom factor.
+	 * Change the current zoom by the zoom factor. The zoom is centered on the
+	 * provided anchor point in world coordinates. The current zoom is changed by
+	 * multiplying the current zoom by the factor, and that becomes the new zoom.
 	 *
 	 * @param anchor The anchor point in world coordinates
 	 * @param factor The zoom factor
@@ -298,44 +301,24 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		setViewCenter( anchor.add( offset.multiply( 1 / factor ) ) );
 	}
 
-	public Point2D screenToWorld( double x, double y ) {
-		return null;
-	}
+	public abstract Point2D screenToWorld( double x, double y );
 
-	public Point2D screenToWorld( Point2D point ) {
-		return null;
-	}
+	public abstract Point2D screenToWorld( Point2D point );
 
-	public Point3D screenToWorld( double x, double y, double z ) {
-		return null;
-	}
+	public abstract Point3D screenToWorld( double x, double y, double z );
 
-	public Point3D screenToWorld( Point3D point ) {
-		return null;
-	}
+	public abstract Point3D screenToWorld( Point3D point );
 
-	public Bounds screenToWorld( Bounds bounds ) {
-		return null;
-	}
+	public abstract Bounds screenToWorld( Bounds bounds );
 
-	public Point2D worldToScreen( double x, double y ) {
-		return null;
-	}
+	public abstract Point2D worldToScreen( double x, double y );
 
-	public Point2D worldToScreen( Point2D point ) {
-		return null;
-	}
+	public abstract Point2D worldToScreen( Point2D point );
 
-	public Point3D worldToScreen( double x, double y, double z ) {
-		return null;
-	}
+	public abstract Point3D worldToScreen( double x, double y, double z );
 
-	public Point3D worldToScreen( Point3D point ) {
-		return null;
-	}
+	public abstract Point3D worldToScreen( Point3D point );
 
-	public Bounds worldToScreen( Bounds bounds ) {
-		return null;
-	}
+	public abstract Bounds worldToScreen( Bounds bounds );
 
 }

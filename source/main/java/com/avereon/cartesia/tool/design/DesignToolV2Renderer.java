@@ -619,6 +619,46 @@ public class DesignToolV2Renderer extends DesignRenderer {
 		return renderer.getWorldToScreenTransform();
 	}
 
+	public Point2D screenToWorld( double x, double y ) {
+		return renderer.parentToLocal( x, y );
+	}
+
+	public Point2D screenToWorld( Point2D point ) {
+		return renderer.parentToLocal( point );
+	}
+
+	public Point3D screenToWorld( double x, double y, double z ) {
+		return renderer.parentToLocal( x, y, z );
+	}
+
+	public Point3D screenToWorld( Point3D point ) {
+		return renderer.parentToLocal( point );
+	}
+
+	public Bounds screenToWorld( Bounds bounds ) {
+		return renderer.parentToLocal( bounds );
+	}
+
+	public Point2D worldToScreen( double x, double y ) {
+		return renderer.localToParent( x, y );
+	}
+
+	public Point2D worldToScreen( Point2D point ) {
+		return renderer.localToParent( point );
+	}
+
+	public Point3D worldToScreen( double x, double y, double z ) {
+		return renderer.localToParent( x, y, z );
+	}
+
+	public Point3D worldToScreen( Point3D point ) {
+		return renderer.localToParent( point );
+	}
+
+	public Bounds worldToScreen( Bounds bounds ) {
+		return renderer.localToParent( bounds );
+	}
+
 	@Override
 	public Point2D localToParent( double localX, double localY ) {
 		return renderer.localToParent( localX, localY );
