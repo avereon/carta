@@ -4,6 +4,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
+import com.avereon.event.EventHandler;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.BoundingBox;
@@ -77,6 +78,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 * efficiently and without conflicts.
 	 */
 	private boolean updatingFxGeometry;
+
+	private final EventHandler<NodeEvent> designUnitChangeHandler = _ -> setDesignUnit( design.calcDesignUnit() );
 
 	// NEXT Apply lessons learned to create a new design renderer
 
@@ -268,12 +271,16 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	@Override
 	public void setDesign( Design design ) {
+		if( this.design != null ) {
+			this.design.unregister( this, Design.UNIT, designUnitChangeHandler);
+		}
+
 		this.design = design;
 
-		// Update the design geometry when the design unit changes
-		design.register( this, Design.UNIT, _ -> setDesignUnit( design.calcDesignUnit() ) );
-
-		setDesignUnit( design.calcDesignUnit() );
+		if( this.design != null ) {
+			design.register( this, Design.UNIT, designUnitChangeHandler );
+			setDesignUnit( design.calcDesignUnit() );
+		}
 	}
 
 	/**

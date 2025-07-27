@@ -237,8 +237,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	protected void conceal() throws ToolException {
-		//		unregisterCommandCapture();
 		//		unregisterActions();
+		//		unregisterCommandCapture();
 
 		super.conceal();
 	}
@@ -247,8 +247,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void deallocate() throws ToolException {
 		//		// Remove asset switch listener to unregister status bar items
 		//		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
-		//
-		//		if( renderer != null ) renderer.setDesign( null );
+
+		if( renderer != null ) renderer.setDesign( null );
 
 		super.deallocate();
 	}
