@@ -6,18 +6,33 @@ import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.DesignRenderer;
+import com.avereon.data.NodeSettings;
 import com.avereon.product.Rb;
+import com.avereon.settings.Settings;
 import com.avereon.skill.WritableIdentity;
-import com.avereon.xenon.XenonProgramProduct;
+import com.avereon.util.DelayedAction;
+import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.AssetSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
+import com.avereon.xenon.asset.type.ProgramPropertiesType;
+import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuidedTool;
+import com.avereon.xenon.tool.settings.SettingsPage;
 import com.avereon.xenon.workpane.ToolException;
+import com.avereon.xenon.workpane.Workpane;
+import com.avereon.xenon.workspace.StatusBar;
+import com.avereon.xenon.workspace.Workspace;
+import com.avereon.zerra.event.FxEventHub;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.geometry.*;
 import javafx.scene.Node;
@@ -32,10 +47,8 @@ import javafx.stage.Screen;
 import lombok.CustomLog;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The design tool is the base class for all design tools.
@@ -115,10 +128,49 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private final Workplane workplane;
 
+	private final Map<String, ProgramAction> commandActions;
+
+	@Getter
+	private final PrintAction printAction;
+
+	@Getter
+	private final PropertiesAction propertiesAction;
+
+	@Getter
+	private final DeleteAction deleteAction;
+
+	@Getter
+	private final UndoAction undoAction;
+
+	@Getter
+	private final RedoAction redoAction;
+
+	@Getter
+	private final DelayedAction storePreviousViewAction;
+
+	private final Stack<DesignPortal> portalStack;
+
+	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
+
 	protected BaseDesignTool( XenonProgramProduct product, Asset asset, DesignRenderer renderer ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
+
+		// Actions
+		commandActions = new ConcurrentHashMap<>();
+
+		printAction = new PrintAction( product.getProgram() );
+		propertiesAction = new PropertiesAction( product.getProgram() );
+		deleteAction = new DeleteAction( product.getProgram() );
+		undoAction = new UndoAction( product.getProgram() );
+		redoAction = new RedoAction( product.getProgram() );
+
+		storePreviousViewAction = new DelayedAction( getProgram().getTaskManager().getExecutor(), this::capturePreviousPortal );
+		storePreviousViewAction.setMinTriggerLimit( 1000 );
+		storePreviousViewAction.setMaxTriggerLimit( 5000 );
+
+		portalStack = new Stack<>();
 
 		// Create the tool toast
 		this.toast = new Label( Rb.text( RbKey.LABEL, "loading-asset", asset.getName() ) + " ..." );
@@ -175,6 +227,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
 		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
 
+		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
+		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
+
 		// Set the design model
 		Design design = request.getAsset().getModel();
 		getRenderer().setDesign( design );
@@ -210,14 +265,14 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void allocate() throws ToolException {
 		super.allocate();
 
-		//		// Add asset switch listener to remove command prompt
-		//		getProgram().register(
-		//			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-		//				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
-		//					unregisterStatusBarItems();
-		//				}
-		//			}
-		//		);
+		// Add asset switch listener to remove command prompt
+		getProgram().register(
+			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
+					unregisterStatusBarItems();
+				}
+			}
+		);
 	}
 
 	@Override
@@ -228,25 +283,25 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		DesignCommandContext commandContext = getCommandContext();
 		if( commandContext != null ) commandContext.setLastUserTool( this );
 
-		//		registerStatusBarItems();
-		//		registerCommandCapture();
-		//		registerActions();
+		registerStatusBarItems();
+		registerCommandCapture();
+		registerActions();
 
 		requestFocus();
 	}
 
 	@Override
 	protected void conceal() throws ToolException {
-		//		unregisterActions();
-		//		unregisterCommandCapture();
+		unregisterActions();
+		unregisterCommandCapture();
 
 		super.conceal();
 	}
 
 	@Override
 	protected void deallocate() throws ToolException {
-		//		// Remove asset switch listener to unregister status bar items
-		//		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+		// Remove asset switch listener to unregister status bar items
+		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
 
 		if( renderer != null ) renderer.setDesign( null );
 
@@ -545,6 +600,172 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		return renderer;
 	}
 
+	protected CommandPrompt getCommandPrompt() {
+		return getDesignContext().getDesignCommandContext().getCommandPrompt();
+	}
+
+	protected CoordinateStatus getCoordinateStatus() {
+		return getDesignContext().getCoordinateStatus();
+	}
+
+	private void capturePreviousPortal() {
+		portalStack.push( new DesignPortal( getViewCenter(), getViewZoom(), getViewRotate() ) );
+	}
+
+	protected void registerStatusBarItems() {
+		Fx.run( () -> {
+			Workspace workspace = getWorkspace();
+			if( workspace == null ) return;
+
+			StatusBar bar = workspace.getStatusBar();
+			bar.setLeftToolItems( getCommandPrompt() );
+			bar.setRightToolItems( getCoordinateStatus() );
+		} );
+	}
+
+	protected void unregisterStatusBarItems() {
+		Fx.run( () -> {
+			Workspace workspace = getWorkspace();
+			if( workspace == null ) return;
+
+			StatusBar bar = workspace.getStatusBar();
+			bar.removeLeftToolItems( getCommandPrompt() );
+			bar.removeRightToolItems( getCoordinateStatus() );
+		} );
+	}
+
+	protected void registerCommandCapture() {
+		// If there is already a command capture handler then remove it
+		// (because it may belong to a different design)
+		unregisterCommandCapture();
+
+		// Add the design command capture handler. This captures all key events that
+		// make it to the tool and forwards them to the command context which
+		// will help determine what to do.
+		addEventHandler( KeyEvent.ANY, getCommandContext() );
+	}
+
+	@SuppressWarnings( "unchecked" )
+	protected void unregisterCommandCapture() {
+		Workpane workpane = getWorkpane();
+		EventHandler<KeyEvent> handler = (EventHandler<KeyEvent>)workpane.getProperties().get( "design-tool-command-capture" );
+		if( handler != null ) workpane.removeEventHandler( KeyEvent.ANY, handler );
+	}
+
+	protected void registerActions() {
+		pushAction( "print", printAction );
+		pushAction( "properties", propertiesAction );
+		pushAction( "delete", deleteAction );
+		pushAction( "undo", undoAction );
+		pushAction( "redo", redoAction );
+
+		pushCommandAction( "draw-arc-2" );
+		pushCommandAction( "draw-arc-3" );
+		pushCommandAction( "draw-circle-2" );
+		pushCommandAction( "draw-circle-3" );
+		pushCommandAction( "draw-circle-diameter-2" );
+		//pushCommandAction( "draw-curve-3" );
+		pushCommandAction( "draw-curve-4" );
+		pushCommandAction( "draw-ellipse-3" );
+		pushCommandAction( "draw-ellipse-arc-5" );
+		pushCommandAction( "draw-line-2" );
+		pushCommandAction( "draw-line-perpendicular" );
+		pushCommandAction( "draw-marker" );
+		pushCommandAction( "draw-path" );
+
+		pushCommandAction( "measure-angle" );
+		pushCommandAction( "measure-distance" );
+		pushCommandAction( "measure-length" );
+		pushCommandAction( "measure-point" );
+		pushCommandAction( "shape-information" );
+
+		//ProgramAction gridVisibleToggleAction = pushCommandAction( "grid-toggle", isGridVisible() ? "enabled" : "disabled" );
+		//gridVisible().addListener( gridVisibleToggleHandler = ( p, o, n ) -> gridVisibleToggleAction.setState( n ? "enabled" : "disabled" ) );
+		//ProgramAction snapGridToggleAction = pushCommandAction( "snap-grid-toggle", isGridSnapEnabled() ? "enabled" : "disabled" );
+		//gridSnapEnabled().addListener( snapGridToggleHandler = ( p, o, n ) -> snapGridToggleAction.setState( n ? "enabled" : "disabled" ) );
+
+		String viewActions = "grid-toggle snap-grid-toggle";
+		String layerActions = "layer[layer-create layer-sublayer | layer-delete]";
+		String drawMarkerActions = "marker[draw-marker]";
+		String drawLineActions = "line[draw-line-2 draw-line-perpendicular]";
+		String drawCircleActions = "circle[draw-circle-2 draw-circle-diameter-2 draw-circle-3 | draw-arc-2 draw-arc-3]";
+		String drawEllipseActions = "ellipse[draw-ellipse-3 draw-ellipse-arc-5]";
+		String drawCurveActions = "curve[draw-curve-4 draw-path]";
+
+		String measurementActions = "measure[shape-information measure-angle measure-distance measure-point measure-length]";
+
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder menus = new StringBuilder( viewActions );
+		menus.append( " " ).append( layerActions );
+		menus.append( "|" ).append( drawMarkerActions );
+		menus.append( " " ).append( drawLineActions );
+		menus.append( " " ).append( drawCircleActions );
+		menus.append( " " ).append( drawEllipseActions );
+		menus.append( " " ).append( drawCurveActions );
+		menus.append( "|" ).append( measurementActions );
+
+		@SuppressWarnings( "StringBufferReplaceableByString" ) StringBuilder tools = new StringBuilder( viewActions );
+		tools.append( " " ).append( drawMarkerActions );
+		tools.append( " " ).append( drawLineActions );
+		tools.append( " " ).append( drawCircleActions );
+		tools.append( " " ).append( drawEllipseActions );
+		tools.append( " " ).append( drawCurveActions );
+
+		pushMenus( menus.toString() );
+		pushTools( tools.toString() );
+	}
+
+	protected void unregisterActions() {
+		pullMenus();
+		pullTools();
+
+		//if( gridVisibleToggleHandler != null ) gridVisible().removeListener( gridVisibleToggleHandler );
+		//pullCommandAction( "grid-toggle" );
+		//if( snapGridToggleHandler != null ) gridSnapEnabled().removeListener( snapGridToggleHandler );
+		//pullCommandAction( "snap-grid-toggle" );
+
+		pullCommandAction( "draw-path" );
+		pullCommandAction( "draw-marker" );
+		pullCommandAction( "draw-line-perpendicular" );
+		pullCommandAction( "draw-line-2" );
+		pullCommandAction( "draw-ellipse-arc-5" );
+		pullCommandAction( "draw-ellipse-3" );
+		pullCommandAction( "draw-curve-4" );
+		//pullCommandAction( "draw-curve-3" );
+		pullCommandAction( "draw-circle-diameter-2" );
+		pullCommandAction( "draw-circle-3" );
+		pullCommandAction( "draw-circle-2" );
+		pullCommandAction( "draw-arc-3" );
+		pullCommandAction( "draw-arc-2" );
+
+		pullCommandAction( "shape-information" );
+		pullCommandAction( "measure-point" );
+		pullCommandAction( "measure-length" );
+		pullCommandAction( "measure-distance" );
+		pullCommandAction( "measure-angle" );
+
+		pullAction( "print", printAction );
+		pullAction( "properties", propertiesAction );
+		pullAction( "delete", deleteAction );
+		pullAction( "undo", undoAction );
+		pullAction( "redo", redoAction );
+	}
+
+	private ProgramAction pushCommandAction( String key ) {
+		return pushCommandAction( key, null );
+	}
+
+	private ProgramAction pushCommandAction( String key, String initialActionState ) {
+		ActionProxy proxy = getProgram().getActionLibrary().getAction( key );
+		ProgramAction action = commandActions.computeIfAbsent( key, k -> new CommandAction( this, getProgram(), proxy.getCommand() ) );
+		if( initialActionState != null ) action.setState( initialActionState );
+		pushAction( key, action );
+		return action;
+	}
+
+	private void pullCommandAction( String key ) {
+		pullAction( key, commandActions.get( key ) );
+	}
+
 	private void updateWorkplaneBoundaries() {
 		// Update the workplane boundaries based on the viewport
 
@@ -563,6 +784,124 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		Bounds workplaneBounds = getRenderer().screenToWorld( source );
 		//		System.out.println( "target bounds: " + workplaneBounds );
 		workplane.setBounds( workplaneBounds );
+	}
+
+	protected class PrintAction extends ProgramAction {
+
+		protected PrintAction( Xenon program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), BaseDesignTool.this, getAsset(), (DesignPrint)null ) );
+			//getProgram().getTaskManager().submit( new DesignAwtPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ) );
+		}
+
+	}
+
+	// FIXME Is this a duplicate of com.avereon.xenon.action.PropertiesAction?
+	protected class PropertiesAction extends ProgramAction {
+
+		protected PropertiesAction( Xenon program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return true;
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			// Get the settings pages for the asset type
+			Asset asset = getAsset();
+			SettingsPage assetSettingsPage = asset.getType().getSettingsPages().get( "grid" );
+			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
+
+			Settings assetSettings = getAssetSettings();
+			Settings designSettings = new NodeSettings( getAsset().getModel() );
+
+			// Set the settings for the pages
+			assetSettingsPage.setSettings( assetSettings );
+			designSettingsPage.setSettings( designSettings );
+
+			// Switch to a task thread to get the tool
+			getProgram().getTaskManager().submit( Task.of( () -> {
+				try {
+					// Show the properties tool
+					getProgram().getAssetManager().openAsset( ProgramPropertiesType.URI, getWorkpane() ).get();
+
+					// Fire the show request on the workspace event bus
+					PropertiesToolEvent toolEvent = new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage );
+					Workspace workspace = getProgram().getWorkspaceManager().getActiveWorkspace();
+					FxEventHub workspaceEventBus = workspace.getEventBus();
+					Fx.run( () -> workspaceEventBus.dispatch( toolEvent ) );
+				} catch( Exception exception ) {
+					log.atError( exception ).log();
+				}
+			} ) );
+		}
+
+	}
+
+	protected class DeleteAction extends ProgramAction {
+
+		protected DeleteAction( Xenon program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getDesignContext() != null && !getSelectedShapes().isEmpty();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getCommandContext().command( getMod().getCommandMap().getCommandByAction( "delete" ).getCommand() );
+		}
+
+	}
+
+	protected class UndoAction extends ProgramAction {
+
+		protected UndoAction( Xenon program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getAsset().getUndoManager().isUndoAvailable();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getAsset().getUndoManager().undo();
+		}
+
+	}
+
+	protected class RedoAction extends ProgramAction {
+
+		protected RedoAction( Xenon program ) {
+			super( program );
+		}
+
+		@Override
+		public boolean isEnabled() {
+			return getAsset().getUndoManager().isRedoAvailable();
+		}
+
+		@Override
+		public void handle( ActionEvent event ) {
+			getAsset().getUndoManager().redo();
+		}
+
 	}
 
 }
