@@ -142,7 +142,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			n.doubleValue(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		gzYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
 			getWidth(),
@@ -153,7 +155,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			n.doubleValue()
+			n.doubleValue(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 
 		// Update the world orientation when view settings change
@@ -166,7 +170,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		heightProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -177,7 +183,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		viewCenterXProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -188,7 +196,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		viewCenterYProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -199,7 +209,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		viewZoomXProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -210,7 +222,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		viewZoomYProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -221,7 +235,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			n.doubleValue(),
 			getViewRotate(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
 		) );
 		viewRotateProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
 			getWidth(),
@@ -232,7 +248,35 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			n.doubleValue(),
 			getGzX(),
-			getGzY()
+			getGzY(),
+			getOutputScaleX(),
+			getOutputScaleY()
+		) );
+		outputScaleXProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
+			getWidth(),
+			getHeight(),
+			getViewCenterX(),
+			getViewCenterY(),
+			getViewZoomX(),
+			getViewZoomY(),
+			getViewRotate(),
+			getGzX(),
+			getGzY(),
+			n.doubleValue(),
+			getOutputScaleY()
+		) );
+		outputScaleYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
+			getWidth(),
+			getHeight(),
+			getViewCenterX(),
+			getViewCenterY(),
+			getViewZoomX(),
+			getViewZoomY(),
+			getViewRotate(),
+			getGzX(),
+			getGzY(),
+			getOutputScaleX(),
+			n.doubleValue()
 		) );
 	}
 
@@ -466,16 +510,28 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
 	}
 
-	private void updateWorldOrientation( double width, double height, double centerX, double centerY, double zoomX, double zoomY, double rotate, double gzx, double gzy ) {
-		world.setTranslateX( (-centerX * gzx + 0.5 * width) * zoomX );
-		world.setTranslateY( (centerY * gzy + 0.5 * height) * zoomY );
+	private void updateWorldOrientation(
+		double width,
+		double height,
+		double centerX,
+		double centerY,
+		double zoomX,
+		double zoomY,
+		double rotate,
+		double gzx,
+		double gzy,
+		double outputScaleX,
+		double outputScaleY
+	) {
+		world.setTranslateX( (-centerX * getUnitScale() * getDpiX() + 0.5 * width) * zoomX );
+		world.setTranslateY( (centerY * getUnitScale() * getDpiY() + 0.5 * height) * zoomY );
 		world.setScaleX( zoomX );
 		world.setScaleY( zoomY );
 		world.setRotate( rotate );
 
 		// TODO This can be optimized also
-		double outputRescaleX = 1.0 / getOutputScaleX();
-		double outputRescaleY = 1.0 / getOutputScaleY();
+		double outputRescaleX = 1.0 / outputScaleX;
+		double outputRescaleY = 1.0 / outputScaleY;
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
 
 		// Clear the cached transforms

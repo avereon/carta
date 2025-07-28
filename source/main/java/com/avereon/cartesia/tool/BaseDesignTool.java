@@ -362,6 +362,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public void setViewCenter( Point3D viewCenter ) {
+		log.atConfig().log( "center=%s", viewCenter );
 		getRenderer().setViewCenter( viewCenter );
 	}
 
