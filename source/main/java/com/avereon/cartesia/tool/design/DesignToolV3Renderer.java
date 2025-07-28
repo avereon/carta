@@ -7,7 +7,6 @@ import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.geometry.BoundingBox;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
@@ -17,6 +16,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
@@ -70,6 +70,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	private Design design;
 
 	private Workplane workplane;
+
+	// Cacheable - meaning always use getScreenToWorldTransform()
+	private Transform screenToWorldTransform;
+
+	// Cacheable - meaning always use getWorldToScreenTransform()
+	private Transform worldToScreenTransform;
 
 	/**
 	 * A flag indicating whether the FX geometry is currently being updated.
@@ -347,13 +353,24 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	}
 
+	public Transform getScreenToWorldTransform() {
+		if( screenToWorldTransform == null ) {
+			try {
+				screenToWorldTransform = getWorldToScreenTransform().createInverse();
+			} catch( NonInvertibleTransformException exception ) {
+				// This should never happen since the world-to-screen transform should always be invertible
+				throw new RuntimeException( exception );
+			}
+		}
+		return screenToWorldTransform;
+	}
+
 	public Point2D screenToWorld( double x, double y ) {
 		return screenToWorld( new Point2D( x, y ) );
 	}
 
 	public Point2D screenToWorld( Point2D point ) {
-		Point2D screenPoint = world.parentToLocal( point );
-		return new Point2D( screenPoint.getX() / getGzX(), screenPoint.getY() / getGzY() );
+		return getScreenToWorldTransform().transform( point );
 	}
 
 	public Point3D screenToWorld( double x, double y, double z ) {
@@ -361,19 +378,19 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	public Point3D screenToWorld( Point3D point ) {
-		Point3D screenPoint = world.parentToLocal( point );
-		return new Point3D( screenPoint.getX() / getGzX(), screenPoint.getY() / getGzY(), screenPoint.getZ() );
+		return getScreenToWorldTransform().transform( point );
 	}
 
 	public Bounds screenToWorld( Bounds bounds ) {
-		Bounds worldBounds = world.parentToLocal( bounds );
+		return getScreenToWorldTransform().transform( bounds );
+	}
 
-		double minX = worldBounds.getMinX() / getGzX();
-		double minY = worldBounds.getMinY() / getGzY();
-		double maxX = worldBounds.getMaxX() / getGzX();
-		double maxY = worldBounds.getMaxY() / getGzY();
-
-		return new BoundingBox( minX, minY, maxX - minX, maxY - minY );
+	public Transform getWorldToScreenTransform() {
+		if( worldToScreenTransform == null ) {
+			Transform scale = Transform.scale( getGzX(), getGzY() );
+			worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
+		}
+		return worldToScreenTransform;
 	}
 
 	public Point2D worldToScreen( double x, double y ) {
@@ -381,8 +398,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	public Point2D worldToScreen( Point2D point ) {
-		Point2D screenPoint = world.localToParent( point );
-		return new Point2D( screenPoint.getX() * getGzX(), screenPoint.getY() * getGzY() );
+		return getWorldToScreenTransform().transform( point );
 	}
 
 	public Point3D worldToScreen( double x, double y, double z ) {
@@ -390,19 +406,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	public Point3D worldToScreen( Point3D point ) {
-		Point3D screenPoint = world.localToParent( point );
-		return new Point3D( screenPoint.getX() * getGzX(), screenPoint.getY() * getGzY(), point.getZ() );
+		return getWorldToScreenTransform().transform( point );
 	}
 
 	public Bounds worldToScreen( Bounds bounds ) {
-		Bounds screenBounds = world.localToParent( bounds );
-
-		double minX = screenBounds.getMinX() * getGzX();
-		double minY = screenBounds.getMinY() * getGzY();
-		double maxX = screenBounds.getMaxX() * getGzX();
-		double maxY = screenBounds.getMaxY() * getGzY();
-
-		return new BoundingBox( minX, minY, maxX - minX, maxY - minY );
+		return getWorldToScreenTransform().transform( bounds );
 	}
 
 	final Pane layersPane() {
@@ -459,7 +467,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateWorldOrientation( double width, double height, double centerX, double centerY, double zoomX, double zoomY, double rotate, double gzx, double gzy ) {
-		log.atConfig().log("width=%s height=%s", width, height);
 		world.setTranslateX( (-centerX * gzx + 0.5 * width) * zoomX );
 		world.setTranslateY( (centerY * gzy + 0.5 * height) * zoomY );
 		world.setScaleX( zoomX );
@@ -470,6 +477,10 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		double outputRescaleX = 1.0 / getOutputScaleX();
 		double outputRescaleY = 1.0 / getOutputScaleY();
 		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
+
+		// Clear the cached transforms
+		screenToWorldTransform = null;
+		worldToScreenTransform = null;
 	}
 
 	void updateGridFxGeometry() {

@@ -10,6 +10,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 
 import java.util.Collection;
@@ -303,6 +304,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 		setViewCenter( anchor.add( offset.multiply( 1.0 / factor ) ) );
 	}
 
+	public abstract Transform getScreenToWorldTransform();
+
 	public abstract Point2D screenToWorld( double x, double y );
 
 	public abstract Point2D screenToWorld( Point2D point );
@@ -312,6 +315,8 @@ public abstract class DesignRenderer extends Pane implements RenderConstants {
 	public abstract Point3D screenToWorld( Point3D point );
 
 	public abstract Bounds screenToWorld( Bounds bounds );
+
+	public abstract Transform getWorldToScreenTransform();
 
 	public abstract Point2D worldToScreen( double x, double y );
 
