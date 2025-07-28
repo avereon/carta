@@ -208,6 +208,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Keep the renderer in the center of the tool
 		widthProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
 		heightProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		renderer.viewCenterXProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		renderer.viewCenterYProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		renderer.viewCenterZProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		renderer.viewRotateProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		renderer.viewZoomXProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
+		renderer.viewZoomYProperty().addListener( ( _, _, _ ) -> updateWorkplaneBoundaries() );
 
 		// Register the listener to update the cursor when the reticle changes, and the cursor is also a reticle cursor
 		reticle.addListener( ( _, _, n ) -> {
@@ -362,7 +368,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public void setViewCenter( Point3D viewCenter ) {
-		log.atConfig().log( "center=%s", viewCenter );
 		getRenderer().setViewCenter( viewCenter );
 	}
 

@@ -251,6 +251,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 	}
 
 	@Test
+	@Tag("")
 	void setWorldViewport() {
 		// given
 		tool.resize( 1000, 1000 );

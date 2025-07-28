@@ -1,10 +1,13 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.annotation.CommonNote;
+import com.avereon.annotation.Note;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -84,6 +87,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 * efficiently and without conflicts.
 	 */
 	private boolean updatingFxGeometry;
+
+	/**
+	 * A timing flag indicating when to allow the next grid update.
+	 */
+	private long nextGridUpdate;
 
 	private final EventHandler<NodeEvent> designUnitChangeHandler = _ -> setDesignUnit( design.calcDesignUnit() );
 
@@ -541,9 +549,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		worldToScreenTransform = null;
 	}
 
+	@Note( CommonNote.ANY_THREAD )
 	void updateGridFxGeometry() {
+		if( System.nanoTime() < nextGridUpdate ) return;
 		if( workplane == null ) return;
-		workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() );
+		Fx.onFx( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
+		nextGridUpdate = System.nanoTime() + 16666667L;
 	}
 
 	/**
