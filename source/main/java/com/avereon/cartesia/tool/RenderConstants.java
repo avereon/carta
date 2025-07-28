@@ -15,4 +15,14 @@ public interface RenderConstants {
 
 	Point2D DEFAULT_ZOOM = new Point2D( 1, 1 );
 
+	/**
+	 * The default JavaFx refresh rate of 60 Hz.
+	 */
+	long DEFAULT_REFRESH_RATE = 60;
+
+	/**
+	 * The default refresh interval time in nanoseconds.
+	 */
+	long DEFAULT_REFRESH_TIME_NANOS = 1_000_000_000L / DEFAULT_REFRESH_RATE;
+
 }

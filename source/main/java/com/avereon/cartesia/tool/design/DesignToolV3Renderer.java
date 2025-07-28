@@ -554,7 +554,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		if( System.nanoTime() < nextGridUpdate ) return;
 		if( workplane == null ) return;
 		Fx.onFx( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
-		nextGridUpdate = System.nanoTime() + 16666667L;
+		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
 	}
 
 	/**
