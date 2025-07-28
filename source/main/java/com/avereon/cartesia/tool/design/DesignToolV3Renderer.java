@@ -61,9 +61,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	private final Pane preview;
 
-	private final DoubleProperty gzX;
+	private final DoubleProperty shapeScaleX;
 
-	private final DoubleProperty gzY;
+	private final DoubleProperty shapeScaleY;
 
 	private final DoubleProperty unitScale;
 
@@ -92,8 +92,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	DesignToolV3Renderer() {
 		super();
 
-		gzX = new SimpleDoubleProperty( 1.0 );
-		gzY = new SimpleDoubleProperty( 1.0 );
+		shapeScaleX = new SimpleDoubleProperty( 1.0 );
+		shapeScaleY = new SimpleDoubleProperty( 1.0 );
 		unitScale = new SimpleDoubleProperty( 1.0 );
 
 		grid = new Pane();
@@ -129,11 +129,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		outputScaleYProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), n.doubleValue() ) );
 
 		// Update the design geometry when the global scale changes
-		gzXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
-		gzYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
-		gzXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
-		gzYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
-		gzXProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
+		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
+		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
+		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
+		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
+		shapeScaleXProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
 			getWidth(),
 			getHeight(),
 			getViewCenterX(),
@@ -142,11 +142,11 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomY(),
 			getViewRotate(),
 			n.doubleValue(),
-			getGzY(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
-		gzYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
+		shapeScaleYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
 			getWidth(),
 			getHeight(),
 			getViewCenterX(),
@@ -154,7 +154,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
+			getShapeScaleX(),
 			n.doubleValue(),
 			getOutputScaleX(),
 			getOutputScaleY()
@@ -169,8 +169,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -182,8 +182,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -195,8 +195,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -208,8 +208,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -221,8 +221,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			n.doubleValue(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -234,8 +234,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			n.doubleValue(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -247,8 +247,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			n.doubleValue(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			getOutputScaleY()
 		) );
@@ -260,8 +260,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			n.doubleValue(),
 			getOutputScaleY()
 		) );
@@ -273,8 +273,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			getViewZoomX(),
 			getViewZoomY(),
 			getViewRotate(),
-			getGzX(),
-			getGzY(),
+			getShapeScaleX(),
+			getShapeScaleY(),
 			getOutputScaleX(),
 			n.doubleValue()
 		) );
@@ -431,7 +431,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	public Transform getWorldToScreenTransform() {
 		if( worldToScreenTransform == null ) {
-			Transform scale = Transform.scale( getGzX(), getGzY() );
+			Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
 			worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
 		}
 		return worldToScreenTransform;
@@ -466,32 +466,32 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	}
 
 	private void updateGz( double unitScale, double dpiX, double dpiY, double outputScaleX, double outputScaleY ) {
-		setGzX( unitScale * dpiX * outputScaleX );
-		setGzY( unitScale * dpiY * outputScaleY );
+		setShapeScaleX( unitScale * dpiX * outputScaleX );
+		setShapeScaleY( unitScale * dpiY * outputScaleY );
 	}
 
-	private double getGzX() {
-		return gzX.get();
+	private double getShapeScaleX() {
+		return shapeScaleX.get();
 	}
 
-	private void setGzX( double gzX ) {
-		this.gzX.set( gzX );
+	private void setShapeScaleX( double shapeScaleX ) {
+		this.shapeScaleX.set( shapeScaleX );
 	}
 
-	private DoubleProperty gzXProperty() {
-		return gzX;
+	private DoubleProperty shapeScaleXProperty() {
+		return shapeScaleX;
 	}
 
-	private double getGzY() {
-		return gzY.get();
+	private double getShapeScaleY() {
+		return shapeScaleY.get();
 	}
 
-	private void setGzY( double gzY ) {
-		this.gzY.set( gzY );
+	private void setShapeScaleY( double shapeScaleY ) {
+		this.shapeScaleY.set( shapeScaleY );
 	}
 
-	private DoubleProperty gzYProperty() {
-		return gzY;
+	private DoubleProperty shapeScaleYProperty() {
+		return shapeScaleY;
 	}
 
 	private double getUnitScale() {
@@ -518,21 +518,23 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		double zoomX,
 		double zoomY,
 		double rotate,
-		double gzx,
-		double gzy,
+		double shapeScaleX,
+		double shapeScaleY,
 		double outputScaleX,
 		double outputScaleY
 	) {
+		// EXPLAIN - Why does the conversion using the center point not use shape 
+		// scale? In particular, why exclude output scale from the formula here 
+		// when it is used almost everywhere else?
 		world.setTranslateX( (-centerX * getUnitScale() * getDpiX() + 0.5 * width) * zoomX );
 		world.setTranslateY( (centerY * getUnitScale() * getDpiY() + 0.5 * height) * zoomY );
+
 		world.setScaleX( zoomX );
 		world.setScaleY( zoomY );
 		world.setRotate( rotate );
 
-		// TODO This can be optimized also
-		double outputRescaleX = 1.0 / outputScaleX;
-		double outputRescaleY = 1.0 / outputScaleY;
-		world.getTransforms().setAll( Transform.scale( outputRescaleX, -outputRescaleY ) );
+		// Unscale back to "normal" size (the inverse of what is done with shape scale)
+		world.getTransforms().setAll( Transform.scale( 1.0 / outputScaleX, -1.0 / outputScaleY ) );
 
 		// Clear the cached transforms
 		screenToWorldTransform = null;
@@ -541,7 +543,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	void updateGridFxGeometry() {
 		if( workplane == null ) return;
-		workplane.getGridSystem().updateFxGeometryGrid( workplane, getGzX(), grid.getChildren() );
+		workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() );
 	}
 
 	/**
@@ -623,12 +625,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		Shape fxShape = shapeRef == null ? null : shapeRef.get();
 		if( !forceUpdate && fxShape != null ) return fxShape;
 
-		double gzX = getGzX();
-		double gzY = getGzY();
+		double shapeScaleX = getShapeScaleX();
+		double shapeScaleY = getShapeScaleY();
 
 		fxShape = switch( designShape.getType() ) {
-			case LINE -> updateLineGeometry( (DesignLine)designShape, gzX, gzY );
-			case TEXT -> updateTextGeometry( (DesignText)designShape, gzX, gzY );
+			case LINE -> updateLineGeometry( (DesignLine)designShape, shapeScaleX, shapeScaleY );
+			case TEXT -> updateTextGeometry( (DesignText)designShape, shapeScaleX, shapeScaleY );
 			default -> null;
 		};
 
@@ -650,7 +652,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return fxShape;
 	}
 
-	private Shape updateLineGeometry( DesignLine designLine, double gzX, double gzY ) {
+	private Shape updateLineGeometry( DesignLine designLine, double shapeScaleX, double shapeScaleY ) {
 		WeakReference<Line> lineRef = designLine.getValue( FX_SHAPE );
 		Line line = lineRef == null ? null : lineRef.get();
 		if( line == null ) {
@@ -658,17 +660,17 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			designLine.setValue( FX_SHAPE, new WeakReference<>( line ) );
 		}
 
-		line.setStartX( designLine.getOrigin().getX() * gzX );
-		line.setStartY( designLine.getOrigin().getY() * gzY );
-		line.setEndX( designLine.getPoint().getX() * gzX );
-		line.setEndY( designLine.getPoint().getY() * gzY );
+		line.setStartX( designLine.getOrigin().getX() * shapeScaleX );
+		line.setStartY( designLine.getOrigin().getY() * shapeScaleY );
+		line.setEndX( designLine.getPoint().getX() * shapeScaleX );
+		line.setEndY( designLine.getPoint().getY() * shapeScaleY );
 
-		return updateCommonShapeGeometry( designLine, line, gzX, gzY );
+		return updateCommonShapeGeometry( designLine, line, shapeScaleX, shapeScaleY );
 	}
 
 	// TODO Finish building the update methods for the remaining design shapes
 
-	private Shape updateTextGeometry( DesignText designText, double gzX, double gzY ) {
+	private Shape updateTextGeometry( DesignText designText, double shapeScaleX, double shapeScaleY ) {
 		WeakReference<Text> textRef = designText.getValue( FX_SHAPE );
 		Text text = textRef == null ? null : textRef.get();
 		if( text == null ) {
@@ -676,18 +678,18 @@ public class DesignToolV3Renderer extends DesignRenderer {
 			designText.setValue( FX_SHAPE, new WeakReference<>( text ) );
 		}
 
-		double x = designText.getOrigin().getX() * gzX;
-		double y = designText.getOrigin().getY() * gzY;
+		double x = designText.getOrigin().getX() * shapeScaleX;
+		double y = designText.getOrigin().getY() * shapeScaleY;
 
 		text.setX( x );
 		text.setY( -y );
 		text.setText( designText.getText() );
-		text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * gzY ) );
+		text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * shapeScaleY ) );
 
 		// Rotate must be before scale
 		text.getTransforms().setAll( Transform.rotate( designText.calcRotate(), x, y ), Transform.scale( 1, -1 ) );
 
-		return updateCommonShapeGeometry( designText, text, gzX, gzY );
+		return updateCommonShapeGeometry( designText, text, shapeScaleX, shapeScaleY );
 	}
 
 	/**
@@ -696,15 +698,15 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 *
 	 * @param designShape The source design shape
 	 * @param shape The target FX shape
-	 * @param gzX The pre-calculated geometry scale factor for the X axis
-	 * @param gzY The pre-calculated geometry scale factor for the Y axis
+	 * @param shapeScaleX The pre-calculated geometry scale factor for the X axis
+	 * @param shapeScaleY The pre-calculated geometry scale factor for the Y axis
 	 * @return The updated FX shape
 	 */
-	private Shape updateCommonShapeGeometry( DesignShape designShape, Shape shape, double gzX, double gzY ) {
-		shape.setStrokeWidth( designShape.calcDrawWidth() * gzX );
-		shape.setStrokeDashOffset( designShape.calcDashOffset() * gzX );
-		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * gzX ).toList() );
-		//shape.setStrokeMiterLimit( designShape.calcDrawMiterLimit()* gzX );
+	private Shape updateCommonShapeGeometry( DesignShape designShape, Shape shape, double shapeScaleX, double shapeScaleY ) {
+		shape.setStrokeWidth( designShape.calcDrawWidth() * shapeScaleX );
+		shape.setStrokeDashOffset( designShape.calcDashOffset() * shapeScaleX );
+		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * shapeScaleX ).toList() );
+		//shape.setStrokeMiterLimit( designShape.calcDrawMiterLimit() * shapeScaleX );
 		return shape;
 	}
 
