@@ -7,7 +7,6 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
-import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -127,30 +126,34 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		getChildren().addAll( world, screen );
 
-		// Configure the shape scale definition
+		// Configure the shape scale definition. The shape scale includes the unit
+		// scale, DPI and the output scale and is used to modify the shape geometry.
 		shapeScaleX.bind( unitScaleProperty().multiply( dpiXProperty() ).multiply( outputScaleXProperty() ) );
 		shapeScaleY.bind( unitScaleProperty().multiply( dpiYProperty() ).multiply( outputScaleYProperty() ) );
 
-		// EXPLAIN - Why does the conversion using the center point not use shape
-		// scale? In particular, why exclude *output scale* from the formula here
-		// when it is used almost everywhere else?
-		// Because these are parent coordinates and not local coordinates
-		// and the parent transforms already have the output scale incorporated
-		//world.setTranslateX( (-centerX * getUnitScale() * getDpiX() + 0.5 * width) * zoomX );
-		//world.setTranslateY( (centerY * getUnitScale() * getDpiY() + 0.5 * height) * zoomY );
+		// The translate properties do not include the output scale property because
+		// these are parent coordinates and not local coordinates, and the parent
+		// transforms have already incorporated the output scale.
+		world.layoutXProperty().bind( new SimpleDoubleProperty( 0 ) );
+		world.layoutYProperty().bind( new SimpleDoubleProperty( 0 ) );
 		world
 			.translateXProperty()
-			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( getDpiX() ) ).add( widthProperty().multiply( 0.5 ) ) );
-		world
-			.translateYProperty()
-			.bind( viewZoomYProperty().multiply( viewCenterYProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( getDpiY() ) ).add( heightProperty().multiply( 0.5 ) ) );
-		world.scaleXProperty().bind( viewZoomXProperty() );
-		world.scaleYProperty().bind( viewZoomYProperty() );
-		world.rotateProperty().bind( viewRotateProperty() );
+			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) ).add( widthProperty().multiply( 0.5 ) ) );
+		world.translateYProperty().bind( viewZoomYProperty().multiply( viewCenterYProperty().multiply( unitScaleProperty() ).multiply( dpiYProperty() ) ).add( heightProperty().multiply( 0.5 ) ) );
+		//		world.translateXProperty().bind( new SimpleDoubleProperty(0) );
+		//		world.translateYProperty().bind( new SimpleDoubleProperty(0) );
 
-		// Unscale back to "normal" size (the inverse of what is done with shape scale)
-		outputScaleXProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( Transform.scale( 1.0 / n.doubleValue(), -1.0 / getOutputScaleY() ) ) );
-		outputScaleYProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( Transform.scale( 1.0 / getOutputScaleX(), -1.0 / n.doubleValue() ) ) );
+		// The scale properties do not include the DPI property because the geometry
+		// values already include the DPI. What is interesting here is that we divide
+		// out the output scale at the same time. This allows JavaFX to render the
+		// geometry at the highest resolution, regardless of the output scale set by
+		// the user. Someday this may need to be tied to a HiDPI setting, but we'll
+		// leave it here to understand how the technique works.
+		world.scaleXProperty().bind( viewZoomXProperty().divide( outputScaleXProperty() ) );
+		world.scaleYProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).multiply( -1 ) );
+
+		// The rotate property is pretty straightforward, after the other two groups
+		world.rotateProperty().bind( viewRotateProperty() );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
@@ -173,7 +176,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Update the grid geometry when the grid parameters change
 		workplane.register( this, NodeEvent.ANY, _ -> this.updateGridFxGeometry() );
 
-		//		updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() );
+		updateGridFxGeometry();
 	}
 
 	public boolean isGridVisible() {
@@ -312,7 +315,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	public Transform getWorldToScreenTransform() {
 		if( worldToScreenTransform == null ) {
-			Transform scale = Transform.scale( getShapeScaleX(), -getShapeScaleY() );
+			Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
 			worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
 		}
 		return worldToScreenTransform;
@@ -402,7 +405,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	void updateGridFxGeometry() {
 		if( System.nanoTime() < nextGridUpdate ) return;
 		if( workplane == null ) return;
-		Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
+		// NEXT - Adding the grid geometry is changing how the world is oriented, not what I expected
+		//Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
 		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
 	}
 

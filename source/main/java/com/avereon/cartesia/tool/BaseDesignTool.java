@@ -792,6 +792,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		// NEXT Continue work to manage the workplane bounds
 		Bounds workplaneBounds = getRenderer().screenToWorld( source );
+		workplaneBounds = new BoundingBox( -10, -10, 20, 20 );
 		//		System.out.println( "target bounds: " + workplaneBounds );
 		workplane.setBounds( workplaneBounds );
 	}
