@@ -288,6 +288,38 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	void zoomIn() {
+		// given
+		double factor = DesignToolV3.ZOOM_IN_FACTOR;
+
+		// when
+		renderer.zoom( new Point3D( -2, -2, 0 ), factor );
+
+		// then
+		assertThat( renderer.getViewZoomX() ).isEqualTo( 1.189207115002721 );
+		assertThat( renderer.getViewZoomY() ).isEqualTo( 1.189207115002721 );
+		assertThat( renderer.getViewCenterX() ).isEqualTo( -0.3182071694925708 );
+		assertThat( renderer.getViewCenterY() ).isEqualTo( -0.3182071694925708 );
+		assertThat( renderer.getViewCenterZ() ).isEqualTo( 0.0 );
+	}
+
+	@Test
+	void zoomOut() {
+		// given
+		double factor = DesignToolV3.ZOOM_OUT_FACTOR;
+
+		// when
+		renderer.zoom( new Point3D( -2, -2, 0 ), factor );
+
+		// then
+		assertThat( renderer.getViewZoomX() ).isEqualTo( 0.8408964152537146 );
+		assertThat( renderer.getViewZoomY() ).isEqualTo( 0.8408964152537146 );
+		assertThat( renderer.getViewCenterX() ).isEqualTo( 0.37841423000544205 );
+		assertThat( renderer.getViewCenterY() ).isEqualTo( 0.37841423000544205 );
+		assertThat( renderer.getViewCenterZ() ).isEqualTo( 0.0 );
+	}
+
+	@Test
 	void getVisibleLayers() {
 
 	}

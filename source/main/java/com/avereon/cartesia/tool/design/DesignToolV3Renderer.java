@@ -127,165 +127,38 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 		getChildren().addAll( world, screen );
 
-		// Add a listener to the unit scale property to update the global scale
-		unitScaleProperty().addListener( ( _, _, n ) -> updateGz( n.doubleValue(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
+		// Configure the shape scale definition
+		shapeScaleX.bind( unitScaleProperty().multiply( dpiXProperty() ).multiply( outputScaleXProperty() ) );
+		shapeScaleY.bind( unitScaleProperty().multiply( dpiYProperty() ).multiply( outputScaleYProperty() ) );
 
-		// Update the global scale when the DPI or output scale changes
-		dpiXProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), n.doubleValue(), getDpiY(), getOutputScaleX(), getOutputScaleY() ) );
-		dpiYProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), n.doubleValue(), getOutputScaleX(), getOutputScaleY() ) );
-		outputScaleXProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), getDpiY(), n.doubleValue(), getOutputScaleY() ) );
-		outputScaleYProperty().addListener( ( _, _, n ) -> this.updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), n.doubleValue() ) );
+		// EXPLAIN - Why does the conversion using the center point not use shape
+		// scale? In particular, why exclude *output scale* from the formula here
+		// when it is used almost everywhere else?
+		// Because these are parent coordinates and not local coordinates
+		// and the parent transforms already have the output scale incorporated
+		//world.setTranslateX( (-centerX * getUnitScale() * getDpiX() + 0.5 * width) * zoomX );
+		//world.setTranslateY( (centerY * getUnitScale() * getDpiY() + 0.5 * height) * zoomY );
+		world
+			.translateXProperty()
+			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( getDpiX() ) ).add( widthProperty().multiply( 0.5 ) ) );
+		world
+			.translateYProperty()
+			.bind( viewZoomYProperty().multiply( viewCenterYProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( getDpiY() ) ).add( heightProperty().multiply( 0.5 ) ) );
+		world.scaleXProperty().bind( viewZoomXProperty() );
+		world.scaleYProperty().bind( viewZoomYProperty() );
+		world.rotateProperty().bind( viewRotateProperty() );
+
+		// Unscale back to "normal" size (the inverse of what is done with shape scale)
+		outputScaleXProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( Transform.scale( 1.0 / n.doubleValue(), -1.0 / getOutputScaleY() ) ) );
+		outputScaleYProperty().addListener( ( _, _, n ) -> world.getTransforms().setAll( Transform.scale( 1.0 / getOutputScaleX(), -1.0 / n.doubleValue() ) ) );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
 		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
-		shapeScaleXProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			n.doubleValue(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		shapeScaleYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			n.doubleValue(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-
-		// Update the world orientation when view settings change
-		widthProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			n.doubleValue(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		heightProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			getWidth(),
-			n.doubleValue(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		viewCenterXProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			n.doubleValue(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		viewCenterYProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			n.doubleValue(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		viewZoomXProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			n.doubleValue(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		viewZoomYProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			n.doubleValue(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		viewRotateProperty().addListener( ( _, _, n ) -> updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			n.doubleValue(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			getOutputScaleY()
-		) );
-		outputScaleXProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			n.doubleValue(),
-			getOutputScaleY()
-		) );
-		outputScaleYProperty().addListener( ( _, _, n ) -> this.updateWorldOrientation(
-			getWidth(),
-			getHeight(),
-			getViewCenterX(),
-			getViewCenterY(),
-			getViewZoomX(),
-			getViewZoomY(),
-			getViewRotate(),
-			getShapeScaleX(),
-			getShapeScaleY(),
-			getOutputScaleX(),
-			n.doubleValue()
-		) );
+		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.clearCachedTransforms() );
+		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.clearCachedTransforms() );
 	}
 
 	@Override
@@ -300,7 +173,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		// Update the grid geometry when the grid parameters change
 		workplane.register( this, NodeEvent.ANY, _ -> this.updateGridFxGeometry() );
 
-		updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() );
+		//		updateGz( getUnitScale(), getDpiX(), getDpiY(), getOutputScaleX(), getOutputScaleY() );
 	}
 
 	public boolean isGridVisible() {
@@ -439,7 +312,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	public Transform getWorldToScreenTransform() {
 		if( worldToScreenTransform == null ) {
-			Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
+			Transform scale = Transform.scale( getShapeScaleX(), -getShapeScaleY() );
 			worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
 		}
 		return worldToScreenTransform;
@@ -473,18 +346,18 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return node.getBoundsInParent();
 	}
 
-	private void updateGz( double unitScale, double dpiX, double dpiY, double outputScaleX, double outputScaleY ) {
-		setShapeScaleX( unitScale * dpiX * outputScaleX );
-		setShapeScaleY( unitScale * dpiY * outputScaleY );
-	}
+	//	private void updateGz( double unitScale, double dpiX, double dpiY, double outputScaleX, double outputScaleY ) {
+	//		setShapeScaleX( unitScale * dpiX * outputScaleX );
+	//		setShapeScaleY( unitScale * dpiY * outputScaleY );
+	//	}
 
 	private double getShapeScaleX() {
 		return shapeScaleX.get();
 	}
 
-	private void setShapeScaleX( double shapeScaleX ) {
-		this.shapeScaleX.set( shapeScaleX );
-	}
+	//	private void setShapeScaleX( double shapeScaleX ) {
+	//		this.shapeScaleX.set( shapeScaleX );
+	//	}
 
 	private DoubleProperty shapeScaleXProperty() {
 		return shapeScaleX;
@@ -494,9 +367,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		return shapeScaleY.get();
 	}
 
-	private void setShapeScaleY( double shapeScaleY ) {
-		this.shapeScaleY.set( shapeScaleY );
-	}
+	//	private void setShapeScaleY( double shapeScaleY ) {
+	//		this.shapeScaleY.set( shapeScaleY );
+	//	}
 
 	private DoubleProperty shapeScaleYProperty() {
 		return shapeScaleY;
@@ -518,32 +391,8 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
 	}
 
-	private void updateWorldOrientation(
-		double width,
-		double height,
-		double centerX,
-		double centerY,
-		double zoomX,
-		double zoomY,
-		double rotate,
-		double shapeScaleX,
-		double shapeScaleY,
-		double outputScaleX,
-		double outputScaleY
+	private void clearCachedTransforms(
 	) {
-		// EXPLAIN - Why does the conversion using the center point not use shape 
-		// scale? In particular, why exclude output scale from the formula here 
-		// when it is used almost everywhere else?
-		world.setTranslateX( (-centerX * getUnitScale() * getDpiX() + 0.5 * width) * zoomX );
-		world.setTranslateY( (centerY * getUnitScale() * getDpiY() + 0.5 * height) * zoomY );
-
-		world.setScaleX( zoomX );
-		world.setScaleY( zoomY );
-		world.setRotate( rotate );
-
-		// Unscale back to "normal" size (the inverse of what is done with shape scale)
-		world.getTransforms().setAll( Transform.scale( 1.0 / outputScaleX, -1.0 / outputScaleY ) );
-
 		// Clear the cached transforms
 		screenToWorldTransform = null;
 		worldToScreenTransform = null;
@@ -553,7 +402,7 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	void updateGridFxGeometry() {
 		if( System.nanoTime() < nextGridUpdate ) return;
 		if( workplane == null ) return;
-		Fx.onFx( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
+		Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
 		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
 	}
 
