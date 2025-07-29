@@ -12,6 +12,7 @@ import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.BoundingBox;
+import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import org.junit.jupiter.api.BeforeEach;
@@ -290,11 +291,83 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 	@Test
 	@Tag( CartesiaTestTag.WHITE_BOX )
+	void screenToWorldWithPoint2D() {
+		tool.screenToWorld( new Point2D( 1, 2 ) );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).screenToWorld( new Point2D( 1, 2 ) );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void screenToWorldWithDoubleDouble() {
+		tool.screenToWorld( 3, 4 );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).screenToWorld( 3, 4 );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void screenToWorldWithPoint3D() {
+		tool.screenToWorld( new Point3D( 1, 2, 3 ) );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).screenToWorld( new Point3D( 1, 2, 3 ) );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void screenToWorldWithDoubleDoubleDouble() {
+		tool.screenToWorld( 3, 4, 5 );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).screenToWorld( 3, 4, 5 );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void screenToWorldWithBounds() {
 		tool.screenToWorld( new BoundingBox( 1, 2, 3, 4 ) );
 
 		// Check that it delegates to the renderer
 		verify( renderer, times( 1 ) ).screenToWorld( new BoundingBox( 1, 2, 3, 4 ) );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void worldToScreenWithPoint2D() {
+		tool.worldToScreen( new Point2D( 1, 2 ) );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).worldToScreen( new Point2D( 1, 2 ) );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void worldToScreenWithDoubleDouble() {
+		tool.worldToScreen( 3, 4 );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).worldToScreen( 3, 4 );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void worldToScreenWithPoint3D() {
+		tool.worldToScreen( new Point3D( 1, 2, 3 ) );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).worldToScreen( new Point3D( 1, 2, 3 ) );
+	}
+
+	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
+	void worldToScreenWithDoubleDoubleDouble() {
+		tool.worldToScreen( 3, 4, 5 );
+
+		// Check that it delegates to the renderer
+		verify( renderer, times( 1 ) ).worldToScreen( 3, 4, 5 );
 	}
 
 	@Test

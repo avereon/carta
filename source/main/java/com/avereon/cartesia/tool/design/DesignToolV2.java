@@ -588,6 +588,16 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	@Override
+	public Point2D worldToScreen( double x, double y ) {
+		return renderer == null ? Point2D.ZERO : renderer.localToParent( x, y );
+	}
+
+	@Override
+	public Point2D worldToScreen( Point2D point ) {
+		return renderer == null ? Point2D.ZERO : renderer.localToParent( point );
+	}
+
+	@Override
 	public Point3D worldToScreen( double x, double y, double z ) {
 		return renderer == null ? Point3D.ZERO : renderer.localToParent( x, y, z );
 	}

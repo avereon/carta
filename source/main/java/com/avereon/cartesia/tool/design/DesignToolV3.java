@@ -120,12 +120,12 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public Point3D screenToWorkplane( Point3D point ) {
-		return null;
+		return getRenderer().screenToWorld( point );
 	}
 
 	@Override
 	public Point3D screenToWorkplane( double x, double y, double z ) {
-		return screenToWorld( x, y, z );
+		return getRenderer().screenToWorld( x, y, z );
 	}
 
 	@Override
