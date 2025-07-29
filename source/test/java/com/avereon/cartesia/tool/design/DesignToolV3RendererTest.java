@@ -625,7 +625,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void screenToWorldWithRotation() {
+	void screenToWorldWithRotate() {
 		// given
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
