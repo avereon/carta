@@ -129,12 +129,12 @@ public class DesignToolV3 extends BaseDesignTool {
 	}
 
 	@Override
-	public Point3D snapToWorkplane( Point3D point ) {
+	public Point3D snapToGrid( Point3D point ) {
 		return null;
 	}
 
 	@Override
-	public Point3D snapToWorkplane( double x, double y, double z ) {
+	public Point3D snapToGrid( double x, double y, double z ) {
 		return null;
 	}
 

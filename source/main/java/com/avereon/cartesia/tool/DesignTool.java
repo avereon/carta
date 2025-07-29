@@ -284,9 +284,9 @@ public interface DesignTool extends RenderConstants {
 
 	Point3D screenToWorkplane( double x, double y, double z );
 
-	Point3D snapToWorkplane( Point3D point );
+	Point3D snapToGrid( Point3D point );
 
-	Point3D snapToWorkplane( double x, double y, double z );
+	Point3D snapToGrid( double x, double y, double z );
 
 	Transform getWorldToScreenTransform();
 

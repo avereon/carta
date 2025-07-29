@@ -57,29 +57,29 @@ public class DesignToolV2Test extends DesignToolBaseTest {
 	}
 
 	@Test
-	void testSnapToWorkplaneWithCoordinates() {
+	void testSnapToGridWithCoordinates() {
 		// given
 		assertThat( tool.isGridSnapEnabled() ).isTrue();
 		assertThat( tool.getWorkplane().calcSnapGridX() ).isEqualTo( 0.1 );
 		assertThat( tool.getWorkplane().calcSnapGridY() ).isEqualTo( 0.1 );
 
 		// then
-		Point3DAssert.assertThat( tool.snapToWorkplane( 2, 2, 0 ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
-		Point3DAssert.assertThat( tool.snapToWorkplane( 2.01, 2.01, 0 ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
-		Point3DAssert.assertThat( tool.snapToWorkplane( 2.101, 2.101, 0 ) ).isEqualTo( new Point3D( 2.1, 2.1, 0 ) );
+		Point3DAssert.assertThat( tool.snapToGrid( 2, 2, 0 ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
+		Point3DAssert.assertThat( tool.snapToGrid( 2.01, 2.01, 0 ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
+		Point3DAssert.assertThat( tool.snapToGrid( 2.101, 2.101, 0 ) ).isEqualTo( new Point3D( 2.1, 2.1, 0 ) );
 	}
 
 	@Test
-	void testSnapToWorkplaneWithPoints() {
+	void testSnapToGridWithPoints() {
 		// given
 		assertThat( tool.isGridSnapEnabled() ).isTrue();
 		assertThat( tool.getWorkplane().calcSnapGridX() ).isEqualTo( 0.1 );
 		assertThat( tool.getWorkplane().calcSnapGridY() ).isEqualTo( 0.1 );
 
 		// then
-		Point3DAssert.assertThat( tool.snapToWorkplane( new Point3D( 2, 2, 0 ) ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
-		Point3DAssert.assertThat( tool.snapToWorkplane( new Point3D( 2.01, 2.01, 0 ) ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
-		Point3DAssert.assertThat( tool.snapToWorkplane( new Point3D( 2.101, 2.101, 0 ) ) ).isEqualTo( new Point3D( 2.1, 2.1, 0 ) );
+		Point3DAssert.assertThat( tool.snapToGrid( new Point3D( 2, 2, 0 ) ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
+		Point3DAssert.assertThat( tool.snapToGrid( new Point3D( 2.01, 2.01, 0 ) ) ).isEqualTo( new Point3D( 2.0, 2.0, 0 ) );
+		Point3DAssert.assertThat( tool.snapToGrid( new Point3D( 2.101, 2.101, 0 ) ) ).isEqualTo( new Point3D( 2.1, 2.1, 0 ) );
 	}
 
 }

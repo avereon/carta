@@ -39,14 +39,14 @@ public class MeasurePointTest extends BaseCommandTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1.001,1.001" );
 		when( commandContext.isInteractive() ).thenReturn( true );
 		// Make this call lenient to prove it is not called
-		lenient().when( tool.snapToWorkplane( eq( new Point3D( 1.001, 1.001, 0 ) ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+		lenient().when( tool.snapToGrid( eq( new Point3D( 1.001, 1.001, 0 ) ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( noticeManager, times( 1 ) ).addNotice( any( Notice.class ) );
-		verify( tool, times( 0 ) ).snapToWorkplane( any( Point3D.class ) );
+		verify( tool, times( 0 ) ).snapToGrid( any( Point3D.class ) );
 		assertThat( result ).isEqualTo( new Point3D( 1.001, 1.001, 0 ) );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
@@ -108,14 +108,14 @@ public class MeasurePointTest extends BaseCommandTest {
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "1.001,1.001", "bad parameter" );
 		when( commandContext.isInteractive() ).thenReturn( true );
 		// Make this call lenient to prove it is not called
-		lenient().when( tool.snapToWorkplane( eq( new Point3D( 1.001, 1.001, 0 ) ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
+		lenient().when( tool.snapToGrid( eq( new Point3D( 1.001, 1.001, 0 ) ) ) ).thenReturn( new Point3D( 1, 1, 0 ) );
 
 		// when
 		Object result = task.runTaskStep();
 
 		// then
 		verify( noticeManager, times( 1 ) ).addNotice( any( Notice.class ) );
-		verify( tool, times( 0 ) ).snapToWorkplane( any( Point3D.class ) );
+		verify( tool, times( 0 ) ).snapToGrid( any( Point3D.class ) );
 		assertThat( result ).isEqualTo( new Point3D( 1.001, 1.001, 0 ) );
 		assertThat( command.getReference() ).hasSize( 0 );
 		assertThat( command.getPreview() ).hasSize( 0 );
