@@ -34,7 +34,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 
 	private DesignToolV3 tool;
 
-	private BaseDesignToolV3Renderer renderer;
+	private DesignToolV3Renderer renderer;
 
 	@BeforeEach
 	protected void setup() throws Exception {
@@ -43,7 +43,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		model = ExampleDesigns.redBlueX();
 		Asset asset = new Asset( new Design2dAssetType( getProgram() ), URI.create( "new://test" ) ).setModel( model );
 
-		renderer = Mockito.spy( new BaseDesignToolV3Renderer() );
+		renderer = Mockito.spy( new DesignToolV3Renderer() );
 
 		Fx.run( () -> tool = new DesignToolV3( module, asset, renderer ) );
 		Fx.waitFor( 1, TimeUnit.SECONDS );

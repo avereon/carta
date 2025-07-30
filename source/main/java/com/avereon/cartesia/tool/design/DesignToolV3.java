@@ -26,7 +26,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@SuppressWarnings( "unused" )
 	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
-		this( product, asset, new BaseDesignToolV3Renderer() );
+		this( product, asset, new DesignToolV3Renderer() );
 	}
 
 	DesignToolV3( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
@@ -255,7 +255,7 @@ public class DesignToolV3 extends BaseDesignTool {
 
 	@Override
 	public Class<? extends BaseDesignRenderer> getPrintDesignRendererClass() {
-		return BaseDesignToolV3Renderer.class;
+		return DesignToolV3Renderer.class;
 	}
 
 }

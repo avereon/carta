@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 @CustomLog
-public class BaseDesignToolV3Renderer extends BaseDesignRenderer {
+public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	public static final String FX_SHAPE = "fx-shape";
 
@@ -98,7 +98,7 @@ public class BaseDesignToolV3Renderer extends BaseDesignRenderer {
 
 	// NEXT Apply lessons learned to create a new design renderer
 
-	BaseDesignToolV3Renderer() {
+	DesignToolV3Renderer() {
 		super();
 
 		shapeScaleX = new SimpleDoubleProperty( 1.0 );
@@ -344,26 +344,44 @@ public class BaseDesignToolV3Renderer extends BaseDesignRenderer {
 		return screenToWorldTransform;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point2D screenToWorld( double x, double y ) {
 		return screenToWorld( new Point2D( x, y ) );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point2D screenToWorld( Point2D point ) {
 		return getScreenToWorldTransform().transform( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D screenToWorld( double x, double y, double z ) {
 		return screenToWorld( new Point3D( x, y, z ) );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D screenToWorld( Point3D point ) {
 		return getScreenToWorldTransform().transform( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Bounds screenToWorld( Bounds bounds ) {
 		return getScreenToWorldTransform().transform( bounds );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Transform getWorldToScreenTransform() {
 		if( worldToScreenTransform == null ) {
 			Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
@@ -372,22 +390,37 @@ public class BaseDesignToolV3Renderer extends BaseDesignRenderer {
 		return worldToScreenTransform;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point2D worldToScreen( double x, double y ) {
 		return worldToScreen( new Point2D( x, y ) );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point2D worldToScreen( Point2D point ) {
 		return getWorldToScreenTransform().transform( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D worldToScreen( double x, double y, double z ) {
 		return worldToScreen( new Point3D( x, y, z ) );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D worldToScreen( Point3D point ) {
 		return getWorldToScreenTransform().transform( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Bounds worldToScreen( Bounds bounds ) {
 		return getWorldToScreenTransform().transform( bounds );
 	}
