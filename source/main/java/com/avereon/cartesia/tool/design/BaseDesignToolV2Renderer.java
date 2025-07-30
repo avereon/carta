@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CustomLog
-public class DesignToolV2Renderer extends DesignRenderer {
+public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 
 	private Design design;
 
@@ -100,7 +100,7 @@ public class DesignToolV2Renderer extends DesignRenderer {
 
 	private final EventHandler<NodeEvent> unitValueWatcher = e -> setLengthUnit( e.getNewValue() );
 
-	public DesignToolV2Renderer() {
+	public BaseDesignToolV2Renderer() {
 		// Ensure the minimum layout size can go to zero
 		// This fixes a problem where the parentToLocal and localToParent methods
 		// did not work correctly.

@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignPrint;
-import com.avereon.cartesia.tool.design.DesignRenderer;
+import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.asset.Asset;
@@ -118,8 +118,8 @@ public class DesignPrintTask extends Task<Void> {
 		double factor = 1;
 
 		// The NEW way
-		Class<? extends DesignRenderer> rendererClass = tool.getPrintDesignRendererClass();
-		final DesignRenderer renderer = rendererClass.getDeclaredConstructor().newInstance();
+		Class<? extends BaseDesignRenderer> rendererClass = tool.getPrintDesignRendererClass();
+		final BaseDesignRenderer renderer = rendererClass.getDeclaredConstructor().newInstance();
 		//renderer.setBackground( Background.fill( Color.LIGHTGRAY ) );
 		renderer.setDesign( asset.getModel() );
 		renderer.setVisibleLayers( tool.getVisibleLayers() );

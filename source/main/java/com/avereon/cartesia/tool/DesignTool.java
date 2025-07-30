@@ -8,7 +8,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.design.DesignRenderer;
+import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
@@ -464,7 +464,7 @@ public interface DesignTool extends RenderConstants {
 
 	void setCursor( Cursor cursor );
 
-	DesignRenderer getScreenDesignRenderer();
+	BaseDesignRenderer getScreenDesignRenderer();
 
-	Class<? extends DesignRenderer> getPrintDesignRendererClass();
+	Class<? extends BaseDesignRenderer> getPrintDesignRendererClass();
 }

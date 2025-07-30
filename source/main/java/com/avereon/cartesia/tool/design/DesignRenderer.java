@@ -1,331 +1,112 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.RenderConstants;
-import com.avereon.cartesia.tool.Workplane;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.layout.Pane;
 import javafx.scene.transform.Transform;
-import lombok.CustomLog;
 
-import java.util.Collection;
-import java.util.List;
-
-@CustomLog
-public abstract class DesignRenderer extends Pane implements RenderConstants {
-
-	private final DoubleProperty dpiX;
-
-	private final DoubleProperty dpiY;
-
-	private final DoubleProperty outputScaleX;
-
-	private final DoubleProperty outputScaleY;
-
-	private final DoubleProperty viewCenterX;
-
-	private final DoubleProperty viewCenterY;
-
-	private final DoubleProperty viewCenterZ;
-
-	private final DoubleProperty viewRotate;
-
-	private final DoubleProperty viewZoomX;
-
-	private final DoubleProperty viewZoomY;
-
-	public DesignRenderer() {
-		getStyleClass().add( "tool-renderer" );
-
-		/*
-	  The renderer is configured to render at 96 DPI by default, but it can be
-		configured to render for different media just as easily by changing the
-		DPI setting:
-
-		screen: setDpi( Screen.getPrimary().getDpi() );
-		printer: setDpi( PrintResolution.getCrossFeedResolution(), PrintResolution.getFeedResolution() );
-		*/
-		dpiX = new SimpleDoubleProperty( DEFAULT_DPI );
-		dpiY = new SimpleDoubleProperty( DEFAULT_DPI );
-
-		/*
-		The output scale is used when working with high resolution (HiDPI) monitors.
-		This allows for fractional scaling as well and needs to be taken into account
-		for detailed rendering of the model when the application may not require it.
-		 */
-		outputScaleX = new SimpleDoubleProperty( DEFAULT_OUTPUT_SCALE );
-		outputScaleY = new SimpleDoubleProperty( DEFAULT_OUTPUT_SCALE );
-
-		/*
-		The world view settings. These are the view settings from the user's
-		perspective.
-		 */
-		viewCenterX = new SimpleDoubleProperty( DEFAULT_CENTER.getX() );
-		viewCenterY = new SimpleDoubleProperty( DEFAULT_CENTER.getY() );
-		viewCenterZ = new SimpleDoubleProperty( DEFAULT_CENTER.getZ() );
-		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
-		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
-		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
-	}
-
-	public abstract Workplane getWorkplane();
-
-	public abstract void setWorkplane( Workplane workplane );
-
-	public abstract boolean isGridVisible();
-
-	public abstract void setGridVisible( boolean visible );
-
-	public abstract Design getDesign();
-
-	public abstract void setDesign( Design design );
-
-	public abstract boolean isLayerVisible( DesignLayer layer );
-
-	public abstract List<DesignLayer> getVisibleLayers();
-
-	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
-
-	public abstract void setLayerVisible( DesignLayer layer, boolean visible );
+public interface DesignRenderer {
 
 	/**
-	 * Called to request the design be rendered.
-	 */
-	public abstract void render();
-
-	/**
-	 * Called to request the design be printed.
+	 * Retrieves the transformation matrix that converts world coordinates to
+	 * screen coordinates.
 	 *
-	 * @param factor The scale factor to apply to the design when printing.
+	 * @return a Transform object representing the world-to-screen coordinate transformation
 	 */
-	@Deprecated
-	public abstract void print( double factor );
+	Transform getWorldToScreenTransform();
 
 	/**
-	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
-	 * axes to the same value.
+	 * Transforms coordinates from world coordinates to screen coordinates.
 	 *
-	 * @param dpi The DPI to set
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @return The converted coordinates in screen coordinates
 	 */
-	public void setDpi( double dpi ) {
-		setDpi( dpi, dpi );
-	}
+	Point2D worldToScreen( double x, double y );
 
 	/**
-	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
-	 * axes.
+	 * Converts a point from world coordinates to screen coordinates.
 	 *
-	 * @param dpiX The DPI to set for the X axis
-	 * @param dpiY The DPI to set for the Y axis
+	 * @param point The point to convert
+	 * @return The converted point in screen coordinates
 	 */
-	public void setDpi( double dpiX, double dpiY ) {
-		setDpiX( dpiX );
-		setDpiY( dpiY );
-	}
-
-	public void setDpiX( double dpi ) {
-		dpiX.set( dpi );
-	}
-
-	public double getDpiX() {
-		return dpiX.get();
-	}
-
-	public DoubleProperty dpiXProperty() {
-		return dpiX;
-	}
-
-	public double getDpiY() {
-		return dpiY.get();
-	}
-
-	public void setDpiY( double dpi ) {
-		dpiY.set( dpi );
-	}
-
-	public DoubleProperty dpiYProperty() {
-		return dpiY;
-	}
-
-	public void setOutputScale( double scaleX, double scaleY ) {
-		setOutputScaleX( scaleX );
-		setOutputScaleY( scaleY );
-	}
-
-	public double getOutputScaleX() {
-		return outputScaleX.get();
-	}
-
-	public void setOutputScaleX( double scale ) {
-		outputScaleX.set( scale );
-	}
-
-	public DoubleProperty outputScaleXProperty() {
-		return outputScaleX;
-	}
-
-	public double getOutputScaleY() {
-		return outputScaleY.get();
-	}
-
-	public void setOutputScaleY( double scale ) {
-		outputScaleY.set( scale );
-	}
-
-	public DoubleProperty outputScaleYProperty() {
-		return outputScaleY;
-	}
-
-	public Point3D getViewCenter() {
-		return new Point3D( viewCenterX.get(), viewCenterY.get(), viewCenterZ.get() );
-	}
-
-	public void setViewCenter( double x, double y, double z ) {
-		viewCenterX.set( x );
-		viewCenterY.set( y );
-		viewCenterZ.set( z );
-	}
-
-	public void setViewCenter( Point3D center ) {
-		setViewCenter( center.getX(), center.getY(), center.getZ() );
-	}
-
-	public double getViewCenterX() {
-		return viewCenterX.get();
-	}
-
-	public void setViewCenterX( double x ) {
-		viewCenterX.set( x );
-	}
-
-	public DoubleProperty viewCenterXProperty() {
-		return viewCenterX;
-	}
-
-	public double getViewCenterY() {
-		return viewCenterY.get();
-	}
-
-	public void setViewCenterY( double y ) {
-		viewCenterY.set( y );
-	}
-
-	public DoubleProperty viewCenterYProperty() {
-		return viewCenterY;
-	}
-
-	public double getViewCenterZ() {
-		return viewCenterZ.get();
-	}
-
-	public void setViewCenterZ( double z ) {
-		viewCenterZ.set( z );
-	}
-
-	public DoubleProperty viewCenterZProperty() {
-		return viewCenterZ;
-	}
-
-	public double getViewRotate() {
-		return viewRotate.get();
-	}
-
-	public void setViewRotate( double rotate ) {
-		viewRotate.set( rotate );
-	}
-
-	public DoubleProperty viewRotateProperty() {
-		return viewRotate;
-	}
-
-	public Point2D getViewZoom() {
-		return new Point2D( viewZoomX.get(), viewZoomY.get() );
-	}
-
-	public void setViewZoom( double zoom ) {
-		setViewZoom( zoom, zoom );
-	}
-
-	public void setViewZoom( double zoomX, double zoomY ) {
-		log.atConfig().log( "set view zoom..." );
-		setViewZoomX( zoomX );
-		setViewZoomY( zoomY );
-	}
-
-	public void setViewZoom( Point2D zoom ) {
-		setViewZoomX( zoom.getX() );
-		setViewZoomY( zoom.getY() );
-	}
-
-	public double getViewZoomX() {
-		return viewZoomX.get();
-	}
-
-	public void setViewZoomX( double zoom ) {
-		viewZoomX.set( zoom );
-	}
-
-	public DoubleProperty viewZoomXProperty() {
-		return viewZoomX;
-	}
-
-	public double getViewZoomY() {
-		return viewZoomY.get();
-	}
-
-	public void setViewZoomY( double zoom ) {
-		viewZoomY.set( zoom );
-	}
-
-	public DoubleProperty viewZoomYProperty() {
-		return viewZoomY;
-	}
+	Point2D worldToScreen( Point2D point );
 
 	/**
-	 * Change the current zoom by the zoom factor. The zoom is centered on the
-	 * provided anchor point in world coordinates. The current zoom is changed by
-	 * multiplying the current zoom by the factor, and that becomes the new zoom.
+	 * Transforms coordinates from world coordinates to screen coordinates.
 	 *
-	 * @param anchor The anchor point in world coordinates
-	 * @param factor The zoom factor
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param z The z coordinate
+	 * @return The converted coordinates in screen coordinates
 	 */
-	public void zoom( Point3D anchor, double factor ) {
-		Point3D offset = getViewCenter().subtract( anchor );
+	Point3D worldToScreen( double x, double y, double z );
 
-		// The new view zoom has to be set before the new view center
-		setViewZoom( getViewZoom().multiply( factor ) );
+	/**
+	 * Converts a point from world coordinates to screen coordinates.
+	 *
+	 * @param point The point to convert
+	 * @return The converted point in screen coordinates
+	 */
+	Point3D worldToScreen( Point3D point );
 
-		// The new view center has to be set after the new view zoom
-		setViewCenter( anchor.add( offset.multiply( 1.0 / factor ) ) );
-	}
+	/**
+	 * Converts bounds from world coordinates to screen coordinates.
+	 *
+	 * @param bounds The bounds in world coordinates to convert
+	 * @return The converted bounds in screen coordinates
+	 */
+	Bounds worldToScreen( Bounds bounds );
 
-	public abstract Transform getScreenToWorldTransform();
+	/**
+	 * Retrieves the transformation matrix that converts screen coordinates to
+	 * world coordinates.
+	 *
+	 * @return a Transform object representing the screen-to-world coordinate transformation
+	 */
+	Transform getScreenToWorldTransform();
 
-	public abstract Point2D screenToWorld( double x, double y );
+	/**
+	 * Converts a point from screen coordinates to world coordinates.
+	 *
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @return The converted point in world coordinates
+	 */
+	Point2D screenToWorld( double x, double y );
 
-	public abstract Point2D screenToWorld( Point2D point );
+	/**
+	 * Converts a point from screen coordinates to world coordinates.
+	 *
+	 * @param point The point in screen coordinates to convert
+	 * @return The converted point in world coordinates
+	 */
+	Point2D screenToWorld( Point2D point );
 
-	public abstract Point3D screenToWorld( double x, double y, double z );
+	/**
+	 * Convert screen coordinates to world coordinates.
+	 *
+	 * @param x The x coordinate
+	 * @param y The y coordinate
+	 * @param z The z coordinate
+	 * @return The converted coordinates in world coordinates
+	 */
+	Point3D screenToWorld( double x, double y, double z );
 
-	public abstract Point3D screenToWorld( Point3D point );
+	/**
+	 * Convert a point from screen coordinates to world coordinates.
+	 *
+	 * @param point The point in screen coordinates to convert
+	 * @return The converted point in world coordinates
+	 */
+	Point3D screenToWorld( Point3D point );
 
-	public abstract Bounds screenToWorld( Bounds bounds );
-
-	public abstract Transform getWorldToScreenTransform();
-
-	public abstract Point2D worldToScreen( double x, double y );
-
-	public abstract Point2D worldToScreen( Point2D point );
-
-	public abstract Point3D worldToScreen( double x, double y, double z );
-
-	public abstract Point3D worldToScreen( Point3D point );
-
-	public abstract Bounds worldToScreen( Bounds bounds );
+	/**
+	 * Converts bounds from screen coordinates to world coordinates.
+	 *
+	 * @param bounds The bounds in screen coordinates to convert
+	 * @return The converted bounds in world coordinates
+	 */
+	Bounds screenToWorld( Bounds bounds );
 
 }

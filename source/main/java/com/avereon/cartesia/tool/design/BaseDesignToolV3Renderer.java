@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 @CustomLog
-public class DesignToolV3Renderer extends DesignRenderer {
+public class BaseDesignToolV3Renderer extends BaseDesignRenderer {
 
 	public static final String FX_SHAPE = "fx-shape";
 
@@ -92,11 +92,13 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	 */
 	private long nextGridUpdate;
 
+	private final EventHandler<NodeEvent> workflowChangeHandler = _ -> updateGridFxGeometry();
+
 	private final EventHandler<NodeEvent> designUnitChangeHandler = _ -> setDesignUnit( design.calcDesignUnit() );
 
 	// NEXT Apply lessons learned to create a new design renderer
 
-	DesignToolV3Renderer() {
+	BaseDesignToolV3Renderer() {
 		super();
 
 		shapeScaleX = new SimpleDoubleProperty( 1.0 );
@@ -164,25 +166,90 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.clearCachedTransforms() );
 	}
 
+	/**
+	 * Retrieves the current {@code Workplane} instance associated with the renderer.
+	 *
+	 * @return The {@code Workplane} instance
+	 */
 	@Override
 	public Workplane getWorkplane() {
 		return workplane;
 	}
 
+	/**
+	 * Sets the workplane for the renderer. If a workplane is already associated,
+	 * it unregisters the current instance as a listener for workplane events
+	 * before associating the new workplane. The method ensures proper event
+	 * handling and updates the grid geometry based on the newly assigned
+	 * workplane. If null, the current workplane association is removed.
+	 *
+	 * @param workplane The {@code Workplane} instance to associate with the renderer.
+	 *
+	 */
 	@Override
 	public void setWorkplane( Workplane workplane ) {
+		if( this.workplane != null ) {
+			this.workplane.unregister( this, NodeEvent.ANY, workflowChangeHandler );
+		}
+
 		this.workplane = workplane;
 
-		// Update the grid geometry when the grid parameters change
-		workplane.register( this, NodeEvent.ANY, _ -> this.updateGridFxGeometry() );
+		if( this.workplane != null ) {
+			this.workplane.register( this, NodeEvent.ANY, workflowChangeHandler );
+		}
 
 		updateGridFxGeometry();
 	}
 
+	/**
+	 * Retrieves the current {@code Design} instance associated with the renderer.
+	 *
+	 * @return The {@code Design} instance
+	 */
+	@Override
+	public Design getDesign() {
+		return design;
+	}
+
+	/**
+	 * Associates a {@code Design} instance with the renderer, handling the
+	 * registration and unregistration of change listeners. The method updates
+	 * the internal state to support rendering consistent with the provided
+	 * design. If null, the current design association is removed.
+	 *
+	 * @param design The {@code Design} instance to associate with the renderer.
+	 */
+	@Override
+	public void setDesign( Design design ) {
+		if( this.design != null ) {
+			this.design.unregister( this, Design.UNIT, designUnitChangeHandler );
+		}
+
+		this.design = design;
+
+		if( this.design != null ) {
+			design.register( this, Design.UNIT, designUnitChangeHandler );
+			setDesignUnit( design.calcDesignUnit() );
+		}
+	}
+
+	/**
+	 * Determines whether the grid is currently visible in the renderer.
+	 *
+	 * @return true if the grid is visible, false otherwise.
+	 */
 	public boolean isGridVisible() {
 		return grid.isVisible();
 	}
 
+	/**
+	 * Sets the visibility of the grid in the renderer. When the grid is made
+	 * visible, the required grid geometry is created and added to the rendering
+	 * system. Conversely, when the grid is hidden, its geometry is removed to
+	 * optimize rendering performance.
+	 *
+	 * @param visible True to make the grid visible, false to hide it.
+	 */
 	public void setGridVisible( boolean visible ) {
 		// This method has a very important implementation, it is more than just
 		// setting a flag, it participates in the performance of the renderer by
@@ -195,25 +262,6 @@ public class DesignToolV3Renderer extends DesignRenderer {
 		} else {
 			grid.setVisible( false );
 			grid.getChildren().clear();
-		}
-	}
-
-	@Override
-	public Design getDesign() {
-		return design;
-	}
-
-	@Override
-	public void setDesign( Design design ) {
-		if( this.design != null ) {
-			this.design.unregister( this, Design.UNIT, designUnitChangeHandler );
-		}
-
-		this.design = design;
-
-		if( this.design != null ) {
-			design.register( this, Design.UNIT, designUnitChangeHandler );
-			setDesignUnit( design.calcDesignUnit() );
 		}
 	}
 
@@ -281,6 +329,9 @@ public class DesignToolV3Renderer extends DesignRenderer {
 
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Transform getScreenToWorldTransform() {
 		if( screenToWorldTransform == null ) {
 			try {
@@ -404,9 +455,12 @@ public class DesignToolV3Renderer extends DesignRenderer {
 	@Note( CommonNote.ANY_THREAD )
 	void updateGridFxGeometry() {
 		if( System.nanoTime() < nextGridUpdate ) return;
-		if( workplane == null ) return;
-		// NEXT - Adding the grid geometry is changing how the world is oriented, not what I expected
-		//Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
+		if( workplane == null ) {
+			grid.getChildren().clear();
+		} else {
+			// NEXT - Adding the grid geometry is changing how the world is oriented, not what I expected
+			//Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
+		}
 		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
 	}
 

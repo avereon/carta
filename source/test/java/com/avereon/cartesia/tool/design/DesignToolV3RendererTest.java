@@ -39,7 +39,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith( MockitoExtension.class )
 public class DesignToolV3RendererTest {
 
-	private DesignToolV3Renderer renderer;
+	private BaseDesignToolV3Renderer renderer;
 
 	@Mock
 	private ChangeListener<Number> xListener;
@@ -55,7 +55,7 @@ public class DesignToolV3RendererTest {
 
 	@BeforeEach
 	void setUp() {
-		renderer = new DesignToolV3Renderer();
+		renderer = new BaseDesignToolV3Renderer();
 	}
 
 	@Test
@@ -66,10 +66,38 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	void setWorkplaneWithNull() {
+		// given
+		Workplane workplane = new Workplane();
+		renderer.setWorkplane( workplane );
+		assertThat( renderer.getWorkplane() ).isEqualTo( workplane );
+
+		// when
+		renderer.setWorkplane( null );
+
+		// then
+		assertThat( renderer.getWorkplane() ).isEqualTo( null );
+	}
+
+	@Test
 	void setDesign() {
 		Design design = new Design2D();
 		renderer.setDesign( design );
 		assertThat( renderer.getDesign() ).isEqualTo( design );
+	}
+
+	@Test
+	void setDesignWithNull() {
+		// given
+		Design design = new Design2D();
+		renderer.setDesign( design );
+		assertThat( renderer.getDesign() ).isEqualTo( design );
+
+		// when
+		renderer.setDesign( null );
+
+		// then
+		assertThat( renderer.getDesign() ).isEqualTo( null );
 	}
 
 	@Test
@@ -825,7 +853,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
-		WeakReference<Pane> weakLayer = layer.getValue( DesignToolV3Renderer.FX_SHAPE );
+		WeakReference<Pane> weakLayer = layer.getValue( BaseDesignToolV3Renderer.FX_SHAPE );
 		if( weakLayer == null ) return -1;
 		return pane.getChildren().indexOf( weakLayer.get() );
 	}

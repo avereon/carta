@@ -8,7 +8,7 @@ import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.data.DesignView;
-import com.avereon.cartesia.tool.design.DesignRenderer;
+import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.data.NodeSettings;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
@@ -95,7 +95,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	private final Node toast;
 
 	@Getter
-	private final DesignRenderer renderer;
+	private final BaseDesignRenderer renderer;
 
 	// FX properties (what others should be here?)
 
@@ -152,7 +152,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
-	protected BaseDesignTool( XenonProgramProduct product, Asset asset, DesignRenderer renderer ) {
+	protected BaseDesignTool( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
@@ -616,7 +616,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// NEXT Insert implementations here
 
 	@Override
-	public DesignRenderer getScreenDesignRenderer() {
+	public BaseDesignRenderer getScreenDesignRenderer() {
 		return renderer;
 	}
 
