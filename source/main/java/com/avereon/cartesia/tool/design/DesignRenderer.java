@@ -109,4 +109,13 @@ public interface DesignRenderer {
 	 */
 	Bounds screenToWorld( Bounds bounds );
 
+	/**
+	 * Change the current zoom by the zoom factor. The zoom is centered on the
+	 * provided anchor point in world coordinates. The current zoom is changed by
+	 * multiplying the current zoom by the factor, and that becomes the new zoom.
+	 *
+	 * @param anchor The anchor point in world coordinates
+	 * @param factor The zoom factor
+	 */
+	void zoom( Point3D anchor, double factor );
 }

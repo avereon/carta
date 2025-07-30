@@ -9,21 +9,20 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
+import com.avereon.cartesia.tool.design.DesignRenderer;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
 import javafx.scene.paint.Paint;
-import javafx.scene.transform.Transform;
 
 import java.util.Collection;
 import java.util.List;
 
-public interface DesignTool extends RenderConstants {
+public interface DesignTool extends RenderConstants, DesignRenderer {
 
 	/**
 	 * The default zoom magnification reached by applying zoom in or out the {@link #DEFAULT_ZOOM_STEPS} times.
@@ -283,108 +282,6 @@ public interface DesignTool extends RenderConstants {
 	Point3D snapToGrid( Point3D point );
 
 	Point3D snapToGrid( double x, double y, double z );
-
-	/**
-	 * Retrieves the transformation matrix that converts world coordinates to
-	 * screen coordinates.
-	 *
-	 * @return a Transform object representing the world-to-screen coordinate transformation
-	 */
-	Transform getWorldToScreenTransform();
-
-	/**
-	 * Transforms coordinates from world coordinates to screen coordinates.
-	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @return The converted coordinates in screen coordinates
-	 */
-	Point2D worldToScreen( double x, double y );
-
-	/**
-	 * Converts a point from world coordinates to screen coordinates.
-	 *
-	 * @param point The point to convert
-	 * @return The converted point in screen coordinates
-	 */
-	Point2D worldToScreen( Point2D point );
-
-	/**
-	 * Transforms coordinates from world coordinates to screen coordinates.
-	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @param z The z coordinate
-	 * @return The converted coordinates in screen coordinates
-	 */
-	Point3D worldToScreen( double x, double y, double z );
-
-	/**
-	 * Converts a point from world coordinates to screen coordinates.
-	 *
-	 * @param point The point to convert
-	 * @return The converted point in screen coordinates
-	 */
-	Point3D worldToScreen( Point3D point );
-
-	/**
-	 * Converts bounds from world coordinates to screen coordinates.
-	 *
-	 * @param bounds The bounds in world coordinates to convert
-	 * @return The converted bounds in screen coordinates
-	 */
-	Bounds worldToScreen( Bounds bounds );
-
-	/**
-	 * Retrieves the transformation matrix that converts screen coordinates to
-	 * world coordinates.
-	 *
-	 * @return a Transform object representing the screen-to-world coordinate transformation
-	 */
-	Transform getScreenToWorldTransform();
-
-	/**
-	 * Converts a point from screen coordinates to world coordinates.
-	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @return The converted point in world coordinates
-	 */
-	Point2D screenToWorld( double x, double y );
-
-	/**
-	 * Converts a point from screen coordinates to world coordinates.
-	 *
-	 * @param point The point in screen coordinates to convert
-	 * @return The converted point in world coordinates
-	 */
-	Point2D screenToWorld( Point2D point );
-
-	/**
-	 * Convert screen coordinates to world coordinates.
-	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @param z The z coordinate
-	 * @return The converted coordinates in world coordinates
-	 */
-	Point3D screenToWorld( double x, double y, double z );
-
-	/**
-	 * Convert a point from screen coordinates to world coordinates.
-	 *
-	 * @param point The point in screen coordinates to convert
-	 * @return The converted point in world coordinates
-	 */
-	Point3D screenToWorld( Point3D point );
-
-	/**
-	 * Converts bounds from screen coordinates to world coordinates.
-	 *
-	 * @param bounds The bounds in screen coordinates to convert
-	 * @return The converted bounds in world coordinates
-	 */
-	Bounds screenToWorld( Bounds bounds );
 
 	/**
 	 * Convert a point from screen coordinates to world coordinates, potentially
