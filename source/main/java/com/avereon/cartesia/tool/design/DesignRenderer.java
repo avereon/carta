@@ -1,121 +1,101 @@
 package com.avereon.cartesia.tool.design;
 
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
-import javafx.scene.transform.Transform;
+import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.tool.Workplane;
 
-public interface DesignRenderer {
+import java.util.Collection;
+import java.util.List;
 
-	/**
-	 * Retrieves the transformation matrix that converts world coordinates to
-	 * screen coordinates.
-	 *
-	 * @return a Transform object representing the world-to-screen coordinate transformation
-	 */
-	Transform getWorldToScreenTransform();
+public interface DesignRenderer extends CommonToolRenderer {
 
 	/**
-	 * Transforms coordinates from world coordinates to screen coordinates.
+	 * Retrieves the current {@code Design} instance associated with the renderer.
 	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @return The converted coordinates in screen coordinates
+	 * @return The {@code Design} instance
 	 */
-	Point2D worldToScreen( double x, double y );
+	Design getDesign();
 
 	/**
-	 * Converts a point from world coordinates to screen coordinates.
+	 * Associates a {@code Design} instance with the renderer, handling the
+	 * registration and unregistration of change listeners. The method updates
+	 * the internal state to support rendering consistent with the provided
+	 * design. If null, the current design association is removed.
 	 *
-	 * @param point The point to convert
-	 * @return The converted point in screen coordinates
+	 * @param design The {@code Design} instance to associate with the renderer.
 	 */
-	Point2D worldToScreen( Point2D point );
+	void setDesign( Design design );
 
 	/**
-	 * Transforms coordinates from world coordinates to screen coordinates.
+	 * Retrieves the current {@code Workplane} instance associated with the renderer.
 	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @param z The z coordinate
-	 * @return The converted coordinates in screen coordinates
+	 * @return The {@code Workplane} instance
 	 */
-	Point3D worldToScreen( double x, double y, double z );
+	Workplane getWorkplane();
 
 	/**
-	 * Converts a point from world coordinates to screen coordinates.
+	 * Sets the workplane for the renderer. If a workplane is already associated,
+	 * it unregisters the current instance as a listener for workplane events
+	 * before associating the new workplane. The method ensures proper event
+	 * handling and updates the grid geometry based on the newly assigned
+	 * workplane. If null, the current workplane association is removed.
 	 *
-	 * @param point The point to convert
-	 * @return The converted point in screen coordinates
+	 * @param workplane The {@code Workplane} instance to associate with the renderer.
+	 *
 	 */
-	Point3D worldToScreen( Point3D point );
+	void setWorkplane( Workplane workplane );
 
 	/**
-	 * Converts bounds from world coordinates to screen coordinates.
+	 * Determines whether the grid is currently visible in the renderer.
 	 *
-	 * @param bounds The bounds in world coordinates to convert
-	 * @return The converted bounds in screen coordinates
+	 * @return true if the grid is visible, false otherwise.
 	 */
-	Bounds worldToScreen( Bounds bounds );
+	boolean isGridVisible();
 
 	/**
-	 * Retrieves the transformation matrix that converts screen coordinates to
-	 * world coordinates.
+	 * Sets the visibility of the grid in the renderer. When the grid is made
+	 * visible, the required grid geometry is created and added to the rendering
+	 * system. Conversely, when the grid is hidden, its geometry is removed to
+	 * optimize rendering performance.
 	 *
-	 * @return a Transform object representing the screen-to-world coordinate transformation
+	 * @param visible True to make the grid visible, false to hide it.
 	 */
-	Transform getScreenToWorldTransform();
+	void setGridVisible( boolean visible );
 
 	/**
-	 * Converts a point from screen coordinates to world coordinates.
+	 * Determines whether the specified design layer is visible within the renderer.
 	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @return The converted point in world coordinates
+	 * @param layer The design layer whose visibility is to be checked.
+	 * @return True if the layer is visible, false otherwise.
 	 */
-	Point2D screenToWorld( double x, double y );
+	boolean isLayerVisible( DesignLayer layer );
 
 	/**
-	 * Converts a point from screen coordinates to world coordinates.
+	 * Sets the visibility of a specific design layer in the renderer. When a layer
+	 * is made visible, its geometry is created and added to the rendering system.
+	 * Conversely, when a layer is hidden, its geometry is removed to optimize
+	 * rendering performance.
 	 *
-	 * @param point The point in screen coordinates to convert
-	 * @return The converted point in world coordinates
+	 * @param layer The design layer whose visibility is being set.
+	 * @param visible True to make the layer visible, false to make it hidden.
 	 */
-	Point2D screenToWorld( Point2D point );
+	void setLayerVisible( DesignLayer layer, boolean visible );
+
+	List<DesignLayer> getVisibleLayers();
+
+	void setVisibleLayers( Collection<DesignLayer> layers );
 
 	/**
-	 * Convert screen coordinates to world coordinates.
-	 *
-	 * @param x The x coordinate
-	 * @param y The y coordinate
-	 * @param z The z coordinate
-	 * @return The converted coordinates in world coordinates
+	 * Called to request the design be rendered.
 	 */
-	Point3D screenToWorld( double x, double y, double z );
+	void render();
 
 	/**
-	 * Convert a point from screen coordinates to world coordinates.
+	 * Called to request the design be printed.
 	 *
-	 * @param point The point in screen coordinates to convert
-	 * @return The converted point in world coordinates
+	 * @param factor The scale factor to apply to the design when printing.
 	 */
-	Point3D screenToWorld( Point3D point );
+	@Deprecated
+	void print( double factor );
 
-	/**
-	 * Converts bounds from screen coordinates to world coordinates.
-	 *
-	 * @param bounds The bounds in screen coordinates to convert
-	 * @return The converted bounds in world coordinates
-	 */
-	Bounds screenToWorld( Bounds bounds );
-
-	/**
-	 * Change the current zoom by the zoom factor. The zoom is centered on the
-	 * provided anchor point in world coordinates. The current zoom is changed by
-	 * multiplying the current zoom by the factor, and that becomes the new zoom.
-	 *
-	 * @param anchor The anchor point in world coordinates
-	 * @param factor The zoom factor
-	 */
-	void zoom( Point3D anchor, double factor );
 }

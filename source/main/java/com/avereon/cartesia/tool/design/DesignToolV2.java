@@ -69,7 +69,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private static final Snap gridSnap = new SnapGrid();
 
-	private final BaseDesignToolV2Renderer renderer;
+	private final DesignToolV2Renderer renderer;
 
 	private final Stack<DesignPortal> portalStack;
 
@@ -98,7 +98,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
 
 	public DesignToolV2( XenonProgramProduct product, Asset asset ) {
-		super( product, asset, new BaseDesignToolV2Renderer() );
+		super( product, asset, new DesignToolV2Renderer() );
 
 		commandActions = new ConcurrentHashMap<>();
 		designPropertiesMap = new DesignPropertiesMap( product );
@@ -108,7 +108,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		//		printsGuide = new PrintsGuide( product, this );
 
 		// Create and associate the workplane and renderer
-		renderer = (BaseDesignToolV2Renderer)getRenderer();
+		renderer = (DesignToolV2Renderer)getRenderer();
 		renderer.setApertureDrawPaint( DEFAULT_APERTURE_DRAW );
 		renderer.setApertureFillPaint( DEFAULT_APERTURE_FILL );
 		renderer.setPreviewDrawPaint( DEFAULT_PREVIEW_DRAW );
@@ -903,7 +903,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	}
 
 	public Class<? extends BaseDesignRenderer> getPrintDesignRendererClass() {
-		return BaseDesignToolV2Renderer.class;
+		return DesignToolV2Renderer.class;
 	}
 
 	private List<DesignLayer> getFilteredLayers( Predicate<? super DesignLayer> filter ) {

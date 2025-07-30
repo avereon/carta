@@ -9,7 +9,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
-import com.avereon.cartesia.tool.design.DesignRenderer;
+import com.avereon.cartesia.tool.design.CommonToolRenderer;
 import com.avereon.xenon.XenonProgram;
 import com.avereon.xenon.asset.Asset;
 import javafx.beans.property.BooleanProperty;
@@ -22,7 +22,7 @@ import javafx.scene.paint.Paint;
 import java.util.Collection;
 import java.util.List;
 
-public interface DesignTool extends RenderConstants, DesignRenderer {
+public interface DesignTool extends RenderConstants, CommonToolRenderer {
 
 	/**
 	 * The default zoom magnification reached by applying zoom in or out the {@link #DEFAULT_ZOOM_STEPS} times.
@@ -243,14 +243,6 @@ public interface DesignTool extends RenderConstants, DesignRenderer {
 
 	@Deprecated
 	ObjectProperty<DesignView> currentViewProperty();
-
-	/**
-	 * Change the zoom value by a factor.
-	 *
-	 * @param anchor The zoom anchor in world coordinates
-	 * @param factor The zoom factor
-	 */
-	void zoom( Point3D anchor, double factor );
 
 	//	/**
 	//	 * Pan the view by mouse coordinates.

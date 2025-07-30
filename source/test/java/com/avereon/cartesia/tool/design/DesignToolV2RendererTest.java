@@ -20,14 +20,14 @@ public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 
 	private Design design;
 
-	private BaseDesignToolV2Renderer renderer;
+	private DesignToolV2Renderer renderer;
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
 		Fx.startup();
 		design = new Design2D();
-		renderer = new BaseDesignToolV2Renderer();
+		renderer = new DesignToolV2Renderer();
 		renderer.setDesign( design );
 		renderer.resizeRelocate( 0, 0, 100, 100 );
 	}

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @CustomLog
-public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
+public class DesignToolV2Renderer extends BaseDesignRenderer {
 
 	private Design design;
 
@@ -100,7 +100,7 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 
 	private final EventHandler<NodeEvent> unitValueWatcher = e -> setLengthUnit( e.getNewValue() );
 
-	public BaseDesignToolV2Renderer() {
+	public DesignToolV2Renderer() {
 		// Ensure the minimum layout size can go to zero
 		// This fixes a problem where the parentToLocal and localToParent methods
 		// did not work correctly.
@@ -173,11 +173,17 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 		);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Design getDesign() {
 		return design;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setDesign( Design design ) {
 		if( this.design != null ) {
@@ -199,6 +205,9 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 		}
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setWorkplane( Workplane workplane ) {
 		// TODO Disconnect listeners
 
@@ -255,15 +264,24 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 		return renderer.dpiYProperty();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isGridVisible() {
 		return gridVisible != null && gridVisible().get();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public void setGridVisible( boolean visible ) {
 		gridVisible().set( visible );
 		render();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public SimpleBooleanProperty gridVisible() {
 		if( gridVisible == null ) gridVisible = new SimpleBooleanProperty( false );
 		return gridVisible;
@@ -271,14 +289,23 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 
 	// Visible Layers ------------------------------------------------------------
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public boolean isLayerVisible( DesignLayer layer ) {
 		return visibleLayers.contains( layer );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public List<DesignLayer> getVisibleLayers() {
 		return visibleLayers;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setVisibleLayers( Collection<DesignLayer> layers ) {
 		visibleLayers.clear();
@@ -286,6 +313,9 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 		render();
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void setLayerVisible( DesignLayer layer, boolean visible ) {
 		if( visible ) {
@@ -627,34 +657,58 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 		return renderer.parentToLocal( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D screenToWorld( double x, double y, double z ) {
 		return renderer.parentToLocal( x, y, z );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D screenToWorld( Point3D point ) {
 		return renderer.parentToLocal( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Bounds screenToWorld( Bounds bounds ) {
 		return renderer.parentToLocal( bounds );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point2D worldToScreen( double x, double y ) {
 		return renderer.localToParent( x, y );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point2D worldToScreen( Point2D point ) {
 		return renderer.localToParent( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D worldToScreen( double x, double y, double z ) {
 		return renderer.localToParent( x, y, z );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Point3D worldToScreen( Point3D point ) {
 		return renderer.localToParent( point );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Bounds worldToScreen( Bounds bounds ) {
 		return renderer.localToParent( bounds );
 	}
@@ -684,6 +738,9 @@ public class BaseDesignToolV2Renderer extends BaseDesignRenderer {
 		return renderer.localToParent( localBounds );
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	public Transform getScreenToWorldTransform() {
 		return renderer.getScreenToWorldTransform();
 	}

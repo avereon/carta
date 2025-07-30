@@ -1,18 +1,12 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.RenderConstants;
-import com.avereon.cartesia.tool.Workplane;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
 import lombok.CustomLog;
-
-import java.util.Collection;
-import java.util.List;
 
 @CustomLog
 public abstract class BaseDesignRenderer extends Pane implements DesignRenderer, RenderConstants {
@@ -70,39 +64,6 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
 		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
 	}
-
-	public abstract Workplane getWorkplane();
-
-	public abstract void setWorkplane( Workplane workplane );
-
-	public abstract boolean isGridVisible();
-
-	public abstract void setGridVisible( boolean visible );
-
-	public abstract Design getDesign();
-
-	public abstract void setDesign( Design design );
-
-	public abstract boolean isLayerVisible( DesignLayer layer );
-
-	public abstract List<DesignLayer> getVisibleLayers();
-
-	public abstract void setVisibleLayers( Collection<DesignLayer> layers );
-
-	public abstract void setLayerVisible( DesignLayer layer, boolean visible );
-
-	/**
-	 * Called to request the design be rendered.
-	 */
-	public abstract void render();
-
-	/**
-	 * Called to request the design be printed.
-	 *
-	 * @param factor The scale factor to apply to the design when printing.
-	 */
-	@Deprecated
-	public abstract void print( double factor );
 
 	/**
 	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
