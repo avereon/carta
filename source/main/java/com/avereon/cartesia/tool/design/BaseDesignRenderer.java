@@ -71,6 +71,7 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 	 *
 	 * @param dpi The DPI to set
 	 */
+	@Override
 	public void setDpi( double dpi ) {
 		setDpi( dpi, dpi );
 	}
@@ -82,165 +83,204 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 	 * @param dpiX The DPI to set for the X axis
 	 * @param dpiY The DPI to set for the Y axis
 	 */
+	@Override
 	public void setDpi( double dpiX, double dpiY ) {
 		setDpiX( dpiX );
 		setDpiY( dpiY );
 	}
 
+	@Override
 	public void setDpiX( double dpi ) {
 		dpiX.set( dpi );
 	}
 
+	@Override
 	public double getDpiX() {
 		return dpiX.get();
 	}
 
+	@Override
 	public DoubleProperty dpiXProperty() {
 		return dpiX;
 	}
 
+	@Override
 	public double getDpiY() {
 		return dpiY.get();
 	}
 
+	@Override
 	public void setDpiY( double dpi ) {
 		dpiY.set( dpi );
 	}
 
+	@Override
 	public DoubleProperty dpiYProperty() {
 		return dpiY;
 	}
 
+	@Override
 	public void setOutputScale( double scaleX, double scaleY ) {
 		setOutputScaleX( scaleX );
 		setOutputScaleY( scaleY );
 	}
 
+	@Override
 	public double getOutputScaleX() {
 		return outputScaleX.get();
 	}
 
+	@Override
 	public void setOutputScaleX( double scale ) {
 		outputScaleX.set( scale );
 	}
 
+	@Override
 	public DoubleProperty outputScaleXProperty() {
 		return outputScaleX;
 	}
 
+	@Override
 	public double getOutputScaleY() {
 		return outputScaleY.get();
 	}
 
+	@Override
 	public void setOutputScaleY( double scale ) {
 		outputScaleY.set( scale );
 	}
 
+	@Override
 	public DoubleProperty outputScaleYProperty() {
 		return outputScaleY;
 	}
 
+	@Override
 	public Point3D getViewCenter() {
 		return new Point3D( viewCenterX.get(), viewCenterY.get(), viewCenterZ.get() );
 	}
 
+	@Override
 	public void setViewCenter( double x, double y, double z ) {
 		viewCenterX.set( x );
 		viewCenterY.set( y );
 		viewCenterZ.set( z );
 	}
 
+	@Override
 	public void setViewCenter( Point3D center ) {
 		setViewCenter( center.getX(), center.getY(), center.getZ() );
 	}
 
+	@Override
 	public double getViewCenterX() {
 		return viewCenterX.get();
 	}
 
+	@Override
 	public void setViewCenterX( double x ) {
 		viewCenterX.set( x );
 	}
 
+	@Override
 	public DoubleProperty viewCenterXProperty() {
 		return viewCenterX;
 	}
 
+	@Override
 	public double getViewCenterY() {
 		return viewCenterY.get();
 	}
 
+	@Override
 	public void setViewCenterY( double y ) {
 		viewCenterY.set( y );
 	}
 
+	@Override
 	public DoubleProperty viewCenterYProperty() {
 		return viewCenterY;
 	}
 
+	@Override
 	public double getViewCenterZ() {
 		return viewCenterZ.get();
 	}
 
+	@Override
 	public void setViewCenterZ( double z ) {
 		viewCenterZ.set( z );
 	}
 
+	@Override
 	public DoubleProperty viewCenterZProperty() {
 		return viewCenterZ;
 	}
 
+	@Override
 	public double getViewRotate() {
 		return viewRotate.get();
 	}
 
+	@Override
 	public void setViewRotate( double rotate ) {
 		viewRotate.set( rotate );
 	}
 
+	@Override
 	public DoubleProperty viewRotateProperty() {
 		return viewRotate;
 	}
 
+	@Override
 	public Point2D getViewZoom() {
 		return new Point2D( viewZoomX.get(), viewZoomY.get() );
 	}
 
+	@Override
 	public void setViewZoom( double zoom ) {
 		setViewZoom( zoom, zoom );
 	}
 
+	@Override
 	public void setViewZoom( double zoomX, double zoomY ) {
 		log.atConfig().log( "set view zoom..." );
 		setViewZoomX( zoomX );
 		setViewZoomY( zoomY );
 	}
 
+	@Override
 	public void setViewZoom( Point2D zoom ) {
 		setViewZoomX( zoom.getX() );
 		setViewZoomY( zoom.getY() );
 	}
 
+	@Override
 	public double getViewZoomX() {
 		return viewZoomX.get();
 	}
 
+	@Override
 	public void setViewZoomX( double zoom ) {
 		viewZoomX.set( zoom );
 	}
 
+	@Override
 	public DoubleProperty viewZoomXProperty() {
 		return viewZoomX;
 	}
 
+	@Override
 	public double getViewZoomY() {
 		return viewZoomY.get();
 	}
 
+	@Override
 	public void setViewZoomY( double zoom ) {
 		viewZoomY.set( zoom );
 	}
 
+	@Override
 	public DoubleProperty viewZoomYProperty() {
 		return viewZoomY;
 	}

@@ -3,6 +3,9 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
+import javafx.beans.property.DoubleProperty;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
 
 import java.util.Collection;
 import java.util.List;
@@ -41,7 +44,6 @@ public interface DesignRenderer extends CommonToolRenderer {
 	 * workplane. If null, the current workplane association is removed.
 	 *
 	 * @param workplane The {@code Workplane} instance to associate with the renderer.
-	 *
 	 */
 	void setWorkplane( Workplane workplane );
 
@@ -97,5 +99,98 @@ public interface DesignRenderer extends CommonToolRenderer {
 	 */
 	@Deprecated
 	void print( double factor );
+
+	/**
+	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
+	 * axes to the same value.
+	 *
+	 * @param dpi The DPI to set
+	 */
+	void setDpi( double dpi );
+
+	/**
+	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
+	 * axes.
+	 *
+	 * @param dpiX The DPI to set for the X axis
+	 * @param dpiY The DPI to set for the Y axis
+	 */
+	void setDpi( double dpiX, double dpiY );
+
+	void setDpiX( double dpi );
+
+	double getDpiX();
+
+	DoubleProperty dpiXProperty();
+
+	double getDpiY();
+
+	void setDpiY( double dpi );
+
+	DoubleProperty dpiYProperty();
+
+	void setOutputScale( double scaleX, double scaleY );
+
+	double getOutputScaleX();
+
+	void setOutputScaleX( double scale );
+
+	DoubleProperty outputScaleXProperty();
+
+	double getOutputScaleY();
+
+	void setOutputScaleY( double scale );
+
+	DoubleProperty outputScaleYProperty();
+
+	Point3D getViewCenter();
+
+	void setViewCenter( double x, double y, double z );
+
+	void setViewCenter( Point3D center );
+
+	double getViewCenterX();
+
+	void setViewCenterX( double x );
+
+	DoubleProperty viewCenterXProperty();
+
+	double getViewCenterY();
+
+	void setViewCenterY( double y );
+
+	DoubleProperty viewCenterYProperty();
+
+	double getViewCenterZ();
+
+	void setViewCenterZ( double z );
+
+	DoubleProperty viewCenterZProperty();
+
+	double getViewRotate();
+
+	void setViewRotate( double rotate );
+
+	DoubleProperty viewRotateProperty();
+
+	Point2D getViewZoom();
+
+	void setViewZoom( double zoom );
+
+	void setViewZoom( double zoomX, double zoomY );
+
+	void setViewZoom( Point2D zoom );
+
+	double getViewZoomX();
+
+	void setViewZoomX( double zoom );
+
+	DoubleProperty viewZoomXProperty();
+
+	double getViewZoomY();
+
+	void setViewZoomY( double zoom );
+
+	DoubleProperty viewZoomYProperty();
 
 }
