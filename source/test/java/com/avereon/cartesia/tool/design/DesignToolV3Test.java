@@ -55,7 +55,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
 		assertThat( tool.getDesign() ).isNotNull();
 
-		lenient().doCallRealMethod().when( renderer ).setDpi( anyDouble() );
+		lenient().doCallRealMethod().when( renderer ).setDpi( anyDouble(), anyDouble() );
 	}
 
 	@Test
@@ -203,7 +203,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		tool.setDpi( 2 * DesignToolV3.DEFAULT_DPI );
 
 		// Check that it delegates to the renderer
-		verify( renderer, times( 1 ) ).setDpi( 2 * DesignToolV3.DEFAULT_DPI );
+		verify( renderer, times( 1 ) ).setDpi( 2 * DesignToolV3.DEFAULT_DPI, 2 * DesignToolV3.DEFAULT_DPI );
 	}
 
 	@Test

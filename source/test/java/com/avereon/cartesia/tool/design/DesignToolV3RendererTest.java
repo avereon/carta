@@ -115,10 +115,6 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void setDpi() {
-		renderer.setDpi( 300 );
-		assertThat( renderer.getDpiX() ).isEqualTo( 300 );
-		assertThat( renderer.getDpiY() ).isEqualTo( 300 );
-
 		renderer.setDpi( 150, 200 );
 		assertThat( renderer.getDpiX() ).isEqualTo( 150 );
 		assertThat( renderer.getDpiY() ).isEqualTo( 200 );
@@ -247,11 +243,6 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void setViewZoom() {
-		renderer.setViewZoom( 2.0 );
-		assertThat( renderer.getViewZoomX() ).isEqualTo( 2.0 );
-		assertThat( renderer.getViewZoomY() ).isEqualTo( 2.0 );
-		assertThat( renderer.getViewZoom() ).isEqualTo( new Point2D( 2.0, 2.0 ) );
-
 		renderer.setViewZoom( 3, 4 );
 		assertThat( renderer.getViewZoomX() ).isEqualTo( 3.0 );
 		assertThat( renderer.getViewZoomY() ).isEqualTo( 4.0 );
@@ -491,7 +482,7 @@ public class DesignToolV3RendererTest {
 		Assertions.assertThat( renderer.getVisualBounds( construction ) ).isEqualTo( new BoundingBox( -207.87400817871094, -207.87400817871094, 415.7480163574219, 415.7480163574219 ) );
 
 		// when
-		renderer.setDpi( 2 * DesignToolV3.DEFAULT_DPI );
+		renderer.setDpi( 2 * DesignToolV3.DEFAULT_DPI, 2 * DesignToolV3.DEFAULT_DPI );
 
 		// then
 		// The FX geometry should have changed in the renderer
@@ -670,7 +661,7 @@ public class DesignToolV3RendererTest {
 		// given
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
-		renderer.setViewZoom( 2 );
+		renderer.setViewZoom( 2, 2 );
 		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
 		double scale = 0.5;
 
@@ -811,7 +802,7 @@ public class DesignToolV3RendererTest {
 		// given
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
-		renderer.setViewZoom( 2 );
+		renderer.setViewZoom( 2, 2 );
 		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
 		double scale = 2;
 

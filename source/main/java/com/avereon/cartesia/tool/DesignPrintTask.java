@@ -124,12 +124,12 @@ public class DesignPrintTask extends Task<Void> {
 		renderer.setDesign( asset.getModel() );
 		renderer.setVisibleLayers( tool.getVisibleLayers() );
 
-		renderer.setDpi( factor * 72 );
+		renderer.setDpi( factor * 72, factor * 72 );
 		renderer.setPrefWidth( layout.getPrintableWidth() );
 		renderer.setPrefHeight( layout.getPrintableHeight() );
 		renderer.setViewCenter( tool.getViewCenter() );
 		renderer.setViewRotate( tool.getViewRotate() );
-		renderer.setViewZoom( tool.getViewZoom() );
+		renderer.setViewZoom( tool.getViewZoom(), tool.getViewZoom() );
 
 		//renderer.setReferenceLayerVisible( false );
 

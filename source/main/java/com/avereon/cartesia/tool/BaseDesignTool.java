@@ -388,7 +388,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public void setViewZoom( double viewZoom ) {
-		getRenderer().setViewZoom( viewZoom );
+		getRenderer().setViewZoom( viewZoom, viewZoom );
 	}
 
 	@Override
@@ -433,7 +433,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public void setDpi( double dpi ) {
-		getRenderer().setDpi( dpi );
+		getRenderer().setDpi( dpi, dpi );
 	}
 
 	public DoubleProperty viewDpiProperty() {

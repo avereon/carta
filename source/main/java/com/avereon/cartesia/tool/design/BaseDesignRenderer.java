@@ -67,17 +67,6 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 
 	/**
 	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
-	 * axes to the same value.
-	 *
-	 * @param dpi The DPI to set
-	 */
-	@Override
-	public void setDpi( double dpi ) {
-		setDpi( dpi, dpi );
-	}
-
-	/**
-	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
 	 * axes.
 	 *
 	 * @param dpiX The DPI to set for the X axis
@@ -235,11 +224,6 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 	@Override
 	public Point2D getViewZoom() {
 		return new Point2D( viewZoomX.get(), viewZoomY.get() );
-	}
-
-	@Override
-	public void setViewZoom( double zoom ) {
-		setViewZoom( zoom, zoom );
 	}
 
 	@Override

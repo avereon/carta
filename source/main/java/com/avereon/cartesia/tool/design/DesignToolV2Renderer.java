@@ -225,11 +225,6 @@ public class DesignToolV2Renderer extends BaseDesignRenderer {
 	}
 
 	@Override
-	public void setDpi( double dpi ) {
-		setDpi( dpi, dpi );
-	}
-
-	@Override
 	public void setDpi( double dpiX, double dpiY ) {
 		renderer.setDpi( dpiX, dpiY );
 	}
@@ -601,11 +596,6 @@ public class DesignToolV2Renderer extends BaseDesignRenderer {
 	 */
 	public Point2D getViewZoom() {
 		return new Point2D( renderer.getZoomX(), renderer.getZoomY() );
-	}
-
-	@Override
-	public void setViewZoom( double zoom ) {
-		renderer.setZoom( zoom, zoom );
 	}
 
 	@Override

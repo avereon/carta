@@ -102,14 +102,6 @@ public interface DesignRenderer extends CommonToolRenderer {
 
 	/**
 	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
-	 * axes to the same value.
-	 *
-	 * @param dpi The DPI to set
-	 */
-	void setDpi( double dpi );
-
-	/**
-	 * Set the DPI for the renderer. This method sets the DPI for both the X and Y
 	 * axes.
 	 *
 	 * @param dpiX The DPI to set for the X axis
@@ -174,8 +166,6 @@ public interface DesignRenderer extends CommonToolRenderer {
 	DoubleProperty viewRotateProperty();
 
 	Point2D getViewZoom();
-
-	void setViewZoom( double zoom );
 
 	void setViewZoom( double zoomX, double zoomY );
 

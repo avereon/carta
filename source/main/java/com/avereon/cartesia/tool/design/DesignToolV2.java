@@ -381,7 +381,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	@Override
 	public void setViewZoom( double viewZoom ) {
-		renderer.setViewZoom( viewZoom );
+		renderer.setViewZoom( viewZoom, viewZoom );
 	}
 
 	@Override
@@ -407,7 +407,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	@Override
 	public void setView( Point3D center, double zoom, double rotate ) {
 		renderer.setViewCenter( center );
-		renderer.setViewZoom( zoom );
+		renderer.setViewZoom( zoom, zoom );
 		renderer.setViewRotate( rotate );
 	}
 
