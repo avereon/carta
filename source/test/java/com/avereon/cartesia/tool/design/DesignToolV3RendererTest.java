@@ -246,12 +246,10 @@ public class DesignToolV3RendererTest {
 		renderer.setViewZoom( 3, 4 );
 		assertThat( renderer.getViewZoomX() ).isEqualTo( 3.0 );
 		assertThat( renderer.getViewZoomY() ).isEqualTo( 4.0 );
-		assertThat( renderer.getViewZoom() ).isEqualTo( new Point2D( 3.0, 4.0 ) );
 
 		renderer.setViewZoom( new Point2D( 5, 6 ) );
 		assertThat( renderer.getViewZoomX() ).isEqualTo( 5.0 );
 		assertThat( renderer.getViewZoomY() ).isEqualTo( 6.0 );
-		assertThat( renderer.getViewZoom() ).isEqualTo( new Point2D( 5.0, 6.0 ) );
 	}
 
 	@Test

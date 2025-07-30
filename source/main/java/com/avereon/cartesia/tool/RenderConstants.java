@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool;
 
-import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 
 public interface RenderConstants {
@@ -13,7 +12,7 @@ public interface RenderConstants {
 
 	double DEFAULT_ROTATE = 0;
 
-	Point2D DEFAULT_ZOOM = new Point2D( 1, 1 );
+	double DEFAULT_ZOOM = 1;
 
 	/**
 	 * The default JavaFx refresh rate of 60 Hz.

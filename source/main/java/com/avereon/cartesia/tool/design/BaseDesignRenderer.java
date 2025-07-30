@@ -61,8 +61,8 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 		viewCenterY = new SimpleDoubleProperty( DEFAULT_CENTER.getY() );
 		viewCenterZ = new SimpleDoubleProperty( DEFAULT_CENTER.getZ() );
 		viewRotate = new SimpleDoubleProperty( DEFAULT_ROTATE );
-		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM.getX() );
-		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM.getY() );
+		viewZoomX = new SimpleDoubleProperty( DEFAULT_ZOOM );
+		viewZoomY = new SimpleDoubleProperty( DEFAULT_ZOOM );
 	}
 
 	/**
@@ -222,8 +222,13 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 	}
 
 	@Override
-	public Point2D getViewZoom() {
-		return new Point2D( viewZoomX.get(), viewZoomY.get() );
+	public double getViewZoom() {
+		return getViewZoomX();
+	}
+
+	@Override
+	public void setViewZoom( double viewZoom ) {
+		setViewZoom( viewZoom, viewZoom );
 	}
 
 	@Override
@@ -281,7 +286,7 @@ public abstract class BaseDesignRenderer extends Pane implements DesignRenderer,
 		Point3D offset = getViewCenter().subtract( anchor );
 
 		// The new view zoom has to be set before the new view center
-		setViewZoom( getViewZoom().multiply( factor ) );
+		setViewZoom( new Point2D( viewZoomX.get(), viewZoomY.get() ).multiply( factor ) );
 
 		// The new view center has to be set after the new view zoom
 		setViewCenter( anchor.add( offset.multiply( 1.0 / factor ) ) );

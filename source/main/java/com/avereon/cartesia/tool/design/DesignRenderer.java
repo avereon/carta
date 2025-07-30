@@ -5,7 +5,6 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
 import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Point2D;
-import javafx.geometry.Point3D;
 
 import java.util.Collection;
 import java.util.List;
@@ -135,11 +134,7 @@ public interface DesignRenderer extends CommonToolRenderer {
 
 	DoubleProperty outputScaleYProperty();
 
-	Point3D getViewCenter();
-
 	void setViewCenter( double x, double y, double z );
-
-	void setViewCenter( Point3D center );
 
 	double getViewCenterX();
 
@@ -159,13 +154,7 @@ public interface DesignRenderer extends CommonToolRenderer {
 
 	DoubleProperty viewCenterZProperty();
 
-	double getViewRotate();
-
-	void setViewRotate( double rotate );
-
 	DoubleProperty viewRotateProperty();
-
-	Point2D getViewZoom();
 
 	void setViewZoom( double zoomX, double zoomY );
 

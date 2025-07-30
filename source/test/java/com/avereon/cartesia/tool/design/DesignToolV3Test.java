@@ -111,7 +111,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		double result = tool.getViewZoom();
 
 		// then
-		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_ZOOM.getX() );
+		assertThat( result ).isEqualTo( DesignToolV3.DEFAULT_ZOOM );
 	}
 
 	@Test

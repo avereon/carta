@@ -105,21 +105,23 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 	 */
 	void setGridSystem( Grid system );
 
-	Point3D getViewCenter();
-
-	void setViewCenter( Point3D point );
-
-	double getViewRotate();
-
-	void setViewRotate( double angle );
-
+	/**
+	 * Convenience method to get the DPI as one value. Technically the DPI has
+	 * both a horizontal and vertical component, but commonly these are both the
+	 * same value.
+	 *
+	 * @return The common DPI value
+	 */
 	double getDpi();
 
+	/**
+	 * Convenience method to set both the horizontal and vertical DPI to the same
+	 * value. Technically the DPI has both a horizontal and vertical component,
+	 * but commonly these are both the same value.
+	 *
+	 * @param dpi The common DPI value
+	 */
 	void setDpi( double dpi );
-
-	double getViewZoom();
-
-	void setViewZoom( double viewZoom );
 
 	void setView( DesignPortal portal );
 

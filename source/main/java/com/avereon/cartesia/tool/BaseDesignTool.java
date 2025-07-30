@@ -383,7 +383,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public double getViewZoom() {
-		return getRenderer().getViewZoom().getX();
+		return getRenderer().getViewZoomX();
 	}
 
 	@Override

@@ -589,15 +589,6 @@ public class DesignToolV2Renderer extends BaseDesignRenderer {
 		return renderer.viewRotateProperty();
 	}
 
-	/**
-	 * Convenience method to get the zoom of the renderer.
-	 *
-	 * @return The zoom of the renderer
-	 */
-	public Point2D getViewZoom() {
-		return new Point2D( renderer.getZoomX(), renderer.getZoomY() );
-	}
-
 	@Override
 	public void setViewZoom( double zoomX, double zoomY ) {
 		renderer.setZoom( zoomX, zoomY );
