@@ -13,6 +13,7 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
 import javafx.scene.transform.Transform;
 import org.assertj.core.api.Assertions;
@@ -59,24 +60,24 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void setWorkplane() {
-		Workplane workplane = new Workplane();
-		renderer.setWorkplane( workplane );
-		assertThat( renderer.getWorkplane() ).isEqualTo( workplane );
-	}
-
-	@Test
-	void setWorkplaneWithNull() {
+	void internalPanelLayout() {
 		// given
-		Workplane workplane = new Workplane();
-		renderer.setWorkplane( workplane );
-		assertThat( renderer.getWorkplane() ).isEqualTo( workplane );
+		double width = 1000;
+		double height = 1000;
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
 
 		// when
-		renderer.setWorkplane( null );
+		renderer.resizeRelocate( 0, 0, width, height );
+		renderer.layout();
 
 		// then
-		assertThat( renderer.getWorkplane() ).isEqualTo( null );
+		assertBounds( renderer.getGrid(), 0, 0, width, height );
+		assertBounds( renderer.getLayers(), 0, 0, width, height );
+		assertBounds( renderer.getPreview(), 0, 0, width, height );
+		assertBounds( renderer.getReference(), 0, 0, width, height );
+		assertBounds( renderer.getWorld(), 0, 0, width, height );
+		assertBounds( renderer, 0, 0, width, height );
 	}
 
 	@Test
@@ -98,6 +99,27 @@ public class DesignToolV3RendererTest {
 
 		// then
 		assertThat( renderer.getDesign() ).isEqualTo( null );
+	}
+
+	@Test
+	void setWorkplane() {
+		Workplane workplane = new Workplane();
+		renderer.setWorkplane( workplane );
+		assertThat( renderer.getWorkplane() ).isEqualTo( workplane );
+	}
+
+	@Test
+	void setWorkplaneWithNull() {
+		// given
+		Workplane workplane = new Workplane();
+		renderer.setWorkplane( workplane );
+		assertThat( renderer.getWorkplane() ).isEqualTo( workplane );
+
+		// when
+		renderer.setWorkplane( null );
+
+		// then
+		assertThat( renderer.getWorkplane() ).isEqualTo( null );
 	}
 
 	@Test
@@ -841,9 +863,31 @@ public class DesignToolV3RendererTest {
 		assertThat( throwable ).isNull();
 	}
 
+	@Test
+	void understandWorldPaneBehaviorWithGridGeometryAdded() {
+		// given
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.resizeRelocate( 0, 0, 1000, 1000 );
+		renderer.layout();
+
+		// then
+		assertThat( renderer.getGrid().getWidth() ).isEqualTo( 1000 );
+		assertThat( renderer.getWorld().getWidth() ).isEqualTo( 1000 );
+		assertThat( renderer.getHeight() ).isEqualTo( 1000 );
+	}
+
 	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
 		WeakReference<Pane> weakLayer = layer.getValue( DesignToolV3Renderer.FX_SHAPE );
 		if( weakLayer == null ) return -1;
 		return pane.getChildren().indexOf( weakLayer.get() );
 	}
+
+	private void assertBounds( Region region, double x, double y, double width, double height ) {
+		assertThat( region.getLayoutX() ).isEqualTo( 0 );
+		assertThat( region.getLayoutY() ).isEqualTo( 0 );
+		assertThat( region.getWidth() ).isEqualTo( width );
+		assertThat( region.getHeight() ).isEqualTo( height );
+	}
+
 }

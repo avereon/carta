@@ -5,11 +5,11 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import lombok.CustomLog;
 
 @CustomLog
-public abstract class BaseDesignRenderer extends Pane implements DesignRenderer, RenderConstants {
+public abstract class BaseDesignRenderer extends StackPane implements DesignRenderer, RenderConstants {
 
 	private final DoubleProperty dpiX;
 

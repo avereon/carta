@@ -14,6 +14,7 @@ import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
@@ -21,6 +22,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.NonInvertibleTransformException;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
+import lombok.Getter;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -39,7 +41,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * This field is immutable and is used internally to manage the rendering system's
 	 * screen-level components.
 	 */
-	private final Pane screen;
+	@Getter
+	final Pane screen;
 
 	/**
 	 * Represents the primary rendering pane for the design in the renderer.
@@ -50,18 +53,23 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * This field is immutable and is used internally to manage the rendering system's
 	 * design-level components.
 	 */
-	private final Pane world;
+	@Getter
+	final Pane world;
 
 	// The geometry in this pane should be configured by the workplane but
-	// managed by an internal class that can optimize the use of the FX geometry.
-	private final Pane grid;
+	// managed internally so that it can be optimized the use of the FX geometry.
+	@Getter
+	final Pane grid;
 
 	// The design pane contains all the design layers.
-	private final Pane layers;
+	@Getter
+	final Pane layers;
 
-	private final Pane reference;
+	@Getter
+	final Pane reference;
 
-	private final Pane preview;
+	@Getter
+	final Pane preview;
 
 	private final DoubleProperty shapeScaleX;
 
@@ -119,7 +127,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 		// The world scale container
 		// Contains the grid, design, preview, and reference panes
-		world = new Pane();
+		world = new StackPane();
 		world.getChildren().addAll( grid, layers, preview, reference );
 
 		// The screen scale container
@@ -136,8 +144,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// The translate properties do not include the output scale property because
 		// these are parent coordinates and not local coordinates, and the parent
 		// transforms have already incorporated the output scale.
-		world.layoutXProperty().bind( new SimpleDoubleProperty( 0 ) );
-		world.layoutYProperty().bind( new SimpleDoubleProperty( 0 ) );
 		world
 			.translateXProperty()
 			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) ).add( widthProperty().multiply( 0.5 ) ) );
@@ -471,7 +477,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		if( workplane == null ) {
 			grid.getChildren().clear();
 		} else {
-			// NEXT - Adding the grid geometry is changing how the world is oriented, not what I expected
+			// NEXT Adding the grid geometry is changing how the world is oriented, not what I expected
 			//Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
 		}
 		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
