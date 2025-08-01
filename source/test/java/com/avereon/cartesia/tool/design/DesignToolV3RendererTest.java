@@ -866,15 +866,27 @@ public class DesignToolV3RendererTest {
 	@Test
 	void understandWorldPaneBehaviorWithGridGeometryAdded() {
 		// given
+		double width = 1000;
+		double height = 1000;
+		Workplane workplane = new Workplane();
 		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, 1000, 1000 );
+		renderer.setWorkplane( workplane );
+		renderer.resizeRelocate( 0, 0, width, height );
 		renderer.layout();
+		assertBounds( renderer.getGrid(), 0, 0, width, height );
+		assertBounds( renderer.getWorld(), 0, 0, width, height );
+		assertBounds( renderer, 0, 0, width, height );
+
+		// when
+		// When we add the grid geometry, do those numbers change?
+		workplane.setBounds( new BoundingBox( -10, -10, 20, 20 ) );
 
 		// then
-		assertThat( renderer.getGrid().getWidth() ).isEqualTo( 1000 );
-		assertThat( renderer.getWorld().getWidth() ).isEqualTo( 1000 );
-		assertThat( renderer.getHeight() ).isEqualTo( 1000 );
+		assertBounds( renderer.getGrid(), 0, 0, width, height );
+		assertBounds( renderer.getWorld(), 0, 0, width, height );
+		assertBounds( renderer, 0, 0, width, height );
+		// Awwwww, this didn't reproduce the problem I'm seeing.
+		// Maybe it won't now that I'm using StackPane.
 	}
 
 	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
