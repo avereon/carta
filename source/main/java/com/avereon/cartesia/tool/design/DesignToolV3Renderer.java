@@ -144,15 +144,19 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 		// The translate properties do not include the output scale property because
 		// these are parent coordinates and not local coordinates, and the parent
-		// transforms have already incorporated the output scale.
-		//				world.layoutXProperty().bind( new SimpleDoubleProperty(0) );
-		//				world.layoutYProperty().bind( new SimpleDoubleProperty(0) );
-		//		world
-		//			.translateXProperty()
-		//			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) ).add( widthProperty().multiply( 0.5 ) ) );
-		//		world.translateYProperty().bind( viewZoomYProperty().multiply( viewCenterYProperty().multiply( unitScaleProperty() ).multiply( dpiYProperty() ) ).add( heightProperty().multiply( 0.5 ) ) );
-		world.translateXProperty().bind( new SimpleDoubleProperty( 0 ) );
-		world.translateYProperty().bind( new SimpleDoubleProperty( 0 ) );
+		// transforms have already incorporated the output scale. The translate
+		// properties also have to compensate for the scale acting at the center of
+		// the pane and not at the origin.
+		world
+			.translateXProperty()
+			.bind( viewZoomXProperty()
+				.multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) )
+				.add( widthProperty().multiply( 0.5 ).divide( outputScaleXProperty() ) ) );
+		world
+			.translateYProperty()
+			.bind( viewZoomYProperty()
+				.multiply( viewCenterYProperty().multiply( unitScaleProperty() ).multiply( dpiYProperty() ) )
+				.add( heightProperty().multiply( -0.5 ).divide( outputScaleXProperty() ) ) );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -322,14 +326,15 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	public Transform getScreenToWorldTransform() {
-		if( screenToWorldTransform == null ) {
+		// FIXME This causes stale transforms :-(
+		//if( screenToWorldTransform == null ) {
 			try {
 				screenToWorldTransform = getWorldToScreenTransform().createInverse();
 			} catch( NonInvertibleTransformException exception ) {
 				// This should never happen since the world-to-screen transform should always be invertible
 				throw new RuntimeException( exception );
 			}
-		}
+		//}
 		return screenToWorldTransform;
 	}
 
@@ -372,10 +377,11 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	public Transform getWorldToScreenTransform() {
-		if( worldToScreenTransform == null ) {
+		// FIXME This causes stale transforms :-(
+		//if( worldToScreenTransform == null ) {
 			Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
 			worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
-		}
+		//}
 		return worldToScreenTransform;
 	}
 
@@ -467,8 +473,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
 	}
 
-	private void clearCachedTransforms(
-	) {
+	private void clearCachedTransforms() {
 		// Clear the cached transforms
 		screenToWorldTransform = null;
 		worldToScreenTransform = null;
@@ -586,7 +591,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		fxShape.setStrokeLineCap( designShape.calcDrawCap() );
 		fxShape.setStrokeLineJoin( designShape.calcDrawJoin() );
 		//fxShape.setStrokeType( designShape.calcDrawType() );
-
 
 		return updateCommonShapeGeometry( designShape, fxShape, shapeScaleX, shapeScaleY );
 	}

@@ -179,18 +179,18 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		// Configure the tool renderer
 		// The renderer is configured to render to the primary screen by default,
-		// but it can be configured to render to different media just as easily by
-		// changing the DPI setting.
-		// Should be:
+		// but it can be configured to render to different media just as easily.
+
+		// Example DPI values:
 		// Sapphire: 162 @ 1x
 		// Graphene: 153 @ 1x
 		renderer.setDpiX( Screen.getPrimary().getDpi() );
 		renderer.setDpiY( Screen.getPrimary().getDpi() );
 
+		// gsettings set org.gnome.desktop.interface scaling-factor 2
 		renderer.setOutputScaleX( Screen.getPrimary().getOutputScaleX() );
 		renderer.setOutputScaleY( Screen.getPrimary().getOutputScaleY() );
 
-		StackPane.setAlignment( renderer, Pos.CENTER );
 		this.renderer = renderer;
 
 		// Initially the toast is shown and the renderer is hidden
@@ -798,20 +798,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Note that the viewport can be panned, zoomed and rotated
 		// A world rectangle could be determined from the viewport
 
-		log.atConfig().log("renderer bounds=%s", getRenderer().getLayoutBounds() );
-
-		double width = getRenderer().getWidth();
-		double height = getRenderer().getHeight();
-		Bounds source = new BoundingBox( 0, 0, width, height );
-		//Bounds source = getRenderer().getBoundsInLocal();
-		//		System.out.println();
-		//		System.out.println( "source bounds: " + source );
-
-		// NEXT Continue work to manage the workplane bounds
-		Bounds workplaneBounds = getRenderer().screenToWorld( source );
-		workplaneBounds = new BoundingBox( -10, -10, 20, 20 );
-		//		System.out.println( "target bounds: " + workplaneBounds );
-		workplane.setBounds( workplaneBounds );
+		workplane.setBounds( getRenderer().screenToWorld( getRenderer().getLayoutBounds() ) );
 	}
 
 	protected class PrintAction extends ProgramAction {

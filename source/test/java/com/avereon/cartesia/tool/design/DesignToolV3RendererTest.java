@@ -21,13 +21,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.ref.WeakReference;
+import java.util.stream.Stream;
 
-import static com.avereon.cartesia.TestConstants.TIGHT_TOLERANCE;
-import static com.avereon.cartesia.TestConstants.TOLERANCE_PERCENT_LOOSE;
+import static com.avereon.cartesia.TestConstants.*;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_OUTPUT_SCALE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -863,30 +866,38 @@ public class DesignToolV3RendererTest {
 		assertThat( throwable ).isNull();
 	}
 
-	@Test
-	void understandWorldPaneBehaviorWithGridGeometryAdded() {
+	@ParameterizedTest
+	@MethodSource
+	void worldToScreenDoesNotChangeWithDifferentOutputScales( double outputScale, Point2D point, Point2D expected ) {
 		// given
 		double width = 1000;
 		double height = 1000;
-		Workplane workplane = new Workplane();
 		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( workplane );
+		renderer.setWorkplane( new Workplane() );
 		renderer.resizeRelocate( 0, 0, width, height );
 		renderer.layout();
-		assertBounds( renderer.getGrid(), 0, 0, width, height );
-		assertBounds( renderer.getWorld(), 0, 0, width, height );
-		assertBounds( renderer, 0, 0, width, height );
 
 		// when
-		// When we add the grid geometry, do those numbers change?
-		workplane.setBounds( new BoundingBox( -10, -10, 20, 20 ) );
+		renderer.setOutputScale( outputScale, outputScale );
+		Point2D actual = renderer.worldToScreen( point );
 
 		// then
-		assertBounds( renderer.getGrid(), 0, 0, width, height );
-		assertBounds( renderer.getWorld(), 0, 0, width, height );
-		assertBounds( renderer, 0, 0, width, height );
-		// Awwwww, this didn't reproduce the problem I'm seeing.
-		// Maybe it won't now that I'm using StackPane.
+		assertThat( actual.getX() ).isCloseTo( expected.getX(), TOLERANCE );
+		assertThat( actual.getY() ).isCloseTo( expected.getY(), TOLERANCE );
+	}
+
+	private static Stream<Arguments> worldToScreenDoesNotChangeWithDifferentOutputScales() {
+		return Stream.of(
+			Arguments.of( 1, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 1.25, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 1.5, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 1.75, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 2, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 2.25, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 2.5, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 2.75, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) ),
+			Arguments.of( 3, new Point2D( -1, 0 ), new Point2D( 462.20472440944883, 500 ) )
+		);
 	}
 
 	private int paneIndexOfDesignLayer( Pane pane, DesignLayer layer ) {
