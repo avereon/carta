@@ -7,6 +7,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
+import com.avereon.zerra.javafx.Fx;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -144,12 +145,14 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// The translate properties do not include the output scale property because
 		// these are parent coordinates and not local coordinates, and the parent
 		// transforms have already incorporated the output scale.
-		world
-			.translateXProperty()
-			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) ).add( widthProperty().multiply( 0.5 ) ) );
-		world.translateYProperty().bind( viewZoomYProperty().multiply( viewCenterYProperty().multiply( unitScaleProperty() ).multiply( dpiYProperty() ) ).add( heightProperty().multiply( 0.5 ) ) );
-		//		world.translateXProperty().bind( new SimpleDoubleProperty(0) );
-		//		world.translateYProperty().bind( new SimpleDoubleProperty(0) );
+		//				world.layoutXProperty().bind( new SimpleDoubleProperty(0) );
+		//				world.layoutYProperty().bind( new SimpleDoubleProperty(0) );
+		//		world
+		//			.translateXProperty()
+		//			.bind( viewZoomXProperty().multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) ).add( widthProperty().multiply( 0.5 ) ) );
+		//		world.translateYProperty().bind( viewZoomYProperty().multiply( viewCenterYProperty().multiply( unitScaleProperty() ).multiply( dpiYProperty() ) ).add( heightProperty().multiply( 0.5 ) ) );
+		world.translateXProperty().bind( new SimpleDoubleProperty( 0 ) );
+		world.translateYProperty().bind( new SimpleDoubleProperty( 0 ) );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -477,8 +480,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		if( workplane == null ) {
 			grid.getChildren().clear();
 		} else {
-			// NEXT Adding the grid geometry is changing how the world is oriented, not what I expected
-			//Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
+			Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
 		}
 		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
 	}
@@ -576,17 +578,17 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 			return null;
 		}
 
-		fxShape.setUserData( designShape );
 		fxShape.setManaged( false );
+		fxShape.setUserData( designShape );
 
+		fxShape.setFill( designShape.calcFillPaint() );
 		fxShape.setStroke( designShape.calcDrawPaint() );
 		fxShape.setStrokeLineCap( designShape.calcDrawCap() );
 		fxShape.setStrokeLineJoin( designShape.calcDrawJoin() );
 		//fxShape.setStrokeType( designShape.calcDrawType() );
 
-		fxShape.setFill( designShape.calcFillPaint() );
 
-		return fxShape;
+		return updateCommonShapeGeometry( designShape, fxShape, shapeScaleX, shapeScaleY );
 	}
 
 	private Shape updateLineGeometry( DesignLine designLine, double shapeScaleX, double shapeScaleY ) {
@@ -602,7 +604,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		line.setEndX( designLine.getPoint().getX() * shapeScaleX );
 		line.setEndY( designLine.getPoint().getY() * shapeScaleY );
 
-		return updateCommonShapeGeometry( designLine, line, shapeScaleX, shapeScaleY );
+		return line;
 	}
 
 	// TODO Finish building the update methods for the remaining design shapes
@@ -626,7 +628,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// Rotate must be before scale
 		text.getTransforms().setAll( Transform.rotate( designText.calcRotate(), x, y ), Transform.scale( 1, -1 ) );
 
-		return updateCommonShapeGeometry( designText, text, shapeScaleX, shapeScaleY );
+		return text;
 	}
 
 	/**

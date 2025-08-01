@@ -189,6 +189,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		renderer.setOutputScaleX( Screen.getPrimary().getOutputScaleX() );
 		renderer.setOutputScaleY( Screen.getPrimary().getOutputScaleY() );
+
+		StackPane.setAlignment( renderer, Pos.CENTER );
 		this.renderer = renderer;
 
 		// Initially the toast is shown and the renderer is hidden
@@ -795,6 +797,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Determine the viewport boundaries in world coordinates
 		// Note that the viewport can be panned, zoomed and rotated
 		// A world rectangle could be determined from the viewport
+
+		log.atConfig().log("renderer bounds=%s", getRenderer().getLayoutBounds() );
 
 		double width = getRenderer().getWidth();
 		double height = getRenderer().getHeight();
