@@ -9,6 +9,42 @@ import java.util.Set;
 
 public class ExampleDesigns {
 
+	public static Design singleHorizontalLine() {
+		Design design = new Design2D();
+		design.setName( "Test Design" );
+
+		DesignLine line = new DesignLine( -1, 0, 1, 0 );
+		line.setDrawPaint( "#ffffff" );
+		line.setDrawWidth( "1.0" );
+		line.setDrawCap( StrokeLineCap.ROUND.name() );
+		line.setOrder( 0 );
+
+		DesignLayer construction = new DesignLayer();
+		construction.setName( "Construction" );
+		construction.addShapes( Set.of( line ) );
+		design.getLayers().addLayer( construction );
+
+		return design;
+	}
+
+	public static Design singleVerticalLine() {
+		Design design = new Design2D();
+		design.setName( "Test Design" );
+
+		DesignLine line = new DesignLine( 0, 1, 0, -1 );
+		line.setDrawPaint( "#ffffff" );
+		line.setDrawWidth( "1.0" );
+		line.setDrawCap( StrokeLineCap.ROUND.name() );
+		line.setOrder( 0 );
+
+		DesignLayer construction = new DesignLayer();
+		construction.setName( "Construction" );
+		construction.addShapes( Set.of( line ) );
+		design.getLayers().addLayer( construction );
+
+		return design;
+	}
+
 	public static Design redBlueX() {
 		Design design = new Design2D();
 		design.setName( "Test Design" );
