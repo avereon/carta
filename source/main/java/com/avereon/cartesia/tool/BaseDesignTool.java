@@ -37,10 +37,7 @@ import javafx.event.EventTarget;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.ScrollEvent;
-import javafx.scene.input.ZoomEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 import javafx.scene.transform.Transform;
 import javafx.stage.Screen;
@@ -263,6 +260,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		addEventFilter( MouseEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ScrollEvent.ANY, e -> getCommandContext().handle( e ) );
 		addEventFilter( ZoomEvent.ANY, e -> getCommandContext().handle( e ) );
+		addEventFilter( GestureEvent.ANY, e -> getCommandContext().handle( e ) );
 
 		// Swap the toast for the renderer
 		getToast().setVisible( false );

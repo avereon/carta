@@ -309,6 +309,10 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		submitEventCommand( event );
 	}
 
+	public void handle( GestureEvent event ) {
+		log.atConfig().log( "event=%s", event);
+	}
+
 	DesignTool getLastUserTool() {
 		return lastUserTool;
 	}
