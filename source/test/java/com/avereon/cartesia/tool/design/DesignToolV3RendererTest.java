@@ -860,12 +860,6 @@ public class DesignToolV3RendererTest {
 		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 * gz, TOLERANCE_PERCENT_LOOSE );
 	}
 
-	@Test
-	void updateGridFxGeometryDoesNotThrowNpe() {
-		Throwable throwable = catchThrowable( () -> renderer.updateGridFxGeometry() );
-		assertThat( throwable ).isNull();
-	}
-
 	@ParameterizedTest
 	@MethodSource
 	void worldToScreenDoesNotChangeWithDifferentOutputScales( double outputScale, Point2D point, Point2D expected ) {
@@ -884,6 +878,12 @@ public class DesignToolV3RendererTest {
 		// then
 		assertThat( actual.getX() ).isCloseTo( expected.getX(), TOLERANCE );
 		assertThat( actual.getY() ).isCloseTo( expected.getY(), TOLERANCE );
+	}
+
+	@Test
+	void updateGridFxGeometryDoesNotThrowNpe() {
+		Throwable throwable = catchThrowable( () -> renderer.updateGridFxGeometry() );
+		assertThat( throwable ).isNull();
 	}
 
 	private static Stream<Arguments> worldToScreenDoesNotChangeWithDifferentOutputScales() {
