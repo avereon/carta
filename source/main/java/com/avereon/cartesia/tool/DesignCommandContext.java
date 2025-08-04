@@ -310,7 +310,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public void handle( GestureEvent event ) {
-		log.atConfig().log( "event=%s", event);
+		log.atConfig().log( "gesture event=%s", event);
 	}
 
 	DesignTool getLastUserTool() {
