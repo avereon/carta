@@ -233,7 +233,6 @@ public abstract class BaseDesignRenderer extends StackPane implements DesignRend
 
 	@Override
 	public void setViewZoom( double zoomX, double zoomY ) {
-		log.atConfig().log( "set view zoom..." );
 		setViewZoomX( zoomX );
 		setViewZoomY( zoomY );
 	}
