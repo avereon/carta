@@ -149,14 +149,19 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// the pane and not at the origin.
 		world
 			.translateXProperty()
-			.bind( viewZoomXProperty()
-				.multiply( viewCenterXProperty().multiply( -1 ).multiply( unitScaleProperty() ).multiply( dpiXProperty() ) )
-				.add( widthProperty().multiply( 0.5 ).divide( outputScaleXProperty() ) ) );
+			.bind( viewCenterXProperty()
+				.multiply( viewZoomXProperty() )
+				.multiply( -1 )
+				.multiply( unitScaleProperty() )
+				.multiply( dpiXProperty() )
+				.add( widthProperty().multiply( 0.5 ).multiply( viewZoomXProperty() ).divide( outputScaleXProperty() ) ) );
 		world
 			.translateYProperty()
-			.bind( viewZoomYProperty()
-				.multiply( viewCenterYProperty().multiply( unitScaleProperty() ).multiply( dpiYProperty() ) )
-				.add( heightProperty().multiply( -0.5 ).divide( outputScaleXProperty() ) ) );
+			.bind( viewCenterYProperty()
+				.multiply( viewZoomXProperty() )
+				.multiply( unitScaleProperty() )
+				.multiply( dpiYProperty() )
+				.add( heightProperty().multiply( -0.5 ).multiply( viewZoomYProperty() ).divide( outputScaleXProperty() ) ) );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -328,12 +333,12 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	public Transform getScreenToWorldTransform() {
 		// FIXME This causes stale transforms :-(
 		//if( screenToWorldTransform == null ) {
-			try {
-				screenToWorldTransform = getWorldToScreenTransform().createInverse();
-			} catch( NonInvertibleTransformException exception ) {
-				// This should never happen since the world-to-screen transform should always be invertible
-				throw new RuntimeException( exception );
-			}
+		try {
+			screenToWorldTransform = getWorldToScreenTransform().createInverse();
+		} catch( NonInvertibleTransformException exception ) {
+			// This should never happen since the world-to-screen transform should always be invertible
+			throw new RuntimeException( exception );
+		}
 		//}
 		return screenToWorldTransform;
 	}
@@ -379,8 +384,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	public Transform getWorldToScreenTransform() {
 		// FIXME This causes stale transforms :-(
 		//if( worldToScreenTransform == null ) {
-			Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
-			worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
+		Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
+		worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
 		//}
 		return worldToScreenTransform;
 	}
