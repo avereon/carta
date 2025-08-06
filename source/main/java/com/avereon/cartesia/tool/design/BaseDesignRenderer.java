@@ -287,10 +287,6 @@ public abstract class BaseDesignRenderer extends StackPane implements DesignRend
 		// The new view zoom has to be set before the new view center
 		setViewZoom( new Point2D( viewZoomX.get(), viewZoomY.get() ).multiply( factor ) );
 
-		// NOTE While not exactly correct, this appears to be setting the view
-		// center, offset roughly by 1,1...regardless of the anchor. So, why off by
-		// one?
-
 		// The new view center has to be set after the new view zoom
 		setViewCenter( anchor.add( offset.multiply( 1.0 / factor ) ) );
 	}
