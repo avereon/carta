@@ -658,6 +658,50 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	void screenToWorldWithTransform() {
+		// given
+		double width = 1000;
+		double height = 800;
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.resizeRelocate( 0, 0, width, height );
+		renderer.layout();
+
+		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+
+		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+
+		// when
+		renderer.setViewCenter( 2, 2, 0 );
+
+		// then
+		assertThat( renderer.screenToWorld( 500 - 2 * gz, 400 + 2 * gz ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500 - 2 * gz, 400 + 2 * gz ).getY() ).isCloseTo( 0, TOLERANCE );
+	}
+
+	@Test
+	void screenToWorldWithZoom() {
+		// given
+		double width = 1000;
+		double height = 800;
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.resizeRelocate( 0, 0, width, height );
+		renderer.layout();
+
+		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+
+		// when
+		renderer.setViewZoom( new Point2D( 2, 2 ) );
+
+		// then
+		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+	}
+
+	@Test
 	void screenToWorldWithTransformButNotSize() {
 		// given
 		renderer.setDesign( new Design2D() );
