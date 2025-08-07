@@ -18,6 +18,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Transform;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -695,6 +696,28 @@ public class DesignToolV3RendererTest {
 
 		// when
 		renderer.setViewZoom( new Point2D( 2, 2 ) );
+
+		// then
+		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+	}
+
+	@Disabled
+	@Test
+	void screenToWorldWithRotate() {
+		// given
+		double width = 1000;
+		double height = 800;
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.resizeRelocate( 0, 0, width, height );
+		renderer.layout();
+
+		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+
+		// when
+		renderer.setViewRotate( 20 );
 
 		// then
 		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );

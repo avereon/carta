@@ -21,6 +21,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.NonInvertibleTransformException;
+import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Transform;
 import lombok.CustomLog;
 import lombok.Getter;
@@ -81,6 +82,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	private Design design;
 
 	private Workplane workplane;
+
+	private Rotate rotateTransform;
 
 	// Cacheable - meaning always use getScreenToWorldTransform()
 	private Transform screenToWorldTransform;
@@ -174,6 +177,12 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 		// The rotate property is pretty straightforward, after the other two groups
 		world.rotateProperty().bind( viewRotateProperty() );
+
+//		// NEXT If we move back to using the transforms list, then how we create the
+//		// world to screen and screen to world transforms will change.
+//		Rotate rotateTransform = new Rotate( 0, Point3D.ZERO );
+//		world.getTransforms().add( rotateTransform );
+//		viewRotateProperty().addListener( (_, _, n) -> updateRotationAxis( n.doubleValue(), getViewCenter() ));
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
@@ -479,9 +488,19 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	}
 
 	private void clearCachedTransforms() {
-		// Clear the cached transforms
 		screenToWorldTransform = null;
 		worldToScreenTransform = null;
+	}
+
+	/**
+	 * Updates the rotation transform of the world pane to rotate around the view center.
+	 * This ensures that when the view is rotated, it rotates around the current view center
+	 * rather than the default (0,0,0) point.
+	 */
+	private void updateRotationAxis( double rotate, Point3D axis ) {
+		world.getTransforms().remove( rotateTransform );
+		rotateTransform = new Rotate( rotate, axis );
+		world.getTransforms().add( rotateTransform );
 	}
 
 	@Note( CommonNote.ANY_THREAD )
