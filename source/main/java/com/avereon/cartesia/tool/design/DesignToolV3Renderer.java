@@ -20,9 +20,7 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
-import javafx.scene.transform.NonInvertibleTransformException;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Transform;
+import javafx.scene.transform.*;
 import lombok.CustomLog;
 import lombok.Getter;
 
@@ -82,8 +80,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	private Design design;
 
 	private Workplane workplane;
-
-	private Rotate rotateTransform;
 
 	// Cacheable - meaning always use getScreenToWorldTransform()
 	private Transform screenToWorldTransform;
@@ -145,26 +141,16 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		shapeScaleX.bind( unitScaleProperty().multiply( dpiXProperty() ).multiply( outputScaleXProperty() ) );
 		shapeScaleY.bind( unitScaleProperty().multiply( dpiYProperty() ).multiply( outputScaleYProperty() ) );
 
-		// The translate properties do not include the output scale property because
-		// these are parent coordinates and not local coordinates, and the parent
-		// transforms have already incorporated the output scale. The translate
-		// properties also have to compensate for the scale acting at the center of
-		// the pane and not at the origin.
-		world
-			.translateXProperty()
-			.bind( viewCenterXProperty()
-				.multiply( viewZoomXProperty() )
-				.multiply( -1 )
-				.multiply( unitScaleProperty() )
-				.multiply( dpiXProperty() )
-				.add( widthProperty().multiply( 0.5 ).multiply( viewZoomXProperty() ).divide( outputScaleXProperty() ) ) );
-		world
-			.translateYProperty()
-			.bind( viewCenterYProperty()
-				.multiply( viewZoomXProperty() )
-				.multiply( unitScaleProperty() )
-				.multiply( dpiYProperty() )
-				.add( heightProperty().multiply( -0.5 ).multiply( viewZoomYProperty() ).divide( outputScaleXProperty() ) ) );
+		// Create and set the world transforms
+		Scale worldScaleProperty = new Scale( 1, 1 );
+		Rotate worldRotateProperty = new Rotate( 0, Point3D.ZERO );
+		Translate worldTranslateProperty = new Translate( 0, 0 );
+		world.getTransforms().setAll( worldRotateProperty, worldScaleProperty, worldTranslateProperty );
+
+		// The rotate property is pretty straightforward, after the other two groups
+		worldRotateProperty.angleProperty().bind( viewRotateProperty() );
+		worldRotateProperty.pivotXProperty().bind( viewCenterXProperty() );
+		worldRotateProperty.pivotYProperty().bind( viewCenterYProperty() );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -172,17 +158,44 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// geometry at the highest resolution, regardless of the output scale set by
 		// the user. Someday this may need to be tied to a HiDPI setting, but we'll
 		// leave it here to understand how the technique works.
-		world.scaleXProperty().bind( viewZoomXProperty().divide( outputScaleXProperty() ) );
-		world.scaleYProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).multiply( -1 ) );
+		worldScaleProperty.xProperty().bind( viewZoomXProperty().divide( outputScaleXProperty() ) );
+		worldScaleProperty.yProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).multiply( -1 ) );
 
-		// The rotate property is pretty straightforward, after the other two groups
-		world.rotateProperty().bind( viewRotateProperty() );
-
-//		// NEXT If we move back to using the transforms list, then how we create the
-//		// world to screen and screen to world transforms will change.
-//		Rotate rotateTransform = new Rotate( 0, Point3D.ZERO );
-//		world.getTransforms().add( rotateTransform );
-//		viewRotateProperty().addListener( (_, _, n) -> updateRotationAxis( n.doubleValue(), getViewCenter() ));
+		// The translate properties do not include the output scale property because
+		// these are parent coordinates and not local coordinates, and the parent
+		// transforms have already incorporated the output scale. The translate
+		// properties also have to compensate for the scale acting at the center of
+		// the pane and not at the origin.
+		//		world
+		//			.translateXProperty()
+		//			.bind( viewCenterXProperty()
+		//				.multiply( viewZoomXProperty() )
+		//				.multiply( -1 )X
+		//				.multiply( unitScaleProperty() )
+		//				.multiply( dpiXProperty() )
+		//				.add( widthProperty().multiply( 0.5 ).multiply( viewZoomXProperty() ).divide( outputScaleXProperty() ) ) );
+		//		world
+		//			.translateYProperty()
+		//			.bind( viewCenterYProperty()
+		//				.multiply( viewZoomYProperty() )
+		//				.multiply( unitScaleProperty() )
+		//				.multiply( dpiYProperty() )
+		//				.add( heightProperty().multiply( -0.5 ).multiply( viewZoomYProperty() ).divide( outputScaleYProperty() ) ) );
+		worldTranslateProperty
+			.xProperty()
+			.bind( viewCenterXProperty()
+				.multiply( viewZoomXProperty() )
+				.multiply( -1 )
+				.multiply( unitScaleProperty() )
+				.multiply( dpiXProperty() )
+				.add( widthProperty().multiply( 0.5 ).multiply(( outputScaleXProperty() ).divide( viewZoomXProperty() )) ) );
+		worldTranslateProperty
+			.yProperty()
+			.bind( viewCenterYProperty()
+				.multiply( viewZoomYProperty() )
+				.multiply( unitScaleProperty() )
+				.multiply( dpiYProperty() )
+				.add( heightProperty().multiply( -0.5 ).multiply(( outputScaleYProperty() ).divide( viewZoomYProperty()) ) ) );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
@@ -490,17 +503,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	private void clearCachedTransforms() {
 		screenToWorldTransform = null;
 		worldToScreenTransform = null;
-	}
-
-	/**
-	 * Updates the rotation transform of the world pane to rotate around the view center.
-	 * This ensures that when the view is rotated, it rotates around the current view center
-	 * rather than the default (0,0,0) point.
-	 */
-	private void updateRotationAxis( double rotate, Point3D axis ) {
-		world.getTransforms().remove( rotateTransform );
-		rotateTransform = new Rotate( rotate, axis );
-		world.getTransforms().add( rotateTransform );
 	}
 
 	@Note( CommonNote.ANY_THREAD )
