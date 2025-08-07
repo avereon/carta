@@ -18,7 +18,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.transform.Transform;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,6 +43,12 @@ import static org.mockito.Mockito.verify;
 @ExtendWith( MockitoExtension.class )
 public class DesignToolV3RendererTest {
 
+	static final double width = 1000;
+
+	static final double height = 1000;
+
+	static final double gz = RenderConstants.DEFAULT_DPI * DesignUnit.CM.to( 1, DesignUnit.IN );
+
 	private DesignToolV3Renderer renderer;
 
 	@Mock
@@ -61,21 +66,14 @@ public class DesignToolV3RendererTest {
 	@BeforeEach
 	void setUp() {
 		renderer = new DesignToolV3Renderer();
+		renderer.resizeRelocate( 0, 0, width, height );
+		renderer.setDesign( new Design2D() );
+		renderer.setWorkplane( new Workplane() );
+		renderer.layout();
 	}
 
 	@Test
 	void internalPanelLayout() {
-		// given
-		double width = 1000;
-		double height = 1000;
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-
-		// when
-		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.layout();
-
-		// then
 		assertBounds( renderer.getGrid(), 0, 0, width, height );
 		assertBounds( renderer.getLayers(), 0, 0, width, height );
 		assertBounds( renderer.getPreview(), 0, 0, width, height );
@@ -580,31 +578,24 @@ public class DesignToolV3RendererTest {
 	@Test
 	void screenToWorld() {
 		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
+		assertThat( renderer.getDpiX() ).isEqualTo( RenderConstants.DEFAULT_DPI );
 
 		// when
-		Bounds bounds = renderer.screenToWorld( new BoundingBox( -100, -100, 200, 200 ) );
+		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 200 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 200 / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( -100 / gz, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 100 / gz, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 200 / gz, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 200 / gz, TOLERANCE );
 	}
 
 	@Test
 	void screenToWorldWithDoubleDouble() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
-		Point2D worldPoint = renderer.screenToWorld( 100, 200 );
+		Point2D worldPoint = renderer.screenToWorld( 600, 700 );
 
 		// then
 		assertThat( worldPoint.getX() ).isEqualTo( 100 / gz, TIGHT_TOLERANCE );
@@ -613,13 +604,8 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void screenToWorldWithPoint2D() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
-		Point2D worldPoint = renderer.screenToWorld( new Point2D( 200, 100 ) );
+		Point2D worldPoint = renderer.screenToWorld( new Point2D( 700, 600 ) );
 
 		// then
 		assertThat( worldPoint.getX() ).isEqualTo( 200 / gz, TIGHT_TOLERANCE );
@@ -628,13 +614,8 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void screenToWorldWithDoubleDoubleDouble() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
-		Point3D worldPoint = renderer.screenToWorld( 100, 200, 300 );
+		Point3D worldPoint = renderer.screenToWorld( 600, 700, 300 );
 
 		// then
 		assertThat( worldPoint.getX() ).isEqualTo( 100 / gz, TIGHT_TOLERANCE );
@@ -644,32 +625,18 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void screenToWorldWithPoint3D() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
-		Point3D worldPoint = renderer.screenToWorld( new Point3D( 200, 300, 100 ) );
+		Point3D worldPoint = renderer.screenToWorld( new Point3D( 700, 800, 100 ) );
 
 		// then
-		assertThat( worldPoint.getX() ).isEqualTo( 200 / gz, TIGHT_TOLERANCE );
-		assertThat( worldPoint.getY() ).isEqualTo( -300 / gz, TIGHT_TOLERANCE );
-		assertThat( worldPoint.getZ() ).isEqualTo( 100, TIGHT_TOLERANCE );
+		assertThat( worldPoint.getX() ).isEqualTo( 200 / gz, TOLERANCE );
+		assertThat( worldPoint.getY() ).isEqualTo( -300 / gz, TOLERANCE );
+		assertThat( worldPoint.getZ() ).isEqualTo( 100, TOLERANCE );
 	}
 
 	@Test
 	void screenToWorldWithTransform() {
 		// given
-		double width = 1000;
-		double height = 800;
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.layout();
-
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
 		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
 
@@ -684,13 +651,7 @@ public class DesignToolV3RendererTest {
 	@Test
 	void screenToWorldWithZoom() {
 		// given
-		double width = 1000;
-		double height = 800;
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.layout();
-
+		renderer.resizeRelocate( 0, 0, 1000, 800 );
 		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
 		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
 
@@ -702,17 +663,10 @@ public class DesignToolV3RendererTest {
 		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
 	}
 
-	@Disabled
 	@Test
 	void screenToWorldWithRotate() {
 		// given
-		double width = 1000;
-		double height = 800;
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.layout();
-
+		renderer.resizeRelocate( 0, 0, 1000, 800 );
 		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
 		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
 
@@ -725,38 +679,30 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void screenToWorldWithTransformButNotSize() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-		// An output scale should not alter the test results
-		renderer.setOutputScale( 1.5, 1.5 );
-
+	void screenToWorldTransform() {
 		// when
 		Transform transform = renderer.getScreenToWorldTransform();
-		Bounds bounds = transform.transform( new BoundingBox( -100, -100, 200, 200 ) );
+		Bounds bounds = transform.transform( new BoundingBox( 400, 400, 200, 200 ) );
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 200 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 200 / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( -100 / gz, TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 100 / gz, TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 200 / gz, TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 200 / gz, TOLERANCE );
 	}
 
 	@Test
-	void screenToWorldWithZoomButNotSize() {
+	void screenToWorldZoom() {
 		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
 		renderer.setViewZoom( 2, 2 );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
 		double scale = 0.5;
 
-		Bounds bounds = renderer.screenToWorld( new BoundingBox( -100, -100, 200, 200 ) );
+		// when
+		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
 
+		// then
 		assertThat( bounds.getMinX() ).isEqualTo( scale * -100 / gz, TIGHT_TOLERANCE );
 		assertThat( bounds.getMinY() ).isEqualTo( scale * -100 / gz, TIGHT_TOLERANCE );
 		assertThat( bounds.getMaxX() ).isEqualTo( scale * 100 / gz, TIGHT_TOLERANCE );
@@ -766,138 +712,101 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void screenToWorldWithRotateButNotSize() {
+	void screenToWorldRotate() {
 		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
 		renderer.setViewRotate( 45 );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
 		double scale = Constants.SQRT_TWO;
 
-		Bounds bounds = renderer.screenToWorld( new BoundingBox( -100, -100, 200, 200 ) );
+		// when
+		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
 
-		assertThat( bounds.getMinX() ).isCloseTo( scale * -100 / gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getMinY() ).isCloseTo( scale * -100 / gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getMaxX() ).isCloseTo( scale * 100 / gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 / gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 / gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 / gz, TOLERANCE_PERCENT_LOOSE );
+		// then
+		assertThat( bounds.getMinX() ).isCloseTo( scale * -100 / gz, TOLERANCE );
+		assertThat( bounds.getMinY() ).isCloseTo( scale * -100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isCloseTo( scale * 100 / gz, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 / gz, TOLERANCE );
+		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 / gz, TOLERANCE );
+		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 / gz, TOLERANCE );
 	}
 
 	@Test
 	void worldToScreen() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
 		Bounds bounds = renderer.worldToScreen( new BoundingBox( -100, -100, 200, 200 ) );
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -100 * gz );
-		assertThat( bounds.getMinY() ).isEqualTo( -100 * gz );
-		assertThat( bounds.getMaxX() ).isEqualTo( 100 * gz );
-		assertThat( bounds.getMaxY() ).isEqualTo( 100 * gz );
-		assertThat( bounds.getWidth() ).isEqualTo( 200 * gz );
-		assertThat( bounds.getHeight() ).isEqualTo( 200 * gz );
+		assertThat( bounds.getMinX() ).isCloseTo( -100 * gz + 500, TOLERANCE );
+		assertThat( bounds.getMinY() ).isCloseTo( -100 * gz + 500, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isCloseTo( 100 * gz + 500, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isCloseTo( 100 * gz + 500, TOLERANCE );
+		assertThat( bounds.getWidth() ).isCloseTo( 200 * gz, TOLERANCE );
+		assertThat( bounds.getHeight() ).isCloseTo( 200 * gz, TOLERANCE );
 	}
 
 	@Test
 	void worldToScreenWithDoubleDouble() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
 		Point2D screenPoint = renderer.worldToScreen( 100, 200 );
 
 		// then
-		assertThat( screenPoint.getX() ).isEqualTo( 100 * gz );
-		assertThat( screenPoint.getY() ).isEqualTo( -200 * gz );
+		assertThat( screenPoint.getX() ).isCloseTo( 100 * gz + 500, TOLERANCE );
+		assertThat( screenPoint.getY() ).isCloseTo( -200 * gz + 500, TOLERANCE );
 	}
 
 	@Test
 	void worldToScreenWithPoint2D() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
 		Point2D screenPoint = renderer.worldToScreen( new Point2D( 200, 100 ) );
 
 		// then
-		assertThat( screenPoint.getX() ).isEqualTo( 200 * gz );
-		assertThat( screenPoint.getY() ).isEqualTo( -100 * gz );
+		assertThat( screenPoint.getX() ).isCloseTo( 200 * gz + 500, TOLERANCE );
+		assertThat( screenPoint.getY() ).isCloseTo( -100 * gz + 500, TOLERANCE );
 	}
 
 	@Test
 	void worldToScreenWithDoubleDoubleDouble() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
 		Point3D screenPoint = renderer.worldToScreen( 200, 300, 100 );
 
 		// then
-		assertThat( screenPoint.getX() ).isEqualTo( 200 * gz );
-		assertThat( screenPoint.getY() ).isEqualTo( -300 * gz );
-		assertThat( screenPoint.getZ() ).isEqualTo( 100 );
+		assertThat( screenPoint.getX() ).isCloseTo( 200 * gz + 500, TOLERANCE );
+		assertThat( screenPoint.getY() ).isCloseTo( -300 * gz + 500, TOLERANCE );
+		assertThat( screenPoint.getZ() ).isCloseTo( 100, TOLERANCE );
 	}
 
 	@Test
 	void worldToScreenWithPoint3D() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
 		// when
 		Point3D screenPoint = renderer.worldToScreen( new Point3D( 300, 200, 100 ) );
 
 		// then
-		assertThat( screenPoint.getX() ).isEqualTo( 300 * gz );
-		assertThat( screenPoint.getY() ).isEqualTo( -200 * gz );
-		assertThat( screenPoint.getZ() ).isEqualTo( 100 );
+		assertThat( screenPoint.getX() ).isCloseTo( 300 * gz + 500, TOLERANCE );
+		assertThat( screenPoint.getY() ).isCloseTo( -200 * gz + 500, TOLERANCE );
+		assertThat( screenPoint.getZ() ).isCloseTo( 100, TOLERANCE );
 	}
 
 	@Test
-	void worldToScreenTransform() {
+	void worldToScreenRotate() {
 		// given
-		double width = 1000;
-		double height = 800;
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.layout();
-
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-
-		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
-		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 );
+		renderer.setViewRotate( 45 );
+		double scale = Constants.SQRT_TWO;
 
 		// when
-		renderer.setViewCenter( 2, 2, 0 );
+		Bounds bounds = renderer.worldToScreen( new BoundingBox( 400, 400, 200, 200 ) );
 
 		// then
-		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isCloseTo( 500 - 2 * gz, TOLERANCE );
-		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 + 2 * gz, TOLERANCE );
+		assertThat( bounds.getMinX() ).isCloseTo( scale * -100 * gz, TOLERANCE );
+		assertThat( bounds.getMinY() ).isCloseTo( scale * -100 * gz, TOLERANCE );
+		assertThat( bounds.getMaxX() ).isCloseTo( scale * 100 * gz, TOLERANCE );
+		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 * gz, TOLERANCE );
+		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 * gz, TOLERANCE );
+		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 * gz, TOLERANCE );
 	}
 
 	@Test
 	void worldToScreenZoom() {
 		// given
-		double width = 1000;
-		double height = 800;
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.layout();
-
+		renderer.resizeRelocate( 0, 0, 1000, 800 );
 		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
 		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 );
 
@@ -910,76 +819,27 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void worldToScreenWithTransformButNotSize() {
+	void worldToScreenTransform() {
 		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-		// An output scale should not alter the test results
-		renderer.setOutputScale( 1.5, 1.5 );
+		renderer.resizeRelocate( 0, 0, 1000, 800 );
+		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
+		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 );
 
 		// when
-		Transform transform = renderer.getWorldToScreenTransform();
-		Bounds bounds = transform.transform( new BoundingBox( -100, -100, 200, 200 ) );
+		renderer.setViewCenter( 2, 2, 0 );
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -100 * gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -100 * gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 100 * gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 100 * gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 200 * gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 200 * gz, TIGHT_TOLERANCE );
-	}
-
-	@Test
-	void worldToScreenWithZoomButNotSize() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.setViewZoom( 2, 2 );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-		double scale = 2;
-
-		// when
-		Bounds bounds = renderer.worldToScreen( new BoundingBox( -100, -100, 200, 200 ) );
-
-		// then
-		assertThat( bounds.getMinX() ).isEqualTo( scale * -100 * gz );
-		assertThat( bounds.getMinY() ).isEqualTo( scale * -100 * gz );
-		assertThat( bounds.getMaxX() ).isEqualTo( scale * 100 * gz );
-		assertThat( bounds.getMaxY() ).isEqualTo( scale * 100 * gz );
-		assertThat( bounds.getWidth() ).isEqualTo( scale * 200 * gz );
-		assertThat( bounds.getHeight() ).isEqualTo( scale * 200 * gz );
-	}
-
-	@Test
-	void worldToScreenWithRotateButNotSize() {
-		// given
-		renderer.setDesign( new Design2D() );
-		renderer.setWorkplane( new Workplane() );
-		renderer.setViewRotate( 45 );
-		double gz = 96 * DesignUnit.CM.to( 1, DesignUnit.IN );
-		double scale = Constants.SQRT_TWO;
-
-		Bounds bounds = renderer.worldToScreen( new BoundingBox( -100, -100, 200, 200 ) );
-
-		assertThat( bounds.getMinX() ).isCloseTo( scale * -100 * gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getMinY() ).isCloseTo( scale * -100 * gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getMaxX() ).isCloseTo( scale * 100 * gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 * gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 * gz, TOLERANCE_PERCENT_LOOSE );
-		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 * gz, TOLERANCE_PERCENT_LOOSE );
+		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isCloseTo( 500 - 2 * gz, TOLERANCE );
+		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 + 2 * gz, TOLERANCE );
 	}
 
 	@ParameterizedTest
 	@MethodSource
 	void worldToScreenDoesNotChangeWithDifferentOutputScales( double outputScale, Point2D point, Point2D expected ) {
 		// given
-		double width = 1000;
-		double height = 1000;
+		renderer.resizeRelocate( 0, 0, 1000, 1000 );
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
-		renderer.resizeRelocate( 0, 0, width, height );
 		renderer.layout();
 
 		// when
