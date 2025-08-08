@@ -149,6 +149,10 @@ public abstract class BaseDesignRenderer extends StackPane implements DesignRend
 		return new Point3D( viewCenterX.get(), viewCenterY.get(), viewCenterZ.get() );
 	}
 
+	public void setViewCenter( double x, double y ) {
+		setViewCenter( x, y, 0 );
+	}
+
 	@Override
 	public void setViewCenter( double x, double y, double z ) {
 		viewCenterX.set( x );

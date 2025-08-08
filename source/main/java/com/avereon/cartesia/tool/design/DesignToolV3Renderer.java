@@ -142,15 +142,15 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		shapeScaleY.bind( unitScaleProperty().multiply( dpiYProperty() ).multiply( outputScaleYProperty() ) );
 
 		// Create and set the world transforms
-		Scale worldScaleProperty = new Scale( 1, 1 );
-		Rotate worldRotateProperty = new Rotate( 0, Point3D.ZERO );
-		Translate worldTranslateProperty = new Translate( 0, 0 );
-		world.getTransforms().setAll( worldRotateProperty, worldScaleProperty, worldTranslateProperty );
+		Scale viewZoomTransform = new Scale( 1, -1 );
+		Rotate viewRotateTransform = new Rotate( 0, Point3D.ZERO );
+		Translate viewCenterTransform = new Translate( 0, 0 );
+		world.getTransforms().setAll( viewZoomTransform, viewRotateTransform, viewCenterTransform );
 
 		// The rotate property is pretty straightforward, after the other two groups
-		worldRotateProperty.angleProperty().bind( viewRotateProperty() );
-		worldRotateProperty.pivotXProperty().bind( viewCenterXProperty() );
-		worldRotateProperty.pivotYProperty().bind( viewCenterYProperty().multiply( -1 ) );
+		viewRotateTransform.angleProperty().bind( viewRotateProperty() );
+		viewRotateTransform.pivotXProperty().bind( viewCenterXProperty() );
+		viewRotateTransform.pivotYProperty().bind( viewCenterYProperty().multiply( -1 ) );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -158,8 +158,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// geometry at the highest resolution, regardless of the output scale set by
 		// the user. Someday this may need to be tied to a HiDPI setting, but we'll
 		// leave it here to understand how the technique works.
-		worldScaleProperty.xProperty().bind( viewZoomXProperty().divide( outputScaleXProperty() ) );
-		worldScaleProperty.yProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).multiply( -1 ) );
+		viewZoomTransform.xProperty().bind( viewZoomXProperty().divide( outputScaleXProperty() ) );
+		viewZoomTransform.yProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).multiply( -1 ) );
 
 		// The translate properties do not include the output scale property because
 		// these are parent coordinates and not local coordinates, and the parent
@@ -181,7 +181,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		//				.multiply( unitScaleProperty() )
 		//				.multiply( dpiYProperty() )
 		//				.add( heightProperty().multiply( -0.5 ).multiply( viewZoomYProperty() ).divide( outputScaleYProperty() ) ) );
-		worldTranslateProperty
+		viewCenterTransform
 			.xProperty()
 			.bind( viewCenterXProperty()
 				.multiply( viewZoomXProperty() )
@@ -189,7 +189,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 				.multiply( unitScaleProperty() )
 				.multiply( dpiXProperty() )
 				.add( widthProperty().multiply( 0.5 ).multiply( (outputScaleXProperty()).divide( viewZoomXProperty() ) ) ) );
-		worldTranslateProperty
+		viewCenterTransform
 			.yProperty()
 			.bind( viewCenterYProperty()
 				.multiply( -1 )

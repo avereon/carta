@@ -576,7 +576,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	void screenToWorld() {
+	void screenToWorldWithBounds() {
 		// given
 		assertThat( renderer.getDpiX() ).isEqualTo( RenderConstants.DEFAULT_DPI );
 
@@ -678,23 +678,23 @@ public class DesignToolV3RendererTest {
 		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
 	}
 
+	//	@Test
+	//	void screenToWorldWithRotate() {
+	//		// given
+	//		renderer.resizeRelocate( 0, 0, 1000, 800 );
+	//		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+	//		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+	//
+	//		// when
+	//		renderer.setViewRotate( 20 );
+	//
+	//		// then
+	//		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
+	//		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
+	//	}
+	//
 	@Test
-	void screenToWorldWithRotate() {
-		// given
-		renderer.resizeRelocate( 0, 0, 1000, 800 );
-		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
-		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
-
-		// when
-		renderer.setViewRotate( 20 );
-
-		// then
-		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
-		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
-	}
-
-	@Test
-	void screenToWorldTransform() {
+	void screenToWorldWith() {
 		// given
 		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
 		assertThat( renderer.screenToWorld( 500, 500 ).getY() ).isCloseTo( 0, TOLERANCE );
@@ -730,22 +730,38 @@ public class DesignToolV3RendererTest {
 		assertThat( bounds.getHeight() ).isEqualTo( scale * 200 / gz, TIGHT_TOLERANCE );
 	}
 
-	@Test
-	void screenToWorldRotate() {
+	@ParameterizedTest
+	@MethodSource
+	void screenToWorldWithRotate( double rotate, double centerX, double centerY, double screenX, double screenY, double worldX, double worldY ) {
 		// given
-		renderer.setViewRotate( 45 );
-		double scale = Constants.SQRT_TWO;
+		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 500 ).getY() ).isCloseTo( 0, TOLERANCE );
 
 		// when
-		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
+		renderer.setViewCenter( centerX, centerY, 0 );
+		renderer.setViewRotate( rotate );
+		Point2D result = renderer.screenToWorld( new Point2D( screenX, screenY ) );
 
 		// then
-		assertThat( bounds.getMinX() ).isCloseTo( scale * -100 / gz, TOLERANCE );
-		assertThat( bounds.getMinY() ).isCloseTo( scale * -100 / gz, TOLERANCE );
-		assertThat( bounds.getMaxX() ).isCloseTo( scale * 100 / gz, TOLERANCE );
-		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 / gz, TOLERANCE );
-		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 / gz, TOLERANCE );
-		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 / gz, TOLERANCE );
+		assertThat( result.getX() ).isCloseTo( worldX, TOLERANCE );
+		assertThat( result.getY() ).isCloseTo( worldY, TOLERANCE );
+	}
+
+	private static Stream<Arguments> screenToWorldWithRotate() {
+		return Stream.of(
+			// No angle should change the center
+			Arguments.arguments( -180, 0, 0, 500, 500, 0, 0 ),
+			Arguments.arguments( -135, 1, 2, 500, 500, 1, 2 ),
+			Arguments.arguments( -90, 2, 3, 500, 500, 2, 3 ),
+			Arguments.arguments( -45, 3, 4, 500, 500, 3, 4 ),
+			Arguments.arguments( 0, 4, 5, 500, 500, 4, 5 ),
+			Arguments.arguments( 45, 5, 6, 500, 500, 5, 6 ),
+			Arguments.arguments( 90, 6, 7, 500, 500, 6, 7 ),
+			Arguments.arguments( 135, 7, 8, 500, 500, 7, 8 ),
+			Arguments.arguments( 180, 8, 9, 500, 500, 8, 9 ),
+
+			Arguments.arguments( 45, 0, 0, 500, 500 - 1 * gz, Constants.SQRT_ONE_HALF, Constants.SQRT_ONE_HALF )
+		);
 	}
 
 	@Test
@@ -824,31 +840,36 @@ public class DesignToolV3RendererTest {
 		assertThat( screenPoint.getZ() ).isCloseTo( 1, TOLERANCE );
 	}
 
-	@Test
-	void worldToScreenWithRotate() {
+	@ParameterizedTest
+	@MethodSource
+	void worldToScreenWithRotate( double rotate, double centerX, double centerY, double worldX, double worldY, double screenX, double screenY ) {
 		// given
-		renderer.setViewRotate( 45 );
-		double scale = Constants.SQRT_TWO;
 		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
 		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 500 );
 
 		// when
-		Point2D point2d = renderer.worldToScreen( 1, 2 );
-		assertThat( point2d.getX() ).isCloseTo( 500 + 1 * gz * scale, TOLERANCE );
+		renderer.setViewCenter( centerX, centerY );
+		renderer.setViewRotate( rotate );
+		Point2D point2d = renderer.worldToScreen( worldX, worldY );
+		assertThat( point2d.getX() ).isCloseTo( screenX, TOLERANCE );
+		assertThat( point2d.getY() ).isCloseTo( screenY, TOLERANCE );
+	}
 
-		// when
-		Bounds bounds = renderer.worldToScreen( new BoundingBox( -1, -2, 3, 4 ) );
+	private static Stream<Arguments> worldToScreenWithRotate() {
+		return Stream.of(
+			// No angle should change the center
+			Arguments.arguments( -180, 0, 1, 0, 1, 500, 500 ),
+			Arguments.arguments( -135, 1, 2, 1, 2, 500, 500 ),
+			Arguments.arguments( -90, 2, 3, 2, 3, 500, 500 ),
+			Arguments.arguments( -45, 3, 4, 3, 4, 500, 500 ),
+			Arguments.arguments( 0, 4, 5, 4, 5, 500, 500 ),
+			Arguments.arguments( 45, 5, 6, 5, 6, 500, 500 ),
+			Arguments.arguments( 90, 6, 7, 6, 7, 500, 500 ),
+			Arguments.arguments( 135, 7, 8, 7, 8, 500, 500 ),
+			Arguments.arguments( 180, 8, 9, 8, 9, 500, 500 ),
 
-		// then
-		// FIXME This isn't right, it needs to have moved some
-		assertThat( bounds.getMinX() ).isCloseTo( 500 - 1 * gz, TOLERANCE );
-		assertThat( bounds.getMinY() ).isCloseTo( 500 + 2 * gz, TOLERANCE );
-		//		assertThat( bounds.getMinX() ).isCloseTo( scale * -100 * gz, TOLERANCE );
-		//		assertThat( bounds.getMinY() ).isCloseTo( scale * -100 * gz, TOLERANCE );
-		//		assertThat( bounds.getMaxX() ).isCloseTo( scale * 100 * gz, TOLERANCE );
-		//		assertThat( bounds.getMaxY() ).isCloseTo( scale * 100 * gz, TOLERANCE );
-		//		assertThat( bounds.getWidth() ).isCloseTo( scale * 200 * gz, TOLERANCE );
-		//		assertThat( bounds.getHeight() ).isCloseTo( scale * 200 * gz, TOLERANCE );
+			Arguments.arguments( 45, 0, 0, 1, 0, 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF )
+		);
 	}
 
 	@Test

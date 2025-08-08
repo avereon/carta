@@ -134,6 +134,8 @@ public interface DesignRenderer extends CommonToolRenderer {
 
 	DoubleProperty outputScaleYProperty();
 
+	void setViewCenter( double x, double y );
+
 	void setViewCenter( double x, double y, double z );
 
 	double getViewCenterX();
