@@ -150,7 +150,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// The rotate property is pretty straightforward, after the other two groups
 		worldRotateProperty.angleProperty().bind( viewRotateProperty() );
 		worldRotateProperty.pivotXProperty().bind( viewCenterXProperty() );
-		worldRotateProperty.pivotYProperty().bind( viewCenterYProperty() );
+		worldRotateProperty.pivotYProperty().bind( viewCenterYProperty().multiply( -1 ) );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -188,14 +188,15 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 				.multiply( -1 )
 				.multiply( unitScaleProperty() )
 				.multiply( dpiXProperty() )
-				.add( widthProperty().multiply( 0.5 ).multiply(( outputScaleXProperty() ).divide( viewZoomXProperty() )) ) );
+				.add( widthProperty().multiply( 0.5 ).multiply( (outputScaleXProperty()).divide( viewZoomXProperty() ) ) ) );
 		worldTranslateProperty
 			.yProperty()
 			.bind( viewCenterYProperty()
+				.multiply( -1 )
 				.multiply( viewZoomYProperty() )
 				.multiply( unitScaleProperty() )
 				.multiply( dpiYProperty() )
-				.add( heightProperty().multiply( -0.5 ).multiply(( outputScaleYProperty() ).divide( viewZoomYProperty()) ) ) );
+				.add( heightProperty().multiply( -0.5 ).multiply( (outputScaleYProperty()).divide( viewZoomYProperty() ) ) ) );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
