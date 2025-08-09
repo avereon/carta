@@ -23,6 +23,7 @@ import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import lombok.CustomLog;
 import lombok.Getter;
+import org.jspecify.annotations.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Collection;
@@ -323,15 +324,35 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 */
 	@Override
 	public List<DesignLayer> getVisibleLayers() {
-		return List.of();
+		// Return the list of design layers that currently have an FX pane in the renderer,
+		// in the same order as they appear visually (top to bottom) in the layers pane.
+		return this.layers.getChildren().stream()
+			.filter(p -> p instanceof Pane)
+			.map(p -> (DesignLayer)p.getUserData())
+			.toList();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setVisibleLayers( Collection<DesignLayer> layers ) {
-		// Convenience method, to set multiple layers visible and hidden at the same time
+	public void setVisibleLayers( @NonNull Collection<DesignLayer> layers ) {
+		// Convenience: show only the specified layers; hide all others currently visible
+		if( this.design == null ) return;
+
+		// Hide layers that are currently visible but not in the target collection
+		for( Node node : List.copyOf(this.layers.getChildren()) ) {
+			if( !(node instanceof Pane pane) ) continue;
+			Object userData = pane.getUserData();
+			if( userData instanceof DesignLayer existing && !layers.contains( existing ) ) {
+				setLayerVisible( existing, false );
+			}
+		}
+
+		// Show any requested layers that are not already visible
+		for( DesignLayer layer : layers ) {
+			if( !isLayerVisible( layer ) ) setLayerVisible( layer, true );
+		}
 	}
 
 	/**

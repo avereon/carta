@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>com.avereon.pom</groupId>
 		<artifactId>mod</artifactId>
-		<version>3.6.2</version>
+		<version>3.6.3</version>
 	</parent>
 
 	<groupId>com.avereon</groupId>
@@ -136,7 +136,7 @@
 				<artifactId>maven-surefire-plugin</artifactId>
 				<!-- Version comes from parent -->
 				<configuration>
-					<forkCount>0.5C</forkCount>
+					<forkCount>0.5</forkCount>
 					<argLine>
 						-Xmx128m
 						--add-opens=javafx.base/com.sun.javafx.logging=ALL-UNNAMED

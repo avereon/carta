@@ -7,6 +7,7 @@ module com.avereon.carta {
 
 	// Compile-time only
 	requires static lombok;
+	requires static org.jspecify;
 
 	// Both compile-time and run-time
 	requires com.avereon.curve;
@@ -22,6 +23,7 @@ module com.avereon.carta {
 	// Public APIs
 	exports com.avereon.cartesia;
 	exports com.avereon.cartesia.command;
+	exports com.avereon.cartesia.command.base;
 	exports com.avereon.cartesia.command.camera;
 	exports com.avereon.cartesia.command.draw;
 	exports com.avereon.cartesia.command.layer;
@@ -47,7 +49,6 @@ module com.avereon.carta {
 	opens com.avereon.cartesia.bundles;
 	opens com.avereon.cartesia.design.props;
 	opens com.avereon.cartesia.settings;
-	exports com.avereon.cartesia.command.base;
 
 	provides Module with CartesiaMod;
 
