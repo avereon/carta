@@ -144,14 +144,14 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 		// Create and set the world transforms
 		Scale viewZoomTransform = new Scale( 1, -1 );
-		Rotate viewRotateTransform = new Rotate( 0, Point3D.ZERO );
+		Rotate viewRotateTransform = new Rotate( 0, 0, 0 );
 		Translate viewCenterTransform = new Translate( 0, 0 );
 		world.getTransforms().setAll( viewZoomTransform, viewRotateTransform, viewCenterTransform );
 
 		// The rotate property is pretty straightforward, after the other two groups
 		viewRotateTransform.angleProperty().bind( viewRotateProperty() );
-		viewRotateTransform.pivotXProperty().bind( viewCenterXProperty() );
-		viewRotateTransform.pivotYProperty().bind( viewCenterYProperty().multiply( -1 ) );
+		viewRotateTransform.pivotXProperty().bind( viewCenterTransform.xProperty() );
+		viewRotateTransform.pivotYProperty().bind( viewCenterTransform.yProperty() );
 
 		// The scale properties do not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -167,21 +167,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// transforms have already incorporated the output scale. The translate
 		// properties also have to compensate for the scale acting at the center of
 		// the pane and not at the origin.
-		//		world
-		//			.translateXProperty()
-		//			.bind( viewCenterXProperty()
-		//				.multiply( viewZoomXProperty() )
-		//				.multiply( -1 )X
-		//				.multiply( unitScaleProperty() )
-		//				.multiply( dpiXProperty() )
-		//				.add( widthProperty().multiply( 0.5 ).multiply( viewZoomXProperty() ).divide( outputScaleXProperty() ) ) );
-		//		world
-		//			.translateYProperty()
-		//			.bind( viewCenterYProperty()
-		//				.multiply( viewZoomYProperty() )
-		//				.multiply( unitScaleProperty() )
-		//				.multiply( dpiYProperty() )
-		//				.add( heightProperty().multiply( -0.5 ).multiply( viewZoomYProperty() ).divide( outputScaleYProperty() ) ) );
 		viewCenterTransform
 			.xProperty()
 			.bind( viewCenterXProperty()
@@ -326,10 +311,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	public List<DesignLayer> getVisibleLayers() {
 		// Return the list of design layers that currently have an FX pane in the renderer,
 		// in the same order as they appear visually (top to bottom) in the layers pane.
-		return this.layers.getChildren().stream()
-			.filter(p -> p instanceof Pane)
-			.map(p -> (DesignLayer)p.getUserData())
-			.toList();
+		return this.layers.getChildren().stream().filter( p -> p instanceof Pane ).map( p -> (DesignLayer)p.getUserData() ).toList();
 	}
 
 	/**
@@ -341,7 +323,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		if( this.design == null ) return;
 
 		// Hide layers that are currently visible but not in the target collection
-		for( Node node : List.copyOf(this.layers.getChildren()) ) {
+		for( Node node : List.copyOf( this.layers.getChildren() ) ) {
 			if( !(node instanceof Pane pane) ) continue;
 			Object userData = pane.getUserData();
 			if( userData instanceof DesignLayer existing && !layers.contains( existing ) ) {

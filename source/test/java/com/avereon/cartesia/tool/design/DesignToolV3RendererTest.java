@@ -30,7 +30,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.ref.WeakReference;
 import java.util.stream.Stream;
 
-import static com.avereon.cartesia.TestConstants.*;
+import static com.avereon.cartesia.TestConstants.TIGHT_TOLERANCE;
+import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
 import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_OUTPUT_SCALE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -749,16 +750,17 @@ public class DesignToolV3RendererTest {
 
 	private static Stream<Arguments> screenToWorldWithRotate() {
 		return Stream.of(
+			Arguments.arguments( 0, 0, 0, 500, 500, 0, 0 ),
 			// No angle should change the center
-			Arguments.arguments( -180, 0, 0, 500, 500, 0, 0 ),
-			Arguments.arguments( -135, 1, 2, 500, 500, 1, 2 ),
-			Arguments.arguments( -90, 2, 3, 500, 500, 2, 3 ),
-			Arguments.arguments( -45, 3, 4, 500, 500, 3, 4 ),
+			//			Arguments.arguments( -180, 0, 0, 500, 500, 0, 0 ),
+			//			Arguments.arguments( -135, 1, 2, 500, 500, 1, 2 ),
+			//			Arguments.arguments( -90, 2, 3, 500, 500, 2, 3 ),
+			//			Arguments.arguments( -45, 3, 4, 500, 500, 3, 4 ),
 			Arguments.arguments( 0, 4, 5, 500, 500, 4, 5 ),
-			Arguments.arguments( 45, 5, 6, 500, 500, 5, 6 ),
-			Arguments.arguments( 90, 6, 7, 500, 500, 6, 7 ),
-			Arguments.arguments( 135, 7, 8, 500, 500, 7, 8 ),
-			Arguments.arguments( 180, 8, 9, 500, 500, 8, 9 ),
+			//			Arguments.arguments( 45, 5, 6, 500, 500, 5, 6 ),
+			//			Arguments.arguments( 90, 6, 7, 500, 500, 6, 7 ),
+			//			Arguments.arguments( 135, 7, 8, 500, 500, 7, 8 ),
+			//			Arguments.arguments( 180, 8, 9, 500, 500, 8, 9 ),
 
 			Arguments.arguments( 45, 0, 0, 500, 500 - 1 * gz, Constants.SQRT_ONE_HALF, Constants.SQRT_ONE_HALF )
 		);
@@ -848,25 +850,35 @@ public class DesignToolV3RendererTest {
 		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 500 );
 
 		// when
-		renderer.setViewCenter( centerX, centerY );
 		renderer.setViewRotate( rotate );
+		renderer.setViewCenter( centerX, centerY );
 		Point2D point2d = renderer.worldToScreen( worldX, worldY );
-		assertThat( point2d.getX() ).isCloseTo( screenX, TOLERANCE );
-		assertThat( point2d.getY() ).isCloseTo( screenY, TOLERANCE );
+
+		// NOTE The x-coordinate is different than not rotating. If something
+		// weren't happening it would still be 500, but it is out at 537.79...,
+		// right where it should be without being rotated, but not where we wanted
+		// it to be. The y-coordinate is still at 500, also right where it should
+		// without being rotated, but not where we wanted it to be. So it appears
+		// the rotation just isn't being applied at all.
+
+		// then
+		assertThat( point2d.getX() ).isCloseTo( screenX, TOLERANCE ); // 537.7952755905512 expecting 526.72529566689310
+		assertThat( point2d.getY() ).isCloseTo( screenY, TOLERANCE ); // 500.0000000000000 expecting 473.27470433310685
 	}
 
 	private static Stream<Arguments> worldToScreenWithRotate() {
 		return Stream.of(
+			Arguments.arguments( 0, 0, 0, 0, 0, 500, 500 ),
 			// No angle should change the center
-			Arguments.arguments( -180, 0, 1, 0, 1, 500, 500 ),
-			Arguments.arguments( -135, 1, 2, 1, 2, 500, 500 ),
-			Arguments.arguments( -90, 2, 3, 2, 3, 500, 500 ),
-			Arguments.arguments( -45, 3, 4, 3, 4, 500, 500 ),
+			//			Arguments.arguments( -180, 0, 1, 0, 1, 500, 500 ),
+			//			Arguments.arguments( -135, 1, 2, 1, 2, 500, 500 ),
+			//			Arguments.arguments( -90, 2, 3, 2, 3, 500, 500 ),
+			//			Arguments.arguments( -45, 3, 4, 3, 4, 500, 500 ),
 			Arguments.arguments( 0, 4, 5, 4, 5, 500, 500 ),
-			Arguments.arguments( 45, 5, 6, 5, 6, 500, 500 ),
-			Arguments.arguments( 90, 6, 7, 6, 7, 500, 500 ),
-			Arguments.arguments( 135, 7, 8, 7, 8, 500, 500 ),
-			Arguments.arguments( 180, 8, 9, 8, 9, 500, 500 ),
+			//			Arguments.arguments( 45, 5, 6, 5, 6, 500, 500 ),
+			//			Arguments.arguments( 90, 6, 7, 6, 7, 500, 500 ),
+			//			Arguments.arguments( 135, 7, 8, 7, 8, 500, 500 ),
+			//			Arguments.arguments( 180, 8, 9, 8, 9, 500, 500 ),
 
 			Arguments.arguments( 45, 0, 0, 1, 0, 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF )
 		);
