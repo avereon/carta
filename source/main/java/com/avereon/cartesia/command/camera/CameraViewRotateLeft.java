@@ -9,7 +9,7 @@ public class CameraViewRotateLeft extends CameraCommand {
 
 	@Override
 	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
-		double angle = context.getTool().getViewRotate() + 45;
+		double angle = context.getTool().getViewRotate() + 5;
 		if( angle > 180 ) angle -= 360;
 		context.getTool().setViewRotate( angle );
 
