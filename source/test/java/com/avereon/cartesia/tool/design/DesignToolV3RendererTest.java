@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
@@ -164,7 +165,7 @@ public class DesignToolV3RendererTest {
 	 * the renderer.
 	 */
 	@Test
-	@Tag( "WhiteBox" )
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void updateDpi() {
 		// given
 		Design design = ExampleDesigns.redBlueX();
@@ -193,7 +194,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	@Tag( "WhiteBox" )
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void updateOutputScale() {
 		// given
 		Design design = ExampleDesigns.redBlueX();
@@ -226,7 +227,7 @@ public class DesignToolV3RendererTest {
 	 * in the design.
 	 */
 	@Test
-	@Tag( "WhiteBox" )
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void updateDesignUnit() {
 		// given
 		Design design = ExampleDesigns.redBlueX();
@@ -255,6 +256,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void shapeScaleX() {
 		// given
 		double dpi = 96;
@@ -274,6 +276,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	@Tag( CartesiaTestTag.WHITE_BOX )
 	void shapeScaleY() {
 		// given
 		double dpi = 96;
