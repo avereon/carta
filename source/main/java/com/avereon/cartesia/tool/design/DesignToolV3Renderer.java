@@ -170,19 +170,19 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		viewCenterTransform
 			.xProperty()
 			.bind( viewCenterXProperty()
-				.multiply( viewZoomXProperty() )
 				.multiply( -1 )
-				.multiply( unitScaleProperty() )
 				.multiply( dpiXProperty() )
-				.add( widthProperty().multiply( 0.5 ).multiply( (outputScaleXProperty()).divide( viewZoomXProperty() ) ) ) );
+				.multiply( viewZoomXProperty() )
+				.multiply( unitScaleProperty() )
+				.add( widthProperty().multiply( 0.5 ).multiply( (outputScaleXProperty().divide( viewZoomXProperty() )) ) ) );
 		viewCenterTransform
 			.yProperty()
 			.bind( viewCenterYProperty()
 				.multiply( -1 )
+				.multiply( dpiYProperty() )
 				.multiply( viewZoomYProperty() )
 				.multiply( unitScaleProperty() )
-				.multiply( dpiYProperty() )
-				.add( heightProperty().multiply( -0.5 ).multiply( (outputScaleYProperty()).divide( viewZoomYProperty() ) ) ) );
+				.add( heightProperty().multiply( -0.5 ).multiply( (outputScaleYProperty().divide( viewZoomYProperty() )) ) ) );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
@@ -408,11 +408,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	public Transform getWorldToScreenTransform() {
-		// FIXME This causes stale transforms :-(
-		//if( worldToScreenTransform == null ) {
 		Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
 		worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
-		//}
 		return worldToScreenTransform;
 	}
 
