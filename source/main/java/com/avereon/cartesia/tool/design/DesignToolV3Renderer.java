@@ -139,6 +139,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 		// Configure the shape scale definition. The shape scale includes the unit
 		// scale, DPI and the output scale and is used to modify the shape geometry.
+		// shapeScale = unitScale * dpi * outputScale
 		shapeScaleX.bind( unitScaleProperty().multiply( dpiXProperty() ).multiply( outputScaleXProperty() ) );
 		shapeScaleY.bind( unitScaleProperty().multiply( dpiYProperty() ).multiply( outputScaleYProperty() ) );
 
@@ -148,19 +149,21 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		Translate viewCenterTransform = new Translate( 0, 0 );
 		world.getTransforms().setAll( viewZoomTransform, viewRotateTransform, viewCenterTransform );
 
-		// The rotate property is pretty straightforward, after the other two groups
+		// The rotation transform needs to include the rotation angle and the pivot
+		// point.
 		viewRotateTransform.angleProperty().bind( viewRotateProperty() );
 		viewRotateTransform.pivotXProperty().bind( viewCenterTransform.xProperty() );
 		viewRotateTransform.pivotYProperty().bind( viewCenterTransform.yProperty() );
 
-		// The scale properties do not include the DPI property because the geometry
+		// The zoom transform does not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
 		// out the output scale at the same time. This allows JavaFX to render the
 		// geometry at the highest resolution, regardless of the output scale set by
 		// the user. Someday this may need to be tied to a HiDPI setting, but we'll
 		// leave it here to understand how the technique works.
+		// viewZoomTransform = viewZoom / outputScale;
 		viewZoomTransform.xProperty().bind( viewZoomXProperty().divide( outputScaleXProperty() ) );
-		viewZoomTransform.yProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).multiply( -1 ) );
+		viewZoomTransform.yProperty().bind( viewZoomYProperty().divide( outputScaleYProperty() ).negate() );
 
 		// The translate properties do not include the output scale property because
 		// these are parent coordinates and not local coordinates, and the parent
@@ -169,20 +172,16 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// the pane and not at the origin.
 		viewCenterTransform
 			.xProperty()
-			.bind( viewCenterXProperty()
-				.multiply( -1 )
-				.multiply( dpiXProperty() )
-				.multiply( viewZoomXProperty() )
-				.multiply( unitScaleProperty() )
-				.add( widthProperty().multiply( 0.5 ).multiply( (outputScaleXProperty().divide( viewZoomXProperty() )) ) ) );
+			.bind( widthProperty()
+				.multiply( 0.5 )
+				.multiply( outputScaleXProperty().divide( viewZoomXProperty() ) )
+				.subtract( viewCenterXProperty().multiply( viewZoomXProperty() ).multiply( shapeScaleXProperty() ) ) );
 		viewCenterTransform
 			.yProperty()
-			.bind( viewCenterYProperty()
-				.multiply( -1 )
-				.multiply( dpiYProperty() )
-				.multiply( viewZoomYProperty() )
-				.multiply( unitScaleProperty() )
-				.add( heightProperty().multiply( -0.5 ).multiply( (outputScaleYProperty().divide( viewZoomYProperty() )) ) ) );
+			.bind( heightProperty()
+				.multiply( -0.5 )
+				.multiply( outputScaleYProperty().divide( viewZoomYProperty() ) )
+				.subtract( viewCenterYProperty().multiply( viewZoomYProperty() ).multiply( shapeScaleYProperty() ) ) );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
@@ -628,6 +627,12 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		if( line == null ) {
 			line = new Line();
 			designLine.setValue( FX_SHAPE, new WeakReference<>( line ) );
+
+			// The future of FX geometry
+			//line.startXProperty().bind( shapeScaleXProperty().multiply( designLine.getOrigin().getX() ) );
+			//line.startYProperty().bind( shapeScaleYProperty().multiply( designLine.getOrigin().getY() ) );
+			//line.endXProperty().bind( shapeScaleXProperty().multiply( designLine.getPoint().getX() ) );
+			//line.endYProperty().bind( shapeScaleYProperty().multiply( designLine.getPoint().getY() ) );
 		}
 
 		line.setStartX( designLine.getOrigin().getX() * shapeScaleX );
