@@ -464,7 +464,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	//		setShapeScaleY( unitScale * dpiY * outputScaleY );
 	//	}
 
-	private double getShapeScaleX() {
+	double getShapeScaleX() {
 		return shapeScaleX.get();
 	}
 
@@ -476,7 +476,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		return shapeScaleX;
 	}
 
-	private double getShapeScaleY() {
+	double getShapeScaleY() {
 		return shapeScaleY.get();
 	}
 
@@ -488,11 +488,11 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		return shapeScaleY;
 	}
 
-	private double getUnitScale() {
+	double getUnitScale() {
 		return unitScale.get();
 	}
 
-	private void setUnitScale( double unitScale ) {
+	void setUnitScale( double unitScale ) {
 		this.unitScale.set( unitScale );
 	}
 
@@ -500,7 +500,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		return unitScale;
 	}
 
-	private void setDesignUnit( DesignUnit unit ) {
+	void setDesignUnit( DesignUnit unit ) {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
 	}
 
