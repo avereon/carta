@@ -150,7 +150,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		world.getTransforms().setAll( viewZoomTransform, viewRotateTransform, viewCenterTransform );
 
 		// The rotation transform needs to include the rotation angle and the pivot
-		// point.
+		// point. The pivot point is always in parent coordinates.
 		viewRotateTransform.angleProperty().bind( viewRotateProperty() );
 		viewRotateTransform.pivotXProperty().bind( viewCenterTransform.xProperty() );
 		viewRotateTransform.pivotYProperty().bind( viewCenterTransform.yProperty() );

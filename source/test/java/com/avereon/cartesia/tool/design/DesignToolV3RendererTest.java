@@ -801,19 +801,19 @@ public class DesignToolV3RendererTest {
 	@Test
 	void screenToWorldZoom() {
 		// given
-		renderer.setViewZoom( 2, 2 );
-		double scale = 0.5;
+		double zoom = 2;
+		renderer.setViewZoom( zoom, zoom );
 
 		// when
 		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
 
 		// then
-		assertThat( bounds.getMinX() ).isEqualTo( scale * -100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( scale * -100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( scale * 100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( scale * 100 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( scale * 200 / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( scale * 200 / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getMinX() ).isEqualTo( -100 / zoom / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getMinY() ).isEqualTo( -100 / zoom / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getMaxX() ).isEqualTo( 100 / zoom / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getMaxY() ).isEqualTo( 100 / zoom / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getWidth() ).isEqualTo( 200 / zoom / gz, TIGHT_TOLERANCE );
+		assertThat( bounds.getHeight() ).isEqualTo( 200 / zoom / gz, TIGHT_TOLERANCE );
 	}
 
 	@ParameterizedTest
