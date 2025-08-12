@@ -5,7 +5,6 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
 import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.tool.RenderConstants;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.curve.math.Constants;
 import javafx.beans.value.ChangeListener;
@@ -33,8 +32,8 @@ import java.util.stream.Stream;
 
 import static com.avereon.cartesia.TestConstants.TIGHT_TOLERANCE;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
-import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_DPI;
-import static com.avereon.cartesia.tool.RenderConstants.DEFAULT_OUTPUT_SCALE;
+import static com.avereon.cartesia.test.Point2DAssert.assertThat;
+import static com.avereon.cartesia.tool.RenderConstants.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,7 +48,7 @@ public class DesignToolV3RendererTest {
 
 	static final double height = 1000;
 
-	static final double gz = RenderConstants.DEFAULT_DPI * DesignUnit.CM.to( 1, DesignUnit.IN );
+	static final double gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
 
 	private DesignToolV3Renderer renderer;
 
@@ -72,6 +71,13 @@ public class DesignToolV3RendererTest {
 		renderer.setDesign( new Design2D() );
 		renderer.setWorkplane( new Workplane() );
 		renderer.layout();
+
+		assertThat( renderer.getDpiX() ).isEqualTo( DEFAULT_DPI );
+		assertThat( renderer.getDpiY() ).isEqualTo( DEFAULT_DPI );
+		assertThat( renderer.getUnitScale() ).isEqualTo( DEFAULT_UNIT_SCALE );
+		assertThat( renderer.getViewRotate() ).isEqualTo( DEFAULT_ROTATE );
+		assertThat( renderer.getViewZoom() ).isEqualTo( DEFAULT_ZOOM );
+		assertThat( renderer.getViewCenter() ).isEqualTo( DEFAULT_CENTER );
 	}
 
 	@Test
@@ -134,9 +140,9 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void defaultView() {
-		assertThat( renderer.getViewCenter() ).isEqualTo( RenderConstants.DEFAULT_CENTER );
-		assertThat( renderer.getViewRotate() ).isEqualTo( RenderConstants.DEFAULT_ROTATE );
-		assertThat( renderer.getViewZoom() ).isEqualTo( RenderConstants.DEFAULT_ZOOM );
+		assertThat( renderer.getViewCenter() ).isEqualTo( DEFAULT_CENTER );
+		assertThat( renderer.getViewRotate() ).isEqualTo( DEFAULT_ROTATE );
+		assertThat( renderer.getViewZoom() ).isEqualTo( DEFAULT_ZOOM );
 	}
 
 	@Test
@@ -664,7 +670,7 @@ public class DesignToolV3RendererTest {
 	@Test
 	void screenToWorldWithBounds() {
 		// given
-		assertThat( renderer.getDpiX() ).isEqualTo( RenderConstants.DEFAULT_DPI );
+		assertThat( renderer.getDpiX() ).isEqualTo( DEFAULT_DPI );
 
 		// when
 		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
@@ -849,6 +855,63 @@ public class DesignToolV3RendererTest {
 
 			Arguments.arguments( 45, 0, 0, 500, 500 - 1 * gz, Constants.SQRT_ONE_HALF, Constants.SQRT_ONE_HALF )
 		);
+	}
+
+	@Test
+	void worldToScreenTransform() {
+		double gz;
+		Transform worldToScreenTransform;
+
+		// Default
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+
+		// DPI
+		renderer.setDpi( 72, 72 );
+		gz = 72 * DEFAULT_UNIT_SCALE;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		renderer.setDpi( DEFAULT_DPI, DEFAULT_DPI );
+
+		// Unit scale
+		renderer.setUnitScale( 1 );
+		gz = DEFAULT_DPI * 1;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		renderer.setUnitScale( DEFAULT_UNIT_SCALE );
+
+		// Output scale
+		renderer.setOutputScale( 3, 3 );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		renderer.setOutputScale( DEFAULT_OUTPUT_SCALE, DEFAULT_OUTPUT_SCALE );
+
+		// Rotate
+		double rotate = 45;
+		renderer.setViewRotate( rotate );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 0 ) ).isEqualTo( new Point2D( 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF ) );
+		renderer.setViewRotate( 0 );
+
+		// Zoom
+		double zoom = 2;
+		renderer.setViewZoom( zoom, zoom );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * zoom * gz, 500 - 1 * zoom * gz ) );
+		renderer.setViewZoom( DEFAULT_ZOOM );
+
+		// Center
+		double centerX = 2;
+		double centerY = 2;
+		renderer.setViewCenter( centerX, centerY, 0 );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		worldToScreenTransform = renderer.getWorldToScreenTransform();
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isCloseTo( new Point2D( 500 + (-centerX + 1) * gz, 500 + (centerY - 1) * gz ) );
+		renderer.setViewCenter( DEFAULT_CENTER );
 	}
 
 	@Test

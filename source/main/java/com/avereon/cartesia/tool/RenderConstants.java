@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.DesignUnit;
 import javafx.geometry.Point3D;
 
 public interface RenderConstants {
@@ -7,6 +8,8 @@ public interface RenderConstants {
 	double DEFAULT_DPI = 96;
 
 	double DEFAULT_OUTPUT_SCALE = 1.0;
+
+	double DEFAULT_UNIT_SCALE = DesignUnit.CM.to( 1, DesignUnit.IN );
 
 	Point3D DEFAULT_CENTER = new Point3D( 0, 0, 0 );
 
