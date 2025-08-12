@@ -843,15 +843,15 @@ public class DesignToolV3RendererTest {
 		return Stream.of(
 			Arguments.arguments( 0, 0, 0, 500, 500, 0, 0 ),
 			// No angle should change the center
-			//			Arguments.arguments( -180, 0, 0, 500, 500, 0, 0 ),
-			//			Arguments.arguments( -135, 1, 2, 500, 500, 1, 2 ),
-			//			Arguments.arguments( -90, 2, 3, 500, 500, 2, 3 ),
-			//			Arguments.arguments( -45, 3, 4, 500, 500, 3, 4 ),
+			Arguments.arguments( -180, 0, 0, 500, 500, 0, 0 ),
+			Arguments.arguments( -135, 1, 2, 500, 500, 1, 2 ),
+			Arguments.arguments( -90, 2, 3, 500, 500, 2, 3 ),
+			Arguments.arguments( -45, 3, 4, 500, 500, 3, 4 ),
 			Arguments.arguments( 0, 4, 5, 500, 500, 4, 5 ),
-			//			Arguments.arguments( 45, 5, 6, 500, 500, 5, 6 ),
-			//			Arguments.arguments( 90, 6, 7, 500, 500, 6, 7 ),
-			//			Arguments.arguments( 135, 7, 8, 500, 500, 7, 8 ),
-			//			Arguments.arguments( 180, 8, 9, 500, 500, 8, 9 ),
+			Arguments.arguments( 45, 5, 6, 500, 500, 5, 6 ),
+			Arguments.arguments( 90, 6, 7, 500, 500, 6, 7 ),
+			Arguments.arguments( 135, 7, 8, 500, 500, 7, 8 ),
+			Arguments.arguments( 180, 8, 9, 500, 500, 8, 9 ),
 
 			Arguments.arguments( 45, 0, 0, 500, 500 - 1 * gz, Constants.SQRT_ONE_HALF, Constants.SQRT_ONE_HALF )
 		);
@@ -1018,15 +1018,15 @@ public class DesignToolV3RendererTest {
 		return Stream.of(
 			Arguments.arguments( 0, 0, 0, 0, 0, 500, 500 ),
 			// No angle should change the center
-			//			Arguments.arguments( -180, 0, 1, 0, 1, 500, 500 ),
-			//			Arguments.arguments( -135, 1, 2, 1, 2, 500, 500 ),
-			//			Arguments.arguments( -90, 2, 3, 2, 3, 500, 500 ),
-			//			Arguments.arguments( -45, 3, 4, 3, 4, 500, 500 ),
+			Arguments.arguments( -180, 0, 1, 0, 1, 500, 500 ),
+			Arguments.arguments( -135, 1, 2, 1, 2, 500, 500 ),
+			Arguments.arguments( -90, 2, 3, 2, 3, 500, 500 ),
+			Arguments.arguments( -45, 3, 4, 3, 4, 500, 500 ),
 			Arguments.arguments( 0, 4, 5, 4, 5, 500, 500 ),
-			//			Arguments.arguments( 45, 5, 6, 5, 6, 500, 500 ),
-			//			Arguments.arguments( 90, 6, 7, 6, 7, 500, 500 ),
-			//			Arguments.arguments( 135, 7, 8, 7, 8, 500, 500 ),
-			//			Arguments.arguments( 180, 8, 9, 8, 9, 500, 500 ),
+			Arguments.arguments( 45, 5, 6, 5, 6, 500, 500 ),
+			Arguments.arguments( 90, 6, 7, 6, 7, 500, 500 ),
+			Arguments.arguments( 135, 7, 8, 7, 8, 500, 500 ),
+			Arguments.arguments( 180, 8, 9, 8, 9, 500, 500 ),
 
 			Arguments.arguments( 45, 0, 0, 1, 0, 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF )
 		);

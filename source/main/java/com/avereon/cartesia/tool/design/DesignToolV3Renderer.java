@@ -152,8 +152,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// The rotation transform needs to include the rotation angle and the pivot
 		// point. The pivot point is always in parent coordinates.
 		viewRotateTransform.angleProperty().bind( viewRotateProperty() );
-		viewRotateTransform.pivotXProperty().bind( viewCenterTransform.xProperty() );
-		viewRotateTransform.pivotYProperty().bind( viewCenterTransform.yProperty() );
+		viewRotateTransform.pivotXProperty().bind( widthProperty().multiply( 0.5 ).multiply( outputScaleXProperty() ) );
+		viewRotateTransform.pivotYProperty().bind( heightProperty().multiply( -0.5 ).multiply( outputScaleYProperty() ) );
 
 		// The zoom transform does not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
