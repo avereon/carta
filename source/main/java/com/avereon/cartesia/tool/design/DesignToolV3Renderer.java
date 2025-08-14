@@ -21,6 +21,7 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.transform.*;
+import lombok.AccessLevel;
 import lombok.CustomLog;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
@@ -34,6 +35,10 @@ import java.util.List;
 public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	public static final String FX_SHAPE = "fx-shape";
+
+	private Design design;
+
+	private Workplane workplane;
 
 	/**
 	 * The primary container for all visual elements that are not part of the design
@@ -78,9 +83,20 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	private final DoubleProperty unitScale;
 
-	private Design design;
+	@Getter( AccessLevel.PACKAGE )
+	private final DoubleProperty rendererCenterX;
 
-	private Workplane workplane;
+	@Getter( AccessLevel.PACKAGE )
+	private final DoubleProperty rendererCenterY;
+
+	@Getter( AccessLevel.PACKAGE )
+	private final Scale viewZoomTransform;
+
+	@Getter( AccessLevel.PACKAGE )
+	private final Rotate viewRotateTransform;
+
+	@Getter( AccessLevel.PACKAGE )
+	private final Translate viewCenterTransform;
 
 	// Cacheable - meaning always use getScreenToWorldTransform()
 	private Transform screenToWorldTransform;
@@ -113,6 +129,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		shapeScaleX = new SimpleDoubleProperty( 1.0 );
 		shapeScaleY = new SimpleDoubleProperty( 1.0 );
 		unitScale = new SimpleDoubleProperty( 1.0 );
+		rendererCenterX = new SimpleDoubleProperty( 0.0 );
+		rendererCenterY = new SimpleDoubleProperty( 0.0 );
 
 		grid = new Pane();
 		grid.getStyleClass().add( "tool-renderer-grid" );
@@ -144,16 +162,24 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		shapeScaleY.bind( unitScaleProperty().multiply( dpiYProperty() ).multiply( outputScaleYProperty() ) );
 
 		// Create and set the world transforms
-		Scale viewZoomTransform = new Scale( 1, -1 );
-		Rotate viewRotateTransform = new Rotate( 0, 0, 0 );
-		Translate viewCenterTransform = new Translate( 0, 0 );
+		viewZoomTransform = new Scale( 1, -1 );
+		viewRotateTransform = new Rotate( 0, 0, 0 );
+		viewCenterTransform = new Translate( 0, 0 );
 		world.getTransforms().setAll( viewZoomTransform, viewRotateTransform, viewCenterTransform );
 
+		// Configure the renderer center definition. The renderer center maintains
+		// the center point in the parent coordinate system regardless of the parent
+		// size, view zoom or output scale. This is important when converting
+		// between screen and world coordinates.
+		rendererCenterX.bind( widthProperty().multiply( 0.5 ).multiply( outputScaleXProperty() ).divide( viewZoomXProperty() ) );
+		rendererCenterY.bind( heightProperty().multiply( -0.5 ).multiply( outputScaleYProperty() ).divide( viewZoomYProperty() ) );
+
 		// The rotation transform needs to include the rotation angle and the pivot
-		// point. The pivot point is always in parent coordinates.
+		// point. The pivot point is always in parent coordinates and is bound to
+		// the renderer center.
 		viewRotateTransform.angleProperty().bind( viewRotateProperty() );
-		viewRotateTransform.pivotXProperty().bind( widthProperty().multiply( 0.5 ).multiply( outputScaleXProperty() ) );
-		viewRotateTransform.pivotYProperty().bind( heightProperty().multiply( -0.5 ).multiply( outputScaleYProperty() ) );
+		viewRotateTransform.pivotXProperty().bind( getRendererCenterX() );
+		viewRotateTransform.pivotYProperty().bind( getRendererCenterY() );
 
 		// The zoom transform does not include the DPI property because the geometry
 		// values already include the DPI. What is interesting here is that we divide
@@ -170,18 +196,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		// transforms have already incorporated the output scale. The translate
 		// properties also have to compensate for the scale acting at the center of
 		// the pane and not at the origin.
-		viewCenterTransform
-			.xProperty()
-			.bind( widthProperty()
-				.multiply( 0.5 )
-				.multiply( outputScaleXProperty().divide( viewZoomXProperty() ) )
-				.subtract( viewCenterXProperty().multiply( viewZoomXProperty() ).multiply( shapeScaleXProperty() ) ) );
-		viewCenterTransform
-			.yProperty()
-			.bind( heightProperty()
-				.multiply( -0.5 )
-				.multiply( outputScaleYProperty().divide( viewZoomYProperty() ) )
-				.subtract( viewCenterYProperty().multiply( viewZoomYProperty() ).multiply( shapeScaleYProperty() ) ) );
+		viewCenterTransform.xProperty().bind( getRendererCenterX().subtract( viewCenterXProperty().multiply( shapeScaleXProperty() ) ) );
+		viewCenterTransform.yProperty().bind( getRendererCenterY().subtract( viewCenterYProperty().multiply( shapeScaleYProperty() ) ) );
 
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );

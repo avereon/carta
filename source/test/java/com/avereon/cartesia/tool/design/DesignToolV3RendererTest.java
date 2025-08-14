@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.Design2D;
@@ -15,7 +14,10 @@ import javafx.geometry.Point3D;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Line;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
@@ -30,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.lang.ref.WeakReference;
 import java.util.stream.Stream;
 
+import static com.avereon.cartesia.CartesiaTestTag.WHITE_BOX;
 import static com.avereon.cartesia.TestConstants.TIGHT_TOLERANCE;
 import static com.avereon.cartesia.TestConstants.TOLERANCE;
 import static com.avereon.cartesia.test.Point2DAssert.assertThat;
@@ -171,7 +174,7 @@ public class DesignToolV3RendererTest {
 	 * the renderer.
 	 */
 	@Test
-	@Tag( CartesiaTestTag.WHITE_BOX )
+	@Tag( WHITE_BOX )
 	void updateDpi() {
 		// given
 		Design design = ExampleDesigns.redBlueX();
@@ -200,7 +203,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	@Tag( CartesiaTestTag.WHITE_BOX )
+	@Tag( WHITE_BOX )
 	void updateOutputScale() {
 		// given
 		Design design = ExampleDesigns.redBlueX();
@@ -233,7 +236,7 @@ public class DesignToolV3RendererTest {
 	 * in the design.
 	 */
 	@Test
-	@Tag( CartesiaTestTag.WHITE_BOX )
+	@Tag( WHITE_BOX )
 	void updateDesignUnit() {
 		// given
 		Design design = ExampleDesigns.redBlueX();
@@ -262,7 +265,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	@Tag( CartesiaTestTag.WHITE_BOX )
+	@Tag( WHITE_BOX )
 	void shapeScaleX() {
 		// given
 		double dpi = 96;
@@ -282,7 +285,7 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	@Tag( CartesiaTestTag.WHITE_BOX )
+	@Tag( WHITE_BOX )
 	void shapeScaleY() {
 		// given
 		double dpi = 96;
@@ -668,6 +671,102 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	@Tag( WHITE_BOX )
+	void rendererCenter() {
+		renderer.setViewZoom( 0.5, 0.5 );
+		assertThat( renderer.getRendererCenterX().get() ).isEqualTo( 1000 );
+		assertThat( renderer.getRendererCenterY().get() ).isEqualTo( -1000 );
+
+		renderer.setViewZoom( 1, 1 );
+		assertThat( renderer.getRendererCenterX().get() ).isEqualTo( 500 );
+		assertThat( renderer.getRendererCenterY().get() ).isEqualTo( -500 );
+
+		renderer.setViewZoom( 2, 2 );
+		assertThat( renderer.getRendererCenterX().get() ).isEqualTo( 250 );
+		assertThat( renderer.getRendererCenterY().get() ).isEqualTo( -250 );
+	}
+
+	@Test
+	@Tag( WHITE_BOX )
+	void viewRotateTransform() {
+		// given
+		Rotate viewRotateTransform;
+
+		renderer.setViewRotate( 0 );
+		renderer.setViewCenter( 0, 0 );
+		renderer.setViewZoom( 1, 1 );
+		viewRotateTransform = renderer.getViewRotateTransform();
+		assertThat( viewRotateTransform.angleProperty().get() ).isEqualTo( 0 );
+		assertThat( viewRotateTransform.pivotXProperty().get() ).isEqualTo( 500 );
+		assertThat( viewRotateTransform.pivotYProperty().get() ).isEqualTo( -500 );
+
+		renderer.setViewRotate( 45 );
+		renderer.setViewCenter( 1, 1 );
+		renderer.setViewZoom( 0.5, 0.5 );
+		viewRotateTransform = renderer.getViewRotateTransform();
+		assertThat( viewRotateTransform.angleProperty().get() ).isEqualTo( 45 );
+		assertThat( viewRotateTransform.pivotXProperty().get() ).isEqualTo( 1000 );
+		assertThat( viewRotateTransform.pivotYProperty().get() ).isEqualTo( -1000 );
+
+		renderer.setViewRotate( 135 );
+		renderer.setViewCenter( 1, 1 );
+		renderer.setViewZoom( 3, 3 );
+		viewRotateTransform = renderer.getViewRotateTransform();
+		assertThat( viewRotateTransform.angleProperty().get() ).isEqualTo( 135 );
+		assertThat( viewRotateTransform.pivotXProperty().get() ).isEqualTo( 500.0 / 3.0 );
+		assertThat( viewRotateTransform.pivotYProperty().get() ).isEqualTo( -500.0 / 3.0 );
+	}
+
+	@Test
+	@Tag( WHITE_BOX )
+	void viewZoomTransform() {
+		// given
+		Scale viewZoomTransform;
+
+		renderer.setViewZoom( 1, 1 );
+		renderer.setOutputScale( 1, 1 );
+		viewZoomTransform = renderer.getViewZoomTransform();
+		assertThat( viewZoomTransform.xProperty().get() ).isEqualTo( 1 );
+		assertThat( viewZoomTransform.yProperty().get() ).isEqualTo( -1 );
+
+		renderer.setViewZoom( 2, 2 );
+		renderer.setOutputScale( 2, 2 );
+		viewZoomTransform = renderer.getViewZoomTransform();
+		assertThat( viewZoomTransform.xProperty().get() ).isEqualTo( 1 );
+		assertThat( viewZoomTransform.yProperty().get() ).isEqualTo( -1 );
+
+		renderer.setViewZoom( 0.5, 0.5 );
+		renderer.setOutputScale( 3, 3 );
+		viewZoomTransform = renderer.getViewZoomTransform();
+		assertThat( viewZoomTransform.xProperty().get() ).isEqualTo( 0.5 / 3 );
+		assertThat( viewZoomTransform.yProperty().get() ).isEqualTo( -0.5 / 3 );
+	}
+
+	@Test
+	@Tag( WHITE_BOX )
+	void viewCenterTransform() {
+		// given
+		Translate viewCenterTransform;
+		// Use an offset center for testing
+		renderer.setViewCenter( 1, 1 );
+
+		renderer.setViewZoom( 0.5, 0.5 );
+		viewCenterTransform = renderer.getViewCenterTransform();
+		assertThat( viewCenterTransform.xProperty().get() ).isEqualTo( 1000 - 1 * gz );
+		assertThat( viewCenterTransform.yProperty().get() ).isEqualTo( -1000 - 1 * gz );
+
+		renderer.setViewZoom( 1, 1 );
+		viewCenterTransform = renderer.getViewCenterTransform();
+		assertThat( viewCenterTransform.xProperty().get() ).isEqualTo( 500 - 1 * gz );
+		assertThat( viewCenterTransform.yProperty().get() ).isEqualTo( -500 - 1 * gz );
+
+		renderer.setViewZoom( 2, 2 );
+		viewCenterTransform = renderer.getViewCenterTransform();
+		assertThat( viewCenterTransform.xProperty().get() ).isEqualTo( 250 - 1 * gz );
+		assertThat( viewCenterTransform.yProperty().get() ).isEqualTo( -250 - 1 * gz );
+	}
+
+	@Test
 	void screenToWorldTransform() {
 		double gz;
 		Transform screenToWorldTransform;
@@ -677,51 +776,51 @@ public class DesignToolV3RendererTest {
 		screenToWorldTransform = renderer.getScreenToWorldTransform();
 		assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
 
-				// DPI
-				renderer.setDpi( 72, 72 );
-				gz = 72 * DEFAULT_UNIT_SCALE;
-				screenToWorldTransform = renderer.getScreenToWorldTransform();
-				assertThat( screenToWorldTransform.transform(  500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D(1, 1 ) );
-				renderer.setDpi( DEFAULT_DPI, DEFAULT_DPI );
+		// DPI
+		renderer.setDpi( 72, 72 );
+		gz = 72 * DEFAULT_UNIT_SCALE;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+		renderer.setDpi( DEFAULT_DPI, DEFAULT_DPI );
 
-				// Unit scale
-				renderer.setUnitScale( 1 );
-				gz = DEFAULT_DPI * 1;
-				screenToWorldTransform = renderer.getScreenToWorldTransform();
-				assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
-				renderer.setUnitScale( DEFAULT_UNIT_SCALE );
+		// Unit scale
+		renderer.setUnitScale( 1 );
+		gz = DEFAULT_DPI * 1;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+		renderer.setUnitScale( DEFAULT_UNIT_SCALE );
 
-				// Output scale
-				renderer.setOutputScale( 3, 3 );
-				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
-				screenToWorldTransform = renderer.getScreenToWorldTransform();
-				assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
-				renderer.setOutputScale( DEFAULT_OUTPUT_SCALE, DEFAULT_OUTPUT_SCALE );
+		// Output scale
+		renderer.setOutputScale( 3, 3 );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+		renderer.setOutputScale( DEFAULT_OUTPUT_SCALE, DEFAULT_OUTPUT_SCALE );
 
-				// View Rotate
-				double rotate = 45;
-				renderer.setViewRotate( rotate );
-				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
-				screenToWorldTransform = renderer.getScreenToWorldTransform();
-				assertThat( screenToWorldTransform.transform( 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF ) ).isCloseTo( new Point2D( 1, 0 ) );
-				renderer.setViewRotate( 0 );
+		// View Rotate
+		double rotate = 45;
+		renderer.setViewRotate( rotate );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF ) ).isCloseTo( new Point2D( 1, 0 ) );
+		renderer.setViewRotate( 0 );
 
-				// View Zoom
-				double zoom = 2;
-				renderer.setViewZoom( zoom, zoom );
-				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
-				screenToWorldTransform = renderer.getScreenToWorldTransform();
-				assertThat( screenToWorldTransform.transform( 500 + 1 * zoom * gz, 500 - 1 * zoom * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
-				renderer.setViewZoom( DEFAULT_ZOOM );
+		// View Zoom
+		double zoom = 2;
+		renderer.setViewZoom( zoom, zoom );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + 1 * zoom * gz, 500 - 1 * zoom * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+		renderer.setViewZoom( DEFAULT_ZOOM );
 
-				// View Center
-				double centerX = 2;
-				double centerY = 2;
-				renderer.setViewCenter( centerX, centerY, 0 );
-				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
-				screenToWorldTransform = renderer.getScreenToWorldTransform();
-				assertThat( screenToWorldTransform.transform( 500 + (-centerX + 1) * gz, 500 + (centerY - 1) * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
-				renderer.setViewCenter( DEFAULT_CENTER );
+		// View Center
+		double centerX = 2;
+		double centerY = 2;
+		renderer.setViewCenter( centerX, centerY, 0 );
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + (-centerX + 1) * gz, 500 + (centerY - 1) * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+		renderer.setViewCenter( DEFAULT_CENTER );
 	}
 
 	@Test
