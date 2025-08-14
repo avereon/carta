@@ -471,18 +471,9 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		return node.getBoundsInParent();
 	}
 
-	//	private void updateGz( double unitScale, double dpiX, double dpiY, double outputScaleX, double outputScaleY ) {
-	//		setShapeScaleX( unitScale * dpiX * outputScaleX );
-	//		setShapeScaleY( unitScale * dpiY * outputScaleY );
-	//	}
-
 	double getShapeScaleX() {
 		return shapeScaleX.get();
 	}
-
-	//	private void setShapeScaleX( double shapeScaleX ) {
-	//		this.shapeScaleX.set( shapeScaleX );
-	//	}
 
 	private DoubleProperty shapeScaleXProperty() {
 		return shapeScaleX;
@@ -491,10 +482,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	double getShapeScaleY() {
 		return shapeScaleY.get();
 	}
-
-	//	private void setShapeScaleY( double shapeScaleY ) {
-	//		this.shapeScaleY.set( shapeScaleY );
-	//	}
 
 	private DoubleProperty shapeScaleYProperty() {
 		return shapeScaleY;
