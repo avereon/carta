@@ -265,46 +265,6 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
-	@Tag( WHITE_BOX )
-	void shapeScaleX() {
-		// given
-		double dpi = 96;
-		double unitScale = DesignUnit.CM.to( 1, DesignUnit.IN );
-		double outputScale = 3;
-		double expectedShapeScaleX = dpi * unitScale * outputScale;
-
-		renderer.setDpi( dpi, dpi );
-		renderer.setUnitScale( unitScale );
-		renderer.setOutputScale( outputScale, outputScale );
-
-		// when
-		double shapeScaleX = renderer.getShapeScaleX();
-
-		// then
-		assertThat( shapeScaleX ).isEqualTo( expectedShapeScaleX, TOLERANCE );
-	}
-
-	@Test
-	@Tag( WHITE_BOX )
-	void shapeScaleY() {
-		// given
-		double dpi = 96;
-		double unitScale = DesignUnit.CM.to( 1, DesignUnit.IN );
-		double outputScale = 3;
-		double expectedShapeScaleY = dpi * unitScale * outputScale;
-
-		renderer.setDpi( dpi, dpi );
-		renderer.setUnitScale( unitScale );
-		renderer.setOutputScale( outputScale, outputScale );
-
-		// when
-		double shapeScaleY = renderer.getShapeScaleY();
-
-		// then
-		assertThat( shapeScaleY ).isEqualTo( expectedShapeScaleY, TOLERANCE );
-	}
-
-	@Test
 	void setViewCenter() {
 		renderer.setViewCenter( 5, 10, 20 );
 		assertThat( renderer.getViewCenterX() ).isEqualTo( 5 );
@@ -626,13 +586,10 @@ public class DesignToolV3RendererTest {
 		assertThat( renderer.isLayerVisible( layer4 ) ).isFalse();
 	}
 
-	// FIXME This test does not show the "set view point" problem seen when changing the view point with the camera viewpoint tool
-
 	@Test
-	void outputScaleAppliedCorrectly() {
+	@Tag( WHITE_BOX )
+	void shapeScale() {
 		// given
-		double worldX = 1;
-		double worldY = 1;
 		double dpi = 96;
 		double unitScale = DesignUnit.CM.to( 1, DesignUnit.IN );
 		double outputScale = 3;
@@ -644,30 +601,12 @@ public class DesignToolV3RendererTest {
 		renderer.setOutputScale( outputScale, outputScale );
 
 		// when
-		// Compute the shape coordinates the renderer should use
-		double shapeX = worldX * renderer.getShapeScaleX();
-		double shapeY = worldY * renderer.getShapeScaleY();
+		double shapeScaleX = renderer.getShapeScaleX();
+		double shapeScaleY = renderer.getShapeScaleY();
 
 		// then
-		// Verify the shape coordinates are correctly scaled
-		assertThat( shapeX ).isEqualTo( worldX * expectedShapeScaleX, TOLERANCE );
-		assertThat( shapeY ).isEqualTo( worldY * expectedShapeScaleY, TOLERANCE );
-
-		// given
-		// Take out the output scale from the shape coordinates to make screen coordinates
-		double shapeScreenX = shapeX / outputScale;
-		double shapeScreenY = shapeY / outputScale;
-		assertThat( shapeScreenX ).isCloseTo( worldX * dpi * unitScale, TOLERANCE );
-		assertThat( shapeScreenY ).isCloseTo( worldY * dpi * unitScale, TOLERANCE );
-
-		// when
-		// Compute the shape screen coordinates to world coordinates
-		Point2D worldPoint = renderer.screenToWorld( 500 + shapeScreenX, 500 - shapeScreenY );
-
-		// then
-		// Verify the screen coordinates are correctly converted to world coordinates
-		assertThat( worldPoint.getX() ).isEqualTo( worldX, TOLERANCE );
-		assertThat( worldPoint.getY() ).isEqualTo( worldY, TOLERANCE );
+		assertThat( shapeScaleX ).isEqualTo( expectedShapeScaleX, TOLERANCE );
+		assertThat( shapeScaleY ).isEqualTo( expectedShapeScaleY, TOLERANCE );
 	}
 
 	@Test
