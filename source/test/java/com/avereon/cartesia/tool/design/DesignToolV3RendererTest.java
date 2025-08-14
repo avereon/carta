@@ -668,6 +668,63 @@ public class DesignToolV3RendererTest {
 	}
 
 	@Test
+	void screenToWorldTransform() {
+		double gz;
+		Transform screenToWorldTransform;
+
+		// Default
+		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+		screenToWorldTransform = renderer.getScreenToWorldTransform();
+		assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+
+				// DPI
+				renderer.setDpi( 72, 72 );
+				gz = 72 * DEFAULT_UNIT_SCALE;
+				screenToWorldTransform = renderer.getScreenToWorldTransform();
+				assertThat( screenToWorldTransform.transform(  500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D(1, 1 ) );
+				renderer.setDpi( DEFAULT_DPI, DEFAULT_DPI );
+
+				// Unit scale
+				renderer.setUnitScale( 1 );
+				gz = DEFAULT_DPI * 1;
+				screenToWorldTransform = renderer.getScreenToWorldTransform();
+				assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+				renderer.setUnitScale( DEFAULT_UNIT_SCALE );
+
+				// Output scale
+				renderer.setOutputScale( 3, 3 );
+				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+				screenToWorldTransform = renderer.getScreenToWorldTransform();
+				assertThat( screenToWorldTransform.transform( 500 + 1 * gz, 500 - 1 * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+				renderer.setOutputScale( DEFAULT_OUTPUT_SCALE, DEFAULT_OUTPUT_SCALE );
+
+				// View Rotate
+				double rotate = 45;
+				renderer.setViewRotate( rotate );
+				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+				screenToWorldTransform = renderer.getScreenToWorldTransform();
+				assertThat( screenToWorldTransform.transform( 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF ) ).isCloseTo( new Point2D( 1, 0 ) );
+				renderer.setViewRotate( 0 );
+
+				// View Zoom
+				double zoom = 2;
+				renderer.setViewZoom( zoom, zoom );
+				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+				screenToWorldTransform = renderer.getScreenToWorldTransform();
+				assertThat( screenToWorldTransform.transform( 500 + 1 * zoom * gz, 500 - 1 * zoom * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+				renderer.setViewZoom( DEFAULT_ZOOM );
+
+				// View Center
+				double centerX = 2;
+				double centerY = 2;
+				renderer.setViewCenter( centerX, centerY, 0 );
+				gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
+				screenToWorldTransform = renderer.getScreenToWorldTransform();
+				assertThat( screenToWorldTransform.transform( 500 + (-centerX + 1) * gz, 500 + (centerY - 1) * gz ) ).isCloseTo( new Point2D( 1, 1 ) );
+				renderer.setViewCenter( DEFAULT_CENTER );
+	}
+
+	@Test
 	void screenToWorldWithBounds() {
 		// given
 		assertThat( renderer.getDpiX() ).isEqualTo( DEFAULT_DPI );
@@ -728,102 +785,6 @@ public class DesignToolV3RendererTest {
 
 	@ParameterizedTest
 	@MethodSource
-	void screenToWorldWithCenter( double centerX, double centerY, double screenX, double screenY, double worldX, double worldY ) {
-		// given
-		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
-		assertThat( renderer.screenToWorld( 500, 500 ).getY() ).isCloseTo( 0, TOLERANCE );
-
-		// when
-		renderer.setViewCenter( centerX, centerY, 0 );
-
-		// then
-		assertThat( renderer.screenToWorld( screenX, screenY ).getX() ).isCloseTo( worldX, TOLERANCE );
-		assertThat( renderer.screenToWorld( screenX, screenY ).getY() ).isCloseTo( worldY, TOLERANCE );
-	}
-
-	private static Stream<Arguments> screenToWorldWithCenter() {
-		return Stream.of(
-			Arguments.arguments( 2, 2, 500, 500, 2, 2 ),
-			Arguments.arguments( 2, 2, 500, 500 - 2 * gz, 2, 4 ),
-			Arguments.arguments( 2, 2, 500 + 2 * gz, 500 - 2 * gz, 4, 4 ),
-			Arguments.arguments( 2, 2, 500 + 2 * gz, 500, 4, 2 ),
-			Arguments.arguments( 2, 2, 500 + 2 * gz, 500 + 2 * gz, 4, 0 ),
-			Arguments.arguments( 2, 2, 500, 500 + 2 * gz, 2, 0 ),
-			Arguments.arguments( 2, 2, 500 - 2 * gz, 500 + 2 * gz, 0, 0 ),
-			Arguments.arguments( 2, 2, 500 - 2 * gz, 500, 0, 2 ),
-			Arguments.arguments( 2, 2, 500 - 2 * gz, 500 - 2 * gz, 0, 4 )
-		);
-	}
-
-	@Test
-	void screenToWorldWithZoom() {
-		// given
-		renderer.resizeRelocate( 0, 0, 1000, 800 );
-		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
-		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
-
-		// when
-		renderer.setViewZoom( new Point2D( 2, 2 ) );
-
-		// then
-		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
-		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
-	}
-
-	//	@Test
-	//	void screenToWorldWithRotate() {
-	//		// given
-	//		renderer.resizeRelocate( 0, 0, 1000, 800 );
-	//		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
-	//		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
-	//
-	//		// when
-	//		renderer.setViewRotate( 20 );
-	//
-	//		// then
-	//		assertThat( renderer.screenToWorld( 500, 400 ).getX() ).isCloseTo( 0, TOLERANCE );
-	//		assertThat( renderer.screenToWorld( 500, 400 ).getY() ).isCloseTo( 0, TOLERANCE );
-	//	}
-	//
-	@Test
-	void screenToWorldWith() {
-		// given
-		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
-		assertThat( renderer.screenToWorld( 500, 500 ).getY() ).isCloseTo( 0, TOLERANCE );
-
-		// when
-		Transform transform = renderer.getScreenToWorldTransform();
-		Bounds bounds = transform.transform( new BoundingBox( 400, 400, 200, 200 ) );
-
-		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -100 / gz, TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -100 / gz, TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 100 / gz, TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 100 / gz, TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 200 / gz, TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 200 / gz, TOLERANCE );
-	}
-
-	@Test
-	void screenToWorldZoom() {
-		// given
-		double zoom = 2;
-		renderer.setViewZoom( zoom, zoom );
-
-		// when
-		Bounds bounds = renderer.screenToWorld( new BoundingBox( 400, 400, 200, 200 ) );
-
-		// then
-		assertThat( bounds.getMinX() ).isEqualTo( -100 / zoom / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMinY() ).isEqualTo( -100 / zoom / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxX() ).isEqualTo( 100 / zoom / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getMaxY() ).isEqualTo( 100 / zoom / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getWidth() ).isEqualTo( 200 / zoom / gz, TIGHT_TOLERANCE );
-		assertThat( bounds.getHeight() ).isEqualTo( 200 / zoom / gz, TIGHT_TOLERANCE );
-	}
-
-	@ParameterizedTest
-	@MethodSource
 	void screenToWorldWithRotate( double rotate, double centerX, double centerY, double screenX, double screenY, double worldX, double worldY ) {
 		// given
 		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
@@ -857,6 +818,72 @@ public class DesignToolV3RendererTest {
 		);
 	}
 
+	@ParameterizedTest
+	@MethodSource
+	void screenToWorldWithZoom( double zoomX, double zoomY, double screenX, double screenY, double worldX, double worldY ) {
+		// given
+		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 500 ).getY() ).isCloseTo( 0, TOLERANCE );
+
+		// when
+		renderer.setViewZoom( new Point2D( zoomX, zoomY ) );
+
+		// then
+		assertThat( renderer.screenToWorld( screenX, screenY ).getX() ).isCloseTo( worldX, TOLERANCE );
+		assertThat( renderer.screenToWorld( screenX, screenY ).getY() ).isCloseTo( worldY, TOLERANCE );
+	}
+
+	private static Stream<Arguments> screenToWorldWithZoom() {
+		return Stream.of(
+			Arguments.arguments( 0.5, 0.5, 500, 500, 0, 0 ),
+			Arguments.arguments( 0.5, 0.5, 500 + 0.5 * gz, 500 - 0.5 * gz, 1, 1 ),
+			Arguments.arguments( 0.5, 0.5, 500 + 0.5 * gz, 500 + 0.5 * gz, 1, -1 ),
+			Arguments.arguments( 0.5, 0.5, 500 - 0.5 * gz, 500 + 0.5 * gz, -1, -1 ),
+			Arguments.arguments( 0.5, 0.5, 500 - 0.5 * gz, 500 - 0.5 * gz, -1, 1 ),
+
+			Arguments.arguments( 1, 1, 500, 500, 0, 0 ),
+			Arguments.arguments( 1, 1, 500 + 1 * gz, 500 - 1 * gz, 1, 1 ),
+			Arguments.arguments( 1, 1, 500 + 1 * gz, 500 + 1 * gz, 1, -1 ),
+			Arguments.arguments( 1, 1, 500 - 1 * gz, 500 + 1 * gz, -1, -1 ),
+			Arguments.arguments( 1, 1, 500 - 1 * gz, 500 - 1 * gz, -1, 1 ),
+
+			Arguments.arguments( 2, 2, 500, 500, 0, 0 ),
+			Arguments.arguments( 2, 2, 500 + 2 * gz, 500 - 2 * gz, 1, 1 ),
+			Arguments.arguments( 2, 2, 500 + 2 * gz, 500 + 2 * gz, 1, -1 ),
+			Arguments.arguments( 2, 2, 500 - 2 * gz, 500 + 2 * gz, -1, -1 ),
+			Arguments.arguments( 2, 2, 500 - 2 * gz, 500 - 2 * gz, -1, 1 )
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource
+	void screenToWorldWithCenter( double centerX, double centerY, double screenX, double screenY, double worldX, double worldY ) {
+		// given
+		assertThat( renderer.screenToWorld( 500, 500 ).getX() ).isCloseTo( 0, TOLERANCE );
+		assertThat( renderer.screenToWorld( 500, 500 ).getY() ).isCloseTo( 0, TOLERANCE );
+
+		// when
+		renderer.setViewCenter( centerX, centerY, 0 );
+
+		// then
+		assertThat( renderer.screenToWorld( screenX, screenY ).getX() ).isCloseTo( worldX, TOLERANCE );
+		assertThat( renderer.screenToWorld( screenX, screenY ).getY() ).isCloseTo( worldY, TOLERANCE );
+	}
+
+	private static Stream<Arguments> screenToWorldWithCenter() {
+		return Stream.of(
+			Arguments.arguments( 2, 2, 500, 500, 2, 2 ),
+			Arguments.arguments( 2, 2, 500, 500 - 2 * gz, 2, 4 ),
+			Arguments.arguments( 2, 2, 500 + 2 * gz, 500 - 2 * gz, 4, 4 ),
+			Arguments.arguments( 2, 2, 500 + 2 * gz, 500, 4, 2 ),
+			Arguments.arguments( 2, 2, 500 + 2 * gz, 500 + 2 * gz, 4, 0 ),
+			Arguments.arguments( 2, 2, 500, 500 + 2 * gz, 2, 0 ),
+			Arguments.arguments( 2, 2, 500 - 2 * gz, 500 + 2 * gz, 0, 0 ),
+			Arguments.arguments( 2, 2, 500 - 2 * gz, 500, 0, 2 ),
+			Arguments.arguments( 2, 2, 500 - 2 * gz, 500 - 2 * gz, 0, 4 )
+		);
+	}
+
 	@Test
 	void worldToScreenTransform() {
 		double gz;
@@ -865,46 +892,46 @@ public class DesignToolV3RendererTest {
 		// Default
 		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
 		worldToScreenTransform = renderer.getWorldToScreenTransform();
-		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isCloseTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
 
 		// DPI
 		renderer.setDpi( 72, 72 );
 		gz = 72 * DEFAULT_UNIT_SCALE;
 		worldToScreenTransform = renderer.getWorldToScreenTransform();
-		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isCloseTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
 		renderer.setDpi( DEFAULT_DPI, DEFAULT_DPI );
 
 		// Unit scale
 		renderer.setUnitScale( 1 );
 		gz = DEFAULT_DPI * 1;
 		worldToScreenTransform = renderer.getWorldToScreenTransform();
-		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isCloseTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
 		renderer.setUnitScale( DEFAULT_UNIT_SCALE );
 
 		// Output scale
 		renderer.setOutputScale( 3, 3 );
 		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
 		worldToScreenTransform = renderer.getWorldToScreenTransform();
-		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isCloseTo( new Point2D( 500 + 1 * gz, 500 - 1 * gz ) );
 		renderer.setOutputScale( DEFAULT_OUTPUT_SCALE, DEFAULT_OUTPUT_SCALE );
 
-		// Rotate
+		// View Rotate
 		double rotate = 45;
 		renderer.setViewRotate( rotate );
 		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
 		worldToScreenTransform = renderer.getWorldToScreenTransform();
-		assertThat( worldToScreenTransform.transform( 1, 0 ) ).isEqualTo( new Point2D( 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF ) );
+		assertThat( worldToScreenTransform.transform( 1, 0 ) ).isCloseTo( new Point2D( 500 + 1 * gz * Constants.SQRT_ONE_HALF, 500 - 1 * gz * Constants.SQRT_ONE_HALF ) );
 		renderer.setViewRotate( 0 );
 
-		// Zoom
+		// View Zoom
 		double zoom = 2;
 		renderer.setViewZoom( zoom, zoom );
 		gz = DEFAULT_DPI * DEFAULT_UNIT_SCALE;
 		worldToScreenTransform = renderer.getWorldToScreenTransform();
-		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isEqualTo( new Point2D( 500 + 1 * zoom * gz, 500 - 1 * zoom * gz ) );
+		assertThat( worldToScreenTransform.transform( 1, 1 ) ).isCloseTo( new Point2D( 500 + 1 * zoom * gz, 500 - 1 * zoom * gz ) );
 		renderer.setViewZoom( DEFAULT_ZOOM );
 
-		// Center
+		// View Center
 		double centerX = 2;
 		double centerY = 2;
 		renderer.setViewCenter( centerX, centerY, 0 );
@@ -1032,33 +1059,70 @@ public class DesignToolV3RendererTest {
 		);
 	}
 
-	@Test
-	void worldToScreenWithZoom() {
-		// given
-		renderer.resizeRelocate( 0, 0, 1000, 800 );
-		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
-		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 );
-
-		// when
-		renderer.setViewZoom( new Point2D( 2, 2 ) );
-
-		// then
-		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
-		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 400 );
-	}
-
-	@Test
-	void worldToScreenWithCenter() {
+	@ParameterizedTest
+	@MethodSource
+	void worldToScreenWithZoom( double zoomX, double zoomY, double worldX, double worldY, double screenX, double screenY ) {
 		// given
 		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
 		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 500 );
 
 		// when
-		renderer.setViewCenter( 2, 2, 0 );
+		renderer.setViewZoom( new Point2D( zoomX, zoomY ) );
 
 		// then
-		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isCloseTo( 500 - 2 * gz, TOLERANCE );
-		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 500 + 2 * gz, TOLERANCE );
+		assertThat( renderer.worldToScreen( worldX, worldY ).getX() ).isCloseTo( screenX, TOLERANCE );
+		assertThat( renderer.worldToScreen( worldX, worldY ).getY() ).isCloseTo( screenY, TOLERANCE );
+	}
+
+	private static Stream<Arguments> worldToScreenWithZoom() {
+		return Stream.of(
+			Arguments.arguments( 0.5, 0.5, 0, 0, 500, 500 ),
+			Arguments.arguments( 0.5, 0.5, 1, 1, 500 + 0.5 * gz, 500 - 0.5 * gz ),
+			Arguments.arguments( 0.5, 0.5, 1, -1, 500 + 0.5 * gz, 500 + 0.5 * gz ),
+			Arguments.arguments( 0.5, 0.5, -1, -1, 500 - 0.5 * gz, 500 + 0.5 * gz ),
+			Arguments.arguments( 0.5, 0.5, -1, 1, 500 - 0.5 * gz, 500 - 0.5 * gz ),
+
+			Arguments.arguments( 1, 1, 0, 0, 500, 500 ),
+			Arguments.arguments( 1, 1, 1, 1, 500 + 1 * gz, 500 - 1 * gz ),
+			Arguments.arguments( 1, 1, 1, -1, 500 + 1 * gz, 500 + 1 * gz ),
+			Arguments.arguments( 1, 1, -1, -1, 500 - 1 * gz, 500 + 1 * gz ),
+			Arguments.arguments( 1, 1, -1, 1, 500 - 1 * gz, 500 - 1 * gz ),
+
+			Arguments.arguments( 2, 2, 0, 0, 500, 500 ),
+			Arguments.arguments( 2, 2, 1, 1, 500 + 2 * gz, 500 - 2 * gz ),
+			Arguments.arguments( 2, 2, 1, -1, 500 + 2 * gz, 500 + 2 * gz ),
+			Arguments.arguments( 2, 2, -1, -1, 500 - 2 * gz, 500 + 2 * gz ),
+			Arguments.arguments( 2, 2, -1, 1, 500 - 2 * gz, 500 - 2 * gz )
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource
+	void worldToScreenWithCenter( double centerX, double centerY, double worldX, double worldY, double screenX, double screenY ) {
+		// given
+		assertThat( renderer.worldToScreen( 0, 0 ).getX() ).isEqualTo( 500 );
+		assertThat( renderer.worldToScreen( 0, 0 ).getY() ).isEqualTo( 500 );
+
+		// when
+		renderer.setViewCenter( centerX, centerY );
+
+		// then
+		assertThat( renderer.worldToScreen( worldX, worldY ).getX() ).isCloseTo( screenX, TOLERANCE );
+		assertThat( renderer.worldToScreen( worldX, worldY ).getY() ).isEqualTo( screenY, TOLERANCE );
+	}
+
+	private static Stream<Arguments> worldToScreenWithCenter() {
+		return Stream.of(
+			Arguments.arguments( 2, 2, 2, 2, 500, 500 ),
+			Arguments.arguments( 2, 2, 2, 4, 500, 500 - 2 * gz ),
+			Arguments.arguments( 2, 2, 4, 4, 500 + 2 * gz, 500 - 2 * gz ),
+			Arguments.arguments( 2, 2, 4, 2, 500 + 2 * gz, 500 ),
+			Arguments.arguments( 2, 2, 4, 0, 500 + 2 * gz, 500 + 2 * gz ),
+			Arguments.arguments( 2, 2, 2, 0, 500, 500 + 2 * gz ),
+			Arguments.arguments( 2, 2, 0, 0, 500 - 2 * gz, 500 + 2 * gz ),
+			Arguments.arguments( 2, 2, 0, 2, 500 - 2 * gz, 500 ),
+			Arguments.arguments( 2, 2, 0, 4, 500 - 2 * gz, 500 - 2 * gz )
+		);
 	}
 
 	@ParameterizedTest
