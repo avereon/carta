@@ -27,6 +27,7 @@ import lombok.Getter;
 import org.jspecify.annotations.NonNull;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -117,6 +118,11 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	// NEXT Apply lessons learned to create a new design renderer
 
+	/**
+	 * Create a new renderer. This class is intended to only be used by {@link
+	 * DesignToolV3} and should not be instantiated directly otherwise except for
+	 * testing purposes.
+	 */
 	DesignToolV3Renderer() {
 		super();
 
@@ -254,6 +260,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean isGridVisible() {
 		return grid.isVisible();
 	}
@@ -261,6 +268,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public void setGridVisible( boolean visible ) {
 		// This method has a very important implementation, it is more than just
 		// setting a flag, it participates in the performance of the renderer by
@@ -300,7 +308,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		if( visible ) {
 			// Add the FX layer to the renderer
 			Pane pane = mapDesignLayer( layer, true );
-			layer.setValue( FX_SHAPE, new WeakReference<>( pane ) );
 			layers.getChildren().add( determineLayerIndex( layer ), pane );
 		} else {
 			// Remove the FX layer from the renderer
@@ -363,6 +370,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Transform getScreenToWorldTransform() {
 		try {
 			return getWorldToScreenTransform().createInverse();
@@ -375,6 +383,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point2D screenToWorld( double x, double y ) {
 		return screenToWorld( new Point2D( x, y ) );
 	}
@@ -382,6 +391,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point2D screenToWorld( Point2D point ) {
 		return getScreenToWorldTransform().transform( point );
 	}
@@ -389,6 +399,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point3D screenToWorld( double x, double y, double z ) {
 		return screenToWorld( new Point3D( x, y, z ) );
 	}
@@ -396,6 +407,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point3D screenToWorld( Point3D point ) {
 		return getScreenToWorldTransform().transform( point );
 	}
@@ -403,6 +415,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Bounds screenToWorld( Bounds bounds ) {
 		return getScreenToWorldTransform().transform( bounds );
 	}
@@ -410,6 +423,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Transform getWorldToScreenTransform() {
 		return world.getLocalToParentTransform().createConcatenation( Transform.scale( getShapeScaleX(), getShapeScaleY() ) );
 	}
@@ -417,6 +431,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point2D worldToScreen( double x, double y ) {
 		return worldToScreen( new Point2D( x, y ) );
 	}
@@ -424,6 +439,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point2D worldToScreen( Point2D point ) {
 		return getWorldToScreenTransform().transform( point );
 	}
@@ -431,6 +447,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point3D worldToScreen( double x, double y, double z ) {
 		return worldToScreen( new Point3D( x, y, z ) );
 	}
@@ -438,6 +455,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Point3D worldToScreen( Point3D point ) {
 		return getWorldToScreenTransform().transform( point );
 	}
@@ -445,6 +463,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	/**
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Bounds worldToScreen( Bounds bounds ) {
 		return getWorldToScreenTransform().transform( bounds );
 	}
@@ -492,11 +511,15 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	@Note( CommonNote.ANY_THREAD )
 	void updateGridFxGeometry() {
 		if( System.nanoTime() < nextGridUpdate ) return;
-		if( workplane == null ) {
-			grid.getChildren().clear();
-		} else {
-			Fx.onFxOrCurrent( () -> workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() ) );
-		}
+
+		Fx.onFxOrCurrent( () -> {
+			if( workplane == null ) {
+				grid.getChildren().clear();
+			} else {
+				workplane.getGridSystem().updateFxGeometryGrid( workplane, getShapeScaleX(), grid.getChildren() );
+			}
+		} );
+
 		nextGridUpdate = System.nanoTime() + DEFAULT_REFRESH_TIME_NANOS;
 	}
 
@@ -508,7 +531,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * @return The computed index where the design layer should be inserted among FX layers.
 	 */
 	private int determineLayerIndex( DesignLayer designLayer ) {
-		List<DesignLayer> designLayers = design.getLayers().getAllLayers();
+		List<DesignLayer> designLayers = new ArrayList<>( design.getLayers().getAllLayers() );
 		Collections.reverse( designLayers );
 		List<Node> fxLayers = layers.getChildren();
 
