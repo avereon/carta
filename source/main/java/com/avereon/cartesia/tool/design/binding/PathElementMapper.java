@@ -25,8 +25,8 @@ public interface PathElementMapper {
 				step.data()[ 4 ],
 				step.data()[ 0 ] * shapeScaleX,
 				step.data()[ 1 ] * shapeScaleY,
-				step.data()[ 5 ] != 0,
-				step.data()[ 6 ] != 0
+				step.data()[ 5 ] == 1,
+				step.data()[ 6 ] == 1
 			);
 			// step data is: bx, by, cx, cy, dx, dy
 			case B -> new CubicCurveTo(

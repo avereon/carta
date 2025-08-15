@@ -663,6 +663,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		designMarker.setValue( FX_SHAPE, new WeakReference<>( path ) );
 
 		bindCommonShapeGeometry( designMarker, path );
+		path.setFillRule( FillRule.EVEN_ODD );
 
 		// Bind on steps and update the path geometry
 		DesignBinding<List<DesignPath.Step>> stepsBinding = new DesignBinding<>( designMarker, DesignPath.STEPS, DesignMarker::getSteps );
