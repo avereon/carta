@@ -65,7 +65,7 @@ public class DesignMarkerTest {
 
 		assertThat( marker.getMarkerType() ).isEqualTo( DesignMarker.Type.CIRCLE.name().toLowerCase() );
 
-		List<DesignPath.Step> steps = marker.getElements();
+		List<DesignPath.Step> steps = marker.getSteps();
 		DesignPath.Step e0 = steps.getFirst();
 		assertThat( e0.command() ).isEqualTo( DesignPath.Command.M );
 		assertThat( e0.data() ).isEqualTo( new double[]{ 0.0, -0.5 } );

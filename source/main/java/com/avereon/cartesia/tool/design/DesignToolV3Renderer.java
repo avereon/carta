@@ -7,6 +7,7 @@ import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.cartesia.tool.design.binding.DesignBinding;
 import com.avereon.cartesia.tool.design.binding.DesignDoubleBinding;
+import com.avereon.cartesia.tool.design.binding.PathElementMapper;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
@@ -20,8 +21,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.Node;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Shape;
+import javafx.scene.shape.*;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
@@ -31,6 +31,7 @@ import lombok.AccessLevel;
 import lombok.CustomLog;
 import lombok.Getter;
 import org.jspecify.annotations.NonNull;
+import org.mapstruct.factory.Mappers;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ import java.util.List;
 public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	public static final String FX_SHAPE = "fx-shape";
+
+	private static PathElementMapper pathElementMapper = Mappers.getMapper( PathElementMapper.class );
 
 	private Design design;
 
@@ -592,9 +595,15 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		if( !forceUpdate && fxShape != null ) return fxShape;
 
 		fxShape = switch( designShape.getType() ) {
+			case ARC -> bindArcGeometry( (DesignArc)designShape );
+			case BOX -> bindBoxGeometry( (DesignBox)designShape );
+			case CUBIC -> bindCubicGeometry( (DesignCubic)designShape );
+			case ELLIPSE -> bindEllipseGeometry( (DesignEllipse)designShape );
 			case LINE -> bindLineGeometry( (DesignLine)designShape );
+			case MARKER -> bindMarkerGeometry( (DesignMarker)designShape );
+			case PATH -> bindPathGeometry( (DesignPath)designShape );
+			case QUAD -> bindQuadGeometry( (DesignQuad)designShape );
 			case TEXT -> bindTextGeometry( (DesignText)designShape );
-			default -> null;
 		};
 
 		if( fxShape == null ) {
@@ -608,7 +617,24 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		return fxShape;
 	}
 
-	// Eventually this should only have to be called once per design shape
+	// TODO Finish building the bind methods for the remaining design shapes
+
+	private Arc bindArcGeometry( DesignArc designArc ) {
+		return null;
+	}
+
+	private Rectangle bindBoxGeometry( DesignBox designBox ) {
+		return null;
+	}
+
+	private CubicCurve bindCubicGeometry( DesignCubic designCubic ) {
+		return null;
+	}
+
+	private Ellipse bindEllipseGeometry( DesignEllipse designEllipse ) {
+		return null;
+	}
+
 	private Line bindLineGeometry( DesignLine designLine ) {
 		WeakReference<Line> reference = designLine.getValue( FX_SHAPE );
 		Line line = reference == null ? null : reference.get();
@@ -632,7 +658,82 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		return line;
 	}
 
-	// TODO Finish building the update methods for the remaining design shapes
+	private Path bindMarkerGeometry( DesignMarker designMarker ) {
+		Path path = new Path();
+		designMarker.setValue( FX_SHAPE, new WeakReference<>( path ) );
+
+		bindCommonShapeGeometry( designMarker, path );
+
+		// Bind on steps and update the path geometry
+		DesignBinding<List<DesignPath.Step>> stepsBinding = new DesignBinding<>( designMarker, DesignPath.STEPS, DesignMarker::getSteps );
+		ObjectBinding<List<PathElement>> elementsBinding = Bindings.createObjectBinding(
+			() -> {
+				List<PathElement> elements = new ArrayList<>();
+				double shapeScaleX = shapeScaleXProperty().get();
+				double shapeScaleY = shapeScaleYProperty().get();
+				for( DesignPath.Step step : stepsBinding.get() ) {
+					pathElementMapper.map( step, shapeScaleX, shapeScaleY );
+				}
+				return elements;
+			}, stepsBinding
+		);
+		path.getElements().setAll( elementsBinding.get() );
+		elementsBinding.addListener( ( _, _, n ) -> path.getElements().setAll( n ) );
+
+		return path;
+	}
+
+	private Path bindPathGeometry( DesignPath designPath ) {
+		Path path = new Path();
+		designPath.setValue( FX_SHAPE, new WeakReference<>( path ) );
+
+		bindCommonShapeGeometry( designPath, path );
+
+		// Bind on steps and update the path geometry
+		DesignBinding<List<DesignPath.Step>> stepsBinding = new DesignBinding<>( designPath, DesignPath.STEPS, DesignPath::getSteps );
+		ObjectBinding<List<PathElement>> elementsBinding = Bindings.createObjectBinding(
+			() -> {
+				List<PathElement> elements = new ArrayList<>();
+				double shapeScaleX = shapeScaleXProperty().get();
+				double shapeScaleY = shapeScaleYProperty().get();
+				for( DesignPath.Step step : stepsBinding.get() ) {
+					pathElementMapper.map( step, shapeScaleX, shapeScaleY );
+				}
+				return elements;
+			}, stepsBinding
+		);
+		path.getElements().setAll( elementsBinding.get() );
+		elementsBinding.addListener( ( _, _, n ) -> path.getElements().setAll( n ) );
+
+		return path;
+	}
+
+	private QuadCurve bindQuadGeometry( DesignQuad designQuad ) {
+		WeakReference<QuadCurve> reference = designQuad.getValue( FX_SHAPE );
+		QuadCurve quad = reference == null ? null : reference.get();
+		if( quad == null ) {
+			quad = new QuadCurve();
+			designQuad.setValue( FX_SHAPE, new WeakReference<>( quad ) );
+
+			bindCommonShapeGeometry( designQuad, quad );
+
+			DesignDoubleBinding startXProperty = new DesignDoubleBinding( designQuad, DesignQuad.ORIGIN, v -> v.getOrigin().getX() );
+			DesignDoubleBinding startYProperty = new DesignDoubleBinding( designQuad, DesignQuad.ORIGIN, v -> v.getOrigin().getY() );
+			DesignDoubleBinding controlXProperty = new DesignDoubleBinding( designQuad, DesignQuad.CONTROL, v -> v.getControl().getX() );
+			DesignDoubleBinding controlYProperty = new DesignDoubleBinding( designQuad, DesignQuad.CONTROL, v -> v.getControl().getY() );
+			DesignDoubleBinding pointXProperty = new DesignDoubleBinding( designQuad, DesignQuad.POINT, v -> v.getPoint().getX() );
+			DesignDoubleBinding pointYProperty = new DesignDoubleBinding( designQuad, DesignQuad.POINT, v -> v.getPoint().getY() );
+
+			quad.startXProperty().bind( shapeScaleXProperty().multiply( startXProperty ) );
+			quad.startYProperty().bind( shapeScaleYProperty().multiply( startYProperty ) );
+			quad.controlXProperty().bind( shapeScaleXProperty().multiply( controlXProperty ) );
+			quad.controlYProperty().bind( shapeScaleYProperty().multiply( controlYProperty ) );
+			quad.endXProperty().bind( shapeScaleXProperty().multiply( pointXProperty ) );
+			quad.endYProperty().bind( shapeScaleYProperty().multiply( pointYProperty ) );
+		}
+
+		return quad;
+	}
 
 	// Eventually this should only have to be called once per design shape
 	private Text bindTextGeometry( DesignText designText ) {
@@ -700,7 +801,11 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		shape.strokeDashOffsetProperty().bind( shapeScaleXProperty().multiply( new DesignDoubleBinding( designShape, DesignShape.DASH_OFFSET, DesignShape::calcDashOffset ) ) );
 		// Dash pattern
 		DesignBinding<List<Double>> patternBinding = new DesignBinding<>( designShape, DesignShape.DASH_PATTERN, DesignShape::calcDashPattern );
-		ObjectBinding<List<Double>> dashBinding = Bindings.createObjectBinding( () -> patternBinding.get().stream().map( d -> d * shapeScaleXProperty().get() ).toList(), shapeScaleXProperty(), patternBinding );
+		ObjectBinding<List<Double>> dashBinding = Bindings.createObjectBinding(
+			() -> patternBinding.get().stream().map( d -> d * shapeScaleXProperty().get() ).toList(),
+			shapeScaleXProperty(),
+			patternBinding
+		);
 		shape.getStrokeDashArray().setAll( dashBinding.get() );
 		dashBinding.addListener( ( _, _, n ) -> shape.getStrokeDashArray().setAll( n ) );
 	}

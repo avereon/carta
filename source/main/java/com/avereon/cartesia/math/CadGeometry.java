@@ -368,7 +368,7 @@ public class CadGeometry {
 			}
 			case MARKER -> {
 				DesignMarker marker = (DesignMarker)shape;
-				Path path = mapToFxPath( marker.getElements() );
+				Path path = mapToFxPath( marker.getSteps() );
 				double size = marker.calcSize();
 				Transform scale = Transform.scale( size, size, marker.getOrigin().getX(), marker.getOrigin().getY() );
 				path.getTransforms().add( scale );

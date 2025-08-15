@@ -456,7 +456,7 @@ public class DesignMarker extends DesignShape {
 		return path;
 	}
 
-	public List<DesignPath.Step> getElements() {
+	public List<DesignPath.Step> getSteps() {
 		DesignPath path = getPath();
 		return path == null ? List.of() : path.getSteps();
 	}

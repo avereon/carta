@@ -28,20 +28,16 @@ public class DesignPath extends DesignShape {
 		Q( "Quad" ),
 		Z( "Close" );
 
-		private final String titile;
+		private final String title;
 
 		Command( String name ) {
-			this.titile = name;
+			this.title = name;
 		}
 	}
 
 	public static final String PATH = "path";
 
 	public static final String STEPS = "steps";
-
-	public static final String CLOSED = "closed";
-
-	//private final List<Step> steps = new ArrayList<>();
 
 	public DesignPath() {
 		super( null );
@@ -84,7 +80,7 @@ public class DesignPath extends DesignShape {
 		// TODO Implement DesignPath.getReferencePoints()
 
 		List<Point3D> points = new ArrayList<>();
-		Point3D start = Point3D.ZERO;
+		Point3D start;
 		Point3D prior = Point3D.ZERO;
 
 		for( Step step : getSteps() ) {
