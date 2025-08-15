@@ -137,6 +137,15 @@ public class ExampleDesigns {
 		DesignMarker centerOfMass = new DesignMarker( new Point3D( 4, -2, 0 ), "1", DesignMarker.Type.CG );
 		centerOfMass.setDrawPaint( "#80FFC0" );
 
+		DesignPath path = new DesignPath();
+		path.move( -3, -4 );
+		path.cubic( -3, -3, -1, -3, 0, -4 );
+		path.cubic( 1, -5, 3, -5, 3 ,-4 );
+		path.cubic( 3, -3, 1, -3, 0, -4 );
+		path.cubic( -1, -5, -3, -5, -3, -4 );
+		path.close();
+		path.setFillPaint( "#20808040" );
+
 		DesignLayer construction = new DesignLayer();
 		construction.setName( "Construction" );
 		construction.addShapes( List.of( greenLineA, greenLineB, greenLineC ) );
@@ -144,6 +153,7 @@ public class ExampleDesigns {
 		construction.addShapes( List.of( redLineA, redLineB, redLineC ) );
 		construction.addShapes( List.of( hello, sweet, world ) );
 		construction.addShapes( List.of( star, cross, centerOfMass ) );
+		construction.addShapes( List.of( path ) );
 		design.getLayers().addLayer( construction );
 		return design;
 	}
