@@ -8,6 +8,7 @@ module com.avereon.carta {
 	// Compile-time only
 	requires static lombok;
 	requires static org.jspecify;
+	requires static org.mapstruct;
 
 	// Both compile-time and run-time
 	requires com.avereon.curve;
@@ -44,6 +45,7 @@ module com.avereon.carta {
 	exports com.avereon.cartesia.settings to com.avereon.xenon;
 	exports com.avereon.cartesia.tool to com.avereon.xenon;
 	exports com.avereon.cartesia.tool.design to com.avereon.xenon;
+	exports com.avereon.cartesia.tool.design.binding to org.mapstruct;
 	exports com.avereon.cartesia.rb to com.avereon.xenon;
 
 	// Public resources
