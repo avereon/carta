@@ -205,11 +205,10 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		viewCenterTransform.xProperty().bind( getRendererCenterX().subtract( viewCenterXProperty().multiply( shapeScaleXProperty() ) ) );
 		viewCenterTransform.yProperty().bind( getRendererCenterY().subtract( viewCenterYProperty().multiply( shapeScaleYProperty() ) ) );
 
+		// FIXME Consider changing the grid geometry to bound properties
 		// Update the design geometry when the global scale changes
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
 		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
-		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
-		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 	}
 
 	/**
@@ -581,22 +580,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		}
 
 		return layer;
-	}
-
-	/**
-	 * Called when all the FX geometry needs to be updated due to a change in
-	 * renderer or design settings such as DPI or design unit.
-	 */
-	private void updateDesignFxGeometry() {
-		if( updatingFxGeometry || design == null ) return;
-		try {
-			updatingFxGeometry = true;
-			design.getLayers().getAllLayers().forEach( layer -> {
-				layer.getShapes().forEach( shape -> mapDesignShape( shape, true ) );
-			} );
-		} finally {
-			updatingFxGeometry = false;
-		}
 	}
 
 	private Shape mapDesignShape( DesignShape designShape ) {
