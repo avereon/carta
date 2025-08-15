@@ -17,6 +17,7 @@ module com.avereon.carta {
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;
 	requires java.logging;
+	requires javafx.base;
 	requires jep;
 	requires org.jsoup;
 

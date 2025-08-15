@@ -5,9 +5,13 @@ import com.avereon.annotation.Note;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.Workplane;
+import com.avereon.cartesia.tool.design.binding.DesignBinding;
+import com.avereon.cartesia.tool.design.binding.DesignDoubleBinding;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
 import com.avereon.zerra.javafx.Fx;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.ObjectBinding;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.geometry.Bounds;
@@ -19,6 +23,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.transform.*;
 import lombok.AccessLevel;
@@ -602,12 +608,9 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		Shape fxShape = shapeRef == null ? null : shapeRef.get();
 		if( !forceUpdate && fxShape != null ) return fxShape;
 
-		double shapeScaleX = getShapeScaleX();
-		double shapeScaleY = getShapeScaleY();
-
 		fxShape = switch( designShape.getType() ) {
-			case LINE -> updateLineGeometry( (DesignLine)designShape, shapeScaleX, shapeScaleY );
-			case TEXT -> updateTextGeometry( (DesignText)designShape, shapeScaleX, shapeScaleY );
+			case LINE -> bindLineGeometry( (DesignLine)designShape );
+			case TEXT -> bindTextGeometry( (DesignText)designShape );
 			default -> null;
 		};
 
@@ -619,77 +622,104 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		fxShape.setManaged( false );
 		fxShape.setUserData( designShape );
 
-		fxShape.setFill( designShape.calcFillPaint() );
-		fxShape.setStroke( designShape.calcDrawPaint() );
-		fxShape.setStrokeLineCap( designShape.calcDrawCap() );
-		fxShape.setStrokeLineJoin( designShape.calcDrawJoin() );
-		//fxShape.setStrokeType( designShape.calcDrawType() );
-
-		return updateCommonShapeGeometry( designShape, fxShape, shapeScaleX, shapeScaleY );
+		return fxShape;
 	}
 
-	private Shape updateLineGeometry( DesignLine designLine, double shapeScaleX, double shapeScaleY ) {
-		WeakReference<Line> lineRef = designLine.getValue( FX_SHAPE );
-		Line line = lineRef == null ? null : lineRef.get();
+	// Eventually this should only have to be called once per design shape
+	private Line bindLineGeometry( DesignLine designLine ) {
+		WeakReference<Line> reference = designLine.getValue( FX_SHAPE );
+		Line line = reference == null ? null : reference.get();
 		if( line == null ) {
 			line = new Line();
 			designLine.setValue( FX_SHAPE, new WeakReference<>( line ) );
 
-			// The future of FX geometry
-			//line.startXProperty().bind( shapeScaleXProperty().multiply( designLine.getOrigin().getX() ) );
-			//line.startYProperty().bind( shapeScaleYProperty().multiply( designLine.getOrigin().getY() ) );
-			//line.endXProperty().bind( shapeScaleXProperty().multiply( designLine.getPoint().getX() ) );
-			//line.endYProperty().bind( shapeScaleYProperty().multiply( designLine.getPoint().getY() ) );
-		}
+			bindCommonShapeGeometry( designLine, line );
 
-		line.setStartX( designLine.getOrigin().getX() * shapeScaleX );
-		line.setStartY( designLine.getOrigin().getY() * shapeScaleY );
-		line.setEndX( designLine.getPoint().getX() * shapeScaleX );
-		line.setEndY( designLine.getPoint().getY() * shapeScaleY );
+			DesignDoubleBinding startXProperty = new DesignDoubleBinding( designLine, DesignLine.ORIGIN, v -> v.getOrigin().getX() );
+			DesignDoubleBinding startYProperty = new DesignDoubleBinding( designLine, DesignLine.ORIGIN, v -> v.getOrigin().getY() );
+			DesignDoubleBinding pointXProperty = new DesignDoubleBinding( designLine, DesignLine.POINT, v -> v.getPoint().getX() );
+			DesignDoubleBinding pointYProperty = new DesignDoubleBinding( designLine, DesignLine.POINT, v -> v.getPoint().getY() );
+
+			line.startXProperty().bind( shapeScaleXProperty().multiply( startXProperty ) );
+			line.startYProperty().bind( shapeScaleYProperty().multiply( startYProperty ) );
+			line.endXProperty().bind( shapeScaleXProperty().multiply( pointXProperty ) );
+			line.endYProperty().bind( shapeScaleYProperty().multiply( pointYProperty ) );
+		}
 
 		return line;
 	}
 
 	// TODO Finish building the update methods for the remaining design shapes
 
-	private Shape updateTextGeometry( DesignText designText, double shapeScaleX, double shapeScaleY ) {
-		WeakReference<Text> textRef = designText.getValue( FX_SHAPE );
-		Text text = textRef == null ? null : textRef.get();
+	// Eventually this should only have to be called once per design shape
+	private Text bindTextGeometry( DesignText designText ) {
+		WeakReference<Text> reference = designText.getValue( FX_SHAPE );
+		Text text = reference == null ? null : reference.get();
 		if( text == null ) {
 			text = new Text();
 			designText.setValue( FX_SHAPE, new WeakReference<>( text ) );
+
+			bindCommonShapeGeometry( designText, text );
+
+			DesignDoubleBinding originXProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, v -> v.getOrigin().getX() );
+			DesignDoubleBinding originYProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, v -> v.getOrigin().getY() );
+			DesignDoubleBinding rotateProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, DesignShape::calcRotate );
+			DesignBinding<String> textProperty = new DesignBinding<>( designText, DesignText.TEXT, DesignText::getText );
+			DesignBinding<String> fontNameProperty = new DesignBinding<>( designText, DesignText.FONT_NAME, DesignText::getFontName );
+			DesignBinding<FontWeight> fontWeightProperty = new DesignBinding<>( designText, DesignText.FONT_WEIGHT, DesignText::calcFontWeight );
+			DesignBinding<FontPosture> fontPostureProperty = new DesignBinding<>( designText, DesignText.FONT_POSTURE, DesignText::calcFontPosture );
+			DesignDoubleBinding textSizeProperty = new DesignDoubleBinding( designText, DesignText.TEXT_SIZE, DesignText::calcTextSize );
+
+			text.textProperty().bind( textProperty );
+
+			text.xProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
+			text.yProperty().bind( shapeScaleYProperty().multiply( originYProperty ).negate() );
+
+			text.fontProperty().bind( Bindings.createObjectBinding(
+				() -> Font.font( fontNameProperty.get(), designText.calcFontWeight(), designText.calcFontPosture(), textSizeProperty.get() * shapeScaleYProperty().get() ),
+				fontNameProperty,
+				fontWeightProperty,
+				fontPostureProperty,
+				textSizeProperty,
+				shapeScaleYProperty()
+			) );
+
+			Rotate rotate = new Rotate();
+			rotate.angleProperty().bind( rotateProperty );
+			rotate.pivotXProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
+			rotate.pivotYProperty().bind( shapeScaleYProperty().multiply( originYProperty ) );
+
+			// Rotate must be before scale
+			text.getTransforms().setAll( rotate, Transform.scale( 1, -1 ) );
 		}
-
-		double x = designText.getOrigin().getX() * shapeScaleX;
-		double y = designText.getOrigin().getY() * shapeScaleY;
-
-		text.setX( x );
-		text.setY( -y );
-		text.setText( designText.getText() );
-		text.setFont( Font.font( designText.calcFontName(), designText.calcFontWeight(), designText.calcFontPosture(), designText.calcTextSize() * shapeScaleY ) );
-
-		// Rotate must be before scale
-		text.getTransforms().setAll( Transform.rotate( designText.calcRotate(), x, y ), Transform.scale( 1, -1 ) );
 
 		return text;
 	}
 
 	/**
-	 * Update the common geometry properties of the shape. This method is used to
-	 * common shape properties that are dependent on the rendering scale.
+	 * Bind the common geometry properties of the shape. This method is used to
+	 * bind the common shape properties to their dependent properties, whether
+	 * they be FX properties or design properties.
 	 *
 	 * @param designShape The source design shape
 	 * @param shape The target FX shape
-	 * @param shapeScaleX The pre-calculated geometry scale factor for the X axis
-	 * @param shapeScaleY The pre-calculated geometry scale factor for the Y axis
-	 * @return The updated FX shape
 	 */
-	private Shape updateCommonShapeGeometry( DesignShape designShape, Shape shape, double shapeScaleX, double shapeScaleY ) {
-		shape.setStrokeWidth( designShape.calcDrawWidth() * shapeScaleX );
-		shape.setStrokeDashOffset( designShape.calcDashOffset() * shapeScaleX );
-		shape.getStrokeDashArray().setAll( designShape.calcDashPattern().stream().map( d -> d * shapeScaleX ).toList() );
-		//shape.setStrokeMiterLimit( designShape.calcDrawMiterLimit() * shapeScaleX );
-		return shape;
+	private void bindCommonShapeGeometry( DesignShape designShape, Shape shape ) {
+		shape.fillProperty().bind( new DesignBinding<>( designShape, DesignShape.FILL_PAINT, DesignShape::calcFillPaint ) );
+		shape.strokeProperty().bind( new DesignBinding<>( designShape, DesignShape.DRAW_PAINT, DesignShape::calcDrawPaint ) );
+		shape.strokeWidthProperty().bind( shapeScaleXProperty().multiply( new DesignDoubleBinding( designShape, DesignShape.DRAW_WIDTH, DesignShape::calcDrawWidth ) ) );
+		shape.strokeLineCapProperty().bind( new DesignBinding<>( designShape, DesignShape.DRAW_CAP, DesignShape::calcDrawCap ) );
+		shape.strokeLineJoinProperty().bind( new DesignBinding<>( designShape, DesignShape.DRAW_JOIN, DesignShape::calcDrawJoin ) );
+		//shape.strokeTypeProperty().bind( new DesignBinding<>( designShape, DesignShape.DRAW_TYPE, DesignShape::calcDrawType ) );
+		//shape.strokeMiterLimitProperty().bind( shapeScaleXProperty().multiply( new DesignDoubleBinding( designShape, DesignShape.DRAW_MITER_LIMIT, DesignShape::calcDrawMiterLimit ) ) );
+
+		// Dash offset
+		shape.strokeDashOffsetProperty().bind( shapeScaleXProperty().multiply( new DesignDoubleBinding( designShape, DesignShape.DASH_OFFSET, DesignShape::calcDashOffset ) ) );
+		// Dash pattern
+		DesignBinding<List<Double>> patternBinding = new DesignBinding<>( designShape, DesignShape.DASH_PATTERN, DesignShape::calcDashPattern );
+		ObjectBinding<List<Double>> dashBinding = Bindings.createObjectBinding( () -> patternBinding.get().stream().map( d -> d * shapeScaleXProperty().get() ).toList(), shapeScaleXProperty(), patternBinding );
+		shape.getStrokeDashArray().setAll( dashBinding.get() );
+		dashBinding.addListener( ( _, _, n ) -> shape.getStrokeDashArray().setAll( n ) );
 	}
 
 }
