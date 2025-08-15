@@ -448,10 +448,9 @@ public class DesignMarker extends DesignShape {
 	}
 
 	public DesignPath getPath() {
-		Type type = calcType();
-		DesignPath path = type.getDesignPath();
+		DesignPath path = calcType().getDesignPath();
 
-		path.apply( CadTransform.translation( getOrigin() ) );
+		path.apply( CadTransform.translation( getOrigin() ).combine( CadTransform.scale( calcSize() ) ) );
 
 		return path;
 	}

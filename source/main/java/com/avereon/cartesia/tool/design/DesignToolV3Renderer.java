@@ -672,7 +672,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 				double shapeScaleX = shapeScaleXProperty().get();
 				double shapeScaleY = shapeScaleYProperty().get();
 				for( DesignPath.Step step : stepsBinding.get() ) {
-					pathElementMapper.map( step, shapeScaleX, shapeScaleY );
+					elements.add( pathElementMapper.map( step, shapeScaleX, shapeScaleY ) );
 				}
 				return elements;
 			}, stepsBinding
@@ -697,7 +697,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 				double shapeScaleX = shapeScaleXProperty().get();
 				double shapeScaleY = shapeScaleYProperty().get();
 				for( DesignPath.Step step : stepsBinding.get() ) {
-					pathElementMapper.map( step, shapeScaleX, shapeScaleY );
+					elements.add( pathElementMapper.map( step, shapeScaleX, shapeScaleY ) );
 				}
 				return elements;
 			}, stepsBinding

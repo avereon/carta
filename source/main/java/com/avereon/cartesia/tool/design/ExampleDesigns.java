@@ -130,12 +130,20 @@ public class ExampleDesigns {
 		world.setFillPaint( "#80C0FF" );
 		world.setRotate( 45 );
 
+		DesignMarker cross = new DesignMarker( new Point3D( 0, -2, 0 ), "2" );
+		cross.setDrawPaint( "#80C0FF" );
+		DesignMarker star = new DesignMarker( new Point3D( -4, -2, 0 ), "1", DesignMarker.Type.STAR );
+		star.setDrawPaint( "#C080FF" );
+		DesignMarker centerOfMass = new DesignMarker( new Point3D( 4, -2, 0 ), "1", DesignMarker.Type.CG );
+		centerOfMass.setDrawPaint( "#80FFC0" );
+
 		DesignLayer construction = new DesignLayer();
 		construction.setName( "Construction" );
 		construction.addShapes( List.of( greenLineA, greenLineB, greenLineC ) );
 		construction.addShapes( List.of( blueLineA, blueLineB, blueLineC ) );
 		construction.addShapes( List.of( redLineA, redLineB, redLineC ) );
 		construction.addShapes( List.of( hello, sweet, world ) );
+		construction.addShapes( List.of( star, cross, centerOfMass ) );
 		design.getLayers().addLayer( construction );
 		return design;
 	}
