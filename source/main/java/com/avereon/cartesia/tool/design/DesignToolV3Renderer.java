@@ -98,12 +98,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	@Getter( AccessLevel.PACKAGE )
 	private final Translate viewCenterTransform;
 
-	// Cacheable - meaning always use getScreenToWorldTransform()
-	private Transform screenToWorldTransform;
-
-	// Cacheable - meaning always use getWorldToScreenTransform()
-	private Transform worldToScreenTransform;
-
 	/**
 	 * A flag indicating whether the FX geometry is currently being updated.
 	 * This variable is primarily used to prevent redundant or recursive updates
@@ -204,8 +198,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateGridFxGeometry() );
 		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
 		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.updateDesignFxGeometry() );
-		shapeScaleXProperty().addListener( ( _, _, _ ) -> this.clearCachedTransforms() );
-		shapeScaleYProperty().addListener( ( _, _, _ ) -> this.clearCachedTransforms() );
 	}
 
 	/**
@@ -372,16 +364,12 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	public Transform getScreenToWorldTransform() {
-		// FIXME This causes stale transforms :-(
-		//if( screenToWorldTransform == null ) {
 		try {
-			screenToWorldTransform = getWorldToScreenTransform().createInverse();
+			return getWorldToScreenTransform().createInverse();
 		} catch( NonInvertibleTransformException exception ) {
 			// This should never happen since the world-to-screen transform should always be invertible
 			throw new RuntimeException( exception );
 		}
-		//}
-		return screenToWorldTransform;
 	}
 
 	/**
@@ -423,9 +411,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	public Transform getWorldToScreenTransform() {
-		Transform scale = Transform.scale( getShapeScaleX(), getShapeScaleY() );
-		worldToScreenTransform = world.getLocalToParentTransform().createConcatenation( scale );
-		return worldToScreenTransform;
+		return world.getLocalToParentTransform().createConcatenation( Transform.scale( getShapeScaleX(), getShapeScaleY() ) );
 	}
 
 	/**
@@ -501,11 +487,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	void setDesignUnit( DesignUnit unit ) {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
-	}
-
-	private void clearCachedTransforms() {
-		screenToWorldTransform = null;
-		worldToScreenTransform = null;
 	}
 
 	@Note( CommonNote.ANY_THREAD )
