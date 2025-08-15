@@ -590,9 +590,11 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	}
 
 	private Shape mapDesignShape( DesignShape designShape, boolean forceUpdate ) {
-		WeakReference<Shape> shapeRef = designShape.getValue( FX_SHAPE );
-		Shape fxShape = shapeRef == null ? null : shapeRef.get();
-		if( !forceUpdate && fxShape != null ) return fxShape;
+		WeakReference<Shape> reference = designShape.getValue( FX_SHAPE );
+		Shape fxShape = reference == null ? null : reference.get();
+
+		// If an FX shape is already bound, don't do it again
+		if( fxShape != null ) return fxShape;
 
 		fxShape = switch( designShape.getType() ) {
 			case ARC -> bindArcGeometry( (DesignArc)designShape );
@@ -610,6 +612,8 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 			log.atWarn().log( "Unable to map design shape: %s", designShape );
 			return null;
 		}
+
+		designShape.setValue( FX_SHAPE, new WeakReference<>( fxShape ) );
 
 		fxShape.setManaged( false );
 		fxShape.setUserData( designShape );
@@ -636,31 +640,25 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	}
 
 	private Line bindLineGeometry( DesignLine designLine ) {
-		WeakReference<Line> reference = designLine.getValue( FX_SHAPE );
-		Line line = reference == null ? null : reference.get();
-		if( line == null ) {
-			line = new Line();
-			designLine.setValue( FX_SHAPE, new WeakReference<>( line ) );
+		Line line = new Line();
 
-			bindCommonShapeGeometry( designLine, line );
+		bindCommonShapeGeometry( designLine, line );
 
-			DesignDoubleBinding startXProperty = new DesignDoubleBinding( designLine, DesignLine.ORIGIN, v -> v.getOrigin().getX() );
-			DesignDoubleBinding startYProperty = new DesignDoubleBinding( designLine, DesignLine.ORIGIN, v -> v.getOrigin().getY() );
-			DesignDoubleBinding pointXProperty = new DesignDoubleBinding( designLine, DesignLine.POINT, v -> v.getPoint().getX() );
-			DesignDoubleBinding pointYProperty = new DesignDoubleBinding( designLine, DesignLine.POINT, v -> v.getPoint().getY() );
+		DesignDoubleBinding startXProperty = new DesignDoubleBinding( designLine, DesignLine.ORIGIN, v -> v.getOrigin().getX() );
+		DesignDoubleBinding startYProperty = new DesignDoubleBinding( designLine, DesignLine.ORIGIN, v -> v.getOrigin().getY() );
+		DesignDoubleBinding pointXProperty = new DesignDoubleBinding( designLine, DesignLine.POINT, v -> v.getPoint().getX() );
+		DesignDoubleBinding pointYProperty = new DesignDoubleBinding( designLine, DesignLine.POINT, v -> v.getPoint().getY() );
 
-			line.startXProperty().bind( shapeScaleXProperty().multiply( startXProperty ) );
-			line.startYProperty().bind( shapeScaleYProperty().multiply( startYProperty ) );
-			line.endXProperty().bind( shapeScaleXProperty().multiply( pointXProperty ) );
-			line.endYProperty().bind( shapeScaleYProperty().multiply( pointYProperty ) );
-		}
+		line.startXProperty().bind( shapeScaleXProperty().multiply( startXProperty ) );
+		line.startYProperty().bind( shapeScaleYProperty().multiply( startYProperty ) );
+		line.endXProperty().bind( shapeScaleXProperty().multiply( pointXProperty ) );
+		line.endYProperty().bind( shapeScaleYProperty().multiply( pointYProperty ) );
 
 		return line;
 	}
 
 	private Path bindMarkerGeometry( DesignMarker designMarker ) {
 		Path path = new Path();
-		designMarker.setValue( FX_SHAPE, new WeakReference<>( path ) );
 
 		bindCommonShapeGeometry( designMarker, path );
 		path.setFillRule( FillRule.EVEN_ODD );
@@ -686,7 +684,6 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	private Path bindPathGeometry( DesignPath designPath ) {
 		Path path = new Path();
-		designPath.setValue( FX_SHAPE, new WeakReference<>( path ) );
 
 		bindCommonShapeGeometry( designPath, path );
 
@@ -710,73 +707,63 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	}
 
 	private QuadCurve bindQuadGeometry( DesignQuad designQuad ) {
-		WeakReference<QuadCurve> reference = designQuad.getValue( FX_SHAPE );
-		QuadCurve quad = reference == null ? null : reference.get();
-		if( quad == null ) {
-			quad = new QuadCurve();
-			designQuad.setValue( FX_SHAPE, new WeakReference<>( quad ) );
+		QuadCurve quad = new QuadCurve();
 
-			bindCommonShapeGeometry( designQuad, quad );
+		bindCommonShapeGeometry( designQuad, quad );
 
-			DesignDoubleBinding startXProperty = new DesignDoubleBinding( designQuad, DesignQuad.ORIGIN, v -> v.getOrigin().getX() );
-			DesignDoubleBinding startYProperty = new DesignDoubleBinding( designQuad, DesignQuad.ORIGIN, v -> v.getOrigin().getY() );
-			DesignDoubleBinding controlXProperty = new DesignDoubleBinding( designQuad, DesignQuad.CONTROL, v -> v.getControl().getX() );
-			DesignDoubleBinding controlYProperty = new DesignDoubleBinding( designQuad, DesignQuad.CONTROL, v -> v.getControl().getY() );
-			DesignDoubleBinding pointXProperty = new DesignDoubleBinding( designQuad, DesignQuad.POINT, v -> v.getPoint().getX() );
-			DesignDoubleBinding pointYProperty = new DesignDoubleBinding( designQuad, DesignQuad.POINT, v -> v.getPoint().getY() );
+		DesignDoubleBinding startXProperty = new DesignDoubleBinding( designQuad, DesignQuad.ORIGIN, v -> v.getOrigin().getX() );
+		DesignDoubleBinding startYProperty = new DesignDoubleBinding( designQuad, DesignQuad.ORIGIN, v -> v.getOrigin().getY() );
+		DesignDoubleBinding controlXProperty = new DesignDoubleBinding( designQuad, DesignQuad.CONTROL, v -> v.getControl().getX() );
+		DesignDoubleBinding controlYProperty = new DesignDoubleBinding( designQuad, DesignQuad.CONTROL, v -> v.getControl().getY() );
+		DesignDoubleBinding pointXProperty = new DesignDoubleBinding( designQuad, DesignQuad.POINT, v -> v.getPoint().getX() );
+		DesignDoubleBinding pointYProperty = new DesignDoubleBinding( designQuad, DesignQuad.POINT, v -> v.getPoint().getY() );
 
-			quad.startXProperty().bind( shapeScaleXProperty().multiply( startXProperty ) );
-			quad.startYProperty().bind( shapeScaleYProperty().multiply( startYProperty ) );
-			quad.controlXProperty().bind( shapeScaleXProperty().multiply( controlXProperty ) );
-			quad.controlYProperty().bind( shapeScaleYProperty().multiply( controlYProperty ) );
-			quad.endXProperty().bind( shapeScaleXProperty().multiply( pointXProperty ) );
-			quad.endYProperty().bind( shapeScaleYProperty().multiply( pointYProperty ) );
-		}
+		quad.startXProperty().bind( shapeScaleXProperty().multiply( startXProperty ) );
+		quad.startYProperty().bind( shapeScaleYProperty().multiply( startYProperty ) );
+		quad.controlXProperty().bind( shapeScaleXProperty().multiply( controlXProperty ) );
+		quad.controlYProperty().bind( shapeScaleYProperty().multiply( controlYProperty ) );
+		quad.endXProperty().bind( shapeScaleXProperty().multiply( pointXProperty ) );
+		quad.endYProperty().bind( shapeScaleYProperty().multiply( pointYProperty ) );
 
 		return quad;
 	}
 
 	// Eventually this should only have to be called once per design shape
 	private Text bindTextGeometry( DesignText designText ) {
-		WeakReference<Text> reference = designText.getValue( FX_SHAPE );
-		Text text = reference == null ? null : reference.get();
-		if( text == null ) {
-			text = new Text();
-			designText.setValue( FX_SHAPE, new WeakReference<>( text ) );
+		Text text = new Text();
 
-			bindCommonShapeGeometry( designText, text );
+		bindCommonShapeGeometry( designText, text );
 
-			DesignDoubleBinding originXProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, v -> v.getOrigin().getX() );
-			DesignDoubleBinding originYProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, v -> v.getOrigin().getY() );
-			DesignDoubleBinding rotateProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, DesignShape::calcRotate );
-			DesignBinding<String> textProperty = new DesignBinding<>( designText, DesignText.TEXT, DesignText::getText );
-			DesignBinding<String> fontNameProperty = new DesignBinding<>( designText, DesignText.FONT_NAME, DesignText::getFontName );
-			DesignBinding<FontWeight> fontWeightProperty = new DesignBinding<>( designText, DesignText.FONT_WEIGHT, DesignText::calcFontWeight );
-			DesignBinding<FontPosture> fontPostureProperty = new DesignBinding<>( designText, DesignText.FONT_POSTURE, DesignText::calcFontPosture );
-			DesignDoubleBinding textSizeProperty = new DesignDoubleBinding( designText, DesignText.TEXT_SIZE, DesignText::calcTextSize );
+		DesignDoubleBinding originXProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, v -> v.getOrigin().getX() );
+		DesignDoubleBinding originYProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, v -> v.getOrigin().getY() );
+		DesignDoubleBinding rotateProperty = new DesignDoubleBinding( designText, DesignText.ORIGIN, DesignShape::calcRotate );
+		DesignBinding<String> textProperty = new DesignBinding<>( designText, DesignText.TEXT, DesignText::getText );
+		DesignBinding<String> fontNameProperty = new DesignBinding<>( designText, DesignText.FONT_NAME, DesignText::getFontName );
+		DesignBinding<FontWeight> fontWeightProperty = new DesignBinding<>( designText, DesignText.FONT_WEIGHT, DesignText::calcFontWeight );
+		DesignBinding<FontPosture> fontPostureProperty = new DesignBinding<>( designText, DesignText.FONT_POSTURE, DesignText::calcFontPosture );
+		DesignDoubleBinding textSizeProperty = new DesignDoubleBinding( designText, DesignText.TEXT_SIZE, DesignText::calcTextSize );
 
-			text.textProperty().bind( textProperty );
+		text.textProperty().bind( textProperty );
 
-			text.xProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
-			text.yProperty().bind( shapeScaleYProperty().multiply( originYProperty ).negate() );
+		text.xProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
+		text.yProperty().bind( shapeScaleYProperty().multiply( originYProperty ).negate() );
 
-			text.fontProperty().bind( Bindings.createObjectBinding(
-				() -> Font.font( fontNameProperty.get(), designText.calcFontWeight(), designText.calcFontPosture(), textSizeProperty.get() * shapeScaleYProperty().get() ),
-				fontNameProperty,
-				fontWeightProperty,
-				fontPostureProperty,
-				textSizeProperty,
-				shapeScaleYProperty()
-			) );
+		text.fontProperty().bind( Bindings.createObjectBinding(
+			() -> Font.font( fontNameProperty.get(), designText.calcFontWeight(), designText.calcFontPosture(), textSizeProperty.get() * shapeScaleYProperty().get() ),
+			fontNameProperty,
+			fontWeightProperty,
+			fontPostureProperty,
+			textSizeProperty,
+			shapeScaleYProperty()
+		) );
 
-			Rotate rotate = new Rotate();
-			rotate.angleProperty().bind( rotateProperty );
-			rotate.pivotXProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
-			rotate.pivotYProperty().bind( shapeScaleYProperty().multiply( originYProperty ) );
+		Rotate rotate = new Rotate();
+		rotate.angleProperty().bind( rotateProperty );
+		rotate.pivotXProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
+		rotate.pivotYProperty().bind( shapeScaleYProperty().multiply( originYProperty ) );
 
-			// Rotate must be before scale
-			text.getTransforms().setAll( rotate, Transform.scale( 1, -1 ) );
-		}
+		// Rotate must be before scale
+		text.getTransforms().setAll( rotate, Transform.scale( 1, -1 ) );
 
 		return text;
 	}
