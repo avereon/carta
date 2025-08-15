@@ -13,6 +13,50 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DesignMarkerTest {
 
 	@Test
+	void testGetSteps() {
+		// given
+		DesignMarker point = new DesignMarker( new Point3D( 0, 0, 0 ), "1", DesignMarker.Type.DIAMOND );
+
+		// when
+		List<DesignPath.Step> steps = point.getSteps();
+
+		// then
+		assertThat( steps ).isNotEmpty();
+		assertThat( steps.get( 0 ).command() ).isEqualTo( DesignPath.Command.M );
+		assertThat( steps.get( 0 ).data() ).isEqualTo( new double[]{ -0.5, 0 } );
+		assertThat( steps.get( 1 ).command() ).isEqualTo( DesignPath.Command.L );
+		assertThat( steps.get( 1 ).data() ).isEqualTo( new double[]{ 0.0, 0.5 } );
+		assertThat( steps.get( 2 ).command() ).isEqualTo( DesignPath.Command.L );
+		assertThat( steps.get( 2 ).data() ).isEqualTo( new double[]{ 0.5, 0 } );
+		assertThat( steps.get( 3 ).command() ).isEqualTo( DesignPath.Command.L );
+		assertThat( steps.get( 3 ).data() ).isEqualTo( new double[]{ 0.0, -0.5 } );
+		assertThat( steps.get( 4 ).command() ).isEqualTo( DesignPath.Command.Z );
+		assertThat( point.getSteps().size() ).isEqualTo( 5 );
+	}
+
+	@Test
+	void testGetStepsWithOriginAndSize() {
+		// given
+		DesignMarker point = new DesignMarker( new Point3D( 1, 1, 0 ), "2", DesignMarker.Type.DIAMOND );
+
+		// when
+		List<DesignPath.Step> steps = point.getSteps();
+
+		// then
+		assertThat( steps ).isNotEmpty();
+		assertThat( steps.get( 0 ).command() ).isEqualTo( DesignPath.Command.M );
+		assertThat( steps.get( 0 ).data() ).isEqualTo( new double[]{ 0.0, 1.0 } );
+		assertThat( steps.get( 1 ).command() ).isEqualTo( DesignPath.Command.L );
+		assertThat( steps.get( 1 ).data() ).isEqualTo( new double[]{ 1.0, 2.0 } );
+		assertThat( steps.get( 2 ).command() ).isEqualTo( DesignPath.Command.L );
+		assertThat( steps.get( 2 ).data() ).isEqualTo( new double[]{ 2.0, 1.0 } );
+		assertThat( steps.get( 3 ).command() ).isEqualTo( DesignPath.Command.L );
+		assertThat( steps.get( 3 ).data() ).isEqualTo( new double[]{ 1.0, 0.0 } );
+		assertThat( steps.get( 4 ).command() ).isEqualTo( DesignPath.Command.Z );
+		assertThat( point.getSteps().size() ).isEqualTo( 5 );
+	}
+
+	@Test
 	void testModify() {
 		DesignMarker point = new DesignMarker( new Point3D( 0, 0, 0 ) );
 		assertThat( point.isModified() ).isTrue();
