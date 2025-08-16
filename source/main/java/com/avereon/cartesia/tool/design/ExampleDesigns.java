@@ -121,6 +121,9 @@ public class ExampleDesigns {
 		redLineC.setDrawCap( StrokeLineCap.BUTT.name() );
 		redLineC.setOrder( 1 );
 
+		DesignArc arc1 = new DesignArc( new Point3D( 0, 0, 0 ), 10.0, 10.0, -135.0, 90.0, DesignArc.Type.OPEN );
+		DesignArc arc2 = new DesignArc( new Point3D( 0, 0, 0 ), 10.0, 10.0, 135.0, -90.0, DesignArc.Type.OPEN );
+
 		DesignEllipse ellipse1 = new DesignEllipse( new Point3D( 7, -2, 0), 1.0 );
 		DesignEllipse ellipse2 = new DesignEllipse( new Point3D( 7, -5.5, 0), 1.0,1.5, -45.0 );
 
@@ -171,6 +174,8 @@ public class ExampleDesigns {
 		construction.addShapes( List.of( redLineA, redLineB, redLineC ) );
 		// Boxes
 		construction.addShapes( List.of( box1, box2 ) );
+		// Arcs
+		construction.addShapes( List.of( arc1, arc2 ) );
 		// Ellipses
 		construction.addShapes( List.of( ellipse1, ellipse2 ) );
 		// Quad

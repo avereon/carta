@@ -624,7 +624,32 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	// TODO Finish building the bind methods for the remaining design shapes
 
 	private Arc bindArcGeometry( DesignArc designArc ) {
-		return null;
+		Arc arc = new Arc();
+
+		bindCommonShapeGeometry( designArc, arc );
+
+		DesignDoubleBinding originXProperty = new DesignDoubleBinding( designArc, DesignArc.ORIGIN, v -> v.getOrigin().getX() );
+		DesignDoubleBinding originYProperty = new DesignDoubleBinding( designArc, DesignArc.ORIGIN, v -> v.getOrigin().getY() );
+		DesignDoubleBinding radiusXProperty = new DesignDoubleBinding( designArc, DesignArc.RADII, v -> v.getRadii().getX() );
+		DesignDoubleBinding radiusYProperty = new DesignDoubleBinding( designArc, DesignArc.RADII, v -> v.getRadii().getY() );
+		DesignDoubleBinding startAngleProperty = new DesignDoubleBinding( designArc, DesignArc.START, DesignArc::calcStart );
+		DesignDoubleBinding lengthProperty = new DesignDoubleBinding( designArc, DesignArc.EXTENT, DesignArc::calcExtent );
+		DesignDoubleBinding rotateProperty = new DesignDoubleBinding( designArc, DesignArc.ROTATE, DesignArc::calcRotate );
+
+		arc.centerXProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
+		arc.centerYProperty().bind( shapeScaleYProperty().multiply( originYProperty ) );
+		arc.radiusXProperty().bind( shapeScaleXProperty().multiply( radiusXProperty ) );
+		arc.radiusYProperty().bind( shapeScaleYProperty().multiply( radiusYProperty ) );
+		arc.startAngleProperty().bind(  startAngleProperty.negate()  );
+		arc.lengthProperty().bind(  lengthProperty.negate()  );
+
+		Rotate rotate = new Rotate();
+		rotate.angleProperty().bind( rotateProperty );
+		rotate.pivotXProperty().bind( shapeScaleXProperty().multiply( originXProperty ) );
+		rotate.pivotYProperty().bind( shapeScaleYProperty().multiply( originYProperty ) );
+		arc.getTransforms().setAll( rotate );
+
+		return arc;
 	}
 
 	private Rectangle bindBoxGeometry( DesignBox designBox ) {
