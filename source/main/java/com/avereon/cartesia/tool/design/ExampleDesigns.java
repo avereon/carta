@@ -121,6 +121,23 @@ public class ExampleDesigns {
 		redLineC.setDrawCap( StrokeLineCap.BUTT.name() );
 		redLineC.setOrder( 1 );
 
+		DesignEllipse ellipse1 = new DesignEllipse( new Point3D( 7, -2, 0), 1.0 );
+		DesignEllipse ellipse2 = new DesignEllipse( new Point3D( 7, -5.5, 0), 1.0,1.5, -45.0 );
+
+		DesignBox box1 = new DesignBox( -8, -2, 2, 1 );
+		box1.setRotate( 15.0 );
+		DesignBox box2 = new DesignBox( -8, -6, 2, 3 );
+		box2.setFillPaint( "#80C08080" );
+
+		DesignQuad quad1 = new DesignQuad( new Point3D( -8, 4, 0 ), new Point3D( -7, 2, 0 ), new Point3D( -6, 4, 0 ) );
+		DesignQuad quad2 = new DesignQuad( new Point3D( -8, 0, 0 ), new Point3D( -7, 2, 0 ), new Point3D( -6, 0, 0 ) );
+		DesignQuad quad3 = new DesignQuad( new Point3D( -8, 3, 0 ), new Point3D( -7, 2, 0 ), new Point3D( -8, 1, 0 ) );
+		DesignQuad quad4 = new DesignQuad( new Point3D( -6, 3, 0 ), new Point3D( -7, 2, 0 ), new Point3D( -6, 1, 0 ) );
+
+		DesignCubic curve1 = new DesignCubic( new Point3D( 6, 4, 0 ), new Point3D( 7, 5, 0 ), new Point3D( 7, 3, 0 ), new Point3D( 8, 4, 0 ) );
+		DesignCubic curve2 = new DesignCubic( new Point3D( 6, 2, 0 ), new Point3D( 6, 4, 0 ), new Point3D( 8, 4, 0 ), new Point3D( 8, 2, 0 ) );
+		DesignCubic curve3 = new DesignCubic( new Point3D( 7, 1, 0 ), new Point3D( 6, 0, 0 ), new Point3D( 8, 0, 0 ), new Point3D( 7, 1, 0 ) );
+
 		DesignText hello = new DesignText( new Point3D( -5, -5, 0 ), "Hello" );
 		hello.setFillPaint( "#80C0FF" );
 		hello.setRotate( -45 );
@@ -140,7 +157,7 @@ public class ExampleDesigns {
 		DesignPath path = new DesignPath();
 		path.move( -3, -4 );
 		path.cubic( -3, -3, -1, -3, 0, -4 );
-		path.cubic( 1, -5, 3, -5, 3 ,-4 );
+		path.cubic( 1, -5, 3, -5, 3, -4 );
 		path.cubic( 3, -3, 1, -3, 0, -4 );
 		path.cubic( -1, -5, -3, -5, -3, -4 );
 		path.close();
@@ -148,13 +165,27 @@ public class ExampleDesigns {
 
 		DesignLayer construction = new DesignLayer();
 		construction.setName( "Construction" );
+		// Lines
 		construction.addShapes( List.of( greenLineA, greenLineB, greenLineC ) );
 		construction.addShapes( List.of( blueLineA, blueLineB, blueLineC ) );
 		construction.addShapes( List.of( redLineA, redLineB, redLineC ) );
+		// Boxes
+		construction.addShapes( List.of( box1, box2 ) );
+		// Ellipses
+		construction.addShapes( List.of( ellipse1, ellipse2 ) );
+		// Quad
+		construction.addShapes( List.of( quad1, quad2, quad3, quad4 ) );
+		// Cubic
+		construction.addShapes( List.of( curve1, curve2, curve3 ) );
+		// Text
 		construction.addShapes( List.of( hello, sweet, world ) );
+		// Markers
 		construction.addShapes( List.of( star, cross, centerOfMass ) );
+		// Paths
 		construction.addShapes( List.of( path ) );
+
 		design.getLayers().addLayer( construction );
+
 		return design;
 	}
 
