@@ -125,6 +125,7 @@ public class ExampleDesigns {
 		DesignArc arc2 = new DesignArc( new Point3D( 0, 0, 0 ), 10.0, 10.0, 135.0, -90.0, DesignArc.Type.OPEN );
 
 		DesignEllipse ellipse1 = new DesignEllipse( new Point3D( 7, -2, 0), 1.0 );
+		ellipse1.setFillPaint( "#C0808080" );
 		DesignEllipse ellipse2 = new DesignEllipse( new Point3D( 7, -5.5, 0), 1.0,1.5, -45.0 );
 
 		DesignBox box1 = new DesignBox( -8, -2, 2, 1 );
