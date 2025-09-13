@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.annotation.CommonNote;
+import com.avereon.annotation.UiNote;
 import com.avereon.annotation.Note;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.*;
@@ -516,7 +516,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 		setUnitScale( unit.to( 1, DesignUnit.IN ) );
 	}
 
-	@Note( CommonNote.ANY_THREAD )
+	@Note( UiNote.THREAD_SAFE )
 	void updateGridFxGeometry() {
 		if( System.nanoTime() < nextGridUpdate ) return;
 
