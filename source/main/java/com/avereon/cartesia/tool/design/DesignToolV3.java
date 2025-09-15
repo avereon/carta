@@ -43,13 +43,14 @@ public class DesignToolV3 extends BaseDesignTool {
 		Design design = request.getAsset().getModel();
 		getRenderer().setDesign( design );
 
-//		// DEVELOPMENT
-//		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) {
-//			ExampleDesigns.addDesign1(design);
-//			if( !design.getLayers().getLayers().isEmpty() ) {
-//				getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
-//			}
-//		}
+		// DEVELOPMENT
+		//		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) {
+		//			Design developmentDesign = ExampleDesigns.design1();
+		//			getRenderer().setDesign( developmentDesign );
+		//			if( !developmentDesign.getLayers().getLayers().isEmpty() ) {
+		//				getRenderer().setLayerVisible( developmentDesign.getLayers().getLayers().getFirst(), true );
+		//			}
+		//		}
 	}
 
 	@Override
