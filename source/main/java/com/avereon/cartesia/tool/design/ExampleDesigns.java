@@ -70,7 +70,15 @@ public class ExampleDesigns {
 	}
 
 	public static Design design1() {
-		Design design = new Design2D();
+		return setDesign1( new Design2D() );
+	}
+	
+	public static Design setDesign1(Design design) {
+		design.getAllLayers().forEach( layer -> design.getLayers().removeLayer( layer) );
+		return addDesign1( design );
+	}
+
+	public static Design addDesign1(Design design) {
 		design.setName( "Test Design" );
 
 		DesignLine greenLineA = new DesignLine( -5, 5, -3, 3 );

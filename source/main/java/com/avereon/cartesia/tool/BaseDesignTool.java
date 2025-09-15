@@ -98,9 +98,16 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	// Current:
 	// selectAperture
-	private final ObjectProperty<DesignLayer> selectedLayer;
 
+	/**
+	 * The current layer for adding geometry to the design.
+	 */
 	private final ObjectProperty<DesignLayer> currentLayer;
+
+	/**
+	 * The selected layer according to the tool guide.
+	 */
+	private final ObjectProperty<DesignLayer> selectedLayer;
 
 	@Deprecated
 	private final ObjectProperty<DesignView> currentView;
@@ -578,6 +585,21 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
+	public DesignLayer getCurrentLayer() {
+		return currentLayer.get();
+	}
+
+	@Override
+	public void setCurrentLayer( DesignLayer layer ) {
+		currentLayer.set( Objects.requireNonNull( layer ) );
+	}
+
+	@Override
+	public ObjectProperty<DesignLayer> currentLayerProperty() {
+		return currentLayer;
+	}
+
+	@Override
 	public DesignLayer getSelectedLayer() {
 		return selectedLayer.get();
 	}
@@ -592,22 +614,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		return selectedLayer;
 	}
 
-	@Override
-	public DesignLayer getCurrentLayer() {
-		return currentLayer.get();
-	}
-
-	@Override
-	public void setCurrentLayer( DesignLayer layer ) {
-		currentLayer.set( Objects.requireNonNull( layer ) );
-	}
-
-	@Override
-	@Deprecated
-	public ObjectProperty<DesignLayer> currentLayerProperty() {
-		return currentLayer;
-	}
-
 	/**
 	 * {@inheritDoc}
 	 */
@@ -616,7 +622,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		Fx.onFxOrCurrent( () -> getRenderer().zoom( anchor, factor ) );
 	}
 
-	// NEXT Insert implementations here
+	// NEXT Insert common design tool implementations here
+	// Many implementations found in DesignToolV2 can be moved here
 
 	@Override
 	public BaseDesignRenderer getScreenDesignRenderer() {
@@ -629,10 +636,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	protected CoordinateStatus getCoordinateStatus() {
 		return getDesignContext().getCoordinateStatus();
-	}
-
-	private void capturePreviousPortal() {
-		portalStack.push( new DesignPortal( getViewCenter(), getViewZoom(), getViewRotate() ) );
 	}
 
 	protected void registerStatusBarItems() {
@@ -771,6 +774,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		pullAction( "delete", deleteAction );
 		pullAction( "undo", undoAction );
 		pullAction( "redo", redoAction );
+	}
+
+	private void capturePreviousPortal() {
+		portalStack.push( new DesignPortal( getViewCenter(), getViewZoom(), getViewRotate() ) );
 	}
 
 	private ProgramAction pushCommandAction( String key ) {

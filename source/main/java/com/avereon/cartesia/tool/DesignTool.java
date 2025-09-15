@@ -186,26 +186,44 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 
 	Point3D nearestReferencePoint( Collection<DesignShape> shapes, Point3D point );
 
-	// What is the difference between selected layer and current layer?
-	// We don't think there is a difference other than name.
-	// BaseDesignTool even has them linked together.
+	/**
+	 * The layer currently being edited. This is the layer used for new geometry.
+	 *
+	 * @return The current layer
+	 */
 	DesignLayer getCurrentLayer();
 
 	void setCurrentLayer( DesignLayer layer );
 
 	ObjectProperty<DesignLayer> currentLayerProperty();
 
-	// What is the difference between selected layer and current layer?
-	// We don't think there is a difference other than name.
-	// BaseDesignTool even has them linked together.
+	/**
+	 * The currently selected layer according to the tool guide.
+	 *
+	 * @return The selected layer
+	 */
 	DesignLayer getSelectedLayer();
 
 	void setSelectedLayer( DesignLayer layer );
 
 	ObjectProperty<DesignLayer> selectedLayerProperty();
 
+	/**
+	 * Determine if the specified layer is visible.
+	 *
+	 * @param layer The layer to check
+	 * @return True if the layer is visible, false otherwise
+	 */
 	boolean isLayerVisible( DesignLayer layer );
 
+	/**
+	 * Set the visibility of a specific layer. When a layer is made visible, its
+	 * geometry is created and added to the rendering system. Conversely, when a
+	 * layer is hidden, its geometry is removed to optimize rendering performance.
+	 *
+	 * @param layer The layer whose visibility is being set
+	 * @param visible True to make the layer visible, false to make it hidden
+	 */
 	void setLayerVisible( DesignLayer layer, boolean visible );
 
 	/**

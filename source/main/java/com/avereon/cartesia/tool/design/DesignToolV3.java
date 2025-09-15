@@ -6,7 +6,6 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
-import com.avereon.xenon.XenonMode;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.OpenAssetRequest;
@@ -19,7 +18,6 @@ import lombok.CustomLog;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 
 @CustomLog
 public class DesignToolV3 extends BaseDesignTool {
@@ -42,15 +40,16 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
+		Design design = request.getAsset().getModel();
+		getRenderer().setDesign( design );
 
-		// DEVELOPMENT
-		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) {
-			Design design = ExampleDesigns.design1();
-			getRenderer().setDesign( design );
-			if( !design.getLayers().getLayers().isEmpty() ) {
-				getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
-			}
-		}
+//		// DEVELOPMENT
+//		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) {
+//			ExampleDesigns.addDesign1(design);
+//			if( !design.getLayers().getLayers().isEmpty() ) {
+//				getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+//			}
+//		}
 	}
 
 	@Override
