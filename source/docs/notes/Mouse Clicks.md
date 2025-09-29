@@ -50,3 +50,24 @@ A different configuration to consider to avoid focusing on the default configura
 - Mouse-down, ctrl-drag. Mouse-up ignored: Move the viewpoint
 - Ctrl-scroll-up: Zoom in
 - Ctrl-scroll down: Zoom out
+
+It would be nice if this were simple mappings from mouse events and modifiers to
+commands, but it is not. Here is a simple example of the challenge. If there is 
+not a current command on the command stack, then the mouse-down event is 
+mapped into a select command followed by coordinates. If, however, there is a 
+command on the command stack, then the mouse-down might need to be mapped to a 
+point command instead of a select command.
+
+Another option is to always return a point command when the mouse-down event is 
+triggered. The receiving command would then have to determine what to do with 
+the point like use it to select geometry or as a point.
+
+| Trigger     | Modifiers | Command                                     |
+|-------------|-----------|---------------------------------------------|
+| mouse-down  | none      | Select                                      |
+| mouse-up    | none      | Deselect                                    |
+| mouse-down  | shift     | Add single element to selected geometry     |
+| mouse-up    | shift     | Add to selected geometry by window contains |
+| mouse-drag  | ctrl      | Move the viewpoint                          |
+| scroll-up   | none      | Zoom in                                     |
+| scroll-down | none      | Zoom out                                    |
