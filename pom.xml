@@ -40,7 +40,7 @@
 		<marea.version>0.4-SNAPSHOT</marea.version>
 		<zerra.version>0.11-SNAPSHOT</zerra.version>
 		<xenos.version>1.9-SNAPSHOT</xenos.version>
-		<cameo.version>2.12-SNAPSHOT</cameo.version>
+		<cameo.version>2.12</cameo.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>21.0.2</monocle.version>
 		<mockito.version>5.20.0</mockito.version>
