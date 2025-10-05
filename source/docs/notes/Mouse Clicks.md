@@ -29,6 +29,14 @@ there was a mouse drag event that occurred. Modifiers can also be used to
 configure the mouse-down event. For example, the modifier "shift" could be 
 used to select geometry.
 
+Something else to consider is the mouse cursor is often used to prompt the user 
+for a specific type of input. We may not need to change the cursor, but we may 
+need to change the mouse cursor to better match the user's intent. For example, 
+if the user is trying to select a point, then the cursor should be a crosshair 
+and the mouse-down event should be mapped to a point command. If the user is 
+trying to select a shape, then the cursor should be the standard cursor and the 
+mouse-down event should be mapped to the select command.
+
 Something that Cartesia has not considered yet is "hover" actions. We have not
 considered "hover" actions because they are possible with touch gestures. But 
 this doesn't necessarily mean that we should not consider them. 
