@@ -164,9 +164,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private final Stack<DesignPortal> portalStack;
 
-	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
+ 	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
+ 	private com.avereon.event.EventHandler<com.avereon.xenon.resource.ResourceSwitchedEvent> resourceSwitchListener;
 
-	protected BaseDesignTool( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
+ 	protected BaseDesignTool( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
 		super( product, asset );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
@@ -288,6 +289,15 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getRenderer().setVisible( true );
 	}
 
+	/**
+	 * Resource-based ready hook for incremental migration.
+	 * Delegates to the Asset-based variant.
+	 */
+	@SuppressWarnings("unused")
+	protected void ready( com.avereon.xenon.resource.OpenResourceRequest request ) throws ToolException {
+		ready( (OpenAssetRequest) request );
+	}
+
 	@Override
 	protected void allocate() throws ToolException {
 		super.allocate();
@@ -295,6 +305,14 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Add asset switch listener to remove command prompt
 		getProgram().register(
 			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
+					unregisterStatusBarItems();
+				}
+			}
+		);
+		// Also listen for the ResourceSwitchedEvent during migration
+		getProgram().register(
+			com.avereon.xenon.resource.ResourceSwitchedEvent.SWITCHED, resourceSwitchListener = e -> {
 				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
 					unregisterStatusBarItems();
 				}
@@ -329,6 +347,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void deallocate() throws ToolException {
 		// Remove asset switch listener to unregister status bar items
 		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+		getProgram().unregister( com.avereon.xenon.resource.ResourceSwitchedEvent.SWITCHED, resourceSwitchListener );
 
 		if( renderer != null ) renderer.setDesign( null );
 
