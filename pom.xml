@@ -37,10 +37,10 @@
 	<properties>
 		<!-- Version numbers updated 28 Apr 2025 -->
 		<xenon.version>1.10-SNAPSHOT</xenon.version>
+		<xenos.version>1.10-SNAPSHOT</xenos.version>
 		<curve.version>0.6-SNAPSHOT</curve.version>
 		<marea.version>0.4-SNAPSHOT</marea.version>
 		<zerra.version>0.11</zerra.version>
-		<xenos.version>1.9</xenos.version>
 		<cameo.version>2.12</cameo.version>
 		<jep.version>2.24</jep.version>
 		<monocle.version>21.0.2</monocle.version>
