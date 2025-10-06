@@ -8,13 +8,13 @@ import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.exception.ResourceException;
-import com.avereon.xenon.asset.AssetType;
+import com.avereon.xenon.asset.ResourceType;
 
-public class Design3dAssetType extends AssetType {
+public class Design3DResourceType extends ResourceType {
 
 	public static final String KEY = "design3d";
 
-	public Design3dAssetType( XenonProgramProduct product ) {
+	public Design3DResourceType( XenonProgramProduct product ) {
 		super( product, KEY );
 		setDefaultCodec( new CartesiaDesignCodec3D( product ) );
 	}

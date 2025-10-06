@@ -9,13 +9,13 @@ import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
 import com.avereon.xenon.asset.exception.ResourceException;
-import com.avereon.xenon.asset.AssetType;
+import com.avereon.xenon.asset.ResourceType;
 
-public class Design2dAssetType extends AssetType {
+public class Design2DResourceType extends ResourceType {
 
 	public static final String KEY = "design2d";
 
-	public Design2dAssetType( XenonProgramProduct product ) {
+	public Design2DResourceType( XenonProgramProduct product ) {
 		super( product, KEY );
 		setDefaultCodec( new CartesiaDesignCodec2D( product ) );
 	}

@@ -39,11 +39,11 @@ public class CartesiaMod extends Module {
 
 	public static final String INDEX_ID = "cartesia";
 
-	private Design2dAssetType design2dAssetType;
+	private Design2DResourceType design2dAssetType;
 
-	private Design3dAssetType design3dAssetType;
+	private Design3DResourceType design3dAssetType;
 
-	private ShapePropertiesAssetType shapePropertiesAssetType;
+	private ShapePropertiesResourceType shapePropertiesAssetType;
 
 	@Getter
 	private CommandMap commandMap;
@@ -59,7 +59,7 @@ public class CartesiaMod extends Module {
 		getProgram().getAssetManager().addScheme( new CartesiaScheme( getProgram() ) );
 
 		// Register Design2D asset type and tools
-		registerAssetType( design2dAssetType = new Design2dAssetType( this ) );
+		registerAssetType( design2dAssetType = new Design2DResourceType( this ) );
 		// Settings pages
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );
@@ -213,7 +213,7 @@ public class CartesiaMod extends Module {
 		//registerTool( design3dAssetType, design3dEditorRegistration );
 
 		// Register ShapeProperties asset type and tools
-		registerAssetType( shapePropertiesAssetType = new ShapePropertiesAssetType( this ) );
+		registerAssetType( shapePropertiesAssetType = new ShapePropertiesResourceType( this ) );
 		ToolRegistration shapePropertiesRegistration = new ToolRegistration( this, ShapePropertiesTool.class );
 		shapePropertiesRegistration.setName( Rb.text( RbKey.LABEL, "shape-properties-tool" ) );
 		shapePropertiesRegistration.setInstanceMode( ToolInstanceMode.SINGLETON );

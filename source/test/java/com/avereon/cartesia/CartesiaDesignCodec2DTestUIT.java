@@ -37,7 +37,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		codec = new CartesiaDesignCodec2D( getMod() );
 
 		Path path = Paths.get( "target", "design.tmp" );
-		asset = new Asset( new Design2dAssetType( getMod() ), path.toUri() );
+		asset = new Asset( new Design2DResourceType( getMod() ), path.toUri() );
 		asset.setModel( new Design2D() );
 	}
 

@@ -3,7 +3,7 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.ParseUtil;
-import com.avereon.cartesia.ShapePropertiesAssetType;
+import com.avereon.cartesia.ShapePropertiesResourceType;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.data.map.DesignUnitMapper;
@@ -1009,7 +1009,7 @@ public class DesignToolV2 extends BaseDesignTool {
 			getProgram().getTaskManager().submit( Task.of( () -> {
 				try {
 					// Open the tool but don't make it the active tool
-					getProgram().getAssetManager().openAsset( ShapePropertiesAssetType.URI, getWorkpane(), true, false ).get();
+					getProgram().getAssetManager().openAsset( ShapePropertiesResourceType.URI, getWorkpane(), true, false ).get();
 
 					// Fire the event on the FX thread
 					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page, settings ) ) );
