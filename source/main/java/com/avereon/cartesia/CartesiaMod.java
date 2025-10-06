@@ -56,7 +56,7 @@ public class CartesiaMod extends Module {
 		registerIcons();
 		registerActions();
 
-		getProgram().getAssetManager().addScheme( new CartesiaScheme( getProgram() ) );
+		getProgram().getResourceManager().addScheme( new CartesiaScheme( getProgram() ) );
 
 		// Register Design2D asset type and tools
 		registerAssetType( design2dAssetType = new Design2DResourceType( this ) );

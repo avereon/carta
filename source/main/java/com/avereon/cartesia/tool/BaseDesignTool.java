@@ -869,7 +869,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 			getProgram().getTaskManager().submit( Task.of( () -> {
 				try {
 					// Show the properties tool
-					getProgram().getAssetManager().openAsset( ProgramPropertiesType.URI, getWorkpane() ).get();
+					getProgram().getResourceManager().openAsset( ProgramPropertiesType.URI, getWorkpane() ).get();
 
 					// Fire the show request on the workspace event bus
 					PropertiesToolEvent toolEvent = new PropertiesToolEvent( PropertiesAction.this, PropertiesToolEvent.SHOW, designSettingsPage, assetSettingsPage );

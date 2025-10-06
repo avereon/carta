@@ -37,7 +37,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 		// Load the design asset into a tool
 		URI uri = Objects.requireNonNull( getClass().getResource( "/design-tool-test.cartesia2d" ) ).toURI();
-		Future<ProgramTool> future = getProgram().getAssetManager().openAsset( uri, DesignToolV2.class );
+		Future<ProgramTool> future = getProgram().getResourceManager().openAsset( uri, DesignToolV2.class );
 		tool = (DesignToolV2)future.get();
 
 		// Wait for the tool to be ready

@@ -1009,7 +1009,7 @@ public class DesignToolV2 extends BaseDesignTool {
 			getProgram().getTaskManager().submit( Task.of( () -> {
 				try {
 					// Open the tool but don't make it the active tool
-					getProgram().getAssetManager().openAsset( ShapePropertiesResourceType.URI, getWorkpane(), true, false ).get();
+					getProgram().getResourceManager().openAsset( ShapePropertiesResourceType.URI, getWorkpane(), true, false ).get();
 
 					// Fire the event on the FX thread
 					Fx.run( () -> getWorkspace().getEventBus().dispatch( new ShapePropertiesToolEvent( this, ShapePropertiesToolEvent.SHOW, page, settings ) ) );
