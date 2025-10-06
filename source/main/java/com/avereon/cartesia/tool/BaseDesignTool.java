@@ -16,7 +16,7 @@ import com.avereon.skill.WritableIdentity;
 import com.avereon.util.DelayedAction;
 import com.avereon.xenon.*;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.AssetSwitchedEvent;
+import com.avereon.xenon.asset.ResourceSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.ProgramPropertiesType;
 import com.avereon.xenon.task.Task;
@@ -164,7 +164,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private final Stack<DesignPortal> portalStack;
 
-	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
+	private com.avereon.event.EventHandler<ResourceSwitchedEvent> assetSwitchListener;
 
 	protected BaseDesignTool( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
 		super( product, asset );
@@ -294,7 +294,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		// Add asset switch listener to remove command prompt
 		getProgram().register(
-			AssetSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
+			ResourceSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
 				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
 					unregisterStatusBarItems();
 				}
@@ -328,7 +328,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Override
 	protected void deallocate() throws ToolException {
 		// Remove asset switch listener to unregister status bar items
-		getProgram().unregister( AssetSwitchedEvent.SWITCHED, assetSwitchListener );
+		getProgram().unregister( ResourceSwitchedEvent.SWITCHED, assetSwitchListener );
 
 		if( renderer != null ) renderer.setDesign( null );
 

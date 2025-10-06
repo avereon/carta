@@ -20,7 +20,7 @@ import com.avereon.util.TypeReference;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.AssetSwitchedEvent;
+import com.avereon.xenon.asset.ResourceSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
@@ -96,7 +96,7 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private ChangeListener<Boolean> snapGridToggleHandler;
 
-	private com.avereon.event.EventHandler<AssetSwitchedEvent> assetSwitchListener;
+	private com.avereon.event.EventHandler<ResourceSwitchedEvent> assetSwitchListener;
 
 	public DesignToolV2( XenonProgramProduct product, Asset asset ) {
 		super( product, asset, new DesignToolV2Renderer() );
