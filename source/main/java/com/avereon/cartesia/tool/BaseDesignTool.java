@@ -939,4 +939,3 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 }
-
