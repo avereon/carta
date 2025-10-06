@@ -53,14 +53,6 @@ public class DesignToolV3 extends BaseDesignTool {
 		//		}
 	}
 
-	/**
-	 * Resource-based ready hook for incremental migration.
-	 */
-	@SuppressWarnings("unused")
-	protected void ready( com.avereon.xenon.resource.OpenResourceRequest request ) throws ToolException {
-		ready( (OpenAssetRequest) request );
-	}
-
 	@Override
 	public DesignValue getSelectTolerance() {
 		return null;
