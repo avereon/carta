@@ -8,7 +8,7 @@ import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.exception.AssetException;
+import com.avereon.xenon.asset.exception.ResourceException;
 import com.avereon.xenon.asset.AssetType;
 
 public class Design2dAssetType extends AssetType {
@@ -21,7 +21,7 @@ public class Design2dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetNew( Xenon program, Asset asset ) throws AssetException {
+	public boolean assetNew( Xenon program, Asset asset ) throws ResourceException {
 		Design2D design = initModel( asset );
 
 		// Create the default layer
@@ -42,7 +42,7 @@ public class Design2dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetOpen( Xenon program, Asset asset ) throws AssetException {
+	public boolean assetOpen( Xenon program, Asset asset ) throws ResourceException {
 		initModel( asset );
 
 		asset.setCaptureUndoChanges( true );

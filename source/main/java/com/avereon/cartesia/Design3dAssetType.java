@@ -7,7 +7,7 @@ import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.exception.AssetException;
+import com.avereon.xenon.asset.exception.ResourceException;
 import com.avereon.xenon.asset.AssetType;
 
 public class Design3dAssetType extends AssetType {
@@ -20,7 +20,7 @@ public class Design3dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetNew( Xenon program, Asset asset ) throws AssetException {
+	public boolean assetNew( Xenon program, Asset asset ) throws ResourceException {
 		// There might already be a model from assetNew()
 		Design3D design = asset.getModel();
 
@@ -38,7 +38,7 @@ public class Design3dAssetType extends AssetType {
 	}
 
 	@Override
-	public boolean assetOpen( Xenon program, Asset asset ) throws AssetException {
+	public boolean assetOpen( Xenon program, Asset asset ) throws ResourceException {
 		asset.setCaptureUndoChanges( true );
 		return true;
 	}

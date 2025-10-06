@@ -2,7 +2,7 @@ package com.avereon.cartesia;
 
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.asset.Asset;
-import com.avereon.xenon.asset.exception.AssetException;
+import com.avereon.xenon.asset.exception.ResourceException;
 import com.avereon.xenon.scheme.ProductScheme;
 
 public class CartesiaScheme extends ProductScheme {
@@ -14,7 +14,7 @@ public class CartesiaScheme extends ProductScheme {
 	}
 
 	@Override
-	public boolean canLoad( Asset asset ) throws AssetException {
+	public boolean canLoad( Asset asset ) throws ResourceException {
 		return true;
 	}
 
