@@ -3,6 +3,8 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.Design2dAssetType;
 import com.avereon.cartesia.DesignToolBaseTest;
+import com.avereon.cartesia.cursor.Reticle;
+import com.avereon.cartesia.cursor.ReticleCursor;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignPortal;
@@ -210,27 +212,25 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		Cursor result = tool.getCursor();
 
 		// then
-		assertThat( result ).isEqualTo( Cursor.DEFAULT );
-		assertThat( result ).isInstanceOf( Cursor.class );
+		assertThat( result.toString() ).isEqualTo( DesignToolV3.DEFAULT_RETICLE.name() );
+		assertThat( result ).isInstanceOf( ReticleCursor.class );
 	}
 
 	@Test
 	void setCursor() throws Exception {
 		// given
-		Cursor currentCursor = Cursor.DEFAULT;
-		Cursor differentCursor = Cursor.CROSSHAIR;
 		CompletableFuture<Cursor> future = new CompletableFuture<>();
 		Fx.run( () -> future.complete( tool.getCursor() ) );
 		Cursor cursor = future.get();
-		assertThat( cursor ).isEqualTo( currentCursor );
+		assertThat( cursor.toString() ).isEqualTo( Reticle.DUPLEX.name() );
 
 		// when
-		tool.setCursor( differentCursor );
+		tool.setCursor( cursor );
 		Cursor result = tool.getCursor();
 
 		// then
-		assertThat( result.toString() ).isEqualTo( differentCursor.toString() );
-		assertThat( result ).isInstanceOf( Cursor.class );
+		assertThat( result.toString() ).isEqualTo( cursor.toString() );
+		assertThat( result ).isInstanceOf( ReticleCursor.class );
 	}
 
 	@Test
