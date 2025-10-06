@@ -34,7 +34,11 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
-import javafx.geometry.*;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
+import javafx.geometry.Point3D;
+import javafx.geometry.Pos;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
@@ -118,6 +122,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	// viewpoint
 	// rotate
 	// zoom
+
+	/**
+	 * The reticle is the more specialized equivalent of the crosshair cursor.
+	 * Whenever the program uses the crosshair cursor, it should use the reticle
+	 * cursor.
+ 	 */
 	private final ObjectProperty<Reticle> reticle;
 
 	// selectedShapes
@@ -201,8 +211,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		this.toast.setVisible( true );
 		this.renderer.setVisible( false );
 
+		// Initialize the reticle
 		reticle = new SimpleObjectProperty<>( DEFAULT_RETICLE );
-		setCursor( getReticleCursor() );
+
+		// Initialize the cursor to the default cursor
+		// There is debate whether this should be the reticle
+		setCursor( Cursor.DEFAULT );
 
 		selectedLayer = new SimpleObjectProperty<>();
 		currentLayer = new SimpleObjectProperty<>();
