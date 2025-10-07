@@ -22,7 +22,7 @@ public class DesignToolV2Test extends DesignToolBaseTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		Fx.run( () -> tool = new DesignToolV2( module, asset ) );
+		Fx.run( () -> tool = new DesignToolV2( module, resource ) );
 		Fx.waitFor( 2, TimeUnit.SECONDS );
 	}
 

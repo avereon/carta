@@ -7,7 +7,7 @@ import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.workpane.ToolException;
 import javafx.beans.property.BooleanProperty;
@@ -23,12 +23,12 @@ import java.util.List;
 public class DesignToolV3 extends BaseDesignTool {
 
 	@SuppressWarnings( "unused" )
-	public DesignToolV3( XenonProgramProduct product, Asset asset ) {
-		this( product, asset, new DesignToolV3Renderer() );
+	public DesignToolV3( XenonProgramProduct product, Resource resource ) {
+		this( product, resource, new DesignToolV3Renderer() );
 	}
 
-	DesignToolV3( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
-		super( product, asset, renderer );
+	DesignToolV3( XenonProgramProduct product, Resource resource, BaseDesignRenderer renderer ) {
+		super( product, resource, renderer );
 	}
 
 	/**
@@ -40,7 +40,7 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
-		Design design = request.getAsset().getModel();
+		Design design = request.getResource().getModel();
 		getRenderer().setDesign( design );
 
 		// DEVELOPMENT

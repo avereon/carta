@@ -13,7 +13,7 @@ public class DesignToolV2AssertTypeUIT extends DesignToolV2BaseUIT {
 
 	@Test
 	void assetTypeResolvesCorrectly() {
-		assertThat( getAsset().getType() ).isInstanceOf( Design2DResourceType.class );
+		assertThat( getResource().getType() ).isInstanceOf( Design2DResourceType.class );
 	}
 
 }

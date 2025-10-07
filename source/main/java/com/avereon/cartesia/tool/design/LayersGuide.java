@@ -109,7 +109,7 @@ public class LayersGuide extends Guide {
 		// NOTE Current layer changes come from the tool
 
 		// Create guide nodes for all the design layers
-		Design design = request.getAsset().getModel();
+		Design design = request.getResource().getModel();
 		design.getAllLayers().forEach( this::addLayer );
 
 		design.register( NodeEvent.CHILD_ADDED, e -> {

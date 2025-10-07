@@ -11,7 +11,7 @@ import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.cartesia.tool.design.CommonToolRenderer;
 import com.avereon.xenon.XenonProgram;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;
@@ -71,7 +71,7 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 
 	CartesiaMod getMod();
 
-	Asset getAsset();
+	Resource getAsset();
 
 	Design getDesign();
 

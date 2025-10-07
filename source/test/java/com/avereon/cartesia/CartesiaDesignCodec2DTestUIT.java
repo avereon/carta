@@ -1,7 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.data.*;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import javafx.geometry.Point2D;
@@ -29,7 +29,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 
 	private CartesiaDesignCodec codec;
 
-	private Asset asset;
+	private Resource resource;
 
 	@BeforeEach
 	protected void setup() throws Exception {
@@ -37,8 +37,8 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		codec = new CartesiaDesignCodec2D( getMod() );
 
 		Path path = Paths.get( "target", "design.tmp" );
-		asset = new Asset( new Design2DResourceType( getMod() ), path.toUri() );
-		asset.setModel( new Design2D() );
+		resource = new Resource( new Design2DResourceType( getMod() ), path.toUri() );
+		resource.setModel( new Design2D() );
 	}
 
 	@Test
@@ -59,8 +59,8 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 
 		// Load the design from a stream
 		byte[] buffer = MAPPER.writer().writeValueAsBytes( expectedMap );
-		codec.load( asset, new ByteArrayInputStream( buffer ) );
-		Map<String, Object> actualMap = ((Design)asset.getModel()).asDeepMap();
+		codec.load( resource, new ByteArrayInputStream( buffer ) );
+		Map<String, Object> actualMap = ((Design)resource.getModel()).asDeepMap();
 		actualMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 
 		// Convert the results to strings for comparison
@@ -73,14 +73,14 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 	@Test
 	void testSave() throws Exception {
 		// Create the expected result
-		Design design = createTestDesign( asset.getModel() );
+		Design design = createTestDesign( resource.getModel() );
 		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
 		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 		remapLayersForSave( expectedMap, this::remapShapeForSave );
 
 		// Create the actual result
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		codec.save( asset, output );
+		codec.save( resource, output );
 
 		// Convert the results to strings for comparison
 		String expected = MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( expectedMap );

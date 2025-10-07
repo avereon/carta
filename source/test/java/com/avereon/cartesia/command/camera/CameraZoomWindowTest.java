@@ -37,7 +37,7 @@ public class CameraZoomWindowTest extends BaseCommandTest {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 		when( tool.getReticleCursor() ).thenReturn( null );
-		when( tool.getAsset() ).thenReturn( asset );
+		when( tool.getAsset() ).thenReturn( resource );
 
 		// when
 		Object result = task.runTaskStep();

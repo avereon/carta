@@ -7,7 +7,7 @@ import com.avereon.data.Node;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Product;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.Codec;
 import com.avereon.zerra.font.FontUtil;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -132,9 +132,9 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	@Override
 	@SuppressWarnings( "unchecked" )
-	public void load( Asset asset, InputStream input ) throws IOException {
+	public void load( Resource resource, InputStream input ) throws IOException {
 		Design2D design = new Design2D();
-		asset.setModel( design );
+		resource.setModel( design );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 		map.put( Design.UNIT, DesignUnitMapper.map( (String)map.get( Design.UNIT ) ).name().toLowerCase() );
@@ -151,12 +151,12 @@ public abstract class CartesiaDesignCodec extends Codec {
 		// Load views
 		views.values().forEach( v -> loadView( design, v ) );
 
-		asset.getUndoManager().forgetHistory();
+		resource.getUndoManager().forgetHistory();
 	}
 
 	@Override
-	public void save( Asset asset, OutputStream output ) throws IOException {
-		Map<String, Object> map = mapDesign( asset.getModel() );
+	public void save( Resource resource, OutputStream output ) throws IOException {
+		Map<String, Object> map = mapDesign( resource.getModel() );
 		map.put( CODEC_VERSION_KEY, CODEC_VERSION );
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 		//System.err.println( JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( map ) );

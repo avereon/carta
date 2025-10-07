@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import com.avereon.zerra.color.Colors;
@@ -25,16 +25,16 @@ public class DesignPrintTask extends Task<Void> {
 
 	private final DesignTool tool;
 
-	private final Asset asset;
+	private final Resource resource;
 
 	private final DesignPrint print;
 
-	public DesignPrintTask( final Xenon program, final DesignTool tool, final Asset asset, final DesignPrint print ) {
+	public DesignPrintTask( final Xenon program, final DesignTool tool, final Resource resource, final DesignPrint print ) {
 		this.program = program;
 		this.tool = tool;
-		this.asset = asset;
+		this.resource = resource;
 		this.print = print;
-		setName( Rb.textOr( RbKey.LABEL, "print", "Print" ) + " " + asset.getName() );
+		setName( Rb.textOr( RbKey.LABEL, "print", "Print" ) + " " + resource.getName() );
 	}
 
 	@Override
@@ -121,7 +121,7 @@ public class DesignPrintTask extends Task<Void> {
 		Class<? extends BaseDesignRenderer> rendererClass = tool.getPrintDesignRendererClass();
 		final BaseDesignRenderer renderer = rendererClass.getDeclaredConstructor().newInstance();
 		//renderer.setBackground( Background.fill( Color.LIGHTGRAY ) );
-		renderer.setDesign( asset.getModel() );
+		renderer.setDesign( resource.getModel() );
 		renderer.setVisibleLayers( tool.getVisibleLayers() );
 
 		renderer.setDpi( factor * 72, factor * 72 );

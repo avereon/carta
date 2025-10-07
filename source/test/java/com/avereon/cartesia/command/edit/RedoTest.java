@@ -32,7 +32,7 @@ public class RedoTest  extends BaseCommandTest {
 	void testExecuteWithAllParametersWithVisibleTrue() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
-		when( asset.getUndoManager() ).thenReturn( undoManager );
+		when( resource.getUndoManager() ).thenReturn( undoManager );
 
 		// when
 		Object result = task.runTaskStep();
@@ -50,7 +50,7 @@ public class RedoTest  extends BaseCommandTest {
 	void testExecuteWithBadParameterOneIsIgnored() throws Exception {
 		// given
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, BAD_TEXT_PARAMETER );
-		when( asset.getUndoManager() ).thenReturn( undoManager );
+		when( resource.getUndoManager() ).thenReturn( undoManager );
 
 		// when
 		Object result = task.runTaskStep();

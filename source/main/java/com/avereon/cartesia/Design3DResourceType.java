@@ -6,7 +6,7 @@ import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.exception.ResourceException;
 import com.avereon.xenon.asset.ResourceType;
 
@@ -20,12 +20,12 @@ public class Design3DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetNew( Xenon program, Asset asset ) throws ResourceException {
+	public boolean assetNew( Xenon program, Resource resource ) throws ResourceException {
 		// There might already be a model from assetNew()
-		Design3D design = asset.getModel();
+		Design3D design = resource.getModel();
 
 		// If there is not already a model, create one
-		if( design == null ) asset.setModel( design = new Design3D() );
+		if( design == null ) resource.setModel( design = new Design3D() );
 
 		// If there is not a default layer, create one
 		if( design.getLayers().getLayers().size() == 0 ) {
@@ -38,8 +38,8 @@ public class Design3DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetOpen( Xenon program, Asset asset ) throws ResourceException {
-		asset.setCaptureUndoChanges( true );
+	public boolean assetOpen( Xenon program, Resource resource ) throws ResourceException {
+		resource.setCaptureUndoChanges( true );
 		return true;
 	}
 

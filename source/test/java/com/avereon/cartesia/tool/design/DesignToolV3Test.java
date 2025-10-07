@@ -6,7 +6,7 @@ import com.avereon.cartesia.DesignToolBaseTest;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignPortal;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.BoundingBox;
@@ -39,18 +39,18 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		super.setup();
 
 		model = ExampleDesigns.redBlueX();
-		Asset asset = new Asset( new Design2DResourceType( getProgram() ), URI.create( "new://test" ) ).setModel( model );
+		Resource resource = new Resource( new Design2DResourceType( getProgram() ), URI.create( "new://test" ) ).setModel( model );
 
 		renderer = Mockito.spy( new DesignToolV3Renderer() );
 
-		Fx.run( () -> tool = new DesignToolV3( module, asset, renderer ) );
+		Fx.run( () -> tool = new DesignToolV3( module, resource, renderer ) );
 		Fx.waitFor( 1, TimeUnit.SECONDS );
 
 		OpenAssetRequest request = new OpenAssetRequest();
-		request.setAsset( asset );
+		request.setResource( resource );
 		tool.ready( request );
 
-		assertThat( (Design)tool.getAsset().getModel() ).isEqualTo( model );
+		assertThat( (Design)tool.getResource().getModel() ).isEqualTo( model );
 		assertThat( tool.getDesign() ).isNotNull();
 
 		lenient().doCallRealMethod().when( renderer ).setDpi( anyDouble(), anyDouble() );

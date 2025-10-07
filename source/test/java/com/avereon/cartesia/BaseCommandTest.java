@@ -64,7 +64,7 @@ public class BaseCommandTest extends DesignToolBaseTest {
 	protected void setup() throws Exception {
 		super.setup();
 
-		lenient().when( asset.getModel() ).thenReturn( design );
+		lenient().when( resource.getModel() ).thenReturn( design );
 		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );

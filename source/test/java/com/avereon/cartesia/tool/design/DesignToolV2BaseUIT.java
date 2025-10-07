@@ -5,7 +5,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.ProgramToolEvent;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.zerra.event.FxEventWatcher;
 import com.avereon.zerra.javafx.Fx;
 import javafx.stage.Screen;
@@ -27,7 +27,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 	private DesignToolV2 tool;
 
-	private Asset asset;
+	private Resource resource;
 
 	private Design design;
 
@@ -48,12 +48,12 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 		Fx.run( () -> tool.setViewZoom( 2 ) );
 		Fx.waitForWithExceptions( 1000 );
 
-		this.asset = tool.getAsset();
+		this.resource = tool.getResource();
 		this.design = tool.getDesign();
 
 		// Ensure the test resources are available
 		assertNotNull( getTool() );
-		assertNotNull( getAsset() );
+		assertNotNull( getResource() );
 		assertNotNull( getDesign() );
 
 		// Check the design state

@@ -19,7 +19,7 @@ import com.avereon.settings.Settings;
 import com.avereon.util.TypeReference;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.ResourceSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.task.Task;
@@ -98,8 +98,8 @@ public class DesignToolV2 extends BaseDesignTool {
 
 	private com.avereon.event.EventHandler<ResourceSwitchedEvent> assetSwitchListener;
 
-	public DesignToolV2( XenonProgramProduct product, Asset asset ) {
-		super( product, asset, new DesignToolV2Renderer() );
+	public DesignToolV2( XenonProgramProduct product, Resource resource ) {
+		super( product, resource, new DesignToolV2Renderer() );
 
 		commandActions = new ConcurrentHashMap<>();
 		designPropertiesMap = new DesignPropertiesMap( product );
@@ -132,11 +132,11 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Don't use the superclass logic
 		//super.ready( request );
 
-		setTitle( getAsset().getName() );
+		setTitle( getResource().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
 
-		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
-		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
+		getResource().register( Resource.NAME, e -> setTitle( e.getNewValue() ) );
+		getResource().register( Resource.ICON, e -> setIcon( e.getNewValue() ) );
 
 		// Hide the toast message
 		getToast().setVisible( false );
@@ -150,8 +150,8 @@ public class DesignToolV2 extends BaseDesignTool {
 		// Fire the design ready event (should be done after renderer.setDesign)
 		fireEvent( new DesignToolEvent( this, DesignToolEvent.DESIGN_READY ) );
 
-		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> getUndoAction().updateEnabled() );
-		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> getRedoAction().updateEnabled() );
+		getResource().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> getUndoAction().updateEnabled() );
+		getResource().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> getRedoAction().updateEnabled() );
 
 		layersGuide.ready( request );
 		//		viewsGuide.ready( request );

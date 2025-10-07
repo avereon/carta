@@ -4,7 +4,7 @@ import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import lombok.CustomLog;
@@ -24,16 +24,16 @@ public class DesignAwtPrintTask extends Task<Void> {
 
 	private final BaseDesignTool tool;
 
-	private final Asset asset;
+	private final Resource resource;
 
 	private final DesignPrint print;
 
-	public DesignAwtPrintTask( final Xenon program, final BaseDesignTool tool, final Asset asset, final DesignPrint print ) {
+	public DesignAwtPrintTask( final Xenon program, final BaseDesignTool tool, final Resource resource, final DesignPrint print ) {
 		this.program = program;
 		this.tool = tool;
-		this.asset = asset;
+		this.resource = resource;
 		this.print = print;
-		setName( Rb.textOr( RbKey.LABEL, "print", "Print" ) + " " + asset.getName() );
+		setName( Rb.textOr( RbKey.LABEL, "print", "Print" ) + " " + resource.getName() );
 	}
 
 	@Override
@@ -66,11 +66,11 @@ public class DesignAwtPrintTask extends Task<Void> {
 		job.setPrintService( optionalPrintService.get() );
 		job.setPrintable( painter, pageFormat );
 
-		log.atConfig().log( "Printing " + asset + "..." );
+		log.atConfig().log( "Printing " + resource + "..." );
 		job.print();
 		if( job.printDialog() ) {
 			job.print();
-			log.atConfig().log( "Printed " + asset + "." );
+			log.atConfig().log( "Printed " + resource + "." );
 		} else {
 			log.atConfig().log( "Printed cancelled." );
 		}

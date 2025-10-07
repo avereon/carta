@@ -15,7 +15,7 @@ import com.avereon.settings.Settings;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.util.DelayedAction;
 import com.avereon.xenon.*;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.ResourceSwitchedEvent;
 import com.avereon.xenon.asset.OpenAssetRequest;
 import com.avereon.xenon.asset.type.ProgramPropertiesType;
@@ -166,8 +166,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	private com.avereon.event.EventHandler<ResourceSwitchedEvent> assetSwitchListener;
 
-	protected BaseDesignTool( XenonProgramProduct product, Asset asset, BaseDesignRenderer renderer ) {
-		super( product, asset );
+	protected BaseDesignTool( XenonProgramProduct product, Resource resource, BaseDesignRenderer renderer ) {
+		super( product, resource );
 		addStylesheet( CartesiaMod.STYLESHEET );
 		getStyleClass().add( "design-tool" );
 
@@ -187,7 +187,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		portalStack = new Stack<>();
 
 		// Create the tool toast
-		this.toast = new Label( Rb.text( RbKey.LABEL, "loading-asset", asset.getName() ) + " ..." );
+		this.toast = new Label( Rb.text( RbKey.LABEL, "loading-asset", resource.getName() ) + " ..." );
 		this.toast.getStyleClass().add( "tool-toast" );
 		StackPane.setAlignment( this.toast, Pos.CENTER );
 
@@ -247,17 +247,17 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
 
-		setTitle( getAsset().getName() );
+		setTitle( getResource().getName() );
 		setGraphic( getProgram().getIconLibrary().getIcon( getProduct().getCard().getArtifact() ) );
 
-		getAsset().register( Asset.NAME, e -> setTitle( e.getNewValue() ) );
-		getAsset().register( Asset.ICON, e -> setIcon( e.getNewValue() ) );
+		getResource().register( Resource.NAME, e -> setTitle( e.getNewValue() ) );
+		getResource().register( Resource.ICON, e -> setIcon( e.getNewValue() ) );
 
-		getAsset().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
-		getAsset().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
+		getResource().getUndoManager().undoAvailableProperty().addListener( ( v, o, n ) -> undoAction.updateEnabled() );
+		getResource().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
 		// Set the design model
-		Design design = request.getAsset().getModel();
+		Design design = request.getResource().getModel();
 		getRenderer().setDesign( design );
 
 		// Set the workplane settings TODO replace with settings eventually
@@ -295,7 +295,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Add asset switch listener to remove command prompt
 		getProgram().register(
 			ResourceSwitchedEvent.SWITCHED, assetSwitchListener = e -> {
-				if( isDisplayed() && e.getOldAsset() == getAsset() && e.getNewAsset() != getAsset() ) {
+				if( isDisplayed() && e.getOldAsset() == getResource() && e.getNewAsset() != getResource() ) {
 					unregisterStatusBarItems();
 				}
 			}
@@ -305,7 +305,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Override
 	protected void activate() throws ToolException {
 		super.activate();
-		if( !getAsset().isLoaded() ) return;
+		if( !getResource().isLoaded() ) return;
 
 		DesignCommandContext commandContext = getCommandContext();
 		if( commandContext != null ) commandContext.setLastUserTool( this );
@@ -833,7 +833,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), BaseDesignTool.this, getAsset(), (DesignPrint)null ) );
+			getProgram().getTaskManager().submit( new DesignPrintTask( getProgram(), BaseDesignTool.this, getResource(), (DesignPrint)null ) );
 			//getProgram().getTaskManager().submit( new DesignAwtPrintTask( getProgram(), FxRenderDesignTool.this, getAsset(), (DesignPrint)null ) );
 		}
 
@@ -854,12 +854,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		@Override
 		public void handle( ActionEvent event ) {
 			// Get the settings pages for the asset type
-			Asset asset = getAsset();
-			SettingsPage assetSettingsPage = asset.getType().getSettingsPages().get( "grid" );
-			SettingsPage designSettingsPage = asset.getType().getSettingsPages().get( "asset" );
+			Resource resource = getResource();
+			SettingsPage assetSettingsPage = resource.getType().getSettingsPages().get( "grid" );
+			SettingsPage designSettingsPage = resource.getType().getSettingsPages().get( "asset" );
 
 			Settings assetSettings = getAssetSettings();
-			Settings designSettings = new NodeSettings( getAsset().getModel() );
+			Settings designSettings = new NodeSettings( getResource().getModel() );
 
 			// Set the settings for the pages
 			assetSettingsPage.setSettings( assetSettings );
@@ -910,12 +910,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		@Override
 		public boolean isEnabled() {
-			return getAsset().getUndoManager().isUndoAvailable();
+			return getResource().getUndoManager().isUndoAvailable();
 		}
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getAsset().getUndoManager().undo();
+			getResource().getUndoManager().undo();
 		}
 
 	}
@@ -928,12 +928,12 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 		@Override
 		public boolean isEnabled() {
-			return getAsset().getUndoManager().isRedoAvailable();
+			return getResource().getUndoManager().isRedoAvailable();
 		}
 
 		@Override
 		public void handle( ActionEvent event ) {
-			getAsset().getUndoManager().redo();
+			getResource().getUndoManager().redo();
 		}
 
 	}

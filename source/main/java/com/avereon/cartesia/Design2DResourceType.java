@@ -7,7 +7,7 @@ import com.avereon.settings.Settings;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.Asset;
+import com.avereon.xenon.asset.Resource;
 import com.avereon.xenon.asset.exception.ResourceException;
 import com.avereon.xenon.asset.ResourceType;
 
@@ -21,8 +21,8 @@ public class Design2DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetNew( Xenon program, Asset asset ) throws ResourceException {
-		Design2D design = initModel( asset );
+	public boolean assetNew( Xenon program, Resource resource ) throws ResourceException {
+		Design2D design = initModel( resource );
 
 		// Create the default layer
 		String constructionLayerName = Rb.textOr( RbKey.LABEL, "layer-construction", "construction" ).toLowerCase();
@@ -30,7 +30,7 @@ public class Design2DResourceType extends ResourceType {
 		design.getLayers().addLayer( layer );
 
 		// Initialize the design settings
-		Settings settings = program.getSettingsManager().getAssetSettings( asset );
+		Settings settings = program.getSettingsManager().getAssetSettings( resource );
 		settings.set( "grid-major-x", "1.0" );
 		settings.set( "grid-major-y", "1.0" );
 		settings.set( "grid-minor-x", "0.5" );
@@ -42,19 +42,19 @@ public class Design2DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetOpen( Xenon program, Asset asset ) throws ResourceException {
-		initModel( asset );
+	public boolean assetOpen( Xenon program, Resource resource ) throws ResourceException {
+		initModel( resource );
 
-		asset.setCaptureUndoChanges( true );
+		resource.setCaptureUndoChanges( true );
 		return true;
 	}
 
-	private Design2D initModel( Asset asset ) {
+	private Design2D initModel( Resource resource ) {
 		// There might already be a model
-		Design2D design = asset.getModel();
+		Design2D design = resource.getModel();
 
 		// If there is not already a model, create one
-		if( design == null ) asset.setModel( design = new Design2D() );
+		if( design == null ) resource.setModel( design = new Design2D() );
 
 		return design;
 	}
