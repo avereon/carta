@@ -8,7 +8,7 @@ public class Undo extends EditCommand {
 
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
-		task.getContext().getTool().getAsset().getUndoManager().undo();
+		task.getContext().getTool().getResource().getUndoManager().undo();
 		return SUCCESS;
 	}
 

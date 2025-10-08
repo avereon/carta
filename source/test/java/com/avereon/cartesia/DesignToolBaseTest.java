@@ -26,7 +26,7 @@ public abstract class DesignToolBaseTest extends BaseCartesiaUnitTest {
 	protected void setup() throws Exception {
 		super.setup();
 
-		lenient().when( tool.getAsset() ).thenReturn( resource );
+		lenient().when( tool.getResource() ).thenReturn( resource );
 		lenient().when( tool.snapToGrid( any() ) ).then( i -> i.getArgument( 0 ) );
 		lenient().when( tool.getScreenToWorldTransform() ).thenReturn( Fx.IDENTITY_TRANSFORM );
 	}

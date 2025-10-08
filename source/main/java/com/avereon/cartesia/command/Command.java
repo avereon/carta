@@ -276,7 +276,7 @@ public abstract class Command {
 	}
 
 	protected void setCaptureUndoChanges( CommandTask task, boolean enabled ) {
-		task.getTool().getAsset().setCaptureUndoChanges( enabled );
+		task.getTool().getResource().setCaptureUndoChanges( enabled );
 	}
 
 	protected void addReference( CommandTask task, DesignShape... shapes ) {

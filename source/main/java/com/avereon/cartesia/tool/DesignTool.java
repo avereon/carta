@@ -71,7 +71,7 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 
 	CartesiaMod getMod();
 
-	Resource getAsset();
+	Resource getResource();
 
 	Design getDesign();
 

@@ -8,7 +8,7 @@ public class Redo extends EditCommand {
 
 	@Override
 	public Object execute( CommandTask task ) throws Exception {
-		task.getContext().getTool().getAsset().getUndoManager().redo();
+		task.getContext().getTool().getResource().getUndoManager().redo();
 		return SUCCESS;
 	}
 
