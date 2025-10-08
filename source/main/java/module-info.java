@@ -15,6 +15,7 @@ module com.avereon.carta {
 	requires com.avereon.marea;
 	requires com.avereon.xenon;
 	requires com.avereon.zerra;
+	requires com.avereon.zevra;
 	requires com.fasterxml.jackson.core;
 	requires com.fasterxml.jackson.databind;
 	requires java.logging;
