@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.data.IdNode;
 import com.avereon.util.TextUtil;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.Resource;
+import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.tool.settings.SettingOptionProvider;
 
 import java.util.List;

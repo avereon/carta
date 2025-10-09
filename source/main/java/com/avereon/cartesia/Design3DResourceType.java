@@ -6,9 +6,9 @@ import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.Resource;
-import com.avereon.xenon.asset.exception.ResourceException;
-import com.avereon.xenon.asset.ResourceType;
+import com.avereon.xenon.resource.Resource;
+import com.avereon.xenon.resource.exception.ResourceException;
+import com.avereon.xenon.resource.ResourceType;
 
 public class Design3DResourceType extends ResourceType {
 

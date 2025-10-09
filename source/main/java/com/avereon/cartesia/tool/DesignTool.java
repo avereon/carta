@@ -11,7 +11,7 @@ import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.cartesia.tool.design.CommonToolRenderer;
 import com.avereon.xenon.XenonProgram;
-import com.avereon.xenon.asset.Resource;
+import com.avereon.xenon.resource.Resource;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.geometry.Bounds;

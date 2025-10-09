@@ -18,7 +18,7 @@ import com.avereon.xenon.ActionProxy;
 import com.avereon.xenon.Module;
 import com.avereon.xenon.ToolInstanceMode;
 import com.avereon.xenon.ToolRegistration;
-import com.avereon.xenon.asset.type.ProgramHelpType;
+import com.avereon.xenon.resource.type.ProgramHelpType;
 import com.avereon.xenon.index.IndexService;
 import com.avereon.xenon.tool.settings.SettingsPageParser;
 import com.avereon.xenon.tool.settings.editor.PaintSettingEditor;

@@ -5,7 +5,7 @@ import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
-import com.avereon.xenon.asset.Resource;
+import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import com.avereon.zerra.color.Colors;

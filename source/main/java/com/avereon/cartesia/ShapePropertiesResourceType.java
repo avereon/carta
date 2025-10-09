@@ -1,9 +1,9 @@
 package com.avereon.cartesia;
 
 import com.avereon.xenon.XenonProgramProduct;
-import com.avereon.xenon.asset.ResourceType;
-import com.avereon.xenon.asset.Codec;
-import com.avereon.xenon.asset.PlaceholderCodec;
+import com.avereon.xenon.resource.ResourceType;
+import com.avereon.xenon.resource.Codec;
+import com.avereon.xenon.resource.PlaceholderCodec;
 
 public class ShapePropertiesResourceType extends ResourceType {
 

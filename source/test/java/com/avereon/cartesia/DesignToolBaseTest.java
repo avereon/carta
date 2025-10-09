@@ -1,7 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.tool.DesignTool;
-import com.avereon.xenon.asset.Resource;
+import com.avereon.xenon.resource.Resource;
 import com.avereon.zerra.javafx.Fx;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.Mock;

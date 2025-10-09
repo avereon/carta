@@ -5,7 +5,7 @@ import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.data.Design;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.ProgramToolEvent;
-import com.avereon.xenon.asset.Resource;
+import com.avereon.xenon.resource.Resource;
 import com.avereon.zerra.event.FxEventWatcher;
 import com.avereon.zerra.javafx.Fx;
 import javafx.stage.Screen;

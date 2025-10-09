@@ -4,7 +4,7 @@ import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.product.Rb;
 import com.avereon.xenon.Xenon;
-import com.avereon.xenon.asset.Resource;
+import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.xenon.task.Task;
 import lombok.CustomLog;
