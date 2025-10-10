@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,7 +23,7 @@ public class DesignContext {
 	/**
 	 * The design that this context belongs to.
 	 */
-	private final Design design;
+	private final DesignModel design;
 
 	private final DesignCommandContext designCommandContext;
 
@@ -33,7 +33,7 @@ public class DesignContext {
 
 	private final CoordinateStatus coordinateStatus;
 
-	public DesignContext( Design design, DesignCommandContext commandContext ) {
+	public DesignContext( DesignModel design, DesignCommandContext commandContext ) {
 		this.design = design;
 
 		// In theory, commands are executed against a tool but scoped by the design,

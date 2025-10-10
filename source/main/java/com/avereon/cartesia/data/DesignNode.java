@@ -22,12 +22,12 @@ public abstract class DesignNode extends IdNode {
 		return this;
 	}
 
-	public Optional<Design> getDesign() {
+	public Optional<DesignModel> getDesign() {
 		Node node = this;
-		while( node != null && !(node instanceof Design) ) {
+		while( node != null && !(node instanceof DesignModel) ) {
 			node = node.getParent();
 		}
-		return Optional.ofNullable( (Design)node );
+		return Optional.ofNullable( (DesignModel)node );
 	}
 
 }

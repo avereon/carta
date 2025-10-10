@@ -46,7 +46,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 
 	private static PathElementMapper pathElementMapper = Mappers.getMapper( PathElementMapper.class );
 
-	private Design design;
+	private DesignModel design;
 
 	private Workplane workplane;
 
@@ -218,7 +218,7 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Design getDesign() {
+	public DesignModel getDesign() {
 		return design;
 	}
 
@@ -226,15 +226,15 @@ public class DesignToolV3Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setDesign( Design design ) {
+	public void setDesign( DesignModel design ) {
 		if( this.design != null ) {
-			this.design.unregister( this, Design.UNIT, designUnitChangeHandler );
+			this.design.unregister( this, DesignModel.UNIT, designUnitChangeHandler );
 		}
 
 		this.design = design;
 
 		if( this.design != null ) {
-			design.register( this, Design.UNIT, designUnitChangeHandler );
+			design.register( this, DesignModel.UNIT, designUnitChangeHandler );
 			setDesignUnit( design.calcDesignUnit() );
 		}
 	}

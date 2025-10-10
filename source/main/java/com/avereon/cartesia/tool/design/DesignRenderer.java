@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
 import javafx.beans.property.DoubleProperty;
@@ -16,7 +16,7 @@ public interface DesignRenderer extends CommonToolRenderer {
 	 *
 	 * @return The {@code Design} instance
 	 */
-	Design getDesign();
+	DesignModel getDesign();
 
 	/**
 	 * Associates a {@code Design} instance with the renderer, handling the
@@ -26,7 +26,7 @@ public interface DesignRenderer extends CommonToolRenderer {
 	 *
 	 * @param design The {@code Design} instance to associate with the renderer.
 	 */
-	void setDesign( Design design );
+	void setDesign( DesignModel design );
 
 	/**
 	 * Retrieves the current {@code Workplane} instance associated with the renderer.

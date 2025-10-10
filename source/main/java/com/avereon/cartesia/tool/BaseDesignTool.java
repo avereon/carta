@@ -4,7 +4,7 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.data.DesignView;
@@ -257,7 +257,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getResource().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
 		// Set the design model
-		Design design = request.getResource().getModel();
+		DesignModel design = request.getResource().getModel();
 		getRenderer().setDesign( design );
 
 		// Set the workplane settings TODO replace with settings eventually
@@ -341,13 +341,13 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
-	public final Design getDesign() {
+	public final DesignModel getDesign() {
 		return getAssetModel();
 	}
 
 	@Override
 	public final DesignContext getDesignContext() {
-		Design design = getDesign();
+		DesignModel design = getDesign();
 		if( design == null ) return null;
 
 		// Lazy instantiate the context

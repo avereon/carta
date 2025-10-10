@@ -5,11 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignTest {
+public class DesignModelTest {
 
 	@Test
 	void testNameModifiesDesign() {
-		Design design = new MockDesign();
+		DesignModel design = new MockDesignModel();
 		design.setModified( false );
 		assertThat( design.getName() ).isNull();
 		assertThat( design.isModified() ).isFalse();
@@ -27,7 +27,7 @@ public class DesignTest {
 
 	@Test
 	void testDesignUnitModifiesDesign() {
-		Design design = new MockDesign();
+		DesignModel design = new MockDesignModel();
 		design.setModified( false );
 		assertThat( design.calcDesignUnit() ).isEqualTo( DesignUnit.CM );
 		assertThat( design.isModified() ).isFalse();
@@ -45,7 +45,7 @@ public class DesignTest {
 
 	@Test
 	void testAddRemoveLayer() {
-		Design design = new MockDesign();
+		DesignModel design = new MockDesignModel();
 		design.setModified( false );
 		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 0 );
 		assertThat( design.isModified() ).isFalse();
@@ -65,7 +65,7 @@ public class DesignTest {
 
 	@Test
 	void testAddLayerAndClearModified() {
-		Design design = new MockDesign();
+		DesignModel design = new MockDesignModel();
 		design.setModified( false );
 		assertThat( design.getLayers().getLayers().size() ).isEqualTo( 0 );
 		assertThat( design.isModified() ).isFalse();
@@ -82,7 +82,7 @@ public class DesignTest {
 
 	@Test
 	void testGetAllLayers() {
-		Design design = new MockDesign();
+		DesignModel design = new MockDesignModel();
 
 		// Using names that are in reverse order helps ensure the nodes are not ordered by name
 		DesignLayer layer0 = new DesignLayer().setName( "layer-f" ).setOrder( 0 );
@@ -102,6 +102,6 @@ public class DesignTest {
 		assertThat( design.getAllLayers() ).contains( layer0, layer00, layer01, layer1, layer10, layer11 );
 	}
 
-	private static class MockDesign extends Design {}
+	private static class MockDesignModel extends DesignModel {}
 
 }

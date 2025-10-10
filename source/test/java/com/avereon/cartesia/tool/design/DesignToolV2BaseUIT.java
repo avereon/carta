@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.BaseCartesiaUiTest;
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.xenon.ProgramTool;
 import com.avereon.xenon.ProgramToolEvent;
 import com.avereon.xenon.resource.Resource;
@@ -29,7 +29,7 @@ public abstract class DesignToolV2BaseUIT extends BaseCartesiaUiTest {
 
 	private Resource resource;
 
-	private Design design;
+	private DesignModel design;
 
 	@BeforeEach
 	protected void setup() throws Exception {

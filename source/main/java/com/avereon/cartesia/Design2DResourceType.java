@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignModel2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
@@ -22,7 +22,7 @@ public class Design2DResourceType extends ResourceType {
 
 	@Override
 	public boolean assetNew( Xenon program, Resource resource ) throws ResourceException {
-		Design2D design = initModel( resource );
+		DesignModel2D design = initModel( resource );
 
 		// Create the default layer
 		String constructionLayerName = Rb.textOr( RbKey.LABEL, "layer-construction", "construction" ).toLowerCase();
@@ -49,12 +49,12 @@ public class Design2DResourceType extends ResourceType {
 		return true;
 	}
 
-	private Design2D initModel( Resource resource ) {
+	private DesignModel2D initModel( Resource resource ) {
 		// There might already be a model
-		Design2D design = resource.getModel();
+		DesignModel2D design = resource.getModel();
 
 		// If there is not already a model, create one
-		if( design == null ) resource.setModel( design = new Design2D() );
+		if( design == null ) resource.setModel( design = new DesignModel2D() );
 
 		return design;
 	}

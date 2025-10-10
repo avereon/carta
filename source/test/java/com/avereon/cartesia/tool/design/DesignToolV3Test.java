@@ -3,7 +3,7 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.Design2DResourceType;
 import com.avereon.cartesia.DesignToolBaseTest;
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.xenon.resource.Resource;
@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 public class DesignToolV3Test extends DesignToolBaseTest {
 
-	private Design model;
+	private DesignModel model;
 
 	private DesignToolV3 tool;
 
@@ -50,7 +50,7 @@ public class DesignToolV3Test extends DesignToolBaseTest {
 		request.setResource( resource );
 		tool.ready( request );
 
-		assertThat( (Design)tool.getResource().getModel() ).isEqualTo( model );
+		assertThat( (DesignModel)tool.getResource().getModel() ).isEqualTo( model );
 		assertThat( tool.getDesign() ).isNotNull();
 
 		lenient().doCallRealMethod().when( renderer ).setDpi( anyDouble(), anyDouble() );

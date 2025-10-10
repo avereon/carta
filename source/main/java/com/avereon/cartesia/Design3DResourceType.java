@@ -1,6 +1,6 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.Design3D;
+import com.avereon.cartesia.data.DesignModel3D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
@@ -22,10 +22,10 @@ public class Design3DResourceType extends ResourceType {
 	@Override
 	public boolean assetNew( Xenon program, Resource resource ) throws ResourceException {
 		// There might already be a model from assetNew()
-		Design3D design = resource.getModel();
+		DesignModel3D design = resource.getModel();
 
 		// If there is not already a model, create one
-		if( design == null ) resource.setModel( design = new Design3D() );
+		if( design == null ) resource.setModel( design = new DesignModel3D() );
 
 		// If there is not a default layer, create one
 		if( design.getLayers().getLayers().size() == 0 ) {

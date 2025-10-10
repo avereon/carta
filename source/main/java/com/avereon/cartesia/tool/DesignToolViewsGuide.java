@@ -1,7 +1,7 @@
 package com.avereon.cartesia.tool;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignNode;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.data.NodeEvent;
@@ -46,17 +46,17 @@ public class DesignToolViewsGuide extends Guide {
 	}
 
 	public void link() {
-		Design design = tool.getDesign();
+		DesignModel design = tool.getDesign();
 
 		// Populate the guide
 		design.getViews().forEach( this::addView );
 
 		// Add listeners for changes
 		design.register( NodeEvent.CHILD_ADDED, e -> {
-			if( Design.VIEWS.equals( e.getSetKey() ) ) Fx.run( () -> addView( e.getNewValue() ) );
+			if( DesignModel.VIEWS.equals( e.getSetKey() ) ) Fx.run( () -> addView( e.getNewValue() ) );
 		} );
 		design.register( NodeEvent.CHILD_REMOVED, e -> {
-			if( Design.VIEWS.equals( e.getSetKey() ) ) Fx.run( () -> removeView( e.getOldValue() ) );
+			if( DesignModel.VIEWS.equals( e.getSetKey() ) ) Fx.run( () -> removeView( e.getOldValue() ) );
 		} );
 	}
 

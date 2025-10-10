@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @CustomLog
-public abstract class Design extends IdNode {
+public abstract class DesignModel extends IdNode {
 
 	public static final DesignUnit DEFAULT_DESIGN_UNIT = DesignUnit.CM;
 
@@ -30,7 +30,7 @@ public abstract class Design extends IdNode {
 
 	private DesignContext context;
 
-	public Design() {
+	public DesignModel() {
 		defineNaturalKey( NAME );
 		addModifyingKeys( NAME, AUTHOR, DESCRIPTION, UNIT, LAYERS, VIEWS );
 
@@ -46,7 +46,7 @@ public abstract class Design extends IdNode {
 		return getValue( NAME );
 	}
 
-	public Design setName( String name ) {
+	public DesignModel setName( String name ) {
 		setValue( NAME, name );
 		return this;
 	}
@@ -55,7 +55,7 @@ public abstract class Design extends IdNode {
 		return getValue( AUTHOR );
 	}
 
-	public Design setAuthor( String author ) {
+	public DesignModel setAuthor( String author ) {
 		setValue( AUTHOR, author );
 		return this;
 	}
@@ -64,7 +64,7 @@ public abstract class Design extends IdNode {
 		return getValue( DESCRIPTION );
 	}
 
-	public Design setDescription( String name ) {
+	public DesignModel setDescription( String name ) {
 		setValue( DESCRIPTION, name );
 		return this;
 	}
@@ -78,12 +78,12 @@ public abstract class Design extends IdNode {
 		return getValue( UNIT );
 	}
 
-	public Design setDesignUnit( DesignUnit unit ) {
+	public DesignModel setDesignUnit( DesignUnit unit ) {
 		setDesignUnit( unit.name().toLowerCase() );
 		return this;
 	}
 
-	public Design setDesignUnit( String unit ) {
+	public DesignModel setDesignUnit( String unit ) {
 		setValue( UNIT, unit );
 		return this;
 	}
@@ -137,12 +137,12 @@ public abstract class Design extends IdNode {
 		return getValues( VIEWS );
 	}
 
-	public Design addView( DesignView view ) {
+	public DesignModel addView( DesignView view ) {
 		addToSet( VIEWS, view );
 		return this;
 	}
 
-	public Design removeView( DesignView view ) {
+	public DesignModel removeView( DesignView view ) {
 		removeFromSet( VIEWS, view );
 		return this;
 	}
@@ -163,12 +163,12 @@ public abstract class Design extends IdNode {
 		return getValues( PRINTS );
 	}
 
-	public Design addPrint( DesignPrint print ) {
+	public DesignModel addPrint( DesignPrint print ) {
 		addToSet( PRINTS, print );
 		return this;
 	}
 
-	public Design removePrint( DesignPrint print ) {
+	public DesignModel removePrint( DesignPrint print ) {
 		removeFromSet( PRINTS, print );
 		return this;
 	}
@@ -184,17 +184,17 @@ public abstract class Design extends IdNode {
 	public Map<String, Object> asDeepMap() {
 		Map<String, Object> map = new HashMap<>( asMap() );
 		map.put( DesignLayer.LAYERS, getLayers().getLayers().stream().collect( Collectors.toMap( DesignLayer::getId, DesignLayer::asDeepMap ) ) );
-		if( !getViews().isEmpty() ) map.put( Design.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
-		if( !getPrints().isEmpty() ) map.put( Design.PRINTS, getPrints().stream().collect( Collectors.toMap( DesignPrint::getId, DesignPrint::asDeepMap ) ) );
+		if( !getViews().isEmpty() ) map.put( DesignModel.VIEWS, getViews().stream().collect( Collectors.toMap( DesignView::getId, DesignView::asDeepMap ) ) );
+		if( !getPrints().isEmpty() ) map.put( DesignModel.PRINTS, getPrints().stream().collect( Collectors.toMap( DesignPrint::getId, DesignPrint::asDeepMap ) ) );
 		return map;
 	}
 
-	public Design updateFrom( Map<String, Object> map ) {
-		map.computeIfPresent( Design.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
-		map.computeIfPresent( Design.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
-		map.computeIfPresent( Design.AUTHOR, ( k, v ) -> setAuthor( String.valueOf( v ) ) );
-		map.computeIfPresent( Design.DESCRIPTION, ( k, v ) -> setDescription( String.valueOf( v ) ) );
-		map.computeIfPresent( Design.UNIT, ( k, v ) -> setDesignUnit( String.valueOf( v ) ) );
+	public DesignModel updateFrom( Map<String, Object> map ) {
+		map.computeIfPresent( DesignModel.ID, ( k, v ) -> setId( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignModel.NAME, ( k, v ) -> setName( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignModel.AUTHOR, ( k, v ) -> setAuthor( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignModel.DESCRIPTION, ( k, v ) -> setDescription( String.valueOf( v ) ) );
+		map.computeIfPresent( DesignModel.UNIT, ( k, v ) -> setDesignUnit( String.valueOf( v ) ) );
 		return this;
 	}
 

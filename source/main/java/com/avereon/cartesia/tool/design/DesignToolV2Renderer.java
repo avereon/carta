@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 @CustomLog
 public class DesignToolV2Renderer extends BaseDesignRenderer {
 
-	private Design design;
+	private DesignModel design;
 
 	@Getter
 	private Workplane workplane;
@@ -177,7 +177,7 @@ public class DesignToolV2Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Design getDesign() {
+	public DesignModel getDesign() {
 		return design;
 	}
 
@@ -185,10 +185,10 @@ public class DesignToolV2Renderer extends BaseDesignRenderer {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void setDesign( Design design ) {
+	public void setDesign( DesignModel design ) {
 		if( this.design != null ) {
 			this.design.unregister( NodeEvent.ANY, designWatcher );
-			this.design.unregister( Design.UNIT, unitValueWatcher );
+			this.design.unregister( DesignModel.UNIT, unitValueWatcher );
 		}
 
 		this.design = design;
@@ -198,7 +198,7 @@ public class DesignToolV2Renderer extends BaseDesignRenderer {
 			renderer.setLengthUnit( RenderUnit.valueOf( design.getDesignUnit().toUpperCase() ) );
 
 			// Add listeners
-			this.design.register( Design.UNIT, unitValueWatcher );
+			this.design.register( DesignModel.UNIT, unitValueWatcher );
 			this.design.register( NodeEvent.ANY, designWatcher );
 
 			visibleLayers.addAll( design.getAllLayers() );

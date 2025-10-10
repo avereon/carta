@@ -133,17 +133,17 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public void load( Resource resource, InputStream input ) throws IOException {
-		Design2D design = new Design2D();
+		DesignModel2D design = new DesignModel2D();
 		resource.setModel( design );
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
-		map.put( Design.UNIT, DesignUnitMapper.map( (String)map.get( Design.UNIT ) ).name().toLowerCase() );
+		map.put( DesignModel.UNIT, DesignUnitMapper.map( (String)map.get( DesignModel.UNIT ) ).name().toLowerCase() );
 		design.updateFrom( map );
 
 		log.atFine().log( "Design codec version: %s", LazyEval.of( () -> map.get( CODEC_VERSION_KEY ) ) );
 
 		Map<String, Map<String, Object>> layers = (Map<String, Map<String, Object>>)map.getOrDefault( DesignLayer.LAYERS, Map.of() );
-		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( Design.VIEWS, Map.of() );
+		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( DesignModel.VIEWS, Map.of() );
 
 		// Load layers
 		layers.values().forEach( l -> loadLayer( design.getLayers(), l ) );
@@ -238,7 +238,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private void loadView( Design design, Map<String, Object> map ) {
+	private void loadView( DesignModel design, Map<String, Object> map ) {
 		DesignView view = new DesignView();
 		loadDesignNode( map, view );
 		if( map.containsKey( DesignView.NAME ) ) view.setName( (String)map.get( DesignView.NAME ) );
@@ -382,10 +382,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		map.remove( oldKey );
 	}
 
-	private Map<String, Object> mapDesign( Design design ) {
-		Map<String, Object> map = new HashMap<>( asMap( design, Design.ID, Design.NAME, Design.AUTHOR, Design.DESCRIPTION, Design.UNIT ) );
-		map.put( Design.LAYERS, design.getLayers().getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
-		if( !design.getViews().isEmpty() ) map.put( Design.VIEWS, design.getViews().stream().collect( Collectors.toMap( IdNode::getId, this::mapView ) ) );
+	private Map<String, Object> mapDesign( DesignModel design ) {
+		Map<String, Object> map = new HashMap<>( asMap( design, DesignModel.ID, DesignModel.NAME, DesignModel.AUTHOR, DesignModel.DESCRIPTION, DesignModel.UNIT ) );
+		map.put( DesignModel.LAYERS, design.getLayers().getLayers().stream().collect( Collectors.toMap( IdNode::getId, this::mapLayer ) ) );
+		if( !design.getViews().isEmpty() ) map.put( DesignModel.VIEWS, design.getViews().stream().collect( Collectors.toMap( IdNode::getId, this::mapView ) ) );
 		return map;
 	}
 
@@ -393,7 +393,7 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Map<String, Object> map = new HashMap<>( asMap(
 			layer,
 			mapDrawable( layer ),
-			Design.NAME,
+			DesignModel.NAME,
 			DesignLayer.TEXT_FILL_PAINT,
 			DesignLayer.TEXT_DRAW_PAINT,
 			DesignLayer.TEXT_DRAW_WIDTH,

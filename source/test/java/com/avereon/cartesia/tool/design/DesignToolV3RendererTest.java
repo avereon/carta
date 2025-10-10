@@ -1,8 +1,8 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignUnit;
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignModel;
+import com.avereon.cartesia.data.DesignModel2D;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.Workplane;
 import com.avereon.curve.math.Constants;
@@ -71,7 +71,7 @@ public class DesignToolV3RendererTest {
 	void setUp() {
 		renderer = new DesignToolV3Renderer();
 		renderer.resizeRelocate( 0, 0, width, height );
-		renderer.setDesign( new Design2D() );
+		renderer.setDesign( new DesignModel2D() );
 		renderer.setWorkplane( new Workplane() );
 		renderer.layout();
 
@@ -95,7 +95,7 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void setDesign() {
-		Design design = new Design2D();
+		DesignModel design = new DesignModel2D();
 		renderer.setDesign( design );
 		assertThat( renderer.getDesign() ).isEqualTo( design );
 	}
@@ -103,7 +103,7 @@ public class DesignToolV3RendererTest {
 	@Test
 	void setDesignWithNull() {
 		// given
-		Design design = new Design2D();
+		DesignModel design = new DesignModel2D();
 		renderer.setDesign( design );
 		assertThat( renderer.getDesign() ).isEqualTo( design );
 
@@ -177,7 +177,7 @@ public class DesignToolV3RendererTest {
 	@Tag( WHITE_BOX )
 	void updateDpi() {
 		// given
-		Design design = ExampleDesigns.redBlueX();
+		DesignModel design = ExampleDesigns.redBlueX();
 		renderer.setDesign( design );
 		renderer.setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 
@@ -206,7 +206,7 @@ public class DesignToolV3RendererTest {
 	@Tag( WHITE_BOX )
 	void updateOutputScale() {
 		// given
-		Design design = ExampleDesigns.redBlueX();
+		DesignModel design = ExampleDesigns.redBlueX();
 		renderer.setDesign( design );
 		renderer.setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 
@@ -239,7 +239,7 @@ public class DesignToolV3RendererTest {
 	@Tag( WHITE_BOX )
 	void updateDesignUnit() {
 		// given
-		Design design = ExampleDesigns.redBlueX();
+		DesignModel design = ExampleDesigns.redBlueX();
 		renderer.setDesign( design );
 		renderer.setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 
@@ -479,7 +479,7 @@ public class DesignToolV3RendererTest {
 	@Test
 	void setLayerVisible() {
 		// given
-		Design design = new Design2D();
+		DesignModel design = new DesignModel2D();
 		DesignLayer layer0 = new DesignLayer().setName( "layer0" ).setOrder( 0 );
 		DesignLayer layer1 = new DesignLayer().setName( "layer1" ).setOrder( 1 );
 		DesignLayer layer2 = new DesignLayer().setName( "layer2" ).setOrder( 2 );
@@ -536,7 +536,7 @@ public class DesignToolV3RendererTest {
 
 	@Test
 	void isLayerVisible() {
-		Design design = new Design2D();
+		DesignModel design = new DesignModel2D();
 		DesignLayer layer0 = new DesignLayer().setName( "layer0" ).setOrder( 0 );
 		DesignLayer layer1 = new DesignLayer().setName( "layer1" ).setOrder( 1 );
 		DesignLayer layer2 = new DesignLayer().setName( "layer2" ).setOrder( 2 );
@@ -1168,7 +1168,7 @@ public class DesignToolV3RendererTest {
 	void worldToScreenDoesNotChangeWithDifferentOutputScales( double outputScale, Point2D point, Point2D expected ) {
 		// given
 		renderer.resizeRelocate( 0, 0, 1000, 1000 );
-		renderer.setDesign( new Design2D() );
+		renderer.setDesign( new DesignModel2D() );
 		renderer.setWorkplane( new Workplane() );
 		renderer.layout();
 

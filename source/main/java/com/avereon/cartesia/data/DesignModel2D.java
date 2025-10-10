@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-public class Design2D extends Design {
+public class DesignModel2D extends DesignModel {
 
 	private static final String GRIDX = "grid-x";
 

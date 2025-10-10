@@ -38,7 +38,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 
 		Path path = Paths.get( "target", "design.tmp" );
 		resource = new Resource( new Design2DResourceType( getMod() ), path.toUri() );
-		resource.setModel( new Design2D() );
+		resource.setModel( new DesignModel2D() );
 	}
 
 	@Test
@@ -52,7 +52,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 	@Test
 	void testLoad() throws Exception {
 		// Generate a test design
-		Design design = createTestDesign( new Design2D() );
+		DesignModel design = createTestDesign( new DesignModel2D() );
 		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
 		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 		remapLayersForLoad( expectedMap, this::remapShapeForLoad );
@@ -60,7 +60,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		// Load the design from a stream
 		byte[] buffer = MAPPER.writer().writeValueAsBytes( expectedMap );
 		codec.load( resource, new ByteArrayInputStream( buffer ) );
-		Map<String, Object> actualMap = ((Design)resource.getModel()).asDeepMap();
+		Map<String, Object> actualMap = ((DesignModel)resource.getModel()).asDeepMap();
 		actualMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 
 		// Convert the results to strings for comparison
@@ -73,7 +73,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 	@Test
 	void testSave() throws Exception {
 		// Create the expected result
-		Design design = createTestDesign( resource.getModel() );
+		DesignModel design = createTestDesign( resource.getModel() );
 		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
 		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 		remapLayersForSave( expectedMap, this::remapShapeForSave );
@@ -89,7 +89,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 		assertThat( actual ).isEqualTo( expected );
 	}
 
-	private Design createTestDesign( Design design ) {
+	private DesignModel createTestDesign( DesignModel design ) {
 		design.setName( "Test Design" );
 		design.setAuthor( "Test Author" );
 		design.setDescription( "Test design for unit tests." );

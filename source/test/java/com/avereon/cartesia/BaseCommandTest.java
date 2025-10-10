@@ -1,7 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.cartesia.command.Command;
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandPrompt;
 import com.avereon.cartesia.tool.DesignCommandContext;
@@ -37,7 +37,7 @@ public class BaseCommandTest extends DesignToolBaseTest {
 	protected static final Object BAD_PARAMETER = null;
 
 	@Mock
-	protected Design design;
+	protected DesignModel design;
 
 	@Mock
 	protected DesignContext designContext;

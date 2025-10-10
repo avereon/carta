@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data.util;
 
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.data.IdNode;
 import com.avereon.util.TextUtil;
@@ -30,10 +30,10 @@ public class DesignLayerOptionProvider implements SettingOptionProvider {
 
 	@Override
 	public List<String> getKeys() {
-		Optional<Design> optional = getDesign();
+		Optional<DesignModel> optional = getDesign();
 		if( optional.isEmpty() ) return List.of();
 
-		Design design = optional.get();
+		DesignModel design = optional.get();
 		List<String> rootKey = List.of();
 		if( showRoot ) rootKey = List.of( design.getLayers().getId() );
 
@@ -42,10 +42,10 @@ public class DesignLayerOptionProvider implements SettingOptionProvider {
 
 	@Override
 	public String getName( String key ) {
-		Optional<Design> optional = getDesign();
+		Optional<DesignModel> optional = getDesign();
 		if( optional.isEmpty() ) return TextUtil.EMPTY;
 
-		Design design = optional.get();
+		DesignModel design = optional.get();
 		DesignLayer notfound = new DesignLayer();
 		List<DesignLayer> layers = design.getAllLayers();
 
@@ -54,11 +54,11 @@ public class DesignLayerOptionProvider implements SettingOptionProvider {
 		return layer == notfound ? key : layer.getFullName();
 	}
 
-	private Optional<Design> getDesign() {
+	private Optional<DesignModel> getDesign() {
 		Resource currentResource = product.getProgram().getResourceManager().getCurrentAsset();
 		if( currentResource == null ) return Optional.empty();
 		Object model = currentResource.getModel();
-		if( model instanceof Design ) return Optional.of( (Design)model );
+		if( model instanceof DesignModel ) return Optional.of( (DesignModel)model );
 		return Optional.empty();
 	}
 

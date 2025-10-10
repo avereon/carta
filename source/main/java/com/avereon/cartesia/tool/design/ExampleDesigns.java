@@ -9,8 +9,8 @@ import java.util.Set;
 
 public class ExampleDesigns {
 
-	public static Design singleHorizontalLine() {
-		Design design = new Design2D();
+	public static DesignModel singleHorizontalLine() {
+		DesignModel design = new DesignModel2D();
 		design.setName( "Test Design" );
 
 		DesignLine line = new DesignLine( -1, 0, 1, 0 );
@@ -27,8 +27,8 @@ public class ExampleDesigns {
 		return design;
 	}
 
-	public static Design singleVerticalLine() {
-		Design design = new Design2D();
+	public static DesignModel singleVerticalLine() {
+		DesignModel design = new DesignModel2D();
 		design.setName( "Test Design" );
 
 		DesignLine line = new DesignLine( 0, 1, 0, -1 );
@@ -45,8 +45,8 @@ public class ExampleDesigns {
 		return design;
 	}
 
-	public static Design redBlueX() {
-		Design design = new Design2D();
+	public static DesignModel redBlueX() {
+		DesignModel design = new DesignModel2D();
 		design.setName( "Test Design" );
 
 		DesignLine blueLine = new DesignLine( -5, -5, 5, 5 );
@@ -69,16 +69,16 @@ public class ExampleDesigns {
 		return design;
 	}
 
-	public static Design design1() {
-		return setDesign1( new Design2D() );
+	public static DesignModel design1() {
+		return setDesign1( new DesignModel2D() );
 	}
 	
-	public static Design setDesign1(Design design) {
+	public static DesignModel setDesign1( DesignModel design) {
 		design.getAllLayers().forEach( layer -> design.getLayers().removeLayer( layer) );
 		return addDesign1( design );
 	}
 
-	public static Design addDesign1(Design design) {
+	public static DesignModel addDesign1( DesignModel design) {
 		design.setName( "Test Design" );
 
 		DesignLine greenLineA = new DesignLine( -5, 5, -3, 3 );

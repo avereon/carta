@@ -4,7 +4,7 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
-import com.avereon.cartesia.data.Design;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
@@ -73,7 +73,7 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 
 	Resource getResource();
 
-	Design getDesign();
+	DesignModel getDesign();
 
 	/**
 	 * A convenience method to get the design context.

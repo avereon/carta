@@ -3,8 +3,8 @@ package com.avereon.cartesia.tool.design;
 import com.avereon.cartesia.BaseCartesiaUnitTest;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.data.Design;
-import com.avereon.cartesia.data.Design2D;
+import com.avereon.cartesia.data.DesignModel;
+import com.avereon.cartesia.data.DesignModel2D;
 import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.zerra.color.Colors;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 
-	private Design design;
+	private DesignModel design;
 
 	private DesignToolV2Renderer renderer;
 
@@ -26,7 +26,7 @@ public class DesignToolV2RendererTest extends BaseCartesiaUnitTest {
 	protected void setup() throws Exception {
 		super.setup();
 		Fx.startup();
-		design = new Design2D();
+		design = new DesignModel2D();
 		renderer = new DesignToolV2Renderer();
 		renderer.setDesign( design );
 		renderer.resizeRelocate( 0, 0, 100, 100 );
