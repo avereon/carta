@@ -69,6 +69,7 @@ public abstract class DesignModel extends IdNode {
 		return this;
 	}
 
+	// FIXME This method should be package-private
 	public DesignUnit calcDesignUnit() {
 		// TODO Cache this object, it is used frequently
 		return DesignUnitMapper.map( getDesignUnit() );
