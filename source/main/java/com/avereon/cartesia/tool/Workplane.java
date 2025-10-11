@@ -344,7 +344,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcGridAxisWidth() {
-		if( gridAxisWidth == null ) gridAxisWidth = CadMath.evalNoException( getGridAxisWidth() );
+		if( gridAxisWidth == null ) gridAxisWidth = CadMath.eval( getGridAxisWidth() );
 		return gridAxisWidth;
 	}
 
@@ -381,7 +381,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcMajorGridX() {
-		if( majorGridX == null ) majorGridX = CadMath.evalNoException( getMajorGridX() );
+		if( majorGridX == null ) majorGridX = CadMath.eval( getMajorGridX() );
 		return majorGridX;
 	}
 
@@ -396,7 +396,7 @@ public class Workplane extends Node {
 	}
 
 	public Double calcMajorGridY() {
-		if( majorGridY == null ) majorGridY = CadMath.evalNoException( getMajorGridY() );
+		if( majorGridY == null ) majorGridY = CadMath.eval( getMajorGridY() );
 		return majorGridY;
 	}
 
@@ -426,7 +426,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcMajorGridWidth() {
-		if( majorGridWidth == null ) majorGridWidth = CadMath.evalNoException( getMajorGridWidth() );
+		if( majorGridWidth == null ) majorGridWidth = CadMath.eval( getMajorGridWidth() );
 		return majorGridWidth;
 	}
 
@@ -463,7 +463,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcMinorGridX() {
-		if( minorGridX == null ) minorGridX = CadMath.evalNoException( getMinorGridX() );
+		if( minorGridX == null ) minorGridX = CadMath.eval( getMinorGridX() );
 		return minorGridX;
 	}
 
@@ -478,7 +478,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcMinorGridY() {
-		if( minorGridY == null ) minorGridY = CadMath.evalNoException( getMinorGridY() );
+		if( minorGridY == null ) minorGridY = CadMath.eval( getMinorGridY() );
 		return minorGridY;
 	}
 
@@ -508,7 +508,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcMinorGridWidth() {
-		if( minorGridWidth == null ) minorGridWidth = CadMath.evalNoException( getMinorGridWidth() );
+		if( minorGridWidth == null ) minorGridWidth = CadMath.eval( getMinorGridWidth() );
 		return minorGridWidth;
 	}
 
@@ -526,7 +526,7 @@ public class Workplane extends Node {
 	// Grid Snap Spacing
 	// ******************************
 	public double calcSnapGridX() {
-		if( snapGridX == null ) snapGridX = CadMath.evalNoException( getSnapGridX() );
+		if( snapGridX == null ) snapGridX = CadMath.eval( getSnapGridX() );
 		return snapGridX;
 	}
 
@@ -541,7 +541,7 @@ public class Workplane extends Node {
 	}
 
 	public double calcSnapGridY() {
-		if( snapGridY == null ) snapGridY = CadMath.evalNoException( getSnapGridY() );
+		if( snapGridY == null ) snapGridY = CadMath.eval( getSnapGridY() );
 		return snapGridY;
 	}
 

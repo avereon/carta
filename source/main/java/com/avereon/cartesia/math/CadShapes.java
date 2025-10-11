@@ -71,9 +71,9 @@ public class CadShapes {
 			String[] coords = input.split( "[,<]+" );
 
 			Point3D point = switch( coords.length ) {
-				case 1 -> new Point3D( CadMath.evalNoException( coords[ 0 ] ), 0, 0 );
-				case 2 -> new Point3D( CadMath.evalNoException( coords[ 0 ] ), CadMath.evalNoException( coords[ 1 ] ), 0 );
-				case 3 -> new Point3D( CadMath.evalNoException( coords[ 0 ] ), CadMath.evalNoException( coords[ 1 ] ), CadMath.evalNoException( coords[ 2 ] ) );
+				case 1 -> new Point3D( CadMath.eval( coords[ 0 ] ), 0, 0 );
+				case 2 -> new Point3D( CadMath.eval( coords[ 0 ] ), CadMath.eval( coords[ 1 ] ), 0 );
+				case 3 -> new Point3D( CadMath.eval( coords[ 0 ] ), CadMath.eval( coords[ 1 ] ), CadMath.eval( coords[ 2 ] ) );
 				default -> null;
 			};
 
@@ -100,7 +100,7 @@ public class CadShapes {
 	}
 
 	public static List<Double> parseDashPattern( String pattern ) {
-		List<Double> values = CadMath.evalExpressions( pattern );
+		List<Double> values = CadMath.evalCsv( pattern );
 		double sum = values.stream().reduce( Double::sum ).orElse( 0.0 );
 		if( sum == 0.0 ) return List.of();
 		return values;

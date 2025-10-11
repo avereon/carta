@@ -113,7 +113,7 @@ public abstract class DesignDrawable extends DesignNode {
 	}
 
 	public double calcDrawWidth() {
-		return (double)getCache().computeIfAbsent( DRAW_WIDTH, k -> CadMath.evalNoException( getDrawWidthWithInheritance() ) );
+		return (double)getCache().computeIfAbsent( DRAW_WIDTH, k -> CadMath.eval( getDrawWidthWithInheritance() ) );
 	}
 
 	public String getDrawWidthWithInheritance() {
@@ -157,7 +157,7 @@ public abstract class DesignDrawable extends DesignNode {
 	// Dash Offset ---------------------------------------------------------------
 
 	public double calcDashOffset() {
-		return (double)getCache().computeIfAbsent( DASH_OFFSET, k -> CadMath.evalNoException( getDashOffsetWithInheritance() ) );
+		return (double)getCache().computeIfAbsent( DASH_OFFSET, k -> CadMath.eval( getDashOffsetWithInheritance() ) );
 	}
 
 	public String getDashOffsetWithInheritance() {

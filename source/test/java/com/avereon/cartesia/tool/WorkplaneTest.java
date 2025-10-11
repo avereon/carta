@@ -130,7 +130,7 @@ class WorkplaneTest {
 	@MethodSource( "gridAxisWidthArguments" )
 	void gridAxisWidth( String input, double expected ) {
 		// given
-		assertThat( workplane.calcGridAxisWidth() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_AXIS_WIDTH ) );
+		assertThat( workplane.calcGridAxisWidth() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_AXIS_WIDTH ) );
 
 		// when
 		workplane.setGridAxisWidth( input );
@@ -143,7 +143,7 @@ class WorkplaneTest {
 	@MethodSource( "majorGridWidthArguments" )
 	void majorGridWidth( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMajorGridWidth() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MAJOR_WIDTH ) );
+		assertThat( workplane.calcMajorGridWidth() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_MAJOR_WIDTH ) );
 
 		// when
 		workplane.setMajorGridWidth( input );
@@ -156,7 +156,7 @@ class WorkplaneTest {
 	@MethodSource( "minorGridWidthArguments" )
 	void minorGridWidth( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMinorGridWidth() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MINOR_WIDTH ) );
+		assertThat( workplane.calcMinorGridWidth() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_MINOR_WIDTH ) );
 
 		// when
 		workplane.setMinorGridWidth( input );
@@ -169,7 +169,7 @@ class WorkplaneTest {
 	@MethodSource( "majorGridSizeArguments" )
 	void majorGridX( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMajorGridX() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		assertThat( workplane.calcMajorGridX() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
 
 		// when
 		workplane.setMajorGridX( input );
@@ -182,7 +182,7 @@ class WorkplaneTest {
 	@MethodSource( "majorGridSizeArguments" )
 	void majorGridY( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMajorGridY() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
+		assertThat( workplane.calcMajorGridY() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_MAJOR_SIZE ) );
 
 		// when
 		workplane.setMajorGridY( input );
@@ -195,7 +195,7 @@ class WorkplaneTest {
 	@MethodSource( "minorGridSizeArguments" )
 	void minorGridX( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMinorGridX() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MINOR_SIZE ) );
+		assertThat( workplane.calcMinorGridX() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_MINOR_SIZE ) );
 
 		// when
 		workplane.setMinorGridX( input );
@@ -208,7 +208,7 @@ class WorkplaneTest {
 	@MethodSource( "minorGridSizeArguments" )
 	void minorGridY( String input, double expected ) {
 		// given
-		assertThat( workplane.calcMinorGridY() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_MINOR_SIZE ) );
+		assertThat( workplane.calcMinorGridY() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_MINOR_SIZE ) );
 
 		// when
 		workplane.setMinorGridY( input );
@@ -221,7 +221,7 @@ class WorkplaneTest {
 	@MethodSource( "snapGridSizeArguments" )
 	void snapGridX( String input, double expected ) {
 		// given
-		assertThat( workplane.calcSnapGridX() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_SNAP_SIZE ) );
+		assertThat( workplane.calcSnapGridX() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 
 		// when
 		workplane.setSnapGridX( input );
@@ -234,7 +234,7 @@ class WorkplaneTest {
 	@MethodSource( "snapGridSizeArguments" )
 	void snapGridY( String input, double expected ) {
 		// given
-		assertThat( workplane.calcSnapGridY() ).isEqualTo( CadMath.evalNoException( Workplane.DEFAULT_GRID_SNAP_SIZE ) );
+		assertThat( workplane.calcSnapGridY() ).isEqualTo( CadMath.eval( Workplane.DEFAULT_GRID_SNAP_SIZE ) );
 
 		// when
 		workplane.setSnapGridY( input );
@@ -322,25 +322,25 @@ class WorkplaneTest {
 
 	private static Stream<Arguments> widthArguments( String defaultWidth ) {
 		return Stream.of(
-			Arguments.of( null, CadMath.evalNoException( defaultWidth ) ),
+			Arguments.of( null, CadMath.eval( defaultWidth ) ),
 			Arguments.of( "0.5", 0.5 ),
 			Arguments.of( "1/2", 0.5 ),
 			Arguments.of( "1.0", 1.0 ),
 			Arguments.of( "2/1", 2.0 ),
 			Arguments.of( "2.0", 2.0 ),
-			Arguments.of( null, CadMath.evalNoException( defaultWidth ) )
+			Arguments.of( null, CadMath.eval( defaultWidth ) )
 		);
 	}
 
 	private static Stream<Arguments> valueArguments( String defaultValue ) {
 		return Stream.of(
-			Arguments.of( null, CadMath.evalNoException( defaultValue ) ),
+			Arguments.of( null, CadMath.eval( defaultValue ) ),
 			Arguments.of( "0.5", 0.5 ),
 			Arguments.of( "1/2", 0.5 ),
 			Arguments.of( "1.0", 1.0 ),
 			Arguments.of( "2/1", 2.0 ),
 			Arguments.of( "2.0", 2.0 ),
-			Arguments.of( null, CadMath.evalNoException( defaultValue ) )
+			Arguments.of( null, CadMath.eval( defaultValue ) )
 		);
 	}
 

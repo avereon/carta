@@ -306,7 +306,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	@Override
 	public double calcDrawWidth() {
-		return CadMath.evalNoException( getDrawWidth() );
+		return CadMath.eval( getDrawWidth() );
 	}
 
 	@Override
@@ -316,7 +316,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 
 	@Override
 	public double calcDashOffset() {
-		return CadMath.evalNoException( getDashOffset() );
+		return CadMath.eval( getDashOffset() );
 	}
 
 	@Override
@@ -392,7 +392,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	}
 
 	public double calcTextDrawWidth() {
-		return CadMath.evalNoException( getTextDrawWidth() );
+		return CadMath.eval( getTextDrawWidth() );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -432,7 +432,7 @@ public class DesignLayer extends DesignDrawable implements DesignTextSupport {
 	// Text size
 	public double calcTextSize() {
 		String value = getTextSize();
-		return CadMath.evalNoException( value == null ? DEFAULT_TEXT_SIZE : value );
+		return CadMath.eval( value == null ? DEFAULT_TEXT_SIZE : value );
 	}
 
 	public String getTextSize() {

@@ -104,7 +104,7 @@ public abstract class DesignShape extends DesignDrawable {
 	 */
 	public double calcRotate() {
 		String rotate = getRotate();
-		return rotate == null ? 0.0 : CadMath.evalNoException( rotate );
+		return rotate == null ? 0.0 : CadMath.eval( rotate );
 	}
 
 	public String getRotate() {

@@ -23,8 +23,8 @@ public class CadMath {
 	 * @return The value of the expression
 	 * @throws IllegalArgumentException If the expression cannot be evaluated
 	 */
-	public static double evalNoException( String expression ) {
-		if( TextUtil.isEmpty( expression ) ) return 0;
+	public static double eval( String expression ) {
+		//if( TextUtil.isEmpty( expression ) ) return 0;
 		return new CustomDoubleEvaluator().evaluate( expression );
 	}
 
@@ -34,9 +34,9 @@ public class CadMath {
 	 * @param expressions The comma-separated list of math expressions
 	 * @return The list of values of the expressions
 	 */
-	public static List<Double> evalExpressions( String expressions ) {
+	public static List<Double> evalCsv( String expressions ) {
 		if( TextUtil.isEmpty( expressions ) ) return List.of();
-		return Arrays.stream( expressions.split( "," ) ).map( CadMath::evalNoException ).collect( Collectors.toList() );
+		return Arrays.stream( expressions.split( "," ) ).map( CadMath::eval ).collect( Collectors.toList() );
 	}
 
 	private static class CustomDoubleEvaluator extends DoubleEvaluator {

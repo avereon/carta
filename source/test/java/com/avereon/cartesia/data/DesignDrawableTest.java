@@ -69,14 +69,14 @@ public class DesignDrawableTest {
 	@Test
 	void testLayerCalcDefaults() {
 		assertThat( layer.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
-		assertThat( layer.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( layer.calcDrawWidth() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 		assertThat( layer.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
-		assertThat( layer.calcDashOffset() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DASH_OFFSET ) );
+		assertThat( layer.calcDashOffset() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_DASH_OFFSET ) );
 		assertThat( layer.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DASH_PATTERN ) );
 		assertThat( layer.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
 
 		assertThat( layer.calcTextDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_DRAW_PAINT ) );
-		assertThat( layer.calcTextDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH ) );
+		assertThat( layer.calcTextDrawWidth() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_TEXT_DRAW_WIDTH ) );
 		assertThat( layer.calcTextDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_TEXT_DRAW_CAP.toUpperCase() ) );
 		assertThat( layer.calcTextDrawPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_TEXT_DASH_PATTERN ) );
 		assertThat( layer.calcTextFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_TEXT_FILL_PAINT ) );
@@ -103,9 +103,9 @@ public class DesignDrawableTest {
 	@Test
 	void testDrawableCalcDefaults() {
 		assertThat( drawable.calcDrawPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_DRAW_PAINT ) );
-		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 		assertThat( drawable.calcDrawCap() ).isEqualTo( StrokeLineCap.valueOf( DesignLayer.DEFAULT_DRAW_CAP.toUpperCase() ) );
-		assertThat( drawable.calcDashOffset() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DASH_OFFSET ) );
+		assertThat( drawable.calcDashOffset() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_DASH_OFFSET ) );
 		assertThat( drawable.calcDashPattern() ).isEqualTo( CadShapes.parseDashPattern( DesignLayer.DEFAULT_DASH_PATTERN ) );
 		assertThat( drawable.calcDrawJoin() ).isEqualTo( StrokeLineJoin.ROUND );
 		assertThat( drawable.calcFillPaint() ).isEqualTo( Paints.parse( DesignLayer.DEFAULT_FILL_PAINT ) );
@@ -162,12 +162,12 @@ public class DesignDrawableTest {
 
 		// Check that the width value is a copy of the layer width value
 		assertThat( drawable.getDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_DRAW_WIDTH );
-		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 
 		// Change the layer width to ensure that width value is still the custom value
 		layer.setDrawWidth( String.valueOf( 1.0 ) );
 		assertThat( drawable.getDrawWidth() ).isEqualTo( DesignLayer.DEFAULT_DRAW_WIDTH );
-		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( DesignLayer.DEFAULT_DRAW_WIDTH ) );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.eval( DesignLayer.DEFAULT_DRAW_WIDTH ) );
 	}
 
 	@Test
@@ -181,12 +181,12 @@ public class DesignDrawableTest {
 
 		// Check that the width value is a copy of the layer width value
 		assertThat( drawable.getDrawWidth() ).isEqualTo( layerWidth );
-		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( layerWidth ) );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.eval( layerWidth ) );
 
 		// Change the layer width to ensure that width value is still the custom value
 		layer.setDrawWidth( "1/3" );
 		assertThat( drawable.getDrawWidth() ).isEqualTo( layerWidth );
-		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.evalNoException( layerWidth ) );
+		assertThat( drawable.calcDrawWidth() ).isEqualTo( CadMath.eval( layerWidth ) );
 	}
 
 	@Test

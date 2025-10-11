@@ -85,7 +85,7 @@ public class DesignText extends DesignShape implements DesignTextSupport {
 	// Text size
 
 	public double calcTextSize() {
-		return CadMath.evalNoException( getTextSizeWithInheritance() );
+		return CadMath.eval( getTextSizeWithInheritance() );
 	}
 
 	public String getTextSizeWithInheritance() {

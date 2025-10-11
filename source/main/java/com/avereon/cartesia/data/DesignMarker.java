@@ -462,7 +462,7 @@ public class DesignMarker extends DesignShape {
 
 	public double calcSize() {
 		String size = getSize();
-		if( size != null ) return CadMath.evalNoException( size );
+		if( size != null ) return CadMath.eval( size );
 		return DEFAULT_SIZE;
 	}
 
