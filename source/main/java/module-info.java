@@ -20,7 +20,7 @@ module com.avereon.carta {
 	requires com.fasterxml.jackson.databind;
 	requires java.logging;
 	requires javafx.base;
-	requires jep;
+	requires javaluator;
 	requires org.jsoup;
 
 	// Public APIs

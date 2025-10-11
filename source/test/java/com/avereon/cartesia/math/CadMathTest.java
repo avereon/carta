@@ -2,8 +2,6 @@ package com.avereon.cartesia.math;
 
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CadMathTest {
@@ -19,21 +17,20 @@ public class CadMathTest {
 	}
 
 	@Test
-	void testEval() throws Exception {
-		assertThat( CadMath.eval( "1/8" ) ).isEqualTo( 0.125 );
-		try {
-			CadMath.eval( "not a valid expression" );
-		} catch( CadMathExpressionException exception ) {
-			assertThat( exception.getMessage() ).startsWith( "Unrecognized symbol \"not\"" );
-			assertThat( ((ParseException)exception.getCause()).getErrorOffset() ).isEqualTo( -1 );
-		}
-	}
-
-	@Test
 	void testEvalNoException() {
 		assertThat( CadMath.evalNoException( "" ) ).isEqualTo( 0.0 );
 		assertThat( CadMath.evalNoException( "1/8" ) ).isEqualTo( 0.125 );
 		assertThat( CadMath.evalNoException( "sin(pi)" ) ).isEqualTo( java.lang.Math.sin( java.lang.Math.PI ) );
+	}
+
+	@Test
+	void testEvalNoExceptionWithIllegalArgument() {
+		assertThat( CadMath.evalNoException( "1/8" ) ).isEqualTo( 0.125 );
+		try {
+			CadMath.evalNoException( "not a valid expression" );
+		} catch( IllegalArgumentException exception ) {
+			assertThat( exception.getMessage() ).startsWith( "not a valid expression is not a number" );
+		}
 	}
 
 }

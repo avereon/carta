@@ -167,8 +167,8 @@ public abstract class Command {
 	protected double asDoubleOrNan( CommandTask task, Object value ) {
 		if( value instanceof Double ) return (Double)value;
 		try {
-			return CadMath.eval( String.valueOf( value ) );
-		} catch( CadMathExpressionException exception ) {
+			return CadMath.evalNoException( String.valueOf( value ) );
+		} catch( IllegalArgumentException exception ) {
 			return Double.NaN;
 		}
 	}
@@ -188,8 +188,8 @@ public abstract class Command {
 		if( value instanceof Point3D ) return ((Point3D)value).distance( anchor );
 
 		try {
-			return CadMath.eval( String.valueOf( value ) );
-		} catch( CadMathExpressionException ignored ) {}
+			return CadMath.evalNoException( String.valueOf( value ) );
+		} catch( IllegalArgumentException ignored ) {}
 
 		// If it is a point, return the distance from the anchor
 		Point3D point = CadShapes.parsePoint( String.valueOf( value ), anchor );

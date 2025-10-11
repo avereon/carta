@@ -42,7 +42,7 @@
 		<marea.version>0.4-SNAPSHOT</marea.version>
 		<zerra.version>0.11</zerra.version>
 		<cameo.version>2.12</cameo.version>
-		<jep.version>2.24</jep.version>
+		<javaluator.version>3.0.6</javaluator.version>
 		<monocle.version>21.0.2</monocle.version>
 		<mockito.version>5.20.0</mockito.version>
 		<images-folder>target/main/images</images-folder>
@@ -77,9 +77,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jep</groupId>
-			<artifactId>jep</artifactId>
-			<version>${jep.version}</version>
+			<groupId>com.fathzer</groupId>
+			<artifactId>javaluator</artifactId>
+			<version>${javaluator.version}</version>
 		</dependency>
 
 		<dependency>
