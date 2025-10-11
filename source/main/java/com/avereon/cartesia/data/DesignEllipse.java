@@ -238,7 +238,7 @@ public class DesignEllipse extends DesignShape {
 		try( Txn ignored = Txn.create() ) {
 			setOrigin( origin );
 			setRadii( radii );
-			setRotate( String.valueOf( rotate ) );
+			setRotate( rotate );
 		} catch( TxnException exception ) {
 			log.atWarn().log( "Unable to apply transform" );
 		}
