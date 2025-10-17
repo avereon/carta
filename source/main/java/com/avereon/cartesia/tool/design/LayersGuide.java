@@ -1,8 +1,9 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.RbKey;
-import com.avereon.cartesia.data.DesignModel;
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.tool.DesignToolLayersGuide;
 import com.avereon.data.NodeEvent;
 import com.avereon.event.EventHandler;
@@ -109,13 +110,14 @@ public class LayersGuide extends Guide {
 		// NOTE Current layer changes come from the tool
 
 		// Create guide nodes for all the design layers
-		DesignModel design = request.getResource().getModel();
-		design.getAllLayers().forEach( this::addLayer );
+		Design<DesignModel> design = request.getResource().getModel();
+		DesignModel model = design.getDataModel();
+		model.getAllLayers().forEach( this::addLayer );
 
-		design.register( NodeEvent.CHILD_ADDED, e -> {
+		model.register( NodeEvent.CHILD_ADDED, e -> {
 			if( e.getNewValue() != null && e.getNewValue() instanceof DesignLayer layer) addLayer( layer );
 		} );
-		design.register( NodeEvent.CHILD_REMOVED, e -> {
+		model.register( NodeEvent.CHILD_REMOVED, e -> {
 			if(e.getOldValue() instanceof DesignLayer layer) removeLayer( layer );
 		} );
 

@@ -1,13 +1,14 @@
 package com.avereon.cartesia.tool.design;
 
+import com.avereon.cartesia.BaseToolTest;
 import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.Design2DResourceType;
-import com.avereon.cartesia.BaseToolTest;
-import com.avereon.cartesia.data.DesignModel;
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.tool.DesignPortal;
-import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.resource.OpenAssetRequest;
+import com.avereon.xenon.resource.Resource;
 import com.avereon.zerra.javafx.Fx;
 import javafx.geometry.BoundingBox;
 import javafx.geometry.Point2D;
@@ -30,6 +31,8 @@ public class DesignToolV3Test extends BaseToolTest {
 
 	private DesignModel model;
 
+	private Design<DesignModel> design;
+
 	private DesignToolV3 tool;
 
 	private DesignToolV3Renderer renderer;
@@ -39,7 +42,9 @@ public class DesignToolV3Test extends BaseToolTest {
 		super.setup();
 
 		model = ExampleDesigns.redBlueX();
-		Resource resource = new Resource( new Design2DResourceType( getProgram() ), URI.create( "new://test" ) ).setModel( model );
+		design = new Design<>().setDataModel( model );
+
+		Resource resource = new Resource( new Design2DResourceType( getProgram() ), URI.create( "new://test" ) ).setModel( design );
 
 		renderer = Mockito.spy( new DesignToolV3Renderer() );
 
@@ -50,7 +55,9 @@ public class DesignToolV3Test extends BaseToolTest {
 		request.setResource( resource );
 		tool.ready( request );
 
-		assertThat( (DesignModel)tool.getResource().getModel() ).isEqualTo( model );
+		Design<DesignModel> design = tool.getResource().getModel();
+		assertThat( design ).isEqualTo( this.design );
+		assertThat( design.getDataModel() ).isEqualTo( model );
 		assertThat( tool.getDesign() ).isNotNull();
 
 		lenient().doCallRealMethod().when( renderer ).setDpi( anyDouble(), anyDouble() );

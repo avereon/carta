@@ -4,10 +4,7 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignModel;
-import com.avereon.cartesia.data.DesignPrint;
-import com.avereon.cartesia.data.DesignView;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.data.NodeSettings;
 import com.avereon.product.Rb;
@@ -86,8 +83,6 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected static final String GRID_VISIBLE = "grid-visible";
 
 	protected static final String GRID_SNAP_ENABLED = "grid-snap";
-
-	protected static final String DESIGN_CONTEXT = "design-context";
 
 	// TODO This is not connected to the grid pixel threshold yet
 	protected static final double MINIMUM_GRID_PIXELS = 3.0;
@@ -257,8 +252,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getResource().getUndoManager().redoAvailableProperty().addListener( ( v, o, n ) -> redoAction.updateEnabled() );
 
 		// Set the design model
-		DesignModel design = request.getResource().getModel();
-		getRenderer().setDesign( design );
+		Design<DesignModel2D> design = request.getResource().getModel();
+		DesignModel model = design.getDataModel();
+		getRenderer().setDesign( model );
 
 		// Set the workplane settings TODO replace with settings eventually
 		getWorkplane().setGridStyle( GridStyle.CROSS );
@@ -269,8 +265,8 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		getRenderer().setGridVisible( true );
 
 		// Show the first layer TODO replace with settings eventually
-		if( !design.getLayers().getLayers().isEmpty() ) {
-			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
+		if( !model.getLayers().getLayers().isEmpty() ) {
+			getRenderer().setLayerVisible( model.getLayers().getLayers().getFirst(), true );
 		}
 
 		// FIXME Mouse events need to go through a mouse event processor
@@ -354,22 +350,14 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 
 	@Override
 	public final DesignModel getDesign() {
-		return getAssetModel();
+		Design<DesignModel2D> design = getAssetModel();
+		return design.getDataModel();
 	}
 
 	@Override
 	public final DesignContext getDesignContext() {
-		DesignModel design = getDesign();
-		if( design == null ) return null;
-
-		// Lazy instantiate the context
-		DesignContext context = design.getValue( DESIGN_CONTEXT );
-		if( context == null ) {
-			context = new DesignContext( design, new DesignCommandContext() );
-			design.setValue( DESIGN_CONTEXT, context );
-		}
-
-		return context;
+		Design<? extends DesignModel> design = getAssetModel();
+		return design == null? null : design.getDesignContext();
 	}
 
 	@Override

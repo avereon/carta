@@ -133,12 +133,12 @@ public abstract class CartesiaDesignCodec extends Codec {
 	@Override
 	@SuppressWarnings( "unchecked" )
 	public void load( Resource resource, InputStream input ) throws IOException {
-		DesignModel2D design = new DesignModel2D();
-		resource.setModel( design );
+		Design<DesignModel2D> design = resource.getModel();
+		DesignModel2D model = design.getDataModel();
 
 		Map<String, Object> map = JSON_MAPPER.readValue( input, new TypeReference<>() {} );
 		map.put( DesignModel.UNIT, DesignUnitMapper.map( (String)map.get( DesignModel.UNIT ) ).name().toLowerCase() );
-		design.updateFrom( map );
+		model.updateFrom( map );
 
 		log.atFine().log( "Design codec version: %s", LazyEval.of( () -> map.get( CODEC_VERSION_KEY ) ) );
 
@@ -146,10 +146,10 @@ public abstract class CartesiaDesignCodec extends Codec {
 		Map<String, Map<String, Object>> views = (Map<String, Map<String, Object>>)map.getOrDefault( DesignModel.VIEWS, Map.of() );
 
 		// Load layers
-		layers.values().forEach( l -> loadLayer( design.getLayers(), l ) );
+		layers.values().forEach( l -> loadLayer( model.getLayers(), l ) );
 
 		// Load views
-		views.values().forEach( v -> loadView( design, v ) );
+		views.values().forEach( v -> loadView( model, v ) );
 
 		resource.getUndoManager().forgetHistory();
 	}

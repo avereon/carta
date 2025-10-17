@@ -25,12 +25,14 @@ public class DesignContext {
 	 */
 	private final DesignModel design;
 
+	@Deprecated
 	private final DesignCommandContext designCommandContext;
 
 	private final ObservableList<DesignShape> previewShapes;
 
 	private final ObservableList<DesignShape> selectedShapes;
 
+	// FIXME Arguably this should be a part of the design tool
 	private final CoordinateStatus coordinateStatus;
 
 	public DesignContext( DesignModel design, DesignCommandContext commandContext ) {
@@ -40,6 +42,8 @@ public class DesignContext {
 		// so there should only be one command context per design, across all the
 		// tools involved.
 		this.designCommandContext = commandContext;
+
+		// FIXME Ok, interesting. A lot of FX state is shared in here.
 
 		this.previewShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );
 		this.selectedShapes = FXCollections.synchronizedObservableList( FXCollections.observableArrayList() );

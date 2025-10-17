@@ -38,7 +38,7 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 
 		Path path = Paths.get( "target", "design.tmp" );
 		resource = new Resource( new Design2DResourceType( getMod() ), path.toUri() );
-		resource.setModel( new DesignModel2D() );
+		resource.setModel( new Design<DesignModel2D>().setDataModel( new DesignModel2D() ) );
 	}
 
 	@Test

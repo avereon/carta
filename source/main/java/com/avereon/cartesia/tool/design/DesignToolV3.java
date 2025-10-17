@@ -1,9 +1,7 @@
 package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.DesignValue;
-import com.avereon.cartesia.data.DesignModel;
-import com.avereon.cartesia.data.DesignLayer;
-import com.avereon.cartesia.data.DesignShape;
+import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.tool.BaseDesignTool;
 import com.avereon.cartesia.tool.DesignPortal;
 import com.avereon.xenon.XenonProgramProduct;
@@ -40,8 +38,9 @@ public class DesignToolV3 extends BaseDesignTool {
 	@Override
 	protected void ready( OpenAssetRequest request ) throws ToolException {
 		super.ready( request );
-		DesignModel design = request.getResource().getModel();
-		getRenderer().setDesign( design );
+		Design<DesignModel2D> design = request.getResource().getModel();
+		DesignModel model = design.getDataModel();
+		getRenderer().setDesign( model );
 
 		// DEVELOPMENT
 		//		if( Objects.equals( getProgram().getMode(), XenonMode.DEV ) ) {
