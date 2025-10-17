@@ -26,7 +26,7 @@ public class CommandAction extends ProgramAction {
 
 	@Override
 	public void handle( ActionEvent event ) {
-		DesignCommandContext context = designTool.getCommandContext();
+		CommandContext context = designTool.getCommandContext();
 		if( context == null ) return;
 		context.command( shortcut );
 	}

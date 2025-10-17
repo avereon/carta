@@ -1,6 +1,6 @@
 package com.avereon.cartesia.data;
 
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import lombok.Getter;
 
@@ -15,15 +15,15 @@ public class Design<T extends DesignModel> {
 
 	private DesignContext designContext;
 
-	private DesignCommandContext commandContext;
+	private CommandContext commandContext;
 
 	public Design() {}
 
-	public Design<T> setDataModel( T dataModel ) {
+	public Design<T> setDataModel( T model ) {
 		if( this.dataModel != null ) return this;
-		this.dataModel = dataModel;
-		this.commandContext = new DesignCommandContext();
-		this.designContext = new DesignContext( dataModel, commandContext );
+		this.dataModel = model;
+		this.commandContext = new CommandContext();
+		this.designContext = new DesignContext( commandContext );
 		return this;
 	}
 

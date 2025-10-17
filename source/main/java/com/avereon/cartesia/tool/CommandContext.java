@@ -38,11 +38,11 @@ import static com.avereon.cartesia.command.Command.Result.*;
 /**
  * The CommandContext class is a container for command-specific information.
  * <pre>
- * {@link DesignTool} -> {@link DesignModel} -> {@link DesignContext} -> {@link DesignCommandContext}
+ * {@link DesignTool} -> {@link DesignModel} -> {@link DesignContext} -> {@link CommandContext}
  * </pre>
  */
 @CustomLog
-public class DesignCommandContext implements EventHandler<KeyEvent> {
+public class CommandContext implements EventHandler<KeyEvent> {
 
 	public enum Input {
 		NONE,
@@ -94,10 +94,10 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private DesignTool lastUserTool;
 
-	public DesignCommandContext() {
+	public CommandContext() {
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorCommand = TextUtil.EMPTY;
-		this.inputMode = DesignCommandContext.Input.NONE;
+		this.inputMode = CommandContext.Input.NONE;
 	}
 
 	public CommandPrompt getCommandPrompt() {
@@ -197,7 +197,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	Command processText( String input, boolean strict ) {
-		boolean isTextInput = getInputMode() == DesignCommandContext.Input.TEXT;
+		boolean isTextInput = getInputMode() == CommandContext.Input.TEXT;
 		if( strict ) {
 			return switch( getInputMode() ) {
 				case NUMBER, POINT, TEXT -> submitCommand( new Value(), input );
@@ -380,7 +380,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				tool.setSelectAperture( null, null );
 				tool.clearSelectedShapes();
 			}
-			setInputMode( DesignCommandContext.Input.NONE );
+			setInputMode( CommandContext.Input.NONE );
 			getCommandPrompt().clear();
 		} );
 	}

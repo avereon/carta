@@ -20,14 +20,14 @@ import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class DesignCommandContextTest extends BaseCommandTest {
+public class CommandContextTest extends BaseCommandTest {
 
 	private static boolean configured;
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		this.commandContext = spy( new DesignCommandContext() );
+		this.commandContext = spy( new CommandContext() );
 		lenient().doReturn( tool ).when( commandContext ).getTool();
 		lenient().doReturn( commandPrompt ).when( commandContext ).getCommandPrompt();
 		if( !configured ) {
@@ -65,7 +65,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 	/**
 	 * This is about the simplest command test possible and still be realistic.
 	 * This test uses the Anchor command to verify the
-	 * {@link DesignCommandContext#doProcessCommands} logic.
+	 * {@link CommandContext#doProcessCommands} logic.
 	 */
 	@Test
 	@SuppressWarnings( "unchecked" )
@@ -110,7 +110,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		commandContext.setLastUserTool( tool );
 
 		// when
-		commandContext.setInputMode( DesignCommandContext.Input.NUMBER );
+		commandContext.setInputMode( CommandContext.Input.NUMBER );
 		commandContext.processText( "4,3,2", true );
 		commandContext.doProcessCommands();
 
@@ -127,7 +127,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		commandContext.setLastUserTool( tool );
 
 		// when
-		commandContext.setInputMode( DesignCommandContext.Input.POINT );
+		commandContext.setInputMode( CommandContext.Input.POINT );
 		commandContext.processText( "4,3,2", true );
 		commandContext.doProcessCommands();
 
@@ -144,7 +144,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		commandContext.setLastUserTool( tool );
 
 		// when
-		commandContext.setInputMode( DesignCommandContext.Input.POINT );
+		commandContext.setInputMode( CommandContext.Input.POINT );
 		commandContext.processText( "@4,3,2", true );
 		commandContext.doProcessCommands();
 
@@ -161,7 +161,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		commandContext.setLastUserTool( tool );
 
 		// when
-		commandContext.setInputMode( DesignCommandContext.Input.TEXT );
+		commandContext.setInputMode( CommandContext.Input.TEXT );
 		commandContext.processText( "test", true );
 		commandContext.doProcessCommands();
 
@@ -178,7 +178,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 		commandContext.setLastUserTool( tool );
 
 		// when
-		commandContext.setInputMode( DesignCommandContext.Input.NONE );
+		commandContext.setInputMode( CommandContext.Input.NONE );
 		UnknownCommand exception = catchThrowableOfType( UnknownCommand.class, () -> commandContext.processText( "unknown", true ) );
 
 		// then
@@ -247,7 +247,7 @@ public class DesignCommandContextTest extends BaseCommandTest {
 	@Test
 	void testNoAutoCommandWithTextInput() throws Exception {
 		commandContext.setLastUserTool( tool );
-		commandContext.setInputMode( DesignCommandContext.Input.TEXT );
+		commandContext.setInputMode( CommandContext.Input.TEXT );
 		Command command = commandContext.processText( "test", false );
 		commandContext.doProcessCommands();
 		assertThat( command ).isNull();
@@ -255,27 +255,27 @@ public class DesignCommandContextTest extends BaseCommandTest {
 
 	@Test
 	void testInputMode() throws Exception {
-		assertThat( commandContext.getInputMode() ).isEqualTo( DesignCommandContext.Input.NONE );
+		assertThat( commandContext.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 
 		MockCommand command = new MockCommand( 0 );
 		commandContext.submit( tool, command );
 		commandContext.doProcessCommands();
 
-		commandContext.submit( tool, new Prompt( "", DesignCommandContext.Input.NONE ) );
+		commandContext.submit( tool, new Prompt( "", CommandContext.Input.NONE ) );
 		commandContext.doProcessCommands();
-		assertThat( commandContext.getInputMode() ).isEqualTo( DesignCommandContext.Input.NONE );
-		commandContext.submit( tool, new Prompt( "", DesignCommandContext.Input.NUMBER ) );
+		assertThat( commandContext.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
+		commandContext.submit( tool, new Prompt( "", CommandContext.Input.NUMBER ) );
 		commandContext.doProcessCommands();
-		assertThat( commandContext.getInputMode() ).isEqualTo( DesignCommandContext.Input.NUMBER );
-		commandContext.submit( tool, new Prompt( "", DesignCommandContext.Input.POINT ) );
+		assertThat( commandContext.getInputMode() ).isEqualTo( CommandContext.Input.NUMBER );
+		commandContext.submit( tool, new Prompt( "", CommandContext.Input.POINT ) );
 		commandContext.doProcessCommands();
-		assertThat( commandContext.getInputMode() ).isEqualTo( DesignCommandContext.Input.POINT );
-		commandContext.submit( tool, new Prompt( "", DesignCommandContext.Input.TEXT ) );
+		assertThat( commandContext.getInputMode() ).isEqualTo( CommandContext.Input.POINT );
+		commandContext.submit( tool, new Prompt( "", CommandContext.Input.TEXT ) );
 		commandContext.doProcessCommands();
-		assertThat( commandContext.getInputMode() ).isEqualTo( DesignCommandContext.Input.TEXT );
-		commandContext.submit( tool, new Prompt( "", DesignCommandContext.Input.NONE ) );
+		assertThat( commandContext.getInputMode() ).isEqualTo( CommandContext.Input.TEXT );
+		commandContext.submit( tool, new Prompt( "", CommandContext.Input.NONE ) );
 		commandContext.doProcessCommands();
-		assertThat( commandContext.getInputMode() ).isEqualTo( DesignCommandContext.Input.NONE );
+		assertThat( commandContext.getInputMode() ).isEqualTo( CommandContext.Input.NONE );
 	}
 
 	@Test

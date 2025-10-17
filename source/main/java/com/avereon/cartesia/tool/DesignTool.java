@@ -90,7 +90,7 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 	 *
 	 * @return The command context
 	 */
-	DesignCommandContext getCommandContext();
+	CommandContext getCommandContext();
 
 	Workplane getWorkplane();
 

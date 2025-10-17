@@ -4,7 +4,7 @@ import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.CommandPrompt;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignContext;
 import javafx.event.EventTarget;
 import javafx.event.EventType;
@@ -43,7 +43,7 @@ public class BaseCommandTest extends BaseToolTest {
 	protected DesignContext designContext;
 
 	@Mock
-	protected DesignCommandContext commandContext;
+	protected CommandContext commandContext;
 
 	@Mock
 	protected CommandPrompt commandPrompt;
@@ -76,9 +76,8 @@ public class BaseCommandTest extends BaseToolTest {
 		lenient().when( tool.getPreviewLayer() ).thenReturn( previewLayer );
 		lenient().when( tool.getReferenceLayer() ).thenReturn( referenceLayer );
 		lenient().when( tool.getReticleCursor() ).thenReturn( RETICLE );
-		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
-		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
+		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 	}
 
 	protected static CommandMetadata createMetadata( String action, String name, String command, Class<? extends Command> type ) {

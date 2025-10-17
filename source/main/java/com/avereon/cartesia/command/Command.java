@@ -6,7 +6,7 @@ import com.avereon.cartesia.command.base.Prompt;
 import com.avereon.cartesia.command.draw.DrawPath;
 import com.avereon.cartesia.data.*;
 import com.avereon.cartesia.math.*;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.product.Rb;
 import javafx.geometry.Point3D;
 import javafx.scene.Cursor;
@@ -67,7 +67,7 @@ import static com.avereon.cartesia.command.Command.Result.SUCCESS;
  * parameters expected.
  *
  * @see DesignShape
- * @see DesignCommandContext
+ * @see CommandContext
  */
 @CustomLog
 public abstract class Command {
@@ -123,7 +123,7 @@ public abstract class Command {
 	}
 
 	@Deprecated
-	public Object execute( DesignCommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
+	public Object execute( CommandContext context, CommandTrigger trigger, InputEvent triggerEvent, Object... parameters ) throws Exception {
 		return SUCCESS;
 	}
 
@@ -139,8 +139,8 @@ public abstract class Command {
 		step++;
 	}
 
-	public DesignCommandContext.Input getInputMode() {
-		return DesignCommandContext.Input.NONE;
+	public CommandContext.Input getInputMode() {
+		return CommandContext.Input.NONE;
 	}
 
 	public boolean clearSelectionWhenComplete() {
@@ -238,27 +238,27 @@ public abstract class Command {
 
 	protected void promptForNumber( CommandTask task, String key ) {
 		task.getTool().setCursor( null );
-		promptForValue( task, key, DesignCommandContext.Input.NUMBER );
+		promptForValue( task, key, CommandContext.Input.NUMBER );
 	}
 
 	protected void promptForPoint( CommandTask task, String key ) {
 		task.getTool().setCursor( task.getTool().getReticleCursor() );
-		promptForValue( task, key, DesignCommandContext.Input.POINT );
+		promptForValue( task, key, CommandContext.Input.POINT );
 	}
 
 	protected void promptForWindow( CommandTask task, String key ) {
 		task.getTool().setCursor( task.getTool().getReticleCursor() );
-		promptForValue( task, key, DesignCommandContext.Input.POINT );
+		promptForValue( task, key, CommandContext.Input.POINT );
 	}
 
 	protected void promptForShape( CommandTask task, String key ) {
 		task.getTool().setCursor( Cursor.HAND );
-		promptForValue( task, key, DesignCommandContext.Input.SHAPE );
+		promptForValue( task, key, CommandContext.Input.SHAPE );
 	}
 
 	protected void promptForText( CommandTask task, String key ) {
 		task.getTool().setCursor( Cursor.TEXT );
-		promptForValue( task, key, DesignCommandContext.Input.TEXT );
+		promptForValue( task, key, CommandContext.Input.TEXT );
 	}
 
 	protected DesignShape findNearestShapeAtPoint( CommandTask task, Point3D point ) {
@@ -523,7 +523,7 @@ public abstract class Command {
 		return spin;
 	}
 
-	private void promptForValue( CommandTask task, String key, DesignCommandContext.Input mode ) {
+	private void promptForValue( CommandTask task, String key, CommandContext.Input mode ) {
 		String text = Rb.text( RbKey.PROMPT, key );
 		task.getContext().submit( task.getTool(), new Prompt( text, mode ) );
 	}

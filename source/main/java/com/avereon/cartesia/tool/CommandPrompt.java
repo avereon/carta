@@ -14,13 +14,13 @@ import lombok.CustomLog;
 @CustomLog
 public class CommandPrompt extends BorderPane {
 
-	private final DesignCommandContext context;
+	private final CommandContext context;
 
 	private final Label prompt;
 
 	private final TextField command;
 
-	public CommandPrompt( DesignCommandContext context ) {
+	public CommandPrompt( CommandContext context ) {
 		this.context = context;
 
 		getStyleClass().add( "cartesia-command" );

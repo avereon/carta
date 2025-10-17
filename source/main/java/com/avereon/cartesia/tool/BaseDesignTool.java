@@ -292,7 +292,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void allocate() throws ToolException {
 		super.allocate();
 
-		DesignCommandContext commandContext = getCommandContext();
+		CommandContext commandContext = getCommandContext();
 		if( commandContext != null ) commandContext.setLastUserTool( this );
 
 		// Add asset switch listener to remove command prompt
@@ -310,7 +310,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		super.activate();
 		if( !getResource().isLoaded() ) return;
 
-		DesignCommandContext commandContext = getCommandContext();
+		CommandContext commandContext = getCommandContext();
 		if( commandContext != null ) commandContext.setLastUserTool( this );
 
 		registerStatusBarItems();
@@ -361,10 +361,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	@Override
-	public final DesignCommandContext getCommandContext() {
-		DesignContext context = getDesignContext();
-		if( context == null ) return null;
-		return context.getDesignCommandContext();
+	public final CommandContext getCommandContext() {
+		Design<? extends DesignModel> design = getAssetModel();
+		return design == null? null : design.getCommandContext();
 	}
 
 	@Override
@@ -645,7 +644,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	protected CommandPrompt getCommandPrompt() {
-		return getDesignContext().getDesignCommandContext().getCommandPrompt();
+		return getCommandContext().getCommandPrompt();
 	}
 
 	protected CoordinateStatus getCoordinateStatus() {

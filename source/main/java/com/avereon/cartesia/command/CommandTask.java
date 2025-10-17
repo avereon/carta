@@ -1,7 +1,7 @@
 package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.CommandTrigger;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandContext;
 import com.avereon.cartesia.tool.DesignTool;
 import com.avereon.util.ArrayUtil;
 import com.avereon.zerra.javafx.Fx;
@@ -25,7 +25,7 @@ public class CommandTask {
 
 	private static final Set<Command.Result> RESULT_CACHE = new HashSet<>( Arrays.asList( Command.Result.values() ) );
 
-	private final DesignCommandContext context;
+	private final CommandContext context;
 
 	private final DesignTool tool;
 
@@ -43,7 +43,7 @@ public class CommandTask {
 	@Setter
 	private CommandTask prior;
 
-	public CommandTask( @NonNull DesignCommandContext context, @NonNull DesignTool tool, CommandTrigger trigger, InputEvent event, @NonNull Command command, Object... parameters ) {
+	public CommandTask( @NonNull CommandContext context, @NonNull DesignTool tool, CommandTrigger trigger, InputEvent event, @NonNull Command command, Object... parameters ) {
 		this.context = Objects.requireNonNull( context );
 		this.tool = Objects.requireNonNull( tool );
 		this.command = Objects.requireNonNull( command );

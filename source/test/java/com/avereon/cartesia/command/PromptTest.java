@@ -2,7 +2,7 @@ package com.avereon.cartesia.command;
 
 import com.avereon.cartesia.BaseCommandTest;
 import com.avereon.cartesia.command.base.Prompt;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandContext;
 import org.junit.jupiter.api.Test;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
@@ -18,7 +18,7 @@ public class PromptTest extends BaseCommandTest {
 		// With no parameter it should set the prompt and return incomplete
 
 		// given
-		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		Prompt command = new Prompt( "Hello world:", CommandContext.Input.TEXT );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command );
 
 		// when
@@ -32,7 +32,7 @@ public class PromptTest extends BaseCommandTest {
 	@Test
 	void testExecute() throws Exception {
 		// given
-		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		Prompt command = new Prompt( "Hello world:", CommandContext.Input.TEXT );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "Hi!" );
 
 		// when
@@ -48,7 +48,7 @@ public class PromptTest extends BaseCommandTest {
 	@Test
 	void testExecuteWithMultipleParameters() throws Exception {
 		// given
-		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		Prompt command = new Prompt( "Hello world:", CommandContext.Input.TEXT );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, "one", "two", "three" );
 
 		// when
@@ -64,7 +64,7 @@ public class PromptTest extends BaseCommandTest {
 	@Test
 	void testExecuteWithArrayParameter() throws Exception {
 		// given
-		Prompt command = new Prompt( "Hello world:", DesignCommandContext.Input.TEXT );
+		Prompt command = new Prompt( "Hello world:", CommandContext.Input.TEXT );
 		CommandTask task = new CommandTask( commandContext, tool, null, null, command, (Object)new String[]{ "one", "two", "three" } );
 
 		// when

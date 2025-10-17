@@ -2,7 +2,7 @@ package com.avereon.cartesia.command.base;
 
 import com.avereon.cartesia.command.Command;
 import com.avereon.cartesia.command.CommandTask;
-import com.avereon.cartesia.tool.DesignCommandContext;
+import com.avereon.cartesia.tool.CommandContext;
 import lombok.CustomLog;
 
 import static com.avereon.cartesia.command.Command.Result.INCOMPLETE;
@@ -12,9 +12,9 @@ public class Prompt extends Command {
 
 	private final String prompt;
 
-	private final DesignCommandContext.Input mode;
+	private final CommandContext.Input mode;
 
-	public Prompt( String prompt, DesignCommandContext.Input mode ) {
+	public Prompt( String prompt, CommandContext.Input mode ) {
 		this.prompt = prompt;
 		this.mode = mode;
 	}
@@ -30,7 +30,7 @@ public class Prompt extends Command {
 	}
 
 	@Override
-	public DesignCommandContext.Input getInputMode() {
+	public CommandContext.Input getInputMode() {
 		return mode;
 	}
 

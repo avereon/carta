@@ -1,12 +1,12 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Point2D;
 import javafx.geometry.Point3D;
 import javafx.scene.input.MouseEvent;
+import lombok.AccessLevel;
 import lombok.Getter;
 
 /**
@@ -20,13 +20,9 @@ import lombok.Getter;
 @Getter
 public class DesignContext {
 
-	/**
-	 * The design that this context belongs to.
-	 */
-	private final DesignModel design;
-
 	@Deprecated
-	private final DesignCommandContext designCommandContext;
+	@Getter( AccessLevel.NONE)
+	private final CommandContext commandContext;
 
 	private final ObservableList<DesignShape> previewShapes;
 
@@ -35,13 +31,11 @@ public class DesignContext {
 	// FIXME Arguably this should be a part of the design tool
 	private final CoordinateStatus coordinateStatus;
 
-	public DesignContext( DesignModel design, DesignCommandContext commandContext ) {
-		this.design = design;
-
+	public DesignContext( CommandContext commandContext ) {
 		// In theory, commands are executed against a tool but scoped by the design,
 		// so there should only be one command context per design, across all the
 		// tools involved.
-		this.designCommandContext = commandContext;
+		this.commandContext = commandContext;
 
 		// FIXME Ok, interesting. A lot of FX state is shared in here.
 
@@ -51,7 +45,6 @@ public class DesignContext {
 	}
 
 	public void setMouse( MouseEvent event ) {
-		DesignCommandContext commandContext = getDesignCommandContext();
 		CoordinateStatus coordinateStatus = getCoordinateStatus();
 		BaseDesignTool tool = (BaseDesignTool)event.getSource();
 
