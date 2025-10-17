@@ -1,6 +1,7 @@
 package com.avereon.cartesia;
 
 import com.avereon.xenos.BaseModTestCase;
+import com.avereon.zerra.javafx.Fx;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -15,6 +16,7 @@ public class BaseCartesiaUnitTest extends BaseModTestCase<CartesiaMod> {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
+		Fx.startup();
 	}
 
 	@Override

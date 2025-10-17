@@ -296,6 +296,9 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	protected void allocate() throws ToolException {
 		super.allocate();
 
+		DesignCommandContext commandContext = getCommandContext();
+		if( commandContext != null ) commandContext.setLastUserTool( this );
+
 		// Add asset switch listener to remove command prompt
 		getProgram().register(
 			ResourceSwitchedEvent.SWITCHED, assetSwitchListener = e -> {

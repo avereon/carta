@@ -9,18 +9,13 @@ import org.mockito.Mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.lenient;
 
-public abstract class DesignToolBaseTest extends BaseCartesiaUnitTest {
+public abstract class BaseToolTest extends BaseCartesiaUnitTest {
 
 	@Mock
 	protected DesignTool tool;
 
 	@Mock
 	protected Resource resource;
-
-	static {
-		// All tools will want FX started
-		Fx.startup();
-	}
 
 	@BeforeEach
 	protected void setup() throws Exception {

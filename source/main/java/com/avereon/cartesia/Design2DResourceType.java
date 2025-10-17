@@ -1,5 +1,6 @@
 package com.avereon.cartesia;
 
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignModel2D;
 import com.avereon.product.Rb;
@@ -21,12 +22,15 @@ public class Design2DResourceType extends ResourceType {
 
 	@Override
 	public boolean assetNew( Xenon program, Resource resource ) {
-		DesignModel2D design = initModel( resource );
+		Design<DesignModel2D> design = initModel( resource );
+
+		// There might already be a model from assetNew()
+		DesignModel2D dataModel = design.getDataModel();
 
 		// Create the default layer
 		String constructionLayerName = Rb.textOr( RbKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 		DesignLayer layer = new DesignLayer().setName( constructionLayerName );
-		design.getLayers().addLayer( layer );
+		dataModel.getLayers().addLayer( layer );
 
 		// Initialize the design settings
 		Settings settings = program.getSettingsManager().getAssetSettings( resource );
@@ -43,17 +47,19 @@ public class Design2DResourceType extends ResourceType {
 	@Override
 	public boolean assetOpen( Xenon program, Resource resource ) {
 		initModel( resource );
-
 		resource.setCaptureUndoChanges( true );
 		return true;
 	}
 
-	private DesignModel2D initModel( Resource resource ) {
+	private Design<DesignModel2D> initModel( Resource resource ) {
 		// There might already be a model
-		DesignModel2D design = resource.getModel();
+		Design<DesignModel2D> design = resource.getModel();
 
 		// If there is not already a model, create one
-		if( design == null ) resource.setModel( design = new DesignModel2D() );
+		if( design == null ) {
+			design = new Design<DesignModel2D>().setDataModel( new DesignModel2D() );
+			resource.setModel( design );
+		}
 
 		return design;
 	}
