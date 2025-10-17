@@ -52,15 +52,16 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 	@Test
 	void testLoad() throws Exception {
 		// Generate a test design
-		DesignModel design = createTestDesign( new DesignModel2D() );
-		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
+		DesignModel model = createTestDesign( new DesignModel2D() );
+		Map<String, Object> expectedMap = new HashMap<>( model.asDeepMap() );
 		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 		remapLayersForLoad( expectedMap, this::remapShapeForLoad );
 
 		// Load the design from a stream
 		byte[] buffer = MAPPER.writer().writeValueAsBytes( expectedMap );
 		codec.load( resource, new ByteArrayInputStream( buffer ) );
-		Map<String, Object> actualMap = ((DesignModel)resource.getModel()).asDeepMap();
+		Design<DesignModel> design = resource.getModel();
+		Map<String, Object> actualMap = design.getDataModel().asDeepMap();
 		actualMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 
 		// Convert the results to strings for comparison
@@ -73,8 +74,9 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 	@Test
 	void testSave() throws Exception {
 		// Create the expected result
-		DesignModel design = createTestDesign( resource.getModel() );
-		Map<String, Object> expectedMap = new HashMap<>( design.asDeepMap() );
+		Design<DesignModel> design = resource.getModel();
+		DesignModel model = createTestDesign( design.getDataModel() );
+		Map<String, Object> expectedMap = new HashMap<>( model.asDeepMap() );
 		expectedMap.put( CartesiaDesignCodec.CODEC_VERSION_KEY, CartesiaDesignCodec.CODEC_VERSION );
 		remapLayersForSave( expectedMap, this::remapShapeForSave );
 

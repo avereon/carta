@@ -156,7 +156,8 @@ public abstract class CartesiaDesignCodec extends Codec {
 
 	@Override
 	public void save( Resource resource, OutputStream output ) throws IOException {
-		Map<String, Object> map = mapDesign( resource.getModel() );
+		Design<DesignModel> design = resource.getModel();
+		Map<String, Object> map = mapDesign( design.getDataModel() );
 		map.put( CODEC_VERSION_KEY, CODEC_VERSION );
 		JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValue( output, map );
 		//System.err.println( JSON_MAPPER.writerWithDefaultPrettyPrinter().writeValueAsString( map ) );
