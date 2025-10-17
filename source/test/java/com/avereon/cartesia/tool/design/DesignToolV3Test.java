@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.CartesiaTestTag;
 import com.avereon.cartesia.Design2DResourceType;
-import com.avereon.cartesia.DesignToolBaseTest;
+import com.avereon.cartesia.BaseToolTest;
 import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.tool.DesignPortal;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class DesignToolV3Test extends DesignToolBaseTest {
+public class DesignToolV3Test extends BaseToolTest {
 
 	private DesignModel model;
 

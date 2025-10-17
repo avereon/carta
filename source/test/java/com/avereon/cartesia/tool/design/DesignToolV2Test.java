@@ -1,6 +1,6 @@
 package com.avereon.cartesia.tool.design;
 
-import com.avereon.cartesia.DesignToolBaseTest;
+import com.avereon.cartesia.BaseToolTest;
 import com.avereon.cartesia.test.Point3DAssert;
 import com.avereon.cartesia.tool.Grid;
 import com.avereon.marea.fx.FxRenderer2d;
@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DesignToolV2Test extends DesignToolBaseTest {
+public class DesignToolV2Test extends BaseToolTest {
 
 	private static final double DPC = FxRenderer2d.DEFAULT_DPI / 2.54;
 
