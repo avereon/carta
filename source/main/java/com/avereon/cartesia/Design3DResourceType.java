@@ -1,13 +1,12 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.DesignModel3D;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignModel3D;
 import com.avereon.product.Rb;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.resource.Resource;
-import com.avereon.xenon.resource.exception.ResourceException;
 import com.avereon.xenon.resource.ResourceType;
 
 public class Design3DResourceType extends ResourceType {
@@ -20,7 +19,7 @@ public class Design3DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetNew( Xenon program, Resource resource ) throws ResourceException {
+	public boolean assetNew( Xenon program, Resource resource ) {
 		// There might already be a model from assetNew()
 		DesignModel3D design = resource.getModel();
 
@@ -28,7 +27,7 @@ public class Design3DResourceType extends ResourceType {
 		if( design == null ) resource.setModel( design = new DesignModel3D() );
 
 		// If there is not a default layer, create one
-		if( design.getLayers().getLayers().size() == 0 ) {
+		if( design.getLayers().getLayers().isEmpty() ) {
 			String constructionLayerName = Rb.textOr( RbKey.LABEL, "layer-construction", "construction" ).toLowerCase();
 			DesignLayer layer = new DesignLayer().setName( constructionLayerName );
 			design.getLayers().addLayer( layer );
@@ -38,7 +37,7 @@ public class Design3DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetOpen( Xenon program, Resource resource ) throws ResourceException {
+	public boolean assetOpen( Xenon program, Resource resource ) {
 		resource.setCaptureUndoChanges( true );
 		return true;
 	}

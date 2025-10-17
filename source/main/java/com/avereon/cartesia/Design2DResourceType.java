@@ -1,14 +1,13 @@
 package com.avereon.cartesia;
 
-import com.avereon.cartesia.data.DesignModel2D;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignModel2D;
 import com.avereon.product.Rb;
 import com.avereon.settings.Settings;
 import com.avereon.xenon.RbKey;
 import com.avereon.xenon.Xenon;
 import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.resource.Resource;
-import com.avereon.xenon.resource.exception.ResourceException;
 import com.avereon.xenon.resource.ResourceType;
 
 public class Design2DResourceType extends ResourceType {
@@ -21,7 +20,7 @@ public class Design2DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetNew( Xenon program, Resource resource ) throws ResourceException {
+	public boolean assetNew( Xenon program, Resource resource ) {
 		DesignModel2D design = initModel( resource );
 
 		// Create the default layer
@@ -42,7 +41,7 @@ public class Design2DResourceType extends ResourceType {
 	}
 
 	@Override
-	public boolean assetOpen( Xenon program, Resource resource ) throws ResourceException {
+	public boolean assetOpen( Xenon program, Resource resource ) {
 		initModel( resource );
 
 		resource.setCaptureUndoChanges( true );
