@@ -4,8 +4,8 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.RbKey;
 import com.avereon.cartesia.cursor.Reticle;
 import com.avereon.cartesia.cursor.ReticleCursor;
-import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignPrint;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
@@ -15,9 +15,9 @@ import com.avereon.settings.Settings;
 import com.avereon.skill.WritableIdentity;
 import com.avereon.util.DelayedAction;
 import com.avereon.xenon.*;
+import com.avereon.xenon.resource.OpenAssetRequest;
 import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.resource.ResourceSwitchedEvent;
-import com.avereon.xenon.resource.OpenAssetRequest;
 import com.avereon.xenon.resource.type.ProgramPropertiesType;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuidedTool;
@@ -273,6 +273,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 			getRenderer().setLayerVisible( design.getLayers().getLayers().getFirst(), true );
 		}
 
+		// FIXME Mouse events need to go through a mouse event processor
+		// to handle more complex context scenarios like clicking on geometry and
+		// then dragging. A simple map solution is not sufficient.
+
 		// Update the design context when the mouse moves
 		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
 
@@ -335,6 +339,11 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		super.deallocate();
 	}
 
+//	@Override
+//	public final XenonProgramProduct getProduct() {
+//		return getMod();
+//	}
+
 	@Override
 	public final CartesiaMod getMod() {
 		return (CartesiaMod)getProduct();
@@ -353,7 +362,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// Lazy instantiate the context
 		DesignContext context = design.getValue( DESIGN_CONTEXT );
 		if( context == null ) {
-			context = new DesignContext( design, new DesignCommandContext( getProduct() ) );
+			context = new DesignContext( design, new DesignCommandContext() );
 			design.setValue( DESIGN_CONTEXT, context );
 		}
 

@@ -9,6 +9,7 @@ import javafx.scene.input.InputEvent;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class CommandTask {
 	@Setter
 	private CommandTask prior;
 
-	public CommandTask( DesignCommandContext context, DesignTool tool, CommandTrigger trigger, InputEvent event, Command command, Object... parameters ) {
+	public CommandTask( @NonNull DesignCommandContext context, @NonNull DesignTool tool, CommandTrigger trigger, InputEvent event, @NonNull Command command, Object... parameters ) {
 		this.context = Objects.requireNonNull( context );
 		this.tool = Objects.requireNonNull( tool );
 		this.command = Objects.requireNonNull( command );

@@ -1,6 +1,5 @@
 package com.avereon.cartesia.tool;
 
-import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.CommandMetadata;
 import com.avereon.cartesia.CommandTrigger;
 import com.avereon.cartesia.RbKey;
@@ -14,8 +13,6 @@ import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
 import com.avereon.util.TextUtil;
-import com.avereon.xenon.Xenon;
-import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.notice.Notice;
 import com.avereon.zerra.javafx.Fx;
 import javafx.event.EventHandler;
@@ -25,6 +22,7 @@ import javafx.scene.input.*;
 import lombok.CustomLog;
 import lombok.Getter;
 import lombok.Setter;
+import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,15 +56,11 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private static final Level COMMAND_STACK_LOG_LEVEL = Level.FINE;
 
-	private final XenonProgramProduct product;
-
 	private final BlockingDeque<CommandTask> commandStack;
 
 	private CommandPrompt commandPrompt;
 
 	private String priorCommand;
-
-	private DesignTool lastUserTool;
 
 	@Setter
 	@Getter
@@ -98,23 +92,12 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 	private DesignTool tool;
 
-	public DesignCommandContext( XenonProgramProduct product ) {
-		this.product = product;
+	private DesignTool lastUserTool;
+
+	public DesignCommandContext() {
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorCommand = TextUtil.EMPTY;
 		this.inputMode = DesignCommandContext.Input.NONE;
-	}
-
-	public final XenonProgramProduct getProduct() {
-		return product;
-	}
-
-	public final Xenon getProgram() {
-		return product.getProgram();
-	}
-
-	public final CartesiaMod getMod() {
-		return (CartesiaMod)product;
 	}
 
 	public CommandPrompt getCommandPrompt() {
@@ -131,7 +114,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 
 		String shortcut = parts[ 0 ];
 
-		CommandMetadata metadata = getMod().getCommandMap().getCommandByShortcut( shortcut );
+		CommandMetadata metadata = tool.getMod().getCommandMap().getCommandByShortcut( shortcut );
 		if( metadata == NONE ) return null;
 
 		// Create a new metadata object with the parameters
@@ -172,7 +155,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		event.consume();
 		String input = getCommandPrompt().getCommand();
 		if( input.isEmpty() ) {
-			DesignTool tool = getLastUserTool();
+			tool = getLastUserTool();
 			Point3D localMouse = this.localMouse;
 			Point2D screenMouse = this.screenMouse;
 			MouseEvent mouseEvent = new MouseEvent(
@@ -220,7 +203,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 				case NUMBER, POINT, TEXT -> submitCommand( new Value(), input );
 				default -> submitCommand( mapCommand( input ) );
 			};
-		} else if( !isTextInput && isAutoCommandEnabled() && getMod().getCommandMap().hasCommand( input ) ) {
+		} else if( !isTextInput && isAutoCommandEnabled() && getTool().getMod().getCommandMap().hasCommand( input ) ) {
 			return submitCommand( mapCommand( input ) );
 		}
 		return null;
@@ -248,7 +231,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public boolean isAutoCommandEnabled() {
-		return getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
+		return getTool().getProduct().getSettings().get( "command-auto-start", Boolean.class, DEFAULT_AUTO_COMMAND );
 	}
 
 	public void handle( KeyEvent event ) {
@@ -260,7 +243,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		// prompt so that the command prompt displays the typed keys.
 		if( event.getSource() == getTool() ) getCommandPrompt().fireEvent( event );
 
-		// On each key event the situation needs to be evaluated...
+		// On each key event, the situation needs to be evaluated...
 		// If ESC was pressed, then the whole command stack should be cancelled
 		// If ENTER was pressed, then an attempt to process the text should be forced
 		// If SPACE was pressed, then the last command should be repeated
@@ -310,24 +293,26 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	}
 
 	public void handle( GestureEvent event ) {
-		log.atConfig().log( "gesture event=%s", event);
+		log.atConfig().log( "gesture event=%s", event );
 	}
 
-	DesignTool getLastUserTool() {
+	@NonNull
+	public final DesignTool getLastUserTool() {
 		return lastUserTool;
 	}
 
-	public void setLastUserTool( DesignTool tool ) {
-		lastUserTool = Objects.requireNonNull( tool );
+	public final void setLastUserTool( @NonNull DesignTool tool ) {
+		lastUserTool = tool;
 		setTool( tool );
 	}
 
+	@NonNull
 	public final DesignTool getTool() {
 		return tool;
 	}
 
-	public void setTool( DesignTool tool ) {
-		this.tool = Objects.requireNonNull( tool );
+	public final void setTool( @NonNull DesignTool tool ) {
+		this.tool = tool;
 	}
 
 	// For test purposes only
@@ -376,7 +361,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 			String title = Rb.text( RbKey.NOTICE, "invalid-input" );
 			String message = Rb.text( RbKey.PROMPT, exception.getInputRbKey() ) + " " + exception.getValue();
 			if( task.getContext().isInteractive() ) {
-				getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
+				getTool().getProgram().getNoticeManager().addNotice( new Notice( title, message ).setType( Notice.Type.WARN ) );
 			} else {
 				log.atWarn( exception ).log( "Invalid input=%s", task );
 			}
@@ -403,7 +388,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private CommandMetadata mapCommand( String input ) {
 		if( TextUtil.isEmpty( input ) ) return null;
 
-		CommandMetadata mapping = getMod().getCommandMap().getCommandByShortcut( input );
+		CommandMetadata mapping = getTool().getMod().getCommandMap().getCommandByShortcut( input );
 		if( mapping == NONE ) throw new UnknownCommand( input );
 
 		return mapping;
@@ -412,7 +397,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 	private boolean submitEventCommand( InputEvent event ) {
 		// NOTE This method does not handle key events,
 		//  those are handled by the action infrastructure
-		CommandMetadata metadata = getMod().getCommandMap().getCommandByEvent( event );
+		CommandMetadata metadata = getTool().getMod().getCommandMap().getCommandByEvent( event );
 		if( metadata == NONE ) return false;
 
 		log.atConfig().log( "Mapped command=%s", metadata );
@@ -455,7 +440,7 @@ public class DesignCommandContext implements EventHandler<KeyEvent> {
 		log.atTrace().log( "Command submitted %s", request );
 
 		// Run the processing on a task thread
-		getProduct().task( "process-commands", this::doProcessCommands );
+		getTool().getProduct().task( "process-commands", this::doProcessCommands );
 
 		// TODO Consider returning the command request
 		return request.getCommand();

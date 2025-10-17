@@ -92,7 +92,7 @@ public class MeasureAngle extends MeasureCommand {
 					content.putString( String.valueOf( extent ) );
 					clipboard.setContent( content );
 				} ) );
-				task.getContext().getProgram().getNoticeManager().addNotice( notice );
+				task.getContext().getTool().getProgram().getNoticeManager().addNotice( notice );
 			}
 
 			log.atDebug().log( "Measured distance=%s", extent );

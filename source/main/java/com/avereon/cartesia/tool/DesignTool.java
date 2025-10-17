@@ -4,13 +4,14 @@ import com.avereon.cartesia.CartesiaMod;
 import com.avereon.cartesia.DesignUnit;
 import com.avereon.cartesia.DesignValue;
 import com.avereon.cartesia.cursor.Reticle;
-import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignLayer;
+import com.avereon.cartesia.data.DesignModel;
 import com.avereon.cartesia.data.DesignShape;
 import com.avereon.cartesia.data.DesignView;
 import com.avereon.cartesia.tool.design.BaseDesignRenderer;
 import com.avereon.cartesia.tool.design.CommonToolRenderer;
 import com.avereon.xenon.XenonProgram;
+import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.resource.Resource;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ObjectProperty;
@@ -68,6 +69,8 @@ public interface DesignTool extends RenderConstants, CommonToolRenderer {
 	double INCH_PER_CM = 1 / CM_PER_INCH;
 
 	XenonProgram getProgram();
+
+	XenonProgramProduct getProduct();
 
 	CartesiaMod getMod();
 

@@ -42,7 +42,7 @@ public class MeasureLength extends MeasureCommand {
 					content.putString( message );
 					clipboard.setContent( content );
 				} ) );
-				task.getContext().getProgram().getNoticeManager().addNotice( notice );
+				task.getContext().getTool().getProgram().getNoticeManager().addNotice( notice );
 			}
 
 			return length;

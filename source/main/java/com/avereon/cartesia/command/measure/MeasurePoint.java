@@ -45,7 +45,7 @@ public class MeasurePoint extends MeasureCommand {
 					content.putString( point );
 					clipboard.setContent( content );
 				} ) );
-				task.getContext().getProgram().getNoticeManager().addNotice( notice );
+				task.getContext().getTool().getProgram().getNoticeManager().addNotice( notice );
 			}
 
 			log.atDebug().log( "Measured point=%s", p1 );

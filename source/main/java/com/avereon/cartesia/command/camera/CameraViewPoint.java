@@ -40,7 +40,7 @@ public class CameraViewPoint extends CameraCommand {
 
 				String title = Rb.text( RbKey.NOTICE, "command-error" );
 				String message = Rb.text( RbKey.NOTICE, "unable-to-move-to-viewpoint", exception );
-				task.getContext().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+				task.getContext().getTool().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 			}
 		}
 

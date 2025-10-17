@@ -68,7 +68,7 @@ public class DrawArc3 extends DrawCommand {
 			} catch( ParseException exception ) {
 				String title = Rb.text( RbKey.NOTICE, "command-error" );
 				String message = Rb.text( RbKey.NOTICE, "unable-to-create-shape", exception );
-				if( task.getContext().isInteractive() ) task.getContext().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
+				if( task.getContext().isInteractive() ) task.getContext().getTool().getProgram().getNoticeManager().addNotice( new Notice( title, message ) );
 			}
 
 			return SUCCESS;

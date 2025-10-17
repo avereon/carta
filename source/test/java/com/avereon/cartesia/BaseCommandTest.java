@@ -65,6 +65,9 @@ public class BaseCommandTest extends DesignToolBaseTest {
 		super.setup();
 
 		lenient().when( resource.getModel() ).thenReturn( design );
+		lenient().when( tool.getMod() ).thenReturn( (CartesiaMod)module );
+		lenient().when( tool.getProduct() ).thenReturn( module );
+		lenient().when( tool.getProgram() ).thenReturn( program );
 		lenient().when( tool.getDesign() ).thenReturn( design );
 		lenient().when( tool.getDesignContext() ).thenReturn( designContext );
 		lenient().when( tool.getCommandContext() ).thenReturn( commandContext );
@@ -76,8 +79,6 @@ public class BaseCommandTest extends DesignToolBaseTest {
 		lenient().when( designContext.getDesignCommandContext() ).thenReturn( commandContext );
 		lenient().when( commandContext.getCommandPrompt() ).thenReturn( commandPrompt );
 		lenient().when( commandContext.getTool() ).thenReturn( tool );
-		lenient().when( commandContext.getProduct() ).thenReturn( module );
-		lenient().when( commandContext.getProgram() ).thenReturn( program );
 	}
 
 	protected static CommandMetadata createMetadata( String action, String name, String command, Class<? extends Command> type ) {

@@ -27,7 +27,8 @@ public class DesignCommandContextTest extends BaseCommandTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		this.commandContext = spy( new DesignCommandContext( getMod() ) );
+		this.commandContext = spy( new DesignCommandContext() );
+		lenient().doReturn( tool ).when( commandContext ).getTool();
 		lenient().doReturn( commandPrompt ).when( commandContext ).getCommandPrompt();
 		if( !configured ) {
 			getMod().getCommandMap().add( "test", MockCommand.class, "Test Command", "test", null );

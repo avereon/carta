@@ -55,7 +55,7 @@ public class MeasureDistance extends MeasureCommand {
 					content.putString( String.valueOf( distance ) );
 					clipboard.setContent( content );
 				} ) );
-				task.getContext().getProgram().getNoticeManager().addNotice( notice );
+				task.getContext().getTool().getProgram().getNoticeManager().addNotice( notice );
 			}
 
 			log.atDebug().log( "Measured distance=%s", distance );
