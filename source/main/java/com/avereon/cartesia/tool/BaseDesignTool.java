@@ -122,7 +122,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	 * The reticle is the more specialized equivalent of the crosshair cursor.
 	 * Whenever the program uses the crosshair cursor, it should use the reticle
 	 * cursor.
- 	 */
+	 */
 	private final ObjectProperty<Reticle> reticle;
 
 	// selectedShapes
@@ -274,7 +274,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		// then dragging. A simple map solution is not sufficient.
 
 		// Update the design context when the mouse moves
-		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getCommandContext().setMouse( e ) );
 
 		// Link the command context to the user interfaces
 		//addEventFilter( KeyEvent.ANY, e -> getCommandContext().handle( e ) );
@@ -338,10 +338,10 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 		super.deallocate();
 	}
 
-//	@Override
-//	public final XenonProgramProduct getProduct() {
-//		return getMod();
-//	}
+	//	@Override
+	//	public final XenonProgramProduct getProduct() {
+	//		return getMod();
+	//	}
 
 	@Override
 	public final CartesiaMod getMod() {
@@ -357,13 +357,13 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	@Override
 	public final DesignContext getDesignContext() {
 		Design<? extends DesignModel> design = getAssetModel();
-		return design == null? null : design.getDesignContext();
+		return design == null ? null : design.getDesignContext();
 	}
 
 	@Override
 	public final CommandContext getCommandContext() {
 		Design<? extends DesignModel> design = getAssetModel();
-		return design == null? null : design.getCommandContext();
+		return design == null ? null : design.getCommandContext();
 	}
 
 	@Override
@@ -648,7 +648,7 @@ public abstract class BaseDesignTool extends GuidedTool implements DesignTool, E
 	}
 
 	protected CoordinateStatus getCoordinateStatus() {
-		return getDesignContext().getCoordinateStatus();
+		return getCommandContext().getCoordinateStatus();
 	}
 
 	protected void registerStatusBarItems() {

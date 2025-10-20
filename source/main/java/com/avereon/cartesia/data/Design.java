@@ -23,7 +23,7 @@ public class Design<T extends DesignModel> {
 		if( this.dataModel != null ) return this;
 		this.dataModel = model;
 		this.commandContext = new CommandContext();
-		this.designContext = new DesignContext( commandContext );
+		this.designContext = new DesignContext();
 		return this;
 	}
 

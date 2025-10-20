@@ -90,6 +90,9 @@ public class CommandContext implements EventHandler<KeyEvent> {
 	@Setter
 	private Point3D worldMouse;
 
+	@Getter
+	private final CoordinateStatus coordinateStatus;
+
 	private DesignTool tool;
 
 	private DesignTool lastUserTool;
@@ -98,6 +101,7 @@ public class CommandContext implements EventHandler<KeyEvent> {
 		this.commandStack = new LinkedBlockingDeque<>();
 		this.priorCommand = TextUtil.EMPTY;
 		this.inputMode = CommandContext.Input.NONE;
+		this.coordinateStatus = new CoordinateStatus();
 	}
 
 	public CommandPrompt getCommandPrompt() {
@@ -268,6 +272,29 @@ public class CommandContext implements EventHandler<KeyEvent> {
 			task.getCommand().handle( task, event );
 		}
 		// Do not consume key events here, let them bubble up
+	}
+
+	public void setMouse( MouseEvent event ) {
+		CoordinateStatus coordinateStatus = getCoordinateStatus();
+		BaseDesignTool tool = (BaseDesignTool)event.getSource();
+
+		// Set the mouse position in screen coordinates
+		Point2D screenMouse = new Point2D( event.getScreenX(), event.getScreenY() );
+		setScreenMouse( screenMouse );
+
+		// Set the mouse position in local coordinates
+		Point3D mouse = new Point3D( event.getX(), event.getY(), event.getZ() );
+		setLocalMouse( mouse );
+
+		// Set the mouse position in world coordinates
+		Point3D point = tool.screenToWorkplane( mouse );
+		setWorldMouse( point );
+
+		// Update the position
+		coordinateStatus.updatePosition( point );
+
+		// While we're updating the position, may as well update the zoom
+		coordinateStatus.updateZoom( tool.getViewZoom() );
 	}
 
 	public void handle( MouseEvent event ) {

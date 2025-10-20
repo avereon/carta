@@ -19,9 +19,9 @@ import com.avereon.settings.Settings;
 import com.avereon.util.TypeReference;
 import com.avereon.xenon.ProgramAction;
 import com.avereon.xenon.XenonProgramProduct;
+import com.avereon.xenon.resource.OpenAssetRequest;
 import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.resource.ResourceSwitchedEvent;
-import com.avereon.xenon.resource.OpenAssetRequest;
 import com.avereon.xenon.task.Task;
 import com.avereon.xenon.tool.guide.GuideNode;
 import com.avereon.xenon.tool.settings.SettingsPage;
@@ -56,6 +56,7 @@ public class DesignToolV2 extends BaseDesignTool {
 	// KEYS
 
 	private static final String CURRENT_LAYER = "current-layer";
+
 	private static final String SELECTED_LAYER = "selected-layer";
 
 	// GUIDES
@@ -302,7 +303,7 @@ public class DesignToolV2 extends BaseDesignTool {
 		//		designPane.referenceLayerVisible().addListener( ( p, o, n ) -> settings.set( REFERENCE_LAYER_VISIBLE, String.valueOf( n ) ) );
 
 		// Update the design context when the mouse moves
-		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getDesignContext().setMouse( e ) );
+		addEventFilter( MouseEvent.MOUSE_MOVED, e -> getCommandContext().setMouse( e ) );
 
 		getDesignContext().getPreviewShapes().addListener( this::onPreviewShapesChanged );
 		getDesignContext().getSelectedShapes().addListener( this::onSelectedShapesChanged );
