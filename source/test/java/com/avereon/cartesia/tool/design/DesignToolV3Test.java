@@ -2,7 +2,7 @@ package com.avereon.cartesia.tool.design;
 
 import com.avereon.cartesia.BaseToolTest;
 import com.avereon.cartesia.CartesiaTestTag;
-import com.avereon.cartesia.Design2DResourceType;
+import com.avereon.cartesia.Design2dResourceType;
 import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignLayer;
 import com.avereon.cartesia.data.DesignModel;
@@ -44,7 +44,7 @@ public class DesignToolV3Test extends BaseToolTest {
 		model = ExampleDesigns.redBlueX();
 		design = new Design<>().setDataModel( model );
 
-		Resource resource = new Resource( new Design2DResourceType( getProgram() ), URI.create( "new://test" ) ).setModel( design );
+		Resource resource = new Resource( new Design2dResourceType( getProgram() ), URI.create( "new://test" ) ).setModel( design );
 
 		renderer = Mockito.spy( new DesignToolV3Renderer() );
 

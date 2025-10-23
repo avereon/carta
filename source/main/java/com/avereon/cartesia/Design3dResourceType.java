@@ -10,13 +10,13 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.resource.ResourceType;
 
-public class Design3DResourceType extends ResourceType {
+public class Design3dResourceType extends ResourceType {
 
 	public static final String KEY = "design3d";
 
-	public Design3DResourceType( XenonProgramProduct product ) {
+	public Design3dResourceType( XenonProgramProduct product ) {
 		super( product, KEY );
-		setDefaultCodec( new CartesiaDesignCodec3D( product ) );
+		setDefaultCodec( new CartesiaDesignCodec3d( product ) );
 	}
 
 	@Override

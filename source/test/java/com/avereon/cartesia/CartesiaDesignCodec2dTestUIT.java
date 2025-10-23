@@ -23,7 +23,7 @@ import java.util.function.Consumer;
 import static com.avereon.cartesia.CartesiaDesignCodec.remapValue;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
+class CartesiaDesignCodec2dTestUIT extends BaseCartesiaUiTest {
 
 	private static final ObjectMapper MAPPER = CartesiaDesignCodec.JSON_MAPPER;
 
@@ -34,10 +34,10 @@ class CartesiaDesignCodec2DTestUIT extends BaseCartesiaUiTest {
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		codec = new CartesiaDesignCodec2D( getMod() );
+		codec = new CartesiaDesignCodec2d( getMod() );
 
 		Path path = Paths.get( "target", "design.tmp" );
-		resource = new Resource( new Design2DResourceType( getMod() ), path.toUri() );
+		resource = new Resource( new Design2dResourceType( getMod() ), path.toUri() );
 		resource.setModel( new Design<DesignModel2D>().setDataModel( new DesignModel2D() ) );
 	}
 
