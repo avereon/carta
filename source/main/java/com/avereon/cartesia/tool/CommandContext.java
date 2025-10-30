@@ -8,7 +8,7 @@ import com.avereon.cartesia.command.CommandTask;
 import com.avereon.cartesia.command.InvalidInputException;
 import com.avereon.cartesia.command.SelectByPoint;
 import com.avereon.cartesia.command.base.Value;
-import com.avereon.cartesia.data.DesignModel;
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.error.UnknownCommand;
 import com.avereon.log.LazyEval;
 import com.avereon.product.Rb;
@@ -36,9 +36,10 @@ import static com.avereon.cartesia.CommandMap.NONE;
 import static com.avereon.cartesia.command.Command.Result.*;
 
 /**
- * The CommandContext class is a container for command-specific information.
+ * The CommandContext class is a container for command-specific information. It
+ * should only be accessed through the design tool and its associated classes.
  * <pre>
- * {@link DesignTool} -> {@link DesignModel} -> {@link DesignContext} -> {@link CommandContext}
+ * {@link DesignTool} -> {@link Design} -> {@link CommandContext}
  * </pre>
  */
 @CustomLog

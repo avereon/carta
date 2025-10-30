@@ -1,5 +1,6 @@
 package com.avereon.cartesia.tool;
 
+import com.avereon.cartesia.data.Design;
 import com.avereon.cartesia.data.DesignShape;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,7 +11,7 @@ import lombok.Getter;
  * tools. It should only be accessed through the design tool and its associated
  * classes.
  * <pre>
- * DesignTool -> Design -> DesignContext -> CommandContext
+ * {@link DesignTool} -> {@link Design} -> {@link DesignContext}
  * </pre>
  */
 @Getter
