@@ -27,8 +27,8 @@ public class ParseUtilTest {
 		return Stream.of(
 			// Exceptions
 			Arguments.of( null, null, new NullPointerException( "Point string cannot be null" ) ),
-			Arguments.of( "", null, new IllegalArgumentException( "Input string cannot be empty" ) ),
-			Arguments.of( "  ", null, new IllegalArgumentException( "Input string cannot be empty" ) ),
+			Arguments.of( "", null, new IllegalArgumentException( "Input string cannot be blank" ) ),
+			Arguments.of( "  ", null, new IllegalArgumentException( "Input string cannot be blank" ) ),
 			Arguments.of( "Not,a,Point", null, new NumberFormatException( "For input string: \"Not\"" ) ),
 			// Valid Points
 			Arguments.of( "0", Point3D.ZERO, null ),
