@@ -17,6 +17,9 @@ public class ParseUtil {
 	}
 
 	public static Point3D parsePoint3D( String string ) {
+		if( string == null ) throw new NullPointerException( "Point string cannot be null" );
+		if( string.isBlank() ) throw new IllegalArgumentException( "Input string cannot be blank" );
+
 		String[] coords = string.split( "," );
 		if( coords.length == 3 ) return new Point3D( Double.parseDouble( coords[ 0 ] ), Double.parseDouble( coords[ 1 ] ), Double.parseDouble( coords[ 2 ] ) );
 		if( coords.length == 2 ) return new Point3D( Double.parseDouble( coords[ 0 ] ), Double.parseDouble( coords[ 1 ] ), 0 );
