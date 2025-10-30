@@ -39,9 +39,9 @@ public class CartesiaMod extends Module {
 
 	public static final String INDEX_ID = "cartesia";
 
-	private Design2DResourceType design2dAssetType;
+	private Design2dResourceType design2dAssetType;
 
-	private Design3DResourceType design3dAssetType;
+	private Design3dResourceType design3dAssetType;
 
 	private ShapePropertiesResourceType shapePropertiesAssetType;
 
@@ -59,7 +59,7 @@ public class CartesiaMod extends Module {
 		getProgram().getResourceManager().addScheme( new CartesiaScheme( getProgram() ) );
 
 		// Register Design2D asset type and tools
-		registerAssetType( design2dAssetType = new Design2DResourceType( this ) );
+		registerAssetType( design2dAssetType = new Design2dResourceType( this ) );
 		// Settings pages
 		String path = "/" + getClass().getPackageName().replace( ".", "/" );
 		design2dAssetType.setSettingsPages( SettingsPageParser.parse( this, path + "/design/props/design.xml", RbKey.PROPS ) );

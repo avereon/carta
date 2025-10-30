@@ -8,14 +8,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CartesiaDesign3DResourceTypeTest extends BaseCartesiaUnitTest {
+class CartesiaDesign3dResourceTypeTest extends BaseCartesiaUnitTest {
 
-	private Design3DResourceType type;
+	private Design3dResourceType type;
 
 	@BeforeEach
 	protected void setup() throws Exception {
 		super.setup();
-		type = new Design3DResourceType( getProgram() );
+		type = new Design3dResourceType( getProgram() );
 	}
 
 	@Test

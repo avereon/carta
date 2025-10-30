@@ -11,13 +11,13 @@ import com.avereon.xenon.XenonProgramProduct;
 import com.avereon.xenon.resource.Resource;
 import com.avereon.xenon.resource.ResourceType;
 
-public class Design2DResourceType extends ResourceType {
+public class Design2dResourceType extends ResourceType {
 
 	public static final String KEY = "design2d";
 
-	public Design2DResourceType( XenonProgramProduct product ) {
+	public Design2dResourceType( XenonProgramProduct product ) {
 		super( product, KEY );
-		setDefaultCodec( new CartesiaDesignCodec2D( product ) );
+		setDefaultCodec( new CartesiaDesignCodec2d( product ) );
 	}
 
 	@Override
